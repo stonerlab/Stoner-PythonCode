@@ -51,13 +51,13 @@ class DataFile:
     """
 #   CONSTANTS
 
-    regexGetType = re.compile(r'{([^\}]*?)\}') # Match the contents of the inner mose {}
-    typeSignedInteger = "I64 I32 I16 I8"
-    typeUnsignedInteger="U64 U32 U16 U8"
-    typeInteger=typeSignedInteger+typeUnsignedInteger
-    typeFloat = "Extended Float Double Float Single Float"
-    typeBoolean = "Boolean"
-    typeString="String"
+    __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner mose {}
+    __typeSignedInteger = "I64 I32 I16 I8"
+    __typeUnsignedInteger="U64 U32 U16 U8"
+    __typeInteger=__typeSignedInteger+__typeUnsignedInteger
+    __typeFloat = "Extended Float Double Float Single Float"
+    __typeBoolean = "Boolean"
+    __typeString="String"
     defaultDumpLocation='C:\\dump.csv'
     
 #   INITIALISATION
@@ -96,14 +96,14 @@ class DataFile:
         
         Uses the typehint to set the type correctly in the dictionary
         """
-        m=re.search('([^\{]*)\{([^\}]*)\}', key)
-        k=m.group(1)
-        t=m.group(2)
-        if self.__contains(self.typeInteger, t) == True:
+        m=self.__regexGetType.search(key)
+        k= m.group(1)
+        t= m.group(2)
+        if self.__contains(self.__typeInteger, t) == True:
             value = int(value);
-        elif self.__contains(self.typeFloat, t) == True:
+        elif self.__contains(self.__typeFloat, t) == True:
             value = float(value);
-        elif self.__contains(self.typeBoolean, t) == True:
+        elif self.__contains(self.__typeBoolean, t) == True:
             value = bool(value);
         else:
             value = str(value);
@@ -128,6 +128,23 @@ class DataFile:
 
     def __contains(self, theString, theQueryValue):
         return theString.find(theQueryValue) > -1
+        
+    def __find_col(self, col):
+        if isinstance(col, int): #col is an int so pass on
+            pass
+        elif isinstance(col, str): # Ok we have a string
+            if col in self.column_headers: # and it is an exact string match
+                col=self.column_headers.index(col)
+            else: # ok we'll try for a regular expression
+                test=re.compile(col)
+                possible=filter(test.search, self.column_headers)
+                if len(possible)==0:
+                    raise KeyError('Unable to find any possible column matches')
+                col=self.column_headers.index(possible[0])
+        else:
+            raise TypeError('Column index must be an integer or string')
+        return col
+
 
 #   PUBLIC METHODS
 
@@ -153,20 +170,7 @@ class DataFile:
     
     def column(self, col):
         """Extracts a column of data by index or name"""
-        if isinstance(col, int): #col is an int so pass on
-            pass
-        elif isinstance(col, str): # Ok we have a string
-            if col in self.column_headers: # and it is an exact string match
-                col=self.column_headers.index(col)
-            else: # ok we'll try for a regular expression
-                test=re.compile(col)
-                possible=filter(test.search, self.column_headers)
-                if len(possible)==0:
-                    raise KeyError('Unable to find any possible column matches')
-                col=self.column_headers.index(possible[0])
-        else:
-            raise TypeError('Column index must be an integer or string')
-        return self.data[:, col]
+        return self.data[:, self.__find_col(col)]
         
     def meta(self, ky):
         """Returns some metadata
@@ -191,6 +195,34 @@ class DataFile:
             raise TypeError("Only string are supported as search keys currently")
             # Should implement using a list of strings as well
     
+    def search(self, *args):
+        """Searches in the numerica data part of the file for lines that match and returns  the correspondign rows
+        
+        search(Column,value,columns=[list])                                Find row(s) that match the specified value in column
+        search(Column,lower_limit,upper_limit)      Find rows that where the column is >= lower_limit and < upper_limit
+        """
+        
+        if len(args)==2:
+            col=args[0]
+            targets=[]
+            val=args[1]
+        elif len(args)==3:
+            col=args[0]
+            targets=map(self.__find_col, args[2])
+            val=args[1]        
+        if len(targets)==0:
+            targets=range(self.data.shape[1])
+        d=self.column(col)
+        if callable(val):
+            rows=numpy.nonzero([val(x) for x in d])[0]
+        elif isinstance(val, float):
+            rows=numpy.nonzero([x==val for x in d])[0]
+        print targets
+        return self.data[rows][:, targets]
+  
+  
+
+
     def do_polyfit(self,column_x,column_y,polynomial_order):
         x_data = self.data[:,column_x]
         y_data = self.data[:,column_y]
