@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------- 
-#   FILE:       STONER DATA CLASS (version 0.1)
-#   AUTHOR:     MATTHEW NEWMAN
+#   FILE:       STONER DATA CLASS (version 0.2)
+#   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
 #
@@ -51,7 +51,7 @@ class DataFile:
     """
 #   CONSTANTS
 
-    __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner mose {}
+    __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner most{}
     __typeSignedInteger = "I64 I32 I16 I8"
     __typeUnsignedInteger="U64 U32 U16 U8"
     __typeInteger=__typeSignedInteger+__typeUnsignedInteger
@@ -196,10 +196,15 @@ class DataFile:
             # Should implement using a list of strings as well
     
     def search(self, *args):
-        """Searches in the numerica data part of the file for lines that match and returns  the correspondign rows
+        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
+
+        Find row(s) that match the specified value in column:
         
-        search(Column,value,columns=[list])                                Find row(s) that match the specified value in column
-        search(Column,lower_limit,upper_limit)      Find rows that where the column is >= lower_limit and < upper_limit
+        search(Column,value,columns=[list])
+        
+        Find rows that where the column is >= lower_limit and < upper_limit:
+        
+        search(Column,lower_limit,upper_limit)      
         """
         
         if len(args)==2:
@@ -220,9 +225,6 @@ class DataFile:
         print targets
         return self.data[rows][:, targets]
   
-  
-
-
     def do_polyfit(self,column_x,column_y,polynomial_order):
         x_data = self.data[:,column_x]
         y_data = self.data[:,column_y]
