@@ -15,6 +15,7 @@ import scipy
 import os
 import sys
 import numpy
+import math
 import pylab
 
 
@@ -117,6 +118,7 @@ class DataFile:
         row=reader.next()
         assert row[0]=="TDI Format 1.5" # Bail out if not the correct format
         self.column_headers = row[1:len(row)]
+        self.data=numpy.array([])
         for row in reader:
             if self.__contains(row[0], '=') == True:
                 self.__parse_metadata(row[0].split('=')[0], row[0].split('=')[1])
@@ -144,6 +146,57 @@ class DataFile:
         else:
             raise TypeError('Column index must be an integer or string')
         return col
+        
+    def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
+        
+        """ calculates filter coefficients for symmetric savitzky-golay filter.
+            see: http://www.nrbook.com/a/bookcpdf/c14-8.pdf
+        
+            num_points   means that 2*num_points+1 values contribute to the
+                     smoother.
+        
+            pol_degree   is degree of fitting polynomial
+        
+            diff_order   is degree of implicit differentiation.
+                     0 means that filter results in smoothing of function
+                     1 means that filter results in smoothing the first 
+                                                 derivative of function.
+                     and so on ...
+        
+        """
+    
+        # setup interpolation matrix
+        # ... you might use other interpolation points
+        # and maybe other functions than monomials ....
+    
+        x = numpy.arange(-num_points, num_points+1, dtype=int)
+        monom = lambda x, deg : math.pow(x, deg)
+    
+        A = numpy.zeros((2*num_points+1, pol_degree+1), float)
+        for i in range(2*num_points+1):
+            for j in range(pol_degree+1):
+                A[i,j] = monom(x[i], j)
+            
+        # calculate diff_order-th row of inv(A^T A)
+        ATA = numpy.dot(A.transpose(), A)
+        rhs = numpy.zeros((pol_degree+1,), float)
+        rhs[diff_order] = (-1)**diff_order
+        wvec = numpy.linalg.solve(ATA, rhs)
+    
+        # calculate filter-coefficients
+        coeff = numpy.dot(A, wvec)
+    
+        return coeff
+
+    def __SG_smooth(sself, signal, coeff):
+        
+        """ applies coefficients calculated by calc_coeff()
+            to signal """
+        
+        N = numpy.size(coeff-1)/2
+        res = numpy.convolve(signal, coeff)
+        return res[N:-N]
+
 
 
 #   PUBLIC METHODS
@@ -204,7 +257,7 @@ class DataFile:
         
         Find rows that where the column is >= lower_limit and < upper_limit:
         
-        search(Column,lower_limit,upper_limit)      
+        search(Column,lfunction)      
         """
         
         if len(args)==2:
@@ -222,9 +275,35 @@ class DataFile:
             rows=numpy.nonzero([val(x) for x in d])[0]
         elif isinstance(val, float):
             rows=numpy.nonzero([x==val for x in d])[0]
-        print targets
         return self.data[rows][:, targets]
-  
+        
+    def del_rows(self, col, val):
+        """Searchs in the numerica data for the lines that match and deletes the corresponding rows
+        del_rows(Column, value)
+        del_rows(Column,function) """
+        d=self.column(col)
+        if callable(val):
+            rows=numpy.nonzero([val(x) for x in d])[0]
+        elif isinstance(val, float):
+            rows=numpy.nonzero([x==val for x in d])[0]
+        self.data=numpy.delete(self.data, rows, 0)
+      
+    def SG_Filter(self, col, points, poly=1, order=0):
+        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
+        
+        SG_Filter(column,points, polynomial order, order of differentuation)
+        or
+        SG_Filter({x-col,y,col},points,polynomial order, order of differentuation)"""
+        if isinstance(col, tuple):
+            x=self.column(col[0])
+            y=self.column(col[1])
+            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
+            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
+            return dy/dx
+        else:
+            d=self.column(col)
+            return self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
+        
     def do_polyfit(self,column_x,column_y,polynomial_order):
         x_data = self.data[:,column_x]
         y_data = self.data[:,column_y]
