@@ -17,6 +17,7 @@ import sys
 import numpy
 import math
 import pylab
+from copy import *
 
 
 class DataFolder:
@@ -75,7 +76,7 @@ class DataFile:
         # Now check for arguments t the constructor
         if len(args)==1:
             if isinstance(args[0], str): # Filename- load datafile
-                self.get_data(args[0])
+                self.load(args[0])
             elif isinstance(args[0], numpy.ndarray): # numpy.array - set data
                 self.data=args[0]
             elif isinstance(args[0].dict): # Dictionary - use as metadata
@@ -89,6 +90,60 @@ class DataFile:
                 self.data=args[1]
             elif isinstance(args[1].dict):
                 self.metadata=args[1]
+                
+# Special Methods
+
+    def __getitem__(self, name):
+        return self.meta(name)
+
+    def __setitem__(self, name, value):
+        self.metadata[name]=value
+        
+    def __add__(self, other): #Overload the + operator to add data file rows
+        if isinstance(other, numpy.ndarray):
+            if other.shape[1]!=self.data.shape[1]: # DataFile + array with correct number of columns
+                newdata=deepcopy(self)
+                newdata.data=numpy.append(self.data, other, 0)
+                return newdata
+            else:
+                return NotImplemented
+        elif isinstance(other, DataFile): # Appending another DataFile
+            if self.column_headers==other.column_headers:
+                newdata=deepcopy(other)
+                for x in self.metadata:
+                    newdata[x]=copy(self[x])
+                newdata.data=numpy.append(self.data, other.data, 0)
+                return newdata
+            else:
+                return NotImplemented
+        else:
+            return NotImplemented
+        
+    def __and__(self, other): #Overload the & operator to add datafile columns
+        if isinstance(other, numpy.ndarray):
+            if other.shape[0]==self.data.shape[0]: # DataFile + array with correct number of rows
+                newdata=deepcopy(self)
+                newdata.column_headers.extend(["" for x in range(other.shape[1])]) 
+                newdata.data=numpy.append(self.data, other, 1)
+                return newdata
+            else:
+                return NotImplemented
+        elif isinstance(other, DataFile): # Appending another datafile
+            if self.data.shape[0]==other.data.shape[0]:
+                newdata=deepcopy(other)
+                newdata.column_headers=copy(self.column_headers)
+                newdata.column_headers.extend(self.column_headers)
+                for x in self.metadata:
+                    newdata[x]=copy(self[x])
+                newdata.data=numpy.append(self.data, other.data, 1)
+                return newdata
+            else:
+                return NotImplemented
+        else:
+             return NotImplemented
+        
+            
+        
 
 #   PRIVATE FUNCTIONS
 
@@ -117,8 +172,8 @@ class DataFile:
         reader = csv.reader(open(self.filename, "rb"), delimiter='\t', quoting=csv.QUOTE_NONE)
         row=reader.next()
         assert row[0]=="TDI Format 1.5" # Bail out if not the correct format
-        self.column_headers = row[1:len(row)]
         self.data=numpy.array([])
+        headers = row[1:len(row)]
         for row in reader:
             if self.__contains(row[0], '=') == True:
                 self.__parse_metadata(row[0].split('=')[0], row[0].split('=')[1])
@@ -127,6 +182,8 @@ class DataFile:
         else:
             shp=(-1, len(row)-1)
             self.data=numpy.reshape(self.data,  shp)
+            self.column_headers=["" for x in range(self.data.shape[1])]
+            self.column_headers[0:len(headers)]=headers
 
     def __contains(self, theString, theQueryValue):
         return theString.find(theQueryValue) > -1
@@ -201,7 +258,7 @@ class DataFile:
 
 #   PUBLIC METHODS
 
-    def get_data(self,filename):
+    def load(self,filename):
         self.filename = filename;
         self.__parse_data();
         
@@ -223,7 +280,16 @@ class DataFile:
     
     def column(self, col):
         """Extracts a column of data by index or name"""
-        return self.data[:, self.__find_col(col)]
+        if isinstance(col, list):
+            d=self.column(col[0])
+            d=numpy.reshape(d, (len(d), 1))
+            for x in range(1, len(col)):
+                t=self.column(col[x])
+                t=numpy.reshape(t, (len(t), 1))
+                d=numpy.append(d,t , 1)
+            return d
+        else:
+            return self.data[:, self.__find_col(col)]
         
     def meta(self, ky):
         """Returns some metadata
@@ -236,7 +302,7 @@ class DataFile:
                 test=re.compile(ky)
                 possible=filter(test.search, self.metadata)
                 if len(possible)==0:
-                    raise KeyError("No metadata with that keyname")
+                    raise KeyError("No metadata with keyname: "+ky)
                 elif len(possible)==1:
                     return self.metadata[possible[0]]
                 else:
