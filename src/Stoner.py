@@ -174,13 +174,16 @@ class DataFile:
         assert row[0]=="TDI Format 1.5" # Bail out if not the correct format
         self.data=numpy.array([])
         headers = row[1:len(row)]
+        maxcol=1
         for row in reader:
+            if maxcol<len(row):
+                    maxcol=len(row)
             if self.__contains(row[0], '=') == True:
                 self.__parse_metadata(row[0].split('=')[0], row[0].split('=')[1])
             if (len(row[1:len(row)]) > 1) or len(row[1]) > 0:
                 self.data=numpy.append(self.data, map(lambda x: float(x), row[1:]))
         else:
-            shp=(-1, len(row)-1)
+            shp=(-1, maxcol-1)
             self.data=numpy.reshape(self.data,  shp)
             self.column_headers=["" for x in range(self.data.shape[1])]
             self.column_headers[0:len(headers)]=headers
