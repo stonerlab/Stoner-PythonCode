@@ -7,7 +7,7 @@ theData=Stoner.DataFile(array([[2, 3][1, 2]]))
 theData=Stoner.DataFile(dict('on':1, 'two', 2))
 
 #import data
-theData.get_data('datafile.txt')
+theData.load('datafile.txt')
 
 # Print the Data
 print theData.data
@@ -20,8 +20,12 @@ print theData.column_headers
 
 # Return a metadata value
 print theData.meta("User") # Returns an exact match
+print theData["User"]
 print theData.meta("multi\[1\]") # Returns all matches to the regular expression
+print theData["multi\[1\]]"]
 print theData .metadata_value('multi[1]:Control: Gate samples') # Included for backwards compatibility but don't include the type information
+# Set the metadata values
+theData["User"]="Sam Adams" # only exact strings for keys
 
 # Return a single column of data
 print theData.column(0) # Match by numberidal index
@@ -33,3 +37,6 @@ print theData.search('Temp',lambda x: x>5 and x<10,['Temp','Resis'])    # First 
                                                                                                                             # Second argument can be a value or function that returns true/false
                                                                                                                             # Third arguement is optional is a list of integers, strings or regular expressions
 print theData.search(0, lambda x: True,  [1, 2, 0]) # Just re-orders the columns
+
+newData=Stoner.PlotFile('data.txt') # All other consutructors are supported
+newData.plot_xy("Res"m"Temp", "Title") # x and y columns are indexed in the same options as DataFile.column()

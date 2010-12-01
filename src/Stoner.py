@@ -96,7 +96,15 @@ class DataFile:
     def __getitem__(self, name):
         return self.meta(name)
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name, value): # writing the metadata neans doing something sensible with the type hints
+        if isinstance(value,bool):
+            self.typehint[name]="Boolean"
+        elif isinstance(value, int):
+            self.typehint[name]="I32"
+        elif isinstance(value, flot):
+            self.typehint[name]="Double Float"
+        else:
+            self.typehint[name]="String"
         self.metadata[name]=value
         
     def __add__(self, other): #Overload the + operator to add data file rows
@@ -121,7 +129,12 @@ class DataFile:
         
     def __and__(self, other): #Overload the & operator to add datafile columns
         if isinstance(other, numpy.ndarray):
-            if other.shape[0]==self.data.shape[0]: # DataFile + array with correct number of rows
+            if len(other.shape)!=2: # 1D array, make it 2D column
+                other=numpy.atleast_2d(other)
+                other=other.T
+            if other.shape[0]<=self.data.shape[0]: # DataFile + array with correct number of rows
+                if other.shape[0]<self.data.shape[0]: # too few rows we can extend with zeros
+                    other=numpy.append(other, numpy.zeros((self.data.shape[0]-other.shape[0], other.shape[1])), 0)
                 newdata=deepcopy(self)
                 newdata.column_headers.extend(["" for x in range(other.shape[1])]) 
                 newdata.data=numpy.append(self.data, other, 1)
@@ -190,8 +203,30 @@ class DataFile:
 
     def __contains(self, theString, theQueryValue):
         return theString.find(theQueryValue) > -1
+
+#   PUBLIC METHODS
+
+    def load(self,filename):
+        self.filename = filename;
+        self.__parse_data();
         
-    def __find_col(self, col):
+    def metadata_value(self, text):
+        """Wrapper of DataFile.meta for compatibility"""
+        return self.meta(text)
+
+    def data(self):
+        return self.data
+
+    def metadata(self):
+        return self.metadata
+        
+    def typehint(self):
+        return self.typehint
+
+    def column_headers(self):
+        return self.column_headers
+
+    def find_col(self, col):
         if isinstance(col, int): #col is an int so pass on
             pass
         elif isinstance(col, str): # Ok we have a string
@@ -206,7 +241,130 @@ class DataFile:
         else:
             raise TypeError('Column index must be an integer or string')
         return col
+
+    def column(self, col):
+        """Extracts a column of data by index or name"""
+        if isinstance(col, list):
+            d=self.column(col[0])
+            d=numpy.reshape(d, (len(d), 1))
+            for x in range(1, len(col)):
+                t=self.column(col[x])
+                t=numpy.reshape(t, (len(t), 1))
+                d=numpy.append(d,t , 1)
+            return d
+        else:
+            return self.data[:, self.find_col(col)]
         
+    def meta(self, ky):
+        """Returns some metadata"""
+        if isinstance(ky, str): #Ok we go at it with a string
+            if ky in self.metadata:
+                return self.metadata[ky]
+            else:
+                test=re.compile(ky)
+                possible=filter(test.search, self.metadata)
+                if len(possible)==0:
+                    raise KeyError("No metadata with keyname: "+ky)
+                elif len(possible)==1:
+                    return self.metadata[possible[0]]
+                else:
+                    d=dict()
+                    for p in possible:
+                        d[p]=self.metadata[p]
+                    return d
+        else:
+            raise TypeError("Only string are supported as search keys currently")
+            # Should implement using a list of strings as well
+    
+    def search(self, *args):
+        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
+
+        Find row(s) that match the specified value in column:
+        
+        search(Column,value,columns=[list])
+        
+        Find rows that where the column is >= lower_limit and < upper_limit:
+        
+        search(Column,lfunction)      
+        """
+        
+        if len(args)==2:
+            col=args[0]
+            targets=[]
+            val=args[1]
+        elif len(args)==3:
+            col=args[0]
+            targets=map(self.find_col, args[2])
+            val=args[1]        
+        if len(targets)==0:
+            targets=range(self.data.shape[1])
+        d=self.column(col)
+        if callable(val):
+            rows=numpy.nonzero([val(x) for x in d])[0]
+        elif isinstance(val, float):
+            rows=numpy.nonzero([x==val for x in d])[0]
+        return self.data[rows][:, targets]
+        
+    def del_rows(self, col, val):
+        """Searchs in the numerica data for the lines that match and deletes the corresponding rows
+        del_rows(Column, value)
+        del_rows(Column,function) """
+        d=self.column(col)
+        if callable(val):
+            rows=numpy.nonzero([val(x) for x in d])[0]
+        elif isinstance(val, float):
+            rows=numpy.nonzero([x==val for x in d])[0]
+        self.data=numpy.delete(self.data, rows, 0)
+    
+    def add_column(self,column_data,column_header='', index=None):
+        """Appends a column of data or inserts a column to a datafile"""
+        if index is None:
+                index=len(self.column_headers)
+        else:
+            index=self.find_col(index)
+        self.column_headers.insert(index, column_header)
+        
+        # The following 2 lines make the array we are adding a
+        # [1, x] array, i.e. a column by first making it 2d and
+        # then transposing it.
+        
+        column_data=numpy.atleast_2d(column_data)
+        self.data=numpy.insert(self.data,index, column_data,1)
+        return True
+    
+           
+    def csvArray(self,dump_location=defaultDumpLocation):
+        spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        i=0
+        spamWriter.writerow(self.column_headers)
+        while i< self.data.shape[0]:
+            spamWriter.writerow(self.data[i,:])
+            i+=1
+class PlotFile(DataFile):
+    """Extends DataFile with plotting functions"""
+    def plot_xy(self,column_x, column_y,title='',save_filename='',show_plot=True):
+        """plot_xy(x column, y column/s, title,save filename, show plot=True)
+        
+                Makes and X-Y plot of the specified data."""
+        column_x=self.find_col(column_x)
+        column_y=self.find_col(column_y)
+        x=self.column(column_x)
+        y=self.column(column_y)
+        if show_plot == True:
+            pylab.ion()
+        pylab.plot(x,y)
+        pylab.draw()
+        pylab.xlabel(str(self.column_headers[column_x]))
+        pylab.ylabel(str(self.column_headers[column_y]))
+        if title=='':
+            title=self.filename
+        pylab.title(title)
+        pylab.grid(True)
+        if save_filename != '':
+            pylab.savefig(str(save_filename))
+     
+class FilterFile(DataFile):
+    """Extends DataFile with Filtering functions"""
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
         
         """ calculates filter coefficients for symmetric savitzky-golay filter.
@@ -256,107 +414,6 @@ class DataFile:
         N = numpy.size(coeff-1)/2
         res = numpy.convolve(signal, coeff)
         return res[N:-N]
-
-
-
-#   PUBLIC METHODS
-
-    def load(self,filename):
-        self.filename = filename;
-        self.__parse_data();
-        
-    def metadata_value(self, text):
-        """Wrapper of DataFile.meta for compatibility"""
-        return self.meta(text)
-
-    def data(self):
-        return self.data
-
-    def metadata(self):
-        return self.metadata
-        
-    def typehint(self):
-        return self.typehint
-
-    def column_headers(self):
-        return self.column_headers
-    
-    def column(self, col):
-        """Extracts a column of data by index or name"""
-        if isinstance(col, list):
-            d=self.column(col[0])
-            d=numpy.reshape(d, (len(d), 1))
-            for x in range(1, len(col)):
-                t=self.column(col[x])
-                t=numpy.reshape(t, (len(t), 1))
-                d=numpy.append(d,t , 1)
-            return d
-        else:
-            return self.data[:, self.__find_col(col)]
-        
-    def meta(self, ky):
-        """Returns some metadata
-        
-        Needs merging with Matt's metadata_value code"""
-        if isinstance(ky, str): #Ok we go at it with a string
-            if ky in self.metadata:
-                return self.metadata[ky]
-            else:
-                test=re.compile(ky)
-                possible=filter(test.search, self.metadata)
-                if len(possible)==0:
-                    raise KeyError("No metadata with keyname: "+ky)
-                elif len(possible)==1:
-                    return self.metadata[possible[0]]
-                else:
-                    d=dict()
-                    for p in possible:
-                        d[p]=self.metadata[p]
-                    return d
-        else:
-            raise TypeError("Only string are supported as search keys currently")
-            # Should implement using a list of strings as well
-    
-    def search(self, *args):
-        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
-
-        Find row(s) that match the specified value in column:
-        
-        search(Column,value,columns=[list])
-        
-        Find rows that where the column is >= lower_limit and < upper_limit:
-        
-        search(Column,lfunction)      
-        """
-        
-        if len(args)==2:
-            col=args[0]
-            targets=[]
-            val=args[1]
-        elif len(args)==3:
-            col=args[0]
-            targets=map(self.__find_col, args[2])
-            val=args[1]        
-        if len(targets)==0:
-            targets=range(self.data.shape[1])
-        d=self.column(col)
-        if callable(val):
-            rows=numpy.nonzero([val(x) for x in d])[0]
-        elif isinstance(val, float):
-            rows=numpy.nonzero([x==val for x in d])[0]
-        return self.data[rows][:, targets]
-        
-    def del_rows(self, col, val):
-        """Searchs in the numerica data for the lines that match and deletes the corresponding rows
-        del_rows(Column, value)
-        del_rows(Column,function) """
-        d=self.column(col)
-        if callable(val):
-            rows=numpy.nonzero([val(x) for x in d])[0]
-        elif isinstance(val, float):
-            rows=numpy.nonzero([x==val for x in d])[0]
-        self.data=numpy.delete(self.data, rows, 0)
-      
     def SG_Filter(self, col, points, poly=1, order=0):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
         
@@ -372,44 +429,13 @@ class DataFile:
         else:
             d=self.column(col)
             return self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
-        
-    def do_polyfit(self,column_x,column_y,polynomial_order):
-        x_data = self.data[:,column_x]
-        y_data = self.data[:,column_y]
+
+    
+    
+class AnalyseFile(DataFile):
+    """Extends DataFile with numpy passthrough functions"""
+    def polyfit(self,column_x,column_y,polynomial_order):
+        """ Pass through to numpy.polyfit"""
+        x_data = self.column(column_x)
+        y_data = self.column(column_y)
         return numpy.polyfit(x_data,y_data,polynomial_order)
-    
-    def add_column(self,column_data,column_header=''):
-        self.column_headers.append(column_header)
-        
-        # The following 2 lines make the array we are adding a
-        # [1, x] array, i.e. a column by first making it 2d and
-        # then transposing it.
-        
-        column_data=numpy.atleast_2d(column_data)
-        column_data=column_data.T # Transposes Array
-        self.data=numpy.append(self.data,column_data,1)
-        print('Column header "'+column_header+'" added to array')
-        return True
-    
-    def plot_simple_xy(self,column_x, column_y,title='',save_filename='',
-                    show_plot=True):
-            x=self.data[:,column_x]
-            y=self.data[:,column_y]
-            if show_plot == True:
-                pylab.ion()
-            pylab.plot(x,y)
-            pylab.draw()
-            pylab.xlabel(str(self.column_headers[column_x]))
-            pylab.ylabel(str(self.column_headers[column_y]))
-            pylab.title(title)
-            pylab.grid(True)
-            if save_filename != '':
-                pylab.savefig(str(save_filename))
-            
-    def csvArray(self,dump_location=defaultDumpLocation):
-        spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        i=0
-        spamWriter.writerow(self.column_headers)
-        while i< self.data.shape[0]:
-            spamWriter.writerow(self.data[i,:])
-            i+=1
