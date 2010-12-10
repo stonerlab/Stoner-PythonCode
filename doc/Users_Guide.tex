@@ -1,0 +1,68 @@
+\documentclass[a4paper,11pt]{scrartcl}
+\usepackage[dvips]{graphicx}
+\usepackage[twoside,paper=a4paper,hmarginratio=3:2,tmargin=2.5cm,bmargin=3cm]{geometry}
+\usepackage{scrpage2}
+\usepackage{amsmath,amsbsy,amsfonts,amssymb,amsxtra}
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{gb_custom}
+
+\setlength\marginparsep{0cm}
+
+\graphicspath{{./figures/}}
+
+
+\reversemarginpar
+
+
+\author{C.S.~Allen, M.~Newman and G.~Burnell}
+\title{Stoner Python Module}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+\pagestyle{scrheadings} \ihead[Stoner Python Module]{Stoner Python Module} \ifoot[\today]{\today}
+\ohead[Manual]{Manual}
+
+
+
+  \section{Introduction}
+
+This manual provides a user guide and reference for the Stoner python module. The Stoner python module provides a set of python classes and functions for reading, manipulating and plotting data acquired with the lab equipment in the Condensed Matter Physics Group at the University of Leeds.
+
+\subsection{Getting the Stoner module}
+
+The source code for the Stoner python module is kept in CVS revision control on the stonerlab server. A stable release of the code is available for copying and use in \verb#\\stonerlab\data\software\python\stable\#. The development code can be obtained by checking out the PythonCode module with a CVSROOT of \\ \verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
+
+\subsection{Using the Stoner module}
+
+The easiest way to use the Stoner Module is to add the path to the directory containing Stoner.py to your PYTHONPATH environment variable. This can be done on Macs and Linux by doing:
+\begin{verbatim}
+  cd <path to PythonCode directory>/src
+  export PYTHONPATH=`pwd`:$PYTHONPATH
+\end{verbatim}
+On a windows machine the easiest way is to create a permanent entry to the folder in the system environment variables. Go to Control Panel -> System -> Advanced Tab -> click on Environment button and then add or edit an entry to the system variable PYTHONPATH.
+
+One this has been done, the Stoner module may be loaded from python command line:
+
+\begin{verbatim}
+  >>> import Stoner
+\end{verbatim}
+
+or
+
+\begin{verbatim}
+  >>> from Stoner import *
+\end{verbatim}
+
+The Stoner module currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\ \verb#\\stonerlab\\data\software\Python for Windows\#.
+
+\section{Users Guide}
+\subsection{Loading a data file}
+
+
+
+\end{document}
