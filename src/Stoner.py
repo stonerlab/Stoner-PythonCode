@@ -6,10 +6,7 @@
 #
 
 import csv
-#import sys
 import re
-#import string
-#from scipy import *
 import scipy
 #import pdb # for debugging
 import os
@@ -67,7 +64,7 @@ class DataFile:
     def __init__(self, *args):
         """Constructor method
         
-        3 forms are recognised: DataFile('filename'), DataFile(array), DataFile(dictionary), DataFile(array,dictionary)
+        3 forms are recognised: DataFile('filename'), DataFile(array), DataFile(dictionary), DataFile(array,dictionary), DataFile(DataFile)
         """
         self.data = numpy.array([])
         self.metadata = dict()
@@ -79,8 +76,13 @@ class DataFile:
                 self.load(args[0])
             elif isinstance(args[0], numpy.ndarray): # numpy.array - set data
                 self.data=args[0]
-            elif isinstance(args[0].dict): # Dictionary - use as metadata
+            elif isinstance(args[0], dict): # Dictionary - use as metadata
                 self.metadata=args[0]
+            elif isinstance(args[0], DataFile):
+                self.metadata=args[0].metadata
+                self.data=args[0].data
+                self.typehint=args[0].typehint
+                self.column_headers=args[0].column_headers
         elif len(args)==2: # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
                 self.data=args[0]
@@ -93,8 +95,13 @@ class DataFile:
                 
 # Special Methods
 
-    def __getitem__(self, name):
-        return self.meta(name)
+    def __getitem__(self, name): # called for DataFile[x] returns column x if x is integer, or metadata[x] if x is string
+        if isinstance(name, int):
+            return self.data[:, name]
+        elif isinstance(name, str):
+            return self.meta(name)
+        else:
+            raise TypeError("Key must be ither numeric of string")
 
     def __setitem__(self, name, value): # writing the metadata neans doing something sensible with the type hints
         if isinstance(value,bool):
@@ -155,8 +162,20 @@ class DataFile:
         else:
              return NotImplemented
         
-            
-        
+    def __repr__(self): # What happens when you print a DataFile object. Also used to save the data
+        outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
+        m=len(self.metadata)
+        (r, c)=numpy.shape(self.data)
+        md=map(lambda x:str(x)+"{"+str(self.typehint[x])+"}="+str(self.metadata[x]), sorted(self.metadata))
+        for x in range(min(r, m)):
+            outp=outp+md[x]+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
+        if m>r: # More metadata
+            for x in range(r, m):
+                    outp=outp+md[x]+"\n"
+        elif r>m: # More data than metadata
+            for x in range(m, r):
+                    outp=outp+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
+        return outp
 
 #   PRIVATE FUNCTIONS
 
@@ -212,8 +231,21 @@ class DataFile:
 #   PUBLIC METHODS
 
     def load(self,filename):
+        """DataFile.load(filename)
+        
+            Loads data from file filename and if it matches the TDI Format, sets all the internal data storage from the file.
+            
+            TODO: Should add another parameter to allow switching to alternative file loading routines"""
         self.filename = filename;
-        self.__parse_data();
+        self.__parse_data()
+        
+    def save(self, filename):
+        """DataFile.save(filename)
+        
+                Saves a string representation of the current DataFile object into the file 'filename' """
+        f=open(filename, 'w')
+        f.write(repr(self))
+        f.close()
         
     # NEW load VSM data     -CSA 08/12/2010
     def loadVSM(self,filename):
@@ -249,6 +281,8 @@ class DataFile:
                 if len(possible)==0:
                     raise KeyError('Unable to find any possible column matches')
                 col=self.column_headers.index(possible[0])
+        elif isinstance(col, list):
+            col=map(self.find_col, col)
         else:
             raise TypeError('Column index must be an integer or string')
         return col
@@ -343,7 +377,19 @@ class DataFile:
         self.data=numpy.insert(self.data,index, column_data,1)
         return True
     
+    def rows(self):
+        """Generator method that will iterate over rows of data"""
+        (r, c)=numpy.shape(self.data)
+        for row in range(r):
+            yield self.data[row]
            
+    def columns(self):
+        """Generator method that will iterate over columns of data"""
+        (r, c)=numpy.shape(self.data)
+        for col in range(c):
+            yield self.data[col]
+
+
     def csvArray(self,dump_location=defaultDumpLocation):
         spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         i=0
@@ -366,7 +412,13 @@ class PlotFile(DataFile):
         pylab.plot(x,y)
         pylab.draw()
         pylab.xlabel(str(self.column_headers[column_x]))
-        pylab.ylabel(str(self.column_headers[column_y]))
+        if isinstance(column_y, list):
+            ylabel=column_y
+            ylabel[0]=self.column_headers[column_y[0]]
+            ylabel=reduce(lambda x, y: x+","+self.column_headers[y],  ylabel)
+        else:
+            ylabel=self.column_headers[y_column]
+        pylab.ylabel(str(ylabel))
         if title=='':
             title=self.filename
         pylab.title(title)
