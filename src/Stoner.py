@@ -200,6 +200,11 @@ class DataFile:
             self.data=numpy.reshape(self.data,  shp)
             self.column_headers=["" for x in range(self.data.shape[1])]
             self.column_headers[0:len(headers)]=headers
+            
+    # NEW parse VSM data   - CSA 08/12/2010     
+    def __parse_VSMdata(self):
+        self.data=numpy.genfromtxt(self.filename,dtype='float',skip_header=6)
+        self.column_headers=[ 'Time','H_vsm','m','Mmass','X','Y','Tsample']
 
     def __contains(self, theString, theQueryValue):
         return theString.find(theQueryValue) > -1
@@ -209,6 +214,12 @@ class DataFile:
     def load(self,filename):
         self.filename = filename;
         self.__parse_data();
+        
+    # NEW load VSM data     -CSA 08/12/2010
+    def loadVSM(self,filename):
+        self.filename = filename
+        self.__parse_VSMdata()
+        
         
     def metadata_value(self, text):
         """Wrapper of DataFile.meta for compatibility"""
