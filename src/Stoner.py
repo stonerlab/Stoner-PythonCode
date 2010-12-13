@@ -95,9 +95,9 @@ class DataFile:
                 
 # Special Methods
 
-    def __getitem__(self, name): # called for DataFile[x] returns column x if x is integer, or metadata[x] if x is string
+    def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
         if isinstance(name, int):
-            return self.data[:, name]
+            return self.data[name,  :]
         elif isinstance(name, str):
             return self.meta(name)
         else:
@@ -330,7 +330,10 @@ class DataFile:
         
         Find rows that where the column is >= lower_limit and < upper_limit:
         
-        search(Column,lfunction)      
+        search(Column,function ,columns=[list])
+        
+        Find rows where the function evaluates to true. Function should take two parameters x (float) and y(numpy array of floats).
+        e.g. AnalysisFile.search('x',lambda x,y: x<10 and y[0]==2, ['y1','y2'])
         """
         
         if len(args)==2:
@@ -343,11 +346,12 @@ class DataFile:
             val=args[1]        
         if len(targets)==0:
             targets=range(self.data.shape[1])
-        d=self.column(col)
+        d=numpy.transpose(numpy.atleast_2d(self.column(col)))
+        d=numpy.append(d, self.data[:, targets], 1)
         if callable(val):
-            rows=numpy.nonzero([val(x) for x in d])[0]
+            rows=numpy.nonzero([val(x[0], x[1:]) for x in d])[0]
         elif isinstance(val, float):
-            rows=numpy.nonzero([x==val for x in d])[0]
+            rows=numpy.nonzero([x[0]==val for x in d])[0]
         return self.data[rows][:, targets]
         
     def del_rows(self, col, val):
@@ -497,8 +501,32 @@ class FilterFile(DataFile):
     
 class AnalyseFile(DataFile):
     """Extends DataFile with numpy passthrough functions"""
-    def polyfit(self,column_x,column_y,polynomial_order):
-        """ Pass through to numpy.polyfit"""
-        x_data = self.column(column_x)
-        y_data = self.column(column_y)
-        return numpy.polyfit(x_data,y_data,polynomial_order)
+    def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True):
+        """ Pass through to numpy.polyfit
+        
+                AnalysisFile.polyfit(xx_column,y_column,polynomial_order,bounds function)
+                
+                x_column and y_column can be integers or strings that match the column headings
+                bounds function should be a python function that takes a single paramter that represents an x value
+                and returns true iof the datapoint is to be retained and false if it isn't."""
+        working=self.search(x_column, bounds, y_column)
+        return numpy.polyfit(working[0],working[1],polynomial_order)
+        
+    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True ):
+        """General curve fitting function passed through from numpy
+        
+                AnalysisFile.Curve_fit(fitting function, x-column,y_column, initial parameters=None, weighting=None, bounds function)
+                
+                The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
+                The x-column and y-column can be either strings to be matched against column headings or integers. 
+                The initial parameter values and weightings default to None which corresponds to all parameters starting 
+                at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the 
+                poiint is to be used and false if not.
+        """
+        from scipy.optimize import curve_fit
+        working=self.search(xcol, bounds, [xcol, ycol])
+        popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
+        return popt, pconv
+        
+
+        
