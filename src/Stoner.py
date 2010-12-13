@@ -321,6 +321,17 @@ class DataFile:
             raise TypeError("Only string are supported as search keys currently")
             # Should implement using a list of strings as well
     
+    def dir(self, pattern=None):
+        """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary
+                
+                DataFile.dir(pattern) - pattern is a regular expression or None to list all keys"""
+        if pattern==None:
+            return self.metadata.keys()
+        else:
+            test=re.compile(pattern)
+            possible=filter(test.search, self.metadata.keys())
+            return possible
+        
     def search(self, *args):
         """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
 
