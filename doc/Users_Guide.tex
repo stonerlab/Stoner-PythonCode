@@ -133,4 +133,27 @@ The first example could also have been written more compactly as:
   ......
 \end{verbatim}
 
-\end{document}
+In many cases you do not know which rows in the data file are of interest - in this case you want to search the data.
+\begin{verbatim}
+  >>>d.search('Temperature',4.2)
+  >>>d.search('Temperature',4.2,['Temperature','Resistance'])
+  >>>d.search('Temperature',lambda x,y: x>10 and x<100)
+  >>>d.search('Temperature',lambda x,y: x>10 and 
+                x<1000 and y[1]<1000,['Temperature','Resistance'])
+\end{verbatim}
+The general form is \\\verb:DataFile.search(<search column>,<search term>[,<list of return columns>]):
+
+The first example will return all the rows where the value of the \textit{Tenperature} column is 4.2. The second example is the same, but only returns the values from the \textit{Temperature}, and \textit{Resistance} columns. The rules for selecting the columns are the same as for the DataFile.column method above -- strings are matched against column headers and integers select column by number.
+
+The third and fourth examples above demonstrate the use of a function as the search value. This allows quite complex search criteria to be used. The function passed to the search routine should take two parameters -- a floating point number and a numpy array of floating point numbers and should return either \textit{ture} or \textit{False}. The function is evaluated for each row in the data file and is passed the value corresponding to the search column as the first parameter while the second parameter contains all of the values in the row to be returned. If the search function returns True, then the row is returned, otherwise it isn't.
+
+\subsection{Modifying Data}
+
+
+
+\subsubsection{Saving Data}
+
+\subsection{Plotting Data}
+
+\subsection{Curve Fitting}
+\end{document} 
