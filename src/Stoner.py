@@ -70,6 +70,7 @@ class DataFile:
         self.metadata = dict()
         self.typehint = dict()
         self.filename = ''
+        self.column_headers=list()
         # Now check for arguments t the constructor
         if len(args)==1:
             if isinstance(args[0], str): # Filename- load datafile
@@ -108,7 +109,7 @@ class DataFile:
             self.typehint[name]="Boolean"
         elif isinstance(value, int):
             self.typehint[name]="I32"
-        elif isinstance(value, flot):
+        elif isinstance(value, float):
             self.typehint[name]="Double Float"
         else:
             self.typehint[name]="String"
@@ -116,7 +117,21 @@ class DataFile:
         
     def __add__(self, other): #Overload the + operator to add data file rows
         if isinstance(other, numpy.ndarray):
-            if other.shape[1]!=self.data.shape[1]: # DataFile + array with correct number of columns
+            if len(self.data)==0:
+                t=numpy.atleast_2d(other)
+                c=numpy.shape(t)[1]
+                self.column_headers=map(lambda x:"Column_"+str(x), range(c))
+                newdata=deepcopy(self)
+                newdata.data=t                
+                return newdata
+            elif len(numpy.shape(other))==1: # 1D array, so assume a single row of data
+                if numpy.shape(other)[0]==numpy.shape(self.data)[1]:
+                    newdata=deepcopy(self)
+                    newdata.data=numpy.append(self.data, numpy.atleast_2d(other), 0)
+                    return newdata
+                else:
+                    return NotImplemented
+            elif len(numpy.shape(other))==2 and numpy.shape(other)[1]==numpy.shape(self.data)[1]: # DataFile + array with correct number of columns
                 newdata=deepcopy(self)
                 newdata.data=numpy.append(self.data, other, 0)
                 return newdata
@@ -538,6 +553,22 @@ class AnalyseFile(DataFile):
         working=self.search(xcol, bounds, [xcol, ycol])
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
         return popt, pconv
+        
+    def max(self, column):
+        """FInd maximum value and index in a column of data
+                
+                AnalysisFile.max(column)
+                """
+        col=self.find_col(column)
+        return self.data[:, col].max(), self.data[:, col].argmax()
+        
+    def min(self, column):
+        """FInd minimum value and index in a column of data
+                
+                AnalysisFile.min(column)
+                """
+        col=self.find_col(column)
+        return self.data[:, col].min(), self.data[:, col].argmin()
         
 
         

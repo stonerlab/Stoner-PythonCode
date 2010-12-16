@@ -138,7 +138,7 @@ In many cases you do not know which rows in the data file are of interest - in t
   >>>d.search('Temperature',4.2)
   >>>d.search('Temperature',4.2,['Temperature','Resistance'])
   >>>d.search('Temperature',lambda x,y: x>10 and x<100)
-  >>>d.search('Temperature',lambda x,y: x>10 and 
+  >>>d.search('Temperature',lambda x,y: x>10 and
                 x<1000 and y[1]<1000,['Temperature','Resistance'])
 \end{verbatim}
 The general form is \\\verb:DataFile.search(<search column>,<search term>[,<list of return columns>]):
@@ -149,9 +149,37 @@ The third and fourth examples above demonstrate the use of a function as the sea
 
 \subsection{Modifying Data}
 
+\subsubsection{Appending data}
 
+The simplest way to modify some data might be to append some columns or rows. The Stoner mpodule redefines two standard operators, \verb:+: and \verb:&: to have special meanings:
+\begin{verbatim}
+  >>>a=Stoner.DataFile('some_new_data.txt')
+  >>>add_rows=d+a
+  >>>add_columns=d&a
+\end{verbatim}
+In these example, \textit{a} is a second DataFile object that contains some data. In the first example, a new DataFile object is created where the contents of \textit{a} are added as new rows after the data in \textit{d}. Any metadata that is in \textit{a} and not in \textit{d} are added to the metadata as well. There is a requirement, however, that the column headers of \textit{d} and \textit{a} are the same -- \ie that the two DataFile objects appear to represent similar data.
 
-\subsubsection{Saving Data}
+In the second example, the data in \textit{a} is added as new columns after the data from \textit{d}. In this case, there is a requirement that the two DataFile objects have the same number of rows.
+
+These operators are not limited just to DataFile objects, you can also add numpy arrays to the DataFile object to append additional data.
+\begin{verbatim}
+  >>>import numpy as np
+  >>>x=np.array([1,2,3])
+  >>>new_data=d+x
+  >>>y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
+  >>>new_data=d+y
+  >>>column=d.column[0]
+  >>>new_data=d&column
+\end{verbatim}
+In the first example above, we add a single row of data to \textit{d}. This assumes that the number of elements in the array matches the number of columns in the data file. The second example is similar but this time appends a 2 dimensional numpy array to the data. The third example appends a numpy array as a column to \textit{d}. In this case the requirement is that the numpy array has the same or fewer rows of data as \textit{d}.
+
+\subsubsection{Inserting Columns of Data}
+
+\subsubsection{Deleting Rows of Data}
+
+\subsubsection{Deleting Columns of Data}
+
+\subsection{Saving Data}
 
 \subsection{Plotting Data}
 
