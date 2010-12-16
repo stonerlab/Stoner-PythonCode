@@ -191,6 +191,9 @@ class DataFile:
             for x in range(m, r):
                     outp=outp+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
         return outp
+        
+    def __len__(self):
+        return numpy.shape(self.data)[0]
 
 #   PRIVATE FUNCTIONS
 
@@ -238,7 +241,7 @@ class DataFile:
     # NEW parse VSM data   - CSA 08/12/2010     
     def __parse_VSMdata(self):
         self.data=numpy.genfromtxt(self.filename,dtype='float',skip_header=6)
-        self.column_headers=[ 'Time','H_vsm','m','Mmass','X','Y','Tsample']
+        self.column_headers=[ 'Time','H_vsm','m','Mvol','Mmass','X','Y','Tsample']
 
     def __contains(self, theString, theQueryValue):
         return theString.find(theQueryValue) > -1
@@ -402,10 +405,28 @@ class DataFile:
         # The following 2 lines make the array we are adding a
         # [1, x] array, i.e. a column by first making it 2d and
         # then transposing it.
-        
-        column_data=numpy.atleast_2d(column_data)
-        self.data=numpy.insert(self.data,index, column_data,1)
-        return True
+        if isinstance(column_data, numpy.ndarray):
+            column_data=numpy.atleast_2d(column_data)
+            self.data=numpy.insert(self.data,index, column_data,1)
+        elif callable(column_data):
+            new_data=map(column_data, self)
+            new_data=numpy.array(new_data)
+            numpy_data=numpy.atleast_2d(new_data)
+            self.data=numpy.insert(self.data,index, numpy_data,1)
+        else:
+            return NotImplemented
+        return None
+            
+    def del_column(self, col):
+        c=self.find_col(col)
+        self.data=numpy.delete(self.data, c, 1)
+        if isinstance (c, list):
+            c.sort(reverse=True)
+        else:
+            c=[c]
+        for col in c:
+            del self.column_headers[col]
+        return None
     
     def rows(self):
         """Generator method that will iterate over rows of data"""
@@ -447,7 +468,7 @@ class PlotFile(DataFile):
             ylabel[0]=self.column_headers[column_y[0]]
             ylabel=reduce(lambda x, y: x+","+self.column_headers[y],  ylabel)
         else:
-            ylabel=self.column_headers[y_column]
+            ylabel=self.column_headers[column_y]
         pylab.ylabel(str(ylabel))
         if title=='':
             title=self.filename
@@ -552,7 +573,7 @@ class AnalyseFile(DataFile):
         from scipy.optimize import curve_fit
         working=self.search(xcol, bounds, [xcol, ycol])
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
-        return popt, pconv
+        return popt, pcov
         
     def max(self, column):
         """FInd maximum value and index in a column of data
