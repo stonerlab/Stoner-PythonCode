@@ -75,15 +75,19 @@ The first step in using the Stoner module is to load some data from a measuremen
 \begin{verbatim}
   >>>import Stoner
   >>>d=Stoner.DataFile('my_data.txt')
+  >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. It is also possible to do these steps separately, or indeed to load new data into an existing instance of DataFile.
+In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are \textit{TDI}, \textit{VSM}, and \textit{BigBlue}. It is also possible to do these steps separately, or indeed to load new data into an existing instance of DataFile.
 
 \begin{verbatim}
   >>>import Stoner
   >>>d=Stoner.DataFile()
   >>>d.load('my_data.txt')
+  >>>d.load('my_VSM_data.fld','VSM')
 \end{verbatim}
+
+The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts.
 
 \subsection{Examining Some Data}
 
@@ -175,7 +179,18 @@ In the first example above, we add a single row of data to \textit{d}. This assu
 
 \subsubsection{Inserting Columns of Data}
 
+\begin{verbatim}
+  >>>d.add_column(numpy.array(range(100)),'Column Header')
+  >>>d.add_column(numpy.array(range(100)),'Column Header',Index)
+  >>>d.add_column(lambda x: x[0]-x[1],'Column Header')    
+\end{verbatim}
+
 \subsubsection{Deleting Rows of Data}
+
+\begin{verbatim}
+  >>>d.del_rows('X Col',value)
+  >>>d.del_rows('X Col',lambda x,y:x>300)
+\end{verbatim}
 
 \subsubsection{Deleting Columns of Data}
 

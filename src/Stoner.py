@@ -88,12 +88,16 @@ class DataFile:
         elif len(args)==2: # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
                 self.data=args[0]
-            elif isinstance(args[0].dict):
+            elif isinstance(args[0], dict):
                 self.metadata=args[0]
+            elif isinstance(args[0], str) and isinstance(args[1], str):
+                self.load(args[0], args[1])
             if isinstance(args[1], numpy.ndarray):
                 self.data=args[1]
-            elif isinstance(args[1].dict):
+            elif isinstance(args[1], dict):
                 self.metadata=args[1]
+        elif len(args)>2:
+            apply(self.load, args)
                 
 # Special Methods
 
@@ -206,11 +210,11 @@ class DataFile:
         m=self.__regexGetType.search(key)
         k= m.group(1)
         t= m.group(2)
-        if self.__contains(self.__typeInteger, t) == True:
+        if self.__typeInteger.find(t)>-1:
             value = int(value);
-        elif self.__contains(self.__typeFloat, t) == True:
+        elif self.__typeFloat.find('t')>-1:
             value = float(value);
-        elif self.__contains(self.__typeBoolean, t) == True:
+        elif self.__typeBoolean.find('t')>-1:
             value = bool(value);
         else:
             value = str(value);
@@ -229,7 +233,7 @@ class DataFile:
         for row in reader:
             if maxcol<len(row):
                     maxcol=len(row)
-            if self.__contains(row[0], '=') == True:
+            if row[0].find('=')>-1:
                 self.__parse_metadata(row[0].split('=')[0], row[0].split('=')[1])
             if (len(row[1:len(row)]) > 1) or len(row[1]) > 0:
                 self.data=numpy.append(self.data, map(lambda x: float(x), row[1:]))
@@ -239,13 +243,11 @@ class DataFile:
             self.column_headers=["" for x in range(self.data.shape[1])]
             self.column_headers[0:len(headers)]=headers
             
-    # NEW parse VSM data   - CSA 08/12/2010     
-    def __parse_VSMdata(self):
-        self.data=numpy.genfromtxt(self.filename,dtype='float',skip_header=6)
-        self.column_headers=[ 'Time','H_vsm','m','Mvol','Mmass','X','Y','Tsample']
-
-    def __contains(self, theString, theQueryValue):
-        return theString.find(theQueryValue) > -1
+    def __parse_plain_data(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
+        header_string=linecache.getline(self.filename, header_line)
+        header_string=re.sub(r'["\n]', '', header_string)
+        self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
+        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
 
 #   PUBLIC METHODS
 
@@ -283,8 +285,8 @@ class DataFile:
     # NEW load VSM data     -CSA 08/12/2010
     def loadVSM(self,filename):
         self.filename = filename
-        self.__parse_VSMdata()
-
+        self.__parse_plain_data()
+ 
     def loadBigBlue(self,filename,header_line,data_line):
         """DataFile.loadBigBlue(filename,header_line,data_line)
 
@@ -297,11 +299,8 @@ class DataFile:
                  Get the metadata from the header
         """
         self.filename=filename
-        header_string=linecache.getline(self.filename, header_line)
-        header_string=re.sub(r'["\n]', '', header_string)
-        self.column_headers=header_string.split(",")
-        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=',',skip_header=data_line-1)
-        
+        self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
+      
 
     def metadata_value(self, text):
         """Wrapper of DataFile.meta for compatibility"""
