@@ -13,8 +13,7 @@ import os
 import sys
 import numpy
 import math
-import pylab
-from copy import *
+import pylabimport copy
 import linecache
 
 
@@ -126,27 +125,27 @@ class DataFile:
                 t=numpy.atleast_2d(other)
                 c=numpy.shape(t)[1]
                 self.column_headers=map(lambda x:"Column_"+str(x), range(c))
-                newdata=deepcopy(self)
+                newdata=copy.deepcopy(self)
                 newdata.data=t                
                 return newdata
             elif len(numpy.shape(other))==1: # 1D array, so assume a single row of data
                 if numpy.shape(other)[0]==numpy.shape(self.data)[1]:
-                    newdata=deepcopy(self)
+                    newdata=copy.deepcopy(self)
                     newdata.data=numpy.append(self.data, numpy.atleast_2d(other), 0)
                     return newdata
                 else:
                     return NotImplemented
             elif len(numpy.shape(other))==2 and numpy.shape(other)[1]==numpy.shape(self.data)[1]: # DataFile + array with correct number of columns
-                newdata=deepcopy(self)
+                newdata=copy.deepcopy(self)
                 newdata.data=numpy.append(self.data, other, 0)
                 return newdata
             else:
                 return NotImplemented
         elif isinstance(other, DataFile): # Appending another DataFile
             if self.column_headers==other.column_headers:
-                newdata=deepcopy(other)
+                newdata=copy.deepcopy(other)
                 for x in self.metadata:
-                    newdata[x]=copy(self[x])
+                    newdata[x]=copy.copy(self[x])
                 newdata.data=numpy.append(self.data, other.data, 0)
                 return newdata
             else:
@@ -162,7 +161,7 @@ class DataFile:
             if other.shape[0]<=self.data.shape[0]: # DataFile + array with correct number of rows
                 if other.shape[0]<self.data.shape[0]: # too few rows we can extend with zeros
                     other=numpy.append(other, numpy.zeros((self.data.shape[0]-other.shape[0], other.shape[1])), 0)
-                newdata=deepcopy(self)
+                newdata=copy.deepcopy(self)
                 newdata.column_headers.extend(["" for x in range(other.shape[1])]) 
                 newdata.data=numpy.append(self.data, other, 1)
                 return newdata
@@ -170,11 +169,11 @@ class DataFile:
                 return NotImplemented
         elif isinstance(other, DataFile): # Appending another datafile
             if self.data.shape[0]==other.data.shape[0]:
-                newdata=deepcopy(other)
-                newdata.column_headers=copy(self.column_headers)
+                newdata=copy.deepcopy(other)
+                newdata.column_headers=copy.copy(self.column_headers)
                 newdata.column_headers.extend(self.column_headers)
                 for x in self.metadata:
-                    newdata[x]=copy(self[x])
+                    newdata[x]=copy.copy(self[x])
                 newdata.data=numpy.append(self.data, other.data, 1)
                 return newdata
             else:
@@ -272,6 +271,8 @@ class DataFile:
             self.loadVSM(filename)
         elif fileType=="BigBlue":
             self.loadBigBlue(filename, args[0], args[1])
+        elif fileType=="csv":
+            self.__parse_plain_data(args[0], args[1], args[2], args[3])
         
         
     def save(self, filename):
