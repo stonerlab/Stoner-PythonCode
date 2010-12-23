@@ -1,10 +1,11 @@
 #----------------------------------------------------------------------------- 
-#   FILE:       STONER DATA CLASS (version 0.2)
+#   $Id: Stoner.py,v 1.18 2010/12/23 19:49:32 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
 #
-
+# Imports
+# If Imort is just used in a sub class of DataFile, consider importing in __init__. See PlotFile for example. GB 23/12/2010
 import csv
 import re
 import scipy
@@ -13,11 +14,11 @@ import os
 import sys
 import numpy
 import math
-import pylabimport copy
+import copy
 import linecache
 
 
-class DataFolder:
+class DataFolder(object):
     
     #   CONSTANTS
     
@@ -40,7 +41,7 @@ class DataFolder:
 #   PUBLIC METHODS
 
         
-class DataFile:
+class DataFile(object): #Now a new style class so that we can use super()
     """Stoner.DataFile represents a standard Stonerlab data file as an object
     
     Provides methods to read, and manipulate data
@@ -211,9 +212,9 @@ class DataFile:
         t= m.group(2)
         if self.__typeInteger.find(t)>-1:
             value = int(value);
-        elif self.__typeFloat.find('t')>-1:
+        elif self.__typeFloat.find(t)>-1:
             value = float(value);
-        elif self.__typeBoolean.find('t')>-1:
+        elif self.__typeBoolean.find(t)>-1:
             value = bool(value);
         else:
             value = str(value);
@@ -233,7 +234,8 @@ class DataFile:
             if maxcol<len(row):
                     maxcol=len(row)
             if row[0].find('=')>-1:
-                self.__parse_metadata(row[0].split('=')[0], row[0].split('=')[1])
+                md=row[0].split('=')
+                self.__parse_metadata(md[0], md[1])
             if (len(row[1:len(row)]) > 1) or len(row[1]) > 0:
                 self.data=numpy.append(self.data, map(lambda x: float(x), row[1:]))
         else:
@@ -482,6 +484,10 @@ class DataFile:
             i+=1
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
+    def __init__(self, *args, **kargs): #Do the import of pylab here to speed module load
+        global pylab
+        import pylab
+        super(PlotFile, self).__init__(*args, **kargs)
     def plot_xy(self,column_x, column_y,title='',save_filename='',show_plot=True):
         """plot_xy(x column, y column/s, title,save filename, show plot=True)
         
