@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------- 
-#   $Id: __init__.py,v 1.1 2010/12/25 22:11:32 cvs Exp $
+#   $Id: __init__.py,v 1.2 2010/12/28 14:33:55 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
@@ -298,6 +298,13 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.__loadBigBlue(args[0], args[1])
         elif fileType=="csv":
             self.__parse_plain_data(args[0], args[1], args[2], args[3])
+        elif fileType=="NewXRD":
+            from .Util import read_XRD_File
+            d=read_XRD_File(filename)
+            self.column_headers=d.column_headers
+            self.data=d.data
+            self.metadata=d.metadata
+            self.typehint=d.typehint
         return self
         
     def save(self, filename):
