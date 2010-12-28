@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------- 
-#   $Id: __init__.py,v 1.2 2010/12/28 14:33:55 cvs Exp $
+#   $Id: __init__.py,v 1.3 2010/12/28 22:31:25 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
@@ -529,8 +529,11 @@ class PlotFile(DataFile):
         if save_filename != '':
             pylab.savefig(str(save_filename))
      
-class FilterFile(DataFile):
-    """Extends DataFile with Filtering functions"""
+ 
+class AnalyseFile(DataFile):
+    """Extends DataFile with numpy passthrough functions"""
+
+#Private Helper Functions
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
         
         """ calculates filter coefficients for symmetric savitzky-golay filter.
@@ -580,26 +583,24 @@ class FilterFile(DataFile):
         N = numpy.size(coeff-1)/2
         res = numpy.convolve(signal, coeff)
         return res[N:-N]
-    def SG_Filter(self, col, points, poly=1, order=0):
-        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
         
-        SG_Filter(column,points, polynomial order, order of differentuation)
-        or
-        SG_Filter({x-col,y,col},points,polynomial order, order of differentuation)"""
-        if isinstance(col, tuple):
-            x=self.column(col[0])
-            y=self.column(col[1])
-            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
-            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
-            return dy/dx
+    def __threshold(self, threshold, data, rising=True, falling=False):
+        """ Internal function that implements the threshold method - also used in peak-finder"""
+        current=data
+        previous=numpy.roll(current, 1)
+        index=numpy.arange(len(current))        
+        sdat=numpy.column_stack((index, current, previous))
+        if rising==True and falling==False:
+            expr=lambda x:(x[1]>=threshold) & (x[2]<threshold)
+        elif rising==True and falling==True:
+            expr=lambda x:((x[1]>=threshold) & (x[2]<threshold)) | ((x[1]<=threshold) & (x[2]>threshold))
+        elif rising==False and falling==True:
+            expr=lambda x:(x[1]<=threshold) & (x[2]>threshold)
         else:
-            d=self.column(col)
-            return self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
-
+            expr=lambda x:False
+        return filter(lambda x:x>0,  map(lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2]), filter(expr, sdat)))
+        
     
-    
-class AnalyseFile(DataFile):
-    """Extends DataFile with numpy passthrough functions"""
     def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True):
         """ Pass through to numpy.polyfit
         
@@ -654,6 +655,67 @@ class AnalyseFile(DataFile):
         else:
             self.data[:, col]=nc
         return self
-        
 
+    def SG_Filter(self, col, points, poly=1, order=0):
+        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
+        
+        SG_Filter(column,points, polynomial order, order of differentuation)
+        or
+        SG_Filter((x-col,y,col),points,polynomial order, order of differentuation)"""
+        p=points
+        if isinstance(col, tuple):
+            x=self.column(col[0])
+            x=numpy.append(numpy.array([x[0]]*p), x)
+            x=numpy.append(x, numpy.array([x[-1]]*p))
+            y=elf.column(col[1])
+            y=anumpy.append(numpy.array([y[0]]*p), y)
+            y=anumpy.append(y, numpy.array([y[-1]]*p))
+            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
+            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
+            r=dy/dx
+            return r[p:-p]
+        else:
+            d=self.column(col)
+            d=numpy.append(numpy.array([d[0]]*p),d)
+            d=numpy.append(d, numpy.array([d[-1]]*p))
+            r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
+            return r[p:-p]
+    def threshold(self, col, threshold, rising=True, falling=False):
+        """AnalysisFile.threshold(column, threshold, rising=True,falling=False)
+        
+        Finds partial indices where the data in column passes the threshold, rising or falling"""
+        current=self.column(col)
+        return self.__threshold(threshold, current, rising=rising, falling=falling)
+        
+    def interpolate(self, newX,kind='linear' ):
+        from scipy.interpolate import interp1d
+        l=numpy.shape(self.data)[0]
+        index=numpy.arange(l)
+        inter=interp1d(index, self.data, kind, 0)
+        return inter(newX)
+    
+    def peaks(self, ycol, width, significance , xcol=None, peaks=True, troughs=False, poly=2):
+        """AnalysisFile.peaks(ycol,width,signficance, xcol=None.peaks=True, troughs=False)
+        
+        Locates peaks and/or troughs in a column of data by using SG-differentiation.
+        
+        ycol is the column name or index of the data in which to search for peaks
+        width is the expected minium halalf-width of a peak in terms of the number of data points. 
+                This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
+                to experimental noise, smaller means better eable to see sharp peaks
+            sensitivity is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+                of the data. Bigger means less sensistive, smaller means more likely to detect noise.
+            xcol name or index of data column that p[rovides the x-coordinate
+            peaks,troughs select whether to measure peaks.troughs in data"""
+        from scipy.interpolate import interp1d
+        d1=self.SG_Filter(ycol, width, poly, 1)
+        i=numpy.arange(len(d1))
+        d2=interp1d(i, self.SG_Filter(ycol, width, poly, 2))
+        if xcol==None:
+            xcol=i
+        else:
+            xcol=self.column(xcol)
+        index=interp1d(i, xcol)
+        z=self.__threshold(0, d1, rising=troughs, falling=peaks)
+        return index(filter(lambda x: numpy.abs(d2(x))>significance, z))       
         
