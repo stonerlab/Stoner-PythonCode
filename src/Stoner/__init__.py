@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------------- 
-#   $Id: __init__.py,v 1.3 2010/12/28 22:31:25 cvs Exp $
+#   $Id: __init__.py,v 1.4 2010/12/28 23:24:32 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
@@ -48,7 +48,6 @@ class DataFile(object): #Now a new style class so that we can use super()
     
     Matt Newman, Chris Allen, Gavin Burnell
     
-    TODO: Add X-Ray file reading utility
     
     """
 #   CONSTANTS
@@ -80,6 +79,7 @@ class DataFile(object): #Now a new style class so that we can use super()
                 self.load(args[0])
             elif isinstance(args[0], numpy.ndarray): # numpy.array - set data
                 self.data=args[0]
+                self.column_headers=['Column'+str(x) for x in range(numpy.shape(args[0])[1])]
             elif isinstance(args[0], dict): # Dictionary - use as metadata
                 self.metadata=args[0]
             elif isinstance(args[0], DataFile):
