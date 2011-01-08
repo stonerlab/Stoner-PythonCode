@@ -1,7 +1,7 @@
 # Utility Functions for Stoner Module
 
 def read_XRD_File(filename):
-    from . import DataFile
+    from .Core import DataFile
     import fileinput
     import re
     import numpy
