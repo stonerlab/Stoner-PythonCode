@@ -3,9 +3,15 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.1 2011/01/08 20:30:02 cvs Exp $
+# $Id: Analysis.py,v 1.2 2011/01/10 23:11:21 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.2  2011/01/10 23:11:21  cvs
+# Switch to using GLC's version of the mpit module
+# Made PlotFile.plot_xy take keyword arguments and return the figure
+# Fixed a missing import math in AnalyseFile
+# Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
+#
 # Revision 1.1  2011/01/08 20:30:02  cvs
 # Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
 # Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
@@ -16,6 +22,7 @@
 from .Core import DataFile
 import scipy
 import numpy
+import math
 
 class AnalyseFile(DataFile):
     """Extends DataFile with numpy passthrough functions"""
@@ -131,14 +138,16 @@ class AnalyseFile(DataFile):
         col=self.find_col(column)
         return self.data[:, col].min(), self.data[:, col].argmin()
     
-    def apply(self, func, col, insert=False):
+    def apply(self, func, col, insert=False, header=None):
         """Applies the given function to each row in the data set and adds to the data set
         
             AnalysisFile.apply(func,column,insert=False)"""
         col=self.find_col(col)
         nc=numpy.array([func(row) for row in self.rows()])
         if insert==True:
-            self=self.add_column(nc, func.__name__, col)
+            if header==None:
+                header=func.__name__
+            self=self.add_column(nc, header, col)
         else:
             self.data[:, col]=nc
         return self

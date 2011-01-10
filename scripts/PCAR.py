@@ -1,6 +1,12 @@
 #
-# $Id: PCAR.py,v 1.1 2011/01/10 19:05:44 cvs Exp $
+# $Id: PCAR.py,v 1.2 2011/01/10 23:11:21 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.2  2011/01/10 23:11:21  cvs
+#Switch to using GLC's version of the mpit module
+#Made PlotFile.plot_xy take keyword arguments and return the figure
+#Fixed a missing import math in AnalyseFile
+#Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
+#
 #Revision 1.1  2011/01/10 19:05:44  cvs
 #Start working on PCAR fitting code
 #
@@ -15,20 +21,29 @@ Z={"value":0.4, "fixed":False, "limited":[True, False], "limits":[0.3, 0.0], "pa
 #Normal state conductance
 Gn=1.0
 
+#Some stuff about the datafile
+gcol='G'
+vcol='V'
 # Import packages
 import numpy
 import scipy
 import Stoner
+from Stoner.mpfit import mpfit
 import easygui
+import sys
+import math
 
 
 
 #gui to get filename and path
 filename=easygui.fileopenbox(title = "Choose your file")
 #import data
-d=Stoner.DataFile(filename)
+d=Stoner.AnalyseFile(filename)
 
-def myfunct(p, fjac=None, x=None, y=None, err=None)
+gcol=d.find_col(gcol)
+vcol=d.find_col(vcol)
+
+def myfunct(p, fjac=None, xdat=None, ydat=None, err=None):
     # Parameter values are passed in "p"
     # If FJAC!=None then partial derivatives must be comptuer.
     # FJAC contains an array of len(p), where each entry
@@ -36,8 +51,11 @@ def myfunct(p, fjac=None, x=None, y=None, err=None)
     model = strijkers(x, p)
     # stop the calculation.
     status = 0
-    return([status, (y-model)/err, pderiv]
+    return [status, (y-model)/err]
     
+def iterfunct(myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
+    sys.stdout.write('.')
+    sys.stdout.flush()
 
 def strijkers(V, params):
     """
@@ -105,31 +123,35 @@ def strijkers(V, params):
         cond[tt]=numpy.trapz(gaus*G,E);
     return cond
 
- 
+# Normalise the data
+d.apply(lambda x:x[gcol]/Gn, gcol)
 
+#Centre the data - look for peaks and troughs within 5 of the initial delta value
+# take the average of these and then subtract it.
+peaks=d.peaks(gcol,len(d)/20,0,xcol=vcol,poly=4,peaks=True,troughs=True)
 
+peaks=filter(lambda x: abs(x)<4*delta['value'], peaks)
+offset=numpy.mean(numpy.array(peaks))
+print "Mean offset ="+str(offset)
+d.apply(lambda x:x[vcol]-offset, vcol)
 
-#Starting Parameters
-# omega, delta, P,Z
-params=[0.55, 1.5, 0.2, 0.4]
-#bounds (min,max)
-omegaBound=[0.3,0.8]
-deltaBound=[1,2.0]
-pBound=[0.1,0.5]
-zBound=[0.3,0.60]
+#Pull out the x and y data separately
+x=d.column(vcol)
+y=d.column(gcol)
+ey=numpy.ones(y.shape,dtype='float64') # equal weights
+fa = {'xdat':x, 'ydat':y, 'err':ey}
+debug=True
+parinfo=[omega, delta, P, Z]
+pderiv=None
+m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
+if (m.status <= 0): 
+    print 'error message = ', m.errmsg
 
-#Fitting accuracy (termination condition when change in function is less than..)
-fitAcc=1e-10
-#Step size for derivative estimates
-fitStep=1e-3
-#Max number of iterations
-maxIt=30
-
-
-
-
-'
-
+print m.params
+d.add_column(strijkers(x, m.params), 'Fit')
+p=Stoner.PlotFile(d)
+p.plot_xy(vcol,gcol, 'ro')
+p.plot_xy(vcol, 'Fit')
 
 
 
