@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.2 2011/01/10 23:11:21 cvs Exp $
+# $Id: PCAR.py,v 1.3 2011/01/10 23:28:15 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.3  2011/01/10 23:28:15  cvs
+#Improved comments in code added some pretty printing - GB
+#
 #Revision 1.2  2011/01/10 23:11:21  cvs
 #Switch to using GLC's version of the mpit module
 #Made PlotFile.plot_xy take keyword arguments and return the figure
@@ -24,6 +27,12 @@ Gn=1.0
 #Some stuff about the datafile
 gcol='G'
 vcol='V'
+
+
+#########################################################
+####   End of User editable part ####################################
+#########################################################
+
 # Import packages
 import numpy
 import scipy
@@ -33,15 +42,19 @@ import easygui
 import sys
 import math
 
-
-
 #gui to get filename and path
 filename=easygui.fileopenbox(title = "Choose your file")
+
 #import data
 d=Stoner.AnalyseFile(filename)
 
+# Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
 vcol=d.find_col(vcol)
+
+#############################################
+### mpfit helper functions  ###########################
+#############################################
 
 def myfunct(p, fjac=None, xdat=None, ydat=None, err=None):
     # Parameter values are passed in "p"
@@ -54,9 +67,13 @@ def myfunct(p, fjac=None, xdat=None, ydat=None, err=None):
     return [status, (y-model)/err]
     
 def iterfunct(myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
+    # Prints a single . for each iteration
     sys.stdout.write('.')
     sys.stdout.flush()
 
+################################################
+################            Here is out model functions  #########
+###############################################
 def strijkers(V, params):
     """
     strijkers(V, params):
@@ -123,35 +140,46 @@ def strijkers(V, params):
         cond[tt]=numpy.trapz(gaus*G,E);
     return cond
 
+# Main part of code
+
 # Normalise the data
 d.apply(lambda x:x[gcol]/Gn, gcol)
 
 #Centre the data - look for peaks and troughs within 5 of the initial delta value
 # take the average of these and then subtract it.
 peaks=d.peaks(gcol,len(d)/20,0,xcol=vcol,poly=4,peaks=True,troughs=True)
-
 peaks=filter(lambda x: abs(x)<4*delta['value'], peaks)
 offset=numpy.mean(numpy.array(peaks))
 print "Mean offset ="+str(offset)
 d.apply(lambda x:x[vcol]-offset, vcol)
 
-#Pull out the x and y data separately
+#Pull out the x and y data separately and setup the weighting array
 x=d.column(vcol)
 y=d.column(gcol)
 ey=numpy.ones(y.shape,dtype='float64') # equal weights
-fa = {'xdat':x, 'ydat':y, 'err':ey}
-debug=True
-parinfo=[omega, delta, P, Z]
-pderiv=None
-m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
-if (m.status <= 0): 
-    print 'error message = ', m.errmsg
 
-print m.params
+# This is used to tell the fitting programme how to pass our data indices
+fa = {'xdat':x, 'ydat':y, 'err':ey}
+
+# Initialise the parameter information with the dictionaries defined at top of file
+parinfo=[omega, delta, P, Z]
+
+# Here is the engine that does the work
+m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
+print "Finished !"
+if (m.status <= 0): # error message ?
+    raise RuntimeError(m.errmsg)
+
+# Ok now we can print the answer
+for i in range(len(parinfo)):
+    print parinfo[i]['parname']+"="+str(m.params[i])
+    
+# And show the fit and the data in a nice plot
 d.add_column(strijkers(x, m.params), 'Fit')
 p=Stoner.PlotFile(d)
 p.plot_xy(vcol,gcol, 'ro')
 p.plot_xy(vcol, 'Fit')
+
 
 
 
