@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.3 2011/01/10 23:28:15 cvs Exp $
+# $Id: PCAR.py,v 1.4 2011/01/10 23:49:13 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.4  2011/01/10 23:49:13  cvs
+#Fix filename from easygui to be a string (only a problem on Windows !?) - GB
+#
 #Revision 1.3  2011/01/10 23:28:15  cvs
 #Improved comments in code added some pretty printing - GB
 #
@@ -46,7 +49,7 @@ import math
 filename=easygui.fileopenbox(title = "Choose your file")
 
 #import data
-d=Stoner.AnalyseFile(filename)
+d=Stoner.AnalyseFile(str(filename))
 
 # Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
