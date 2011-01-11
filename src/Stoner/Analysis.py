@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.2 2011/01/10 23:11:21 cvs Exp $
+# $Id: Analysis.py,v 1.3 2011/01/11 18:55:57 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.3  2011/01/11 18:55:57  cvs
+# Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
+#
 # Revision 1.2  2011/01/10 23:11:21  cvs
 # Switch to using GLC's version of the mpit module
 # Made PlotFile.plot_xy take keyword arguments and return the figure
@@ -23,6 +26,7 @@ from .Core import DataFile
 import scipy
 import numpy
 import math
+import sys
 
 class AnalyseFile(DataFile):
     """Extends DataFile with numpy passthrough functions"""
@@ -93,7 +97,31 @@ class AnalyseFile(DataFile):
         else:
             expr=lambda x:False
         return filter(lambda x:x>0,  map(lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2]), filter(expr, sdat)))
+
+    def __mpf_fn(self, p, **fa):
+        # Parameter values are passed in "p"
+        # If FJAC!=None then partial derivatives must be comptuer.
+        # FJAC contains an array of len(p), where each entry
+        # is 1 if that parameter is free and 0 if it is fixed. 
+        func=fa['func']
+        x=fa['x']
+        y=fa['y']
+        err=fa['err']
+        del(fa['x'])
+        del(fa['y'])
+        del(fa['func'])
+        del(fa['fjac'])
+        del(fa['err'])
+        model = func(x, p, **fa)
+        # stop the calculation.
+        status = 0
+        return [status, (y-model)/err]
         
+    def mpfit_iterfunct(self, myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
+        # Prints a single . for each iteration
+        sys.stdout.write('.')
+        sys.stdout.flush()
+
     
     def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True):
         """ Pass through to numpy.polyfit
@@ -214,4 +242,34 @@ class AnalyseFile(DataFile):
         index=interp1d(i, xcol)
         z=self.__threshold(0, d1, rising=troughs, falling=peaks)
         return index(filter(lambda x: numpy.abs(d2(x))>significance, z))       
+        
+    def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
+        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
+        
+                mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
+                
+                func: Fitting function def func(x,parameters, **func_args)
+                xcol, ycol: index the x and y data sets
+                p_info: array of dictionaries that define the fitting parameters
+                sigma: weights of the data poiints. If not specified, then equal weighting assumed
+                bounds: function that takes x,y pairs and returns true if to be used in the fitting
+                **mpfit_kargs: other lkeywords passed straight to mpfit"""
+        from .mpfit import mpfit
+        if sigma==None:
+            working=self.search(xcol, bounds, [xcol, ycol])
+            x=working[:, 0]
+            y=working[:, 1]
+            sigma=numpy.ones(numpy.shape(y), numpy.float64)
+        else:
+            working=self.search(xcol, bounds, [xcol, ycol, sigma])
+            x=working[:, 0]
+            y=working[:, 1]
+            sigma=working[:, 2]
+        func_args["x"]=x
+        func_args["y"]=y
+        func_args["err"]=sigma
+        func_args["func"]=func
+        m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
+        return m        
+
         

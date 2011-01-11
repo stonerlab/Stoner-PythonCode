@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.5 2011/01/11 16:26:52 cvs Exp $
+# $Id: PCAR.py,v 1.6 2011/01/11 18:55:57 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.6  2011/01/11 18:55:57  cvs
+#Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
+#
 #Revision 1.5  2011/01/11 16:26:52  cvs
 #Convert code to use a separate ini file to setup problem
 #
@@ -25,7 +28,6 @@
 import numpy
 import scipy
 import Stoner
-from Stoner.mpfit import mpfit
 from scipy.stats import chisquare
 import wx
 import sys
@@ -78,27 +80,8 @@ d=Stoner.AnalyseFile(str(filename))
 gcol=d.find_col(gcol)
 vcol=d.find_col(vcol)
 
-#############################################
-### mpfit helper functions  ###########################
-#############################################
-
-def myfunct(p, fjac=None, xdat=None, ydat=None, err=None):
-    # Parameter values are passed in "p"
-    # If FJAC!=None then partial derivatives must be comptuer.
-    # FJAC contains an array of len(p), where each entry
-    # is 1 if that parameter is free and 0 if it is fixed. 
-    model = strijkers(x, p)
-    # stop the calculation.
-    status = 0
-    return [status, (y-model)/err]
-    
-def iterfunct(myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
-    # Prints a single . for each iteration
-    sys.stdout.write('.')
-    sys.stdout.flush()
-
 ################################################
-################            Here is out model functions  #########
+######### Here is out model functions  #########
 ###############################################
 def strijkers(V, params):
     """
@@ -179,23 +162,15 @@ offset=numpy.mean(numpy.array(peaks))
 print "Mean offset ="+str(offset)
 d.apply(lambda x:x[vcol]-offset, vcol)
 
-#Pull out the x and y data separately and setup the weighting array
-x=d.column(vcol)
-y=d.column(gcol)
-ey=numpy.ones(y.shape,dtype='float64') # equal weights
-
-# This is used to tell the fitting programme how to pass our data indices
-fa = {'xdat':x, 'ydat':y, 'err':ey}
-
 # Initialise the parameter information with the dictionaries defined at top of file
 parinfo=[omega, delta, P, Z]
 
 if user_iterfunct==False:
     # Here is the engine that does the work
-    m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
+    m = d.mpfit(strijkers,vcol, gcol, parinfo, iterfunct=d.mpfit_iterfunct)
     print "Finished !"
 else:
-    m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True)
+    m = d.mpfit(strijkers,vcol, gcol, parinfo)
 
 if (m.status <= 0): # error message ?
     raise RuntimeError(m.errmsg)
@@ -203,7 +178,7 @@ if (m.status <= 0): # error message ?
 
 if show_plot:
     # And show the fit and the data in a nice plot
-    d.add_column(strijkers(x, m.params), 'Fit')
+    d.add_column(strijkers(d.column(vcol), m.params), 'Fit')
     p=Stoner.PlotFile(d)
     p.plot_xy(vcol,gcol, 'ro')
     p.plot_xy(vcol, 'Fit')
