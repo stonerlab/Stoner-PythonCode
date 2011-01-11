@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.4 2011/01/10 23:49:13 cvs Exp $
+# $Id: PCAR.py,v 1.5 2011/01/11 16:26:52 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.5  2011/01/11 16:26:52  cvs
+#Convert code to use a separate ini file to setup problem
+#
 #Revision 1.4  2011/01/10 23:49:13  cvs
 #Fix filename from easygui to be a string (only a problem on Windows !?) - GB
 #
@@ -18,36 +21,56 @@
 #
 # Script to fit PCAR data GB Jan 2011
 
-# Initial para,eter
-omega={"value":0.55, "fixed":False, "limited":[True, False], "limits":[0.0, 0.0], "parname":"Omega", "step":0, "mpside":0, "mpmaxstep":0, "tied":"", "mpprint":True}
-delta={"value":1.5, "fixed":False, "limited":[True, True], "limits":[0.5, 2.0], "parname":"Delta", "step":0, "mpside":0, "mpmaxstep":0, "tied":"", "mpprint":True}
-P={"value":0.2, "fixed":False, "limited":[True, True], "limits":[0.0, 1.0], "parname":"Polarisation", "step":0, "mpside":0, "mpmaxstep":0, "tied":"", "mpprint":True}
-Z={"value":0.4, "fixed":False, "limited":[True, False], "limits":[0.3, 0.0], "parname":"Barrier", "step":0, "mpside":0, "mpmaxstep":0, "tied":"", "mpprint":True}
-
-#Normal state conductance
-Gn=1.0
-
-#Some stuff about the datafile
-gcol='G'
-vcol='V'
-
-
-#########################################################
-####   End of User editable part ####################################
-#########################################################
-
 # Import packages
 import numpy
 import scipy
 import Stoner
 from Stoner.mpfit import mpfit
-import easygui
+from scipy.stats import chisquare
+import wx
 import sys
 import math
+import os
+import ConfigParser
 
-#gui to get filename and path
-filename=easygui.fileopenbox(title = "Choose your file")
+# Read the co nfig file for the model
+config=ConfigParser.SafeConfigParser()
+config.read("pcar.ini")
 
+show_plot=config.getboolean('Fitting', 'show_plot')
+user_iterfunct=config.getboolean('Fitting', 'print_each_step')
+
+pars=dict()
+parnames=['omega', 'delta', 'P', 'Z']
+for section in parnames:
+    pars[section]=dict()
+    pars[section]['value']=config.getfloat(section, 'value')
+    pars[section]['fixed']=config.getboolean(section, 'fixed')
+    pars[section]['limited']=[config.getboolean(section, 'lower_limited'), config.getboolean(section, 'upper_limited')]
+    pars[section]['limits']=[config.getfloat(section, 'lower_limit'), config.getfloat(section, 'upper_limit')]
+    pars[section]['parname']=config.get(section, 'name')
+    pars[section]['step']=config.getfloat(section, 'step')
+    pars[section]['mpside']=config.getint(section, 'side')
+    pars[section]['mpmaxstep']=config.getfloat(section, 'maxstep')
+    pars[section]['tied']=config.get(section, 'tied')
+    pars[section]['mpprint']=config.getboolean(section, 'print')
+
+Gn=config.getfloat('data', 'Normal_conductance')
+gcol=config.get('data', 'y-column')
+vcol=config.get('data', 'x-column')
+omega=pars['omega']
+delta=pars['delta']
+P=pars['P']
+Z=pars['Z']
+
+
+
+dlg=wx.FileDialog(None, "Select Datafile", "", "", "*.*", wx.OPEN)
+if dlg.ShowModal()==wx.ID_OK:
+    filename=os.path.join(dlg.Directory, dlg.Filename)
+else:
+    raise RuntimeError("Must specify a filename !")
+        
 #import data
 d=Stoner.AnalyseFile(str(filename))
 
@@ -167,21 +190,31 @@ fa = {'xdat':x, 'ydat':y, 'err':ey}
 # Initialise the parameter information with the dictionaries defined at top of file
 parinfo=[omega, delta, P, Z]
 
-# Here is the engine that does the work
-m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
-print "Finished !"
+if user_iterfunct==False:
+    # Here is the engine that does the work
+    m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True,  iterfunct=iterfunct)
+    print "Finished !"
+else:
+    m = mpfit(myfunct, parinfo=parinfo,functkw=fa,  autoderivative=True)
+
 if (m.status <= 0): # error message ?
     raise RuntimeError(m.errmsg)
+
+
+if show_plot:
+    # And show the fit and the data in a nice plot
+    d.add_column(strijkers(x, m.params), 'Fit')
+    p=Stoner.PlotFile(d)
+    p.plot_xy(vcol,gcol, 'ro')
+    p.plot_xy(vcol, 'Fit')
 
 # Ok now we can print the answer
 for i in range(len(parinfo)):
     print parinfo[i]['parname']+"="+str(m.params[i])
+
+chi2=chisquare(d.column(gcol), d.column('Fit'))
+print "Chi^2:"+str(chi2)
     
-# And show the fit and the data in a nice plot
-d.add_column(strijkers(x, m.params), 'Fit')
-p=Stoner.PlotFile(d)
-p.plot_xy(vcol,gcol, 'ro')
-p.plot_xy(vcol, 'Fit')
 
 
 
