@@ -1,6 +1,10 @@
 #
-# $Id: PCAR.py,v 1.6 2011/01/11 18:55:57 cvs Exp $
+# $Id: PCAR.py,v 1.7 2011/01/11 21:52:26 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.7  2011/01/11 21:52:26  cvs
+#Change the script to make some of the more dangerous data manipulations into options to be turned on in the ini file
+#Commented the ini file. - GB
+#
 #Revision 1.6  2011/01/11 18:55:57  cvs
 #Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
 #
@@ -33,14 +37,16 @@ import wx
 import sys
 import math
 import os
+import time
 import ConfigParser
 
 # Read the co nfig file for the model
-config=ConfigParser.SafeConfigParser()
+defaults={"filetype":"TDI", "header_line":1,"start_line":2, "separator":",", "v_scale":1 }
+config=ConfigParser.SafeConfigParser(defaults)
 config.read("pcar.ini")
 
-show_plot=config.getboolean('Fitting', 'show_plot')
-user_iterfunct=config.getboolean('Fitting', 'print_each_step')
+show_plot=config.getboolean('options', 'show_plot')
+user_iterfunct=config.getboolean('options', 'print_each_step')
 
 pars=dict()
 parnames=['omega', 'delta', 'P', 'Z']
@@ -57,7 +63,6 @@ for section in parnames:
     pars[section]['tied']=config.get(section, 'tied')
     pars[section]['mpprint']=config.getboolean(section, 'print')
 
-Gn=config.getfloat('data', 'Normal_conductance')
 gcol=config.get('data', 'y-column')
 vcol=config.get('data', 'x-column')
 omega=pars['omega']
@@ -65,7 +70,10 @@ delta=pars['delta']
 P=pars['P']
 Z=pars['Z']
 
-
+format=config.get("data", "filetype")
+header=config.getint("data", "header_line")
+start=config.getint("data", "start_line")
+delim=config.get("data", "separator")
 
 dlg=wx.FileDialog(None, "Select Datafile", "", "", "*.*", wx.OPEN)
 if dlg.ShowModal()==wx.ID_OK:
@@ -74,7 +82,8 @@ else:
     raise RuntimeError("Must specify a filename !")
         
 #import data
-d=Stoner.AnalyseFile(str(filename))
+d=Stoner.AnalyseFile()
+d.load(str(filename), format, header, start, delim, delim)
 
 # Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
@@ -149,18 +158,46 @@ def strijkers(V, params):
         cond[tt]=numpy.trapz(gaus*G,E);
     return cond
 
-# Main part of code
+def Normalise(config, d, gcol, vcol):
+    # Normalise the data
+    Gn=config.getfloat('data', 'Normal_conductance')
+    v_scale=config.getfloat("data", "v_scale")
+    if config.has_option("options", "fancy_normaliser") and config.getboolean("options", "fancy_normaliser"):
+        def quad(x, a, b, c): # linear fitting function
+            return x*x*a+x*b+c
+        vmax, vp=d.max(vcol)
+        vmin, vp=d.min(vcol)
+        p, pv=d.curve_fit(quad, vcol, gcol, bounds=lambda x, y:(x>0.9*vmax) or (x<0.9*vmin)) #fit a striaght line to the outer 10% of data
+        print "Fitted normal conductance background of G="+str(p[0])+"V^2 +"+str(p[1])+"V+"+str(p[2])
+        d.apply(lambda x:x[gcol]/quad(x[vcol], p[0], p[1], p[2]), gcol)
+    else:
+        d.apply(lambda x:x[gcol]/Gn, gcol)
+    if config.has_option("options", "rescale_v") and config.getboolean("options", "rescale_v"):    
+        d.apply(lambda x:x[vcol]*v_scale, vcol)
+    return d
 
-# Normalise the data
-d.apply(lambda x:x[gcol]/Gn, gcol)
+def offset_correct(config, d, gcol, vcol):
+    """Centre the data - look for peaks and troughs within 5 of the initial delta value
+        take the average of these and then subtract it.
+    """
+    peaks=d.peaks(gcol,len(d)/20,0,xcol=vcol,poly=4,peaks=True,troughs=True)
+    peaks=filter(lambda x: abs(x)<4*delta['value'], peaks)
+    offset=numpy.mean(numpy.array(peaks))
+    print "Mean offset ="+str(offset)
+    d.apply(lambda x:x[vcol]-offset, vcol)
+    return d
 
-#Centre the data - look for peaks and troughs within 5 of the initial delta value
-# take the average of these and then subtract it.
-peaks=d.peaks(gcol,len(d)/20,0,xcol=vcol,poly=4,peaks=True,troughs=True)
-peaks=filter(lambda x: abs(x)<4*delta['value'], peaks)
-offset=numpy.mean(numpy.array(peaks))
-print "Mean offset ="+str(offset)
-d.apply(lambda x:x[vcol]-offset, vcol)
+if config.has_option("options", "normalise") and config.getboolean("options", "normalise"):
+    d=Normalise(config, d, gcol, vcol)
+    
+if config.has_option("options", "remove_offset") and config.getboolean("options", "remove_offset"): 
+    d=offset_correct(config, d, gcol, vcol)
+    
+#Plot the data while we do the fitting
+if show_plot:
+    p=Stoner.PlotFile(d)
+    p.plot_xy(vcol,gcol, 'ro')
+    time.sleep(2)
 
 # Initialise the parameter information with the dictionaries defined at top of file
 parinfo=[omega, delta, P, Z]
@@ -175,13 +212,12 @@ else:
 if (m.status <= 0): # error message ?
     raise RuntimeError(m.errmsg)
 
+d.add_column(strijkers(d.column(vcol), m.params), 'Fit')
 
 if show_plot:
     # And show the fit and the data in a nice plot
-    d.add_column(strijkers(d.column(vcol), m.params), 'Fit')
     p=Stoner.PlotFile(d)
-    p.plot_xy(vcol,gcol, 'ro')
-    p.plot_xy(vcol, 'Fit')
+p.plot_xy(vcol, 'Fit')
 
 # Ok now we can print the answer
 for i in range(len(parinfo)):
