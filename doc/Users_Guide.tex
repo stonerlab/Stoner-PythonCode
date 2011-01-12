@@ -16,7 +16,7 @@
 
 
 \author{C.S.~Allen, M.~Newman and G.~Burnell}
-\title{Stoner Python Module}
+\title{Stoner Python Package}
 
 \begin{document}
 
@@ -24,22 +24,25 @@
 
 \tableofcontents
 \newpage
-\pagestyle{scrheadings} \ihead[Stoner Python Module]{Stoner Python Module} \ifoot[\today]{\today}
+\pagestyle{scrheadings} \ihead[Stoner Python Package]{Stoner Python Package} \ifoot[\today]{\today}
 \ohead[Manual]{Manual}
 
 
 
   \section{Introduction}
 
-This manual provides a user guide and reference for the Stoner python module. The Stoner python module provides a set of python classes and functions for reading, manipulating and plotting data acquired with the lab equipment in the Condensed Matter Physics Group at the University of Leeds.
+This manual provides a user guide and reference for the Stoner python pacakage. The Stoner python package provides a set of python classes and functions for reading, manipulating and plotting data acquired with the lab equipment in the Condensed Matter Physics Group at the University of Leeds.
 
-\subsection{Getting the Stoner module}
+\subsection{Getting the Stoner Package}
 
 The source code for the Stoner python module is kept in CVS revision control on the stonerlab server. A stable release of the code is available for copying and use in \verb#\\stonerlab\data\software\python\stable\#. The development code can be obtained by checking out the PythonCode module with a CVSROOT of \\ \verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
 
-\subsection{Using the Stoner module}
+The Stoner Package currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\ \verb#\\stonerlab\\data\software\Python\#.  The easiest way to get a Python installation with all the necessary dependencies for the Stoner Package is to install the \textit{Enthought Python Distribution}. Windows install file are kept in \verb#\\stonerlab\data\software\python#
 
-The easiest way to use the Stoner Module is to add the path to the directory containing Stoner.py to your PYTHONPATH environment variable. This can be done on Macs and Linux by doing:
+
+\subsection{Using the Stoner Package}
+
+The easiest way to use the Stoner Package is to add the path to the directory containing Stoner.py to your PYTHONPATH environment variable. This can be done on Macs and Linux by doing:
 \begin{verbatim}
   cd <path to PythonCode directory>/src
   export PYTHONPATH=`pwd`:$PYTHONPATH
@@ -58,15 +61,13 @@ or
   >>> from Stoner import *
 \end{verbatim}
 
-The Stoner module currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\ \verb#\\stonerlab\\data\software\Python for Windows\#.
-
 \section{Users' Guide}
 
 The Users'Guide provides a brief overview of the functions contained within the Stoner module and so basic examples of how the module can be used.
 
 The Stoner module provides several Python classes that can be used to manipulate experimental data. The main class that provides the basic functionality is the DataFile class. This handles loading data, finding and manipulating meta data, selecting rows or columns of data, adding or removing data, and saving data.
 
-The PlotFile class is a descendent of DataFile, meaning it shares all the same functionality as DataFile, but in addition has methods to present data graphically. The AnalysisFile class is another descendent of DataFile, but provides extra methods to fit curves and carry out other simple analysis operations. Finally the FilterFile class provides extra methods to manipulate whole columns of data.
+The PlotFile class is a descendent of DataFile, meaning it shares all the same functionality as DataFile, but in addition has methods to present data graphically. The AnalyseFile class is another descendent of DataFile, but provides extra methods to fit curves, smooth and differentiate data, find peaks and carry out other simple analysis operations.
 
 \subsection{Loading a data file}
 
@@ -78,7 +79,7 @@ The first step in using the Stoner module is to load some data from a measuremen
   >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are \textit{TDI}, \textit{VSM}, and \textit{BigBlue}. It is also possible to do these steps separately, or indeed to load new data into an existing instance of DataFile.
+In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are \textit{TDI}, \textit{VSM}, \textit{BigBlue}, and \textit{csv}. It is also possible to do these steps separately, or indeed to load new data into an existing instance of DataFile.
 
 \begin{verbatim}
   >>>import Stoner
@@ -87,7 +88,9 @@ In this example we have loaded data from my\_data.txt which should be in the cur
   >>>d.load('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts.
+The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts. The \textit{csv} takes four additional parameters to the constructor and load methods. In addition to the two extra arguments used for the \textit{BigBlue} variant, a further two parameters specify the deliminators for the header and data rows.
+
+\keypoint{The load method, like many of the DataFile methods returns a copy of the Datafile object \textbf{as well as} modifying the object itself. The advantage of this is that it is then possible to chain several methods into one command}
 
 \subsection{Examining Some Data}
 
@@ -104,12 +107,15 @@ This is all very well, but often you want to examine a particular column of data
   >>>d.column('Temperature')
   >>>d.column(['Temperature',0])
 \end{verbatim}
-In the first example, the first column of numeric data will be returned. In the second example, the column headers will first be checked for one labeled exactly \textit{Temperature} and then if no column is found, the column headers will be searched using \textit{Temperature} as a regular expression. This would then match \textit{Temperature (K)} or \textit{Sample Temperature}.  The third example results in a 2 dimensional numpy array containing two columns in the order that they appear in the list (\ie not the order that they are in the data file).
+In the first example, the first column of numeric data will be returned. In the second example, the column headers will first be checked for one labeled exactly \textit{Temperature} and then if no column is found, the column headers will be searched using \textit{Temperature} as a regular expression. This would then match \textit{Temperature (K)} or \textit{Sample Temperature}.  The third example results in a 2 dimensional numpy array containing two columns in the order that they appear in the list (\ie not the order that they are in the data file). For completeness, the \textbf{DataFile.column} method also allows one to pass slices to select columns and should do the expected thing.
 
 Rows don't have labels, so are accessed directly by number:
 \begin{verbatim}
   >>>d[1]
+  >>>d[1:4]
 \end{verbatim}
+The second example uses a slice to pull out more than one row. This syntax also supports the full slice syntax which allows one to, for example, decimate the rows, or directly pull out the last fews rows in the file.
+
 What happens if you use a string and not a number in the above examples ?
 \begin{verbatim}
   >>>d['User']
@@ -179,22 +185,55 @@ In the first example above, we add a single row of data to \textit{d}. This assu
 
 \subsubsection{Inserting Columns of Data}
 
+The append columns operator \verb#&# will only add columns to the end of a dataset. If you want to add a column of data in the middle of the data set then you should use the \textbf{add\_column} method.
+
 \begin{verbatim}
   >>>d.add_column(numpy.array(range(100)),'Column Header')
   >>>d.add_column(numpy.array(range(100)),'Column Header',Index)
-  >>>d.add_column(lambda x: x[0]-x[1],'Column Header')    
+  >>>d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
 \end{verbatim}
+
+The first example simply adds a column of data to the end of the dataset and sets the new column headers. The second variant  inserts the new column before column \textit{Index}. \textit{Index} follows the same rules as for the \textbf{DataFile.colummn()} method. In the third example, the new column data is generated by applying the specified function. The function is passed s dingle row as a 1D numpy array and any of the keyword, argument pairs passed in a dictionary to the optional \textit{func\_args} argument.
+
+The \textbf{DataFile.add\_column} method returns a copy of the DataFile object itself as well as modifying the object. This is to allow the metod to be chained up with other methods for more compact code writing.
 
 \subsubsection{Deleting Rows of Data}
 
+Removing complete rows of data is achieved using the \textbf{DataFile.del\_row} method.
+
 \begin{verbatim}
+  >>>d.del_rows(10)
   >>>d.del_rows('X Col',value)
   >>>d.del_rows('X Col',lambda x,y:x>300)
 \end{verbatim}
 
+The first variant will delete row 10 from the data set (where the first row will be row 0). You can also supply a list or slice to \textbf{DataFile.del\_rows} to delete multiple rows.
+
+If you do not know in advance which row to delete, then the second and third variants provide more advanced options. The second variant searches for and deletes all rows in which the specified column contains \textit{value}. The third variant selects which ros to delete by calling a user supplied function for each row. The user supplied function is the same in form and definitition as that used for the \textbf{DataFile.search} method.
+
 \subsubsection{Deleting Columns of Data}
 
+Deleting whole columns of data can be done by referring to a column by index or column header - the indexing rules are the same as used for the \textbf{DataFile.column} method.
+
+\begin{verbatim}
+  >>>d.del_column('Temperature')
+  >>>d.del_column(1)
+\end{verbatim}
+
 \subsection{Saving Data}
+
+Only saving data in the \textit{TDI} format is supported.
+
+\begin{verbatim}
+  >>>d.save()
+  >>>d.save(filename)
+\end{verbatim}
+
+In the first case, the filename used tosave the data is determined from the filename attribute of the DataFile object. This will have been set when the filewas loaded from disc.
+
+\warning{If the filename attribute has not been set \eg if the DataFile object was created from scratch, then the \textbf{DataFile.save} method will fail. This will be changed to cause a dialog box to be raised.}
+
+In the second variant, the supplied filename is used and the filename attribute is changed to match this \ie \verb#d.filename# will always return the last filename used for a load or save operation.
 
 \subsection{Plotting Data}
 

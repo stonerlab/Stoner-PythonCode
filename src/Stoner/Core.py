@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.1 2011/01/08 20:30:02 cvs Exp $
+# $Id: Core.py,v 1.2 2011/01/12 22:56:33 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.2  2011/01/12 22:56:33  cvs
+# Update documentation, add support for slices in some of the DataFile methods
+#
 # Revision 1.1  2011/01/08 20:30:02  cvs
 # Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
 # Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
@@ -110,7 +113,15 @@ class DataFile(object): #Now a new style class so that we can use super()
 # Special Methods
 
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
-        if isinstance(name, int):
+        if isinstance(name, slice):
+            indices=name.indices(len(self))
+            name=range(*indices)
+            d=self.data[name[0], :]
+            d=numpy.atleast_2d(d)
+            for x in range(1, len(name)):
+                d=numpy.append(d, numpy.atleast_2d(self.data[x, :]), 0)
+            return d
+        elif isinstance(name, int):
             return self.data[name,  :]
         elif isinstance(name, str):
             return self.meta(name)
@@ -313,13 +324,16 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.typehint=d.typehint
         return self
         
-    def save(self, filename):
+    def save(self, filename=None):
         """DataFile.save(filename)
         
                 Saves a string representation of the current DataFile object into the file 'filename' """
+        if filename is None:
+            filename=self.filename
         f=open(filename, 'w')
         f.write(repr(self))
         f.close()
+        self.filename=filename
         return self
         
       
@@ -352,6 +366,10 @@ class DataFile(object): #Now a new style class so that we can use super()
                 if len(possible)==0:
                     raise KeyError('Unable to find any possible column matches')
                 col=self.column_headers.index(possible[0])
+        elif isinstance(col, slice):
+            indices=col.indices(numpy.shape(self.data)[1])
+            col=range(*indices)
+            col=self.find_col(col)
         elif isinstance(col, list):
             col=map(self.find_col, col)
         else:
@@ -360,6 +378,9 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def column(self, col):
         """Extracts a column of data by index or name"""
+        if isinstance(col, slice): # convert a slice into a list and then continue
+            indices=col.indices(numpy.shape(self.data)[1])
+            col=range(*indices)
         if isinstance(col, list):
             d=self.column(col[0])
             d=numpy.reshape(d, (len(d), 1))
@@ -436,19 +457,30 @@ class DataFile(object): #Now a new style class so that we can use super()
             rows=numpy.nonzero([x[0]==val for x in d])[0]
         return self.data[rows][:, targets]
         
-    def del_rows(self, col, val):
+    def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
         del_rows(Column, value)
         del_rows(Column,function) """
-        d=self.column(col)
-        if callable(val):
-            rows=numpy.nonzero([val(x) for x in d])[0]
-        elif isinstance(val, float):
-            rows=numpy.nonzero([x==val for x in d])[0]
-        self.data=numpy.delete(self.data, rows, 0)
+        if is_instance(col, slice) and val is None:
+            indices=col.indices(len(self))
+            col-=range(*indices)
+        if isinstance(col, list) and val is None:
+            col.sort(reverse=True)
+            for c in col:
+                self.del_rows(c)
+        elif is_instance(col,  int) and val is None:
+            self.data=numpy.delete(self.data, col, 0)
+        else:
+            col=self.find_col(col)
+            d=self.column(col)
+            if callable(val):
+                rows=numpy.nonzero([val(x[col], x) for x in self])[0]
+            elif isinstance(val, float):
+                rows=numpy.nonzero([x==val for x in d])[0]
+            self.data=numpy.delete(self.data, rows, 0)
         return self
     
-    def add_column(self,column_data,column_header='', index=None):
+    def add_column(self,column_data,column_header='', index=None, func_args=None):
         """Appends a column of data or inserts a column to a datafile"""
         if index is None:
                 index=len(self.column_headers)
@@ -463,7 +495,10 @@ class DataFile(object): #Now a new style class so that we can use super()
             column_data=numpy.atleast_2d(column_data)
             self.data=numpy.insert(self.data,index, column_data,1)
         elif callable(column_data):
-            new_data=map(column_data, self)
+            if is_instance(func_args, dict):
+                new_data=[new_data(x, **func_args) for x in self]
+            else:
+                new_data=[new_data(x) for x in self]
             new_data=numpy.array(new_data)
             numpy_data=numpy.atleast_2d(new_data)
             self.data=numpy.insert(self.data,index, numpy_data,1)
