@@ -2,9 +2,14 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.2 2011/01/12 22:56:33 cvs Exp $
+# $Id: Core.py,v 1.3 2011/01/13 22:30:56 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.3  2011/01/13 22:30:56  cvs
+# Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
+# Extra comments in the ini file
+# Give DataFile some file dialog boxes
+#
 # Revision 1.2  2011/01/12 22:56:33  cvs
 # Update documentation, add support for slices in some of the DataFile methods
 #
@@ -80,7 +85,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         self.data = numpy.array([])
         self.metadata = dict()
         self.typehint = dict()
-        self.filename = ''
+        self.filename = None
         self.column_headers=list()
         # Now check for arguments t the constructor
         if len(args)==1:
@@ -221,6 +226,25 @@ class DataFile(object): #Now a new style class so that we can use super()
 
 #   PRIVATE FUNCTIONS
 
+    def __file_dialog(self, mode):
+        import wx
+        if mode=="r":
+            mode=wx.OPEN
+        elif mode=="w":
+            mode=wx.SAVE
+        if self.filename is not None:
+            filename=os.path.basename(self.filename)
+            dirname=os.path.dirname(self.filename)
+        else:
+            filename=""
+            dirname=""
+        dlg=wx.FileDialog(None, "Select Datafile", dirname, filename, "*.*", wx.OPEN)
+        if dlg.ShowModal()==wx.ID_OK:
+            self.filename=str(os.path.join(dlg.Directory, dlg.Filename))
+            return self.filename
+        else:
+            return None        
+
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
         
@@ -290,7 +314,7 @@ class DataFile(object): #Now a new style class so that we can use super()
 
 #   PUBLIC METHODS
 
-    def load(self,filename,fileType="TDI",*args):
+    def load(self,filename=None,fileType="TDI",*args):
         """DataFile.load(filename,type,*args)
         
             Loads data from file filename using routines dependent on the fileType parameter
@@ -305,7 +329,10 @@ class DataFile(object): #Now a new style class so that we can use super()
             TODO: Implement a filename extension check to more intelligently guess the datafile type
             """
             
-        self.filename = filename;
+        if filename is None:
+            filename=self.__file_dialog('r')
+        else:
+            self.filename = filename;
         
         if fileType=="TDI":
             self.__parse_data()
@@ -330,6 +357,8 @@ class DataFile(object): #Now a new style class so that we can use super()
                 Saves a string representation of the current DataFile object into the file 'filename' """
         if filename is None:
             filename=self.filename
+        if filename is None: # now go and ask for one
+            self.__file_dialog('w')
         f=open(filename, 'w')
         f.write(repr(self))
         f.close()
@@ -480,30 +509,40 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.data=numpy.delete(self.data, rows, 0)
         return self
     
-    def add_column(self,column_data,column_header='', index=None, func_args=None):
+    def add_column(self,column_data,column_header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile"""
         if index is None:
-                index=len(self.column_headers)
+            index=len(self.column_headers)
+            replace=False
+            if column_header is None:
+                column_header="Col"+str(index)
         else:
             index=self.find_col(index)
-        self.column_headers.insert(index, column_header)
+            if column_header is None:
+                column_header=self.column_headers[index]
+        if not replace:
+            self.column_headers.insert(index, column_header)
+        else:
+            self.column_headers[index]=column_header
         
         # The following 2 lines make the array we are adding a
         # [1, x] array, i.e. a column by first making it 2d and
         # then transposing it.
         if isinstance(column_data, numpy.ndarray):
-            column_data=numpy.atleast_2d(column_data)
-            self.data=numpy.insert(self.data,index, column_data,1)
+            numpy_data=numpy.atleast_2d(column_data)
         elif callable(column_data):
-            if is_instance(func_args, dict):
-                new_data=[new_data(x, **func_args) for x in self]
+            if isinstance(func_args, dict):
+                new_data=[column_data(x, **func_args) for x in self]
             else:
-                new_data=[new_data(x) for x in self]
+                new_data=[column_data(x) for x in self]
             new_data=numpy.array(new_data)
             numpy_data=numpy.atleast_2d(new_data)
-            self.data=numpy.insert(self.data,index, numpy_data,1)
         else:
             return NotImplemented
+        if replace:
+            self.data[:, index]=numpy_data[0, :]
+        else:
+            self.data=numpy.insert(self.data,index, numpy_data,1)
         return self
             
     def del_column(self, col):

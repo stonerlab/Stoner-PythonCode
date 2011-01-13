@@ -1,6 +1,11 @@
 #
-# $Id: PCAR.py,v 1.7 2011/01/11 21:52:26 cvs Exp $
+# $Id: PCAR.py,v 1.8 2011/01/13 22:30:56 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.8  2011/01/13 22:30:56  cvs
+#Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
+#Extra comments in the ini file
+#Give DataFile some file dialog boxes
+#
 #Revision 1.7  2011/01/11 21:52:26  cvs
 #Change the script to make some of the more dangerous data manipulations into options to be turned on in the ini file
 #Commented the ini file. - GB
@@ -75,15 +80,10 @@ header=config.getint("data", "header_line")
 start=config.getint("data", "start_line")
 delim=config.get("data", "separator")
 
-dlg=wx.FileDialog(None, "Select Datafile", "", "", "*.*", wx.OPEN)
-if dlg.ShowModal()==wx.ID_OK:
-    filename=os.path.join(dlg.Directory, dlg.Filename)
-else:
-    raise RuntimeError("Must specify a filename !")
-        
+       
 #import data
 d=Stoner.AnalyseFile()
-d.load(str(filename), format, header, start, delim, delim)
+d.load(None, format, header, start, delim, delim)
 
 # Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
@@ -199,32 +199,62 @@ if show_plot:
     p.plot_xy(vcol,gcol, 'ro')
     time.sleep(2)
 
+
 # Initialise the parameter information with the dictionaries defined at top of file
 parinfo=[omega, delta, P, Z]
 
-if user_iterfunct==False:
-    # Here is the engine that does the work
-    m = d.mpfit(strijkers,vcol, gcol, parinfo, iterfunct=d.mpfit_iterfunct)
-    print "Finished !"
-else:
-    m = d.mpfit(strijkers,vcol, gcol, parinfo)
+#Build a list of parameter values to iterate over
+r=Stoner.DataFile()
+r.column_headers=[x["parname"] for x in parinfo]
+r.column_headers.append("chi^2")
 
-if (m.status <= 0): # error message ?
-    raise RuntimeError(m.errmsg)
+steps=["fit"]
+if config.has_option("options", "chi2_mapping") and config.getboolean("options", "chi2_mapping"):
+    for p in parinfo:
+            if p["fixed"]==True and p["step"]<>0:
+                t=steps
+                steps=[]
+                for x in numpy.arange(p["limits"][0], p["limits"][1], p["step"]):
+                    steps.extend([(p, x)])
+                    steps.extend(t)
+d.add_column(lambda x:1, 'Fit')
+for step in steps:
+    if isinstance(step, str) and step=="fit":
+        if user_iterfunct==False:
+            # Here is the engine that does the work
+            m = d.mpfit(strijkers,vcol, gcol, parinfo, iterfunct=d.mpfit_iterfunct)
+            print "Finished !"
+        else:
+            m = d.mpfit(strijkers,vcol, gcol, parinfo)
+        if (m.status <= 0): # error message ?
+            raise RuntimeError(m.errmsg)
+        else:
+            d.add_column(strijkers(d.column(vcol), m.params), index='Fit', replace=True)
+            if show_plot:
+                # And show the fit and the data in a nice plot
+                p=Stoner.PlotFile(d)
+            p.plot_xy(vcol, 'Fit')
+            
+            # Ok now we can print the answer
+            for i in range(len(parinfo)):
+                print parinfo[i]['parname']+"="+str(m.params[i])
+            
+            chi2=chisquare(d.column(gcol), d.column('Fit'))
+            print "Chi^2:"+str(chi2)
 
-d.add_column(strijkers(d.column(vcol), m.params), 'Fit')
+            row=m.params
+            row=numpy.append(row, chi2[0])
+            r=r+row            
+    elif isinstance(step, tuple):
+        (p, x)=step
+        p["value"]=x
 
-if show_plot:
-    # And show the fit and the data in a nice plot
-    p=Stoner.PlotFile(d)
-p.plot_xy(vcol, 'Fit')
+if len(steps)>1:
+    ch=[x['parname'] for x in parinfo]
+    ch.append('Chi^2')
+    r.column_headers=ch
+    r.save(None)
 
-# Ok now we can print the answer
-for i in range(len(parinfo)):
-    print parinfo[i]['parname']+"="+str(m.params[i])
-
-chi2=chisquare(d.column(gcol), d.column('Fit'))
-print "Chi^2:"+str(chi2)
     
 
 
