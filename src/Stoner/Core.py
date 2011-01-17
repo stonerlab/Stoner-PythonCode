@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.3 2011/01/13 22:30:56 cvs Exp $
+# $Id: Core.py,v 1.4 2011/01/17 10:12:08 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.4  2011/01/17 10:12:08  cvs
+# Added code for mac implementation of wx.FileDialog()
+#
 # Revision 1.3  2011/01/13 22:30:56  cvs
 # Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
 # Extra comments in the ini file
@@ -238,13 +241,17 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             filename=""
             dirname=""
-        dlg=wx.FileDialog(None, "Select Datafile", dirname, filename, "*.*", wx.OPEN)
-        if dlg.ShowModal()==wx.ID_OK:
-            self.filename=str(os.path.join(dlg.Directory, dlg.Filename))
-            return self.filename
-        else:
-            return None        
-
+        app = wx.PySimpleApp()  # needed for MAC implementation of wx.FileDialog 
+        dlg = wx.FileDialog(None,"Select Datafile",dirname, filename,"*.*",wx.OPEN)
+        try:
+            if dlg.ShowModal()==wx.ID_OK:
+                self.filename=str(os.path.join(dlg.Directory, dlg.Filename))
+                return self.filename
+            else:
+                return None        
+        finally:
+            dlg.Destroy()
+            app.Destroy()
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
         
