@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.4 2011/01/17 10:12:08 cvs Exp $
+# $Id: Core.py,v 1.5 2011/02/11 00:00:58 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.5  2011/02/11 00:00:58  cvs
+# Add a DataFile.unique method
+#
 # Revision 1.4  2011/01/17 10:12:08  cvs
 # Added code for mac implementation of wx.FileDialog()
 #
@@ -493,6 +496,10 @@ class DataFile(object): #Now a new style class so that we can use super()
             rows=numpy.nonzero([x[0]==val for x in d])[0]
         return self.data[rows][:, targets]
         
+    def unique(self, col, return_index=False, return_inverse=False):
+        """Return the unique values from the specified column - pass through for numpy.unique"""
+        return numpy.unique(self.column(col), return_index, return_inverse)
+    
     def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
         del_rows(Column, value)
