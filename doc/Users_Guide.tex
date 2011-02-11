@@ -166,7 +166,7 @@ The first example will return all the rows where the value of the \textit{Tenper
 
 The third and fourth examples above demonstrate the use of a function as the search value. This allows quite complex search criteria to be used. The function passed to the search routine should take two parameters -- a floating point number and a numpy array of floating point numbers and should return either \textit{ture} or \textit{False}. The function is evaluated for each row in the data file and is passed the value corresponding to the search column as the first parameter while the second parameter contains all of the values in the row to be returned. If the search function returns True, then the row is returned, otherwise it isn't.
 
-\subsubsection{Findout more about the data}
+\subsubsection{Find out more about the data}
 
 Another question you might want to ask is, what are all the unique
 values of data in a given column (or set of columns). The Python numpy
@@ -174,12 +174,13 @@ package has a function to do this and we have a direct pass through
 from the DataFile object for this:
 
 \begin{verbatim}
+  >>> d.unique('Temp')
   >>> d.unique(column,return_index=False, return_inverse=False)
 \end{verbatim}
 
 The two optional keywords cause the numpy routine to return the
 indices of the unique and all non-unique values in the array. The
-column is specified in the same way as the \textit{DataFile.column}
+column is specified in the same way as the \textbf{DataFile.column}
 method does.
 
 
@@ -257,11 +258,70 @@ Only saving data in the \textit{TDI} format is supported.
 
 In the first case, the filename used tosave the data is determined from the filename attribute of the DataFile object. This will have been set when the filewas loaded from disc.
 
-\warning{If the filename attribute has not been set \eg if the DataFile object was created from scratch, then the \textbf{DataFile.save} method will fail. This will be changed to cause a dialog box to be raised.}
+If the filename attribute has not been set \eg if the DataFile object was created from scratch, then the \textbf{DataFile.save} method will cause a dialog box to be raised so that the user can supply a filename.
 
 In the second variant, the supplied filename is used and the filename attribute is changed to match this \ie \verb#d.filename# will always return the last filename used for a load or save operation.
 
 \subsection{Plotting Data}
 
 \subsection{Curve Fitting}
-\end{document} 
+
+Curve fitting is handled by a sub-class of the DataFile object -- AnalyseFile
+
+\begin{verbatim}
+  >>> import Stoner.Analysis as Analysis
+  >>> a=Analysis.AnalyseFile('Data')
+  >>>  a2=Analysis.AnalyseFile()
+  >>> a2=d
+\end{verbatim}
+
+The first line imports the AnaylseFile class. Since the AnalyseFile is a child class of DataFile, everything you can do with a DataFile also works with an AnalyseFile object. The last two lines demonstrate creating a blank AnalyseFile and then copying all of the data, metadata and column headings from an existing dataFile object.
+
+\subsubsection{Simply polynomial Fits}
+\begin{verbatim}
+  >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True)
+\end{verbatim}
+
+\subsubsection{Simple function fitting}
+\begin{verbatim}
+  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True )
+\end{verbatim}
+
+\subsubsection{Fitting with limits}
+\begin{verbatim}
+  >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, 
+               bounds=lambda x, y: True, **mpfit_kargs )
+\end{verbatim}
+
+\subsection{More AnalyseFile Functions}
+
+\subsubsection{Basic Data Inspection}
+\begin{verbatim}
+  >>> a.max(column)
+  >>> a.min(column)
+\end{verbatim}
+
+\subsubsection{Thresholding and Interpolating Data}
+\begin{verbatim}
+  >>> a.threshold(col, threshold, rising=True, falling=False)
+  >>> a.interpolate(newX,kind='linear' )
+\end{verbatim}
+
+\section{Cookbook}
+
+This section gives some short examples to give an idea of things that can be done with the Stoner python module in just a few lines.
+
+\subsection{Extract X-Y(Z) from X-Y-Z data}
+
+In a number of measurement systems the data is returned as 3 parameters X, Y and Z and one wishes to extract X-Y as a function of constant Z. For example, $I-V$ sweeps as a function of gate voltage $V_G$. Assuming we have a data file with columns \textit{Current}, \textit{Voltage},\textit{Gate}:
+
+\begin{verbatim}
+  >>> d=DataFile('data.txt')
+  >>> t=d
+  >>> for gate in d.unique('Gate'):
+  >>>     t.data=d.search('Gate',gate)
+  >>>     t.save('Data Gate='+str(gate)+'.txt')
+\end{verbatim}
+
+The first line opens the data file containing the $I-V(V_G)$ data. The second creates a temporary copy of the DataFile object - ensuring that we get a copy of all metadata and column headers. The \textbf{for} loop iterates over all unique values of the data in the gate column and then inside the for loop, searches for the corresponding $I-V$ data, sets it as the data of the temporary DataFile and then saves it.
+\end{document}
