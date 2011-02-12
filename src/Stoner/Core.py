@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.5 2011/02/11 00:00:58 cvs Exp $
+# $Id: Core.py,v 1.6 2011/02/12 22:12:43 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.6  2011/02/12 22:12:43  cvs
+# Added some doxygen compatible doc strings
+#
 # Revision 1.5  2011/02/11 00:00:58  cvs
 # Add a DataFile.unique method
 #
@@ -62,13 +65,11 @@ class DataFolder(object):
 #   PUBLIC METHODS
      
 class DataFile(object): #Now a new style class so that we can use super()
-    """Stoner.DataFile represents a standard Stonerlab data file as an object
+    """@b Stoner.Core.DataFile is the base class object that represents a matrix of data, associated metadata and column headers.
     
-    Provides methods to read, and manipulate data
-    
-    Matt Newman, Chris Allen, Gavin Burnell
-    
-    
+    @b DataFile provides the mthods to load, save, add and delete data, index and slice data, manipulate metadata and column headings.
+   
+    Authors: Matt Newman, Chris Allen and Gavin Burnell    
     """
 #   CONSTANTS
 
@@ -86,7 +87,21 @@ class DataFile(object): #Now a new style class so that we can use super()
     def __init__(self, *args):
         """Constructor method
         
-        3 forms are recognised: DataFile('filename',<optional filetype>,<args>), DataFile(array), DataFile(dictionary), DataFile(array,dictionary), DataFile(DataFile)
+        various forms are recognised: 
+        @li DataFile('filename',<optional filetype>,<args>)
+        Creates the new DataFile object and then executes the \b DataFile.load method to load data from the given \a filename
+        @li DataFile(array)
+        Creates a new DataFile object and assigns the \a array to the \b DataFile.data attribute.
+        @li DataFile(dictionary)
+        Creates the new DataFile object, but initialises the metadata with \a dictionary
+        @li  DataFile(array,dictionary), 
+        Creates the new DataFile object and does the combination of the previous two forms.
+        @li DataFile(DataFile)
+        Creates the new DataFile object and initialises all data from the existing \DataFile instance. This on the face of it does the same as the assignment operator, 
+        but is more useful when one or other of the DataFile objects is an instance of a sub-class of DataFile
+        
+        @param *args Variable number of arguments that match one of the definitions above
+        @return A new instance of the DataFile class.
         """
         self.data = numpy.array([])
         self.metadata = dict()
@@ -124,6 +139,14 @@ class DataFile(object): #Now a new style class so that we can use super()
 # Special Methods
 
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
+        """Called for \b DataFile[x] to return either a row or iterm of metadata
+        
+        @param name The name, slice or number of the part of the \b DataFile to be returned.
+        @return an item of metadata or row(s) of data. \li If \a name is an integer then the corresponding single row will be rturned
+        \li if \a name is a slice, then the corresponding rows of data will be returned. \li If \a name is a string then the metadata dictionary item with
+        the correspondoing key will be returned.
+        
+        """
         if isinstance(name, slice):
             indices=name.indices(len(self))
             name=range(*indices)
