@@ -2,9 +2,15 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.2 2011/01/10 23:11:21 cvs Exp $
+# $Id: Plot.py,v 1.3 2011/02/13 15:51:08 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.3  2011/02/13 15:51:08  cvs
+# Merge in ma gui branch back to HEAD
+#
+# Revision 1.2.2.1  2011/01/19 16:43:50  cvs
+# Added OSX specific backend for matplotlib graphics
+#
 # Revision 1.2  2011/01/10 23:11:21  cvs
 # Switch to using GLC's version of the mpit module
 # Made PlotFile.plot_xy take keyword arguments and return the figure
@@ -21,6 +27,11 @@
 from .Core import DataFile
 import scipy
 import numpy
+import matplotlib
+import os
+if os.name=="posix":
+    matplotlib.use("MacOSx")
+from matplotlib import pyplot
 
 
 class PlotFile(DataFile):
@@ -42,8 +53,8 @@ class PlotFile(DataFile):
         if format==None:
             figure=pylab.plot(x,y, **kwords)
         else:
-            figure=pylab.plot(x,y, format, **kwords)
-        pylab.draw()
+            figure=pylab.plot(x,y, format, **kwords)        
+        pyplot.draw()
         pylab.xlabel(str(self.column_headers[column_x]))
         if isinstance(column_y, list):
             ylabel=column_y

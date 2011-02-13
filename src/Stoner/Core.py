@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.6 2011/02/12 22:12:43 cvs Exp $
+# $Id: Core.py,v 1.7 2011/02/13 15:51:08 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.7  2011/02/13 15:51:08  cvs
+# Merge in ma gui branch back to HEAD
+#
 # Revision 1.6  2011/02/12 22:12:43  cvs
 # Added some doxygen compatible doc strings
 #
@@ -52,7 +55,7 @@ class DataFolder(object):
         self.data = [];
         self.metadata = dict();
         self.foldername = foldername;
-        self.__parseFolder();
+        self.__parseFolder(); 
         
     #   PRIVATE FUNCTIONS
     
@@ -256,28 +259,29 @@ class DataFile(object): #Now a new style class so that we can use super()
 #   PRIVATE FUNCTIONS
 
     def __file_dialog(self, mode):
-        import wx
+        from enthought.pyface.api import FileDialog, OK
+        # Wildcard pattern to be used in file dialogs.
+        file_wildcard = "Text file (*.txt)|*.txt|Data file (*.dat)|*.dat|All files|*"
+        
         if mode=="r":
-            mode=wx.OPEN
+            mode="open"
         elif mode=="w":
-            mode=wx.SAVE
+            mode="save"
+            
         if self.filename is not None:
             filename=os.path.basename(self.filename)
             dirname=os.path.dirname(self.filename)
         else:
             filename=""
             dirname=""
-        app = wx.PySimpleApp()  # needed for MAC implementation of wx.FileDialog 
-        dlg = wx.FileDialog(None,"Select Datafile",dirname, filename,"*.*",wx.OPEN)
-        try:
-            if dlg.ShowModal()==wx.ID_OK:
-                self.filename=str(os.path.join(dlg.Directory, dlg.Filename))
-                return self.filename
-            else:
-                return None        
-        finally:
-            dlg.Destroy()
-            app.Destroy()
+        dlg = FileDialog(action=mode, wildcard=file_wildcard)
+        dlg.open()
+        if dlg.return_code==OK:
+            self.filename=dlg.path
+            return self.filename
+        else:
+            return None        
+            
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
         
@@ -382,6 +386,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.data=d.data
             self.metadata=d.metadata
             self.typehint=d.typehint
+            
         return self
         
     def save(self, filename=None):
