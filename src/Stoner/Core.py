@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.7 2011/02/13 15:51:08 cvs Exp $
+# $Id: Core.py,v 1.8 2011/02/14 17:00:03 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.8  2011/02/14 17:00:03  cvs
+# Updated documentation. More doxygen comments
+#
 # Revision 1.7  2011/02/13 15:51:08  cvs
 # Merge in ma gui branch back to HEAD
 #
@@ -165,7 +168,11 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             raise TypeError("Key must be either numeric of string")
 
-    def __setitem__(self, name, value): # writing the metadata means doing something sensible with the type hints
+    def __setitem__(self, name, value):
+        """Called for \DataFile[\em name ] = \em value to write mewtadata entries.
+            @param name The string key used to access the metadata
+            @param value The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
+            @return Nothing."""
         if isinstance(value,bool):
             self.typehint[name]="Boolean"
         elif isinstance(value, int):
@@ -176,7 +183,15 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.typehint[name]="String"
         self.metadata[name]=value
         
-    def __add__(self, other): #Overload the + operator to add data file rows
+    def __add__(self, other):
+        """ Implements a + operator to concatenate rows of data
+                @param other Either a numpy array object or an instance of a \b DataFile object.
+                @return A Datafile object with the rows of \a other appended to the rows of the current object.
+                
+                If \a other is a 1D numopy array with the same number of lements as their are columns in \a self.data then the numpy array is treated as a new row of data
+                If \a ither is a 2D numpy array then it is appended if it has the same number of columns and \a self.data.
+                
+"""
         if isinstance(other, numpy.ndarray):
             if len(self.data)==0:
                 t=numpy.atleast_2d(other)

@@ -183,6 +183,14 @@ indices of the unique and all non-unique values in the array. The
 column is specified in the same way as the \textbf{DataFile.column}
 method does.
 
+Many of the function in the Stoner module index columns by searching the column headings. If one wishes to find the numeric index of a column then the \textbf{DataFile.find\_col} method can be used:
+
+\begin{verbatim}
+  >>> index=d.find_col('Temp')
+\end{verbatim}
+
+This is the function that is used internally by \textbf{DataFile.column}, \textbf{DataFile.search} \etc.
+
 
 \subsection{Modifying Data}
 
@@ -289,7 +297,7 @@ The first line imports the AnaylseFile class. Since the AnalyseFile is a child c
 
 \subsubsection{Fitting with limits}
 \begin{verbatim}
-  >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, 
+  >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,
                bounds=lambda x, y: True, **mpfit_kargs )
 \end{verbatim}
 
@@ -324,4 +332,20 @@ In a number of measurement systems the data is returned as 3 parameters X, Y and
 \end{verbatim}
 
 The first line opens the data file containing the $I-V(V_G)$ data. The second creates a temporary copy of the DataFile object - ensuring that we get a copy of all metadata and column headers. The \textbf{for} loop iterates over all unique values of the data in the gate column and then inside the for loop, searches for the corresponding $I-V$ data, sets it as the data of the temporary DataFile and then saves it.
+
+\subsection{Mapping X-Y-Z data to Z(X,Y) data}
+
+In a similar fashion to the previous section, where data has been recorded with fixed values of $X$ and $Y$ \eg $I$ measured for fixed $V$ and $V_G$, it can be useful to map the data to a matrix.
+
+\begin{verbatim}
+  >>> d=DataFile('Data,.txt')
+  >>> t=d
+  >>> for gate in d.unique('Gate'):
+  >>>    t=t+d.search('Gate',gate)[:,d.find_col('Current')]
+  >>> t.column_headers=['Bias='+str(x) for x in d.unique('Voltage')]
+  >>> t.add_column(d.unique('Gate'),'Gate Voltage',0)
+\end{verbatim}
+
+The start of the script follows the previous section, however this time in the for loop the addition operator is used to add a single row to the temporary DataFile \textit{t}. In this case we are using the utility method \textbf{DataFile.find\_col} to find the index of the column with the current data. After the for loop we set the column headers in \textit{t} and then insert an additional column at the start with the gate voltage values.
+
 \end{document}
