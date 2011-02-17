@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.8 2011/02/14 17:00:03 cvs Exp $
+# $Id: Core.py,v 1.9 2011/02/17 23:36:51 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.9  2011/02/17 23:36:51  cvs
+# Updated doxygen comment strings
+#
 # Revision 1.8  2011/02/14 17:00:03  cvs
 # Updated documentation. More doxygen comments
 #
@@ -225,7 +228,18 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             return NotImplemented
         
-    def __and__(self, other): #Overload the & operator to add datafile columns
+    def __and__(self, other):
+        """Implements the & operator to concatenate columns of data in a \b Stoner.DataFile object.
+       
+        @param other Either a numpy array or \bStoner.DataFile object
+        @return A \b Stoner.DataFile object with the columns of other concatenated as new columns at the end of the self object.
+       
+        Whether \a other is a numopy array of \b Stoner.DataFile, it must have the same or fewer rows than the self object. 
+        The size of \a other is increased with zeros for the extra rows. 
+        If \a other is a 1D numpy array it is treated as a column vector.
+        The new columns are given blank column headers, but the length of the \b Stoner.DataFile.column_headers is 
+        increased to match the actual number of columns.
+        """
         if isinstance(other, numpy.ndarray):
             if len(other.shape)!=2: # 1D array, make it 2D column
                 other=numpy.atleast_2d(other)
@@ -253,7 +267,9 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
              return NotImplemented
         
-    def __repr__(self): # What happens when you print a DataFile object. Also used to save the data
+    def __repr__(self): 
+        """Outputs the \b Stoner.DataFile object in TDI format. This allows one to print any \b Stoner.DataFile to a stream based object andgenerate a reasonable textual representation of the data.shape
+       @return \a self in a textual format. """
         outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
         m=len(self.metadata)
         (r, c)=numpy.shape(self.data)
