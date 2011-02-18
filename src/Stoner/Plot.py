@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.3 2011/02/13 15:51:08 cvs Exp $
+# $Id: Plot.py,v 1.4 2011/02/18 22:37:13 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.4  2011/02/18 22:37:13  cvs
+# Make PlotFile return the matplotlib figure when plotting and allow it to handle multiple figures. Add methofs to force a redraw and also to access the Axes object. -Gavin
+#
 # Revision 1.3  2011/02/13 15:51:08  cvs
 # Merge in ma gui branch back to HEAD
 #
@@ -29,18 +32,21 @@ import scipy
 import numpy
 import matplotlib
 import os
-if os.name=="posix":
+if os.name=="posix" and os.pathsep==":":
     matplotlib.use("MacOSx")
 from matplotlib import pyplot
 
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
+    
+    __figure=None
+    
     def __init__(self, *args, **kargs): #Do the import of pylab here to speed module load
         global pylab
         import pylab
         super(PlotFile, self).__init__(*args, **kargs)
-    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', **kwords):
+    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, **kwords):
         """plot_xy(x column, y column/s, title,save filename, show plot=True)
         
                 Makes and X-Y plot of the specified data."""
@@ -48,10 +54,18 @@ class PlotFile(DataFile):
         column_y=self.find_col(column_y)
         x=self.column(column_x)
         y=self.column(column_y)
+        if isinstance(figure, int):
+            figure=pylab.figure(figure)
+        elif isinstance(figure, matplotlib.figure.Figure):
+            pylab.figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=pylab.figure()
         if show_plot == True:
             pylab.ion()
         if format==None:
-            figure=pylab.plot(x,y, **kwords)
+            pylab.plot(x,y, **kwords)
         else:
             figure=pylab.plot(x,y, format, **kwords)        
         pyplot.draw()
@@ -69,5 +83,30 @@ class PlotFile(DataFile):
         pylab.grid(True)
         if save_filename != '':
             pylab.savefig(str(save_filename))
-     
+        self.__figure=figure
+        return figure
+    
+    def draw(self):
+        """Pass through to pylab to force figure redraw"""
+        pylab.figure(self.__figure.number)
+        pylab.draw()
+        
+    def axes(self):
+        """Get the axes object of the current figure"""
+        if isinstance(self.__figure, matplotlib.figure.Figure):
+            return self.__figure.axes
+        else:
+            return None
+        
+    def figure(figure):
+        """Set the figure used by \b Stoner.PlotFile
+         @param figure A matplotlib figure or figure number
+         @return The current \b Stoner.PlotFile instance"""
+        if isinstance(figure, int):
+            figure=pylab.figure(figure)
+        elif isinstance(figure, matplotlib.figure.Figure):
+            pylab.figure(figure.number)
+        self.__figure=figure
+        return self
+         
  
