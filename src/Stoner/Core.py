@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.9 2011/02/17 23:36:51 cvs Exp $
+# $Id: Core.py,v 1.10 2011/02/23 21:42:16 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.10  2011/02/23 21:42:16  cvs
+# Experimental code for displaying grid included
+#
 # Revision 1.9  2011/02/17 23:36:51  cvs
 # Updated doxygen comment strings
 #
@@ -50,6 +53,43 @@ import numpy
 import math
 import copy
 import linecache
+import wx
+
+class MyForm(wx.Frame):
+    """Provides an editable grid for the DataFile class to use display data"""
+ 
+    #----------------------------------------------------------------------
+    def __init__(self, dfile, **kwargs):
+        """Constructor
+        @param dfile An instance of the Stoner.DataFile object
+        @ param **kwargs Keyword arguments - recognised values include"""
+        import wx.grid as gridlib
+        if not isinstance(dfile, DataFile):
+            raise TypeError('First argument must be a Stoner.DataFile')
+        cols=max(len(dfile.column_headers), 4)
+        rows=max(len(dfile), 20)
+        wx.Frame.__init__(self, parent=None, title="Untitled")
+        self.Bind(wx.EVT_SIZE, self._OnSize)           
+        self.panel = wx.Panel(self)
+ 
+        myGrid = gridlib.Grid(self.panel)
+        myGrid.CreateGrid(rows, cols)
+ 
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(myGrid, 1, wx.EXPAND)
+        self.panel.SetSizer(self.sizer)
+          
+        for i in range(len(dfile.column_headers)):
+            myGrid.SetColLabelValue(i, dfile.column_headers[i])
+            for j in range(len(dfile)):
+                myGrid.SetCellValue(j, i, str(dfile.data[j, i]))
+        
+    def _OnSize(self, evt):
+        evt.Skip()
+        
+        
+        
+
 
 class DataFolder(object):
     
@@ -649,3 +689,10 @@ class DataFile(object): #Now a new style class so that we can use super()
         while i< self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i+=1
+            
+    def edit(self):
+        """Produce an editor window with a grid"""
+        app = wx.PySimpleApp()
+        frame = MyForm(self).Show()
+        app.MainLoop()
+
