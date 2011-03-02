@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.10 2011/02/23 21:42:16 cvs Exp $
+# $Id: Core.py,v 1.11 2011/03/02 13:16:52 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.11  2011/03/02 13:16:52  cvs
+# Fix buglet in DataFile.search
+#
 # Revision 1.10  2011/02/23 21:42:16  cvs
 # Experimental code for displaying grid included
 #
@@ -583,7 +586,11 @@ class DataFile(object): #Now a new style class so that we can use super()
             val=args[1]
         elif len(args)==3:
             col=args[0]
-            targets=map(self.find_col, args[2])
+            if not isinstance(args[2],list):
+                c=[args[2]]
+            else
+                c=args[2]
+            targets=map(self.find_col, c)
             val=args[1]        
         if len(targets)==0:
             targets=range(self.data.shape[1])
