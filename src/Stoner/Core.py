@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.11 2011/03/02 13:16:52 cvs Exp $
+# $Id: Core.py,v 1.12 2011/03/02 14:56:20 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.12  2011/03/02 14:56:20  cvs
+# Colon missing from else command in search function (Line 591)
+#
 # Revision 1.11  2011/03/02 13:16:52  cvs
 # Fix buglet in DataFile.search
 #
@@ -588,7 +591,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             col=args[0]
             if not isinstance(args[2],list):
                 c=[args[2]]
-            else
+            else:
                 c=args[2]
             targets=map(self.find_col, c)
             val=args[1]        
