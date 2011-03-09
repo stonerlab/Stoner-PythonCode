@@ -136,6 +136,20 @@ In the first case, all of the keys will be returned in a list. In the second, on
 
 \subsubsection{Selecting Individual rows and columns of data}
 
+Many of the function in the Stoner module index columns by searching the column headings. If one wishes to find the numeric index of a column then the \textbf{DataFile.find\_col} method can be used:
+
+\begin{verbatim}
+  >>> index=d.find_col(1)
+  >>> index=d.find_col('Temperature')
+  >>> index=d.find_col('Temp.*')
+  >>> index=d.find_col(1:10:2)
+  >>> index=d.find_col(['Temperature',2,'Resistance'])
+\end{verbatim}
+
+ \textbf{DataFile.find\_col} takes a number of different forms. If the argument is an integer then it returns (trivially) the same integer, a string argument is first checked to see if it exactly matches one of the column headers in which case the number of the matching column heading is returned. If no exact match is found then a regular expression search is carried out on the column headings. In both cases, only the first match is returned. The final two examples given above both return a list of indices, firstly using a slice construct - in this case the result is trivially the same as the slice itself, and in the last example by passing a list of column headers to look for.
+
+This is the function that is used internally by \textbf{DataFile.column}, \textbf{DataFile.search} \etc and for this reason the trivial integer and slice forms are implemented to allow these other functions to work with multiple columns.
+
 Sometimes you may want to iterate over all of the rows or columns in a data set. This can be done quite easily:
 \begin{verbatim}
   >>>for row in d.rows():
@@ -164,7 +178,7 @@ The general form is \\\verb:DataFile.search(<search column>,<search term>[,<list
 
 The first example will return all the rows where the value of the \textit{Tenperature} column is 4.2. The second example is the same, but only returns the values from the \textit{Temperature}, and \textit{Resistance} columns. The rules for selecting the columns are the same as for the DataFile.column method above -- strings are matched against column headers and integers select column by number.
 
-The third and fourth examples above demonstrate the use of a function as the search value. This allows quite complex search criteria to be used. The function passed to the search routine should take two parameters -- a floating point number and a numpy array of floating point numbers and should return either \textit{ture} or \textit{False}. The function is evaluated for each row in the data file and is passed the value corresponding to the search column as the first parameter while the second parameter contains all of the values in the row to be returned. If the search function returns True, then the row is returned, otherwise it isn't.
+The third and fourth examples above demonstrate the use of a function as the search value. This allows quite complex search criteria to be used. The function passed to the search routine should take two parameters -- a floating point number and a numpy array of floating point numbers and should return either \textit{ture} or \textit{False}. The function is evaluated for each row in the data file and is passed the value corresponding to the search column as the first parameter while the second parameter contains a list of all of the values in the row to be returned. If the search function returns True, then the row is returned, otherwise it isn't. In thr last example, the final parameter can either be a list of columns or a single column. The rules for indexing columns are the same as used for the \textbf{DataFile.find\_col} method.
 
 \subsubsection{Find out more about the data}
 
@@ -182,15 +196,6 @@ The two optional keywords cause the numpy routine to return the
 indices of the unique and all non-unique values in the array. The
 column is specified in the same way as the \textbf{DataFile.column}
 method does.
-
-Many of the function in the Stoner module index columns by searching the column headings. If one wishes to find the numeric index of a column then the \textbf{DataFile.find\_col} method can be used:
-
-\begin{verbatim}
-  >>> index=d.find_col('Temp')
-\end{verbatim}
-
-This is the function that is used internally by \textbf{DataFile.column}, \textbf{DataFile.search} \etc.
-
 
 \subsection{Modifying Data}
 
@@ -286,14 +291,27 @@ Curve fitting is handled by a sub-class of the DataFile object -- AnalyseFile
 The first line imports the AnaylseFile class. Since the AnalyseFile is a child class of DataFile, everything you can do with a DataFile also works with an AnalyseFile object. The last two lines demonstrate creating a blank AnalyseFile and then copying all of the data, metadata and column headings from an existing dataFile object.
 
 \subsubsection{Simply polynomial Fits}
+
+Simple least squares fitting of polynomial functions is handled by the \textbf{AnalyseFile.polyfit} method:
+
 \begin{verbatim}
   >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True)
 \end{verbatim}
 
+This is a simple pass through to the numpy routine of the same name. The x and y columns are specified in the first two arguments using the usual index rules for the Stoner package. The routine will fit multiple columns if \textit{column\_y} is a list or slice. The polynomial\_order parameter should be a simple integer greater or equal to 1 to define the degree of polynomial to fit. The bounds function follows the same rules as the bounds function in \textbf{DataFile.search} to restrict the fitting to a limited range of rows. The mthod returns a list of co-efficients with the highest power first. If \textit{column\_y} was a list, then a 2D array of co-efficients is returned. 
+
 \subsubsection{Simple function fitting}
+
+For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit} method can be employed. Again, this is a pass through to the numpy routine of the same name.
+
 \begin{verbatim}
-  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True )
+  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None, 
+                                bounds=lambda x, y: True )
 \end{verbatim}
+
+The first parameter is the fitting function. This should have prototype \\\verb:y=func(x,p[0],p[1],p[2]...): where p is a list of fitting parameters. The \textit{p0} parameter contains the initial guesses at the fitting parameters, the default value is 1. \textit{xcol} and \textit{ycol} are the x and y columns to fit. This method cannot handle multiple y columns. \textit{sigma}, if present, provides the weightings for each datapoint and so should also be an array of the same length as the x and y data. Fianlly, the bounds function can be used to restrict the fitting to only a subset of the rows of data.
+
+\textbf{AnalyseFile.curve\_fit} returns a list of two arrays \verb:[popt,pcov]: where \textit{popt} is an array of the optimal fitting parameters and \textit{pcov} is a 2D array of the co-variances between the parameters.
 
 \subsubsection{Fitting with limits}
 \begin{verbatim}
@@ -312,8 +330,15 @@ The first line imports the AnaylseFile class. Since the AnalyseFile is a child c
 \subsubsection{Thresholding and Interpolating Data}
 \begin{verbatim}
   >>> a.threshold(col, threshold, rising=True, falling=False)
+\end{verbatim}
+
+\begin{verbatim}
   >>> a.interpolate(newX,kind='linear' )
 \end{verbatim}
+
+\subsubsection{Smoothing and Differentiating Data}
+
+\subsubsection{Peak Finding}
 
 \section{Cookbook}
 
