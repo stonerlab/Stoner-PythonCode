@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.3 2011/01/11 18:55:57 cvs Exp $
+# $Id: Analysis.py,v 1.4 2011/03/09 11:02:38 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.4  2011/03/09 11:02:38  cvs
+# Fix bug in polyfit
+#
 # Revision 1.3  2011/01/11 18:55:57  cvs
 # Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
 #
@@ -131,8 +134,8 @@ class AnalyseFile(DataFile):
                 x_column and y_column can be integers or strings that match the column headings
                 bounds function should be a python function that takes a single paramter that represents an x value
                 and returns true if the datapoint is to be retained and false if it isn't."""
-        working=self.search(column_x, bounds, column_y)
-        return numpy.polyfit(working[0],working[1],polynomial_order)
+        working=self.search(column_x, bounds)
+        return numpy.polyfit(working[self.find_col(column_x)],working[self.find_col(column_y)],polynomial_order)
         
     def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True ):
         """General curve fitting function passed through from numpy
