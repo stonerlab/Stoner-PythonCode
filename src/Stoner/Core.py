@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.12 2011/03/02 14:56:20 cvs Exp $
+# $Id: Core.py,v 1.13 2011/04/22 14:44:04 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.13  2011/04/22 14:44:04  cvs
+# Add code to return data as a structured record and to to provide a DataFile.sort() method
+#
 # Revision 1.12  2011/03/02 14:56:20  cvs
 # Colon missing from else command in search function (Line 591)
 #
@@ -193,6 +196,17 @@ class DataFile(object): #Now a new style class so that we can use super()
                 
 # Special Methods
 
+    def __getattr__(self, name):
+        """
+        Called for \bDataFile.x to handle some special pseudo attributes
+        
+        @param name The name of the attribute to be returned. These include: records
+        @return For Records, returns the data as an array of structures
+        """
+        if name=="records":
+            dtype=[(x, numpy.float64) for x in self.column_headers]
+            return self.data.view(dtype=dtype).reshape(len(self))
+
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
         """Called for \b DataFile[x] to return either a row or iterm of metadata
         
@@ -214,6 +228,17 @@ class DataFile(object): #Now a new style class so that we can use super()
             return self.data[name,  :]
         elif isinstance(name, str):
             return self.meta(name)
+        elif isinstance(name, tuple) and len(name)==2:
+            x, y=name
+            if isinstance(x, str):
+                return self[x][y]
+            else:
+                d=numpy.atleast_2d(self[x])
+                y=self.find_col(y)
+                r=d[:, y]
+                if len(r)==1:
+                    r=r[0]
+                return r
         else:
             raise TypeError("Key must be either numeric of string")
 
@@ -500,6 +525,8 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def find_col(self, col):
         if isinstance(col, int): #col is an int so pass on
+            if col<0 or col>=len(self.column_headers):
+                raise IndexError('Attempting to index a non-existant column')
             pass
         elif isinstance(col, str): # Ok we have a string
             if col in self.column_headers: # and it is an exact string match
@@ -691,7 +718,21 @@ class DataFile(object): #Now a new style class so that we can use super()
         for col in range(c):
             yield self.data[col]
 
-
+    def sort(self, order):
+        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods
+        @param order Either a scalar integer or string or a list of integer or strings that represent the sort order
+        @return A copy of the sorted object
+        """
+        if isinstance(order, list) or isinstance(order, tuple):
+            order=[self.column_headers[self.find_col(x)] for x in order]
+        else:
+            order=[self.column_headers[self.find_col(order)]]
+        d=numpy.sort(self.records, order=order)
+        print d
+        self.data=d.view(dtype='f8').reshape(len(self), len(self.column_headers))
+        return self
+    
+    
     def csvArray(self,dump_location=defaultDumpLocation):
         spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         i=0

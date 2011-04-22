@@ -134,6 +134,25 @@ in this case, it is assumed that you meant the metadata with key \textit{User}. 
 \end{verbatim}
 In the first case, all of the keys will be returned in a list. In the second, only keys matching the pattern will be returned -- all keys containing \textit{Option:}.
 
+\subsubsection{More on Indexing the data}
+
+There are a number o other forms of indexing supported for \textbf{DataFile} objects.
+
+\begin{verbatim}
+  >>>d[10,0]
+  >>>d[0:10,0]
+  >>>d[10,'Temp']
+  >>>d[0:10,['Voltage','Temp']
+\end{verbatim}
+
+The first variant just returns the data in the 11th row, first column (remember indexing starts at 0). The second variant returns the first 10 values in the first column. The third variant demonstrates that columns can be indexed by string as well as number, and the last variant demonstrates indexing multiplerows and columns -- in this case the first 10 values of the Voltage and Temp columns.
+
+You might think of the data as being a list of records, where each column is a field in the record. Numpy supports this type of structured record view of data and the \textbf{DataFile} object provides the \textit{DataFile.records} attribute to d this. This read-only attribute is just providing an alternative view of the same data.
+
+\begin{verbatim}
+  >>> d.records
+\end{verbatim}
+
 \subsubsection{Selecting Individual rows and columns of data}
 
 Many of the function in the Stoner module index columns by searching the column headings. If one wishes to find the numeric index of a column then the \textbf{DataFile.find\_col} method can be used:
@@ -260,6 +279,15 @@ Deleting whole columns of data can be done by referring to a column by index or 
   >>>d.del_column(1)
 \end{verbatim}
 
+\subsubsection{Sorting Data}
+
+Data can be sorted by one or more columns, specifying the columns as a number or string for single columns or a list or tuple of strings or numbers for multiple columns. Currently only ascending sorts are supported.
+
+\begin{verbatim}
+  >>>d.sort('Temp')
+  >>>d.sort(['Temp','Gate'])
+\end{verbatim}
+
 \subsection{Saving Data}
 
 Only saving data in the \textit{TDI} format is supported.
@@ -298,14 +326,14 @@ Simple least squares fitting of polynomial functions is handled by the \textbf{A
   >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True)
 \end{verbatim}
 
-This is a simple pass through to the numpy routine of the same name. The x and y columns are specified in the first two arguments using the usual index rules for the Stoner package. The routine will fit multiple columns if \textit{column\_y} is a list or slice. The polynomial\_order parameter should be a simple integer greater or equal to 1 to define the degree of polynomial to fit. The bounds function follows the same rules as the bounds function in \textbf{DataFile.search} to restrict the fitting to a limited range of rows. The mthod returns a list of co-efficients with the highest power first. If \textit{column\_y} was a list, then a 2D array of co-efficients is returned. 
+This is a simple pass through to the numpy routine of the same name. The x and y columns are specified in the first two arguments using the usual index rules for the Stoner package. The routine will fit multiple columns if \textit{column\_y} is a list or slice. The polynomial\_order parameter should be a simple integer greater or equal to 1 to define the degree of polynomial to fit. The bounds function follows the same rules as the bounds function in \textbf{DataFile.search} to restrict the fitting to a limited range of rows. The mthod returns a list of co-efficients with the highest power first. If \textit{column\_y} was a list, then a 2D array of co-efficients is returned.
 
 \subsubsection{Simple function fitting}
 
 For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit} method can be employed. Again, this is a pass through to the numpy routine of the same name.
 
 \begin{verbatim}
-  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None, 
+  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
                                 bounds=lambda x, y: True )
 \end{verbatim}
 
@@ -314,10 +342,29 @@ The first parameter is the fitting function. This should have prototype \\\verb:
 \textbf{AnalyseFile.curve\_fit} returns a list of two arrays \verb:[popt,pcov]: where \textit{popt} is an array of the optimal fitting parameters and \textit{pcov} is a 2D array of the co-variances between the parameters.
 
 \subsubsection{Fitting with limits}
+
+For cases where one requires more flexibility in fitting data, in particular where the fitting parameters are constrained, the \textbf{AnalyzeFile.mpfit} method is provided. This is a pass through to the \textbf{mpfit} module.
+
 \begin{verbatim}
   >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,
                bounds=lambda x, y: True, **mpfit_kargs )
 \end{verbatim}
+
+In this case, the \textit{func} argument takes a slightly different prototype:\\\verb:def func(x,parameters, **func_args): where \textit{parameters} is a list of the fitting parameters and \textit{func\_args} provides a dictionary of fixed \ie non-fitting parameters. \textit{xcol} and \textit{ycol} are the column indices for the x and y data, \textit{bounds} is a bounding function to select only those rows to use for fitting the function, and \textit{sigma} are the weightings for each datapoint. The remaining arguments are a dictionary of k\underline keywords to pass through to the \textbf{mpfit} routine and the textit{p\_info} which is a list of dictionaries which is used to control the parameters in the fit. This described below.
+
+\textit{p\_info} contains one element for each parameter used to fit the data. Each element is a dictionary with the following keys:
+\begin{description}
+  \item[*] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+  \item[] 
+\end{description}
 
 \subsection{More AnalyseFile Functions}
 
