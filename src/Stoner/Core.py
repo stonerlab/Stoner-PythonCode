@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.13 2011/04/22 14:44:04 cvs Exp $
+# $Id: Core.py,v 1.14 2011/04/23 18:23:33 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.14  2011/04/23 18:23:33  cvs
+# What happened here ?
+#
 # Revision 1.13  2011/04/22 14:44:04  cvs
 # Add code to return data as a structured record and to to provide a DataFile.sort() method
 #
@@ -640,14 +643,14 @@ class DataFile(object): #Now a new style class so that we can use super()
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
         del_rows(Column, value)
         del_rows(Column,function) """
-        if is_instance(col, slice) and val is None:
+        if isinstance(col, slice) and val is None:
             indices=col.indices(len(self))
             col-=range(*indices)
         if isinstance(col, list) and val is None:
             col.sort(reverse=True)
             for c in col:
                 self.del_rows(c)
-        elif is_instance(col,  int) and val is None:
+        elif isinstance(col,  int) and val is None:
             self.data=numpy.delete(self.data, col, 0)
         else:
             col=self.find_col(col)
@@ -746,4 +749,6 @@ class DataFile(object): #Now a new style class so that we can use super()
         app = wx.PySimpleApp()
         frame = MyForm(self).Show()
         app.MainLoop()
+        while app.IsMainLoopRunning:
+            pass
 
