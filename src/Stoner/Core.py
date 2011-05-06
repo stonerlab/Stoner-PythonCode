@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.14 2011/04/23 18:23:33 cvs Exp $
+# $Id: Core.py,v 1.15 2011/05/06 22:21:42 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.15  2011/05/06 22:21:42  cvs
+# Add code to read Renishaw spc files and some sample Raman data. GB
+#
 # Revision 1.14  2011/04/23 18:23:33  cvs
 # What happened here ?
 #
@@ -491,6 +494,14 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.data=d.data
             self.metadata=d.metadata
             self.typehint=d.typehint
+        elif fileType=="Raman":
+            from .Util import read_spc_File
+            d=read_spc_File(filename)
+            self.column_headers=d.column_headers
+            self.data=d.data
+            self.metadata=d.metadata
+            self.typehint=d.typehint
+
             
         return self
         
