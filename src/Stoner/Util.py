@@ -1,4 +1,9 @@
 # Utility Functions for Stoner Module
+# $Id: Util.py,v 1.4 2011/05/06 22:35:37 cvs Exp $
+# $Log: Util.py,v $
+# Revision 1.4  2011/05/06 22:35:37  cvs
+# Add some tags to the Util file to moniyor version and log
+#
 
 def read_spc_File(filename):
     from .Core import DataFile
