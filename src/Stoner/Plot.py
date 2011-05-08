@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.4 2011/02/18 22:37:13 cvs Exp $
+# $Id: Plot.py,v 1.5 2011/05/08 18:25:00 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.5  2011/05/08 18:25:00  cvs
+# Correct the Raman load to include the last point in the Xdata
+#
 # Revision 1.4  2011/02/18 22:37:13  cvs
 # Make PlotFile return the matplotlib figure when plotting and allow it to handle multiple figures. Add methofs to force a redraw and also to access the Axes object. -Gavin
 #
@@ -35,7 +38,6 @@ import os
 if os.name=="posix" and os.pathsep==":":
     matplotlib.use("MacOSx")
 from matplotlib import pyplot
-
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
