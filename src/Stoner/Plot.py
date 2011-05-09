@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.5 2011/05/08 18:25:00 cvs Exp $
+# $Id: Plot.py,v 1.6 2011/05/09 18:47:32 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.6  2011/05/09 18:47:32  cvs
+# Try to improve handling of Mac OSX detection
+#
 # Revision 1.5  2011/05/08 18:25:00  cvs
 # Correct the Raman load to include the last point in the Xdata
 #
@@ -35,7 +38,8 @@ import scipy
 import numpy
 import matplotlib
 import os
-if os.name=="posix" and os.pathsep==":":
+import platform
+if os.name=="posix" and platform.system=="Mac OS X":
     matplotlib.use("MacOSx")
 from matplotlib import pyplot
 
