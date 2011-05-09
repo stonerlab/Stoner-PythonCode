@@ -79,7 +79,16 @@ The first step in using the Stoner module is to load some data from a measuremen
   >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are \textit{TDI}, \textit{VSM}, \textit{BigBlue}, and \textit{csv}. It is also possible to do these steps separately, or indeed to load new data into an existing instance of DataFile.
+In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are 
+
+\begin{description}
+\item[TDI] Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs
+\item[VSM] The text files produced by the group's Oxford Instruments VSM
+\item[BigBlue] Datafiles produced by VB Code running on Big Blue. The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts.
+\item[csv] Reads a generic comma separated value file. The \textit{csv} load routine takes four additional parameters to the constructor and load methods. In addition to the two extra arguments used for the \textit{BigBlue} variant, a further two parameters specify the deliminators for the header and data rows.
+\item[NewXRD] Loads a scan file produced by Arkengarthdale - the group's Brucker XRD Machine.
+\item[Raman] Loads a Raman scan file (.spc format) produced by the Rensihaw Raman spectrometer.
+\end{description}
 
 \begin{verbatim}
   >>>import Stoner
@@ -87,8 +96,6 @@ In this example we have loaded data from my\_data.txt which should be in the cur
   >>>d.load('my_data.txt')
   >>>d.load('my_VSM_data.fld','VSM')
 \end{verbatim}
-
-The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts. The \textit{csv} takes four additional parameters to the constructor and load methods. In addition to the two extra arguments used for the \textit{BigBlue} variant, a further two parameters specify the deliminators for the header and data rows.
 
 \keypoint{The load method, like many of the DataFile methods returns a copy of the Datafile object \textbf{as well as} modifying the object itself. The advantage of this is that it is then possible to chain several methods into one command}
 

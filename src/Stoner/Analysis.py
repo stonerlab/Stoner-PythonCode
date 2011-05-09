@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.4 2011/03/09 11:02:38 cvs Exp $
+# $Id: Analysis.py,v 1.5 2011/05/09 18:34:48 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.5  2011/05/09 18:34:48  cvs
+# Minor changes to AnalyseFile
+#
 # Revision 1.4  2011/03/09 11:02:38  cvs
 # Fix bug in polyfit
 #
@@ -214,7 +217,19 @@ class AnalyseFile(DataFile):
         current=self.column(col)
         return self.__threshold(threshold, current, rising=rising, falling=falling)
         
-    def interpolate(self, newX,kind='linear' ):
+    def interpolate(self, newX,kind='linear', xcol=None ):
+        """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
+        
+        @param newX Row indices or X column values to interpolate with
+        @param kind Type of interpolation function to use - does a pass through from numpy. Default is linear.
+        @param xcol Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
+        @return Returns a 2D numpy array representing a section of the current object's data.
+        
+        Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices. 
+        Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
+        """
+        if not xcol is None:
+            newX=self.threshold(xcol, newX, True, True)
         from scipy.interpolate import interp1d
         l=numpy.shape(self.data)[0]
         index=numpy.arange(l)
@@ -226,14 +241,17 @@ class AnalyseFile(DataFile):
         
         Locates peaks and/or troughs in a column of data by using SG-differentiation.
         
-        ycol is the column name or index of the data in which to search for peaks
-        width is the expected minium halalf-width of a peak in terms of the number of data points. 
+        @param ycol is the column name or index of the data in which to search for peaks
+        @param width is the expected minium halalf-width of a peak in terms of the number of data points. 
                 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
                 to experimental noise, smaller means better eable to see sharp peaks
-            sensitivity is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+            @praam sensitivity is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
                 of the data. Bigger means less sensistive, smaller means more likely to detect noise.
-            xcol name or index of data column that p[rovides the x-coordinate
-            peaks,troughs select whether to measure peaks.troughs in data"""
+            @param xcol name or index of data column that p[rovides the x-coordinate (default None)
+            @pramam peaks select whether to measure peaks in data (default True)
+            @param troughs select whether to measure troughs in data (default False)
+            @return If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
+            """
         from scipy.interpolate import interp1d
         d1=self.SG_Filter(ycol, width, poly, 1)
         i=numpy.arange(len(d1))
