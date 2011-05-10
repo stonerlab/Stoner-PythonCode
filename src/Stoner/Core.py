@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.15 2011/05/06 22:21:42 cvs Exp $
+# $Id: Core.py,v 1.16 2011/05/10 22:10:31 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.16  2011/05/10 22:10:31  cvs
+# Workaround new behaviou of deepcopy() in Python 2.7 and improve handling when a typehint for the metadata doesn't exist (printing the DataFile will fix the typehinting).
+#
 # Revision 1.15  2011/05/06 22:21:42  cvs
 # Add code to read Renishaw spc files and some sample Raman data. GB
 #
@@ -180,23 +183,23 @@ class DataFile(object): #Now a new style class so that we can use super()
                 self.data=args[0]
                 self.column_headers=['Column'+str(x) for x in range(numpy.shape(args[0])[1])]
             elif isinstance(args[0], dict): # Dictionary - use as metadata
-                self.metadata=args[0]
+                self.metadata=args[0].copy()
             elif isinstance(args[0], DataFile):
-                self.metadata=args[0].metadata
+                self.metadata=args[0].metadata.copy()
                 self.data=args[0].data
-                self.typehint=args[0].typehint
+                self.typehint=args[0].typehint.copy()
                 self.column_headers=args[0].column_headers
         elif len(args)==2: # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
                 self.data=args[0]
             elif isinstance(args[0], dict):
-                self.metadata=args[0]
+                self.metadata=args[0].copy()
             elif isinstance(args[0], str) and isinstance(args[1], str):
                 self.load(args[0], args[1])
             if isinstance(args[1], numpy.ndarray):
                 self.data=args[1]
             elif isinstance(args[1], dict):
-                self.metadata=args[1]
+                self.metadata=args[1].copy()
         elif len(args)>2:
             apply(self.load, args)
                 
@@ -248,11 +251,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             raise TypeError("Key must be either numeric of string")
 
-    def __setitem__(self, name, value):
-        """Called for \DataFile[\em name ] = \em value to write mewtadata entries.
-            @param name The string key used to access the metadata
-            @param value The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
-            @return Nothing."""
+    def __settype__(self, name, value):
         if isinstance(value,bool):
             self.typehint[name]="Boolean"
         elif isinstance(value, int):
@@ -261,6 +260,14 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.typehint[name]="Double Float"
         else:
             self.typehint[name]="String"
+
+    
+    def __setitem__(self, name, value):
+        """Called for \DataFile[\em name ] = \em value to write mewtadata entries.
+            @param name The string key used to access the metadata
+            @param value The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
+            @return Nothing."""
+        self.__settype__(name, value)
         self.metadata[name]=value
         
     def __add__(self, other):
@@ -277,27 +284,27 @@ class DataFile(object): #Now a new style class so that we can use super()
                 t=numpy.atleast_2d(other)
                 c=numpy.shape(t)[1]
                 self.column_headers=map(lambda x:"Column_"+str(x), range(c))
-                newdata=copy.deepcopy(self)
+                newdata=self.__class__(self)
                 newdata.data=t                
                 return newdata
             elif len(numpy.shape(other))==1: # 1D array, so assume a single row of data
                 if numpy.shape(other)[0]==numpy.shape(self.data)[1]:
-                    newdata=copy.deepcopy(self)
+                    newdata=self.__class__(self)
                     newdata.data=numpy.append(self.data, numpy.atleast_2d(other), 0)
                     return newdata
                 else:
                     return NotImplemented
             elif len(numpy.shape(other))==2 and numpy.shape(other)[1]==numpy.shape(self.data)[1]: # DataFile + array with correct number of columns
-                newdata=copy.deepcopy(self)
+                newdata=self.__class__(self)
                 newdata.data=numpy.append(self.data, other, 0)
                 return newdata
             else:
                 return NotImplemented
         elif isinstance(other, DataFile): # Appending another DataFile
             if self.column_headers==other.column_headers:
-                newdata=copy.deepcopy(other)
+                newdata=self.__class__(other)
                 for x in self.metadata:
-                    newdata[x]=copy.copy(self[x])
+                    newdata[x]=self.__class__(self[x])
                 newdata.data=numpy.append(self.data, other.data, 0)
                 return newdata
             else:
@@ -324,7 +331,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             if other.shape[0]<=self.data.shape[0]: # DataFile + array with correct number of rows
                 if other.shape[0]<self.data.shape[0]: # too few rows we can extend with zeros
                     other=numpy.append(other, numpy.zeros((self.data.shape[0]-other.shape[0], other.shape[1])), 0)
-                newdata=copy.deepcopy(self)
+                newdata=self.__class__(self)
                 newdata.column_headers.extend(["" for x in range(other.shape[1])]) 
                 newdata.data=numpy.append(self.data, other, 1)
                 return newdata
@@ -332,11 +339,10 @@ class DataFile(object): #Now a new style class so that we can use super()
                 return NotImplemented
         elif isinstance(other, DataFile): # Appending another datafile
             if self.data.shape[0]==other.data.shape[0]:
-                newdata=copy.deepcopy(other)
-                newdata.column_headers=copy.copy(self.column_headers)
-                newdata.column_headers.extend(self.column_headers)
-                for x in self.metadata:
-                    newdata[x]=copy.copy(self[x])
+                newdata=self.__class__(self)
+                newdata.column_headers.extend(other.column_headers)
+                for x in other.metadata:
+                    newdata[x]=other[x]
                 newdata.data=numpy.append(self.data, other.data, 1)
                 return newdata
             else:
@@ -350,7 +356,11 @@ class DataFile(object): #Now a new style class so that we can use super()
         outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
         m=len(self.metadata)
         (r, c)=numpy.shape(self.data)
-        md=map(lambda x:str(x)+"{"+str(self.typehint[x])+"}="+str(self.metadata[x]), sorted(self.metadata))
+        md=[]
+        for x in sorted(self.metadata):
+            if not x in self.typehint:
+                self.__settype__(x, self.metadata[x])
+            md.extend(str(x)+"{"+str(self.typehint[x])+"}="+str(self.metadata[x]))
         for x in range(min(r, m)):
             outp=outp+md[x]+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
         if m>r: # More metadata

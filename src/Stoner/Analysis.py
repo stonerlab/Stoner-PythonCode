@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.5 2011/05/09 18:34:48 cvs Exp $
+# $Id: Analysis.py,v 1.6 2011/05/10 22:10:31 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.6  2011/05/10 22:10:31  cvs
+# Workaround new behaviou of deepcopy() in Python 2.7 and improve handling when a typehint for the metadata doesn't exist (printing the DataFile will fix the typehinting).
+#
 # Revision 1.5  2011/05/09 18:34:48  cvs
 # Minor changes to AnalyseFile
 #
@@ -215,7 +218,11 @@ class AnalyseFile(DataFile):
         
         Finds partial indices where the data in column passes the threshold, rising or falling"""
         current=self.column(col)
-        return self.__threshold(threshold, current, rising=rising, falling=falling)
+        if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
+            ret=[self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+        else:
+            ret=self.__threshold(threshold, current, rising=rising, falling=falling)[0]
+        return ret
         
     def interpolate(self, newX,kind='linear', xcol=None ):
         """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
