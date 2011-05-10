@@ -1,6 +1,9 @@
 # Utility Functions for Stoner Module
-# $Id: Util.py,v 1.5 2011/05/08 18:25:00 cvs Exp $
+# $Id: Util.py,v 1.6 2011/05/10 13:28:34 cvs Exp $
 # $Log: Util.py,v $
+# Revision 1.6  2011/05/10 13:28:34  cvs
+# Fix spc load routine to work properly
+#
 # Revision 1.5  2011/05/08 18:25:00  cvs
 # Correct the Raman load to include the last point in the Xdata
 #
@@ -22,7 +25,7 @@ def read_spc_File(filename):
     import numpy
     
     # Open the file and read the main file header and unpack into a dict
-    f=open(filename, 'r')
+    f=open(filename, 'rb')
     spchdr=struct.unpack('BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
     keys=("ftflgs","fversn","fexper","fexp","fnpts","ffirst","flast","fnsub","fxtype","fytype","fztype","fpost","fres","fsource","fpeakpt","fspare1","fspare2","fspare3","fspare4","fspare5","fspare6","fspare7","fspare8","fcm","nt","fcatx","flogoff","fmods","fprocs","flevel","fsampin","ffactor","fmethod","fzinc","fwplanes","fwinc","fwtype","fwtype","fresv")
     header=dict(zip(keys, spchdr))
@@ -53,9 +56,11 @@ def read_spc_File(filename):
         if header['ftflgs'] &1:
             y_width=2
             y_fmt='h'
+            divisor=2**16
         else:
             y_width=4
             y_fmt='i'
+            divisor=2**32
 
         for j in range(n): # We have n sub-scans
             # Read the subheader and import into the main metadata dictionary as scan#:<subheader item>
@@ -64,10 +69,12 @@ def read_spc_File(filename):
             
             # Now read the y-data
             exponent=subheader["scan"+str(j)+':subexp']
-            if int(exponent) & 128: # Data is unscaled direct floats
+            if int(exponent) & -128: # Data is unscaled direct floats
                 ydata=numpy.array(struct.unpack(str(pts)+"f", f.read(pts*y_width)))
             else: # Data is scaled by exponent
-                ydata=numpy.array(struct.unpack(str(pts)+y_fmt, f.read(pts*y_width)))*(2**exponent)
+                yvals=struct.unpack(str(pts)+y_fmt, f.read(pts*y_width))
+                print yvals
+                ydata=numpy.array(yvals, dtype='float64')*(2**exponent)/divisor
             
             # Pop the y-data into the array and merge the matadata in too.
             data[:, j+1]=ydata
