@@ -1,6 +1,9 @@
 # Utility Functions for Stoner Module
-# $Id: Util.py,v 1.6 2011/05/10 13:28:34 cvs Exp $
+# $Id: Util.py,v 1.7 2011/05/10 16:39:26 cvs Exp $
 # $Log: Util.py,v $
+# Revision 1.7  2011/05/10 16:39:26  cvs
+# Remove spurious print statement
+#
 # Revision 1.6  2011/05/10 13:28:34  cvs
 # Fix spc load routine to work properly
 #
@@ -73,7 +76,6 @@ def read_spc_File(filename):
                 ydata=numpy.array(struct.unpack(str(pts)+"f", f.read(pts*y_width)))
             else: # Data is scaled by exponent
                 yvals=struct.unpack(str(pts)+y_fmt, f.read(pts*y_width))
-                print yvals
                 ydata=numpy.array(yvals, dtype='float64')*(2**exponent)/divisor
             
             # Pop the y-data into the array and merge the matadata in too.
