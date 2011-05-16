@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.16 2011/05/10 22:10:31 cvs Exp $
+# $Id: Core.py,v 1.17 2011/05/16 22:43:19 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.17  2011/05/16 22:43:19  cvs
+# Start work on a dict child class that keeps track of type hints to use as the core class for the metadata. GB
+#
 # Revision 1.16  2011/05/10 22:10:31  cvs
 # Workaround new behaviou of deepcopy() in Python 2.7 and improve handling when a typehint for the metadata doesn't exist (printing the DataFile will fix the typehinting).
 #
@@ -73,9 +76,61 @@ import copy
 import linecache
 import wx
 
+class typeHintedDict(dict):
+
+    _typehints=dict()
+
+    __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner most{}
+    __typeSignedInteger = "I64 I32 I16 I8"
+    __typeUnsignedInteger="U64 U32 U16 U8"
+    __typeInteger=__typeSignedInteger+__typeUnsignedInteger
+    __typeFloat = "Extended Float Double Float Single Float"
+    __typeBoolean = "Boolean"
+    __typeString="String"
+    __types={'Boolean':bool, 'I32':int, 'Double Float':float, 'Cluster':dict, 'Array':numpy.ndarray, 'String':str}
+
+    """Extends a regular dict to include type hints of what each key contains."""
+    def __init__(self, *args):
+        parent=super(typeHintedDict, self)
+        parent.__init__(*args)
+        print type(parent)
+        for key in self: # Chekc through all the keys and see if they contain type hints. If they do, move them to the _typehint dict
+            m=self.__regexGetType.search(key)
+            if m is not None:
+                k= m.group(1)
+                t= m.group(2)
+                self._typehints[k]=t
+                parent.__setitem__(k, self[key])
+                del(self[key])
+            else:
+                self._typehints[key]=self.__findtype(parent.__getitem__(key))
+
+    def __findtype(self,  value):
+        typ="String"
+        for t in self.__types:
+            if isinstance(value, self.__types[t]):
+                if t=="Cluster":
+                    elements=[]
+                    for k in  value:
+                        elements.append(self.__findtype( value[k]))
+                    tt=','
+                    tt=tt.join(elements)
+                    typ='Cluster ('+tt+')'
+                elif t=='Array':
+                    z=numpy.zeros(1, dtype=value.dtype)
+                    typ=str(len(numpy.shape(value)))+"D Array ("+self.__findtype(z[0])+")"
+                else:
+                    typ=t
+                break
+        return typ
+
+    def type(self, key):
+       return self._typehints[key]
+
+
 class MyForm(wx.Frame):
     """Provides an editable grid for the DataFile class to use display data"""
- 
+
     #----------------------------------------------------------------------
     def __init__(self, dfile, **kwargs):
         """Constructor
@@ -87,42 +142,42 @@ class MyForm(wx.Frame):
         cols=max(len(dfile.column_headers), 4)
         rows=max(len(dfile), 20)
         wx.Frame.__init__(self, parent=None, title="Untitled")
-        self.Bind(wx.EVT_SIZE, self._OnSize)           
+        self.Bind(wx.EVT_SIZE, self._OnSize)
         self.panel = wx.Panel(self)
- 
+
         myGrid = gridlib.Grid(self.panel)
         myGrid.CreateGrid(rows, cols)
- 
+
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(myGrid, 1, wx.EXPAND)
         self.panel.SetSizer(self.sizer)
-          
+
         for i in range(len(dfile.column_headers)):
             myGrid.SetColLabelValue(i, dfile.column_headers[i])
             for j in range(len(dfile)):
                 myGrid.SetCellValue(j, i, str(dfile.data[j, i]))
-        
+
     def _OnSize(self, evt):
         evt.Skip()
-        
-        
-        
+
+
+
 
 
 class DataFolder(object):
-    
+
     #   CONSTANTS
-    
+
     #   INITIALISATION
-    
+
     def __init__(self, foldername):
         self.data = [];
         self.metadata = dict();
         self.foldername = foldername;
-        self.__parseFolder(); 
-        
+        self.__parseFolder();
+
     #   PRIVATE FUNCTIONS
-    
+
     def __parseFolder(self):
         path="C:/Documents and Settings/pymn/workspace/Stonerlab/src/folder/run1"  # insert the path to the directory of interest
         dirList=os.listdir(path)
@@ -130,13 +185,13 @@ class DataFolder(object):
             print(fname)
 
 #   PUBLIC METHODS
-     
+
 class DataFile(object): #Now a new style class so that we can use super()
     """@b Stoner.Core.DataFile is the base class object that represents a matrix of data, associated metadata and column headers.
-    
+
     @b DataFile provides the mthods to load, save, add and delete data, index and slice data, manipulate metadata and column headings.
-   
-    Authors: Matt Newman, Chris Allen and Gavin Burnell    
+
+    Authors: Matt Newman, Chris Allen and Gavin Burnell
     """
 #   CONSTANTS
 
@@ -148,25 +203,25 @@ class DataFile(object): #Now a new style class so that we can use super()
     __typeBoolean = "Boolean"
     __typeString="String"
     defaultDumpLocation='C:\\dump.csv'
-    
+
 #   INITIALISATION
 
     def __init__(self, *args):
         """Constructor method
-        
-        various forms are recognised: 
+
+        various forms are recognised:
         @li DataFile('filename',<optional filetype>,<args>)
         Creates the new DataFile object and then executes the \b DataFile.load method to load data from the given \a filename
         @li DataFile(array)
         Creates a new DataFile object and assigns the \a array to the \b DataFile.data attribute.
         @li DataFile(dictionary)
         Creates the new DataFile object, but initialises the metadata with \a dictionary
-        @li  DataFile(array,dictionary), 
+        @li  DataFile(array,dictionary),
         Creates the new DataFile object and does the combination of the previous two forms.
         @li DataFile(DataFile)
-        Creates the new DataFile object and initialises all data from the existing \DataFile instance. This on the face of it does the same as the assignment operator, 
+        Creates the new DataFile object and initialises all data from the existing \DataFile instance. This on the face of it does the same as the assignment operator,
         but is more useful when one or other of the DataFile objects is an instance of a sub-class of DataFile
-        
+
         @param *args Variable number of arguments that match one of the definitions above
         @return A new instance of the DataFile class.
         """
@@ -202,13 +257,13 @@ class DataFile(object): #Now a new style class so that we can use super()
                 self.metadata=args[1].copy()
         elif len(args)>2:
             apply(self.load, args)
-                
+
 # Special Methods
 
     def __getattr__(self, name):
         """
         Called for \bDataFile.x to handle some special pseudo attributes
-        
+
         @param name The name of the attribute to be returned. These include: records
         @return For Records, returns the data as an array of structures
         """
@@ -218,12 +273,12 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
         """Called for \b DataFile[x] to return either a row or iterm of metadata
-        
+
         @param name The name, slice or number of the part of the \b DataFile to be returned.
         @return an item of metadata or row(s) of data. \li If \a name is an integer then the corresponding single row will be rturned
         \li if \a name is a slice, then the corresponding rows of data will be returned. \li If \a name is a string then the metadata dictionary item with
         the correspondoing key will be returned.
-        
+
         """
         if isinstance(name, slice):
             indices=name.indices(len(self))
@@ -261,7 +316,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             self.typehint[name]="String"
 
-    
+
     def __setitem__(self, name, value):
         """Called for \DataFile[\em name ] = \em value to write mewtadata entries.
             @param name The string key used to access the metadata
@@ -269,15 +324,15 @@ class DataFile(object): #Now a new style class so that we can use super()
             @return Nothing."""
         self.__settype__(name, value)
         self.metadata[name]=value
-        
+
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance of a \b DataFile object.
                 @return A Datafile object with the rows of \a other appended to the rows of the current object.
-                
+
                 If \a other is a 1D numopy array with the same number of lements as their are columns in \a self.data then the numpy array is treated as a new row of data
                 If \a ither is a 2D numpy array then it is appended if it has the same number of columns and \a self.data.
-                
+
 """
         if isinstance(other, numpy.ndarray):
             if len(self.data)==0:
@@ -285,7 +340,7 @@ class DataFile(object): #Now a new style class so that we can use super()
                 c=numpy.shape(t)[1]
                 self.column_headers=map(lambda x:"Column_"+str(x), range(c))
                 newdata=self.__class__(self)
-                newdata.data=t                
+                newdata.data=t
                 return newdata
             elif len(numpy.shape(other))==1: # 1D array, so assume a single row of data
                 if numpy.shape(other)[0]==numpy.shape(self.data)[1]:
@@ -311,17 +366,17 @@ class DataFile(object): #Now a new style class so that we can use super()
                 return NotImplemented
         else:
             return NotImplemented
-        
+
     def __and__(self, other):
         """Implements the & operator to concatenate columns of data in a \b Stoner.DataFile object.
-       
+
         @param other Either a numpy array or \bStoner.DataFile object
         @return A \b Stoner.DataFile object with the columns of other concatenated as new columns at the end of the self object.
-       
-        Whether \a other is a numopy array of \b Stoner.DataFile, it must have the same or fewer rows than the self object. 
-        The size of \a other is increased with zeros for the extra rows. 
+
+        Whether \a other is a numopy array of \b Stoner.DataFile, it must have the same or fewer rows than the self object.
+        The size of \a other is increased with zeros for the extra rows.
         If \a other is a 1D numpy array it is treated as a column vector.
-        The new columns are given blank column headers, but the length of the \b Stoner.DataFile.column_headers is 
+        The new columns are given blank column headers, but the length of the \b Stoner.DataFile.column_headers is
         increased to match the actual number of columns.
         """
         if isinstance(other, numpy.ndarray):
@@ -332,7 +387,7 @@ class DataFile(object): #Now a new style class so that we can use super()
                 if other.shape[0]<self.data.shape[0]: # too few rows we can extend with zeros
                     other=numpy.append(other, numpy.zeros((self.data.shape[0]-other.shape[0], other.shape[1])), 0)
                 newdata=self.__class__(self)
-                newdata.column_headers.extend(["" for x in range(other.shape[1])]) 
+                newdata.column_headers.extend(["" for x in range(other.shape[1])])
                 newdata.data=numpy.append(self.data, other, 1)
                 return newdata
             else:
@@ -349,8 +404,8 @@ class DataFile(object): #Now a new style class so that we can use super()
                 return NotImplemented
         else:
              return NotImplemented
-        
-    def __repr__(self): 
+
+    def __repr__(self):
         """Outputs the \b Stoner.DataFile object in TDI format. This allows one to print any \b Stoner.DataFile to a stream based object andgenerate a reasonable textual representation of the data.shape
        @return \a self in a textual format. """
         outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
@@ -370,7 +425,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             for x in range(m, r):
                     outp=outp+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
         return outp
-        
+
     def __len__(self):
         return numpy.shape(self.data)[0]
 
@@ -380,12 +435,12 @@ class DataFile(object): #Now a new style class so that we can use super()
         from enthought.pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
         file_wildcard = "Text file (*.txt)|*.txt|Data file (*.dat)|*.dat|All files|*"
-        
+
         if mode=="r":
             mode="open"
         elif mode=="w":
             mode="save"
-            
+
         if self.filename is not None:
             filename=os.path.basename(self.filename)
             dirname=os.path.dirname(self.filename)
@@ -398,11 +453,11 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.filename=dlg.path
             return self.filename
         else:
-            return None        
-            
+            return None
+
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
-        
+
         Uses the typehint to set the type correctly in the dictionary
         """
         m=self.__regexGetType.search(key)
@@ -441,7 +496,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.data=numpy.reshape(self.data,  shp)
             self.column_headers=["" for x in range(self.data.shape[1])]
             self.column_headers[0:len(headers)]=headers
-            
+
     def __parse_plain_data(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         header_string=linecache.getline(self.filename, header_line)
         header_string=re.sub(r'["\n]', '', header_string)
@@ -450,19 +505,19 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def __loadVSM(self):
          """DataFile.__loadVSM(filename)
-         
+
             Loads Data from a VSM file
             """
          self.__parse_plain_data()
- 
+
     def __loadBigBlue(self,header_line,data_line):
         """DataFile.__loadBigBlue(filename,header_line,data_line)
 
-        Lets you load the data from the files generated by Big Blue. Should work for any flat file 
+        Lets you load the data from the files generated by Big Blue. Should work for any flat file
         with a standard header file and comma separated data.
-        
+
         header_line/data_line=line number of header/start of data
-        
+
         TODO:    Get the metadata from the header
         """
         self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
@@ -471,24 +526,24 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def load(self,filename=None,fileType="TDI",*args):
         """DataFile.load(filename,type,*args)
-        
+
             Loads data from file filename using routines dependent on the fileType parameter
             fileType is one on TDI,VSM,BigBlue,csv Default is TDI.
-            
+
             Example: To load Big Blue file
-            
+
                 d.load(file,"BigBlue",8,10)
-            
+
             Where "BigBlue" is filetype and 8/10 are the line numbers of the headers/start of data respectively
-            
+
             TODO: Implement a filename extension check to more intelligently guess the datafile type
             """
-            
+
         if filename is None:
             filename=self.__file_dialog('r')
         else:
             self.filename = filename;
-        
+
         if fileType=="TDI":
             self.__parse_data()
         elif fileType=="VSM":
@@ -512,12 +567,12 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.metadata=d.metadata
             self.typehint=d.typehint
 
-            
+
         return self
-        
+
     def save(self, filename=None):
         """DataFile.save(filename)
-        
+
                 Saves a string representation of the current DataFile object into the file 'filename' """
         if filename is None:
             filename=self.filename
@@ -528,8 +583,8 @@ class DataFile(object): #Now a new style class so that we can use super()
         f.close()
         self.filename=filename
         return self
-        
-      
+
+
 
     def metadata_value(self, text):
         """Wrapper of DataFile.meta for compatibility"""
@@ -540,7 +595,7 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def metadata(self):
         return self.metadata
-        
+
     def typehint(self):
         return self.typehint
 
@@ -586,7 +641,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             return d
         else:
             return self.data[:, self.find_col(col)]
-        
+
     def meta(self, ky):
         """Returns some metadata"""
         if isinstance(ky, str): #Ok we go at it with a string
@@ -607,10 +662,10 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             raise TypeError("Only string are supported as search keys currently")
             # Should implement using a list of strings as well
-    
+
     def dir(self, pattern=None):
         """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary
-                
+
                 DataFile.dir(pattern) - pattern is a regular expression or None to list all keys"""
         if pattern==None:
             return self.metadata.keys()
@@ -618,22 +673,22 @@ class DataFile(object): #Now a new style class so that we can use super()
             test=re.compile(pattern)
             possible=filter(test.search, self.metadata.keys())
             return possible
-        
+
     def search(self, *args):
         """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
 
         Find row(s) that match the specified value in column:
-        
+
         search(Column,value,columns=[list])
-        
+
         Find rows that where the column is >= lower_limit and < upper_limit:
-        
+
         search(Column,function ,columns=[list])
-        
+
         Find rows where the function evaluates to true. Function should take two parameters x (float) and y(numpy array of floats).
         e.g. AnalysisFile.search('x',lambda x,y: x<10 and y[0]==2, ['y1','y2'])
         """
-        
+
         if len(args)==2:
             col=args[0]
             targets=[]
@@ -645,7 +700,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             else:
                 c=args[2]
             targets=map(self.find_col, c)
-            val=args[1]        
+            val=args[1]
         if len(targets)==0:
             targets=range(self.data.shape[1])
         d=numpy.transpose(numpy.atleast_2d(self.column(col)))
@@ -655,11 +710,11 @@ class DataFile(object): #Now a new style class so that we can use super()
         elif isinstance(val, float):
             rows=numpy.nonzero([x[0]==val for x in d])[0]
         return self.data[rows][:, targets]
-        
+
     def unique(self, col, return_index=False, return_inverse=False):
         """Return the unique values from the specified column - pass through for numpy.unique"""
         return numpy.unique(self.column(col), return_index, return_inverse)
-    
+
     def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
         del_rows(Column, value)
@@ -682,7 +737,7 @@ class DataFile(object): #Now a new style class so that we can use super()
                 rows=numpy.nonzero([x==val for x in d])[0]
             self.data=numpy.delete(self.data, rows, 0)
         return self
-    
+
     def add_column(self,column_data,column_header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile"""
         if index is None:
@@ -698,7 +753,7 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.column_headers.insert(index, column_header)
         else:
             self.column_headers[index]=column_header
-        
+
         # The following 2 lines make the array we are adding a
         # [1, x] array, i.e. a column by first making it 2d and
         # then transposing it.
@@ -718,7 +773,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         else:
             self.data=numpy.insert(self.data,index, numpy_data,1)
         return self
-            
+
     def del_column(self, col):
         c=self.find_col(col)
         self.data=numpy.delete(self.data, c, 1)
@@ -729,13 +784,13 @@ class DataFile(object): #Now a new style class so that we can use super()
         for col in c:
             del self.column_headers[col]
         return self
-    
+
     def rows(self):
         """Generator method that will iterate over rows of data"""
         (r, c)=numpy.shape(self.data)
         for row in range(r):
             yield self.data[row]
-           
+
     def columns(self):
         """Generator method that will iterate over columns of data"""
         (r, c)=numpy.shape(self.data)
@@ -755,8 +810,8 @@ class DataFile(object): #Now a new style class so that we can use super()
         print d
         self.data=d.view(dtype='f8').reshape(len(self), len(self.column_headers))
         return self
-    
-    
+
+
     def csvArray(self,dump_location=defaultDumpLocation):
         spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
         i=0
@@ -764,7 +819,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         while i< self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i+=1
-            
+
     def edit(self):
         """Produce an editor window with a grid"""
         app = wx.PySimpleApp()
