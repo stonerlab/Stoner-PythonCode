@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.17 2011/05/16 22:43:19 cvs Exp $
+# $Id: Core.py,v 1.18 2011/05/17 21:04:29 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.18  2011/05/17 21:04:29  cvs
+# Finish implementing the DataFile metadata as a new typeHintDict() dictionary that keeps track of the type hinting strings internally. This ensures that we always have a type hint string available.
+#
 # Revision 1.17  2011/05/16 22:43:19  cvs
 # Start work on a dict child class that keeps track of type hints to use as the core class for the metadata. GB
 #
@@ -76,36 +79,48 @@ import copy
 import linecache
 import wx
 
-class typeHintedDict(dict):
+class evaluatable:
+    """A very simple class that is just a placeholder"""
 
+
+class typeHintedDict(dict):
+    """Extends a regular dict to include type hints of what each key contains."""
     _typehints=dict()
 
     __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner most{}
-    __typeSignedInteger = "I64 I32 I16 I8"
-    __typeUnsignedInteger="U64 U32 U16 U8"
-    __typeInteger=__typeSignedInteger+__typeUnsignedInteger
-    __typeFloat = "Extended Float Double Float Single Float"
-    __typeBoolean = "Boolean"
-    __typeString="String"
-    __types={'Boolean':bool, 'I32':int, 'Double Float':float, 'Cluster':dict, 'Array':numpy.ndarray, 'String':str}
+    __regexSignedInt=re.compile(r'^I\d+') # Matches all signed integers
+    __regexUnsignedInt=re.compile(r'^U/d+')# Match unsigned integers
+    __regexFloat=re.compile(r'^(Extended|Double|Single)\sFloat') # Match floating point types
+    __regexBoolean=re.compile(r'^Boolean')
+    __regexString=re.compile(r'^(String|Path|Enum)')
+    __regexEvaluatable=re.compile(r'^(Cluster|\dD Array)')
 
-    """Extends a regular dict to include type hints of what each key contains."""
+    __types={'Boolean':bool, 'I32':int, 'Double Float':float, 'Cluster':dict, 'Array':numpy.ndarray, 'String':str} # This is the inverse of the __tests below - this gives the string type for standard Python classes
+
+    __tests=[(__regexSignedInt, int), (__regexUnsignedInt, int),(__regexFloat, float) , (__regexBoolean, bool), (__regexString, str), (__regexEvaluatable, evaluatable())] # This is used to work out the correct python class for some string types
+
+
+
     def __init__(self, *args):
+        """Calls the dict() constructor, then runs through the keys of the created dictionary and either uses the
+        string type embedded in the keyname to generate the type hint (and remove the embedded string type from the keyname)
+        or determines the likely type hint from the value of the dict element."""
+
         parent=super(typeHintedDict, self)
         parent.__init__(*args)
-        print type(parent)
         for key in self: # Chekc through all the keys and see if they contain type hints. If they do, move them to the _typehint dict
             m=self.__regexGetType.search(key)
             if m is not None:
                 k= m.group(1)
                 t= m.group(2)
                 self._typehints[k]=t
-                parent.__setitem__(k, self[key])
+                super(typeHintedDict, self).__setitem__(k, self[key])
                 del(self[key])
             else:
                 self._typehints[key]=self.__findtype(parent.__getitem__(key))
 
     def __findtype(self,  value):
+        """Determines the correct string type to return for common python classes"""
         typ="String"
         for t in self.__types:
             if isinstance(value, self.__types[t]):
@@ -124,8 +139,59 @@ class typeHintedDict(dict):
                 break
         return typ
 
+    def __mungevalue(self, t, value):
+        """Based on a string type t, return value cast to an appropriate python class
+
+        @param t is a string representing the type
+        @param value is the data value to be munged into the correct class
+        @return Returns the munged data value
+
+        Detail: The class has a series of precompiled regular expressions that will match type strings, a list of these has been
+        constructed with instances of the matching Python classes. These are tested in turn and if the type string matches
+        the constructor of the associated python class is called with value as its argument."""
+        for (regexp, valuetype) in self.__tests:
+            m=regexp.search(t)
+            if m is not None:
+                if isinstance(valuetype, evaluatable):
+                    return eval(str(value), globals(), locals())
+                    break
+                else:
+                    return valuetype(value)
+                    break
+        return str(value)
+
+    def __setitem__(self, name, value):
+        """Provides a method to set an item in the dict, checking the key for an embedded type hint or inspecting the value as necessary.
+
+        NB If you provide an embedded type string it is your responsibility to make sure that it correctly describes the actual data
+        typehintDict does not verify that your data and type string are compatible."""
+        m=self.__regexGetType.search(name)
+        if m is not None:
+            k= m.group(1)
+            t= m.group(2)
+            self._typehints[k]=t
+            super(typeHintedDict, self).__setitem__(k, self.__mungevalue(t, value))
+        else:
+            self._typehints[name]=self.__findtype(value)
+            super(typeHintedDict, self).__setitem__(name,  self.__mungevalue(self._typehints[name], value))
+
+
+    def copy(self):
+        """Provides a copy method that is aware of the type hinting strings"""
+        return typeHintedDict([(x+'{'+self.type(x)+'}', self[x]) for x in self])
+
     def type(self, key):
-       return self._typehints[key]
+        """Returns the typehint for the given k(s)
+
+        @param key Either a single string key or a iterable type containing keys
+        @return the string type hint (or a list of string type hints)"""
+        if isinstance(key, str):
+            return self._typehints[key]
+        else:
+            try:
+                return [self._typehints[x] for x in key]
+            except TypeError:
+                return self._typehints[key]
 
 
 class MyForm(wx.Frame):
@@ -194,14 +260,6 @@ class DataFile(object): #Now a new style class so that we can use super()
     Authors: Matt Newman, Chris Allen and Gavin Burnell
     """
 #   CONSTANTS
-
-    __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}') # Match the contents of the inner most{}
-    __typeSignedInteger = "I64 I32 I16 I8"
-    __typeUnsignedInteger="U64 U32 U16 U8"
-    __typeInteger=__typeSignedInteger+__typeUnsignedInteger
-    __typeFloat = "Extended Float Double Float Single Float"
-    __typeBoolean = "Boolean"
-    __typeString="String"
     defaultDumpLocation='C:\\dump.csv'
 
 #   INITIALISATION
@@ -226,8 +284,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         @return A new instance of the DataFile class.
         """
         self.data = numpy.array([])
-        self.metadata = dict()
-        self.typehint = dict()
+        self.metadata = typeHintedDict()
         self.filename = None
         self.column_headers=list()
         # Now check for arguments t the constructor
@@ -242,7 +299,6 @@ class DataFile(object): #Now a new style class so that we can use super()
             elif isinstance(args[0], DataFile):
                 self.metadata=args[0].metadata.copy()
                 self.data=args[0].data
-                self.typehint=args[0].typehint.copy()
                 self.column_headers=args[0].column_headers
         elif len(args)==2: # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
@@ -305,16 +361,6 @@ class DataFile(object): #Now a new style class so that we can use super()
                 return r
         else:
             raise TypeError("Key must be either numeric of string")
-
-    def __settype__(self, name, value):
-        if isinstance(value,bool):
-            self.typehint[name]="Boolean"
-        elif isinstance(value, int):
-            self.typehint[name]="I32"
-        elif isinstance(value, float):
-            self.typehint[name]="Double Float"
-        else:
-            self.typehint[name]="String"
 
 
     def __setitem__(self, name, value):
@@ -413,9 +459,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         (r, c)=numpy.shape(self.data)
         md=[]
         for x in sorted(self.metadata):
-            if not x in self.typehint:
-                self.__settype__(x, self.metadata[x])
-            md.extend(str(x)+"{"+str(self.typehint[x])+"}="+str(self.metadata[x]))
+            md.extend(x+"{"+self.metadata.type(x)+"}="+str(self.metadata[x]))
         for x in range(min(r, m)):
             outp=outp+md[x]+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
         if m>r: # More metadata
@@ -459,20 +503,10 @@ class DataFile(object): #Now a new style class so that we can use super()
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
 
         Uses the typehint to set the type correctly in the dictionary
+
+        NB All the clever work of managing the typehinting is done in the metadata dictionary object now.
         """
-        m=self.__regexGetType.search(key)
-        k= m.group(1)
-        t= m.group(2)
-        if self.__typeInteger.find(t)>-1:
-            value = int(value);
-        elif self.__typeFloat.find(t)>-1:
-            value = float(value);
-        elif self.__typeBoolean.find(t)>-1:
-            value = bool(value);
-        else:
-            value = str(value);
-        self.metadata[k]=value
-        self.typehint[k]=t
+        self.metadata[key]=value
 
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
@@ -558,14 +592,12 @@ class DataFile(object): #Now a new style class so that we can use super()
             self.column_headers=d.column_headers
             self.data=d.data
             self.metadata=d.metadata
-            self.typehint=d.typehint
         elif fileType=="Raman":
             from .Util import read_spc_File
             d=read_spc_File(filename)
             self.column_headers=d.column_headers
             self.data=d.data
             self.metadata=d.metadata
-            self.typehint=d.typehint
 
 
         return self
@@ -595,9 +627,6 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def metadata(self):
         return self.metadata
-
-    def typehint(self):
-        return self.typehint
 
     def column_headers(self):
         return self.column_headers
