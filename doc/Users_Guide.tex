@@ -79,7 +79,7 @@ The first step in using the Stoner module is to load some data from a measuremen
   >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are 
+In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are
 
 \begin{description}
 \item[TDI] Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs
@@ -101,12 +101,11 @@ In this example we have loaded data from my\_data.txt which should be in the cur
 
 \subsection{Examining Some Data}
 \subsubsection{Data, Column headers and metadata}
-Having loaded some data, the next stage might be to take a look at it. Internally, data is represented as a 2D numpy array of floating point numbers, along with a list of column headers and two dictionaries that hold metadata and type information about metadata (metametadata perhaps !). These can be accessed like so:
+Having loaded some data, the next stage might be to take a look at it. Internally, data is represented as a 2D numpy array of floating point numbers, along with a list of column headers and a dictionary that keeps the metadata and also keeps track of the expected type of the metadata (\ie the meta-metadata). These can be accessed like so:
 \begin{verbatim}
   >>>d.data
   >>>d.column_headers
   >>>d.metadata
-  >>>d.typehint
 \end{verbatim}
 
 \subsubsection{Working with columns of data}
@@ -140,6 +139,16 @@ in this case, it is assumed that you meant the metadata with key \textit{User}. 
   >>>d.dir('Option\:.*')
 \end{verbatim}
 In the first case, all of the keys will be returned in a list. In the second, only keys matching the pattern will be returned -- all keys containing \textit{Option:}.
+
+We mentioned above that the metadata also keeps a note of the expected type of the data. You can get at the metadata type for a particular key like this:
+\begin{verbatim}
+  >>>d.metadata.type('User')
+\end{verbatim}
+to get a dictionary of all of the types associated with each key you could do:
+\begin{verbatim}
+  >>>dict(zip(d.dir(),d.metadata.type(d.dir())))
+\end{verbatim}
+\warning{This really ought to be made simpler with a better method implemented on the typeHintDict class that just returns the type hint directory !}
 
 \subsubsection{More on Indexing the data}
 
