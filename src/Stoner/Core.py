@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.20 2011/06/13 20:15:13 cvs Exp $
+# $Id: Core.py,v 1.21 2011/06/13 20:38:10 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.21  2011/06/13 20:38:10  cvs
+# Merged in fixes to typeHintedDict with fixes for deepcopy
+#
 # Revision 1.20  2011/06/13 20:15:13  cvs
 # Make copy and deepcopy work properly
 #
@@ -121,9 +124,16 @@ class typeHintedDict(dict):
                 t= m.group(2)
                 self._typehints[k]=t
                 super(typeHintedDict, self).__setitem__(k, self[key])
-                del(self[key])
+                super(typeHintedDict, self).__delitem__(key)
             else:
                 self._typehints[key]=self.__findtype(parent.__getitem__(key))
+
+    def __getattr__(self, name):
+        """Handles attribute access"""
+        if name=="types":
+            return self._typehints
+        else:
+            raise AttributeError
 
     def __findtype(self,  value):
         """Determines the correct string type to return for common python classes"""
@@ -184,6 +194,11 @@ class typeHintedDict(dict):
         else:
             self._typehints[name]=self.__findtype(value)
             super(typeHintedDict, self).__setitem__(name,  self.__mungevalue(self._typehints[name], value))
+
+    def __delitem__(self, name):
+        """Deletes the specified key"""
+        del(self._typehints[name])
+        super(typeHintedDict, self).__delitem__(name)
 
 
     def copy(self):
@@ -299,6 +314,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         self.column_headers=list()
         # Now check for arguments t the constructor
         if len(args)==1:
+            print type(args[0])
             if isinstance(args[0], str): # Filename- load datafile
                 self.load(args[0])
             elif isinstance(args[0], numpy.ndarray): # numpy.array - set data
@@ -310,6 +326,8 @@ class DataFile(object): #Now a new style class so that we can use super()
                 self.metadata=args[0].metadata.copy()
                 self.data=args[0].data
                 self.column_headers=args[0].column_headers
+            else:
+                raise SyntaxError("No constructor")
         elif len(args)==2: # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
                 self.data=args[0]
@@ -378,7 +396,6 @@ class DataFile(object): #Now a new style class so that we can use super()
             @param name The string key used to access the metadata
             @param value The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
             @return Nothing."""
-        self.__settype__(name, value)
         self.metadata[name]=value
 
     def __add__(self, other):
@@ -636,21 +653,6 @@ class DataFile(object): #Now a new style class so that we can use super()
         f.close()
         self.filename=filename
         return self
-
-
-
-    def metadata_value(self, text):
-        """Wrapper of DataFile.meta for compatibility"""
-        return self.meta(text)
-
-    def data(self):
-        return self.data
-
-    def metadata(self):
-        return self.metadata
-
-    def column_headers(self):
-        return self.column_headers
 
     def find_col(self, col):
         if isinstance(col, int): #col is an int so pass on
