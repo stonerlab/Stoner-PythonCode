@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.18 2011/05/17 21:04:29 cvs Exp $
+# $Id: Core.py,v 1.19 2011/06/13 14:40:51 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.19  2011/06/13 14:40:51  cvs
+# Make the load routine handle a blank value in metadata
+#
 # Revision 1.18  2011/05/17 21:04:29  cvs
 # Finish implementing the DataFile metadata as a new typeHintDict() dictionary that keeps track of the type hinting strings internally. This ensures that we always have a type hint string available.
 #
@@ -170,7 +173,11 @@ class typeHintedDict(dict):
             k= m.group(1)
             t= m.group(2)
             self._typehints[k]=t
-            super(typeHintedDict, self).__setitem__(k, self.__mungevalue(t, value))
+            if len(value)==0: # Empty data so reset to string and set empty
+                super(typeHintedDict, self).__setitem__(k, "")
+                self._typehints[k]="String"
+            else:
+                super(typeHintedDict, self).__setitem__(k, self.__mungevalue(t, value))
         else:
             self._typehints[name]=self.__findtype(value)
             super(typeHintedDict, self).__setitem__(name,  self.__mungevalue(self._typehints[name], value))
