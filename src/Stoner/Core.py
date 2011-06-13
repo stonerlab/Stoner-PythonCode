@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.19 2011/06/13 14:40:51 cvs Exp $
+# $Id: Core.py,v 1.20 2011/06/13 20:15:13 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.20  2011/06/13 20:15:13  cvs
+# Make copy and deepcopy work properly
+#
 # Revision 1.19  2011/06/13 14:40:51  cvs
 # Make the load routine handle a blank value in metadata
 #
@@ -479,6 +482,17 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def __len__(self):
         return numpy.shape(self.data)[0]
+        
+    def __setstate__(self, state):
+        self.data=state["data"]
+        self.column_headers=state["column_headers"]
+        self.metadata=state["metadata"]
+        
+    def __getstate__(self):
+        return {"data":self.data,  "column_headers":self.column_headers,  "metadata":self.metadata}
+        
+    def __reduce_ex__(self, p):
+        return (DataFile, (), self.__getstate__())
 
 #   PRIVATE FUNCTIONS
 
