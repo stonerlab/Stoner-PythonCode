@@ -1,6 +1,7 @@
 \documentclass[a4paper,11pt]{scrartcl}
 \usepackage[dvips]{graphicx}
-\usepackage[twoside,paper=a4paper,hmarginratio=3:2,tmargin=2.5cm,bmargin=3cm]{geometry}
+\usepackage[twoside,paper=a4paper,hmarginratio=3:2,tmargin=2.5cm,bmargin=3cm]{
+geometry}
 \usepackage{scrpage2}
 \usepackage{amsmath,amsbsy,amsfonts,amssymb,amsxtra}
 \usepackage{enumitem}
@@ -24,32 +25,53 @@
 
 \tableofcontents
 \newpage
-\pagestyle{scrheadings} \ihead[Stoner Python Package]{Stoner Python Package} \ifoot[\today]{\today}
+\pagestyle{scrheadings} \ihead[Stoner Python Package]{Stoner Python Package}
+\ifoot[\today]{\today}
 \ohead[Manual]{Manual}
 
 
 
   \section{Introduction}
 
-This manual provides a user guide and reference for the Stoner python pacakage. The Stoner python package provides a set of python classes and functions for reading, manipulating and plotting data acquired with the lab equipment in the Condensed Matter Physics Group at the University of Leeds.
+This manual provides a user guide and reference for the Stoner python pacakage.
+The Stoner python package provides a set of python classes and functions for
+reading, manipulating and plotting data acquired with the lab equipment in the
+Condensed Matter Physics Group at the University of Leeds.
 
 \subsection{Getting the Stoner Package}
 
-The source code for the Stoner python module is kept in CVS revision control on the stonerlab server. A stable release of the code is available for copying and use in \verb#\\stonerlab\data\software\python\stable\#. The development code can be obtained by checking out the PythonCode module with a CVSROOT of \\ \verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
+The source code for the Stoner python module is kept in CVS revision control on
+the stonerlab server. A stable release of the code is available for copying and
+use in \verb#\\stonerlab\data\software\python\stable\#. The development code can
+be obtained by checking out the PythonCode module with a CVSROOT of \\
+\verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the
+cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
 
-The Stoner Package currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\ \verb#\\stonerlab\\data\software\Python\#.  The easiest way to get a Python installation with all the necessary dependencies for the Stoner Package is to install the \textit{Enthought Python Distribution}. Windows install file are kept in \verb#\\stonerlab\data\software\python#
+The Stoner Package currently depends on a number of other modules. These are
+installed on the lab machines that have Python installed. Primarily these are
+Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\
+\verb#\\stonerlab\\data\software\Python\#.  The easiest way to get a Python
+installation with all the necessary dependencies for the Stoner Package is to
+install the \textit{Enthought Python Distribution}. Windows install file are
+kept in \verb#\\stonerlab\data\software\python#
 
 
 \subsection{Using the Stoner Package}
 
-The easiest way to use the Stoner Package is to add the path to the directory containing Stoner.py to your PYTHONPATH environment variable. This can be done on Macs and Linux by doing:
+The easiest way to use the Stoner Package is to add the path to the directory
+containing Stoner.py to your PYTHONPATH environment variable. This can be done
+on Macs and Linux by doing:
 \begin{verbatim}
   cd <path to PythonCode directory>/src
   export PYTHONPATH=`pwd`:$PYTHONPATH
 \end{verbatim}
-On a windows machine the easiest way is to create a permanent entry to the folder in the system environment variables. Go to Control Panel -> System -> Advanced Tab -> click on Environment button and then add or edit an entry to the system variable PYTHONPATH.
+On a windows machine the easiest way is to create a permanent entry to the
+folder in the system environment variables. Go to Control Panel -> System ->
+Advanced Tab -> click on Environment button and then add or edit an entry to the
+system variable PYTHONPATH.
 
-One this has been done, the Stoner module may be loaded from python command line:
+One this has been done, the Stoner module may be loaded from python command
+line:
 
 \begin{verbatim}
   >>> import Stoner
@@ -63,15 +85,24 @@ or
 
 \section{Users' Guide}
 
-The Users'Guide provides a brief overview of the functions contained within the Stoner module and so basic examples of how the module can be used.
+The Users'Guide provides a brief overview of the functions contained within the
+Stoner module and so basic examples of how the module can be used.
 
-The Stoner module provides several Python classes that can be used to manipulate experimental data. The main class that provides the basic functionality is the DataFile class. This handles loading data, finding and manipulating meta data, selecting rows or columns of data, adding or removing data, and saving data.
+The Stoner module provides several Python classes that can be used to manipulate
+experimental data. The main class that provides the basic functionality is the
+DataFile class. This handles loading data, finding and manipulating meta data,
+selecting rows or columns of data, adding or removing data, and saving data.
 
-The PlotFile class is a descendent of DataFile, meaning it shares all the same functionality as DataFile, but in addition has methods to present data graphically. The AnalyseFile class is another descendent of DataFile, but provides extra methods to fit curves, smooth and differentiate data, find peaks and carry out other simple analysis operations.
+The PlotFile class is a descendent of DataFile, meaning it shares all the same
+functionality as DataFile, but in addition has methods to present data
+graphically. The AnalyseFile class is another descendent of DataFile, but
+provides extra methods to fit curves, smooth and differentiate data, find peaks
+and carry out other simple analysis operations.
 
 \subsection{Loading a data file}
 
-The first step in using the Stoner module is to load some data from a measurement.
+The first step in using the Stoner module is to load some data from a
+measurement.
 
 \begin{verbatim}
   >>>import Stoner
@@ -79,15 +110,30 @@ The first step in using the Stoner module is to load some data from a measuremen
   >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-In this example we have loaded data from my\_data.txt which should be in the current directory -- here we are assuming that my\_data.txt contains data in the \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the file successfully loads, \textit{d}, is an instance of the DataFile object. Here the DataFile constructor has been used to both create the instance and load the data in one go. The second version adds an extra parameter that specifying how to interpret the file data. Currently allowed values are
+In this example we have loaded data from my\_data.txt which should be in the
+current directory -- here we are assuming that my\_data.txt contains data in the
+\textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the
+file successfully loads, \textit{d}, is an instance of the DataFile object. Here
+the DataFile constructor has been used to both create the instance and load the
+data in one go. The second version adds an extra parameter that specifying how
+to interpret the file data. Currently allowed values are
 
 \begin{description}
-\item[TDI] Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs
+\item[TDI] Tagged Data Interchange Format 1.5 -- the default format produced by
+the LabVIEW measurement rigs
 \item[VSM] The text files produced by the group's Oxford Instruments VSM
-\item[BigBlue] Datafiles produced by VB Code running on Big Blue. The \textit{BigBlue} version of the DataFile.load and DataFile constructors takes two additional parameters that specify the row on which the column headers will be found and the row on which the data starts.
-\item[csv] Reads a generic comma separated value file. The \textit{csv} load routine takes four additional parameters to the constructor and load methods. In addition to the two extra arguments used for the \textit{BigBlue} variant, a further two parameters specify the deliminators for the header and data rows.
-\item[NewXRD] Loads a scan file produced by Arkengarthdale - the group's Brucker XRD Machine.
-\item[Raman] Loads a Raman scan file (.spc format) produced by the Rensihaw Raman spectrometer.
+\item[BigBlue] Datafiles produced by VB Code running on Big Blue. The
+\textit{BigBlue} version of the DataFile.load and DataFile constructors takes
+two additional parameters that specify the row on which the column headers will
+be found and the row on which the data starts.
+\item[csv] Reads a generic comma separated value file. The \textit{csv} load
+routine takes four additional parameters to the constructor and load methods. In
+addition to the two extra arguments used for the \textit{BigBlue} variant, a
+further two parameters specify the deliminators for the header and data rows.
+\item[NewXRD] Loads a scan file produced by Arkengarthdale - the group's Brucker
+XRD Machine.
+\item[Raman] Loads a Raman scan file (.spc format) produced by the Rensihaw
+Raman spectrometer.
 \end{description}
 
 \begin{verbatim}
@@ -97,11 +143,18 @@ In this example we have loaded data from my\_data.txt which should be in the cur
   >>>d.load('my_VSM_data.fld','VSM')
 \end{verbatim}
 
-\keypoint{The load method, like many of the DataFile methods returns a copy of the Datafile object \textbf{as well as} modifying the object itself. The advantage of this is that it is then possible to chain several methods into one command}
+\keypoint{The load method, like many of the DataFile methods returns a copy of
+the Datafile object \textbf{as well as} modifying the object itself. The
+advantage of this is that it is then possible to chain several methods into one
+command}
 
 \subsection{Examining Some Data}
 \subsubsection{Data, Column headers and metadata}
-Having loaded some data, the next stage might be to take a look at it. Internally, data is represented as a 2D numpy array of floating point numbers, along with a list of column headers and a dictionary that keeps the metadata and also keeps track of the expected type of the metadata (\ie the meta-metadata). These can be accessed like so:
+Having loaded some data, the next stage might be to take a look at it.
+Internally, data is represented as a 2D numpy array of floating point numbers,
+along with a list of column headers and a dictionary that keeps the metadata and
+also keeps track of the expected type of the metadata (\ie the meta-metadata).
+These can be accessed like so:
 \begin{verbatim}
   >>>d.data
   >>>d.column_headers
@@ -110,13 +163,22 @@ Having loaded some data, the next stage might be to take a look at it. Internall
 
 \subsubsection{Working with columns of data}
 
-This is all very well, but often you want to examine a particular column of data or a particular row:
+This is all very well, but often you want to examine a particular column of data
+or a particular row:
 \begin{verbatim}
   >>>d.column(0)
   >>>d.column('Temperature')
   >>>d.column(['Temperature',0])
 \end{verbatim}
-In the first example, the first column of numeric data will be returned. In the second example, the column headers will first be checked for one labeled exactly \textit{Temperature} and then if no column is found, the column headers will be searched using \textit{Temperature} as a regular expression. This would then match \textit{Temperature (K)} or \textit{Sample Temperature}.  The third example results in a 2 dimensional numpy array containing two columns in the order that they appear in the list (\ie not the order that they are in the data file). For completeness, the \textbf{DataFile.column} method also allows one to pass slices to select columns and should do the expected thing.
+In the first example, the first column of numeric data will be returned. In the
+second example, the column headers will first be checked for one labeled exactly
+\textit{Temperature} and then if no column is found, the column headers will be
+searched using \textit{Temperature} as a regular expression. This would then
+match \textit{Temperature (K)} or \textit{Sample Temperature}.  The third
+example results in a 2 dimensional numpy array containing two columns in the
+order that they appear in the list (\ie not the order that they are in the data
+file). For completeness, the \textbf{DataFile.column} method also allows one to
+pass slices to select columns and should do the expected thing.
 
 \subsubsection{Working with complete rows of data}
 
@@ -125,7 +187,9 @@ Rows don't have labels, so are accessed directly by number:
   >>>d[1]
   >>>d[1:4]
 \end{verbatim}
-The second example uses a slice to pull out more than one row. This syntax also supports the full slice syntax which allows one to, for example, decimate the rows, or directly pull out the last fews rows in the file.
+The second example uses a slice to pull out more than one row. This syntax also
+supports the full slice syntax which allows one to, for example, decimate the
+rows, or directly pull out the last fews rows in the file.
 
 \subsubsection{Manipulating the metadata}
 
@@ -133,14 +197,18 @@ What happens if you use a string and not a number in the above examples ?
 \begin{verbatim}
   >>>d['User']
 \end{verbatim}
-in this case, it is assumed that you meant the metadata with key \textit{User}. To get a list of possible keys in the metadata, you can do:
+in this case, it is assumed that you meant the metadata with key \textit{User}.
+To get a list of possible keys in the metadata, you can do:
 \begin{verbatim}
   >>>d.dir()
   >>>d.dir('Option\:.*')
 \end{verbatim}
-In the first case, all of the keys will be returned in a list. In the second, only keys matching the pattern will be returned -- all keys containing \textit{Option:}.
+In the first case, all of the keys will be returned in a list. In the second,
+only keys matching the pattern will be returned -- all keys containing
+\textit{Option:}.
 
-We mentioned above that the metadata also keeps a note of the expected type of the data. You can get at the metadata type for a particular key like this:
+We mentioned above that the metadata also keeps a note of the expected type of
+the data. You can get at the metadata type for a particular key like this:
 \begin{verbatim}
   >>>d.metadata.type('User')
 \end{verbatim}
@@ -148,11 +216,16 @@ to get a dictionary of all of the types associated with each key you could do:
 \begin{verbatim}
   >>>dict(zip(d.dir(),d.metadata.type(d.dir())))
 \end{verbatim}
-\warning{This really ought to be made simpler with a better method implemented on the typeHintDict class that just returns the type hint directory !}
+but an easier way would be to use the \textbf{typeHintedDict.types} attribute:
+\begin{verbatim}
+   >>>d.metadata.types
+\end{verbatim}
+.
 
 \subsubsection{More on Indexing the data}
 
-There are a number o other forms of indexing supported for \textbf{DataFile} objects.
+There are a number o other forms of indexing supported for \textbf{DataFile}
+objects.
 
 \begin{verbatim}
   >>>d[10,0]
@@ -161,9 +234,18 @@ There are a number o other forms of indexing supported for \textbf{DataFile} obj
   >>>d[0:10,['Voltage','Temp']
 \end{verbatim}
 
-The first variant just returns the data in the 11th row, first column (remember indexing starts at 0). The second variant returns the first 10 values in the first column. The third variant demonstrates that columns can be indexed by string as well as number, and the last variant demonstrates indexing multiplerows and columns -- in this case the first 10 values of the Voltage and Temp columns.
+The first variant just returns the data in the 11th row, first column (remember
+indexing starts at 0). The second variant returns the first 10 values in the
+first column. The third variant demonstrates that columns can be indexed by
+string as well as number, and the last variant demonstrates indexing
+multiplerows and columns -- in this case the first 10 values of the Voltage and
+Temp columns.
 
-You might think of the data as being a list of records, where each column is a field in the record. Numpy supports this type of structured record view of data and the \textbf{DataFile} object provides the \textit{DataFile.records} attribute to d this. This read-only attribute is just providing an alternative view of the same data.
+You might think of the data as being a list of records, where each column is a
+field in the record. Numpy supports this type of structured record view of data
+and the \textbf{DataFile} object provides the \textit{DataFile.records}
+attribute to d this. This read-only attribute is just providing an alternative
+view of the same data.
 
 \begin{verbatim}
   >>> d.records
@@ -171,7 +253,9 @@ You might think of the data as being a list of records, where each column is a f
 
 \subsubsection{Selecting Individual rows and columns of data}
 
-Many of the function in the Stoner module index columns by searching the column headings. If one wishes to find the numeric index of a column then the \textbf{DataFile.find\_col} method can be used:
+Many of the function in the Stoner module index columns by searching the column
+headings. If one wishes to find the numeric index of a column then the
+\textbf{DataFile.find\_col} method can be used:
 
 \begin{verbatim}
   >>> index=d.find_col(1)
@@ -181,11 +265,23 @@ Many of the function in the Stoner module index columns by searching the column 
   >>> index=d.find_col(['Temperature',2,'Resistance'])
 \end{verbatim}
 
- \textbf{DataFile.find\_col} takes a number of different forms. If the argument is an integer then it returns (trivially) the same integer, a string argument is first checked to see if it exactly matches one of the column headers in which case the number of the matching column heading is returned. If no exact match is found then a regular expression search is carried out on the column headings. In both cases, only the first match is returned. The final two examples given above both return a list of indices, firstly using a slice construct - in this case the result is trivially the same as the slice itself, and in the last example by passing a list of column headers to look for.
+ \textbf{DataFile.find\_col} takes a number of different forms. If the argument
+is an integer then it returns (trivially) the same integer, a string argument is
+first checked to see if it exactly matches one of the column headers in which
+case the number of the matching column heading is returned. If no exact match is
+found then a regular expression search is carried out on the column headings. In
+both cases, only the first match is returned. The final two examples given above
+both return a list of indices, firstly using a slice construct - in this case
+the result is trivially the same as the slice itself, and in the last example by
+passing a list of column headers to look for.
 
-This is the function that is used internally by \textbf{DataFile.column}, \textbf{DataFile.search} \etc and for this reason the trivial integer and slice forms are implemented to allow these other functions to work with multiple columns.
+This is the function that is used internally by \textbf{DataFile.column},
+\textbf{DataFile.search} \etc and for this reason the trivial integer and slice
+forms are implemented to allow these other functions to work with multiple
+columns.
 
-Sometimes you may want to iterate over all of the rows or columns in a data set. This can be done quite easily:
+Sometimes you may want to iterate over all of the rows or columns in a data set.
+This can be done quite easily:
 \begin{verbatim}
   >>>for row in d.rows():
   ......print row
@@ -201,7 +297,8 @@ The first example could also have been written more compactly as:
   ......
 \end{verbatim}
 
-In many cases you do not know which rows in the data file are of interest - in this case you want to search the data.
+In many cases you do not know which rows in the data file are of interest - in
+this case you want to search the data.
 \begin{verbatim}
   >>>d.search('Temperature',4.2)
   >>>d.search('Temperature',4.2,['Temperature','Resistance'])
@@ -209,11 +306,26 @@ In many cases you do not know which rows in the data file are of interest - in t
   >>>d.search('Temperature',lambda x,y: x>10 and
                 x<1000 and y[1]<1000,['Temperature','Resistance'])
 \end{verbatim}
-The general form is \\\verb:DataFile.search(<search column>,<search term>[,<list of return columns>]):
+The general form is \\\verb:DataFile.search(<search column>,<search term>[,<listof return columns>]):
 
-The first example will return all the rows where the value of the \textit{Tenperature} column is 4.2. The second example is the same, but only returns the values from the \textit{Temperature}, and \textit{Resistance} columns. The rules for selecting the columns are the same as for the DataFile.column method above -- strings are matched against column headers and integers select column by number.
+The first example will return all the rows where the value of the
+\textit{Tenperature} column is 4.2. The second example is the same, but only
+returns the values from the \textit{Temperature}, and \textit{Resistance}
+columns. The rules for selecting the columns are the same as for the
+DataFile.column method above -- strings are matched against column headers and
+integers select column by number.
 
-The third and fourth examples above demonstrate the use of a function as the search value. This allows quite complex search criteria to be used. The function passed to the search routine should take two parameters -- a floating point number and a numpy array of floating point numbers and should return either \textit{ture} or \textit{False}. The function is evaluated for each row in the data file and is passed the value corresponding to the search column as the first parameter while the second parameter contains a list of all of the values in the row to be returned. If the search function returns True, then the row is returned, otherwise it isn't. In thr last example, the final parameter can either be a list of columns or a single column. The rules for indexing columns are the same as used for the \textbf{DataFile.find\_col} method.
+The third and fourth examples above demonstrate the use of a function as the
+search value. This allows quite complex search criteria to be used. The function
+passed to the search routine should take two parameters -- a floating point
+number and a numpy array of floating point numbers and should return either
+\textit{ture} or \textit{False}. The function is evaluated for each row in the
+data file and is passed the value corresponding to the search column as the
+first parameter while the second parameter contains a list of all of the values
+in the row to be returned. If the search function returns True, then the row is
+returned, otherwise it isn't. In thr last example, the final parameter can
+either be a list of columns or a single column. The rules for indexing columns
+are the same as used for the \textbf{DataFile.find\_col} method.
 
 \subsubsection{Find out more about the data}
 
@@ -232,21 +344,45 @@ indices of the unique and all non-unique values in the array. The
 column is specified in the same way as the \textbf{DataFile.column}
 method does.
 
+\subsubsection{Copying Data}
+
+One of the characterisitics of Python that can confuse those used to other
+programming languages is that assignments and argument passing is by reference
+and not by value. This can lead to unexcted results as you can end up modifying variables you were not expecting ! To help with creating genuine copies of data Python provides the copy module. Whilst this works with DataFile objects, for convenience, the \textbf{DataFile.clone} atribute is provided to make a deep copy of a DataFile object.
+
+\keypoint{This is an attribute not a method, so there are no brackets here !}
+
+\begin{verbatim}
+   >>> t=d.clone
+\end{verbatim}
+
+
 \subsection{Modifying Data}
 
 \subsubsection{Appending data}
 
-The simplest way to modify some data might be to append some columns or rows. The Stoner mpodule redefines two standard operators, \verb:+: and \verb:&: to have special meanings:
+The simplest way to modify some data might be to append some columns or rows.
+The Stoner mpodule redefines two standard operators, \verb:+: and \verb:&: to
+have special meanings:
 \begin{verbatim}
   >>>a=Stoner.DataFile('some_new_data.txt')
   >>>add_rows=d+a
   >>>add_columns=d&a
 \end{verbatim}
-In these example, \textit{a} is a second DataFile object that contains some data. In the first example, a new DataFile object is created where the contents of \textit{a} are added as new rows after the data in \textit{d}. Any metadata that is in \textit{a} and not in \textit{d} are added to the metadata as well. There is a requirement, however, that the column headers of \textit{d} and \textit{a} are the same -- \ie that the two DataFile objects appear to represent similar data.
+In these example, \textit{a} is a second DataFile object that contains some
+data. In the first example, a new DataFile object is created where the contents
+of \textit{a} are added as new rows after the data in \textit{d}. Any metadata
+that is in \textit{a} and not in \textit{d} are added to the metadata as well.
+There is a requirement, however, that the column headers of \textit{d} and
+\textit{a} are the same -- \ie that the two DataFile objects appear to represent
+similar data.
 
-In the second example, the data in \textit{a} is added as new columns after the data from \textit{d}. In this case, there is a requirement that the two DataFile objects have the same number of rows.
+In the second example, the data in \textit{a} is added as new columns after the
+data from \textit{d}. In this case, there is a requirement that the two DataFile
+objects have the same number of rows.
 
-These operators are not limited just to DataFile objects, you can also add numpy arrays to the DataFile object to append additional data.
+These operators are not limited just to DataFile objects, you can also add numpy
+arrays to the DataFile object to append additional data.
 \begin{verbatim}
   >>>import numpy as np
   >>>x=np.array([1,2,3])
@@ -256,11 +392,18 @@ These operators are not limited just to DataFile objects, you can also add numpy
   >>>column=d.column[0]
   >>>new_data=d&column
 \end{verbatim}
-In the first example above, we add a single row of data to \textit{d}. This assumes that the number of elements in the array matches the number of columns in the data file. The second example is similar but this time appends a 2 dimensional numpy array to the data. The third example appends a numpy array as a column to \textit{d}. In this case the requirement is that the numpy array has the same or fewer rows of data as \textit{d}.
+In the first example above, we add a single row of data to \textit{d}. This
+assumes that the number of elements in the array matches the number of columns
+in the data file. The second example is similar but this time appends a 2
+dimensional numpy array to the data. The third example appends a numpy array as
+a column to \textit{d}. In this case the requirement is that the numpy array has
+the same or fewer rows of data as \textit{d}.
 
 \subsubsection{Inserting Columns of Data}
 
-The append columns operator \verb#&# will only add columns to the end of a dataset. If you want to add a column of data in the middle of the data set then you should use the \textbf{add\_column} method.
+The append columns operator \verb#&# will only add columns to the end of a
+dataset. If you want to add a column of data in the middle of the data set then
+you should use the \textbf{add\_column} method.
 
 \begin{verbatim}
   >>>d.add_column(numpy.array(range(100)),'Column Header')
@@ -268,13 +411,22 @@ The append columns operator \verb#&# will only add columns to the end of a datas
   >>>d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
 \end{verbatim}
 
-The first example simply adds a column of data to the end of the dataset and sets the new column headers. The second variant  inserts the new column before column \textit{Index}. \textit{Index} follows the same rules as for the \textbf{DataFile.colummn()} method. In the third example, the new column data is generated by applying the specified function. The function is passed s dingle row as a 1D numpy array and any of the keyword, argument pairs passed in a dictionary to the optional \textit{func\_args} argument.
+The first example simply adds a column of data to the end of the dataset and
+sets the new column headers. The second variant  inserts the new column before
+column \textit{Index}. \textit{Index} follows the same rules as for the
+\textbf{DataFile.colummn()} method. In the third example, the new column data is
+generated by applying the specified function. The function is passed s dingle
+row as a 1D numpy array and any of the keyword, argument pairs passed in a
+dictionary to the optional \textit{func\_args} argument.
 
-The \textbf{DataFile.add\_column} method returns a copy of the DataFile object itself as well as modifying the object. This is to allow the metod to be chained up with other methods for more compact code writing.
+The \textbf{DataFile.add\_column} method returns a copy of the DataFile object
+itself as well as modifying the object. This is to allow the metod to be chained
+up with other methods for more compact code writing.
 
 \subsubsection{Deleting Rows of Data}
 
-Removing complete rows of data is achieved using the \textbf{DataFile.del\_row} method.
+Removing complete rows of data is achieved using the \textbf{DataFile.del\_row}
+method.
 
 \begin{verbatim}
   >>>d.del_rows(10)
@@ -282,13 +434,22 @@ Removing complete rows of data is achieved using the \textbf{DataFile.del\_row} 
   >>>d.del_rows('X Col',lambda x,y:x>300)
 \end{verbatim}
 
-The first variant will delete row 10 from the data set (where the first row will be row 0). You can also supply a list or slice to \textbf{DataFile.del\_rows} to delete multiple rows.
+The first variant will delete row 10 from the data set (where the first row will
+be row 0). You can also supply a list or slice to \textbf{DataFile.del\_rows} to
+delete multiple rows.
 
-If you do not know in advance which row to delete, then the second and third variants provide more advanced options. The second variant searches for and deletes all rows in which the specified column contains \textit{value}. The third variant selects which ros to delete by calling a user supplied function for each row. The user supplied function is the same in form and definitition as that used for the \textbf{DataFile.search} method.
+If you do not know in advance which row to delete, then the second and third
+variants provide more advanced options. The second variant searches for and
+deletes all rows in which the specified column contains \textit{value}. The
+third variant selects which ros to delete by calling a user supplied function
+for each row. The user supplied function is the same in form and definitition as
+that used for the \textbf{DataFile.search} method.
 
 \subsubsection{Deleting Columns of Data}
 
-Deleting whole columns of data can be done by referring to a column by index or column header - the indexing rules are the same as used for the \textbf{DataFile.column} method.
+Deleting whole columns of data can be done by referring to a column by index or
+column header - the indexing rules are the same as used for the
+\textbf{DataFile.column} method.
 
 \begin{verbatim}
   >>>d.del_column('Temperature')
@@ -297,7 +458,9 @@ Deleting whole columns of data can be done by referring to a column by index or 
 
 \subsubsection{Sorting Data}
 
-Data can be sorted by one or more columns, specifying the columns as a number or string for single columns or a list or tuple of strings or numbers for multiple columns. Currently only ascending sorts are supported.
+Data can be sorted by one or more columns, specifying the columns as a number or
+string for single columns or a list or tuple of strings or numbers for multiple
+columns. Currently only ascending sorts are supported.
 
 \begin{verbatim}
   >>>d.sort('Temp')
@@ -313,11 +476,17 @@ Only saving data in the \textit{TDI} format is supported.
   >>>d.save(filename)
 \end{verbatim}
 
-In the first case, the filename used tosave the data is determined from the filename attribute of the DataFile object. This will have been set when the filewas loaded from disc.
+In the first case, the filename used tosave the data is determined from the
+filename attribute of the DataFile object. This will have been set when the
+filewas loaded from disc.
 
-If the filename attribute has not been set \eg if the DataFile object was created from scratch, then the \textbf{DataFile.save} method will cause a dialog box to be raised so that the user can supply a filename.
+If the filename attribute has not been set \eg if the DataFile object was
+created from scratch, then the \textbf{DataFile.save} method will cause a dialog
+box to be raised so that the user can supply a filename.
 
-In the second variant, the supplied filename is used and the filename attribute is changed to match this \ie \verb#d.filename# will always return the last filename used for a load or save operation.
+In the second variant, the supplied filename is used and the filename attribute
+is changed to match this \ie \verb#d.filename# will always return the last
+filename used for a load or save operation.
 
 \subsection{Plotting Data}
 
@@ -332,61 +501,125 @@ Curve fitting is handled by a sub-class of the DataFile object -- AnalyseFile
   >>> a2=d
 \end{verbatim}
 
-The first line imports the AnaylseFile class. Since the AnalyseFile is a child class of DataFile, everything you can do with a DataFile also works with an AnalyseFile object. The last two lines demonstrate creating a blank AnalyseFile and then copying all of the data, metadata and column headings from an existing dataFile object.
+The first line imports the AnaylseFile class. Since the AnalyseFile is a child
+class of DataFile, everything you can do with a DataFile also works with an
+AnalyseFile object. The last two lines demonstrate creating a blank AnalyseFile
+and then copying all of the data, metadata and column headings from an existing
+dataFile object.
 
 \subsubsection{Simply polynomial Fits}
 
-Simple least squares fitting of polynomial functions is handled by the \textbf{AnalyseFile.polyfit} method:
+Simple least squares fitting of polynomial functions is handled by the
+\textbf{AnalyseFile.polyfit} method:
 
 \begin{verbatim}
   >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True)
 \end{verbatim}
 
-This is a simple pass through to the numpy routine of the same name. The x and y columns are specified in the first two arguments using the usual index rules for the Stoner package. The routine will fit multiple columns if \textit{column\_y} is a list or slice. The polynomial\_order parameter should be a simple integer greater or equal to 1 to define the degree of polynomial to fit. The bounds function follows the same rules as the bounds function in \textbf{DataFile.search} to restrict the fitting to a limited range of rows. The mthod returns a list of co-efficients with the highest power first. If \textit{column\_y} was a list, then a 2D array of co-efficients is returned.
+This is a simple pass through to the numpy routine of the same name. The x and y
+columns are specified in the first two arguments using the usual index rules for
+the Stoner package. The routine will fit multiple columns if \textit{column\_y}
+is a list or slice. The polynomial\_order parameter should be a simple integer
+greater or equal to 1 to define the degree of polynomial to fit. The bounds
+function follows the same rules as the bounds function in
+\textbf{DataFile.search} to restrict the fitting to a limited range of rows. The
+mthod returns a list of co-efficients with the highest power first. If
+\textit{column\_y} was a list, then a 2D array of co-efficients is returned.
 
 \subsubsection{Simple function fitting}
 
-For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit} method can be employed. Again, this is a pass through to the numpy routine of the same name.
+For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit}
+method can be employed. Again, this is a pass through to the numpy routine of
+the same name.
 
 \begin{verbatim}
   >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
                                 bounds=lambda x, y: True )
 \end{verbatim}
 
-The first parameter is the fitting function. This should have prototype \\\verb:y=func(x,p[0],p[1],p[2]...): where p is a list of fitting parameters. The \textit{p0} parameter contains the initial guesses at the fitting parameters, the default value is 1. \textit{xcol} and \textit{ycol} are the x and y columns to fit. This method cannot handle multiple y columns. \textit{sigma}, if present, provides the weightings for each datapoint and so should also be an array of the same length as the x and y data. Fianlly, the bounds function can be used to restrict the fitting to only a subset of the rows of data.
+The first parameter is the fitting function. This should have prototype
+\\\verb:y=func(x,p[0],p[1],p[2]...): where p is a list of fitting parameters.
+The \textit{p0} parameter contains the initial guesses at the fitting
+parameters, the default value is 1. \textit{xcol} and \textit{ycol} are the x
+and y columns to fit. This method cannot handle multiple y columns.
+\textit{sigma}, if present, provides the weightings for each datapoint and so
+should also be an array of the same length as the x and y data. Fianlly, the
+bounds function can be used to restrict the fitting to only a subset of the rows
+of data.
 
-\textbf{AnalyseFile.curve\_fit} returns a list of two arrays \verb:[popt,pcov]: where \textit{popt} is an array of the optimal fitting parameters and \textit{pcov} is a 2D array of the co-variances between the parameters.
+\textbf{AnalyseFile.curve\_fit} returns a list of two arrays \verb:[popt,pcov]:
+where \textit{popt} is an array of the optimal fitting parameters and
+\textit{pcov} is a 2D array of the co-variances between the parameters.
 
 \subsubsection{Fitting with limits}
 
-For cases where one requires more flexibility in fitting data, in particular where the fitting parameters are constrained, the \textbf{AnalyzeFile.mpfit} method is provided. This is a pass through to the \textbf{mpfit} module.
+For cases where one requires more flexibility in fitting data, in particular
+where the fitting parameters are constrained, the \textbf{AnalyzeFile.mpfit}
+method is provided. This is a pass through to the \textbf{mpfit} module.
 
 \begin{verbatim}
   >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,
                bounds=lambda x, y: True, **mpfit_kargs )
 \end{verbatim}
 
-In this case, the \textit{func} argument takes a slightly different prototype:\\\verb:def func(x,parameters, **func_args): where \textit{parameters} is a list of the fitting parameters and \textit{func\_args} provides a dictionary of fixed \ie non-fitting parameters. \textit{xcol} and \textit{ycol} are the column indices for the x and y data, \textit{bounds} is a bounding function to select only those rows to use for fitting the function, and \textit{sigma} are the weightings for each datapoint. The remaining arguments are a dictionary of keywords to pass through to the \textbf{mpfit} routine and  \textit{p\_info} which is a list of dictionaries which is used to control the parameters in the fit. This described below.
+In this case, the \textit{func} argument takes a slightly different
+prototype:\\\verb:def func(x,parameters, **func_args): where \textit{parameters}
+is a list of the fitting parameters and \textit{func\_args} provides a
+dictionary of fixed \ie non-fitting parameters. \textit{xcol} and \textit{ycol}
+are the column indices for the x and y data, \textit{bounds} is a bounding
+function to select only those rows to use for fitting the function, and
+\textit{sigma} are the weightings for each datapoint. The remaining arguments
+are a dictionary of keywords to pass through to the \textbf{mpfit} routine and 
+\textit{p\_info} which is a list of dictionaries which is used to control the
+parameters in the fit. This described below.
 
-\textit{p\_info} contains one element for each parameter used to fit the data. Each element is a dictionary with the following keys:
+\textit{p\_info} contains one element for each parameter used to fit the data.
+Each element is a dictionary with the following keys:
 \begin{description}
-  \item[value] the starting parameter value (but see the START\_PARAMS parameter for more information).
-  \item[fixed] a boolean value, whether the parameter is to be held fixed or not.  Fixed parameters are not varied by MPFIT, but are passed on to MYFUNCT for evaluation.
-  \item[limited] a two-element boolean array.  If the first/second element is set, then the parameter is bounded on the lower/upper side.  A parameter can be bounded on both sides.  Both LIMITED and LIMITS must be given together.
-  \item[limits] a two-element float array.  Gives the parameter limits on the lower and upper sides, respectively.  Zero, one or two of these values can be set, depending on the values of LIMITED.  Both LIMITED and LIMITS must be given together.
-  \item[parname] a string, giving the name of the parameter.  The fitting code of MPFIT does not use this tag in any way.  However, the default iterfunct will print the parameter name if available.
-  \item[step] the step size to be used in calculating the numerical derivatives.  If set to zero, then the step size is	computed automatically.  Ignored when AUTODERIVATIVE=0.
-  \item[mpside] the sidedness of the finite difference when computing numerical derivatives.  This field can take four values:\\
+  \item[value] the starting parameter value (but see the START\_PARAMS parameter
+for more information).
+  \item[fixed] a boolean value, whether the parameter is to be held fixed or
+not.  Fixed parameters are not varied by MPFIT, but are passed on to MYFUNCT for
+evaluation.
+  \item[limited] a two-element boolean array.  If the first/second element is
+set, then the parameter is bounded on the lower/upper side.  A parameter can be
+bounded on both sides.  Both LIMITED and LIMITS must be given together.
+  \item[limits] a two-element float array.  Gives the parameter limits on the
+lower and upper sides, respectively.  Zero, one or two of these values can be
+set, depending on the values of LIMITED.  Both LIMITED and LIMITS must be given
+together.
+  \item[parname] a string, giving the name of the parameter.  The fitting code
+of MPFIT does not use this tag in any way.  However, the default iterfunct will
+print the parameter name if available.
+  \item[step] the step size to be used in calculating the numerical derivatives.
+ If set to zero, then the step size is	computed automatically.  Ignored when
+AUTODERIVATIVE=0.
+  \item[mpside] the sidedness of the finite difference when computing numerical
+derivatives.  This field can take four values:\\
     \begin{description}
       \item [0]one-sided derivative computed automatically
       \item [1]one-sided derivative $(f(x+h) - f(x)  )/h$
       \item [-1] one-sided derivative $(f(x)   - f(x-h))/h$
       \item [2] two-sided derivative $(f(x+h) - f(x-h))/(2*h)$
     \end{description}
-	Where H is the STEP parameter described above.  The "automatic" one-sided derivative method will chose a direction for the finite difference which does not 			 violate any constraints.  The other methods do not perform this check.  The two-sided method is in principle more precise, but requires twice as many function evaluations.  Default: 0.
-  \item[mpmaxstep] the maximum change to be made in the parameter value.  During the fitting process, the parameter will never be changed by more than this value in one iteration.\\ A value of 0 indicates no maximum.  Default: 0.
-  \item[tied] a string expression which ``ties'' the parameter to other	free or fixed parameters.  Any expression involving	constants and the parameter array P are permitted.Example: if parameter 2 is always to be twice parameter 1 then use the following: \verb#parinfo(2).tied = '2 * p(1)'#. Since they are totally constrained, tied parameters are considered to be fixed; no errors are computed for them.[ NOTE: the PARNAME can't be used in expressions. ]
-  \item[mpprint] if set to 1, then the default iterfunct will print the parameter value.  If set to 0, the parameter value will not be printed.  This tag can be used to selectively print only a few parameter values out of many.\\Default: 1 (all parameters printed)
+	Where H is the STEP parameter described above.  The "automatic"
+one-sided derivative method will chose a direction for the finite difference
+which does not 			 violate any constraints.  The other methods do
+not perform this check.  The two-sided method is in principle more precise, but
+requires twice as many function evaluations.  Default: 0.
+  \item[mpmaxstep] the maximum change to be made in the parameter value.  During
+the fitting process, the parameter will never be changed by more than this value
+in one iteration.\\ A value of 0 indicates no maximum.  Default: 0.
+  \item[tied] a string expression which ``ties'' the parameter to other	free or
+fixed parameters.  Any expression involving	constants and the parameter
+array P are permitted.Example: if parameter 2 is always to be twice parameter 1
+then use the following: \verb#parinfo(2).tied = '2 * p(1)'#. Since they are
+totally constrained, tied parameters are considered to be fixed; no errors are
+computed for them.[ NOTE: the PARNAME can't be used in expressions. ]
+  \item[mpprint] if set to 1, then the default iterfunct will print the
+parameter value.  If set to 0, the parameter value will not be printed.  This
+tag can be used to selectively print only a few parameter values out of
+many.\\Default: 1 (all parameters printed)
 \end{description}
 
 \subsection{More AnalyseFile Functions}
@@ -412,11 +645,15 @@ In this case, the \textit{func} argument takes a slightly different prototype:\\
 
 \section{Cookbook}
 
-This section gives some short examples to give an idea of things that can be done with the Stoner python module in just a few lines.
+This section gives some short examples to give an idea of things that can be
+done with the Stoner python module in just a few lines.
 
 \subsection{Extract X-Y(Z) from X-Y-Z data}
 
-In a number of measurement systems the data is returned as 3 parameters X, Y and Z and one wishes to extract X-Y as a function of constant Z. For example, $I-V$ sweeps as a function of gate voltage $V_G$. Assuming we have a data file with columns \textit{Current}, \textit{Voltage},\textit{Gate}:
+In a number of measurement systems the data is returned as 3 parameters X, Y and
+Z and one wishes to extract X-Y as a function of constant Z. For example, $I-V$
+sweeps as a function of gate voltage $V_G$. Assuming we have a data file with
+columns \textit{Current}, \textit{Voltage},\textit{Gate}:
 
 \begin{verbatim}
   >>> d=DataFile('data.txt')
@@ -426,11 +663,18 @@ In a number of measurement systems the data is returned as 3 parameters X, Y and
   >>>     t.save('Data Gate='+str(gate)+'.txt')
 \end{verbatim}
 
-The first line opens the data file containing the $I-V(V_G)$ data. The second creates a temporary copy of the DataFile object - ensuring that we get a copy of all metadata and column headers. The \textbf{for} loop iterates over all unique values of the data in the gate column and then inside the for loop, searches for the corresponding $I-V$ data, sets it as the data of the temporary DataFile and then saves it.
+The first line opens the data file containing the $I-V(V_G)$ data. The second
+creates a temporary copy of the DataFile object - ensuring that we get a copy of
+all metadata and column headers. The \textbf{for} loop iterates over all unique
+values of the data in the gate column and then inside the for loop, searches for
+the corresponding $I-V$ data, sets it as the data of the temporary DataFile and
+then saves it.
 
 \subsection{Mapping X-Y-Z data to Z(X,Y) data}
 
-In a similar fashion to the previous section, where data has been recorded with fixed values of $X$ and $Y$ \eg $I$ measured for fixed $V$ and $V_G$, it can be useful to map the data to a matrix.
+In a similar fashion to the previous section, where data has been recorded with
+fixed values of $X$ and $Y$ \eg $I$ measured for fixed $V$ and $V_G$, it can be
+useful to map the data to a matrix.
 
 \begin{verbatim}
   >>> d=DataFile('Data,.txt')
@@ -441,6 +685,11 @@ In a similar fashion to the previous section, where data has been recorded with 
   >>> t.add_column(d.unique('Gate'),'Gate Voltage',0)
 \end{verbatim}
 
-The start of the script follows the previous section, however this time in the for loop the addition operator is used to add a single row to the temporary DataFile \textit{t}. In this case we are using the utility method \textbf{DataFile.find\_col} to find the index of the column with the current data. After the for loop we set the column headers in \textit{t} and then insert an additional column at the start with the gate voltage values.
+The start of the script follows the previous section, however this time in the
+for loop the addition operator is used to add a single row to the temporary
+DataFile \textit{t}. In this case we are using the utility method
+\textbf{DataFile.find\_col} to find the index of the column with the current
+data. After the for loop we set the column headers in \textit{t} and then insert
+an additional column at the start with the gate voltage values.
 
 \end{document}

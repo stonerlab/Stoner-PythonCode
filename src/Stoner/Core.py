@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.21 2011/06/13 20:38:10 cvs Exp $
+# $Id: Core.py,v 1.22 2011/06/14 21:50:55 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.22  2011/06/14 21:50:55  cvs
+# Produce a clone attribute in Core that does a deep copy and update the documention some more.
+#
 # Revision 1.21  2011/06/13 20:38:10  cvs
 # Merged in fixes to typeHintedDict with fixes for deepcopy
 #
@@ -349,11 +352,17 @@ class DataFile(object): #Now a new style class so that we can use super()
         Called for \bDataFile.x to handle some special pseudo attributes
 
         @param name The name of the attribute to be returned. These include: records
-        @return For Records, returns the data as an array of structures
+        @return the DataFile object in various forms
+
+        Supported attributes:
+        @a records - return the DataFile data as a numpy structured array - i.e. rows of elements whose keys are column headings
+        @a clone - returns a deep copy of the current DataFile instance
         """
         if name=="records":
             dtype=[(x, numpy.float64) for x in self.column_headers]
             return self.data.view(dtype=dtype).reshape(len(self))
+        elif name=="clone":
+            return copy.deepcopy(self)
 
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
         """Called for \b DataFile[x] to return either a row or iterm of metadata
@@ -499,15 +508,15 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def __len__(self):
         return numpy.shape(self.data)[0]
-        
+
     def __setstate__(self, state):
         self.data=state["data"]
         self.column_headers=state["column_headers"]
         self.metadata=state["metadata"]
-        
+
     def __getstate__(self):
         return {"data":self.data,  "column_headers":self.column_headers,  "metadata":self.metadata}
-        
+
     def __reduce_ex__(self, p):
         return (DataFile, (), self.__getstate__())
 
