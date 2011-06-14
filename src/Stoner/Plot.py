@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.6 2011/05/09 18:47:32 cvs Exp $
+# $Id: Plot.py,v 1.7 2011/06/14 08:14:38 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.7  2011/06/14 08:14:38  cvs
+# Ammended platform.system()=Darwin for correct MacOSx implementation. - CSA
+#
 # Revision 1.6  2011/05/09 18:47:32  cvs
 # Try to improve handling of Mac OSX detection
 #
@@ -39,8 +42,8 @@ import numpy
 import matplotlib
 import os
 import platform
-if os.name=="posix" and platform.system=="Mac OS X":
-    matplotlib.use("MacOSx")
+if os.name=="posix" and platform.system()=="Darwin":
+    matplotlib.use('MacOSX')
 from matplotlib import pyplot
 
 class PlotFile(DataFile):
