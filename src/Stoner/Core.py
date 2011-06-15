@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.22 2011/06/14 21:50:55 cvs Exp $
+# $Id: Core.py,v 1.23 2011/06/15 11:38:20 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.23  2011/06/15 11:38:20  cvs
+# Matt - Removed printing of args datatype on DataFile initialization.
+#
 # Revision 1.22  2011/06/14 21:50:55  cvs
 # Produce a clone attribute in Core that does a deep copy and update the documention some more.
 #
@@ -317,7 +320,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         self.column_headers=list()
         # Now check for arguments t the constructor
         if len(args)==1:
-            print type(args[0])
+            #print type(args[0])
             if isinstance(args[0], str): # Filename- load datafile
                 self.load(args[0])
             elif isinstance(args[0], numpy.ndarray): # numpy.array - set data
