@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.8 2011/01/13 22:30:56 cvs Exp $
+# $Id: PCAR.py,v 1.9 2011/06/16 09:40:57 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.9  2011/06/16 09:40:57  cvs
+#Ironed out a bug or two - csa
+#
 #Revision 1.8  2011/01/13 22:30:56  cvs
 #Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
 #Extra comments in the ini file
@@ -34,6 +37,7 @@
 # Script to fit PCAR data GB Jan 2011
 
 # Import packages
+
 import numpy
 import scipy
 import Stoner
@@ -44,6 +48,7 @@ import math
 import os
 import time
 import ConfigParser
+import pylab
 
 # Read the co nfig file for the model
 defaults={"filetype":"TDI", "header_line":1,"start_line":2, "separator":",", "v_scale":1 }
@@ -89,6 +94,9 @@ d.load(None, format, header, start, delim, delim)
 gcol=d.find_col(gcol)
 vcol=d.find_col(vcol)
 
+# Get filename for title
+filenameonly=os.path.basename(d.filename)
+filenameonly=os.path.splitext(filenameonly)[0]
 ################################################
 ######### Here is out model functions  #########
 ###############################################
@@ -196,7 +204,7 @@ if config.has_option("options", "remove_offset") and config.getboolean("options"
 #Plot the data while we do the fitting
 if show_plot:
     p=Stoner.PlotFile(d)
-    p.plot_xy(vcol,gcol, 'ro')
+    p.plot_xy(vcol,gcol, 'ro',title=filenameonly)
     time.sleep(2)
 
 
@@ -233,8 +241,8 @@ for step in steps:
             if show_plot:
                 # And show the fit and the data in a nice plot
                 p=Stoner.PlotFile(d)
-            p.plot_xy(vcol, 'Fit')
-            
+                p.plot_xy(vcol,gcol,'ro',title=filenameonly)
+                pylab.plot(p.column(vcol), p.column('Fit'),'b-')
             # Ok now we can print the answer
             for i in range(len(parinfo)):
                 print parinfo[i]['parname']+"="+str(m.params[i])
