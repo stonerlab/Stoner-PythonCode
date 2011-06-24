@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.23 2011/06/15 11:38:20 cvs Exp $
+# $Id: Core.py,v 1.24 2011/06/24 16:23:58 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.24  2011/06/24 16:23:58  cvs
+# Update API documentation. Minor improvement to save method to force a dialog box.
+#
 # Revision 1.23  2011/06/15 11:38:20  cvs
 # Matt - Removed printing of args datatype on DataFile initialization.
 #
@@ -283,17 +286,16 @@ class DataFolder(object):
 
 #   PUBLIC METHODS
 
-class DataFile(object): #Now a new style class so that we can use super()
+class DataFile(object):
     """@b Stoner.Core.DataFile is the base class object that represents a matrix of data, associated metadata and column headers.
 
     @b DataFile provides the mthods to load, save, add and delete data, index and slice data, manipulate metadata and column headings.
 
-    Authors: Matt Newman, Chris Allen and Gavin Burnell
-    """
-#   CONSTANTS
+    Authors: Matt Newman, Chris Allen and Gavin Burnell"""
+    #   CONSTANTS
     defaultDumpLocation='C:\\dump.csv'
 
-#   INITIALISATION
+    #   INITIALISATION
 
     def __init__(self, *args):
         """Constructor method
@@ -308,7 +310,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         @li  DataFile(array,dictionary),
         Creates the new DataFile object and does the combination of the previous two forms.
         @li DataFile(DataFile)
-        Creates the new DataFile object and initialises all data from the existing \DataFile instance. This on the face of it does the same as the assignment operator,
+        Creates the new DataFile object and initialises all data from the existing \b DataFile instance. This on the face of it does the same as the assignment operator,
         but is more useful when one or other of the DataFile objects is an instance of a sub-class of DataFile
 
         @param *args Variable number of arguments that match one of the definitions above
@@ -348,11 +350,11 @@ class DataFile(object): #Now a new style class so that we can use super()
         elif len(args)>2:
             apply(self.load, args)
 
-# Special Methods
+    # Special Methods
 
     def __getattr__(self, name):
         """
-        Called for \bDataFile.x to handle some special pseudo attributes
+        Called for \b DataFile.x to handle some special pseudo attributes
 
         @param name The name of the attribute to be returned. These include: records
         @return the DataFile object in various forms
@@ -404,7 +406,7 @@ class DataFile(object): #Now a new style class so that we can use super()
 
 
     def __setitem__(self, name, value):
-        """Called for \DataFile[\em name ] = \em value to write mewtadata entries.
+        """Called for \b DataFile[\em name ] = \em value to write mewtadata entries.
             @param name The string key used to access the metadata
             @param value The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
             @return Nothing."""
@@ -416,9 +418,7 @@ class DataFile(object): #Now a new style class so that we can use super()
                 @return A Datafile object with the rows of \a other appended to the rows of the current object.
 
                 If \a other is a 1D numopy array with the same number of lements as their are columns in \a self.data then the numpy array is treated as a new row of data
-                If \a ither is a 2D numpy array then it is appended if it has the same number of columns and \a self.data.
-
-"""
+                If \a ither is a 2D numpy array then it is appended if it has the same number of columns and \a self.data."""
         if isinstance(other, numpy.ndarray):
             if len(self.data)==0:
                 t=numpy.atleast_2d(other)
@@ -455,7 +455,7 @@ class DataFile(object): #Now a new style class so that we can use super()
     def __and__(self, other):
         """Implements the & operator to concatenate columns of data in a \b Stoner.DataFile object.
 
-        @param other Either a numpy array or \bStoner.DataFile object
+        @param other Either a numpy array or \b Stoner.DataFile object
         @return A \b Stoner.DataFile object with the columns of other concatenated as new columns at the end of the self object.
 
         Whether \a other is a numopy array of \b Stoner.DataFile, it must have the same or fewer rows than the self object.
@@ -523,7 +523,7 @@ class DataFile(object): #Now a new style class so that we can use super()
     def __reduce_ex__(self, p):
         return (DataFile, (), self.__getstate__())
 
-#   PRIVATE FUNCTIONS
+    #   PRIVATE FUNCTIONS
 
     def __file_dialog(self, mode):
         from enthought.pyface.api import FileDialog, OK
@@ -606,7 +606,7 @@ class DataFile(object): #Now a new style class so that we can use super()
         """
         self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
 
-#   PUBLIC METHODS
+    #   PUBLIC METHODS
 
     def load(self,filename=None,fileType="TDI",*args):
         """DataFile.load(filename,type,*args)
@@ -653,12 +653,16 @@ class DataFile(object): #Now a new style class so that we can use super()
         return self
 
     def save(self, filename=None):
-        """DataFile.save(filename)
-
-                Saves a string representation of the current DataFile object into the file 'filename' """
+        """Saves a string representation of the current DataFile object into the file 'filename' 
+               
+              
+                @param filename = None  filename to save data as, if this is \b None then the current filename for the object is used
+                    If this is not set, then then a file dialog is used. If filename is \b False then a file dialog is force.
+                    @return The current object
+                """
         if filename is None:
             filename=self.filename
-        if filename is None: # now go and ask for one
+        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
             self.__file_dialog('w')
         f=open(filename, 'w')
         f.write(repr(self))
@@ -781,8 +785,15 @@ class DataFile(object): #Now a new style class so that we can use super()
 
     def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
-        del_rows(Column, value)
-        del_rows(Column,function) """
+                @param col Column containg values to search for. Maybe a list or slice
+                @param val Specifies rows to delete. Maybe None - in which case whole columns are deleted, a float 
+                in which case rows whose column \b col = \b val are deleted or a function - in which case rows where 
+                the function evaluates to be true are deleted.
+                @return The current object
+                
+                If \b val is a function it should take two arguments - a float and a list. The float is the value of the 
+                current row that corresponds to column \b col abd the second argument is the current row.
+            """
         if isinstance(col, slice) and val is None:
             indices=col.indices(len(self))
             col-=range(*indices)

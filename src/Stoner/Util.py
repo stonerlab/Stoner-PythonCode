@@ -1,6 +1,9 @@
 # Utility Functions for Stoner Module
-# $Id: Util.py,v 1.7 2011/05/10 16:39:26 cvs Exp $
+# $Id: Util.py,v 1.8 2011/06/24 16:23:58 cvs Exp $
 # $Log: Util.py,v $
+# Revision 1.8  2011/06/24 16:23:58  cvs
+# Update API documentation. Minor improvement to save method to force a dialog box.
+#
 # Revision 1.7  2011/05/10 16:39:26  cvs
 # Remove spurious print statement
 #
@@ -20,9 +23,9 @@ def read_spc_File(filename):
     @param filename String containing file to be loaded
     @return An instance of Stoner.DataFile with the data loaded
     
-    @TODO Implement the second form of the file that stores multiple x-y curves in the one file.
+    @todo Implement the second form of the file that stores multiple x-y curves in the one file.
     
-    @NB Metadata keys are pretty much as specified in the spc.h file that defines the filerformat."""
+    @note Metadata keys are pretty much as specified in the spc.h file that defines the filerformat."""
     from .Core import DataFile
     import struct
     import numpy

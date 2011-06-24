@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.8 2011/06/22 22:54:29 cvs Exp $
+# $Id: Plot.py,v 1.9 2011/06/24 16:23:58 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.9  2011/06/24 16:23:58  cvs
+# Update API documentation. Minor improvement to save method to force a dialog box.
+#
 # Revision 1.8  2011/06/22 22:54:29  cvs
 # Look at getting PlotFile.plot_xy to plot to the same window and update API documentation
 #
@@ -78,8 +81,8 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__getattr__(name)
             
-    def __setattr__(self, name, value):"""
-                Sets the specified attribute
+    def __setattr__(self, name, value):
+        """Sets the specified attribute
                 
                 @param name The name of the attribute to set. Only "fig" is supported in this class - everything else drops through to the parent class
                 @param value The value of the attribute to set.

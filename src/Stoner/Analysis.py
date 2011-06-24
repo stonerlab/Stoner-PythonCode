@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.6 2011/05/10 22:10:31 cvs Exp $
+# $Id: Analysis.py,v 1.7 2011/06/24 16:23:58 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.7  2011/06/24 16:23:58  cvs
+# Update API documentation. Minor improvement to save method to force a dialog box.
+#
 # Revision 1.6  2011/05/10 22:10:31  cvs
 # Workaround new behaviou of deepcopy() in Python 2.7 and improve handling when a typehint for the metadata doesn't exist (printing the DataFile will fix the typehinting).
 #
@@ -252,10 +255,12 @@ class AnalyseFile(DataFile):
         @param width is the expected minium halalf-width of a peak in terms of the number of data points. 
                 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
                 to experimental noise, smaller means better eable to see sharp peaks
-            @praam sensitivity is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+            @param poly This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
+            will find sharper peaks more accurately but at the risk of finding more false positives.
+            @param significance is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
                 of the data. Bigger means less sensistive, smaller means more likely to detect noise.
             @param xcol name or index of data column that p[rovides the x-coordinate (default None)
-            @pramam peaks select whether to measure peaks in data (default True)
+            @param peaks select whether to measure peaks in data (default True)
             @param troughs select whether to measure troughs in data (default False)
             @return If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
