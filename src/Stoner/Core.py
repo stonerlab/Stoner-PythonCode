@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.24 2011/06/24 16:23:58 cvs Exp $
+# $Id: Core.py,v 1.25 2011/07/12 15:53:19 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.25  2011/07/12 15:53:19  cvs
+# Teach typeHintedDict to handle NaN as a value, introduce an export function to help with the string representation of DataFile and fix a weird regression in DataFile.__repr__. Update doxygen docs
+#
 # Revision 1.24  2011/06/24 16:23:58  cvs
 # Update API documentation. Minor improvement to save method to force a dialog box.
 #
@@ -178,7 +181,11 @@ class typeHintedDict(dict):
             m=regexp.search(t)
             if m is not None:
                 if isinstance(valuetype, evaluatable):
-                    return eval(str(value), globals(), locals())
+                    try:
+                        ret=eval(str(value), globals(), locals())
+                    except NameError:
+                        ret=str(value)
+                    return ret
                     break
                 else:
                     return valuetype(value)
@@ -226,6 +233,12 @@ class typeHintedDict(dict):
                 return [self._typehints[x] for x in key]
             except TypeError:
                 return self._typehints[key]
+                
+    def export(self, key):
+        """Exports a single metadata value to a string representation with type hint
+        @param key The metadata key to export
+        @return A string of the format : key{type hint}=value"""
+        return key+"{"+self.type(key)+"}="+str(self[key])
 
 
 class MyForm(wx.Frame):
@@ -496,9 +509,7 @@ class DataFile(object):
         outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
         m=len(self.metadata)
         (r, c)=numpy.shape(self.data)
-        md=[]
-        for x in sorted(self.metadata):
-            md.extend(x+"{"+self.metadata.type(x)+"}="+str(self.metadata[x]))
+        md=[self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
             outp=outp+md[x]+"\t"+reduce(lambda z, y: str(z)+"\t"+str(y), self.data[x])+"\n"
         if m>r: # More metadata
