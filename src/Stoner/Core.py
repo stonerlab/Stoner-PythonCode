@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.25 2011/07/12 15:53:19 cvs Exp $
+# $Id: Core.py,v 1.26 2011/08/09 14:17:28 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.26  2011/08/09 14:17:28  cvs
+# Added option to load Horiba Raman plaintext file
+#
 # Revision 1.25  2011/07/12 15:53:19  cvs
 # Teach typeHintedDict to handle NaN as a value, introduce an export function to help with the string representation of DataFile and fix a weird regression in DataFile.__repr__. Update doxygen docs
 #
@@ -24,7 +27,7 @@
 # Make copy and deepcopy work properly
 #
 # Revision 1.19  2011/06/13 14:40:51  cvs
-# Make the load routine handle a blank value in metadata
+# Make theroutine handle a blank value in metadata
 #
 # Revision 1.18  2011/05/17 21:04:29  cvs
 # Finish implementing the DataFile metadata as a new typeHintDict() dictionary that keeps track of the type hinting strings internally. This ensures that we always have a type hint string available.
@@ -617,6 +620,10 @@ class DataFile(object):
         """
         self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
 
+    def __loadHariboPlain(self):
+        
+        self.__parse_plain_data(0,0, data_delim='\t', header_delim='\t')
+
     #   PUBLIC METHODS
 
     def load(self,filename=None,fileType="TDI",*args):
@@ -659,6 +666,9 @@ class DataFile(object):
             self.column_headers=d.column_headers
             self.data=d.data
             self.metadata=d.metadata
+        elif fileType=="HariboPlain":
+            self.__loadHariboPlain()
+            self.column_headers = ['wavenumbers','intensity']
 
 
         return self
