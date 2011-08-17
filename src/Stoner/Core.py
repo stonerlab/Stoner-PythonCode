@@ -2,9 +2,23 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.26 2011/08/09 14:17:28 cvs Exp $
+# $Id: Core.py,v 1.27 2011/08/17 12:46:29 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.27  2011/08/17 12:46:29  cvs
+# Hack to fix the following issue:
+#
+# Sort of - source is string value and the code should have exported it as
+# '' rather than a blank string. I'll take a look. In the meantime you
+# could put the eval statement in a try except block something like:
+#
+# try:
+#     ret=eval(....)
+# except SyntaxError:
+#    ret=""
+#
+# which should at least stop the crash and burn...
+#
 # Revision 1.26  2011/08/09 14:17:28  cvs
 # Added option to load Horiba Raman plaintext file
 #
@@ -188,6 +202,8 @@ class typeHintedDict(dict):
                         ret=eval(str(value), globals(), locals())
                     except NameError:
                         ret=str(value)
+                    except SyntaxError:
+                        ret=""  
                     return ret
                     break
                 else:
