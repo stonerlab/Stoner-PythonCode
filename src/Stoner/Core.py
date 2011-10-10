@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.27 2011/08/17 12:46:29 cvs Exp $
+# $Id: Core.py,v 1.28 2011/10/10 13:22:58 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.28  2011/10/10 13:22:58  cvs
+# Removed a print from the sort function.
+#
 # Revision 1.27  2011/08/17 12:46:29  cvs
 # Hack to fix the following issue:
 #
@@ -919,7 +922,7 @@ class DataFile(object):
         else:
             order=[self.column_headers[self.find_col(order)]]
         d=numpy.sort(self.records, order=order)
-        print d
+        #print d
         self.data=d.view(dtype='f8').reshape(len(self), len(self.column_headers))
         return self
 
