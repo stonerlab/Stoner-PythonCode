@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.9 2011/06/16 09:40:57 cvs Exp $
+# $Id: PCAR.py,v 1.10 2011/10/24 12:17:54 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.10  2011/10/24 12:17:54  cvs
+#Update PCAR lab script to save data and fix a bug with save as mode in Stoner.Core
+#
 #Revision 1.9  2011/06/16 09:40:57  cvs
 #Ironed out a bug or two - csa
 #
@@ -56,6 +59,7 @@ config=ConfigParser.SafeConfigParser(defaults)
 config.read("pcar.ini")
 
 show_plot=config.getboolean('options', 'show_plot')
+save_fit=config.getboolean('options', 'save_fit')
 user_iterfunct=config.getboolean('options', 'print_each_step')
 
 pars=dict()
@@ -246,9 +250,13 @@ for step in steps:
             # Ok now we can print the answer
             for i in range(len(parinfo)):
                 print parinfo[i]['parname']+"="+str(m.params[i])
+                d[parinfo[i]['parname']]=m.params[i]
             
             chi2=chisquare(d.column(gcol), d.column('Fit'))
+            d["Chi^2"]=chi2
             print "Chi^2:"+str(chi2)
+            if save_fit:
+                d.save(False)
 
             row=m.params
             row=numpy.append(row, chi2[0])

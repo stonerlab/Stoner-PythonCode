@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.28 2011/10/10 13:22:58 cvs Exp $
+# $Id: Core.py,v 1.29 2011/10/24 12:17:55 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.29  2011/10/24 12:17:55  cvs
+# Update PCAR lab script to save data and fix a bug with save as mode in Stoner.Core
+#
 # Revision 1.28  2011/10/10 13:22:58  cvs
 # Removed a print from the sort function.
 #
@@ -566,7 +569,7 @@ class DataFile(object):
         if mode=="r":
             mode="open"
         elif mode=="w":
-            mode="save"
+            mode="save as"
 
         if self.filename is not None:
             filename=os.path.basename(self.filename)
@@ -703,7 +706,7 @@ class DataFile(object):
         if filename is None:
             filename=self.filename
         if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
-            self.__file_dialog('w')
+            filename=self.__file_dialog('w')
         f=open(filename, 'w')
         f.write(repr(self))
         f.close()
