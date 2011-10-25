@@ -1,6 +1,9 @@
 # Utility Functions for Stoner Module
-# $Id: Util.py,v 1.8 2011/06/24 16:23:58 cvs Exp $
+# $Id: Util.py,v 1.9 2011/10/25 15:47:01 cvs Exp $
 # $Log: Util.py,v $
+# Revision 1.9  2011/10/25 15:47:01  cvs
+# Fix bugs in spc code that stopped Haribo generated spc files from loading
+#
 # Revision 1.8  2011/06/24 16:23:58  cvs
 # Update API documentation. Minor improvement to save method to force a dialog box.
 #
@@ -29,6 +32,7 @@ def read_spc_File(filename):
     from .Core import DataFile
     import struct
     import numpy
+    from re import split
     
     # Open the file and read the main file header and unpack into a dict
     f=open(filename, 'rb')
@@ -43,7 +47,7 @@ def read_spc_File(filename):
         pts=header['fnpts']
         if header['ftflgs'] & 128: # We need to read some X Data
             xvals=f.read(4*pts) # I think storing X vals directly implies that each one is 4 bytes....
-            xdata=numpy.array(struct.unpack(str(header['fnpts'])+"f"))
+            xdata=numpy.array(struct.unpack(str(pts)+"f", xvals))
         else: # Generate the X Data ourselves
             first=header['ffirst']
             last=header['flast']
@@ -101,9 +105,11 @@ def read_spc_File(filename):
             # Now read the rest of the file as log text
             logtext=f.read()
             # We expect things to be single lines terminated with a CR-LF of the format key=value
-            for line in logtext.split("\r\n"):
+            for line in split("[\r\n]+", logtext):
                 if "=" in line:
-                    key, value= line.split('=')
+                    parts= line.split('=')
+                    key=parts[0]
+                    value=parts[1]
                     header[key]=value
         # Ok now build the Stoner.DataFile instance to return
         d=DataFile()
