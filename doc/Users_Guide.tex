@@ -180,6 +180,14 @@ order that they appear in the list (\ie not the order that they are in the data
 file). For completeness, the \textbf{DataFile.column} method also allows one to
 pass slices to select columns and should do the expected thing.
 
+There is a convenient shortcut for working with cases where the column headers are not the same
+as the names of any of the attributes of the \textbf{DataFile} object:
+\begin{verbatim}
+  >>>d.Temperature
+  >>>d.column('Temperature')
+\end{verbatim}
+both return the same data.
+
 \subsubsection{Working with complete rows of data}
 
 Rows don't have labels, so are accessed directly by number:
@@ -205,7 +213,8 @@ To get a list of possible keys in the metadata, you can do:
 \end{verbatim}
 In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned -- all keys containing
-\textit{Option:}.
+\textit{Option:}. For compatibility with normal opython semantics: \verb#>>>d.keys()# is
+synonymous with \verb#>>>d.dir()#. 
 
 We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:
@@ -569,7 +578,7 @@ dictionary of fixed \ie non-fitting parameters. \textit{xcol} and \textit{ycol}
 are the column indices for the x and y data, \textit{bounds} is a bounding
 function to select only those rows to use for fitting the function, and
 \textit{sigma} are the weightings for each datapoint. The remaining arguments
-are a dictionary of keywords to pass through to the \textbf{mpfit} routine and 
+are a dictionary of keywords to pass through to the \textbf{mpfit} routine and
 \textit{p\_info} which is a list of dictionaries which is used to control the
 parameters in the fit. This described below.
 

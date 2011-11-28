@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.29 2011/10/24 12:17:55 cvs Exp $
+# $Id: Core.py,v 1.30 2011/11/28 09:26:33 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.30  2011/11/28 09:26:33  cvs
+# Update documentation
+#
 # Revision 1.29  2011/10/24 12:17:55  cvs
 # Update PCAR lab script to save data and fix a bug with save as mode in Stoner.Core
 #
@@ -145,13 +148,17 @@ class typeHintedDict(dict):
 
 
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kargs):
         """Calls the dict() constructor, then runs through the keys of the created dictionary and either uses the
         string type embedded in the keyname to generate the type hint (and remove the embedded string type from the keyname)
-        or determines the likely type hint from the value of the dict element."""
+        or determines the likely type hint from the value of the dict element.
+        
+        @param *args Pass through all parameters to the dict() constructor.
+        @param **kargs Pass through all keyword parameters to dict() constructor
+        @return A dictionary like object that understands the type of data stored in each key."""
 
         parent=super(typeHintedDict, self)
-        parent.__init__(*args)
+        parent.__init__(*args, **kargs)
         for key in self: # Chekc through all the keys and see if they contain type hints. If they do, move them to the _typehint dict
             m=self.__regexGetType.search(key)
             if m is not None:
@@ -171,7 +178,11 @@ class typeHintedDict(dict):
             raise AttributeError
 
     def __findtype(self,  value):
-        """Determines the correct string type to return for common python classes"""
+        """Determines the correct string type to return for common python classes. Understands booleans, strings, integers, floats and numpy arrays(as arrays),
+        and dictionaries (as clusters).
+        
+                @param value The data value to determine the type hint for.
+                @return A type hint string"""
         typ="String"
         for t in self.__types:
             if isinstance(value, self.__types[t]):
@@ -299,31 +310,6 @@ class MyForm(wx.Frame):
         evt.Skip()
 
 
-
-
-
-class DataFolder(object):
-
-    #   CONSTANTS
-
-    #   INITIALISATION
-
-    def __init__(self, foldername):
-        self.data = [];
-        self.metadata = dict();
-        self.foldername = foldername;
-        self.__parseFolder();
-
-    #   PRIVATE FUNCTIONS
-
-    def __parseFolder(self):
-        path="C:/Documents and Settings/pymn/workspace/Stonerlab/src/folder/run1"  # insert the path to the directory of interest
-        dirList=os.listdir(path)
-        for fname in dirList:
-            print(fname)
-
-#   PUBLIC METHODS
-
 class DataFile(object):
     """@b Stoner.Core.DataFile is the base class object that represents a matrix of data, associated metadata and column headers.
 
@@ -392,7 +378,7 @@ class DataFile(object):
 
     def __getattr__(self, name):
         """
-        Called for \b DataFile.x to handle some special pseudo attributes
+        Called for \b DataFile.x to handle some special pseudo attributes and otherwise to act as a shortcut for @b DataFile.column
 
         @param name The name of the attribute to be returned. These include: records
         @return the DataFile object in various forms
@@ -400,12 +386,20 @@ class DataFile(object):
         Supported attributes:
         @a records - return the DataFile data as a numpy structured array - i.e. rows of elements whose keys are column headings
         @a clone - returns a deep copy of the current DataFile instance
+        
+        Otherwise the @a name parameter is tried as an argument to ~b DataFile.column and the resultant column isreturned. If 
+        @b DataFile.column raises a KeyError this is remapped as an AttributeError.
         """
         if name=="records":
             dtype=[(x, numpy.float64) for x in self.column_headers]
             return self.data.view(dtype=dtype).reshape(len(self))
         elif name=="clone":
             return copy.deepcopy(self)
+        else:
+            try:
+                return self.column(name)
+            except KeyError:
+                raise AttributeError(name+" is neither an attribute of DataFile, nor a column heading of this DataFile instance")
 
     def __getitem__(self, name): # called for DataFile[x] returns row x if x is integer, or metadata[x] if x is string
         """Called for \b DataFile[x] to return either a row or iterm of metadata
@@ -414,6 +408,11 @@ class DataFile(object):
         @return an item of metadata or row(s) of data. \li If \a name is an integer then the corresponding single row will be rturned
         \li if \a name is a slice, then the corresponding rows of data will be returned. \li If \a name is a string then the metadata dictionary item with
         the correspondoing key will be returned.
+        
+        If a tuple is supplied as the arguement then there are a number of possible behaviours. If the first element of the tuple is a string, then it is assumed
+        that it is the nth element of the named metadata is required. Otherwise itis assumed that it is a particular element within a column determined by
+        the second part of the tuple that is required. e.g. DataFile['Temp',5] would return the 6th element of the list of elements in the metadata called 'Temp', while
+        DataFile[5,'Temp'] would return the 6th row of the data column called 'Temp' and DataFile[5,3] would return the 6th element of the 4th column.
 
         """
         if isinstance(name, slice):
@@ -529,8 +528,10 @@ class DataFile(object):
              return NotImplemented
 
     def __repr__(self):
-        """Outputs the \b Stoner.DataFile object in TDI format. This allows one to print any \b Stoner.DataFile to a stream based object andgenerate a reasonable textual representation of the data.shape
-       @return \a self in a textual format. """
+        """Outputs the \b Stoner.DataFile object in TDI format. This allows one to print any \b Stoner.DataFile to a stream based
+                object andgenerate a reasonable textual representation of the data.shape
+                
+                @return \a self in a textual format. """
         outp="TDI Format 1.5"+"\t"+reduce(lambda x, y: str(x)+"\t"+str(y), self.column_headers)+"\n"
         m=len(self.metadata)
         (r, c)=numpy.shape(self.data)
@@ -546,6 +547,9 @@ class DataFile(object):
         return outp
 
     def __len__(self):
+        """Return the length of the data.shape
+                @return Returns the number of rows of data
+                """
         return numpy.shape(self.data)[0]
 
     def __setstate__(self, state):
@@ -562,6 +566,10 @@ class DataFile(object):
     #   PRIVATE FUNCTIONS
 
     def __file_dialog(self, mode):
+        """Creates a file dialog box for loading or saving ~b DataFile objects
+        
+        @param mode The mode of the file operation  'r' or 'w'
+        @return A filename to be used for the file operation."""
         from enthought.pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
         file_wildcard = "Text file (*.txt)|*.txt|Data file (*.dat)|*.dat|All files|*"
@@ -587,6 +595,10 @@ class DataFile(object):
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
+        
+        @param key The name of the metadata parameter to be written, possibly including a type hinting string.
+        @value The value of the item of metadata.
+        @return Nothing, but the current instance's metadata is changed.
 
         Uses the typehint to set the type correctly in the dictionary
 
@@ -618,6 +630,15 @@ class DataFile(object):
             self.column_headers[0:len(headers)]=headers
 
     def __parse_plain_data(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
+        """An intrernal function for parsing deliminated data without a leading column of metadata.copy
+        @param header_line is the line on which the column headers are recorded (default 3)
+        @param data_line is the first line of tabulated data (default 7)
+        @data_delim is the deliminator for the data rows (default = space)
+        @param header_delim is the deliminator for the header values (default = tab)
+        @return Nothing, but updates the current instances data
+        
+        NBThe default values are configured fir read VSM data files
+        """
         header_string=linecache.getline(self.filename, header_line)
         header_string=re.sub(r'["\n]', '', header_string)
         self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
@@ -714,6 +735,14 @@ class DataFile(object):
         return self
 
     def find_col(self, col):
+        """Indexes the column headers in order to locate a column of data.shape
+        @param col Which column(s) to retuirn indices for.
+       
+        @return  If @a col is an integer then simply returns the matching integer assuming that the corresponding column exists.
+        If @a col is a string, then first attemps an exact string comparison, anbd then falls back to a regular expression search on the column headers. If either
+        of these searches returns more than onbe match, then the first is used. If @a col  is a slice then a list of the matching indices is returned. If @a col is a list
+        then a list of the results of apply @b DataFile.find_col on each element of @a col is returned.
+        """
         if isinstance(col, int): #col is an int so pass on
             if col<0 or col>=len(self.column_headers):
                 raise IndexError('Attempting to index a non-existant column')
@@ -734,11 +763,14 @@ class DataFile(object):
         elif isinstance(col, list):
             col=map(self.find_col, col)
         else:
-            raise TypeError('Column index must be an integer or string')
+            raise TypeError('Column index must be an integer, string, list or slice')
         return col
 
     def column(self, col):
-        """Extracts a column of data by index or name"""
+        """Extracts a column of data by index or name
+        
+        @param col is the column index as defined for @b DataFile.find_col
+        @returns one or more columns of data"""
         if isinstance(col, slice): # convert a slice into a list and then continue
             indices=col.indices(numpy.shape(self.data)[1])
             col=range(*indices)
@@ -754,7 +786,11 @@ class DataFile(object):
             return self.data[:, self.find_col(col)]
 
     def meta(self, ky):
-        """Returns some metadata"""
+        """Returns some metadata
+        
+        @param key The name of the metadata item to be returned. If @a key is not an exact match for an item of metadata, then a regular expression
+        match is carried out.
+        @return Returns the item of metadata."""
         if isinstance(ky, str): #Ok we go at it with a string
             if ky in self.metadata:
                 return self.metadata[ky]
@@ -777,13 +813,20 @@ class DataFile(object):
     def dir(self, pattern=None):
         """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary
 
-                DataFile.dir(pattern) - pattern is a regular expression or None to list all keys"""
+                @param pattern is a regular expression or None to list all keys
+                @return Returns a list of metadata keys."""
         if pattern==None:
             return self.metadata.keys()
         else:
             test=re.compile(pattern)
             possible=filter(test.search, self.metadata.keys())
             return possible
+            
+    def keys(self):
+        """An alias for @b DataFile.dir(None)
+        
+        @return a list of all the keys in the metadata dictionary"""
+        return self.dir(None)
 
     def search(self, *args):
         """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
@@ -857,7 +900,15 @@ class DataFile(object):
         return self
 
     def add_column(self,column_data,column_header=None, index=None, func_args=None, replace=False):
-        """Appends a column of data or inserts a column to a datafile"""
+        """Appends a column of data or inserts a column to a datafile
+        
+        @param column_data An array or list of data to append or insert or a callable function that will generate new data
+        @param column_header The text to set the column header to, if not supplied then defaults to 'col#'
+        @param index The  index (numeric or string) to insert (or replace) the data
+        @param func_args If @a column_data is a callable object, then this argument can be used to supply a dictionary of function arguments to
+        the callable object.
+        @param replace Replace the data or insert the data (default)
+        @return The @b DataFile instance with the additonal column inserted. NB also modifies the original DataFile Instance."""
         if index is None:
             index=len(self.column_headers)
             replace=False
@@ -893,6 +944,9 @@ class DataFile(object):
         return self
 
     def del_column(self, col):
+        """Deletes a column from the current @b DataFile object
+                @param col A column index (passed via @B DataFile.find_col) to the column to be deleted
+                @return The @b DataFile object with the column deleted."""
         c=self.find_col(col)
         self.data=numpy.delete(self.data, c, 1)
         if isinstance (c, list):
@@ -904,13 +958,16 @@ class DataFile(object):
         return self
 
     def rows(self):
-        """Generator method that will iterate over rows of data"""
+        """Generator method that will iterate over rows of data
+        @return Returns the next row of data"""
         (r, c)=numpy.shape(self.data)
         for row in range(r):
             yield self.data[row]
 
     def columns(self):
-        """Generator method that will iterate over columns of data"""
+        """Generator method that will iterate over columns of data
+        
+        @return Returns the next column of data."""
         (r, c)=numpy.shape(self.data)
         for col in range(c):
             yield self.data[col]
