@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.7 2011/06/24 16:23:58 cvs Exp $
+# $Id: Analysis.py,v 1.8 2011/11/28 14:26:52 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.8  2011/11/28 14:26:52  cvs
+# Merge latest versions
+#
 # Revision 1.7  2011/06/24 16:23:58  cvs
 # Update API documentation. Minor improvement to save method to force a dialog box.
 #
@@ -39,66 +42,67 @@ import scipy
 import numpy
 import math
 import sys
+import inspect
 
 class AnalyseFile(DataFile):
     """Extends DataFile with numpy passthrough functions"""
 
 #Private Helper Functions
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
-        
+
         """ calculates filter coefficients for symmetric savitzky-golay filter.
             see: http://www.nrbook.com/a/bookcpdf/c14-8.pdf
-        
+
             num_points   means that 2*num_points+1 values contribute to the
                      smoother.
-        
+
             pol_degree   is degree of fitting polynomial
-        
+
             diff_order   is degree of implicit differentiation.
                      0 means that filter results in smoothing of function
-                     1 means that filter results in smoothing the first 
+                     1 means that filter results in smoothing the first
                                                  derivative of function.
                      and so on ...
-        
+
         """
-    
+
         # setup interpolation matrix
         # ... you might use other interpolation points
         # and maybe other functions than monomials ....
-    
+
         x = numpy.arange(-num_points, num_points+1, dtype=int)
         monom = lambda x, deg : math.pow(x, deg)
-    
+
         A = numpy.zeros((2*num_points+1, pol_degree+1), float)
         for i in range(2*num_points+1):
             for j in range(pol_degree+1):
                 A[i,j] = monom(x[i], j)
-            
+
         # calculate diff_order-th row of inv(A^T A)
         ATA = numpy.dot(A.transpose(), A)
         rhs = numpy.zeros((pol_degree+1,), float)
         rhs[diff_order] = (-1)**diff_order
         wvec = numpy.linalg.solve(ATA, rhs)
-    
+
         # calculate filter-coefficients
         coeff = numpy.dot(A, wvec)
-    
+
         return coeff
 
     def __SG_smooth(self, signal, coeff):
-        
+
         """ applies coefficients calculated by calc_coeff()
             to signal """
-        
+
         N = numpy.size(coeff-1)/2
         res = numpy.convolve(signal, coeff)
         return res[N:-N]
-        
+
     def __threshold(self, threshold, data, rising=True, falling=False):
         """ Internal function that implements the threshold method - also used in peak-finder"""
         current=data
         previous=numpy.roll(current, 1)
-        index=numpy.arange(len(current))        
+        index=numpy.arange(len(current))
         sdat=numpy.column_stack((index, current, previous))
         if rising==True and falling==False:
             expr=lambda x:(x[1]>=threshold) & (x[2]<threshold)
@@ -114,7 +118,7 @@ class AnalyseFile(DataFile):
         # Parameter values are passed in "p"
         # If FJAC!=None then partial derivatives must be comptuer.
         # FJAC contains an array of len(p), where each entry
-        # is 1 if that parameter is free and 0 if it is fixed. 
+        # is 1 if that parameter is free and 0 if it is fixed.
         func=fa['func']
         x=fa['x']
         y=fa['y']
@@ -128,59 +132,67 @@ class AnalyseFile(DataFile):
         # stop the calculation.
         status = 0
         return [status, (y-model)/err]
-        
+
     def mpfit_iterfunct(self, myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
         # Prints a single . for each iteration
         sys.stdout.write('.')
         sys.stdout.flush()
 
-    
-    def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True):
+
+    def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True, result=None):
         """ Pass through to numpy.polyfit
-        
-                AnalysisFile.polyfit(xx_column,y_column,polynomial_order,bounds function)
-                
+
+                AnalysisFile.polyfit(xx_column,y_column,polynomial_order,bounds function,result=None)
+
                 x_column and y_column can be integers or strings that match the column headings
                 bounds function should be a python function that takes a single paramter that represents an x value
                 and returns true if the datapoint is to be retained and false if it isn't."""
         working=self.search(column_x, bounds)
         return numpy.polyfit(working[self.find_col(column_x)],working[self.find_col(column_y)],polynomial_order)
-        
-    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True ):
+
+    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None ):
         """General curve fitting function passed through from numpy
-        
+
                 AnalysisFile.Curve_fit(fitting function, x-column,y_column, initial parameters=None, weighting=None, bounds function)
-                
+
                 The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
-                The x-column and y-column can be either strings to be matched against column headings or integers. 
-                The initial parameter values and weightings default to None which corresponds to all parameters starting 
-                at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the 
+                The x-column and y-column can be either strings to be matched against column headings or integers.
+                The initial parameter values and weightings default to None which corresponds to all parameters starting
+                at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
                 point is to be used and false if not.
         """
         from scipy.optimize import curve_fit
+        from inspect import getargspec
+
         working=self.search(xcol, bounds, [xcol, ycol])
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
+        if not result is None:
+            (args, varargs, keywords, defaults)=getargspec(func)
+            for i in range(len(popt)):
+                self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
+            xc=self.find_col(xcol)
+            self.apply(lambda x:func(x[xc], *popt), result, insert=True, header='Fitted with '+func.__name__)
         return popt, pcov
-        
+
     def max(self, column):
         """FInd maximum value and index in a column of data
-                
+
                 AnalysisFile.max(column)
                 """
         col=self.find_col(column)
         return self.data[:, col].max(), self.data[:, col].argmax()
-        
+
     def min(self, column):
         """FInd minimum value and index in a column of data
-                
+
                 AnalysisFile.min(column)
                 """
         col=self.find_col(column)
         return self.data[:, col].min(), self.data[:, col].argmin()
-    
+
     def apply(self, func, col, insert=False, header=None):
         """Applies the given function to each row in the data set and adds to the data set
-        
+
             AnalysisFile.apply(func,column,insert=False)"""
         col=self.find_col(col)
         nc=numpy.array([func(row) for row in self.rows()])
@@ -189,12 +201,12 @@ class AnalyseFile(DataFile):
                 header=func.__name__
             self=self.add_column(nc, header, col)
         else:
-            self.data[:, col]=nc
+            self.data[:, col]=numpy.reshape(nc, -1)
         return self
 
     def SG_Filter(self, col, points, poly=1, order=0):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
-        
+
         SG_Filter(column,points, polynomial order, order of differentuation)
         or
         SG_Filter((x-col,y,col),points,polynomial order, order of differentuation)"""
@@ -218,7 +230,7 @@ class AnalyseFile(DataFile):
             return r[p:-p]
     def threshold(self, col, threshold, rising=True, falling=False):
         """AnalysisFile.threshold(column, threshold, rising=True,falling=False)
-        
+
         Finds partial indices where the data in column passes the threshold, rising or falling"""
         current=self.column(col)
         if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
@@ -226,16 +238,16 @@ class AnalyseFile(DataFile):
         else:
             ret=self.__threshold(threshold, current, rising=rising, falling=falling)[0]
         return ret
-        
+
     def interpolate(self, newX,kind='linear', xcol=None ):
         """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
-        
+
         @param newX Row indices or X column values to interpolate with
         @param kind Type of interpolation function to use - does a pass through from numpy. Default is linear.
         @param xcol Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
         @return Returns a 2D numpy array representing a section of the current object's data.
-        
-        Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices. 
+
+        Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
         Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
         """
         if not xcol is None:
@@ -245,14 +257,14 @@ class AnalyseFile(DataFile):
         index=numpy.arange(l)
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
-    
+
     def peaks(self, ycol, width, significance , xcol=None, peaks=True, troughs=False, poly=2):
         """AnalysisFile.peaks(ycol,width,signficance, xcol=None.peaks=True, troughs=False)
-        
+
         Locates peaks and/or troughs in a column of data by using SG-differentiation.
-        
+
         @param ycol is the column name or index of the data in which to search for peaks
-        @param width is the expected minium halalf-width of a peak in terms of the number of data points. 
+        @param width is the expected minium halalf-width of a peak in terms of the number of data points.
                 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
                 to experimental noise, smaller means better eable to see sharp peaks
             @param poly This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
@@ -274,13 +286,13 @@ class AnalyseFile(DataFile):
             xcol=self.column(xcol)
         index=interp1d(i, xcol)
         z=self.__threshold(0, d1, rising=troughs, falling=peaks)
-        return index(filter(lambda x: numpy.abs(d2(x))>significance, z))       
-        
+        return index(filter(lambda x: numpy.abs(d2(x))>significance, z))
+
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
         """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
-        
+
                 mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
-                
+
                 func: Fitting function def func(x,parameters, **func_args)
                 xcol, ycol: index the x and y data sets
                 p_info: array of dictionaries that define the fitting parameters
@@ -303,6 +315,6 @@ class AnalyseFile(DataFile):
         func_args["err"]=sigma
         func_args["func"]=func
         m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
-        return m        
+        return m
 
-        
+

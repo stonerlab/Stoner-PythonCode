@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.30 2011/11/28 09:26:33 cvs Exp $
+# $Id: Core.py,v 1.31 2011/11/28 14:26:52 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.31  2011/11/28 14:26:52  cvs
+# Merge latest versions
+#
 # Revision 1.30  2011/11/28 09:26:33  cvs
 # Update documentation
 #
@@ -220,7 +223,7 @@ class typeHintedDict(dict):
                     except NameError:
                         ret=str(value)
                     except SyntaxError:
-                        ret=""  
+                        ret=""
                     return ret
                     break
                 else:
@@ -269,7 +272,7 @@ class typeHintedDict(dict):
                 return [self._typehints[x] for x in key]
             except TypeError:
                 return self._typehints[key]
-                
+
     def export(self, key):
         """Exports a single metadata value to a string representation with type hint
         @param key The metadata key to export
@@ -664,7 +667,7 @@ class DataFile(object):
         self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
 
     def __loadHariboPlain(self):
-        
+
         self.__parse_plain_data(0,0, data_delim='\t', header_delim='\t')
 
     #   PUBLIC METHODS
@@ -717,9 +720,9 @@ class DataFile(object):
         return self
 
     def save(self, filename=None):
-        """Saves a string representation of the current DataFile object into the file 'filename' 
-               
-              
+        """Saves a string representation of the current DataFile object into the file 'filename'
+
+
                 @param filename = None  filename to save data as, if this is \b None then the current filename for the object is used
                     If this is not set, then then a file dialog is used. If filename is \b False then a file dialog is force.
                     @return The current object
@@ -872,12 +875,12 @@ class DataFile(object):
     def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows
                 @param col Column containg values to search for. Maybe a list or slice
-                @param val Specifies rows to delete. Maybe None - in which case whole columns are deleted, a float 
-                in which case rows whose column \b col = \b val are deleted or a function - in which case rows where 
+                @param val Specifies rows to delete. Maybe None - in which case whole columns are deleted, a float
+                in which case rows whose column \b col = \b val are deleted or a function - in which case rows where
                 the function evaluates to be true are deleted.
                 @return The current object
-                
-                If \b val is a function it should take two arguments - a float and a list. The float is the value of the 
+
+                If \b val is a function it should take two arguments - a float and a list. The float is the value of the
                 current row that corresponds to column \b col abd the second argument is the current row.
             """
         if isinstance(col, slice) and val is None:
@@ -940,7 +943,7 @@ class DataFile(object):
         if replace:
             self.data[:, index]=numpy_data[0, :]
         else:
-            self.data=numpy.insert(self.data,index, numpy_data,1)
+            self.data=numpy.insert(self.data,index, numpy.transpose(numpy_data),1)
         return self
 
     def del_column(self, col):
