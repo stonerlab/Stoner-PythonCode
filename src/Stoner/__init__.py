@@ -1,10 +1,16 @@
 #----------------------------------------------------------------------------- 
-#   $Id: __init__.py,v 1.7 2011/01/10 23:11:21 cvs Exp $
+#   $Id: __init__.py,v 1.8 2011/12/03 13:58:48 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
 #
 # $Log: __init__.py,v $
+# Revision 1.8  2011/12/03 13:58:48  cvs
+# Replace the various format load routines in DataFile with subclasses of DataFile with their own overloaded load methods
+# Improve the VSM load routine
+# Add some new sample data sets to play with
+# Updatedocumentation
+#
 # Revision 1.7  2011/01/10 23:11:21  cvs
 # Switch to using GLC's version of the mpit module
 # Made PlotFile.plot_xy take keyword arguments and return the figure
@@ -16,10 +22,11 @@
 #
 #
 
-__all__=['Core', 'Analysis', 'Plot']
+__all__=['Core', 'Analysis', 'Plot', 'FileFormats']
 
 # These fake the old namespace if you do an import Stoner
 from .Core import *
 from .Analysis import *
 from Plot import *
+from FileFormats import *
 

@@ -107,7 +107,7 @@ measurement.
 \begin{verbatim}
   >>>import Stoner
   >>>d=Stoner.DataFile('my_data.txt')
-  >>>d=Stoner.DataFile('my_VSM_data.fld','VSM')
+  >>>d=Stoner.VSMFile('my_VSM_data.fld')
 \end{verbatim}
 
 In this example we have loaded data from my\_data.txt which should be in the
@@ -115,32 +115,39 @@ current directory -- here we are assuming that my\_data.txt contains data in the
 \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the
 file successfully loads, \textit{d}, is an instance of the DataFile object. Here
 the DataFile constructor has been used to both create the instance and load the
-data in one go. The second version adds an extra parameter that specifying how
-to interpret the file data. Currently allowed values are
+data in one go. 
 
+The second example shows the use of one of the sub-classes of the DataFile object to load data from a specific instrument (in this case the VSM).
+
+\warning{This is an API change from earlier versions of the Stoner package where a second parameter on the constructor of the DataFile object was used to identify the type of data file. This syntax is now depreciated !).}
+
+The possible sub-classes are:
 \begin{description}
-\item[TDI] Tagged Data Interchange Format 1.5 -- the default format produced by
+\item[DataFile] Tagged Data Interchange Format 1.5 -- the default format produced by
 the LabVIEW measurement rigs
-\item[VSM] The text files produced by the group's Oxford Instruments VSM
-\item[BigBlue] Datafiles produced by VB Code running on Big Blue. The
+\item[VSMFile] The text files produced by the group's Oxford Instruments VSM
+\item[BigBlueFile] Datafiles produced by VB Code running on Big Blue. The
 \textit{BigBlue} version of the DataFile.load and DataFile constructors takes
 two additional parameters that specify the row on which the column headers will
 be found and the row on which the data starts.
-\item[csv] Reads a generic comma separated value file. The \textit{csv} load
+\item[CSVFile] Reads a generic comma separated value file. The \textbf{CSVFile} load
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the \textit{BigBlue} variant, a
-further two parameters specify the deliminators for the header and data rows.
-\item[NewXRD] Loads a scan file produced by Arkengarthdale - the group's Brucker
+further two parameters specify the deliminators for the data and header rows.
+\item[XRDFile] Loads a scan file produced by Arkengarthdale - the group's Brucker
 XRD Machine.
-\item[Raman] Loads a Raman scan file (.spc format) produced by the Rensihaw
-Raman spectrometer.
+\item[SPCFile] Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba 
+Raman spectrometers. This may also work for other instruments that produce spc files, but has not been extensively tested.
 \end{description}
 
 \begin{verbatim}
   >>>import Stoner
   >>>d=Stoner.DataFile()
   >>>d.load('my_data.txt')
-  >>>d.load('my_VSM_data.fld','VSM')
+  >>> v=Stoner.VSMFIle()
+  >>>v.load('my_VSM_data.fld')
+  >>> c=Stoner.CSVFile()
+  >>> c.load('data.csv',1,0,',',',')
 \end{verbatim}
 
 \keypoint{The load method, like many of the DataFile methods returns a copy of
@@ -214,7 +221,7 @@ To get a list of possible keys in the metadata, you can do:
 In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned -- all keys containing
 \textit{Option:}. For compatibility with normal opython semantics: \verb#>>>d.keys()# is
-synonymous with \verb#>>>d.dir()#. 
+synonymous with \verb#>>>d.dir()#.
 
 We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:
