@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.8 2011/11/28 14:26:52 cvs Exp $
+# $Id: Analysis.py,v 1.9 2011/12/04 23:09:16 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.9  2011/12/04 23:09:16  cvs
+# Fixes to Keissig and plotting code
+#
 # Revision 1.8  2011/11/28 14:26:52  cvs
 # Merge latest versions
 #
@@ -43,6 +46,28 @@ import numpy
 import math
 import sys
 import inspect
+
+def cov2corr(M):
+    """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc"""
+    if (not isinstance(M, numpy.ndarray)) or (not (len(M.shape) == 2)) or (not(M.shape[0] == M.shape[1])):
+        raise ValueError('cov2corr expects a square ndarray, got %s' % M)
+    
+    if numpy.isnan(M).any():
+        raise ValueError('Found NaNs in my covariance matrix: %s' % M)
+        
+    # TODO check Nan and positive diagonal
+    d = M.diagonal()
+    if (d < 0).any():
+        raise ValueError('Expected positive elements for square matrix, got diag = %s' % d)
+        
+    n = M.shape[0]
+    R = numpy.ndarray((n, n))
+    for i in range(n):
+        for j in range(n):
+            d = M[i, j] / math.sqrt(M[i, i] * M[j, j])
+            R[i, j] = d
+            
+    return R 
 
 class AnalyseFile(DataFile):
     """Extends DataFile with numpy passthrough functions"""

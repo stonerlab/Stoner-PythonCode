@@ -186,13 +186,12 @@ class XRDFile(DataFile):
         Format is ini file like but not enough to do standard inifile processing - in particular one can have multiple sections with the same name (!)
     """
         from ast import literal_eval
-        print self.column_headers
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
         sh=re.compile(r'\[(.+)\]') # Regexp to grab section name
-        f=fileinput.FileInput(filename) # Read filename linewise
+        f=fileinput.FileInput(self.filename) # Read filename linewise
         if f.next().strip()!=";RAW4.00": # Check we have the corrrect fileformat
                 raise RuntimeError("File Format Not Recognized !")
         drive=0
@@ -222,7 +221,6 @@ class XRDFile(DataFile):
         self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
         f.close()# Cleanup
-        print self.column_headers
         return self
 
 class CSVFile(DataFile):

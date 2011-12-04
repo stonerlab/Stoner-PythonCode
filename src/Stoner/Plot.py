@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.9 2011/06/24 16:23:58 cvs Exp $
+# $Id: Plot.py,v 1.10 2011/12/04 23:09:16 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.10  2011/12/04 23:09:16  cvs
+# Fixes to Keissig and plotting code
+#
 # Revision 1.9  2011/06/24 16:23:58  cvs
 # Update API documentation. Minor improvement to save method to force a dialog box.
 #
@@ -50,23 +53,22 @@ import os
 import platform
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
-from matplotlib import pyplot
+from matplotlib import pyplot as pyplot
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
     
     __figure=None
     
-    def __init__(self, *args, **kargs): #Do the import of pylab here to speed module load
-        """Constructor of \b PlotFile class. Imports pylab and then calls the parent constructor
+    def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
+        """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
                 @param args Arguements to pass to \b DataFile.__init__
                 @param kargs Dictionary of keyword arguments to pass to \b DataFile.__init__
                 
                 @return This instance
         
         """
-        global pylab
-        import pylab
+        global pyplot
         super(PlotFile, self).__init__(*args, **kargs)
     
     def __getattr__(self, name):
@@ -92,7 +94,7 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
     
-    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, **kwords):
+    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, plotter=pyplot.plot,  **kwords):
         """Makes a simple X-Y plot of the specified data.
                 
                 @param column_x An integer or string that indexes the relevant column for the x data
@@ -114,43 +116,47 @@ class PlotFile(DataFile):
         x=self.column(column_x)
         y=self.column(column_y)
         if isinstance(figure, int):
-            figure=pylab.figure(figure)
+            figure=pyplot.figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=pylab.figure()
+            figure=pyplot.figure()
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=pylab.figure(figure.number)
+            figure=pyplot.figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
         else:
-            figure=pylab.figure()
+            figure=pyplot.figure()
         if show_plot == True:
-            pylab.ion()
+            pyplot.ion()
         if format==None:
-            pylab.plot(x,y, figure=figure, **kwords)
+            plotter(x,y, figure=figure, **kwords)
         else:
-            figure=pylab.plot(x,y, format, figure=figure, **kwords)        
-        pyplot.draw()
-        pylab.xlabel(str(self.column_headers[column_x]))
+            pyplot.plot(x,y, format, figure=figure, **kwords)        
+        pyplot.xlabel(str(self.column_headers[column_x]))
         if isinstance(column_y, list):
             ylabel=column_y
             ylabel[0]=self.column_headers[column_y[0]]
             ylabel=reduce(lambda x, y: x+","+self.column_headers[y],  ylabel)
         else:
             ylabel=self.column_headers[column_y]
-        pylab.ylabel(str(ylabel))
+        pyplot.ylabel(str(ylabel))
         if title=='':
             title=self.filename
-        pylab.title(title)
-        pylab.grid(True)
+        pyplot.title(title)
+        pyplot.grid(True)
         if save_filename != '':
-            pylab.savefig(str(save_filename))
+            pyplot.savefig(str(save_filename))
+        pyplot.draw()
         self.__figure=figure
-        return figure
+        return self.__figure
     
     def draw(self):
-        """Pass through to pylab to force figure redraw"""
-        pylab.figure(self.__figure.number)
-        pylab.draw()
+        """Pass through to pyplot to force figure redraw"""
+        pyplot.figure(self.__figure.number)
+        pyplot.draw()
+        
+    def show(self):
+        """Pass through for pyplot Figure.show()"""
+        self.fig.show()
         
     def axes(self):
         """Get the axes object of the current figure"""
@@ -164,9 +170,9 @@ class PlotFile(DataFile):
          @param figure A matplotlib figure or figure number
          @return The current \b Stoner.PlotFile instance"""
         if isinstance(figure, int):
-            figure=pylab.figure(figure)
+            figure=pyplot.figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):
-            pylab.figure(figure.number)
+            pyplot.figure(figure.number)
         self.__figure=figure
         return self
          

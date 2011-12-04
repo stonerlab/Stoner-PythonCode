@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.32 2011/12/03 13:58:48 cvs Exp $
+# $Id: Core.py,v 1.33 2011/12/04 23:09:16 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.33  2011/12/04 23:09:16  cvs
+# Fixes to Keissig and plotting code
+#
 # Revision 1.32  2011/12/03 13:58:48  cvs
 # Replace the various format load routines in DataFile with subclasses of DataFile with their own overloaded load methods
 # Improve the VSM load routine
@@ -356,7 +359,7 @@ class DataFile(object):
         # Now check for arguments t the constructor
         if len(args)==1:
             #print type(args[0])
-            if isinstance(args[0], str): # Filename- load datafile
+            if isinstance(args[0], str) or (isinstance(args[0], bool) and not args[0]): # Filename- load datafile
                 t=self.load(args[0])
                 self.data=t.data
                 self.metadata=t.metadata
@@ -911,20 +914,22 @@ class DataFile(object):
         # [1, x] array, i.e. a column by first making it 2d and
         # then transposing it.
         if isinstance(column_data, numpy.ndarray):
-            numpy_data=numpy.atleast_2d(column_data)
+            if len(numpy.shape(column_data))!=1:
+                raise ValueError('Column data must be 1 dimensional')
+            else:
+                numpy_data=column_data
         elif callable(column_data):
             if isinstance(func_args, dict):
                 new_data=[column_data(x, **func_args) for x in self]
             else:
                 new_data=[column_data(x) for x in self]
-            new_data=numpy.array(new_data)
-            numpy_data=numpy.atleast_2d(new_data)
+            numpy_data=numpy.array(new_data)
         else:
             return NotImplemented
         if replace:
-            self.data[:, index]=numpy_data[0, :]
+            self.data[:, index]=numpy_data
         else:
-            self.data=numpy.insert(self.data,index, numpy.transpose(numpy_data),1)
+            self.data=numpy.insert(self.data,index, numpy_data,1)
         return self
 
     def del_column(self, col):
