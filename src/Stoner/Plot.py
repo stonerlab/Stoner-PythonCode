@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.10 2011/12/04 23:09:16 cvs Exp $
+# $Id: Plot.py,v 1.11 2011/12/05 21:56:26 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.11  2011/12/05 21:56:26  cvs
+# Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
+#
 # Revision 1.10  2011/12/04 23:09:16  cvs
 # Fixes to Keissig and plotting code
 #
@@ -104,6 +107,7 @@ class PlotFile(DataFile):
                 @param title Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 @param save_filename Filename used to save the plot
                 @param figure Optional argument that controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                @param plotter Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
                 @param kwords A dictionary of other keyword arguments to pass into the plot function.
                 
                 @return a matplotlib.figure isntance

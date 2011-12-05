@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.33 2011/12/04 23:09:16 cvs Exp $
+# $Id: Core.py,v 1.34 2011/12/05 21:56:25 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.34  2011/12/05 21:56:25  cvs
+# Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
+#
 # Revision 1.33  2011/12/04 23:09:16  cvs
 # Fixes to Keissig and plotting code
 #
@@ -775,7 +778,7 @@ class DataFile(object):
     def meta(self, ky):
         """Returns some metadata
         
-        @param key The name of the metadata item to be returned. If @a key is not an exact match for an item of metadata, then a regular expression
+        @param ky The name of the metadata item to be returned. If @a key is not an exact match for an item of metadata, then a regular expression
         match is carried out.
         @return Returns the item of metadata."""
         if isinstance(ky, str): #Ok we go at it with a string
@@ -944,6 +947,42 @@ class DataFile(object):
             c=[c]
         for col in c:
             del self.column_headers[col]
+        return self
+        
+    def swap_column(self, swp, headers_too=True):
+        """Swaps pairs of columns in the data. Useful for reordering data for idiot programs that expect columns in a fixed order.
+        
+            @param swp  A tuple of list of tuples of two elements. Each element will be iused as a column index (using the normal rules for matching columns).  The two elements represent the two columns that are to be swapped.
+            @param headers_too A boolean that indicates the column headers are swapped as well
+            @return A copy of the modified DataFile objects
+            
+            If @swp is a list, then the function is called recursively on each element of the list. Thus in principle the @swp could contain lists of lists of tuples
+        """
+        if isinstance(swp, list):
+            for item in swp:
+                self.swap_column(item, headers_too)
+        elif isinstance(swp, tuple):
+            col1=self.find_col(swp[0])
+            col2=self.find_col(swp[1])
+            self.data[:, [col1, col2]]=self.data[:, [col2, col1]]
+            if headers_too:
+                self.column_headers[col1], self.column_headers[col2]=self.column_headers[col2], self.column_headers[col1]
+        else:
+            raise TypeError("Swap parameter must be either a tuple or a list of tuples")
+        return self
+        
+    def reorder_columns(self, cols, headers_too=True):
+        """Construct a new data array from the original data by assembling the columns in the order given
+                @param cols A list of column indices (referred to the oriignal data set) from which to assemble the new data set
+                @param headers_too Reorder the column headers in the same way as the data (defaults to True)
+                @return A copy of the modified DataFile object"""
+        if headers_too:
+            self.column_headers=[self.column_headers[self.find_col(x)] for x in cols]
+        
+        newdata=numpy.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
+        for col in cols:
+            newdata=numpy.append(newdata, numpy.atleast_2d(self.data[:, self.find_col(col)]), axis=0)
+        self.data=numpy.transpose(newdata)
         return self
 
     def rows(self):

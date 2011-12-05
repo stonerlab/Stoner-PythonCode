@@ -1,5 +1,11 @@
 ####################################################
 ## FielFormats - sub classes of DataFile for different machines
+# $Id: FileFormats.py,v 1.3 2011/12/05 21:56:26 cvs Exp $
+# $Log: FileFormats.py,v $
+# Revision 1.3  2011/12/05 21:56:26  cvs
+# Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
+#
+
 
 from .Core import DataFile
 import linecache
@@ -77,6 +83,7 @@ class SPCFile(DataFile):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
         
         @param filename String containing file to be loaded
+        @param args Pass through all other arguements
         @return An instance of Stoner.DataFile with the data loaded
         
         @todo Implement the second form of the file that stores multiple x-y curves in the one file.
@@ -181,6 +188,7 @@ class XRDFile(DataFile):
         """Reads an XRD datafile as produced by the Brucker diffractometer
 
         @param filename String containing file to be loaded
+        @param args Pass through all other arguements
         @return An instance of Stoner.DataFile with the data loaded
         
         Format is ini file like but not enough to do standard inifile processing - in particular one can have multiple sections with the same name (!)
