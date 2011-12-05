@@ -1,7 +1,10 @@
 ####################################################
 ## FielFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.3 2011/12/05 21:56:26 cvs Exp $
+# $Id: FileFormats.py,v 1.4 2011/12/05 22:58:11 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.4  2011/12/05 22:58:11  cvs
+# Make CSVFile able to save as a CSV file and remove csvdump from Core. Update docs
+#
 # Revision 1.3  2011/12/05 21:56:26  cvs
 # Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
 #
@@ -243,4 +246,22 @@ class CSVFile(DataFile):
         self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
         self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
         return self
+
+    def save(self,filename, deliminator=','):
+        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
+                @param filename Fielname to save as (using the same rules as for the load routines)
+                @param deliminator Record deliniminator (defaults to a comma)
+                @return A copy of itself."""
+        if filename is None:
+            filename=self.filename
+        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
+            filename=self.__file_dialog('w')
+        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator,quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        i=0
+        spamWriter.writerow(self.column_headers)
+        while i< self.data.shape[0]:
+            spamWriter.writerow(self.data[i,:])
+            i+=1
+        return self
+
     

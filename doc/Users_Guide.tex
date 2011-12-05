@@ -115,7 +115,7 @@ current directory -- here we are assuming that my\_data.txt contains data in the
 \textit{TDI Format 1.5} which is produced by the LabVIEW rigs. Assuming that the
 file successfully loads, \textit{d}, is an instance of the DataFile object. Here
 the DataFile constructor has been used to both create the instance and load the
-data in one go. 
+data in one go.
 
 The second example shows the use of one of the sub-classes of the DataFile object to load data from a specific instrument (in this case the VSM).
 
@@ -133,10 +133,10 @@ be found and the row on which the data starts.
 \item[CSVFile] Reads a generic comma separated value file. The \textbf{CSVFile} load
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the \textit{BigBlue} variant, a
-further two parameters specify the deliminators for the data and header rows.
+further two parameters specify the deliminators for the data and header rows. \textbf{CSVFile} also offers a \textbf{save} method to allow data to be saved in a simple deliminated text way (see Section \ref{save} for details).
 \item[XRDFile] Loads a scan file produced by Arkengarthdale - the group's Brucker
 XRD Machine.
-\item[SPCFile] Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba 
+\item[SPCFile] Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
 Raman spectrometers. This may also work for other instruments that produce spc files, but has not been extensively tested.
 \end{description}
 
@@ -415,8 +415,20 @@ dimensional numpy array to the data. The third example appends a numpy array as
 a column to \textit{d}. In this case the requirement is that the numpy array has
 the same or fewer rows of data as \textit{d}.
 
-\subsubsection{Inserting Columns of Data}
+\subsubsection{Working with Columns of Data}
+\subsubsection{Rearranging Columns of Data}
+Sometimes it is useful to rearrange columns of data. \textbf{DataFile} offers a couple of methods to help with this.
+\begin{verbatim}
+  >>> d.swap_column(('Resistance','Temperature'))
+  >>> d.swap_column(('Resistance','Temperature'),headers_too=False)
+  >>> d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
+  >>> d.reorder([1,3,'Volt','Temp'])
+  >>> d.reorder([1,3,'Volt','Temp'],header_too=False)
+\end{verbatim}
 
+The \textbf{swap} method takes either a tuple of column names/indices or a list of such tuples and swaps the columns accordingly, whilst the \textbf{reorder} method takes a list of column labels/indices and constructs a new data matrix out of those columns in the new order. The \textit{headers\_too=False} options, as the name suggests, cause the column headers not be rearranged.
+
+\subsubsection{Inserting Columns of Data}
 The append columns operator \verb#&# will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the \textbf{add\_column} method.
@@ -483,13 +495,18 @@ columns. Currently only ascending sorts are supported.
   >>>d.sort(['Temp','Gate'])
 \end{verbatim}
 
-\subsection{Saving Data}
+\subsection{Saving Data}\label{save}
 
-Only saving data in the \textit{TDI} format is supported.
+Only saving data in the \textit{TDI} format and as comma or tab deliminated formats is supported.
+
+\warning{The \textbf{CSVFile} comma or tab deliminated files discard all metadata about the measurement. You absolutely must not use this as your primary data format -- always keep the \textit{TDI} format files as well.}
 
 \begin{verbatim}
   >>>d.save()
   >>>d.save(filename)
+  >>>d=Stoner.CSVFile(d)
+  >>>d.save()
+  >>>d.save(filename,'\t')
 \end{verbatim}
 
 In the first case, the filename used tosave the data is determined from the
@@ -503,6 +520,8 @@ box to be raised so that the user can supply a filename.
 In the second variant, the supplied filename is used and the filename attribute
 is changed to match this \ie \verb#d.filename# will always return the last
 filename used for a load or save operation.
+
+The third is similar but convert the file to \textit{cvs} format while the fourth also specifies that the deliminator is a tab character.
 
 \subsection{Plotting Data}
 
