@@ -1,7 +1,10 @@
 ####################################################
 ## FielFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.4 2011/12/05 22:58:11 cvs Exp $
+# $Id: FileFormats.py,v 1.5 2011/12/06 09:48:49 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.5  2011/12/06 09:48:49  cvs
+# Add BNLFile for Brookhaven Data (Rowan)
+#
 # Revision 1.4  2011/12/05 22:58:11  cvs
 # Make CSVFile able to save as a CSV file and remove csvdump from Core. Update docs
 #
@@ -262,6 +265,81 @@ class CSVFile(DataFile):
         while i< self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i+=1
+        return self
+
+class BNLFile(DataFile):
+    """By Rowan Temple 12/2011
+    Creates BNLFile a subclass of DataFile that caters for files in the format given
+    by BNL.
+
+    The file from BNL must be split into seperate scan files before Stoner can use
+    them, a separate python script has been written for this and should be found
+    in data somewhere obvious.
+    """
+    def __init__(self, *params):
+        """Constructor modification
+        BNLFile('filename')
+        Do a normal initiation using the parent class 'self' followed by adding an extra attribute line_numbers,
+        line_numbers is a list of important line numbers in the file.
+        I've left it open for someone to add options for more args if they wish."""
+        if len(params)==1: super(BNLFile,self).__init__((params[0]))
+        """super(Stoner.DataFile,self) is self in the DataFile class"""
+        self.line_numbers=[]
+
+    def __find_lines(self):
+        """returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]"""
+        fp=open(self.filename,'r')
+        print fp
+        self.line_numbers=[0,0,0,0,0]
+        counter=0
+        for line in fp:
+            counter+=1
+            if len(line)<2:continue  #if there's nothing written on the line go to the next
+            elif line[0:2]=='#L':self.line_numbers[0]=counter
+            elif line[0:2]=='#S':self.line_numbers[2]=counter
+            elif line[0:2]=='#D':self.line_numbers[3]=counter
+            elif line[0:2]=='#P':self.line_numbers[4]=counter
+            elif line[0] in ['0','1','2','3','4','5','6','7','8','9']:
+                self.line_numbers[1]=counter
+                break
+        
+    def __get_metadata(self):
+        """Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
+        scan date/time 'Sdatetime' and z motor position 'Smotor'."""
+        scanLine=linecache.getline(self.filename,self.line_numbers[2])
+        dateLine=linecache.getline(self.filename,self.line_numbers[3])
+        motorLine=linecache.getline(self.filename,self.line_numbers[4])
+        self.metadata={'Snumber':scanLine.split()[1],'Stype':string.join(scanLine.split()[2:]),\
+                       'Sdatetime':dateLine[3:],'Smotor':motorLine.split()[3]}
+        
+                       
+    def __parse_BNL_data(self):
+        """
+        Internal function for parsing BNL data. The meta data is labelled by #L type tags
+        so easy to find but #L must be excluded from the result.
+        """
+        self.__find_lines()
+        """creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]"""
+        header_string=linecache.getline(self.filename, self.line_numbers[0])
+        header_string=re.sub(r'["\n]', '', header_string) #get rid of new line character
+        header_string=re.sub(r'#L', '', header_string) #get rid of line indicator character
+        self.column_headers=map(lambda x: x.strip(),  header_string.split())
+        self.data=numpy.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
+        self.metaData=self.__get_metadata()
+        
+        
+    def load(self,filename):        #fileType omitted, implicit in class call
+        """BNLFile.load(filename)
+
+        Overwrites load method in DataFile class, no header positions and data
+        positions are needed because of the hash title structure used in BNL files.
+
+        Normally its good to use _parse_plain_data method from DataFile class
+        to load data but unfortunately Brookhaven data isn't very plain so there's
+        a new method below.
+        """
+        self.filename=filename
+        self.__parse_BNL_data() #call an internal function rather than put it in load function
         return self
 
     
