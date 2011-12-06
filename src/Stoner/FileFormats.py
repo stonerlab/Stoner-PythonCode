@@ -1,7 +1,10 @@
 ####################################################
-## FielFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.5 2011/12/06 09:48:49 cvs Exp $
+## FileFormats - sub classes of DataFile for different machines
+# $Id: FileFormats.py,v 1.6 2011/12/06 16:35:37 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.6  2011/12/06 16:35:37  cvs
+# added import string line to sort a bug in BNLFile class. Rowan
+#
 # Revision 1.5  2011/12/06 09:48:49  cvs
 # Add BNLFile for Brookhaven Data (Rowan)
 #
@@ -18,6 +21,7 @@ import linecache
 import re
 import numpy
 import fileinput
+import string
 
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
@@ -268,13 +272,13 @@ class CSVFile(DataFile):
         return self
 
 class BNLFile(DataFile):
-    """By Rowan Temple 12/2011
+    """Author Rowan 12/2011
     Creates BNLFile a subclass of DataFile that caters for files in the format given
     by BNL.
 
     The file from BNL must be split into seperate scan files before Stoner can use
     them, a separate python script has been written for this and should be found
-    in data somewhere obvious.
+    in data/Python/PythonCode/scripts.
     """
     def __init__(self, *params):
         """Constructor modification
