@@ -1,13 +1,13 @@
 """Created 08/2011 Rowan Temple
 Splits Brookhaven files up into seperate scan files and dumps them in a folder 'BNLSplitFiles'
-You must be working in the directory of the file to run the program.
+
 """
 
 
 import os
 import re
 
-#Get file open ###############
+#Get file open and make a directory for new files###############
 while(True):
     try:
         directory=raw_input("Enter the directory path where your data is stored\n")
@@ -22,7 +22,7 @@ os.chdir('BNLSplitFiles')
 
 #Main algorithm ###########
     
-writeName=re.split(r'[.]',filename)
+writeName=re.split(r'[.]',filename)   #splits 'filename.txt' into ['filename','txt']
 writeFP=open(writeName[0]+'0.txt','w') #title sequence goes in this file
 counter=1   #this will label the files
 for line in mainFP:
