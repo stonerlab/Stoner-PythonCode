@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.6 2011/12/06 16:35:37 cvs Exp $
+# $Id: FileFormats.py,v 1.7 2011/12/09 12:10:41 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.7  2011/12/09 12:10:41  cvs
+# Remove cvs writing code from DataFile (use CSVFile.save()). Fixed BNLFile to always call the DataFile constructor
+#
 # Revision 1.6  2011/12/06 16:35:37  cvs
 # added import string line to sort a bug in BNLFile class. Rowan
 #
@@ -21,6 +24,7 @@ import linecache
 import re
 import numpy
 import fileinput
+import csv
 import string
 
 class VSMFile(DataFile):
@@ -286,8 +290,7 @@ class BNLFile(DataFile):
         Do a normal initiation using the parent class 'self' followed by adding an extra attribute line_numbers,
         line_numbers is a list of important line numbers in the file.
         I've left it open for someone to add options for more args if they wish."""
-        if len(params)==1: super(BNLFile,self).__init__((params[0]))
-        """super(Stoner.DataFile,self) is self in the DataFile class"""
+        super(BNLFile,self).__init__(*params)
         self.line_numbers=[]
 
     def __find_lines(self):

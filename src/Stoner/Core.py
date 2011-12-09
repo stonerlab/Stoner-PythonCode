@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.34 2011/12/05 21:56:25 cvs Exp $
+# $Id: Core.py,v 1.35 2011/12/09 12:10:41 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.35  2011/12/09 12:10:41  cvs
+# Remove cvs writing code from DataFile (use CSVFile.save()). Fixed BNLFile to always call the DataFile constructor
+#
 # Revision 1.34  2011/12/05 21:56:25  cvs
 # Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
 #
@@ -1013,15 +1016,6 @@ class DataFile(object):
         #print d
         self.data=d.view(dtype='f8').reshape(len(self), len(self.column_headers))
         return self
-
-
-    def csvArray(self,dump_location=defaultDumpLocation):
-        spamWriter = csv.writer(open(dump_location, 'wb'), delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        i=0
-        spamWriter.writerow(self.column_headers)
-        while i< self.data.shape[0]:
-            spamWriter.writerow(self.data[i,:])
-            i+=1
 
     def edit(self):
         """Produce an editor window with a grid"""
