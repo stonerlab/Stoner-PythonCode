@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.7 2011/12/09 12:10:41 cvs Exp $
+# $Id: FileFormats.py,v 1.8 2011/12/12 10:26:32 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.8  2011/12/12 10:26:32  cvs
+# Minor changes in BNLFile class to fix a metadata bug. Rowan
+#
 # Revision 1.7  2011/12/09 12:10:41  cvs
 # Remove cvs writing code from DataFile (use CSVFile.save()). Fixed BNLFile to always call the DataFile constructor
 #
@@ -316,8 +319,10 @@ class BNLFile(DataFile):
         scanLine=linecache.getline(self.filename,self.line_numbers[2])
         dateLine=linecache.getline(self.filename,self.line_numbers[3])
         motorLine=linecache.getline(self.filename,self.line_numbers[4])
-        self.metadata={'Snumber':scanLine.split()[1],'Stype':string.join(scanLine.split()[2:]),\
-                       'Sdatetime':dateLine[3:],'Smotor':motorLine.split()[3]}
+        self.__setitem__('Snumber',scanLine.split()[1])
+        self.__setitem__('Stype',string.join(scanLine.split()[2:]))
+        self.__setitem__('Sdatetime',dateLine[3:])
+        self.__setitem__('Smotor',motorLine.split()[3])
         
                        
     def __parse_BNL_data(self):
@@ -331,8 +336,11 @@ class BNLFile(DataFile):
         header_string=re.sub(r'["\n]', '', header_string) #get rid of new line character
         header_string=re.sub(r'#L', '', header_string) #get rid of line indicator character
         self.column_headers=map(lambda x: x.strip(),  header_string.split())
-        self.data=numpy.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
-        self.metaData=self.__get_metadata()
+        self.__get_metadata()
+        try: self.data=numpy.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
+        except IOError:
+            self.data=numpy.array([0])
+            print 'Did not import any data for %s'% self.filename
         
         
     def load(self,filename):        #fileType omitted, implicit in class call

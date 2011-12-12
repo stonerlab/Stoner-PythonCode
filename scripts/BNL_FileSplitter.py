@@ -30,7 +30,7 @@ for line in mainFP:
         if int(line.split()[1])!=counter:
             raise ValueError                #check for inconsistencies with filenames and scan numbers
         writeFP.close()
-        writeFP=open(writeName[0]+str(counter)+'.txt','w')
+        writeFP=open(writeName[0]+str(counter)+'.bnl','w')
         counter+=1
     if line[0:2]!='#C':
       writeFP.write(line)
