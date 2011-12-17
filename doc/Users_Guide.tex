@@ -16,7 +16,7 @@ geometry}
 \reversemarginpar
 
 
-\author{C.S.~Allen, M.~Newman and G.~Burnell}
+\author{C.S.~Allen, M.~Newman, R.~Temple and G.~Burnell}
 \title{Stoner Python Package}
 
 \begin{document}
@@ -524,6 +524,59 @@ filename used for a load or save operation.
 The third is similar but convert the file to \textit{cvs} format while the fourth also specifies that the deliminator is a tab character.
 
 \subsection{Plotting Data}
+
+Data plotting and visualisation is handled by the PlotFile sub-class of DataFile. The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing publication ready figures.
+
+\begin{verbatim}
+  >>> import Stoner.Plot as plot
+  >>> p=plot.PlotFile(d)
+\end{verbatim}
+
+The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnecessary as the Plot module's namespace is imported when the Stoner package as a whole is imported. The second line creates an instance of the \textbf{PlotFile} class. PlotFile inherits the constructor method of \textbf{DataFile} and so all the variations detailed above work with PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance for plotting.
+
+\subsubsection{Plotting 2D data}
+
+\textit{x-y} plots are produced by the \textbf{PlotFile.plot\_xy} method:
+
+\begin{verbatim}
+  >>> p.plot_xy(column_x, column_y)
+  >>> p.plot_xy(column_x, [y1,y2])
+  >>> p.plot_xy(x,y,'ro')
+  >>> p.plot_xy(x,[y1,y2],['ro','b-'])
+  >>> p.plot_xy(x,y,title='My Plot')
+  >>> p.plot_xy(x,y,figure=2)
+  >>> p.plot_xy(x,y,plotter=pyplot.semilogy)
+\end{verbatim}
+
+The examples above demonstrate several use cases of the \textbf{plot\_xy} method. The first parameter is always the x column that contains the data, the second is the y-data either as a single column or list of columns. The third parameter is the style of the plot (lines, points, colours \etc) and can either be a list if the y-column data is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log plots. By default, \textbf{plotxy} uses the \textbf{pyplot.plot} function to produce linear scaler plots. In principle a log scale plot could be produced by calculating a new column of data, but a more convenient way is to use the \textbf{pyplot.semilogx}, \textbf{.semilogy} and \textbf{.loglog} functions. These can be passed to the \textbf{plot\_xy} function by setting the \textit{plotter} keyword argument.
+
+The X and Y axis label will be set from the column headers.
+
+\subsubsection{Plotting 3D Data}
+ 
+ A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot these on a surface plot or 3D plot. The \textbf{PlotFile.plot\_xyz} method can be used for this.
+ 
+ \begin{verbatim}
+   >>> p.plot_xyz(col_x,col_y,col_z)
+   >>> p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
+   >>> p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
+ \end{verbatim}
+ 
+ By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overriden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
+ 
+ Like \textbf{plot\_xy}, a \textit{figure} parameter can be used to control the figure being used and any additional keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
+ 
+ \subsubsection{Getting More Control on the Figure}
+ 
+ It is useful to be able to get access to the matplotlib figure that is used for each \textbf{PlotFle} instance. The \textbf{PlotFile.fig} attribute can do this, thus allowing plots from multiple \textbf{PlotFile} instances to be combined in a single figure.
+ 
+ \begin{verbatim}
+   >>> p1.plot_xy(0,1,'r-')
+   >>> p2.plot_xy(0,1,'bo',figure=p1.fig)
+ \end{verbatim}
+ 
+ Likewise the \textbf{PlotFile.axes} attribute returns the current axes object of the current figure in use by the \textbf{PlotFile} instance.
+ 
 
 \subsection{Curve Fitting}
 

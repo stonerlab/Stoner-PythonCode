@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.11 2011/12/05 21:56:26 cvs Exp $
+# $Id: Plot.py,v 1.12 2011/12/17 20:41:39 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.12  2011/12/17 20:41:39  cvs
+# Implement a PlotFile.plot_xyz method, make plot_xy work with multiple y columns and formats a little better. Update documentation. - Gavin
+#
 # Revision 1.11  2011/12/05 21:56:26  cvs
 # Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
 #
@@ -83,6 +86,11 @@ class PlotFile(DataFile):
                 """
         if name=="fig":
             return self.__figure
+        elif name=="axes":
+            if isinstance(self.__figure, matplotlib.figure.Figure):
+                return self.__figure.axes
+            else:
+                return None
         else:
             super(PlotFile, self).__getattr__(name)
             
@@ -131,10 +139,21 @@ class PlotFile(DataFile):
             figure=pyplot.figure()
         if show_plot == True:
             pyplot.ion()
-        if format==None:
-            plotter(x,y, figure=figure, **kwords)
+        if isinstance(column_y, list):
+            for ix in range(len(column_y)):
+                yt=y[:, ix]
+                if isinstance(format, list):
+                    plotter(x,yt, format[ix], figure=figure, **kwords)
+                elif format==None:
+                    plotter(x,y, figure=figure, **kwords)
+                else:
+                    plotter(x,y, format, figure=figure, **kwords)
         else:
-            pyplot.plot(x,y, format, figure=figure, **kwords)        
+            if format==None:
+                plotter(x,y, figure=figure, **kwords)
+            else:
+                plotter(x,y, format, figure=figure, **kwords)
+            
         pyplot.xlabel(str(self.column_headers[column_x]))
         if isinstance(column_y, list):
             ylabel=column_y
@@ -152,7 +171,71 @@ class PlotFile(DataFile):
         pyplot.draw()
         self.__figure=figure
         return self.__figure
-    
+        
+    def plot_xyz(self, xcol, ycol, zcol, shape=None, cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
+        """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
+        
+            @param xcol Xcolumn index or label
+            @param ycol Y column index or label
+            @param zcol Z column index or label
+            @param shape A tuple that defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
+            @param cmap A matplotlib colour map - defaults to the jet colour map
+            @param show_plot Interactive plotting on
+            @param title Text to use as the title - defaults to the filename of the dataset
+            @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
+            @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
+            @param kwords Other keywords to pass into the plot function.  
+            
+            @return The matplotib figure with the data plotted"""
+            
+        if shape is None:
+            shape=(len(self.unique(xcol)), len(self.unique(ycol)))
+        xdata=numpy.reshape(self.column(xcol), shape)
+        ydata=numpy.reshape(self.column(ycol), shape)
+        zdata=numpy.reshape(self.column(zcol), shape)
+        if isinstance(figure, int):
+            figure=pyplot.figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=pyplot.figure()
+        elif isinstance(figure, matplotlib.figure.Figure):
+            figure=pyplot.figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=pyplot.figure()
+        self.__figure=figure
+        if show_plot == True:
+            pyplot.ion()
+        if plotter is None:
+            plotter=self.__SurfPlotter
+        plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
+        pyplot.xlabel(str(self.column_headers[self.find_col(xcol)]))
+        pyplot.ylabel(str(self.column_headers[self.find_col(ycol)]))
+        if plotter==self.__SurfPlotter:
+            self.axes()[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
+        if title=='':
+            title=self.filename
+        pyplot.title(title)
+        pyplot.draw()
+
+        return self.__figure
+        
+    def __SurfPlotter(self, X, Y, Z, **kargs):
+        """Utility private function to plot a 3D color mapped surface
+        @param X X dataFile
+        @param Y Y data
+        @param Z Z data
+        @param kargs Other keywords to pass through
+        
+        @return A matplotib Figure
+        
+        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
+        from mpl_toolkits.mplot3d import Axes3D
+        ax = self.fig.gca(projection='3d')
+        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, **kargs)
+        self.fig.colorbar(surf, shrink=0.5, aspect=5)
+        return surf
+   
     def draw(self):
         """Pass through to pyplot to force figure redraw"""
         pyplot.figure(self.__figure.number)
@@ -161,13 +244,6 @@ class PlotFile(DataFile):
     def show(self):
         """Pass through for pyplot Figure.show()"""
         self.fig.show()
-        
-    def axes(self):
-        """Get the axes object of the current figure"""
-        if isinstance(self.__figure, matplotlib.figure.Figure):
-            return self.__figure.axes
-        else:
-            return None
         
     def figure(self, figure):
         """Set the figure used by \b Stoner.PlotFile
