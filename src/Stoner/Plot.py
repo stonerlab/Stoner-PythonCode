@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.12 2011/12/17 20:41:39 cvs Exp $
+# $Id: Plot.py,v 1.13 2011/12/18 20:18:27 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.13  2011/12/18 20:18:27  cvs
+# Fixed minor regression following removal of PlotFile.axes() method in favour of PlotFile.axes attribute
+#
 # Revision 1.12  2011/12/17 20:41:39  cvs
 # Implement a PlotFile.plot_xyz method, make plot_xy work with multiple y columns and formats a little better. Update documentation. - Gavin
 #
@@ -212,7 +215,7 @@ class PlotFile(DataFile):
         pyplot.xlabel(str(self.column_headers[self.find_col(xcol)]))
         pyplot.ylabel(str(self.column_headers[self.find_col(ycol)]))
         if plotter==self.__SurfPlotter:
-            self.axes()[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
+            self.axes[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
         if title=='':
             title=self.filename
         pyplot.title(title)
