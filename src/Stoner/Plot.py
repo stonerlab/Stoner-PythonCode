@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.13 2011/12/18 20:18:27 cvs Exp $
+# $Id: Plot.py,v 1.14 2011/12/19 23:08:54 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.14  2011/12/19 23:08:54  cvs
+# Add a PlotFile.plot_matrix command and update documentation
+#
 # Revision 1.13  2011/12/18 20:18:27  cvs
 # Fixed minor regression following removal of PlotFile.axes() method in favour of PlotFile.axes attribute
 #
@@ -222,6 +225,120 @@ class PlotFile(DataFile):
         pyplot.draw()
 
         return self.__figure
+        
+    def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
+        """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
+        
+            @param xvals Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
+            @param yvals Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
+            @param rectang a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
+            @param cmap A matplotlib colour map - defaults to the jet colour map
+            @param show_plot Interactive plotting on
+            @param title Text to use as the title - defaults to the filename of the dataset
+            @param xlabel X axes label. Deafult is None - guess from xvals or metadata
+            @param ylabel Y axes label, Default is None - guess from metadata
+            @param zlabel Z axis label, Default is None - guess from metadata
+            @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
+            @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
+            @param kwords Other keywords to pass into the plot function.  
+            
+            @return The matplotib figure with the data plotted"""
+        # Sortout yvals values
+        if isinstance(yvals, int): #  Int means we're sepcifying a data row
+            if rectang is None: # we need to intitialise the rectang
+                rectang=(yvals+1, 0) # We'll sort the column origin later
+            elif isinstance(rectang, tuple) and rectang[1]<=yvals: # We have a rectang, but we need to adjust the row origin
+                rectang[0]=yvals+1
+            yvals=self[yvals] # change the yvals into a numpy array
+        elif isinstance(yvals, list) or isinstance(yvals, tuple): # We're given the yvals as a list already
+            yvals=numpy.array(yvals)
+        elif yvals is None: # No yvals, so we'l try column headings
+            if isinstance(xvals, int) or isinstance(xvals, str): # Do we have an xcolumn header to take away ?
+                xvals=self.find_col(xvals)
+                headers=self.column_headers[xvals+1:]
+            elif xvals is None: # No xvals so we're going to be using the first column
+                xvals=0
+                headers=self.column_headers[1:]
+            else:
+                headers=self.column_headers
+            yvals=numpy.array([float(x) for x in headers]) #Ok try to construct yvals aray
+        else:
+            raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
+        #Sort out xvls values    
+        if isinstance(xvals, int) or isinstance(xvals, string): # String or int means using a column index
+            if xlabel is None:
+                xlabel=self.column_headers[self.find_col(xvals)]
+            if rectang is None: # Do we need to init the rectan ?
+                rectang=(0, xvals+1)
+            elif isinstance(rectang, tuple): # Do we need to adjust the rectan column origin ?
+                rectang[1]=xvals+1
+            xvals=self.column(xvals)
+        elif isinstance(xvals, list) or isinstance(xvals, tuple): # Xvals as a data item
+            xvals=numpy.array(xvals)
+        elif isinstance(xvals, numpy.ndarray):
+            pass
+        elif xvals is None: # xvals from column 0
+            xvals=self.column(0)
+            if rectang is None: # and fix up rectang
+                rectang=(0, 1)
+        else:
+            raise RuntimeError("xvals must be a string, integer, list, tuple or numpy array or None")
+            
+        if isinstance(rectang, tuple) and len(rectang)==2: # Sort the rectang value
+            rectang=(rectang[0], rectang[1], numpy.shape(self.data)[0]-rectang[0], numpy.shape(self.data)[1]-rectang[1])
+        elif rectang is None:
+            rectang=(0, 0, numpy.shape(self.data)[0], numpy.shape(self.data)[1])
+        elif isisntance(rectang, tuple) and len(rectang)==4: # Ok, just make sure we have enough data points left.
+            rectang=(rectang[0], rectang[1], min(rectang[2], numpy.shape(self.data)[0]-rectang[0]), min(rectang[3], numpy.shape(self.data)[1]-rectang[1]))
+        else:
+            raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
+            
+        #Now we can create X,Y and Z 2D arrays
+        print rectang    
+        zdata=self.data[rectang[0]:rectang[0]+rectang[2], rectang[1]:rectang[1]+rectang[3]]
+        xvals=xvals[0:rectang[2]]
+        yvals=yvals[0:rectang[3]]
+        xdata, ydata=numpy.meshgrid(xvals, yvals)
+        
+        #This is the same as for the plot_xyz routine'
+        if isinstance(figure, int):
+            figure=pyplot.figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=pyplot.figure()
+        elif isinstance(figure, matplotlib.figure.Figure):
+            figure=pyplot.figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=pyplot.figure()
+        self.__figure=figure
+        if show_plot == True:
+            pyplot.ion()
+        if plotter is None:
+            plotter=self.__SurfPlotter
+        plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
+        labels={"xlabel":(xlabel, "X Data"), "ylabel":(ylabel, "Y Data"), "zlabel":(zlabel, "Z Data")}
+        for label in labels:
+            (v, default)=labels[label]
+            if v is None:
+                if label in self.metadata:
+                    labels[label]=self[label]
+                else:
+                    labels[label]=default
+            else:
+                labels[label]=v
+        
+        pyplot.xlabel(str(labels["xlabel"]))
+        pyplot.ylabel(str(labels["ylabel"]))
+        if plotter==self.__SurfPlotter:
+            self.axes[0].set_zlabel(str(labels["zlabel"]))
+        if title=='':
+            title=self.filename
+        pyplot.title(title)
+        pyplot.draw()
+
+        return self.__figure
+            
         
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface
