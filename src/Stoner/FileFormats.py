@@ -1,7 +1,11 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.8 2011/12/12 10:26:32 cvs Exp $
+# $Id: FileFormats.py,v 1.9 2012/01/03 12:41:50 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.9  2012/01/03 12:41:50  cvs
+# Made Core pep8 compliant
+# Added TDMS code and TDMSFile
+#
 # Revision 1.8  2011/12/12 10:26:32  cvs
 # Minor changes in BNLFile class to fix a metadata bug. Rowan
 #
@@ -21,18 +25,23 @@
 # Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
 #
 
-
-from .Core import DataFile
 import linecache
 import re
 import numpy
 import fileinput
 import csv
 import string
+import struct
+from re import split
+import codecs
+
+from .Core import DataFile
+from .pyTDMS import read as tdms_read
+
 
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
-    
+
     def __parse_VSM(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
         @param header_line is the line on which the column headers are recorded (default 3)
@@ -40,7 +49,7 @@ class VSMFile(DataFile):
         @data_delim is the deliminator for the data rows (default = space)
         @param header_delim is the deliminator for the header values (default = tab)
         @return Nothing, but updates the current instances data
-        
+
         NBThe default values are configured fir read VSM data files
         """
         f=fileinput.FileInput(self.filename) # Read filename linewise
@@ -54,7 +63,7 @@ class VSMFile(DataFile):
         self.column_headers=map(lambda x: x[0].strip()+" ("+x[1].strip()+")",  column_headers)
         f.next()
         f.next()
-        
+
         self.data=numpy.genfromtxt(f,dtype='float',delimiter=data_delim,skip_header=data_line-1, missing_values=['         ---'], invalid_raise=False)
         f.close()
 
@@ -66,7 +75,7 @@ class VSMFile(DataFile):
             self.filename = filename
         self.__parse_VSM()
         return self
-        
+
 class BigBlueFile(DataFile):
     """Extends DataFile to load files from BigBlue"""
 
@@ -77,7 +86,7 @@ class BigBlueFile(DataFile):
         @data_delim is the deliminator for the data rows (default = space)
         @param header_delim is the deliminator for the header values (default = tab)
         @return Nothing, but updates the current instances data
-        
+
         NBThe default values are configured fir read VSM data files
         """
         header_string=linecache.getline(self.filename, header_line)
@@ -98,17 +107,14 @@ class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
     def load(self,filename=None,*args):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
-        
+
         @param filename String containing file to be loaded
         @param args Pass through all other arguements
         @return An instance of Stoner.DataFile with the data loaded
-        
+
         @todo Implement the second form of the file that stores multiple x-y curves in the one file.
-        
+
         @note Metadata keys are pretty much as specified in the spc.h file that defines the filerformat."""
-        import struct
-        import numpy
-        from re import split
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -118,7 +124,7 @@ class SPCFile(DataFile):
         spchdr=struct.unpack('BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
         keys=("ftflgs","fversn","fexper","fexp","fnpts","ffirst","flast","fnsub","fxtype","fytype","fztype","fpost","fres","fsource","fpeakpt","fspare1","fspare2","fspare3","fspare4","fspare5","fspare6","fspare7","fspare8","fcm","nt","fcatx","flogoff","fmods","fprocs","flevel","fsampin","ffactor","fmethod","fzinc","fwplanes","fwinc","fwtype","fwtype","fresv")
         header=dict(zip(keys, spchdr))
-        
+
         if header['ftflgs'] & 64: # This is the multiple XY curves in file flag.
             raise NotImplemented("Filetype not implemented yet !")
         else: # A single XY curve in the file.
@@ -137,10 +143,10 @@ class SPCFile(DataFile):
             xvars=["Arbitrary","Wavenumber (cm-1)","Micrometers (um)","Nanometers (nm)","Seconds","Minutes","Hertz (Hz)","Kilohertz (KHz)","Megahertz (MHz)","Mass (M/z)","Parts per million (PPM)","Days","Years","Raman Shift (cm-1)","Raman Shift (cm-1)","eV","XYZ text labels in fcatxt (old 0x4D version only)","Diode Number","Channel","Degrees","Temperature (F)","Temperature (C)","Temperature (K)","Data Points","Milliseconds (mSec)","Microseconds (uSec)","Nanoseconds (nSec)","Gigahertz (GHz)","Centimeters (cm)","Meters (m)","Millimeters (mm)","Hours","Hours"]
             yvars=["Arbitrary Intensity","Interferogram","Absorbance","Kubelka-Monk","Counts","Volts","Degrees","Milliamps","Millimeters","Millivolts","Log(1/R)","Percent","Percent","Intensity","Relative Intensity","Energy","Decibel","Temperature (F)","Temperature (C)","Temperature (K)","Index of Refraction [N]","Extinction Coeff. [K]","Real","Imaginary","Complex","Complex","Transmission (ALL HIGHER MUST HAVE VALLEYS!)","Reflectance","Arbitrary or Single Beam with Valley Peaks","Emission","Emission"]
             column_headers=[xvars[header['fxtype']]] # And label the X column correctly
-            
+
             #Now we're going to read the Y-data
             # Start by preping some vars for use
-            
+
             subhdr_keys=("subflgs","subexp","subindx", "subtime", "subnext", "subnois", "subnpts", "subscan", "subwlevel", "subresv")
             if header['ftflgs'] &1:
                 y_width=2
@@ -150,12 +156,12 @@ class SPCFile(DataFile):
                 y_width=4
                 y_fmt='i'
                 divisor=2**32
-    
+
             for j in range(n): # We have n sub-scans
                 # Read the subheader and import into the main metadata dictionary as scan#:<subheader item>
                 subhdr=struct.unpack('BBHfffIIf4s', f.read(32))
                 subheader=dict(zip(["scan"+str(j)+":"+x for x in subhdr_keys], subhdr))
-                
+
                 # Now read the y-data
                 exponent=subheader["scan"+str(j)+':subexp']
                 if int(exponent) & -128: # Data is unscaled direct floats
@@ -163,22 +169,22 @@ class SPCFile(DataFile):
                 else: # Data is scaled by exponent
                     yvals=struct.unpack(str(pts)+y_fmt, f.read(pts*y_width))
                     ydata=numpy.array(yvals, dtype='float64')*(2**exponent)/divisor
-                
+
                 # Pop the y-data into the array and merge the matadata in too.
                 data[:, j+1]=ydata
                 header=dict(header, **subheader)
                 column_headers.append("Scan"+str(j)+":"+yvars[header['fytype']])
-                
-            # Now we're going to read any log information    
+
+            # Now we're going to read any log information
             if header['flogoff']!=0: # Ok, we've got a log, so read the log header and merge into metadata
                 logstc=struct.unpack('IIIII44s', f.read(64))
                 logstc_keys=("logsizd", "logsizm", "logtxto", "logbins", "logdsks", "logrsvr")
                 logheader=dict(zip(logstc_keys, logstc))
                 header=dict(header, **logheader)
-                
+
                 # Can't handle either binary log information or ion disk log information (wtf is this anyway !)
                 f.read(header['logbins']+header['logdsks'])
-                
+
                 # The renishaw seems to put a 16 character timestamp next - it's not in the spec but never mind that.
                 header['Date-Time']=f.read(16)
                 # Now read the rest of the file as log text
@@ -199,7 +205,34 @@ class SPCFile(DataFile):
             f.close() # tidy up and return
             return self
 
+class TDMSFile(DataFile):
+    """A first stab at writing a file that will import TDMS files"""
+
+    Objects=dict()
+
+    def load(self, filename=None, *args):
+        """Reads a TDMS File
+
+        @param filename String containing file to be loaded
+        @param args Pass through all other arguements
+        @return An instance of Stoner.DataFile with the data loaded"""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        # Open the file and read the main file header and unpack into a dict
+        (metadata, data)=tdms_read(self.filename)
+        for key in metadata:
+            self.metadata[key]=metadata[key]
+        self.column_headers = list()
+        for column in data:
+            nd=data[column]
+            print nd
+            self.add_column(nd, column)
+        return self
+
 class XRDFile(DataFile):
+    """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
     def load(self,filename=None,*args):
         """Reads an XRD datafile as produced by the Brucker diffractometer
@@ -207,7 +240,7 @@ class XRDFile(DataFile):
         @param filename String containing file to be loaded
         @param args Pass through all other arguements
         @return An instance of Stoner.DataFile with the data loaded
-        
+
         Format is ini file like but not enough to do standard inifile processing - in particular one can have multiple sections with the same name (!)
     """
         from ast import literal_eval
@@ -236,7 +269,7 @@ class XRDFile(DataFile):
                         parts=line.split(',')
                         angle=parts[0].strip()
                         counts=parts[1].strip()
-                        dataline=numpy.array([float(angle), float(counts)])                        
+                        dataline=numpy.array([float(angle), float(counts)])
                         self=self+dataline
                     else: # Other sections contain metadata
                         parts=line.split('=')
@@ -312,7 +345,7 @@ class BNLFile(DataFile):
             elif line[0] in ['0','1','2','3','4','5','6','7','8','9']:
                 self.line_numbers[1]=counter
                 break
-        
+
     def __get_metadata(self):
         """Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
         scan date/time 'Sdatetime' and z motor position 'Smotor'."""
@@ -323,8 +356,8 @@ class BNLFile(DataFile):
         self.__setitem__('Stype',string.join(scanLine.split()[2:]))
         self.__setitem__('Sdatetime',dateLine[3:])
         self.__setitem__('Smotor',motorLine.split()[3])
-        
-                       
+
+
     def __parse_BNL_data(self):
         """
         Internal function for parsing BNL data. The meta data is labelled by #L type tags
@@ -341,8 +374,8 @@ class BNLFile(DataFile):
         except IOError:
             self.data=numpy.array([0])
             print 'Did not import any data for %s'% self.filename
-        
-        
+
+
     def load(self,filename):        #fileType omitted, implicit in class call
         """BNLFile.load(filename)
 
@@ -357,4 +390,4 @@ class BNLFile(DataFile):
         self.__parse_BNL_data() #call an internal function rather than put it in load function
         return self
 
-    
+
