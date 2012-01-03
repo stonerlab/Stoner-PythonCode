@@ -2,9 +2,13 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.36 2012/01/03 12:41:50 cvs Exp $
+# $Id: Core.py,v 1.37 2012/01/03 21:51:04 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.37  2012/01/03 21:51:04  cvs
+# Fix a bug with add_column
+# Upload new TDMS data
+#
 # Revision 1.36  2012/01/03 12:41:50  cvs
 # Made Core pep8 compliant
 # Added TDMS code and TDMSFile
@@ -428,7 +432,7 @@ class DataFile(object):
         if len(args) == 1:
             #print type(args[0])
             if (isinstance(args[0], str) or (
-                isinstance(args[0], ool) and not args[0])):
+                isinstance(args[0], bool) and not args[0])):
                                         # Filename- load datafile
                 t = self.load(args[0])
                 self.data = t.data
@@ -1098,7 +1102,7 @@ class DataFile(object):
             self.data[:, index] = numpy_data
         else:
             if len(self.data) == 0:
-                self.data=numpy.atleast_2d(numpy_data)
+                self.data=numpy.transpose(numpy.atleast_2d(numpy_data))
             else:
                 self.data = numpy.insert(self.data, index, numpy_data, 1)
         return self

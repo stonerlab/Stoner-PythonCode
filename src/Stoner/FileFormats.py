@@ -1,7 +1,11 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.9 2012/01/03 12:41:50 cvs Exp $
+# $Id: FileFormats.py,v 1.10 2012/01/03 21:51:04 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.10  2012/01/03 21:51:04  cvs
+# Fix a bug with add_column
+# Upload new TDMS data
+#
 # Revision 1.9  2012/01/03 12:41:50  cvs
 # Made Core pep8 compliant
 # Added TDMS code and TDMSFile
@@ -227,7 +231,6 @@ class TDMSFile(DataFile):
         self.column_headers = list()
         for column in data:
             nd=data[column]
-            print nd
             self.add_column(nd, column)
         return self
 
