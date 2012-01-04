@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.11 2012/01/04 22:35:32 cvs Exp $
+# $Id: FileFormats.py,v 1.12 2012/01/04 23:07:54 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.12  2012/01/04 23:07:54  cvs
+# Make BigBlueFile really a subclass of CSVFile
+#
 # Revision 1.11  2012/01/04 22:35:32  cvs
 # Give CSVFIle options to skip headers
 # Make PlotFile.plot_xy errornar friendly
@@ -47,6 +50,47 @@ from .Core import DataFile
 from .pyTDMS import read as tdms_read
 
 
+class CSVFile(DataFile):
+    """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
+
+    def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=','):
+        """Generic deliminated file loader routine.
+
+        @pram filename File to load. If None then the existing filename is used,
+        if False, then a file dialog will be used.
+        @param header_line The line in the file that contains the column headers.
+        If None, then column headers are auotmatically generated."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
+        if header_line is not None:
+            header_string=linecache.getline(self.filename, header_line)
+            header_string=re.sub(r'["\n]', '', header_string)
+            self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
+        else:
+            self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
+        return self
+
+    def save(self,filename, deliminator=','):
+        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
+                @param filename Fielname to save as (using the same rules as for the load routines)
+                @param deliminator Record deliniminator (defaults to a comma)
+                @return A copy of itself."""
+        if filename is None:
+            filename=self.filename
+        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
+            filename=self.__file_dialog('w')
+        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator,quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        i=0
+        spamWriter.writerow(self.column_headers)
+        while i< self.data.shape[0]:
+            spamWriter.writerow(self.data[i,:])
+            i+=1
+        return self
+
+
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
 
@@ -84,32 +128,15 @@ class VSMFile(DataFile):
         self.__parse_VSM()
         return self
 
-class BigBlueFile(DataFile):
-    """Extends DataFile to load files from BigBlue"""
 
-    def __parse_plain_data(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
-        """An intrernal function for parsing deliminated data without a leading column of metadata.copy
-        @param header_line is the line on which the column headers are recorded (default 3)
-        @param data_line is the first line of tabulated data (default 7)
-        @data_delim is the deliminator for the data rows (default = space)
-        @param header_delim is the deliminator for the header values (default = tab)
-        @return Nothing, but updates the current instances data
-
-        NBThe default values are configured fir read VSM data files
-        """
-        header_string=linecache.getline(self.filename, header_line)
-        header_string=re.sub(r'["\n]', '', header_string)
-        self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
-        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
-
+class BigBlueFile(CSVFile):
+    """Extends CSVFile to load files from BigBlue"""
 
     def load(self,filename=None,*args):
-        if filename is None or not filename:
-            self.get_filename('r')
-        else:
-            self.filename = filename
-        self.__parse_plain_data(header_line,data_line, data_delim=',', header_delim=',')
+        """Just call the parent class but with the right parameters set"""
+        super(BigBlueFile,self).load(self, header_line=3, data_line=7, data_delim=' ', header_delim=',')
         return self
+
 
 class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
@@ -213,6 +240,7 @@ class SPCFile(DataFile):
             f.close() # tidy up and return
             return self
 
+
 class TDMSFile(DataFile):
     """A first stab at writing a file that will import TDMS files"""
 
@@ -237,6 +265,7 @@ class TDMSFile(DataFile):
             nd=data[column]
             self.add_column(nd, column)
         return self
+
 
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
@@ -288,45 +317,6 @@ class XRDFile(DataFile):
         f.close()# Cleanup
         return self
 
-class CSVFile(DataFile):
-    """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
-
-    def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=','):
-        """Generic deliminated file loader routine.
-
-        @pram filename File to load. If None then the existing filename is used,
-        if False, then a file dialog will be used.
-        @param header_line The line in the file that contains the column headers.
-        If None, then column headers are auotmatically generated."""
-        if filename is None or not filename:
-            self.get_filename('r')
-        else:
-            self.filename = filename
-        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
-        if header_line is not None:
-            header_string=linecache.getline(self.filename, header_line)
-            header_string=re.sub(r'["\n]', '', header_string)
-            self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
-        else:
-            self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
-        return self
-
-    def save(self,filename, deliminator=','):
-        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
-                @param filename Fielname to save as (using the same rules as for the load routines)
-                @param deliminator Record deliniminator (defaults to a comma)
-                @return A copy of itself."""
-        if filename is None:
-            filename=self.filename
-        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
-            filename=self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator,quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        i=0
-        spamWriter.writerow(self.column_headers)
-        while i< self.data.shape[0]:
-            spamWriter.writerow(self.data[i,:])
-            i+=1
-        return self
 
 class BNLFile(DataFile):
     """Author Rowan 12/2011
