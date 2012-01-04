@@ -1,7 +1,11 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.10 2012/01/03 21:51:04 cvs Exp $
+# $Id: FileFormats.py,v 1.11 2012/01/04 22:35:32 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.11  2012/01/04 22:35:32  cvs
+# Give CSVFIle options to skip headers
+# Make PlotFile.plot_xy errornar friendly
+#
 # Revision 1.10  2012/01/03 21:51:04  cvs
 # Fix a bug with add_column
 # Upload new TDMS data
@@ -286,15 +290,25 @@ class XRDFile(DataFile):
 
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
+
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=','):
+        """Generic deliminated file loader routine.
+
+        @pram filename File to load. If None then the existing filename is used,
+        if False, then a file dialog will be used.
+        @param header_line The line in the file that contains the column headers.
+        If None, then column headers are auotmatically generated."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
-        header_string=linecache.getline(self.filename, header_line)
-        header_string=re.sub(r'["\n]', '', header_string)
-        self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
         self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
+        if header_line is not None:
+            header_string=linecache.getline(self.filename, header_line)
+            header_string=re.sub(r'["\n]', '', header_string)
+            self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
+        else:
+            self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
         return self
 
     def save(self,filename, deliminator=','):

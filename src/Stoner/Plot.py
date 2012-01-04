@@ -2,9 +2,13 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.14 2011/12/19 23:08:54 cvs Exp $
+# $Id: Plot.py,v 1.15 2012/01/04 22:35:32 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.15  2012/01/04 22:35:32  cvs
+# Give CSVFIle options to skip headers
+# Make PlotFile.plot_xy errornar friendly
+#
 # Revision 1.14  2011/12/19 23:08:54  cvs
 # Add a PlotFile.plot_matrix command and update documentation
 #
@@ -69,25 +73,25 @@ from matplotlib import pyplot as pyplot
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
-    
+
     __figure=None
-    
+
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
                 @param args Arguements to pass to \b DataFile.__init__
                 @param kargs Dictionary of keyword arguments to pass to \b DataFile.__init__
-                
+
                 @return This instance
-        
+
         """
         global pyplot
         super(PlotFile, self).__init__(*args, **kargs)
-    
+
     def __getattr__(self, name):
         """Attribute accessor
-        
+
                 @param name Name of attribute: only "fig" is supported here to return the current figure refernce
-                
+
                 All other attrbiutes are passed over to the parent class
                 """
         if name=="fig":
@@ -99,10 +103,10 @@ class PlotFile(DataFile):
                 return None
         else:
             super(PlotFile, self).__getattr__(name)
-            
+
     def __setattr__(self, name, value):
         """Sets the specified attribute
-                
+
                 @param name The name of the attribute to set. Only "fig" is supported in this class - everything else drops through to the parent class
                 @param value The value of the attribute to set.
     """
@@ -110,10 +114,10 @@ class PlotFile(DataFile):
             self.figure(value)
         else:
             super(PlotFile, self).__setattr__(name, value)
-    
+
     def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, plotter=pyplot.plot,  **kwords):
         """Makes a simple X-Y plot of the specified data.
-                
+
                 @param column_x An integer or string that indexes the relevant column for the x data
                 @param column_y An integer go string that indexes the y-data column
                 @param format Optional string parameter that specifies the format for the plot - see matplotlib documentation for details
@@ -123,16 +127,28 @@ class PlotFile(DataFile):
                 @param figure Optional argument that controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 @param plotter Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
                 @param kwords A dictionary of other keyword arguments to pass into the plot function.
-                
-                @return a matplotlib.figure isntance
-                
 
-        
+                @return a matplotlib.figure isntance
+
+
+
         """
         column_x=self.find_col(column_x)
         column_y=self.find_col(column_y)
         x=self.column(column_x)
         y=self.column(column_y)
+        for err in ["xerr", "yerr"]:  # Check for x and y error keywords
+            if err in kwords:
+                # If the keyword exists and is either an int or a string, then
+                # it will be a column index, so get the matching data
+                if reduce(lambda x, y: x or isinstance(kwords[err], y), [int, str], False):
+                    kwords[err]=self.column(kwords[err])
+                elif isinstance(kwords[err], list):
+                # Ok, so it's a list, so redo the check for each  item.
+                    for i in range(len(kwords[err])):
+                        if reduce(lambda x, y: x or isinstance(kwords[err][i], y), [int, str], False):
+                            kwords[err][i]=self.column(kwords[err])
+        # Now try to process the figure parameter
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -159,7 +175,7 @@ class PlotFile(DataFile):
                 plotter(x,y, figure=figure, **kwords)
             else:
                 plotter(x,y, format, figure=figure, **kwords)
-            
+
         pyplot.xlabel(str(self.column_headers[column_x]))
         if isinstance(column_y, list):
             ylabel=column_y
@@ -177,10 +193,10 @@ class PlotFile(DataFile):
         pyplot.draw()
         self.__figure=figure
         return self.__figure
-        
+
     def plot_xyz(self, xcol, ycol, zcol, shape=None, cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
-        
+
             @param xcol Xcolumn index or label
             @param ycol Y column index or label
             @param zcol Z column index or label
@@ -190,10 +206,10 @@ class PlotFile(DataFile):
             @param title Text to use as the title - defaults to the filename of the dataset
             @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
             @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
-            @param kwords Other keywords to pass into the plot function.  
-            
+            @param kwords Other keywords to pass into the plot function.
+
             @return The matplotib figure with the data plotted"""
-            
+
         if shape is None:
             shape=(len(self.unique(xcol)), len(self.unique(ycol)))
         xdata=numpy.reshape(self.column(xcol), shape)
@@ -225,10 +241,10 @@ class PlotFile(DataFile):
         pyplot.draw()
 
         return self.__figure
-        
+
     def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
-        
+
             @param xvals Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
             @param yvals Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
             @param rectang a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
@@ -240,8 +256,8 @@ class PlotFile(DataFile):
             @param zlabel Z axis label, Default is None - guess from metadata
             @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
             @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
-            @param kwords Other keywords to pass into the plot function.  
-            
+            @param kwords Other keywords to pass into the plot function.
+
             @return The matplotib figure with the data plotted"""
         # Sortout yvals values
         if isinstance(yvals, int): #  Int means we're sepcifying a data row
@@ -264,7 +280,7 @@ class PlotFile(DataFile):
             yvals=numpy.array([float(x) for x in headers]) #Ok try to construct yvals aray
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
-        #Sort out xvls values    
+        #Sort out xvls values
         if isinstance(xvals, int) or isinstance(xvals, string): # String or int means using a column index
             if xlabel is None:
                 xlabel=self.column_headers[self.find_col(xvals)]
@@ -283,7 +299,7 @@ class PlotFile(DataFile):
                 rectang=(0, 1)
         else:
             raise RuntimeError("xvals must be a string, integer, list, tuple or numpy array or None")
-            
+
         if isinstance(rectang, tuple) and len(rectang)==2: # Sort the rectang value
             rectang=(rectang[0], rectang[1], numpy.shape(self.data)[0]-rectang[0], numpy.shape(self.data)[1]-rectang[1])
         elif rectang is None:
@@ -292,14 +308,14 @@ class PlotFile(DataFile):
             rectang=(rectang[0], rectang[1], min(rectang[2], numpy.shape(self.data)[0]-rectang[0]), min(rectang[3], numpy.shape(self.data)[1]-rectang[1]))
         else:
             raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
-            
+
         #Now we can create X,Y and Z 2D arrays
-        print rectang    
+        print rectang
         zdata=self.data[rectang[0]:rectang[0]+rectang[2], rectang[1]:rectang[1]+rectang[3]]
         xvals=xvals[0:rectang[2]]
         yvals=yvals[0:rectang[3]]
         xdata, ydata=numpy.meshgrid(xvals, yvals)
-        
+
         #This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
@@ -327,7 +343,7 @@ class PlotFile(DataFile):
                     labels[label]=default
             else:
                 labels[label]=v
-        
+
         pyplot.xlabel(str(labels["xlabel"]))
         pyplot.ylabel(str(labels["ylabel"]))
         if plotter==self.__SurfPlotter:
@@ -338,33 +354,33 @@ class PlotFile(DataFile):
         pyplot.draw()
 
         return self.__figure
-            
-        
+
+
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface
         @param X X dataFile
         @param Y Y data
         @param Z Z data
         @param kargs Other keywords to pass through
-        
+
         @return A matplotib Figure
-        
+
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
         from mpl_toolkits.mplot3d import Axes3D
         ax = self.fig.gca(projection='3d')
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5)
         return surf
-   
+
     def draw(self):
         """Pass through to pyplot to force figure redraw"""
         pyplot.figure(self.__figure.number)
         pyplot.draw()
-        
+
     def show(self):
         """Pass through for pyplot Figure.show()"""
         self.fig.show()
-        
+
     def figure(self, figure):
         """Set the figure used by \b Stoner.PlotFile
          @param figure A matplotlib figure or figure number
@@ -375,5 +391,5 @@ class PlotFile(DataFile):
             pyplot.figure(figure.number)
         self.__figure=figure
         return self
-         
- 
+
+
