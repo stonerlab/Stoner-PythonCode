@@ -138,6 +138,9 @@ further two parameters specify the deliminators for the data and header rows. \t
 XRD Machine.
 \item[SPCFile] Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
 Raman spectrometers. This may also work for other instruments that produce spc files, but has not been extensively tested.
+\item[TDMSFile] Loads a file saved in the National Instruments TDMS format
+
+\warning{NB This code is not very well tested and should be used with caution.}
 \end{description}
 
 \begin{verbatim}
@@ -548,7 +551,23 @@ The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnece
   >>> p.plot_xy(x,y,plotter=pyplot.semilogy)
 \end{verbatim}
 
-The examples above demonstrate several use cases of the \textbf{plot\_xy} method. The first parameter is always the x column that contains the data, the second is the y-data either as a single column or list of columns. The third parameter is the style of the plot (lines, points, colours \etc) and can either be a list if the y-column data is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log plots. By default, \textbf{plotxy} uses the \textbf{pyplot.plot} function to produce linear scaler plots. In principle a log scale plot could be produced by calculating a new column of data, but a more convenient way is to use the \textbf{pyplot.semilogx}, \textbf{.semilogy} and \textbf{.loglog} functions. These can be passed to the \textbf{plot\_xy} function by setting the \textit{plotter} keyword argument.
+The examples above demonstrate several use cases of the \textbf{plot\_xy} method. The first parameter is always the x column that contains the data, the second is the y-data either as a single column or list of columns. The third parameter is the style of the plot (lines, points, colours \etc) and can either be a list if the y-column data is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log plots. By default, \textbf{plotxy} uses the \textbf{pyplot.plot} function to produce linear scaler plots. There are a number of useful plotter functions that will work like this:
+\begin{description}
+  \item[pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
+  \item[pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.
+  \item[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are passed as keyword arguments, \textit{xerr} or \textit{yerr}. In standard matplotlib, these can be numpy arrays or constants. \textbf{PlotFile.plot\_xy} extends this by intercepting these arguements and offering some short cuts:
+      \begin{verbatim}
+        >>> p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',
+                                            xerr=[5,'dTemp+'])
+      \end{verbatim}
+      This is equivalent to doing something like:
+       \begin{verbatim}
+        >>> p.plot_xy(x,y,plotter=errorbar,
+                yerr=p.column('dResistance'),
+                xerr=[p.column(5),p.column('dTemp+')])
+      \end{verbatim}
+    If you actually want to pass a constant to the \textit{x/yerr} keywords you should use a float rather than an integer.
+\end{description}
 
 The X and Y axis label will be set from the column headers.
 
@@ -565,16 +584,16 @@ The X and Y axis label will be set from the column headers.
  By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overriden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
 
  Like \textbf{plot\_xy}, a \textit{figure} parameter can be used to control the figure being used and any additional keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
- 
+
  Alternatively, if your data is already in the form of a matrix, you can use the \textbf{PlotFile.plot\_matrix} method:
- 
+
  \begin{verbatim}
    >>> p.plot_matrix()
    >>> p.plot_matrix(xvals,yvals,rectang,title="Title",xlabel="X Axis",
                 ylabel="Y Axis",zlabel="Z Axis",cmap=matplotlib.cm.jet)
    >>> p.plot_matrix(plotter=pyplot.pcolor,figure=False)
  \end{verbatim}
- 
+
  The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set either from the meta data item ``ylabel'' or to ``Y Data''. Likewise the z axis label is set from the corresponding metadata item or defaults to ``Z Data''. In the second form these parameters are all set explicitly. The \textit{xvals} parameter can be either a column index (integer or sring) or a list, tuple or numpy array. The \textit{yvals} parameter can be either an row number (integer) or list,tuple or numpy array. Other parameters (including \textit{plotter}, \textit{figure} \etc) work as for the \textbf{PlotFile.plot\_xyz} method. The \textit{rectang} parameter is used to select only part of the data array to use as the matrix. It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth elements are the number of rows and columns to include. If \textit{xvals} or \textit{yvals} specify particular column or rows then the origin of the matrix is moved to be one column further over and one row further down (\ie the matrix is to the right and below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a new 2D surface plot in a new window using default matrix setup.
 
  \subsubsection{Getting More Control on the Figure}
@@ -587,9 +606,9 @@ The X and Y axis label will be set from the column headers.
  \end{verbatim}
 
  Likewise the \textbf{PlotFile.axes} attribute returns the current axes object of the current figure in use by the \textbf{PlotFile} instance.
- 
+
  There's a couple of extra methods that just pass through to the pyplot equivalents:
- 
+
  \begin{verbatim}
    >>> p.draw()
    >>> p.show()
