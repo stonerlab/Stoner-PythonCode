@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.9 2011/12/04 23:09:16 cvs Exp $
+# $Id: Analysis.py,v 1.10 2012/03/10 20:16:55 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.10  2012/03/10 20:16:55  cvs
+# Add new methods to normalise, subtract and add data columns
+#
 # Revision 1.9  2011/12/04 23:09:16  cvs
 # Fixes to Keissig and plotting code
 #
@@ -214,6 +217,59 @@ class AnalyseFile(DataFile):
                 """
         col=self.find_col(column)
         return self.data[:, col].min(), self.data[:, col].argmin()
+        
+    def normalise(self, target, base, replace=True, header=None):
+        """Normalise data columns by dividing through by a base column value.
+        
+        @param target One or more target columns to normalise can be a string, integer or list of strings or integers.
+        @param base The column to normalise to, can be an integer or string
+        @param replace Set True(default) to overwrite  the target data columns
+        @param header The new column header - default is target name(norm)
+        @return A copy of the current object"""
+        
+        base=self.find_col(base)
+        if not isinstance(target, list):
+            target=[self.find_col(target)]
+        else:
+            target=[self.find_col(t) for t in target]
+        for t in target:
+            if header is None:
+                h2=self.column_headers[t]+"(norm)"
+            else:
+                h2=header            
+            self.add_column(lambda x:x[t]/x[base], h2, t, replace=replace)
+        return self
+        
+    def subtract(self, a, b, replace=False, header=None):
+        """Subtract one column from another column
+        @param a First column to subtract from
+        @param b Second column to subtract from a
+        @param header new column header  (defaults to a-b
+        @param replace Replace the a column with the a-b data
+        @return A copy of the new data object"""
+        
+        a=self.find_col(a)
+        b=self.find_col(b)
+        if header is None:
+            header=self.column_headers[a]+"-"+self.column_headers[b]
+        self.add_column(lambda x:x[a]-x[b], header, a, replace=replace)
+        return self
+        
+    def add(self, a, b, replace=False, header=None):
+        """Add  one column to  another column
+        @param a First column to add to
+        @param b Second column to add to a
+        @param header new column header  (defaults to a+b
+        @param replace Replace the a column with the a+b data
+        @return A copy of the new data object"""
+        
+        a=self.find_col(a)
+        b=self.find_col(b)
+        if header is None:
+            header=self.column_headers[a]+"+"+self.column_headers[b]
+        self.add_column(lambda x:x[a]+x[b], header, a, replace=replace)
+        return self
+
 
     def apply(self, func, col, insert=False, header=None):
         """Applies the given function to each row in the data set and adds to the data set
