@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.37 2012/01/03 21:51:04 cvs Exp $
+# $Id: Core.py,v 1.38 2012/03/10 20:17:15 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.38  2012/03/10 20:17:15  cvs
+# Minor changes
+#
 # Revision 1.37  2012/01/03 21:51:04  cvs
 # Fix a bug with add_column
 # Upload new TDMS data
@@ -429,6 +432,7 @@ class DataFile(object):
         @return A new instance of the DataFile class.
         """
          # Now check for arguments t the constructor
+        self.metadata=typeHintedDict()
         if len(args) == 1:
             #print type(args[0])
             if (isinstance(args[0], str) or (
