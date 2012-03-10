@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.12 2012/01/04 23:07:54 cvs Exp $
+# $Id: FileFormats.py,v 1.13 2012/03/10 20:12:58 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.13  2012/03/10 20:12:58  cvs
+# Add new formats for Diamond I10 files
+#
 # Revision 1.12  2012/01/04 23:07:54  cvs
 # Make BigBlueFile really a subclass of CSVFile
 #
@@ -135,6 +138,66 @@ class BigBlueFile(CSVFile):
     def load(self,filename=None,*args):
         """Just call the parent class but with the right parameters set"""
         super(BigBlueFile,self).load(self, header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        return self
+
+class QDSquidVSMFile(DataFile):
+    """Extends DataFile to load files from The SQUID VSM"""
+
+    def load(self,filename=None,*args):        
+        """Just call the parent class but with the right parameters set"""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        f=fileinput.FileInput(self.filename) # Read filename linewise
+        while f.next().strip()!="[Header]":
+            pass
+        line=f.next().strip()
+        while line!="[Data]":
+            if line[0]==";":
+                line=f.next().strip()
+                continue
+            parts=line.split(',')
+            if parts[0]=="INFO":
+                key=parts[0]+parts[2]
+                key=key.title()
+                value=parts[1]
+            elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
+                key=parts[0].title()
+                value=' '.join(parts[1:])
+            else:
+                key=parts[0]+"."+parts[1]
+                key=key.title()
+                value=' '.join(parts[2:])
+            self.metadata[key]=value
+            line=f.next().strip()
+        self.column_headers=f.next().strip().split(',')
+        self.data=numpy.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
+        return self
+
+class RasorFile(DataFile):
+    """Extends DataFile to load files from RASOR"""
+
+    def load(self,filename=None,*args):        
+        """Just call the parent class but with the right parameters set"""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        f=fileinput.FileInput(self.filename) # Read filename linewise
+        while f.next().strip()!="<MetaDataAtStart>":
+            pass
+        line=f.next().strip()
+        while line!="</MetaDataAtStart>":
+            parts=line.split('=')
+            key=parts[0]
+            value=parts[1].strip()
+            self.metadata[key]=value
+            line=f.next().strip()
+        while f.next().strip()!="&END":
+            pass
+        self.column_headers=f.next().strip().split("\t")
+        self.data=numpy.genfromtxt(f,dtype='float', invalid_raise=False)
         return self
 
 
