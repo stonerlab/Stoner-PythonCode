@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.38 2012/03/10 20:17:15 cvs Exp $
+# $Id: Core.py,v 1.39 2012/03/11 01:41:56 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.39  2012/03/11 01:41:56  cvs
+# Recompile API help
+#
 # Revision 1.38  2012/03/10 20:17:15  cvs
 # Minor changes
 #
@@ -786,7 +789,7 @@ class DataFile(object):
         @param header_line is the line on which the column headers are
         recorded (default 3)
         @param data_line is the first line of tabulated data (default 7)
-        @data_delim is the deliminator for the data rows (default = space)
+        @param data_delim is the deliminator for the data rows (default = space)
         @param header_delim is the deliminator for the header values
         (default = tab)
         @return Nothing, but updates the current instances data

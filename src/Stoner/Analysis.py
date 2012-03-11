@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.10 2012/03/10 20:16:55 cvs Exp $
+# $Id: Analysis.py,v 1.11 2012/03/11 01:41:56 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.11  2012/03/11 01:41:56  cvs
+# Recompile API help
+#
 # Revision 1.10  2012/03/10 20:16:55  cvs
 # Add new methods to normalise, subtract and add data columns
 #
@@ -73,11 +76,12 @@ def cov2corr(M):
     return R 
 
 class AnalyseFile(DataFile):
-    """Extends DataFile with numpy passthrough functions"""
+    """@b Stoner.Analysis.AnalyseFile extends DataFile with numpy passthrough functions
 
-#Private Helper Functions
+
+    @b AnalyseFile provides the mthods to manipulate and fit data in variety of ways."""
+
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
-
         """ calculates filter coefficients for symmetric savitzky-golay filter.
             see: http://www.nrbook.com/a/bookcpdf/c14-8.pdf
 
@@ -118,7 +122,6 @@ class AnalyseFile(DataFile):
         return coeff
 
     def __SG_smooth(self, signal, coeff):
-
         """ applies coefficients calculated by calc_coeff()
             to signal """
 

@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.13 2012/03/10 20:12:58 cvs Exp $
+# $Id: FileFormats.py,v 1.14 2012/03/11 01:41:56 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.14  2012/03/11 01:41:56  cvs
+# Recompile API help
+#
 # Revision 1.13  2012/03/10 20:12:58  cvs
 # Add new formats for Diamond I10 files
 #
@@ -59,7 +62,7 @@ class CSVFile(DataFile):
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=','):
         """Generic deliminated file loader routine.
 
-        @pram filename File to load. If None then the existing filename is used,
+        @param filename File to load. If None then the existing filename is used,
         if False, then a file dialog will be used.
         @param header_line The line in the file that contains the column headers.
         If None, then column headers are auotmatically generated."""
@@ -101,7 +104,7 @@ class VSMFile(DataFile):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
         @param header_line is the line on which the column headers are recorded (default 3)
         @param data_line is the first line of tabulated data (default 7)
-        @data_delim is the deliminator for the data rows (default = space)
+        @param data_delim is the deliminator for the data rows (default = space)
         @param header_delim is the deliminator for the header values (default = tab)
         @return Nothing, but updates the current instances data
 
