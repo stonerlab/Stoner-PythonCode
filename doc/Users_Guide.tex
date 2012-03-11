@@ -615,22 +615,52 @@ The X and Y axis label will be set from the column headers.
  \end{verbatim}
 
 
-\subsection{Curve Fitting}
 
-Curve fitting is handled by a sub-class of the DataFile object -- AnalyseFile
+\subsection{Manipulating and Analysing Data}
+
+Curve fitting, data manipulation, and other analysis functions  is handled by a sub-class of the DataFile object -- AnalyseFile
 
 \begin{verbatim}
   >>> import Stoner.Analysis as Analysis
   >>> a=Analysis.AnalyseFile('Data')
   >>>  a2=Analysis.AnalyseFile()
   >>> a2=d
+  >>> a3=Analysis.AnalyseFile(d)
 \end{verbatim}
 
 The first line imports the AnaylseFile class. Since the AnalyseFile is a child
 class of DataFile, everything you can do with a DataFile also works with an
-AnalyseFile object. The last two lines demonstrate creating a blank AnalyseFile
+AnalyseFile object. The next two lines demonstrate creating a blank AnalyseFile
 and then copying all of the data, metadata and column headings from an existing
-dataFile object.
+dataFile object. The final variant shows how to cast one child-class of \textbf{DataFile} into another -- in this case an \textbf{AnalyseFile}.
+
+\subsection{Manipulating Data}
+
+Several methods are provided to assist with common data fitting and preparation tasks, such as normalising columns, adding and subtracting columns.
+
+\begin{verbatim}
+  >>> a.normalise('data','reference',header='Normalised Data',replace=True)
+  >>> a.normalise(0,1)
+\end{verbatim}
+
+The \textit{normalise} method simply divides the data column by the reference column. By default the normalise method replaces the data column with the new (normalised) data and appends ``(norm)'' to the column header. The keyword arguments header and replace can override this behaviour.
+
+\begin{verbatim}
+  >>> a.subtract('A','B'm header="A-B",replace=True)
+  >>> a.subtract(0,1)
+\end{verbatim}
+
+As one might expect form the name, the \textit{subtract} method subtracts the second column form the first. Like \textit{normalise} the first data column with be replaced and a new header (defaulting to column header 1 - column header 2) will be created, but can be overridden with the header and replace keyword arguments. Finally the \text{add} method allows one to add two columns in a similar fashion:
+
+\begin{verbatim}
+  >>> a.add('A','B',header='A plus B',replace=False)
+  >>> a.add(0,1)
+\end{verbatim}
+
+
+
+
+\subsection{Curve Fitting}
 
 \subsubsection{Simply polynomial Fits}
 
