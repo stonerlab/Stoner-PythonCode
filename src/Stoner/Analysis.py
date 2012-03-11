@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.11 2012/03/11 01:41:56 cvs Exp $
+# $Id: Analysis.py,v 1.12 2012/03/11 15:07:41 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.12  2012/03/11 15:07:41  cvs
+# Demo CVS
+#
 # Revision 1.11  2012/03/11 01:41:56  cvs
 # Recompile API help
 #
@@ -219,7 +222,7 @@ class AnalyseFile(DataFile):
                 AnalysisFile.min(column)
                 """
         col=self.find_col(column)
-        return self.data[:, col].min(), self.data[:, col].argmin()
+        return self.data[:,col].min(), self.data[:, col].argmin()
         
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
