@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.14 2012/03/11 01:41:56 cvs Exp $
+# $Id: FileFormats.py,v 1.15 2012/03/11 23:12:33 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.15  2012/03/11 23:12:33  cvs
+# string_to_type function to do a better job of working out python type from string representation when no type hint give.
+#
 # Revision 1.14  2012/03/11 01:41:56  cvs
 # Recompile API help
 #
@@ -172,7 +175,7 @@ class QDSquidVSMFile(DataFile):
                 key=parts[0]+"."+parts[1]
                 key=key.title()
                 value=' '.join(parts[2:])
-            self.metadata[key]=value
+            self.metadata[key]=self.metadata.string_to_type(value)
             line=f.next().strip()
         self.column_headers=f.next().strip().split(',')
         self.data=numpy.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
@@ -195,7 +198,7 @@ class RasorFile(DataFile):
             parts=line.split('=')
             key=parts[0]
             value=parts[1].strip()
-            self.metadata[key]=value
+            self.metadata[key]=self.metadata.string_to_type(value)
             line=f.next().strip()
         while f.next().strip()!="&END":
             pass

@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.39 2012/03/11 01:41:56 cvs Exp $
+# $Id: Core.py,v 1.40 2012/03/11 23:12:32 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.40  2012/03/11 23:12:32  cvs
+# string_to_type function to do a better job of working out python type from string representation when no type hint give.
+#
 # Revision 1.39  2012/03/11 01:41:56  cvs
 # Recompile API help
 #
@@ -299,6 +302,36 @@ class typeHintedDict(dict):
                     return valuetype(value)
                     break
         return str(value)
+        
+    def string_to_type(self, value):
+        """Given a string value try to work out if there is a better python type dor the value
+        @param value String representation of he value
+        @return A python object of the natural type for value"""
+        if not isinstance(value, str):
+            raise TypeError("Value must be a string")
+        value=value.strip()
+        if len(value)==0:
+            return None
+        if value[0]=="[":
+            try:
+                return eval('list('+value+')') #List
+            except SyntaxError:
+                pass
+        if value[0]=="{":
+            try:
+                return eval('dict('+value+')') #Dict
+            except SyntaxError:
+                pass
+        if value in ['True', 'TRUE','true', 'Yes', 'YES', 'yes'] or value in ['False', 'FALSE', 'false', 'No','NO', 'no']:
+            return value in ['True', 'TRUE','true', 'Yes', 'YES', 'yes'] #Booleab
+        try:
+            return int(value) # try as an int
+        except ValueError:
+            pass
+        try:
+            return float(value) # Ok try as a float
+        except ValueError:
+            return value.strip('"\'')
 
     def __setitem__(self, name, value):
         """Provides a method to set an item in the dict, checking the key for
