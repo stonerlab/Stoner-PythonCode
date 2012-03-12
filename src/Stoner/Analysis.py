@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.12 2012/03/11 15:07:41 cvs Exp $
+# $Id: Analysis.py,v 1.13 2012/03/12 15:04:00 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.13  2012/03/12 15:04:00  cvs
+# Make add subtract and normalise a bit more clever
+#
 # Revision 1.12  2012/03/11 15:07:41  cvs
 # Demo CVS
 #
@@ -205,7 +208,7 @@ class AnalyseFile(DataFile):
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
             xc=self.find_col(xcol)
-            self.apply(lambda x:func(x[xc], *popt), result, insert=True, header='Fitted with '+func.__name__)
+            self.apply(lambda x:func(x[xc], *popt), result, replace=False, header='Fitted with '+func.__name__)
         return popt, pcov
 
     def max(self, column):
@@ -233,7 +236,12 @@ class AnalyseFile(DataFile):
         @param header The new column header - default is target name(norm)
         @return A copy of the current object"""
         
-        base=self.find_col(base)
+        if isinstance(base, float):
+            base=[base for x in self.rows()]
+        elif isinstance(base, numpy.ndarray) and len(base.shape)==1 and len(base)==len(self):
+            pass
+        else:
+            base=self.column(base)
         if not isinstance(target, list):
             target=[self.find_col(target)]
         else:
@@ -243,52 +251,72 @@ class AnalyseFile(DataFile):
                 h2=self.column_headers[t]+"(norm)"
             else:
                 h2=header            
-            self.add_column(lambda x:x[t]/x[base], h2, t, replace=replace)
+            self.add_column(self.column(t)/numpy.array(base), h2, t, replace=replace)
         return self
         
     def subtract(self, a, b, replace=False, header=None):
         """Subtract one column from another column
         @param a First column to subtract from
-        @param b Second column to subtract from a
+        @param b Second column to subtract from a may be a column index, floating point number or a 1D array of numbers
         @param header new column header  (defaults to a-b
         @param replace Replace the a column with the a-b data
-        @return A copy of the new data object"""
-        
+        @return A copy of the new data object"""     
         a=self.find_col(a)
-        b=self.find_col(b)
-        if header is None:
-            header=self.column_headers[a]+"-"+self.column_headers[b]
-        self.add_column(lambda x:x[a]-x[b], header, a, replace=replace)
+        if isinstance(b, float):
+            self.add_column(lself.column(a)-b, header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"- "+str(b)
+        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
+            self.add_column(self.column(a)-numpy.array(b), h2, t, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"- data"
+        else:
+            b=self.find_col(b)
+            self.add_column(self.column(a)-self.column(b), header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"-"+self.column_headers[b]
         return self
         
     def add(self, a, b, replace=False, header=None):
-        """Add  one column to  another column
+        """Subtract one column from another column
         @param a First column to add to
-        @param b Second column to add to a
-        @param header new column header  (defaults to a+b
-        @param replace Replace the a column with the a+b data
-        @return A copy of the new data object"""
-        
+        @param b Second column to add to a, may be a column index, floating point number or 1D array of numbers
+        @param header new column header  (defaults to a-b
+        @param replace Replace the a column with the a-b data
+        @return A copy of the new data object"""     
         a=self.find_col(a)
-        b=self.find_col(b)
-        if header is None:
-            header=self.column_headers[a]+"+"+self.column_headers[b]
-        self.add_column(lambda x:x[a]+x[b], header, a, replace=replace)
+        if isinstance(b, float):
+            self.add_column(lself.column(a)+b, header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"- "+str(b)
+        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
+            self.add_column(self.column(a)+numpy.array(b), h2, t, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"- data"
+        else:
+            b=self.find_col(b)
+            self.add_column(self.column(a)+self.column(b), header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"-"+self.column_headers[b]
         return self
 
 
-    def apply(self, func, col, insert=False, header=None):
+    def apply(self, func, col, replace=True, header=None):
         """Applies the given function to each row in the data set and adds to the data set
 
-            AnalysisFile.apply(func,column,insert=False)"""
+            @param func A function that takes a numpy 1D array representing each row of data
+            @param col The column in which to place the result of the function
+            @param replace Keyword argument indicating to isnert a new data column (False) or replace the data column (True)
+            @param header The new column header (defaults to the name of the function func"""
         col=self.find_col(col)
         nc=numpy.array([func(row) for row in self.rows()])
-        if insert==True:
-            if header==None:
-                header=func.__name__
+        if header==None:
+            header=func.__name__
+        if replace!=True:
             self=self.add_column(nc, header, col)
         else:
             self.data[:, col]=numpy.reshape(nc, -1)
+            self.column_headers[nc]=header
         return self
 
     def SG_Filter(self, col, points, poly=1, order=0):
