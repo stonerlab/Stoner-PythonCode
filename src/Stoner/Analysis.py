@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.13 2012/03/12 15:04:00 cvs Exp $
+# $Id: Analysis.py,v 1.14 2012/03/12 16:20:30 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.14  2012/03/12 16:20:30  cvs
+# Bounds on AnalyseFile.max and .min, documentation updates
+#
 # Revision 1.13  2012/03/12 15:04:00  cvs
 # Make add subtract and normalise a bit more clever
 #
@@ -211,21 +214,39 @@ class AnalyseFile(DataFile):
             self.apply(lambda x:func(x[xc], *popt), result, replace=False, header='Fitted with '+func.__name__)
         return popt, pcov
 
-    def max(self, column):
+    def max(self, column, bounds=None):
         """FInd maximum value and index in a column of data
+        @param column Column to look for the maximum in
+        @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
+        @return (maximum value,row index of max value)
+        
+        @todo Fix the row index when the bounds function is used (invent a self.lookup method)
 
                 AnalysisFile.max(column)
                 """
         col=self.find_col(column)
-        return self.data[:, col].max(), self.data[:, col].argmax()
+        if bounds is None:
+            return self.data[:, col].max(), self.data[:, col].argmax()
+        else:
+            search=self.search(col, bounds, [col])[:, 0]
+            return search.max(), search.argmax()
 
-    def min(self, column):
+    def min(self, column, bounds=None):
         """FInd minimum value and index in a column of data
 
+        @param column Column to look for the minimum in
+        @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
+        @return (minimum value,row index of min value)
+        
+        @todo Fix the row index when the bounds function is used - see note of \b max
                 AnalysisFile.min(column)
                 """
         col=self.find_col(column)
-        return self.data[:,col].min(), self.data[:, col].argmin()
+        if bounds is None:
+            return self.data[:, col].min(), self.data[:, col].argmin()
+        else:
+            search=self.search(col, bounds, [col])[:, 0]
+            return search.min(), search.argmin()
         
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
