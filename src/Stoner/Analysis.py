@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.14 2012/03/12 16:20:30 cvs Exp $
+# $Id: Analysis.py,v 1.15 2012/03/18 17:58:10 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.15  2012/03/18 17:58:10  cvs
+# Fix a bug in AnalyseFile.apply when not inserting a new column
+#
 # Revision 1.14  2012/03/12 16:20:30  cvs
 # Bounds on AnalyseFile.max and .min, documentation updates
 #
@@ -66,23 +69,23 @@ def cov2corr(M):
     """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc"""
     if (not isinstance(M, numpy.ndarray)) or (not (len(M.shape) == 2)) or (not(M.shape[0] == M.shape[1])):
         raise ValueError('cov2corr expects a square ndarray, got %s' % M)
-    
+
     if numpy.isnan(M).any():
         raise ValueError('Found NaNs in my covariance matrix: %s' % M)
-        
+
     # TODO check Nan and positive diagonal
     d = M.diagonal()
     if (d < 0).any():
         raise ValueError('Expected positive elements for square matrix, got diag = %s' % d)
-        
+
     n = M.shape[0]
     R = numpy.ndarray((n, n))
     for i in range(n):
         for j in range(n):
             d = M[i, j] / math.sqrt(M[i, i] * M[j, j])
             R[i, j] = d
-            
-    return R 
+
+    return R
 
 class AnalyseFile(DataFile):
     """@b Stoner.Analysis.AnalyseFile extends DataFile with numpy passthrough functions
@@ -219,7 +222,7 @@ class AnalyseFile(DataFile):
         @param column Column to look for the maximum in
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
         @return (maximum value,row index of max value)
-        
+
         @todo Fix the row index when the bounds function is used (invent a self.lookup method)
 
                 AnalysisFile.max(column)
@@ -237,7 +240,7 @@ class AnalyseFile(DataFile):
         @param column Column to look for the minimum in
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
         @return (minimum value,row index of min value)
-        
+
         @todo Fix the row index when the bounds function is used - see note of \b max
                 AnalysisFile.min(column)
                 """
@@ -247,16 +250,16 @@ class AnalyseFile(DataFile):
         else:
             search=self.search(col, bounds, [col])[:, 0]
             return search.min(), search.argmin()
-        
+
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
-        
+
         @param target One or more target columns to normalise can be a string, integer or list of strings or integers.
         @param base The column to normalise to, can be an integer or string
         @param replace Set True(default) to overwrite  the target data columns
         @param header The new column header - default is target name(norm)
         @return A copy of the current object"""
-        
+
         if isinstance(base, float):
             base=[base for x in self.rows()]
         elif isinstance(base, numpy.ndarray) and len(base.shape)==1 and len(base)==len(self):
@@ -271,17 +274,17 @@ class AnalyseFile(DataFile):
             if header is None:
                 h2=self.column_headers[t]+"(norm)"
             else:
-                h2=header            
+                h2=header
             self.add_column(self.column(t)/numpy.array(base), h2, t, replace=replace)
         return self
-        
+
     def subtract(self, a, b, replace=False, header=None):
         """Subtract one column from another column
         @param a First column to subtract from
         @param b Second column to subtract from a may be a column index, floating point number or a 1D array of numbers
         @param header new column header  (defaults to a-b
         @param replace Replace the a column with the a-b data
-        @return A copy of the new data object"""     
+        @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
             self.add_column(lself.column(a)-b, header, a, replace=replace)
@@ -297,14 +300,14 @@ class AnalyseFile(DataFile):
             if header is None:
                 header=self.column_headers[a]+"-"+self.column_headers[b]
         return self
-        
+
     def add(self, a, b, replace=False, header=None):
         """Subtract one column from another column
         @param a First column to add to
         @param b Second column to add to a, may be a column index, floating point number or 1D array of numbers
         @param header new column header  (defaults to a-b
         @param replace Replace the a column with the a-b data
-        @return A copy of the new data object"""     
+        @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
             self.add_column(lself.column(a)+b, header, a, replace=replace)
@@ -337,7 +340,7 @@ class AnalyseFile(DataFile):
             self=self.add_column(nc, header, col)
         else:
             self.data[:, col]=numpy.reshape(nc, -1)
-            self.column_headers[nc]=header
+            self.column_headers[col]=header
         return self
 
     def SG_Filter(self, col, points, poly=1, order=0):
