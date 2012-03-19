@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.15 2012/03/18 17:58:10 cvs Exp $
+# $Id: Analysis.py,v 1.16 2012/03/19 23:04:23 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.16  2012/03/19 23:04:23  cvs
+# Fixed a bug adding and subrtacting floats and also implemented a AnaluyseFile.mean()
+#
 # Revision 1.15  2012/03/18 17:58:10  cvs
 # Fix a bug in AnalyseFile.apply when not inserting a new column
 #
@@ -251,6 +254,23 @@ class AnalyseFile(DataFile):
             search=self.search(col, bounds, [col])[:, 0]
             return search.min(), search.argmin()
 
+    def mean(self, column, bounds=None):
+        """FInd mean value of a data column
+
+        @param column Column to look for the minimum in
+        @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
+        @return mean value of data column
+
+        @todo Fix the row index when the bounds function is used - see note of \b max
+                AnalysisFile.min(column)
+                """
+        col=self.find_col(column)
+        if bounds is None:
+            return self.data[:, col].mean()
+        else:
+            search=self.search(col, bounds, [col])[:, 0]
+            return search.mean()
+
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
 
@@ -287,7 +307,7 @@ class AnalyseFile(DataFile):
         @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
-            self.add_column(lself.column(a)-b, header, a, replace=replace)
+            self.add_column(self.column(a)-b, header, a, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"- "+str(b)
         elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
@@ -310,7 +330,7 @@ class AnalyseFile(DataFile):
         @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
-            self.add_column(lself.column(a)+b, header, a, replace=replace)
+            self.add_column(self.column(a)+b, header, a, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"- "+str(b)
         elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
