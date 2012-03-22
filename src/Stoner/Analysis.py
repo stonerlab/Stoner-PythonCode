@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.16 2012/03/19 23:04:23 cvs Exp $
+# $Id: Analysis.py,v 1.17 2012/03/22 12:17:16 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.17  2012/03/22 12:17:16  cvs
+# Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
+#
 # Revision 1.16  2012/03/19 23:04:23  cvs
 # Fixed a bug adding and subrtacting floats and also implemented a AnaluyseFile.mean()
 #
@@ -344,6 +347,38 @@ class AnalyseFile(DataFile):
                 header=self.column_headers[a]+"-"+self.column_headers[b]
         return self
 
+    def divide(self, target, base, replace=False, header=None):
+        """Divide data columns by dividing through by a base column value. synonym of normalise, but note the opposite default to replace.
+
+        @param target One or more target columns to normalise can be a string, integer or list of strings or integers.
+        @param base The column to normalise to, can be an integer or string
+        @param replace Set True(default) to overwrite  the target data columns
+        @param header The new column header - default is target name(norm)
+        @return A copy of the current object"""
+        return normalise(target, base, replace=replace, header=header)
+
+    def mulitply(self, a, b, replace=False, header=None):
+        """Subtract one column from another column
+        @param a First column to multiply
+        @param b Second column to multiply a with, may be a column index, floating point number or 1D array of numbers
+        @param header new column header  (defaults to a*b
+        @param replace Replace the a column with the a*b data
+        @return A copy of the new data object"""
+        a=self.find_col(a)
+        if isinstance(b, float):
+            self.add_column(self.column(a)*b, header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"*"+str(b)
+        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
+            self.add_column(self.column(a)*numpy.array(b), h2, t, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"* data"
+        else:
+            b=self.find_col(b)
+            self.add_column(self.column(a)*self.column(b), header, a, replace=replace)
+            if header is None:
+                header=self.column_headers[a]+"*"+self.column_headers[b]
+        return self
 
     def apply(self, func, col, replace=True, header=None):
         """Applies the given function to each row in the data set and adds to the data set

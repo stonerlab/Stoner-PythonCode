@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.40 2012/03/11 23:12:32 cvs Exp $
+# $Id: Core.py,v 1.41 2012/03/22 12:17:16 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.41  2012/03/22 12:17:16  cvs
+# Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
+#
 # Revision 1.40  2012/03/11 23:12:32  cvs
 # string_to_type function to do a better job of working out python type from string representation when no type hint give.
 #
@@ -643,16 +646,20 @@ class DataFile(object):
             else:
                 return NotImplemented
         elif isinstance(other, DataFile):  # Appending another DataFile
-            if self.column_headers == other.column_headers:
-                newdata = self.__class__(other)
-                for x in self.metadata:
-                    newdata[x] = self.__class__(self[x])
-                newdata.data = numpy.append(self.data, other.data, 0)
-                return newdata
-            else:
-                return NotImplemented
+            new_data=numpy.zeros((len(other), len(self.column_headers)))*numpy.nan
+            for i in range(len(self.column_headers)):
+                column=self.column_headers[i]
+                try:
+                    new_data[:, i]=other.column(column)
+                except KeyError:
+                    pass
+            newdata = self.__class__(other)
+            for x in self.metadata:
+                newdata[x] = self[x]
+            newdata.data = numpy.append(self.data, new_data, 0)
+            return newdata
         else:
-            return NotImplemented
+            return NotImplemented('Failed in DataFile')
 
     def __and__(self, other):
         """Implements the & operator to concatenate columns of data in a

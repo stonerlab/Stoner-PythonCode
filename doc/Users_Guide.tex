@@ -651,7 +651,7 @@ Several methods are provided to assist with common data fitting and preparation 
   >>> a.normalise(0,a2.column(0))
 \end{verbatim}
 
-The \textit{normalise} method simply divides the data column by the reference column. By default the normalise method replaces the data column with the new (normalised) data and appends ``(norm)'' to the column header. The keyword arguments header and replace can override this behaviour. The third variant illustrates normalising to a constant (note, however, that if the second argument is an integer it is treated as a column index and not a constant). The fina;l variant takes a 1D array with the same number of elements as rows and uses that to normalise to. A typical example might be to have some baseline scan that one is normalising to.
+The \textit{normalise} method simply divides the data column by the reference column. By default the normalise method replaces the data column with the new (normalised) data and appends ``(norm)'' to the column header. The keyword arguments header and replace can override this behaviour. The third variant illustrates normalising to a constant (note, however, that if the second argument is an integer it is treated as a column index and not a constant). The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to. A typical example might be to have some baseline scan that one is normalising to.
 
 \begin{verbatim}
   >>> a.subtract('A','B'm header="A-B",replace=True)
@@ -660,7 +660,7 @@ The \textit{normalise} method simply divides the data column by the reference co
   >>> a.subtract(0,a2.column(0))
 \end{verbatim}
 
-As one might expect form the name, the \textit{subtract} method subtracts the second column form the first. Like \textit{normalise} the first data column with be replaced and a new header (defaulting to column header 1 - column header 2) will be created, but can be overridden with the header and replace keyword arguments. The next two variants of the \textit{subtract} method work in an analogous manner to the \textit{normalise} methods. Finally the \text{add} method allows one to add two columns in a similar fashion:
+As one might expect form the name, the \textit{subtract} method subtracts the second column form the first. Unlike \textit{normalise} the first data column will not be replaced but a new column inserted and a new header (defaulting to column header 1 - column header 2) will be created. This can be overridden with the header and replace keyword arguments. The next two variants of the \textit{subtract} method work in an analogous manner to the \textit{normalise} methods. Finally the \text{add} method allows one to add two columns in a similar fashion:
 
 \begin{verbatim}
   >>> a.add('A','B',header='A plus B',replace=False)
@@ -668,6 +668,15 @@ As one might expect form the name, the \textit{subtract} method subtracts the se
   >>> a.add(0,3.141592654)
   >>> a.add(0,a2.column(0))
 \end{verbatim}
+
+For completeness we also have:
+
+\begin{verbatim}
+  >>> a.divide('A','B',header='A/B', replace=True)
+  >>> a.multiply('A','B',header='A*B', replace=True)
+\end{verbatim}
+
+with variants that take either a 1D array of data or a constant instead of the B column index.
 
 \subsection{Curve Fitting}
 
