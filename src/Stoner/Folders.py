@@ -2,9 +2,12 @@
 #
 # Classes for working directories of datafiles
 #
-# $Id: Folders.py,v 1.1 2012/03/24 00:36:04 cvs Exp $
+# $Id: Folders.py,v 1.2 2012/03/24 22:39:40 cvs Exp $
 #
 # $Log: Folders.py,v $
+# Revision 1.2  2012/03/24 22:39:40  cvs
+# Update focumentation for new DataFolder class. Add more functionality to DataFolder including indexing, representation and len support.
+#
 # Revision 1.1  2012/03/24 00:36:04  cvs
 # Add a new DataFolder class with methods for sorting and grouping data files
 #
@@ -16,7 +19,7 @@ import fnmatch
 
 from .Core import DataFile
 
-class DataFolder:
+class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
     This class is intended to help process large groups of datasets in a natural and convenient way."""
@@ -35,7 +38,7 @@ class DataFolder:
 
         Handles constructors like:
 
-        DataFolder('directory',type=DataFile,pattern='*.*')"""
+        DataFolder('directory',type=DataFile,pattern='*.*', nolist=False)"""
         self.files=[]
         self.groups={}
         if not "type" in kargs:
@@ -48,19 +51,48 @@ class DataFolder:
             self.pattern="*.*"
         else:
             self.pattern=kargs["pattern"]
+        if not "nolist" in kargs:
+            nolist=False
+        else:
+            nolist=kargs["nolist"]
         if len(args)>0:
             if isinstance(args[0], str):
                 self.directory=args[0]
         else:
             self.directory=os.getcwd()
+        if "recursive" in kargs:
+            recursive=kargs["recursive"]
+        else:
+            recursive=True
+        if not nolist:
+            self.getlist(recursive=recursive)
 
     def __iter__(self):
         """Returns the files iterator object
         @return self.files.__iter__"""
         for f in self.files:
             yield self.type(f)
-
-
+            
+    def __len__(self):
+        """Pass through to return the length of the files array
+        @return len(self.files)"""
+        return len(self.files)
+        
+    def __getitem__(self, i):
+        """Load and returen DataFile type objects based on the filenames in self.files
+        @param i The index(eces) of the files to return
+        @return One or more instances of DataFile objects"""
+        files=self.files[i]
+        if isinstance(files, str):
+            return self.type(files)
+        else:
+            return [self.type(x) for x in files]
+            
+    def __repr__(self):
+        """Prints a summary of the DataFolder structure
+        @return A string representation of the current DataFolder object"""
+        return "DataFolder("+self.directory+") with pattern "+self.pattern+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
+        
     def getlist(self, recursive=True):
         """Scans the current directory, optionally recursively to build a list of filenames
         @param recursive Do a walk through all the directories for files
@@ -139,12 +171,22 @@ class DataFolder:
             x=self.type(f)
             v=key(x)
             if not v in self.groups:
-                self.groups[v]=DataFolder(self.directory, type=self.type, pattern=self.pattern)
+                self.groups[v]=DataFolder(self.directory, type=self.type, pattern=self.pattern, nolist=True)
             self.groups[v].files.append(f)
         if len(next_keys)>0:
             for g in self.groups:
                 self.groups[g].group(next_keys)
         return self
+        
+    def zipp_groups(self, groups):
+        """Return a list of tuples of DataFiles drawn from the specified groups
+        @param groups A list of keys of groups in the DataFolder
+        @return A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
+        """
+        if not isinstance(groups, list):
+            raise SyntaxError("groups must be a list of groups")
+        grps=[[y for y in self.groups[x]] for x in groups]
+        return zip(*grps)
 
 
 
