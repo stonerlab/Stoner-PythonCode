@@ -1,10 +1,13 @@
-#----------------------------------------------------------------------------- 
-#   $Id: __init__.py,v 1.8 2011/12/03 13:58:48 cvs Exp $
+#-----------------------------------------------------------------------------
+#   $Id: __init__.py,v 1.9 2012/03/24 00:36:04 cvs Exp $
 #   AUTHOR:     MATTHEW NEWMAN, CHRIS ALLEN, GAVIN BURNELL
 #   DATE:       24/11/2010
 #-----------------------------------------------------------------------------
 #
 # $Log: __init__.py,v $
+# Revision 1.9  2012/03/24 00:36:04  cvs
+# Add a new DataFolder class with methods for sorting and grouping data files
+#
 # Revision 1.8  2011/12/03 13:58:48  cvs
 # Replace the various format load routines in DataFile with subclasses of DataFile with their own overloaded load methods
 # Improve the VSM load routine
@@ -22,11 +25,12 @@
 #
 #
 
-__all__=['Core', 'Analysis', 'Plot', 'FileFormats']
+__all__=['Core', 'Analysis', 'Plot', 'FileFormats', 'Folders']
 
 # These fake the old namespace if you do an import Stoner
 from .Core import *
 from .Analysis import *
 from Plot import *
 from FileFormats import *
+from Folders import *
 
