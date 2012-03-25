@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.15 2012/03/11 23:12:33 cvs Exp $
+# $Id: FileFormats.py,v 1.16 2012/03/25 19:41:31 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.16  2012/03/25 19:41:31  cvs
+# Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
+#
 # Revision 1.15  2012/03/11 23:12:33  cvs
 # string_to_type function to do a better job of working out python type from string representation when no type hint give.
 #
@@ -54,9 +57,11 @@ import string
 import struct
 from re import split
 import codecs
+from datetime import datetime
 
 from .Core import DataFile
 from .pyTDMS import read as tdms_read
+
 
 
 class CSVFile(DataFile):
@@ -115,6 +120,7 @@ class VSMFile(DataFile):
         """
         f=fileinput.FileInput(self.filename) # Read filename linewise
         self['Timestamp']=f.next().strip()
+        check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
         f.next()
         header_string=f.next()
         header_string=re.sub(r'["\n]', '', header_string)
@@ -143,13 +149,18 @@ class BigBlueFile(CSVFile):
 
     def load(self,filename=None,*args):
         """Just call the parent class but with the right parameters set"""
-        super(BigBlueFile,self).load(self, header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+
+        super(BigBlueFile,self).load(self, self.filename,  header_line=3, data_line=7, data_delim=' ', header_delim=',')
         return self
 
 class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
 
-    def load(self,filename=None,*args):        
+    def load(self,filename=None,*args):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')
@@ -184,7 +195,7 @@ class QDSquidVSMFile(DataFile):
 class RasorFile(DataFile):
     """Extends DataFile to load files from RASOR"""
 
-    def load(self,filename=None,*args):        
+    def load(self,filename=None,*args):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')

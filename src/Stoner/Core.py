@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.41 2012/03/22 12:17:16 cvs Exp $
+# $Id: Core.py,v 1.42 2012/03/25 19:41:31 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.42  2012/03/25 19:41:31  cvs
+# Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
+#
 # Revision 1.41  2012/03/22 12:17:16  cvs
 # Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
 #
@@ -305,7 +308,7 @@ class typeHintedDict(dict):
                     return valuetype(value)
                     break
         return str(value)
-        
+
     def string_to_type(self, value):
         """Given a string value try to work out if there is a better python type dor the value
         @param value String representation of he value
@@ -853,22 +856,12 @@ class DataFile(object):
         self.filename = self.__file_dialog(mode)
         return self.filename
 
-    def load(self, filename=None, fileType="TDI", *args):
+    def load(self, filename=None, auto_load=True,  filetype=None,  *args, **kargs):
         """DataFile.load(filename,type,*args)
-
-            Loads data from file filename using routines dependent on the f
-            ileType parameter
-            fileType is one on TDI,VSM,BigBlue,csv Default is TDI.
-
-            Example: To load Big Blue file
-
-                d.load(file,"BigBlue",8,10)
-
-            Where "BigBlue" is filetype and 8 / 10 are the line numbers of the
-            headers / start of data respectively
-
-            TODO: Implement a filename extension check to more intelligently
-            guess the datafile type
+        @param filename path to file to load
+        @param auto_load If True (default) then the load routine tries all the subclasses of DataFile in turn to load the file
+        @param filetype If not none then tries using filetype as the loader
+        @return A copy of the loaded instance
             """
 
         if filename is None:
@@ -876,15 +869,28 @@ class DataFile(object):
         else:
             self.filename = filename
 
-        if fileType == "TDI":
-            self.__parse_data()
-        elif fileType == "csv":
-            self.__parse_plain_data(args[0], args[1], args[2], args[3])
-        elif fileType == "HariboPlain":
-            self.__loadHariboPlain()
-            self.column_headers = ['wavenumbers', 'intensity']
-        else:
-            raise SyntaxError()
+        failed=True
+        try:
+            if filetype is None:
+                self.__parse_data()
+            else:
+                self.__class__(filetype(filename))
+            failed=False
+        except: # We failed to parse assuming this was a TDI
+            if auto_load: # We're going to try every subclass we can
+                for cls in itersubclasses(DataFile):
+                    try:
+                        test=cls().load(self.filename)
+                        self.data=test.data
+                        self.metadata=test.metadata
+                        self.column_headers=test.column_headers
+                        failed=False
+                        self["Loaded as"]=cls.__name__
+                        break
+                    except Exception as inst:
+                        continue
+        if failed:
+            raise SyntaxError("Failed to load file")
         return self
 
     def save(self, filename=None):
@@ -1258,3 +1264,43 @@ class DataFile(object):
         app.MainLoop()
         while app.IsMainLoopRunning:
             pass
+
+def itersubclasses(cls, _seen=None):
+    """
+    itersubclasses(cls)
+
+    Generator over all subclasses of a given class, in depth first order.
+
+    >>> list(itersubclasses(int)) == [bool]
+    True
+    >>> class A(object): pass
+    >>> class B(A): pass
+    >>> class C(A): pass
+    >>> class D(B,C): pass
+    >>> class E(D): pass
+    >>>
+    >>> for cls in itersubclasses(A):
+    ...     print(cls.__name__)
+    B
+    D
+    E
+    C
+    >>> # get ALL (new-style) classes currently defined
+    >>> [cls.__name__ for cls in itersubclasses(object)] #doctest: +ELLIPSIS
+    ['type', ...'tuple', ...]
+    """
+
+    if not isinstance(cls, type):
+        raise TypeError('itersubclasses must be called with '
+                        'new-style classes, not %.100r' % cls)
+    if _seen is None: _seen = set()
+    try:
+        subs = cls.__subclasses__()
+    except TypeError: # fails only when cls is type
+        subs = cls.__subclasses__(cls)
+    for sub in subs:
+        if sub not in _seen:
+            _seen.add(sub)
+            yield sub
+            for sub in itersubclasses(sub, _seen):
+                yield sub
