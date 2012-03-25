@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.16 2012/03/25 19:41:31 cvs Exp $
+# $Id: FileFormats.py,v 1.17 2012/03/25 20:35:06 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.17  2012/03/25 20:35:06  cvs
+# More work to stop load recursiing badly
+#
 # Revision 1.16  2012/03/25 19:41:31  cvs
 # Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
 #
@@ -67,7 +70,7 @@ from .pyTDMS import read as tdms_read
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
-    def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=','):
+    def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
 
         @param filename File to load. If None then the existing filename is used,
@@ -135,7 +138,7 @@ class VSMFile(DataFile):
         f.close()
 
 
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -147,7 +150,7 @@ class VSMFile(DataFile):
 class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
 
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')
@@ -160,7 +163,7 @@ class BigBlueFile(CSVFile):
 class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
 
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')
@@ -195,7 +198,7 @@ class QDSquidVSMFile(DataFile):
 class RasorFile(DataFile):
     """Extends DataFile to load files from RASOR"""
 
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')
@@ -220,7 +223,7 @@ class RasorFile(DataFile):
 
 class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
 
         @param filename String containing file to be loaded
@@ -326,7 +329,7 @@ class TDMSFile(DataFile):
 
     Objects=dict()
 
-    def load(self, filename=None, *args):
+    def load(self, filename=None, *args, **kargs):
         """Reads a TDMS File
 
         @param filename String containing file to be loaded
@@ -350,7 +353,7 @@ class TDMSFile(DataFile):
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
-    def load(self,filename=None,*args):
+    def load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
 
         @param filename String containing file to be loaded
@@ -463,7 +466,7 @@ class BNLFile(DataFile):
             print 'Did not import any data for %s'% self.filename
 
 
-    def load(self,filename):        #fileType omitted, implicit in class call
+    def load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
         """BNLFile.load(filename)
 
         Overwrites load method in DataFile class, no header positions and data
