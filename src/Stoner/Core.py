@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.42 2012/03/25 19:41:31 cvs Exp $
+# $Id: Core.py,v 1.43 2012/03/25 20:23:13 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.43  2012/03/25 20:23:13  cvs
+# Try to stop recursive calling of the load routine
+#
 # Revision 1.42  2012/03/25 19:41:31  cvs
 # Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
 #
@@ -880,7 +883,7 @@ class DataFile(object):
             if auto_load: # We're going to try every subclass we can
                 for cls in itersubclasses(DataFile):
                     try:
-                        test=cls().load(self.filename)
+                        test=cls().load(self.filename, auto_load=False)
                         self.data=test.data
                         self.metadata=test.metadata
                         self.column_headers=test.column_headers
