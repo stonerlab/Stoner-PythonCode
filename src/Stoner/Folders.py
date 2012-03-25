@@ -2,9 +2,12 @@
 #
 # Classes for working directories of datafiles
 #
-# $Id: Folders.py,v 1.2 2012/03/24 22:39:40 cvs Exp $
+# $Id: Folders.py,v 1.3 2012/03/25 21:18:10 cvs Exp $
 #
 # $Log: Folders.py,v $
+# Revision 1.3  2012/03/25 21:18:10  cvs
+# Documentation updates and minor fixes
+#
 # Revision 1.2  2012/03/24 22:39:40  cvs
 # Update focumentation for new DataFolder class. Add more functionality to DataFolder including indexing, representation and len support.
 #
@@ -124,8 +127,7 @@ class DataFolder(object):
         files=[]
         if isinstance(filter, str):
             for f in self.files:
-                x=self.type(f)
-                if ffnmatch.fnmatch(f, filter)  ^ invert:
+                if fnmatch.fnmatch(f, filter)  ^ invert:
                     files.append(f)
         elif filter is None:
             raise ValueError("A filter must be defined !")

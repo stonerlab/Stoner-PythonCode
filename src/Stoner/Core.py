@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.44 2012/03/25 20:35:06 cvs Exp $
+# $Id: Core.py,v 1.45 2012/03/25 21:18:10 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.45  2012/03/25 21:18:10  cvs
+# Documentation updates and minor fixes
+#
 # Revision 1.44  2012/03/25 20:35:06  cvs
 # More work to stop load recursiing badly
 #
@@ -879,8 +882,10 @@ class DataFile(object):
         try:
             if filetype is None:
                 self.__parse_data()
+                self["Loaded as"]="DataFile"
             else:
                 self.__class__(filetype(filename))
+                self["Loaded as"]=filetype.__name__
             failed=False
         except: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
