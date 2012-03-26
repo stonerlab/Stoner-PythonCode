@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.45 2012/03/25 21:18:10 cvs Exp $
+# $Id: Core.py,v 1.46 2012/03/26 21:57:55 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.46  2012/03/26 21:57:55  cvs
+# Some improvements to auto-file detection
+#
 # Revision 1.45  2012/03/25 21:18:10  cvs
 # Documentation updates and minor fixes
 #
@@ -452,6 +455,7 @@ class DataFile(object):
     metadata = typeHintedDict()
     filename = None
     column_headers = list()
+    priority=32
 
 
     #   INITIALISATION
@@ -889,20 +893,24 @@ class DataFile(object):
             failed=False
         except: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
-                for cls in itersubclasses(DataFile):
+                subclasses={x:x.priority for x in itersubclasses(DataFile)}
+                for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
                     try:
                         test=cls()
                         test.load(self.filename, auto_load=False)
-                        self.data=test.data
-                        self.metadata=test.metadata
-                        self.column_headers=test.column_headers
                         failed=False
-                        self["Loaded as"]=cls.__name__
                         break
                     except Exception as inst:
                         continue
+
         if failed:
             raise SyntaxError("Failed to load file")
+        else:
+            self.data=test.data
+            self.metadata=test.metadata
+            self.column_headers=test.column_headers
+            self["Loaded as"]=cls.__name__
+            
         return self
 
     def save(self, filename=None):

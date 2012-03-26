@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.17 2012/03/25 20:35:06 cvs Exp $
+# $Id: FileFormats.py,v 1.18 2012/03/26 21:57:55 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.18  2012/03/26 21:57:55  cvs
+# Some improvements to auto-file detection
+#
 # Revision 1.17  2012/03/25 20:35:06  cvs
 # More work to stop load recursiing badly
 #
@@ -69,6 +72,8 @@ from .pyTDMS import read as tdms_read
 
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
+    
+    priority=128
 
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
@@ -149,6 +154,8 @@ class VSMFile(DataFile):
 
 class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
+    
+    priority=64
 
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
@@ -173,6 +180,8 @@ class QDSquidVSMFile(DataFile):
         while f.next().strip()!="[Header]":
             pass
         line=f.next().strip()
+        if line!="&SRS":
+            raise RuntimeError("Not a GDA File from Rasor ?")
         while line!="[Data]":
             if line[0]==";":
                 line=f.next().strip()
@@ -389,7 +398,7 @@ class XRDFile(DataFile):
                         angle=parts[0].strip()
                         counts=parts[1].strip()
                         dataline=numpy.array([float(angle), float(counts)])
-                        self=self+dataline
+                        self.data=numpy.append(self.data, dataline)
                     else: # Other sections contain metadata
                         parts=line.split('=')
                         key=parts[0].strip()
@@ -398,6 +407,7 @@ class XRDFile(DataFile):
         self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
         f.close()# Cleanup
+        self.data=numpy.reshape(self.data, (-1, 2))
         return self
 
 
@@ -422,11 +432,12 @@ class BNLFile(DataFile):
     def __find_lines(self):
         """returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]"""
         fp=open(self.filename,'r')
-        print fp
         self.line_numbers=[0,0,0,0,0]
         counter=0
         for line in fp:
             counter+=1
+            if counter==1 and line[0]!='#':
+                raise RuntimeError("Not a BNL File ?")
             if len(line)<2:continue  #if there's nothing written on the line go to the next
             elif line[0:2]=='#L':self.line_numbers[0]=counter
             elif line[0:2]=='#S':self.line_numbers[2]=counter
