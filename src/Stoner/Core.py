@@ -1,10 +1,14 @@
-#############################################
+############################################
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.46 2012/03/26 21:57:55 cvs Exp $
+# $Id: Core.py,v 1.47 2012/03/27 21:54:04 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.47  2012/03/27 21:54:04  cvs
+# Fix a bug with loading DataFiles and in __repr__
+# Improve peak finding code a bit
+#
 # Revision 1.46  2012/03/26 21:57:55  cvs
 # Some improvements to auto-file detection
 #
@@ -40,145 +44,7 @@
 # Made Core pep8 compliant
 # Added TDMS code and TDMSFile
 #
-# Revision 1.35  2011 / 12 / 09 12:10:41  cvs
-# Remove cvs writing code from DataFile (use CSVFile.save()). Fixed BNLFile to
-# always call the DataFile constructor
-#
-# Revision 1.34  2011 / 12 / 05 21:56:25  cvs
-# Add in DataFile methods swap_column and reorder_columns and update API
-# documentation.
-# Fix some Doxygen problems.
-#
-# Revision 1.33  2011 / 12 / 04 23:09:16  cvs
-# Fixes to Keissig and plotting code
-#
-# Revision 1.32  2011 / 12 / 03 13:58:48  cvs
-# Replace the various format load routines in DataFile with subclasses of
-# DataFile with their own overloaded load methods
-# Improve the VSM load routine
-# Add some new sample data sets to play with
-# Updatedocumentation
-#
-# Revision 1.31  2011 / 11 / 28 14:26:52  cvs
-# Merge latest versions
-#
-# Revision 1.30  2011 / 11 / 28 09:26:33  cvs
-# Update documentation
-#
-# Revision 1.29  2011 / 10 / 24 12:17:55  cvs
-# Update PCAR lab script to save data and fix a bug with save as mode in
-# Stoner.Core
-#
-# Revision 1.28  2011 / 10 / 10 13:22:58  cvs
-# Removed a print from the sort function.
-#
-# Revision 1.27  2011 / 08 / 17 12:46:29  cvs
-# Hack to fix the following issue:
-#
-# Sort of - source is string value and the code should have exported it as
-# '' rather than a blank string. I'll take a look. In the meantime you
-# could put the eval statement in a try except block something like:
-#
-# try:
-#     ret = eval(....)
-# except SyntaxError:
-#    ret=""
-#
-# which should at least stop the crash and burn...
-#
-# Revision 1.26  2011 / 08 / 09 14:17:28  cvs
-# Added option to load Horiba Raman plaintext file
-#
-# Revision 1.25  2011 / 07 / 12 15:53:19  cvs
-# Teach typeHintedDict to handle NaN as a value, introduce an export function
-# to help with the string representation of DataFile and fix a weird regression
-# in DataFile.__repr__. Update doxygen docs
-#
-# Revision 1.24  2011 / 06 / 24 16:23:58  cvs
-# Update API documentation. Minor improvement to save method to force a dialog
-# box.
-#
-# Revision 1.23  2011 / 06 / 15 11:38:20  cvs
-# Matt - Removed printing of args datatype on DataFile initialization.
-#
-# Revision 1.22  2011 / 06 / 14 21:50:55  cvs
-# Produce a clone attribute in Core that does a deep copy and update
-# the documention some more.
-#
-# Revision 1.21  2011 / 06 / 13 20:38:10  cvs
-# Merged in fixes to typeHintedDict with fixes for deepcopy
-#
-# Revision 1.20  2011 / 06 / 13 20:15:13  cvs
-# Make copy and deepcopy work properly
-#
-# Revision 1.19  2011 / 06 / 13 14:40:51  cvs
-# Make theroutine handle a blank value in metadata
-#
-# Revision 1.18  2011 / 05 / 17 21:04:29  cvs
-# Finish implementing the DataFile metadata as a new typeHintDict()
-# dictionary that keeps track of the type hinting strings internally.
-# This ensures that we always have a type hint string available.
-#
-# Revision 1.17  2011 / 05 / 16 22:43:19  cvs
-# Start work on a dict child class that keeps track of type hints to use as
-# the core class for the metadata. GB
-#
-# Revision 1.16  2011 / 05 / 10 22:10:31  cvs
-# Workaround new behaviou of deepcopy() in Python 2.7 and improve
-# handling when a typehint for the metadata
-# doesn't exist (printing the DataFile will fix the typehinting).
-#
-# Revision 1.15  2011 / 05 / 06 22:21:42  cvs
-# Add code to read Renishaw spc files and some sample Raman data. GB
-#
-# Revision 1.14  2011 / 04 / 23 18:23:33  cvs
-# What happened here ?
-#
-# Revision 1.13  2011 / 04 / 22 14:44:04  cvs
-# Add code to return data as a structured record and to to provide a
-# DataFile.sort() method
-#
-# Revision 1.12  2011 / 03 / 02 14:56:20  cvs
-# Colon missing from else command in search function (Line 591)
-#
-# Revision 1.11  2011 / 03 / 02 13:16:52  cvs
-# Fix buglet in DataFile.search
-#
-# Revision 1.10  2011 / 02 / 23 21:42:16  cvs
-# Experimental code for displaying grid included
-#
-# Revision 1.9  2011 / 02 / 17 23:36:51  cvs
-# Updated doxygen comment strings
-#
-# Revision 1.8  2011 / 02 / 14 17:00:03  cvs
-# Updated documentation. More doxygen comments
-#
-# Revision 1.7  2011 / 02 / 13 15:51:08  cvs
-# Merge in ma gui branch back to HEAD
-#
-# Revision 1.6  2011 / 02 / 12 22:12:43  cvs
-# Added some doxygen compatible doc strings
-#
-# Revision 1.5  2011 / 02 / 11 00:00:58  cvs
-# Add a DataFile.unique method
-#
-# Revision 1.4  2011 / 01 / 17 10:12:08  cvs
-# Added code for mac implementation of wx.FileDialog()
-#
-# Revision 1.3  2011 / 01 / 13 22:30:56  cvs
-# Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
-# Extra comments in the ini file
-# Give DataFile some file dialog boxes
-#
-# Revision 1.2  2011 / 01 / 12 22:56:33  cvs
-# Update documentation, add support for slices in some of the DataFile methods
-#
-# Revision 1.1  2011 / 01 / 08 20:30:02  cvs
-# Complete splitting Stoner into a package with sub - packages - Core, Analysis
-# and Plot.
-# Setup some imports in __init__ so that import Stoner still gets all
-# the subclasses - Gavin
-#
+
 #
 #############################################
 
@@ -460,7 +326,7 @@ class DataFile(object):
 
     #   INITIALISATION
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kargs):
         """Constructor method
 
         various forms are recognised:
@@ -493,7 +359,7 @@ class DataFile(object):
             if (isinstance(args[0], str) or (
                 isinstance(args[0], bool) and not args[0])):
                                         # Filename- load datafile
-                t = self.load(args[0])
+                t = self.load(*args, **kargs)
                 self.data = t.data
                 self.metadata = t.metadata
                 self.column_headers = t.column_headers
@@ -523,7 +389,8 @@ class DataFile(object):
             elif isinstance(args[1], dict):
                 self.metadata = args[1].copy()
         elif len(args) > 2:
-            apply(self.load, args)
+            self.load(*args, **kargs)
+        self.metadata["Stoner.class"]=self.__class__.__name__
 
     # Special Methods
 
@@ -730,21 +597,19 @@ class DataFile(object):
                 the data.shape
 
                 @return \a self in a textual format. """
-        outp = "TDI Format 1.5" + "\t" + reduce(lambda x, y: str(x) +
-        "\t" + str(y), self.column_headers) + "\n"
+        outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
+        self.data=numpy.atleast_2d(self.data)
         (r, c) = numpy.shape(self.data)
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + reduce(lambda z, y:
-                            str(z) + "\t" + str(y), self.data[x]) + "\n"
+            outp = outp + md[x] + "\t" + "\t".join(self.data[x].astype(numpy.dtype('|S12')))+ "\n"
         if m > r:  # More metadata
             for x in range(r, m):
                     outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             for x in range(m, r):
-                    outp = outp + "\t" + reduce(lambda z, y:
-                        str(z) + "\t" + str(y), self.data[x]) + "\n"
+                    outp = outp + "\t" + "\t".join(self.data[x].astype(numpy.dtype('|S12')))+ "\n"
         return outp
 
     def __len__(self):
@@ -891,6 +756,7 @@ class DataFile(object):
                 self.__class__(filetype(filename))
                 self["Loaded as"]=filetype.__name__
             failed=False
+            return self
         except: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
                 subclasses={x:x.priority for x in itersubclasses(DataFile)}

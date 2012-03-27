@@ -3,9 +3,13 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.17 2012/03/22 12:17:16 cvs Exp $
+# $Id: Analysis.py,v 1.18 2012/03/27 21:54:04 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.18  2012/03/27 21:54:04  cvs
+# Fix a bug with loading DataFiles and in __repr__
+# Improve peak finding code a bit
+#
 # Revision 1.17  2012/03/22 12:17:16  cvs
 # Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
 #
@@ -452,7 +456,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def peaks(self, ycol, width, significance , xcol=None, peaks=True, troughs=False, poly=2):
+    def peaks(self, ycol, width, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sorted=False):
         """AnalysisFile.peaks(ycol,width,signficance, xcol=None.peaks=True, troughs=False)
 
         Locates peaks and/or troughs in a column of data by using SG-differentiation.
@@ -471,6 +475,11 @@ class AnalyseFile(DataFile):
             @return If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
         from scipy.interpolate import interp1d
+        if significance is None: # Guess the significance based on the range of y and width settings
+            dm, p=self.max(ycol)
+            dp, p=self.min(ycol)
+            dm=dm-dp
+            significance=0.2*dm/(4*width**2)
         d1=self.SG_Filter(ycol, width, poly, 1)
         i=numpy.arange(len(d1))
         d2=interp1d(i, self.SG_Filter(ycol, width, poly, 2))
@@ -479,7 +488,10 @@ class AnalyseFile(DataFile):
         else:
             xcol=self.column(xcol)
         index=interp1d(i, xcol)
-        z=self.__threshold(0, d1, rising=troughs, falling=peaks)
+        z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))+width/2
+        z=z[:-1]
+        if sorted:
+            z=numpy.take(z, numpy.argsort(d2(z)))
         return index(filter(lambda x: numpy.abs(d2(x))>significance, z))
 
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
