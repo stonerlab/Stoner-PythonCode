@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.18 2012/03/26 21:57:55 cvs Exp $
+# $Id: FileFormats.py,v 1.19 2012/04/02 11:58:07 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.19  2012/04/02 11:58:07  cvs
+# Minor bug fixes and corrections
+#
 # Revision 1.18  2012/03/26 21:57:55  cvs
 # Some improvements to auto-file detection
 #
@@ -180,8 +183,6 @@ class QDSquidVSMFile(DataFile):
         while f.next().strip()!="[Header]":
             pass
         line=f.next().strip()
-        if line!="&SRS":
-            raise RuntimeError("Not a GDA File from Rasor ?")
         while line!="[Data]":
             if line[0]==";":
                 line=f.next().strip()
@@ -214,6 +215,8 @@ class RasorFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
+        if f.next()!="&SRS":
+            raise RuntimeError("Not a GDA File from Rasor ?")
         while f.next().strip()!="<MetaDataAtStart>":
             pass
         line=f.next().strip()

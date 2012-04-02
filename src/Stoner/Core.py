@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.47 2012/03/27 21:54:04 cvs Exp $
+# $Id: Core.py,v 1.48 2012/04/02 11:58:07 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.48  2012/04/02 11:58:07  cvs
+# Minor bug fixes and corrections
+#
 # Revision 1.47  2012/03/27 21:54:04  cvs
 # Fix a bug with loading DataFiles and in __repr__
 # Improve peak finding code a bit
@@ -742,7 +745,7 @@ class DataFile(object):
         @return A copy of the loaded instance
             """
 
-        if filename is None:
+        if filename is None or (isinstance(filename, bool) and not filename):
             filename = self.__file_dialog('r')
         else:
             self.filename = filename
