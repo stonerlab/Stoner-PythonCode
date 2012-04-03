@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.19 2012/04/02 11:58:07 cvs Exp $
+# $Id: FileFormats.py,v 1.20 2012/04/03 15:13:44 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.20  2012/04/03 15:13:44  cvs
+# Not sure what was done here !
+#
 # Revision 1.19  2012/04/02 11:58:07  cvs
 # Minor bug fixes and corrections
 #
@@ -75,7 +78,7 @@ from .pyTDMS import read as tdms_read
 
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
-    
+
     priority=128
 
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
@@ -157,7 +160,7 @@ class VSMFile(DataFile):
 
 class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
-    
+
     priority=64
 
     def load(self,filename=None,*args, **kargs):
@@ -352,6 +355,10 @@ class TDMSFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
+        f=fileinput.FileInput(self.filename) # Read filename linewise
+        line=f.netxt()
+        assert line[0:4] == "TDSm"
+        f.close()
         (metadata, data)=tdms_read(self.filename)
         for key in metadata:
             self.metadata[key]=metadata[key]
