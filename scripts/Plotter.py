@@ -1,6 +1,6 @@
 # Plotting DataFile wiuth Chaco, TraitsUI, TraitsUI
 from traits.api import HasTraits, Instance,  Array, Int, List, Enum,  Str
-from traitsui.api import View, Group, HGroup,  Item,  CheckListEditor, Handler
+from traitsui.api import View, Group, HGroup,  Item,  CheckListEditor, Handler,  TreeEditor, TreeNode, VSplit
 from enable.api import ColorTrait, LineStyle
 from enable.component_editor import ComponentEditor
 from chaco.api import marker_trait, Plot, ArrayPlotData, ArrayDataSource
@@ -23,11 +23,20 @@ class StonerPlot(HasTraits):
     yc=Str
     cols=List(['X', 'Y'])
     type=Enum('scatter', 'line')
-    data=S.DataFile()
+    data=Instance(S.DataFile)
+    
+    menubar=MenuBar(
+                    Menu(
+                        Action(name = 'E&xit', accelerator="Ctrl+Q",  tooltip="E&xit",  action = '_on_close'),
+                        Separator(),
+                        Action(name="&Open", accelerator="Ctrl+O", tooltip="&Open Data File", action="load"), # these callbacks                         
+                        Action(name="&Close", accelerator="Ctrl+W", tooltip="&Close Plot", action="close_plot"), # these callbacks                         
+                        name="File"))
+
+
 
     def trait_view(self, parent=None):
-        traits_view = View(
-            Group(
+        traits_view = View(Group(
                   HGroup(Item('xc',label='X Column', editor=CheckListEditor(name='cols')),
                          Item('yc', label='Y Column', editor=CheckListEditor(name='cols')),
                          Item('type', label='Plot Type')),
@@ -36,35 +45,36 @@ class StonerPlot(HasTraits):
                          HGroup(Item('marker', label="Marker", visible_when='type=="scatter"'),
                   Item('line_style',  label='Line Style',  visible_when="type=='line'"),
                   Item('marker_size', label="Marker Size",  visible_when='type=="scatter"'),  Item('outline_width', label="Line Width")),
-                  Item('plot', editor=ComponentEditor(), show_label=False),
-            orientation = "vertical"),
-            menubar=MenuBar(
-                    Menu(
-                         Action(name="Save Plot", action="save"), # see Controller for
-                        Action(name="Load Plot", action="load"), # these callbacks
-                        Separator(),
-                        CloseAction,
-                        name="File")),
-                  width=800, height=600, resizable=True, title="Chaco Plot",  handler=MenuController)
+                  Item('plot', editor=ComponentEditor(), show_label=False), orientation="vertical"), menubar=self.menubar,
+                  width=800, 
+                  height=600, 
+                  resizable=True, 
+                  title="Stoner Plotter",  
+                  handler=MenuController)
         return traits_view
 
     def __init__(self):
         super(StonerPlot, self).__init__()
+        self.data=S.DataFile()
 
-        self.data=S.DataFile(False)
+        self._paint()
+        
+    def _load(self):
+        self.data.load(False)
         self._paint()
 
     def _paint(self):
         p=self.data
 
-        self.cols=p.column_headers
-
-
-        xc=0
-        yc=1
-
-        plotdata = ArrayPlotData(x = p.column(xc), y = p.column(yc))
-
+        if len(p)==0:
+            self.cols=['X', 'Y']
+            plotdata=ArrayPlotData(x=[], y=[])
+        else:
+            self.cols=p.column_headers
+            xc=0
+            yc=1
+            plotdata = ArrayPlotData(x = p.column(xc), y = p.column(yc))
+    
         plot = Plot(plotdata)
 
         if self.type=="scatter":
@@ -102,39 +112,27 @@ class StonerPlot(HasTraits):
     def _xc_changed(self):
         xc=self.xc
         data=self.data.column(xc)
+        self.renderer.xlabel=xc
         self.renderer.index = ArrayDataSource(data)
         self.renderer.index_mapper.range.set_bounds(min(data), max(data))
 
     def _yc_changed(self):
-        xc=self.yc
-        data=self.data.column(xc)
+        yc=self.yc
+        self.renderer.ylabel=yc
+        data=self.data.column(yc)
         self.renderer.value = ArrayDataSource(data)
         self.renderer.value_mapper.range.set_bounds(min(data), max(data))
 
 class MenuController(Handler):
 
-	    # The HasTraits object we are a controller for
-
-	    #---------------------------------------------------------------------------
-	    # Public 'DemoController' interface
-	    #---------------------------------------------------------------------------
-	    #---------------------------------------------------------------------------
-
-    def save(self, ui_info):
-        """
-        Callback for the 'Save Image' menu option.
-        """
-        ui = self.view.edit_traits(view='save_file_view')
-        if ui.result == True:
-            self.view._save()
-
     def load(self, ui_info):
-        """
-        Callback for the 'Load Image' menu option.
-        """
-        ui=self.view.edit_traits(view='load_file_view')
-        if ui.result == True:
-            self.view._load()
+        view = ui_info.ui.context['object']
+        view._load()
+
+    def close_plot(self, ui_info):
+        view = ui_info.ui.context['object']
+        view.__init__()
+
 
 if __name__ == "__main__":
     StonerPlot().configure_traits()
