@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.48 2012/04/02 11:58:07 cvs Exp $
+# $Id: Core.py,v 1.49 2012/04/04 23:04:11 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.49  2012/04/04 23:04:11  cvs
+# Improvements to AnalyseFile and DataFolder
+#
 # Revision 1.48  2012/04/02 11:58:07  cvs
 # Minor bug fixes and corrections
 #
@@ -428,6 +431,12 @@ class DataFile(object):
                 raise AttributeError(name +
                 " is neither an attribute of DataFile, nor a column \
                 heading of this DataFile instance")
+
+    def __contains__(self, item):
+        """Operator function for membertship tests - used to check metadata contents
+        @param item String of metadata key
+        @return iem in self.metadata"""
+        return item in self.metadata
 
     def __getitem__(self, name):
             # called for DataFile[x] returns row x if x is integer, or

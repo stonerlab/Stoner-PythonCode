@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.18 2012/03/27 21:54:04 cvs Exp $
+# $Id: Analysis.py,v 1.19 2012/04/04 23:04:11 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.19  2012/04/04 23:04:11  cvs
+# Improvements to AnalyseFile and DataFolder
+#
 # Revision 1.18  2012/03/27 21:54:04  cvs
 # Fix a bug with loading DataFiles and in __repr__
 # Improve peak finding code a bit
@@ -260,6 +263,25 @@ class AnalyseFile(DataFile):
         else:
             search=self.search(col, bounds, [col])[:, 0]
             return search.min(), search.argmin()
+            
+    def span(self, column, bounds=None):
+        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
+        @param column Column to look for the max and min values in
+        @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
+        @return A tuple of (min value, max value)
+        """
+        return (self.min(column, bounds)[0], self.max(column, bounds)[0])
+        
+    def clip(self, column, clipper):
+        """Clips the data based on the column and the clipper value
+        @param column Column to look for the clipping value in
+        @param clipper Either a tuple of (min,max) or a numpy.ndarray - in which case the max and min values in that array will be used as the clip limits
+        """
+        clipper=(min(clipper), max(clipper))
+        self=self.del_rows(column, lambda x, y:x<clipper[0] or x>clipper[1])
+        return self
+            
+        
 
     def mean(self, column, bounds=None):
         """FInd mean value of a data column
@@ -448,11 +470,12 @@ class AnalyseFile(DataFile):
         Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
         Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
         """
-        if not xcol is None:
-            newX=self.threshold(xcol, newX, True, True)
         from scipy.interpolate import interp1d
         l=numpy.shape(self.data)[0]
         index=numpy.arange(l)
+        if xcol is not None: # We need to convert newX to row indices
+            xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
+            newX=xfunc(newX)
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
@@ -488,7 +511,7 @@ class AnalyseFile(DataFile):
         else:
             xcol=self.column(xcol)
         index=interp1d(i, xcol)
-        z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))+width/2
+        z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
         z=z[:-1]
         if sorted:
             z=numpy.take(z, numpy.argsort(d2(z)))

@@ -2,9 +2,12 @@
 #
 # Classes for working directories of datafiles
 #
-# $Id: Folders.py,v 1.3 2012/03/25 21:18:10 cvs Exp $
+# $Id: Folders.py,v 1.4 2012/04/04 23:04:11 cvs Exp $
 #
 # $Log: Folders.py,v $
+# Revision 1.4  2012/04/04 23:04:11  cvs
+# Improvements to AnalyseFile and DataFolder
+#
 # Revision 1.3  2012/03/25 21:18:10  cvs
 # Documentation updates and minor fixes
 #
@@ -29,7 +32,7 @@ class DataFolder(object):
 
     type=DataFile
     pattern="*.*"
-    directory="."
+    directory=False
     files=[]
     groups={}
 
@@ -70,6 +73,27 @@ class DataFolder(object):
         if not nolist:
             self.getlist(recursive=recursive)
 
+    def _dialog(self, message="Select Folder",  new_directory=True):
+        """Creates a directory dialog box for working with
+        
+        @param message Message to display in dialog
+        @param new_directory True if allowed to create new directory
+        @return A directory to be used for the file operation."""
+        from enthought.pyface.api import DirectoryDialog, OK
+        # Wildcard pattern to be used in file dialogs.
+
+        if isinstance(self.directory, str):
+            dirname = self.directory
+        else:
+            dirname = os.getcwd()
+        dlg = DirectoryDialog(action="open",  default_path=dirname,  message=message,  new_directory=new_directory)
+        dlg.open()
+        if dlg.return_code == OK:
+            self.directory = dlg.path
+            return self.directory
+        else:
+            return None
+
     def __iter__(self):
         """Returns the files iterator object
         @return self.files.__iter__"""
@@ -96,11 +120,18 @@ class DataFolder(object):
         @return A string representation of the current DataFolder object"""
         return "DataFolder("+self.directory+") with pattern "+self.pattern+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
         
-    def getlist(self, recursive=True):
+    def getlist(self, recursive=True, directory=None):
         """Scans the current directory, optionally recursively to build a list of filenames
         @param recursive Do a walk through all the directories for files
+        @param directory Either a string path ot a new directory or False to open a dialog box or not set in which case existing director is used.
         @return A copy of the current DataFoder directory with the files stored in the files attribute"""
         self.files=[]
+        if isinstance(directory,  bool) and not directory:
+            self._dialog()
+        elif isinstance(directory, str):
+            self.directory=directory
+        if isinstance(self.directory, bool) and not self.directory:
+            self._dialog()
         if not recursive:
             root=self.directory
             dirs=[]
@@ -117,6 +148,13 @@ class DataFolder(object):
             for f in fnmatch.filter(files, self.pattern):
                 self.files.append(path.join(root, f))
         return self
+
+    def filterout(self, filter):
+        """Synonym for self.filter(filter,invert=True)
+        
+        @param filter Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
+        @return The current DataFolder object with the files in the file list filtered."""
+        return self.filter(filter, invert=True)
 
     def filter(self, filter=None,  invert=False):
         """Filter the current set of files by some criterion
