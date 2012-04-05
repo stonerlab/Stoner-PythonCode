@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.20 2012/04/03 15:13:44 cvs Exp $
+# $Id: FileFormats.py,v 1.21 2012/04/05 11:32:38 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.21  2012/04/05 11:32:38  cvs
+# Just modified some comments in BNLdata
+#
 # Revision 1.20  2012/04/03 15:13:44  cvs
 # Not sure what was done here !
 #
@@ -422,9 +425,11 @@ class XRDFile(DataFile):
 
 
 class BNLFile(DataFile):
-    """Author Rowan 12/2011
+    """
     Creates BNLFile a subclass of DataFile that caters for files in the format given
     by BNL.
+    
+    Author Rowan 12/2011
 
     The file from BNL must be split into seperate scan files before Stoner can use
     them, a separate python script has been written for this and should be found
@@ -489,6 +494,7 @@ class BNLFile(DataFile):
 
     def load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
         """BNLFile.load(filename)
+        @param filename  Filename to be loaded
 
         Overwrites load method in DataFile class, no header positions and data
         positions are needed because of the hash title structure used in BNL files.
