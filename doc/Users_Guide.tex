@@ -805,13 +805,24 @@ many.\\Default: 1 (all parameters printed)
 \begin{verbatim}
   >>> a.max(column)
   >>> a.min(column)
-  >>> a.max(column,bounds=labda x:x[2]>1 and x[2]<10)
-  >>> a.min(column,bounds=labda x:x[2]>1 and x[2]<10)
+  >>> a.max(column,bounds=labda x,y:y[2]>1 and y[2]<10)
+  >>> a.min(column,bounds=labda x,y:y[2]>1 and y[2]<10)
 \end{verbatim}
 
-Hopefully all of the above are failry obvious ! In the last two cases, one can use a function to limit the search to particular rows (\eg to search for the maximum y value subject to some constraint in x). One important point to note is that the routines return a tuple of two numbers, the maximum (or minimum) and the row number where the maximum or minimum was found.
+Hopefully all of the above are fairly obvious ! In the last two cases, one can use a function to limit the search to particular rows (\eg to search for the maximum y value subject to some constraint in x). One important point to note is that the routines return a tuple of two numbers, the maximum (or minimum) and the row number where the maximum or minimum was found.
 
 \warning{The position of the maximum or minimum value is wrong when using the bounds options ! This note will be removed when the bug is fixed.}
+
+There are a couple of related functions to help here:
+
+\begin{verbatim}
+  >>> a.span(column)
+  >>> a.span(column, bounds=lambda x,y:y[2]>100) 
+  >>> a.clip(column,(max_v,min_v)
+  >>> a.clip(column,b.span(column))
+\end{verbatim}
+
+The span method simply returns a tuple of minimum and maximum values within either the whole column or bounded data. Internally this is just calling the \textbf{max} and \textbf{min} methods. The \textbf{clip} method deletes rows for which the specified column as a value that is either larger or smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple -- \eg the result of the \textbf{span} method, or a complete list as in the last example above. Specifying a single float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
 
 \subsubsection{Thresholding and Interpolating Data}
 \begin{verbatim}
@@ -873,6 +884,21 @@ The current root directory and pattern are stored in the \textit{directory} and 
   >>> f.getlist()
 \end{verbatim}
 
+Sometimes a more complex filename matching mechanism than simple ``globbing'' is useful. The \textit{patter} keyword can also be a compiled regular expression:
+
+\begin{verbatim}
+  >>> import re
+  >>> p=re.compile('i10-\d*.dat')
+  >>> f=DataFolder(pattern=p)
+  >>> p2=re.compile('i10-(?P<run>\d*)')
+  >>> f=DataFolder(pattern=p)
+  >>> f[0]['run']
+\end{verbatim}
+
+The second case illustrates a useful reature of regular expressions - they can be used to capture parts of the matched pattern -- and in the python version, one can name the capturing groups. In both cases above the \textbf{DataFolder} has the same file members (basically these would be runs produced by the i10 beamline at Diamond), but in the second case the run number (which comes after ``i10-'' would be captured and presented as the ``run'' parameter in the metadata when the file was read. \warning{Note that the files are not modified - the extra metadata is only added as the file is read by the \textbf{DataFlder}}. The loading process will also add the metadata key ``Loaded From'' to the file which will give you a note of the filename used to read the data.
+
+Finally, akin to \textbf{DataFile} you can force a dialog box to select a directory by passing \textit{False} into the constructor or getlist methods in place of a directory name.
+
 \subsubsection{Doing Something With Each File}
 
 A \textbf{DataFolder} is an object that you can iterate over, lading the \textbf{DataFile} type object for each of the files in turn. This probides an easy way to run through a set of files, performing the same operation on each:
@@ -917,11 +943,13 @@ The \textbf{filter} method can be used to prune the list of files to be used by 
 
 \begin{verbatim}
   >>> f.filter('[ab]*.dat')
+  >>> import re
+  >>> f.filter(re.compile('i10-\d*\.dat'))
   >>> f.filter(lambda x: x['Temperature']>150)
   >>> f.filter(lambda x: x['Temperature']>150,invert=True)
 \end{verbatim}
 
-The first form performs the filter on the filenames (using the standard python fnmatch module). The second variant calls the supplied function, passing the current file as a \textbf{DataFile} object in each time. If the function evaluates to be True then the file is kept. The \textit{invert} keyword is used to invert the sense of the filter (a particularly silly example here, since the greater than sign could simply be replaced with a less than or equals sign !).
+The first form performs the filter on the filenames (using the standard python fnmatch module). One can also use a regular expression as illustrated int he second example -- although unlike using the \textit{pattern} keyword in \textbf{getlist}, there is no option to capture metadata (although one could then subsequently set the pattern to achieve this). The third variant calls the supplied function, passing the current file as a \textbf{DataFile} object in each time. If the function evaluates to be True then the file is kept. The \textit{invert} keyword is used to invert the sense of the filter (a particularly silly example here, since the greater than sign could simply be replaced with a less than or equals sign !).
 
 One of the more common tasks is to group a long list of data files into separate groups according to some logical test --  for example gathering files with magnetic field sweeps in a positive direction together and those with magnetic field in a negative direction together. The \textbf{group} method provides a powerful way to do this. Suppose we have a series of data curves taken at a variety of temperatures and with three different magnetic fields:
 
@@ -1031,6 +1059,13 @@ then follows the code to actually read the file. It \underline{must} at the very
         return self
 \end{verbatim}
 One useful function for reading metadata from files is \textit{self.metadata.string\_to\_type()} which will try to convert a string representation of data into a sensible Python type.
+
+There is one global attribute that can be used to tweak the automatic file importing code.
+\begin{verbatim}
+      f.priority=32
+\end{verbatim}
+
+When the subclasses are tried to see if they can load an undetermined file, they are tried in order of priority. If your load code can make a positive determination that it has the correct file (\eg by looking for some magic combination of characters at the start of the file) and can throw an exception if it tries loading an incorrect file, then you can give it a lower priority number to force it to run earlier. Conversely if your only way of identifying your own files is seeing they make sense when you try to load them and that you might partially succeed with a file from another system (as can happen if you have a tab or comma separated text file), then you should raise the priority number. Currently \textbf{DataFolder} defaults to 32, \textbf{CSVFile} and \textbf{BigBlueFile} have values of 128 and 64 respectively.
 
 If you need to write any additional methods please make sure that they have DoxyGen document strings so that the API documentation is picked up correctly.
 
