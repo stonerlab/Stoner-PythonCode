@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.49 2012/04/04 23:04:11 cvs Exp $
+# $Id: Core.py,v 1.50 2012/04/06 19:36:08 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.50  2012/04/06 19:36:08  cvs
+# Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
+#
 # Revision 1.49  2012/04/04 23:04:11  cvs
 # Improvements to AnalyseFile and DataFolder
 #
@@ -715,32 +718,17 @@ class DataFile(object):
             self.column_headers = ["" for x in range(self.data.shape[1])]
             self.column_headers[0:len(headers)] = headers
 
-    def __parse_plain_data(self, header_line=3, data_line=7,
-                           data_delim=' ', header_delim=','):
-        """An intrernal function for parsing deliminated data without a leading
-        column of metadata.copy
-        @param header_line is the line on which the column headers are
-        recorded (default 3)
-        @param data_line is the first line of tabulated data (default 7)
-        @param data_delim is the deliminator for the data rows (default = space)
-        @param header_delim is the deliminator for the header values
-        (default = tab)
-        @return Nothing, but updates the current instances data
-
-        NBThe default values are configured fir read VSM data files
-        """
-        header_string = linecache.getline(self.filename, header_line)
-        header_string = re.sub(r'["\n]', '', header_string)
-        self.column_headers = map(lambda x:
-            x.strip(),  header_string.split(header_delim))
-        self.data = numpy.genfromtxt(self.filename, dtype='float',
-                            delimiter=data_delim, skip_header=data_line - 1)
-
-    def __loadHariboPlain(self):
-
-        self.__parse_plain_data(0, 0, data_delim='\t', header_delim='\t')
-
     #   PUBLIC METHODS
+
+    def get(self, item):
+        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
+        @param item A string representing the metadata keyname
+        @return self.metadata[item] or None if item not in self.metadata"""
+        try:
+            return self[item]
+        except KeyError:
+            return None
+
 
     def get_filename(self, mode):
         self.filename = self.__file_dialog(mode)
@@ -788,7 +776,7 @@ class DataFile(object):
             self.metadata=test.metadata
             self.column_headers=test.column_headers
             self["Loaded as"]=cls.__name__
-            
+
         return self
 
     def save(self, filename=None):

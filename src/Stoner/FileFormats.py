@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.21 2012/04/05 11:32:38 cvs Exp $
+# $Id: FileFormats.py,v 1.22 2012/04/06 19:36:08 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.22  2012/04/06 19:36:08  cvs
+# Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
+#
 # Revision 1.21  2012/04/05 11:32:38  cvs
 # Just modified some comments in BNLdata
 #
@@ -221,8 +224,9 @@ class RasorFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        if f.next()!="&SRS":
-            raise RuntimeError("Not a GDA File from Rasor ?")
+        line=f.next().strip()
+        if line!="&SRS":
+            raise RuntimeError("Not a GDA File from Rasor ?"+str(line))
         while f.next().strip()!="<MetaDataAtStart>":
             pass
         line=f.next().strip()
@@ -428,7 +432,7 @@ class BNLFile(DataFile):
     """
     Creates BNLFile a subclass of DataFile that caters for files in the format given
     by BNL.
-    
+
     Author Rowan 12/2011
 
     The file from BNL must be split into seperate scan files before Stoner can use
