@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.19 2012/04/04 23:04:11 cvs Exp $
+# $Id: Analysis.py,v 1.20 2012/04/19 20:07:07 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.20  2012/04/19 20:07:07  cvs
+# Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
+#
 # Revision 1.19  2012/04/04 23:04:11  cvs
 # Improvements to AnalyseFile and DataFolder
 #
@@ -236,16 +239,17 @@ class AnalyseFile(DataFile):
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
         @return (maximum value,row index of max value)
 
-        @todo Fix the row index when the bounds function is used (invent a self.lookup method)
 
                 AnalysisFile.max(column)
                 """
         col=self.find_col(column)
-        if bounds is None:
-            return self.data[:, col].max(), self.data[:, col].argmax()
-        else:
-            search=self.search(col, bounds, [col])[:, 0]
-            return search.max(), search.argmax()
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].max(), self.data[:, col].argmax()
+        if bounds is not None:
+            self._pop_mask()
+        return result
 
     def min(self, column, bounds=None):
         """FInd minimum value and index in a column of data
@@ -254,15 +258,16 @@ class AnalyseFile(DataFile):
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
         @return (minimum value,row index of min value)
 
-        @todo Fix the row index when the bounds function is used - see note of \b max
-                AnalysisFile.min(column)
+                 AnalysisFile.min(column)
                 """
         col=self.find_col(column)
-        if bounds is None:
-            return self.data[:, col].min(), self.data[:, col].argmin()
-        else:
-            search=self.search(col, bounds, [col])[:, 0]
-            return search.min(), search.argmin()
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].min(), self.data[:, col].argmin()
+        if bounds is not None:
+            self._pop_mask()
+        return result
             
     def span(self, column, bounds=None):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
@@ -294,11 +299,14 @@ class AnalyseFile(DataFile):
                 AnalysisFile.min(column)
                 """
         col=self.find_col(column)
-        if bounds is None:
-            return self.data[:, col].mean()
-        else:
-            search=self.search(col, bounds, [col])[:, 0]
-            return search.mean()
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].mean()
+        if bounds is not None:
+            self._pop_mask()
+        return result
+
 
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.

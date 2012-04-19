@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.50 2012/04/06 19:36:08 cvs Exp $
+# $Id: Core.py,v 1.51 2012/04/19 20:07:07 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.51  2012/04/19 20:07:07  cvs
+# Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
+#
 # Revision 1.50  2012/04/06 19:36:08  cvs
 # Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
 #
@@ -66,10 +69,12 @@ import scipy
 import os
 import sys
 import numpy
+import numpy.ma as ma
 import math
 import copy
 import linecache
 import wx
+import inspect
 
 
 class evaluatable:
@@ -326,11 +331,12 @@ class DataFile(object):
     #   CONSTANTS
     defaultDumpLocation = 'C:\\dump.csv'
 
-    data = numpy.array([])
+    data = ma.masked_array([])
     metadata = typeHintedDict()
     filename = None
     column_headers = list()
     priority=32
+    _masks=[False]
 
 
     #   INITIALISATION
@@ -369,32 +375,32 @@ class DataFile(object):
                 isinstance(args[0], bool) and not args[0])):
                                         # Filename- load datafile
                 t = self.load(*args, **kargs)
-                self.data = t.data
+                self.data = ma.masked_array(t.data)
                 self.metadata = t.metadata
                 self.column_headers = t.column_headers
             elif isinstance(args[0], numpy.ndarray):
                                                     # numpy.array - set data
-                self.data = args[0]
+                self.data = ma.masked_array(args[0])
                 self.column_headers = ['Column' + str(x)
                                     for x in range(numpy.shape(args[0])[1])]
             elif isinstance(args[0], dict):  # Dictionary - use as metadata
                 self.metadata = args[0].copy()
             elif isinstance(args[0], DataFile):
                 self.metadata = args[0].metadata.copy()
-                self.data = args[0].data
+                self.data = ma.masked_array(args[0].data)
                 self.column_headers = args[0].column_headers
             else:
                 raise SyntaxError("No constructor")
         elif len(args) == 2:
                             # 2 argument forms either array,dict or dict,array
             if isinstance(args[0], numpy.ndarray):
-                self.data = args[0]
+                self.data = ma.masked_array(args[0])
             elif isinstance(args[0], dict):
                 self.metadata = args[0].copy()
             elif isinstance(args[0], str) and isinstance(args[1], str):
                 self.load(args[0], args[1])
             if isinstance(args[1], numpy.ndarray):
-                self.data = args[1]
+                self.data = ma.masked_array(args[1])
             elif isinstance(args[1], dict):
                 self.metadata = args[1].copy()
         elif len(args) > 2:
@@ -427,6 +433,8 @@ class DataFile(object):
             return self.data.view(dtype=dtype).reshape(len(self))
         elif name == "clone":
             return copy.deepcopy(self)
+        elif name=="mask":
+            return ma.getmaskarray(self.data)
         else:
             try:
                 return self.column(name)
@@ -435,6 +443,20 @@ class DataFile(object):
                 " is neither an attribute of DataFile, nor a column \
                 heading of this DataFile instance")
 
+    def __setattr__(self, name, value):
+        """Handles attempts to set attributes not covered with class attribute variables.
+        @param name Name of attribute to set. Details of possible attributes below:
+        
+        \b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
+        the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
+        if name=="mask":
+            if callable(value):
+                self._set_mask(value, invert=False)
+            else:
+                self.data.mask=value
+        else:
+            self.__dict__[name] = value 
+    
     def __contains__(self, item):
         """Operator function for membertship tests - used to check metadata contents
         @param item String of metadata key
@@ -614,17 +636,17 @@ class DataFile(object):
                 @return \a self in a textual format. """
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
-        self.data=numpy.atleast_2d(self.data)
+        self.data=ma.masked_array(numpy.atleast_2d(self.data))
         (r, c) = numpy.shape(self.data)
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + "\t".join(self.data[x].astype(numpy.dtype('|S12')))+ "\n"
+            outp = outp + md[x] + "\t" + "\t".join(self.data[x].filled().astype(numpy.dtype('|S12')))+ "\n"
         if m > r:  # More metadata
             for x in range(r, m):
                     outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             for x in range(m, r):
-                    outp = outp + "\t" + "\t".join(self.data[x].astype(numpy.dtype('|S12')))+ "\n"
+                    outp = outp + "\t" + "\t".join(self.data[x].filled().astype(numpy.dtype('|S12')))+ "\n"
         return outp
 
     def __len__(self):
@@ -634,7 +656,7 @@ class DataFile(object):
         return numpy.shape(self.data)[0]
 
     def __setstate__(self, state):
-        self.data = state["data"]
+        self.data = ma.masked_array(state["data"])
         self.column_headers = state["column_headers"]
         self.metadata = state["metadata"]
 
@@ -676,6 +698,52 @@ class DataFile(object):
         else:
             return None
 
+    def _set_mask(self, func, invert=False,  cumulative=False, col=0):
+        """Applies func to each row in self.data and uses the result to set the mask for the row
+        @param func A Callable object of the form lambda x:True where x is a row of data (numpy
+        @pram invert Optionally invert te reult of the func test so that it unmasks data instead
+        @param cumulative if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
+        
+        i=-1
+        args=len(inspect.getargs(func.__code__)[0])
+        for r in self.rows():
+            i+=1
+            if args==2:
+                t=func(r[col], r)
+            else:
+                t=func(r)
+            if isinstance(t, bool) or isinstance(t, numpy.bool_):
+                if t^invert:
+                    self.data[i]=ma.masked
+                elif not cumulative:
+                    self.data[i]=self.data.data[i]
+            else:
+                for j in range(min(len(t), numpy.shape(self.data)[1])):
+                    if t[j]^invert:
+                        self.data[i, j]=ma.masked
+                    elif not cumulative:
+                        self.data[i, j]=self.data.data[i, j]
+                    
+    def _push_mask(self, mask=None):
+        """Copy the current data mask to a temporary store and replace it with a new mask if supplied
+        @param mask The new data mask to apply (defaults to None = unmask the data
+        @return None"""
+        self._masks.append(self.mask)
+        if mask is None:
+            self.data.mask=False
+        else:
+            self.mask=mask
+            
+    def _pop_mask(self):
+        """Replaces the mask on the data with the last one stored by _push_mask()
+        @return None"""
+        self.mask=False
+        self.mask=self._masks.pop()
+        if len(self._masks)==0:
+            self.__masks=[False]
+
+
+    
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate
         dictionary from the metadata
@@ -700,7 +768,7 @@ class DataFile(object):
         row = reader.next()
         assert row[0] == "TDI Format 1.5"
                             # Bail out if not the correct format
-        self.data = numpy.array([])
+        self.data = ma.masked_array([])
         headers = row[1:len(row)]
         maxcol = 1
         for row in reader:
@@ -757,7 +825,7 @@ class DataFile(object):
                 self["Loaded as"]=filetype.__name__
             failed=False
             return self
-        except: # We failed to parse assuming this was a TDI
+        except AssertionError: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
                 subclasses={x:x.priority for x in itersubclasses(DataFile)}
                 for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
@@ -772,7 +840,7 @@ class DataFile(object):
         if failed:
             raise SyntaxError("Failed to load file")
         else:
-            self.data=test.data
+            self.data=ma.masked_array(test.data)
             self.metadata=test.metadata
             self.column_headers=test.column_headers
             self["Loaded as"]=cls.__name__
@@ -937,12 +1005,11 @@ class DataFile(object):
                 c = args[2]
             targets = map(self.find_col, c)
             val = args[1]
+        col=self.find_col(col)
         if len(targets) == 0:
             targets = range(self.data.shape[1])
-        d = numpy.transpose(numpy.atleast_2d(self.column(col)))
-        d = numpy.append(d, self.data[:, targets], 1)
         if callable(val):
-            rows = numpy.nonzero([val(x[0], x[1:]) for x in d])[0]
+            rows = numpy.nonzero([bool(val(x[col], x) and not x.mask[col]) for x in self])[0]
         elif isinstance(val, float):
             rows = numpy.nonzero([x[0] == val for x in d])[0]
         return self.data[rows][:, targets]
@@ -980,10 +1047,11 @@ class DataFile(object):
             col = self.find_col(col)
             d = self.column(col)
             if callable(val):
-                rows = numpy.nonzero([val(x[col], x) for x in self])[0]
+                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask[col]) for x in self])[0]
+                print rows
             elif isinstance(val, float):
                 rows = numpy.nonzero([x == val for x in d])[0]
-            self.data = numpy.delete(self.data, rows, 0)
+            self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
         return self
 
     def add_column(self, column_data, column_header=None, index=None,
@@ -1041,9 +1109,9 @@ class DataFile(object):
             self.data[:, index] = numpy_data
         else:
             if len(self.data) == 0:
-                self.data=numpy.transpose(numpy.atleast_2d(numpy_data))
+                self.data=ma.masked_array(numpy.transpose(numpy.atleast_2d(numpy_data)))
             else:
-                self.data = numpy.insert(self.data, index, numpy_data, 1)
+                self.data = ma.masked_array(numpy.insert(self.data, index, numpy_data, 1))
         return self
 
     def del_column(self, col):
@@ -1052,7 +1120,7 @@ class DataFile(object):
                 to the column to be deleted
                 @return The @b DataFile object with the column deleted."""
         c = self.find_col(col)
-        self.data = numpy.delete(self.data, c, 1)
+        self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
         if isinstance(c, list):
             c.sort(reverse=True)
         else:
@@ -1108,7 +1176,7 @@ class DataFile(object):
         for col in cols:
             newdata = numpy.append(newdata, numpy.atleast_2d(self.data[:,
                                                 self.find_col(col)]), axis=0)
-        self.data = numpy.transpose(newdata)
+        self.data = ma.masked_array(numpy.transpose(newdata))
         return self
 
     def rows(self):
@@ -1139,8 +1207,8 @@ class DataFile(object):
             order = [self.column_headers[self.find_col(order)]]
         d = numpy.sort(self.records, order=order)
         #print d
-        self.data = d.view(dtype='f8').reshape(len(self), len(self.
-                                                              column_headers))
+        self.data = ma.masked_array(d.view(dtype='f8').reshape(len(self), len(self.
+                                                              column_headers)))
         return self
 
     def edit(self):
