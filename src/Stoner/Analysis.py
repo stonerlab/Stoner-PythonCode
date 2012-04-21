@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.20 2012/04/19 20:07:07 cvs Exp $
+# $Id: Analysis.py,v 1.21 2012/04/21 21:51:24 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.21  2012/04/21 21:51:24  cvs
+# Fix a bug with AnalysFile polyfit
+#
 # Revision 1.20  2012/04/19 20:07:07  cvs
 # Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
 #
@@ -207,7 +210,10 @@ class AnalyseFile(DataFile):
                 bounds function should be a python function that takes a single paramter that represents an x value
                 and returns true if the datapoint is to be retained and false if it isn't."""
         working=self.search(column_x, bounds)
-        return numpy.polyfit(working[self.find_col(column_x)],working[self.find_col(column_y)],polynomial_order)
+        p= numpy.polyfit(working[:, self.find_col(column_x)],working[:, self.find_col(column_y)],polynomial_order)
+        if result is not None:
+            self.add_column(numpy.polyval(p, self.column(column_x)), index=result, replace=False, column_header='Fitter with '+str(polynomial_order)+' order poylnomial')
+        return p
 
     def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None ):
         """General curve fitting function passed through from numpy
@@ -225,7 +231,7 @@ class AnalyseFile(DataFile):
 
         working=self.search(xcol, bounds, [xcol, ycol])
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
-        if not result is None:
+        if result is not None:
             (args, varargs, keywords, defaults)=getargspec(func)
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]

@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.51 2012/04/19 20:07:07 cvs Exp $
+# $Id: Core.py,v 1.52 2012/04/21 21:51:24 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.52  2012/04/21 21:51:24  cvs
+# Fix a bug with AnalysFile polyfit
+#
 # Revision 1.51  2012/04/19 20:07:07  cvs
 # Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
 #
@@ -1006,10 +1009,18 @@ class DataFile(object):
             targets = map(self.find_col, c)
             val = args[1]
         col=self.find_col(col)
+        print col
         if len(targets) == 0:
             targets = range(self.data.shape[1])
         if callable(val):
-            rows = numpy.nonzero([bool(val(x[col], x) and not x.mask[col]) for x in self])[0]
+            from inspect import getargspec
+            (args, varargs, keywords, defaults)=getargspec(val)
+            if len(args)==1: # Handle one argrument search function
+                val=lambda x, y:val(y)
+            if numpy.isscalar(self.data[0].mask): # check if the mask is defined or not
+                rows = numpy.nonzero([bool(val(x[col], x)) and not x.mask for x in self])[0]
+            else:
+                rows = numpy.nonzero([bool(val(x[col], x)) and not x.mask[col] for x in self])[0]
         elif isinstance(val, float):
             rows = numpy.nonzero([x[0] == val for x in d])[0]
         return self.data[rows][:, targets]
