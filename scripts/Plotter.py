@@ -13,6 +13,7 @@ from chaco.api import add_default_axes, add_default_grids, \
 from chaco.tools.api import PanTool, ZoomTool
 from enthought.chaco.tools.cursor_tool import CursorTool, BaseCursorTool
 
+
 import numpy
 
 import Stoner as S
@@ -178,8 +179,8 @@ class StonerPlot(HasTraits):
         )
 
         traits_view = View(Tabbed(group1, group2), menubar=self.menubar,
-                  width=800, 
-                  height=600, 
+                  width=1024, 
+                  height=768, 
                   resizable=True, 
                   title="Stoner Plotter",  
                   handler=MenuController)
@@ -188,6 +189,7 @@ class StonerPlot(HasTraits):
     def __init__(self):
         super(StonerPlot, self).__init__()
         self.data=S.DataFile()
+        self.code=PythonShell()
         self.data.data=numpy.zeros((1, 2))
         self.data.column_headers=["X", "Y"]
 

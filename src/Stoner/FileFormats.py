@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.22 2012/04/06 19:36:08 cvs Exp $
+# $Id: FileFormats.py,v 1.23 2012/04/28 20:05:14 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.23  2012/04/28 20:05:14  cvs
+# Switch RasorFile to OpenGDAFile and make it handle blank lines in metadata
+#
 # Revision 1.22  2012/04/06 19:36:08  cvs
 # Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
 #
@@ -214,7 +217,7 @@ class QDSquidVSMFile(DataFile):
         self.data=numpy.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
         return self
 
-class RasorFile(DataFile):
+class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
 
     def load(self,filename=None,*args, **kargs):
@@ -232,6 +235,9 @@ class RasorFile(DataFile):
         line=f.next().strip()
         while line!="</MetaDataAtStart>":
             parts=line.split('=')
+            if len(parts)!=2:
+                line=f.next().strip()
+                continue
             key=parts[0]
             value=parts[1].strip()
             self.metadata[key]=self.metadata.string_to_type(value)
@@ -241,6 +247,10 @@ class RasorFile(DataFile):
         self.column_headers=f.next().strip().split("\t")
         self.data=numpy.genfromtxt(f,dtype='float', invalid_raise=False)
         return self
+
+class RasorFile(OpenGDAFile):
+    """Just an alias for OpenGDAFile"""
+    pass
 
 
 class SPCFile(DataFile):
