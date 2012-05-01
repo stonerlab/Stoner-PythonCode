@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.23 2012/04/28 20:05:14 cvs Exp $
+# $Id: FileFormats.py,v 1.24 2012/05/01 14:24:49 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.24  2012/05/01 14:24:49  cvs
+# FmokeFile class added to FileFormats
+#
 # Revision 1.23  2012/04/28 20:05:14  cvs
 # Switch RasorFile to OpenGDAFile and make it handle blank lines in metadata
 #
@@ -519,6 +522,26 @@ class BNLFile(DataFile):
         """
         self.filename=filename
         self.__parse_BNL_data() #call an internal function rather than put it in load function
+        return self
+
+
+class FmokeFile(DataFile):
+    """Extends DataFile to open Fmoke Files"""
+
+    def load(self,filename=None,*args, **kargs):
+        """Just call the parent class but with the right parameters set"""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        f=fileinput.FileInput(self.filename) # Read filename linewise
+        value=[float(x.strip()) for x in f.next().split('\t')]
+        label=[ x.strip() for x in f.next().split('\t')]
+        del(label[0])
+        for k,v in zip(label, value):
+               self.metadata[k]=v # Create metatdata from first 2 lines
+        self.column_headers=f.next().strip().split("\t")
+        self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
 
