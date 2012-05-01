@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.52 2012/04/21 21:51:24 cvs Exp $
+# $Id: Core.py,v 1.53 2012/05/01 13:08:09 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.53  2012/05/01 13:08:09  cvs
+# Restore an overwritten rename and fixed __repr__ methods
+#
 # Revision 1.52  2012/04/21 21:51:24  cvs
 # Fix a bug with AnalysFile polyfit
 #
@@ -65,7 +68,7 @@
 
 # Imports
 
-import csv
+import fileinput
 import re
 import scipy
 #import pdb # for debugging
@@ -340,6 +343,8 @@ class DataFile(object):
     column_headers = list()
     priority=32
     _masks=[False]
+    _conv_string=numpy.vectorize(lambda x:str(x))
+    _conv_float=numpy.vectorize(lambda x:float(x))
 
 
     #   INITIALISATION
@@ -643,13 +648,13 @@ class DataFile(object):
         (r, c) = numpy.shape(self.data)
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + "\t".join(self.data[x].filled().astype(numpy.dtype('|S12')))+ "\n"
+            outp = outp + md[x] + "\t" + "\t".join([str(x) for x in self.data[x].filled()])+ "\n"
         if m > r:  # More metadata
             for x in range(r, m):
                     outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             for x in range(m, r):
-                    outp = outp + "\t" + "\t".join(self.data[x].filled().astype(numpy.dtype('|S12')))+ "\n"
+                    outp = outp + "\t" + "\t".join([str(x) for x in self.data[x].filled()])+ "\n"
         return outp
 
     def __len__(self):
@@ -766,31 +771,37 @@ class DataFile(object):
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
-        reader = csv.reader(open(self.filename, "rb"), delimiter='\t',
-                            quoting=csv.QUOTE_NONE)
-        row = reader.next()
-        assert row[0] == "TDI Format 1.5"
-                            # Bail out if not the correct format
-        self.data = ma.masked_array([])
-        headers = row[1:len(row)]
-        maxcol = 1
-        for row in reader:
-            if maxcol < len(row):
-                    maxcol = len(row)
-            if row[0].find('=') > -1:
-                md = row[0].split('=')
-                self.__parse_metadata(md[0], md[1])
-            if (len(row[1:len(row)]) > 1) or len(row[1]) > 0:
-                self.data = numpy.append(self.data, map(lambda x:
-                                                        float(x), row[1:]))
-        else:
-            shp = (-1, maxcol - 1)
-            self.data = numpy.reshape(self.data,  shp)
-            self.column_headers = ["" for x in range(self.data.shape[1])]
-            self.column_headers[0:len(headers)] = headers
+        
+        reader=fileinput.FileInput(self.filename)
+        row=reader.next().split('\t')
+        if row[0].strip()!="TDI Format 1.5":
+            raise RuntimeError("Not a TDI File")
+        self.column_headers=row[1:]
+        cols=len(self.column_headers)
+        self.data=ma.masked_array([])
+        for r in reader:
+            row=r.split('\t')
+            cols=max(cols, len(row)-1)
+            if row[0].strip()!='':
+                md=row[0].split('=')
+                if len(md)==2:
+                    self.metadata[md[0].strip()]=md[1].strip()
+            self.data=numpy.append(self.data, self._conv_float(row[1:]))
+        self.data=numpy.reshape(self.data, (-1, cols))
 
     #   PUBLIC METHODS
 
+    def rename(self, old_col, new_col):
+        """Renames columns without changing the underlying data
+        @param old_col Old column index or name (using standard rules)
+        @param new_col New name of column
+        @return A copy of self
+        """
+        
+        old_col=self.find_col(old_col)
+        self.column_headers[old_col]=new_col
+        return self
+    
     def get(self, item):
         """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
         @param item A string representing the metadata keyname
