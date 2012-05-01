@@ -1,9 +1,9 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.25 2012/05/01 14:45:54 cvs Exp $
+# $Id: FileFormats.py,v 1.26 2012/05/01 16:11:03 cvs Exp $
 # $Log: FileFormats.py,v $
-# Revision 1.25  2012/05/01 14:45:54  cvs
-# *** empty log message ***
+# Revision 1.26  2012/05/01 16:11:03  cvs
+# Workinf FmokeFile format
 #
 # Revision 1.23  2012/04/28 20:05:14  cvs
 # Switch RasorFile to OpenGDAFile and make it handle blank lines in metadata
@@ -540,8 +540,7 @@ class FmokeFile(DataFile):
         del(label[0])
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
-        column_headers=[f.next().split("\t")]
-        self.column_headers=map(lambda x: x.strip(),  column_headers)
+        self.column_headers=[ x.strip() for x in f.next().split('\t')]      
         self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
