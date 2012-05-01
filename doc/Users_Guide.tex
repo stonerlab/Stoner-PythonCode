@@ -171,7 +171,7 @@ Sometimes you won't know exactly which subclass of \textbf{DataFile} is the one 
 \subsection{Examining Some Data}
 \subsubsection{Data, Column headers and metadata}
 Having loaded some data, the next stage might be to take a look at it.
-Internally, data is represented as a 2D numpy array of floating point numbers,
+Internally, data is represented as a 2D numpy masked array of floating point numbers,
 along with a list of column headers and a dictionary that keeps the metadata and
 also keeps track of the expected type of the metadata (\ie the meta-metadata).
 These can be accessed like so:
@@ -180,6 +180,27 @@ These can be accessed like so:
   >>>d.column_headers
   >>>d.metadata
 \end{verbatim}
+
+\subsubsection{Masked Data and Why You Care}
+Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements. This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean value or plotting some data. One could, of course, simply ignore the masking option and use the data as is, however, masking does have a number of practical uses.
+
+The data mask can be accessed via the \textit{mask} attribute of \textbf{DataFile}:
+\begin{verbatim}
+  >>> import numpy.ma as ma
+  >>> print d.mask
+  >>> d.mask=False
+  >>> d.mask=ma.nomask
+  >>> d.mask=numpy.array([[True, True, Fale,...False],...,
+      [False,True,...True]])
+  >>> d.mask=lambda x: x[0]<50
+  >>> d.mask=lambda x:[y<50 for y in x]
+\end{verbatim}
+
+The first line is simply the import statement for the numpy masked arrays in order to get the \textit{nomask} symbol. The second line will simply print the current mask. The next two examples will unmask all the data \ie make the values visible and useable. The next example illustrates using a numpy array of booleans to set the mask - every element in the mask array that evaluates as a boolean True will be masked and every False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on the data via \verb'd.data.mask' but the final two examples illustrate an extension that setting the \textbf{DataFile} mask attribute allows. If you pass a callable object to the mask attribute it will be executed, passing each row of the data array to the user supplied function as a numpy array. The user supplied function can then either return a single boolean value -- in which case it will be used to mask the entire row -- or a list of booleans to mask individual cells in the current row.
+
+Ny default when the \textbf{DataFile} object is printed or saved, data values that have been masked are replaced with a ``fill'' value of $10^{20}$.
+
+\warning{This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any chance that you will need the masked data values again later !}
 
 \subsubsection{Working with columns of data}
 
@@ -441,6 +462,16 @@ Sometimes it is useful to rearrange columns of data. \textbf{DataFile} offers a 
 
 The \textbf{swap} method takes either a tuple of column names/indices or a list of such tuples and swaps the columns accordingly, whilst the \textbf{reorder} method takes a list of column labels/indices and constructs a new data matrix out of those columns in the new order. The \textit{headers\_too=False} options, as the name suggests, cause the column headers not be rearranged.
 
+\subsubsection{Renaming Columns of Data}
+As a convenience, \textbf{DataFile} also offers a useful method to rename data columns:
+
+\begin{verbatim}
+  >>> d.rename('old_name','new_name')
+  >>> d.rename(0,'new_name')
+\end{verbatim}
+
+Alternatively,of course, one could just edit the column\_headers attribute.
+
 \subsubsection{Inserting Columns of Data}
 The append columns operator \verb#&# will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
@@ -684,13 +715,14 @@ with variants that take either a 1D array of data or a constant instead of the B
 
 \subsection{Curve Fitting}
 
-\subsubsection{Simply polynomial Fits}
+\subsubsection{Simple polynomial Fits}
 
 Simple least squares fitting of polynomial functions is handled by the
 \textbf{AnalyseFile.polyfit} method:
 
 \begin{verbatim}
-  >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True)
+  >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,
+                                                        result="New Column")
 \end{verbatim}
 
 This is a simple pass through to the numpy routine of the same name. The x and y
@@ -700,8 +732,10 @@ is a list or slice. The polynomial\_order parameter should be a simple integer
 greater or equal to 1 to define the degree of polynomial to fit. The bounds
 function follows the same rules as the bounds function in
 \textbf{DataFile.search} to restrict the fitting to a limited range of rows. The
-mthod returns a list of co-efficients with the highest power first. If
+method returns a list of co-efficients with the highest power first. If
 \textit{column\_y} was a list, then a 2D array of co-efficients is returned.
+
+If \textit{result} is specified then a new column with the header given by the result parameter will be created and the fitted polynomial evaluated at each point.
 
 \subsubsection{Simple function fitting}
 
@@ -711,7 +745,7 @@ the same name.
 
 \begin{verbatim}
   >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
-                                bounds=lambda x, y: True )
+                bounds=lambda x, y: True, result="New column" )
 \end{verbatim}
 
 The first parameter is the fitting function. This should have prototype
@@ -727,6 +761,9 @@ of data.
 \textbf{AnalyseFile.curve\_fit} returns a list of two arrays \verb:[popt,pcov]:
 where \textit{popt} is an array of the optimal fitting parameters and
 \textit{pcov} is a 2D array of the co-variances between the parameters.
+
+If \textit{result} is specified then a new column with the header given by the result parameter will be created and the fitted function evaluated at each point.
+
 
 \subsubsection{Fitting with limits}
 
@@ -811,18 +848,22 @@ many.\\Default: 1 (all parameters printed)
 
 Hopefully all of the above are fairly obvious ! In the last two cases, one can use a function to limit the search to particular rows (\eg to search for the maximum y value subject to some constraint in x). One important point to note is that the routines return a tuple of two numbers, the maximum (or minimum) and the row number where the maximum or minimum was found.
 
-\warning{The position of the maximum or minimum value is wrong when using the bounds options ! This note will be removed when the bug is fixed.}
-
 There are a couple of related functions to help here:
 
 \begin{verbatim}
   >>> a.span(column)
-  >>> a.span(column, bounds=lambda x,y:y[2]>100) 
+  >>> a.span(column, bounds=lambda x,y:y[2]>100)
   >>> a.clip(column,(max_v,min_v)
   >>> a.clip(column,b.span(column))
 \end{verbatim}
 
 The span method simply returns a tuple of minimum and maximum values within either the whole column or bounded data. Internally this is just calling the \textbf{max} and \textbf{min} methods. The \textbf{clip} method deletes rows for which the specified column as a value that is either larger or smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple -- \eg the result of the \textbf{span} method, or a complete list as in the last example above. Specifying a single float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
+
+It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set, in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around, however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the bounds function:
+
+\begin{verbatim}
+  >>> a.span(column,bounds=lambda x,y:y[2]>10 or not numpy.any(y.mask))
+\end{verbatim}
 
 \subsubsection{Thresholding and Interpolating Data}
 \begin{verbatim}
