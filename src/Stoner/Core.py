@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.53 2012/05/01 13:08:09 cvs Exp $
+# $Id: Core.py,v 1.54 2012/05/02 23:03:09 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.54  2012/05/02 23:03:09  cvs
+# Update documentation, improve loading handling of external fileformats.
+#
 # Revision 1.53  2012/05/01 13:08:09  cvs
 # Restore an overwritten rename and fixed __repr__ methods
 #
@@ -342,6 +345,7 @@ class DataFile(object):
     filename = None
     column_headers = list()
     priority=32
+    debug=False
     _masks=[False]
     _conv_string=numpy.vectorize(lambda x:str(x))
     _conv_float=numpy.vectorize(lambda x:float(x))
@@ -839,10 +843,12 @@ class DataFile(object):
                 self["Loaded as"]=filetype.__name__
             failed=False
             return self
-        except AssertionError: # We failed to parse assuming this was a TDI
+        except RuntimeError: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
                 subclasses={x:x.priority for x in itersubclasses(DataFile)}
                 for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
+                    if self.debug:
+                        print cls.__class__.__name__
                     try:
                         test=cls()
                         test.load(self.filename, auto_load=False)

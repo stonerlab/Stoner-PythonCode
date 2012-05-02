@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.21 2012/04/21 21:51:24 cvs Exp $
+# $Id: Analysis.py,v 1.22 2012/05/02 23:03:09 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.22  2012/05/02 23:03:09  cvs
+# Update documentation, improve loading handling of external fileformats.
+#
 # Revision 1.21  2012/04/21 21:51:24  cvs
 # Fix a bug with AnalysFile polyfit
 #
@@ -279,15 +282,15 @@ class AnalyseFile(DataFile):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
         @param column Column to look for the max and min values in
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
-        @return A tuple of (min value, max value)
-        """
+        @return A tuple of (min value, max value)"""
+        
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
         
     def clip(self, column, clipper):
         """Clips the data based on the column and the clipper value
         @param column Column to look for the clipping value in
-        @param clipper Either a tuple of (min,max) or a numpy.ndarray - in which case the max and min values in that array will be used as the clip limits
-        """
+        @param clipper Either a tuple of (min,max) or a numpy.ndarray - in which case the max and min values in that array will be used as the clip limits"""
+        
         clipper=(min(clipper), max(clipper))
         self=self.del_rows(column, lambda x, y:x<clipper[0] or x>clipper[1])
         return self
@@ -302,8 +305,8 @@ class AnalyseFile(DataFile):
         @return mean value of data column
 
         @todo Fix the row index when the bounds function is used - see note of \b max
-                AnalysisFile.min(column)
-                """
+                AnalysisFile.min(column)"""
+
         col=self.find_col(column)
         if bounds is not None:
             self._push_mask()
