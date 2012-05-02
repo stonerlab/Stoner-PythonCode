@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.26 2012/05/01 16:11:03 cvs Exp $
+# $Id: FileFormats.py,v 1.27 2012/05/02 21:30:25 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.27  2012/05/02 21:30:25  cvs
+# Add more checks to help autofile laoding and priorities on it.
+#
 # Revision 1.26  2012/05/01 16:11:03  cvs
 # Workinf FmokeFile format
 #
@@ -91,7 +94,7 @@ from .pyTDMS import read as tdms_read
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
-    priority=128
+    priority=128 # Rather generic file format so make it a low priority
 
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
@@ -173,7 +176,7 @@ class VSMFile(DataFile):
 class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
 
-    priority=64
+    priority=64 # Also rather generic file format so make a lower priority
 
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
@@ -188,6 +191,8 @@ class BigBlueFile(CSVFile):
 class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
 
+    priority=16 # Is able to make a positive ID of its file content, so get priority to check
+
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
@@ -198,6 +203,9 @@ class QDSquidVSMFile(DataFile):
         while f.next().strip()!="[Header]":
             pass
         line=f.next().strip()
+        line=f.next().strip()
+        if "Quantum Design" not in line:
+            raise RuntimeError("Not a Quantum Design File !")
         while line!="[Data]":
             if line[0]==";":
                 line=f.next().strip()
@@ -222,6 +230,8 @@ class QDSquidVSMFile(DataFile):
 
 class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
+
+    priority=16 # Makes a positive ID of it's file type so give priority
 
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
@@ -363,6 +373,7 @@ class TDMSFile(DataFile):
     """A first stab at writing a file that will import TDMS files"""
 
     Objects=dict()
+    priority=16 # Makes a positive ID of its file contents
 
     def load(self, filename=None, *args, **kargs):
         """Reads a TDMS File
@@ -391,6 +402,8 @@ class TDMSFile(DataFile):
 
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
+
+    priority=16 # Makes a positive id of its file contents
 
     def load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
@@ -528,6 +541,8 @@ class BNLFile(DataFile):
 class FmokeFile(DataFile):
     """Extends DataFile to open Fmoke Files"""
 
+    priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
+
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
@@ -537,10 +552,12 @@ class FmokeFile(DataFile):
         f=fileinput.FileInput(self.filename) # Read filename linewise
         value=[float(x.strip()) for x in f.next().split('\t')]
         label=[ x.strip() for x in f.next().split('\t')]
+        if label[0]!="Header:":
+            raise RuntimeError("Not a Focussed MOKE file !")
         del(label[0])
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
-        self.column_headers=[ x.strip() for x in f.next().split('\t')]      
+        self.column_headers=[ x.strip() for x in f.next().split('\t')]
         self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
