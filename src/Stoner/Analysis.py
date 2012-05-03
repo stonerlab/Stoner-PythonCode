@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.22 2012/05/02 23:03:09 cvs Exp $
+# $Id: Analysis.py,v 1.23 2012/05/03 10:17:25 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.23  2012/05/03 10:17:25  cvs
+# typo, elf to self
+#
 # Revision 1.22  2012/05/02 23:03:09  cvs
 # Update documentation, improve loading handling of external fileformats.
 #
@@ -452,7 +455,7 @@ class AnalyseFile(DataFile):
             x=self.column(col[0])
             x=numpy.append(numpy.array([x[0]]*p), x)
             x=numpy.append(x, numpy.array([x[-1]]*p))
-            y=elf.column(col[1])
+            y=self.column(col[1])
             y=anumpy.append(numpy.array([y[0]]*p), y)
             y=anumpy.append(y, numpy.array([y[-1]]*p))
             dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
