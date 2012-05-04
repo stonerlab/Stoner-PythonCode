@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.54 2012/05/02 23:03:09 cvs Exp $
+# $Id: Core.py,v 1.55 2012/05/04 16:47:25 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.55  2012/05/04 16:47:25  cvs
+# Fixed a string representation problem in __repr__. Minor changes to BNLFile format.
+#
 # Revision 1.54  2012/05/02 23:03:09  cvs
 # Update documentation, improve loading handling of external fileformats.
 #
@@ -652,13 +655,16 @@ class DataFile(object):
         (r, c) = numpy.shape(self.data)
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + "\t".join([str(x) for x in self.data[x].filled()])+ "\n"
+            #outp = outp + md[x] + "\t" + "\t".join(self.data[x].astype(numpy.dtype('|S12')))+ "\n"
+            outp = outp + md[x] + "\t" + "\t".join(map(lambda y:'{:.6g}'.format(y),self.data[x]))+ "\n"
+            #string.format() is a bit safer than numpy.astype('|S12') which will convert eg -4.1234455e-05 to -4.1234455e-,
+            #a number which it will then no longer be able to read
         if m > r:  # More metadata
             for x in range(r, m):
-                    outp = outp + md[x] + "\n"
+                outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             for x in range(m, r):
-                    outp = outp + "\t" + "\t".join([str(x) for x in self.data[x].filled()])+ "\n"
+                outp = outp + "\t" + "\t".join(map(lambda y:'{:.6g}'.format(y),self.data[x]))+ "\n"
         return outp
 
     def __len__(self):

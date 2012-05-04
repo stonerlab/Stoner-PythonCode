@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.27 2012/05/02 21:30:25 cvs Exp $
+# $Id: FileFormats.py,v 1.28 2012/05/04 16:47:25 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.28  2012/05/04 16:47:25  cvs
+# Fixed a string representation problem in __repr__. Minor changes to BNLFile format.
+#
 # Revision 1.27  2012/05/02 21:30:25  cvs
 # Add more checks to help autofile laoding and priorities on it.
 #
@@ -499,8 +502,9 @@ class BNLFile(DataFile):
         dateLine=linecache.getline(self.filename,self.line_numbers[3])
         motorLine=linecache.getline(self.filename,self.line_numbers[4])
         self.__setitem__('Snumber',scanLine.split()[1])
-        self.__setitem__('Stype',string.join(scanLine.split()[2:]))
-        self.__setitem__('Sdatetime',dateLine[3:])
+        tmp=string.join(scanLine.split()[2:])
+        self.__setitem__('Stype',string.join(tmp.split(','))) #get rid of commas
+        self.__setitem__('Sdatetime',dateLine[3:-1])  #don't want \n at end of line so use -1
         self.__setitem__('Smotor',motorLine.split()[3])
 
 
