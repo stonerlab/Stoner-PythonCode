@@ -1,0 +1,219 @@
+\documentclass[a4paper,9pt,threecolumn,landscape]{scrartcl}
+\usepackage[paper=a4paper,hmarginratio=3:2,tmargin=1cm,bmargin=1cm,lmargin=1cm,rmargin=1cm]{geometry}
+\usepackage{scrpage2}
+\usepackage{amsmath,amsbsy,amsfonts,amssymb,amsxtra}
+\usepackage{enumitem}
+\usepackage{multicol}
+\begin{document}
+\setlength{\parindent}{0pt}
+\columnsep 1cm
+\columnseprule 0.4pt
+\begin{multicols}{3}{
+{\huge \textbf{Stoner Cheat Sheet}}
+\vspace{0.5cm}
+
+\textbf {Loading a data file}
+\vspace{0.2cm}
+\normalfont
+\begin{verbatim}
+  >>>import Stoner
+  >>>d=Stoner.DataFile('my_data.txt')
+  >>>d=Stoner.VSMFile('my_VSM_data.fld')
+\end{verbatim}
+Valid file types:
+DataFile,
+VSMFile,
+BigBlueFile,
+CSVFile,
+XRDFile,
+SPCFile,
+BNLFile,
+TDMSFile,
+QDSquidVSMFile,
+OpenGDAFile,
+RasorFile,
+FmokeFile
+
+\vspace{0.5cm}
+\textbf {Looking at data}
+\vspace{0.2cm}
+
+\normalfont As a whole:
+\begin{verbatim}
+  >>>d.data
+  >>>d.column_headers
+  >>>d.metadata
+\end{verbatim}
+Columns:
+\begin{verbatim}
+  >>>d.column(0)
+  >>>d.column('Temperature')
+  >>>d.column(['Temperature',0])
+  >>>d.Temperature
+\end{verbatim}
+Rows:
+\begin{verbatim}
+  >>>d[1]
+  >>>d[1:4]
+\end{verbatim}
+Specific:
+\begin{verbatim}
+  >>>d[10,0]
+  >>>d[10,'Temp']
+  >>>d[0:10,['Voltage','Temp']
+\end{verbatim}
+Getting the index of a column:
+\begin{verbatim}
+  >>> index=d.find_col(1)
+  >>> index=d.find_col('Temperature')
+  >>> index=d.find_col('Temp.*')
+  >>> index=d.find_col(['Temperature',2,'Resistance'])
+\end{verbatim}
+Getting an iterable of the column/row:
+\begin{verbatim}
+  >>> d.rows()
+  >>> d.columns()
+  >>> for row in d:
+\end{verbatim}
+Searching:
+\begin{verbatim}
+  >>>d.search('Temperature',4.2)
+  >>>d.search('Temperature',4.2,['Temperature',
+                                   'Resistance'])
+  >>>d.search('Temperature',lambda x,y: x>10 and x<100)
+  >>>d.search('Temperature',lambda x,y: x>10 and
+            x<1000 and y[1]<1000,['Temperature',
+                                    'Resistance'])
+  >>> d.unique('Temp')
+  >>> d.unique(column,return_index=False, 
+                              return_inverse=False)          
+\end{verbatim}
+Copying:
+\begin{verbatim}
+   >>> t=d.clone
+\end{verbatim}
+
+\vspace{0.5cm}
+\textbf {Modifying data}
+\vspace{0.2cm}\normalfont
+
+Appending data
+\begin{verbatim}
+  >>>a=Stoner.DataFile('some_new_data.txt')
+  >>>add_rows=d+a
+  >>>add_columns=d&a
+  >>>d.add_column(numpy.array(range(100)),
+                              'Column Header')
+  >>>d.add_column(numpy.array(range(100)),
+                       'Column Header',Index)
+  >>>d.add_column(lambda x: x[0]-x[1],
+                 'Column Header',func_args=None)
+\end{verbatim}
+(here \verb:+: is add rows and \verb:&: is add columns)
+\vspace{0.4cm}
+
+Swap, reorder and rename columns:
+\begin{verbatim}
+  >>> d.swap_column(('Resistance','Temperature'))
+  >>> d.swap_column(('Resistance','Temperature'),
+                                 headers_too=False)
+  >>> d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
+  >>> d.reorder([1,3,'Volt','Temp'])
+  >>> d.reorder([1,3,'Volt','Temp'],header_too=False)
+  >>> d.rename('old_name','new_name')
+  >>> d.rename(0,'new_name')
+\end{verbatim}
+
+Sort columns ascending:
+\begin{verbatim}
+  >>>d.sort('Temp')
+  >>>d.sort(['Temp','Gate'])
+\end{verbatim}
+
+Delete rows and columns:
+\begin{verbatim}
+  >>>d.del_rows(10)
+  >>>d.del_rows('X Col',value)
+  >>>d.del_rows('X Col',lambda x,y:x>300)
+  >>>d.del_column('Temperature')
+  >>>d.del_column(1)
+\end{verbatim}
+
+\vspace{0.5cm}
+\textbf {Saving data}
+\vspace{0.2cm}\normalfont
+
+Data saved in TDI format (tab delimited with first column reserved for metadata), or CSV formatted with no metadata.
+\begin{verbatim}
+  >>>d.save()   #saves with the filename 
+                #that it was loaded with
+  >>>d.save(filename)
+    >>>d=Stoner.CSVFile(d)
+  >>>d.save()
+  >>>d.save(filename,'\t')
+\end{verbatim}
+
+\vspace{0.5cm}
+\textbf {Plotting data}
+\vspace{0.2cm}\normalfont
+
+2D:
+\begin{verbatim}
+  >>> import Stoner.Plot as plot
+  >>> p.plot_xy(column_x, column_y)
+  >>> p.plot_xy(column_x, [y1,y2])
+  >>> p.plot_xy(x,y,'ro')
+  >>> p.plot_xy(x,[y1,y2],['ro','b-'])
+  >>> p.plot_xy(x,y,title='My Plot')
+  >>> p.plot_xy(x,y,figure=2)
+  >>> p.plot_xy(x,y,plotter=pyplot.semilogy)
+  >>> p.plot_xy(x,y,plotter=errorbar,
+               yerr='dResistance', xerr=[5,'dTemp+'])
+\end{verbatim}
+3D:
+\begin{verbatim}
+   >>> p.plot_xyz(col_x,col_y,col_z)
+   >>> p.plot_xyz(col_x,col_y,col_z,
+                       cmap=matplotlib.cm.jet)
+   >>> p.plot)xyz(col-x,col-y,col-z,
+                       plotter=pyplot.pcolor)
+ \end{verbatim}
+
+\vspace{0.5cm}
+\textbf {Analysing data}
+\vspace{0.2cm}\normalfont
+
+Load the data:
+\begin{verbatim}
+  >>> import Stoner.Analysis as Analysis
+  >>> a=Analysis.AnalyseFile('Data')
+  >>>  a2=Analysis.AnalyseFile()
+  >>> a2=d
+  >>> a3=Analysis.AnalyseFile(d)
+\end{verbatim}
+
+Do maths on the data:
+\begin{verbatim}
+  >>> a.subtract('A','B'm header="A-B",replace=True)
+  >>> a.subtract(0,1)
+  >>> a.subtract(0,3.141592654)
+  >>> a.subtract(0,a2.column(0))
+  >>> a.add('A','B',header='A plus B',replace=False)
+  >>> a.normalise('data','reference',
+               header='Normalised Data',replace=True)
+\end{verbatim}
+
+Fit the data:
+\begin{verbatim}
+  >>> a.polyfit(column_x,column_y,polynomial_order, 
+        bounds=lambda x, y:True, result="New Column")
+  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
+        bounds=lambda x, y: True, result="New column" )
+\end{verbatim}
+
+
+ 
+
+}%end multicols
+\end{multicols}
+\end{document}
