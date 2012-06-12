@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.1.19)  16 MAY 2012 15:36
+This is pdfTeX, Version 3.1415926-1.40.10 (MiKTeX 2.8) (preloaded format=pdflatex 2011.1.19)  22 MAY 2012 09:29
 entering extended mode
 **C:/PythonCode/doc/CheatSheet.tex
 (C:/PythonCode/doc/CheatSheet.tex
@@ -284,7 +284,7 @@ Package: multicol 2008/12/05 v1.6h multicolumn formatting (FMi)
 LaTeX Warning: Unused global option(s):
     [threecolumn].
 
-(C:\PythonCode\doc\CheatSheet.aux)
+No file CheatSheet.aux.
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
@@ -297,7 +297,6 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
 LaTeX Font Info:    ... okay on input line 7.
-
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
@@ -393,8 +392,8 @@ Overfull \hbox (16.1267pt too wide) in paragraph at lines 212--212
 {C:/ProgramData/MiKTeX/2.8/pdftex/config/pdftex.map}]
 (C:\PythonCode\doc\CheatSheet.aux) ) 
 Here is how much of TeX's memory you used:
- 3055 strings out of 495285
- 43240 string characters out of 3179827
+ 3053 strings out of 495285
+ 43176 string characters out of 3179827
  158682 words of memory out of 3000000
  6257 multiletter control sequences out of 15000+200000
  5019 words of font info for 19 fonts, out of 3000000 for 9000
@@ -405,7 +404,7 @@ pe1/public/amsfonts/cm/cmbx12.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/type
 1/public/amsfonts/cm/cmbx9.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/type1/p
 ublic/amsfonts/cm/cmr9.pfb><C:/Program Files (x86)/MiKTeX 2.8/fonts/type1/publi
 c/amsfonts/cm/cmtt9.pfb>
-Output written on CheatSheet.pdf (1 page, 61407 bytes).
+Output written on CheatSheet.pdf (1 page, 61399 bytes).
 PDF statistics:
  22 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

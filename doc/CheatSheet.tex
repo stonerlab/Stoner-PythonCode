@@ -100,8 +100,8 @@ Copying:
 Appending data
 \begin{verbatim}
   >>>a=Stoner.DataFile('some_new_data.txt')
-  >>>add_rows=d+a
-  >>>add_columns=d&a
+  >>>d=d+a
+  >>>d=d&a
   >>>d.add_column(numpy.array(range(100)),
                               'Column Header')
   >>>d.add_column(numpy.array(range(100)),
