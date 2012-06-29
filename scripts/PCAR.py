@@ -1,6 +1,9 @@
 #
-# $Id: PCAR.py,v 1.10 2011/10/24 12:17:54 cvs Exp $
+# $Id: PCAR.py,v 1.11 2012/06/29 15:30:12 cvs Exp $
 #$Log: PCAR.py,v $
+#Revision 1.11  2012/06/29 15:30:12  cvs
+#Fixes to PCAR code
+#
 #Revision 1.10  2011/10/24 12:17:54  cvs
 #Update PCAR lab script to save data and fix a bug with save as mode in Stoner.Core
 #
@@ -54,7 +57,7 @@ import ConfigParser
 import pylab
 
 # Read the co nfig file for the model
-defaults={"filetype":"TDI", "header_line":1,"start_line":2, "separator":",", "v_scale":1 }
+defaults={"filetype":"TDI", "header_line":1,"start_line":2, "separator":",", "v_scale":1,"discard":False,"v_limit":1000.0 }
 config=ConfigParser.SafeConfigParser(defaults)
 config.read("pcar.ini")
 
@@ -79,6 +82,9 @@ for section in parnames:
 
 gcol=config.get('data', 'y-column')
 vcol=config.get('data', 'x-column')
+discard=config.get('data','discard')
+if discard:
+    v_limit=config.get('data','v_limit')
 omega=pars['omega']
 delta=pars['delta']
 P=pars['P']
@@ -91,12 +97,26 @@ delim=config.get("data", "separator")
 
        
 #import data
-d=Stoner.AnalyseFile()
-d.load(None, format, header, start, delim, delim)
-
+if format=="csv":
+    d=Stoner.FileFormats.CSVFile()
+    d.load(None,header,start)
+    filename=d.filename
+    d=Stoner.AnalyseFile(d)
+    d.filename=filename
+else:
+    d=Stoner.AnalyseFile()
+    d.load(None)
+    
 # Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
 vcol=d.find_col(vcol)
+print v_limit
+if discard:
+    d=d.del_rows(vcol,lambda x,y:abs(x)>v_limit)
+
+print d
+
+
 
 # Get filename for title
 filenameonly=os.path.basename(d.filename)
