@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.56 2012/05/04 22:13:13 cvs Exp $
+# $Id: Core.py,v 1.57 2012/11/16 22:05:00 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.57  2012/11/16 22:05:00  cvs
+# Add the << operator to read a DataFile from a string or an iterable object. Update documentation
+#
 # Revision 1.56  2012/05/04 22:13:13  cvs
 # Put back the 1.54 __repr__ fix
 #
@@ -27,7 +30,7 @@
 # Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
 #
 # Revision 1.49  2012/04/04 23:04:11  cvs
-# Improvements to AnalyseFile and DataFolder
+# Improvements to AnalyseFile and DataFolders="This is 
 #
 # Revision 1.48  2012/04/02 11:58:07  cvs
 # Minor bug fixes and corrections
@@ -90,6 +93,8 @@ import copy
 import linecache
 import wx
 import inspect
+import itertools
+import collections
 
 
 class evaluatable:
@@ -482,8 +487,6 @@ class DataFile(object):
         return item in self.metadata
 
     def __getitem__(self, name):
-            # called for DataFile[x] returns row x if x is integer, or
-            # metadata[x] if x is string
         """Called for \b DataFile[x] to return either a row or iterm of
         metadata
 
@@ -644,6 +647,20 @@ class DataFile(object):
                 return NotImplemented
         else:
             return NotImplemented
+            
+    def __lshift__(self, other):
+        """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function
+        @param other Either a string or iterable object used to source the DataFile object
+        @return A new DataFile object
+        """
+        newdata=self.__class__()
+        if isinstance(other, str):
+            lines=itertools.imap(lambda x:x,  other.splitlines())
+            newdata._read_iterable(lines)
+        elif isinstance(other, collections.Iterable):
+            newdata._read_iterable(other)
+        return newdata
+            
 
     def __repr__(self):
         """Outputs the \b Stoner.DataFile object in TDI format.
@@ -782,7 +799,9 @@ class DataFile(object):
         """Internal function to parse the tab deliminated text file
         """
         
-        reader=fileinput.FileInput(self.filename)
+        self._read_iterable(fileinput.FileInput(self.filename))
+        
+    def _read_iterable(self, reader):
         row=reader.next().split('\t')
         if row[0].strip()!="TDI Format 1.5":
             raise RuntimeError("Not a TDI File")

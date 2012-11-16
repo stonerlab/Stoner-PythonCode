@@ -189,7 +189,7 @@ class StonerPlot(HasTraits):
     def __init__(self):
         super(StonerPlot, self).__init__()
         self.data=S.DataFile()
-        self.code=PythonShell()
+        #self.code=PythonShell()
         self.data.data=numpy.zeros((1, 2))
         self.data.column_headers=["X", "Y"]
 
