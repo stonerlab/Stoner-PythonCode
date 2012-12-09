@@ -2,9 +2,13 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.58 2012/12/09 15:55:50 cvs Exp $
+# $Id: Core.py,v 1.59 2012/12/09 17:05:03 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.59  2012/12/09 17:05:03  cvs
+# Update find_col to interperate strings as integers if not string matching
+# Update documentation
+#
 # Revision 1.58  2012/12/09 15:55:50  cvs
 # Updates to documentation and make stoner Core at least partially Unicode aware
 #
@@ -929,7 +933,9 @@ class DataFile(object):
         is a string, then first attemps an exact string comparison, and then
         falls back to a regular expression search on the column headers. If
         either of these searches returns more than onbe match, then the
-        first is used. If @a col  is a slice then a list of the matching
+        first is used. If neither string tests works, the tries casting the string to an integer and checking that
+        the result is in range for the size of the  dataset.
+        If @a col  is a slice then a list of the matching
         indices is returned. If @a col is a list
         then a list of the results of apply @b DataFile.find_col on each
         element of @a col is returned.
@@ -946,9 +952,15 @@ class DataFile(object):
                 test = re.compile(col)
                 possible = filter(test.search, self.column_headers)
                 if len(possible) == 0:
-                    raise KeyError('Unable to find any possible column \
+                    try:
+                        col=int(col)
+                    except ValueError:
+                        raise KeyError('Unable to find any possible column \
                     matches')
-                col = self.column_headers.index(possible[0])
+                    if col<0 or col>=self.data.shape[1]:
+                        raise KeyError('Column index out of range')
+                else:
+                    col = self.column_headers.index(possible[0])
         elif isinstance(col, slice):
             indices = col.indices(numpy.shape(self.data)[1])
             col = range(*indices)

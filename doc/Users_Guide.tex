@@ -333,6 +333,7 @@ headings. If one wishes to find the numeric index of a column then the
   >>> index=d.find_col(1)
   >>> index=d.find_col('Temperature')
   >>> index=d.find_col('Temp.*')
+  >>> index=d.find_col('1')
   >>> index=d.find_col(1:10:2)
   >>> index=d.find_col(['Temperature',2,'Resistance'])
 \end{verbatim}
@@ -342,7 +343,10 @@ is an integer then it returns (trivially) the same integer, a string argument is
 first checked to see if it exactly matches one of the column headers in which
 case the number of the matching column heading is returned. If no exact match is
 found then a regular expression search is carried out on the column headings. In
-both cases, only the first match is returned. The final two examples given above
+both cases, only the first match is returned. If the string still doesn't match, then
+the string is checked to see if it can be cast to an integer, in which case the integer value is used.
+
+The final two examples given above
 both return a list of indices, firstly using a slice construct - in this case
 the result is trivially the same as the slice itself, and in the last example by
 passing a list of column headers to look for.
