@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.57 2012/11/16 22:05:00 cvs Exp $
+# $Id: Core.py,v 1.58 2012/12/09 15:55:50 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.58  2012/12/09 15:55:50  cvs
+# Updates to documentation and make stoner Core at least partially Unicode aware
+#
 # Revision 1.57  2012/11/16 22:05:00  cvs
 # Add the << operator to read a DataFile from a string or an iterable object. Update documentation
 #
@@ -259,6 +262,7 @@ class typeHintedDict(dict):
         to make sure that it correctly describes the actual data
         typehintDict does not verify that your data and type string are
         compatible."""
+        name=str(name)
         m = self.__regexGetType.search(name)
         if m is not None:
             k = m.group(1)
@@ -277,6 +281,7 @@ class typeHintedDict(dict):
 
     def __delitem__(self, name):
         """Deletes the specified key"""
+        name=str(name)
         del(self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
@@ -394,7 +399,7 @@ class DataFile(object):
         self.metadata=typeHintedDict()
         if len(args) == 1:
             #print type(args[0])
-            if (isinstance(args[0], str) or (
+            if (isinstance(args[0], str) or isinstance(args[0], unicode) or (
                 isinstance(args[0], bool) and not args[0])):
                                         # Filename- load datafile
                 t = self.load(*args, **kargs)
@@ -521,7 +526,8 @@ class DataFile(object):
             return d
         elif isinstance(name, int):
             return self.data[name, :]
-        elif isinstance(name, str):
+        elif isinstance(name, str) or isinstance(name, unicode):
+            name=str(name)
             return self.meta(name)
         elif isinstance(name, tuple) and len(name) == 2:
             x, y = name
@@ -932,7 +938,8 @@ class DataFile(object):
             if col < 0 or col >= len(self.column_headers):
                 raise IndexError('Attempting to index a non - existant column')
             pass
-        elif isinstance(col, str):  # Ok we have a string
+        elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
+            col=str(col)
             if col in self.column_headers:  # and it is an exact string match
                 col = self.column_headers.index(col)
             else:  # ok we'll try for a regular expression
