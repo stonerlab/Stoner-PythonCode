@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.28 2012/05/04 16:47:25 cvs Exp $
+# $Id: FileFormats.py,v 1.29 2012/12/11 16:08:59 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.29  2012/12/11 16:08:59  cvs
+# Add a Rigaku file reader
+#
 # Revision 1.28  2012/05/04 16:47:25  cvs
 # Fixed a string representation problem in __repr__. Minor changes to BNLFile format.
 #
@@ -402,6 +405,75 @@ class TDMSFile(DataFile):
             self.add_column(nd, column)
         return self
 
+class RigakuFile(DataFile):
+    """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
+    
+    priority=16 #Can make a positive id of file from first line
+    
+    def load(self, filename=None, *args, **kargs):
+        """Reads an Rigaku ras file including handling the metadata nicely
+        
+        @param filename String containing the file to be laoded
+        @param args Passthrough of of all other positional arguments
+        @kargs Holds all keyword arguments"""
+        from ast import literal_eval
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        sh=re.compile(r'^\*([^\s]+)\s+(.*)$') # Regexp to grab the keys
+        ka=re.compile(r'(.*)\-(\d+)$')
+        f=fileinput.FileInput(self.filename) # Read filename linewise
+        if f.next().strip()!="*RAS_DATA_START": # Check we have the corrrect fileformat
+                raise RuntimeError("File Format Not Recognized !")
+        line=f.next().strip()
+        while line!="*RAS_HEADER_START":
+            line=f.next().strip()
+        header=dict()
+        while line!="*RAS_HEADER_END":
+            line=f.next().strip()
+            m=sh.match(line)
+            if m:
+                key=m.groups()[0].lower().replace('_','.')
+                value=m.groups()[1]
+                header[key]=value
+        keys=header.keys()
+        keys.sort()
+        for key in keys:
+            m=ka.match(key)
+            value=header[key].strip()
+            try:
+                newvalue=literal_eval(value.strip('"'))
+            except Exception, e:
+                newvalue=literal_eval(value)
+            if m:
+                key=m.groups()[0]
+                if key in self.metadata and not (isinstance(self[key], numpy.ndarray) or isinstance(self[key], list)):
+                    if isinstance(self[key], str):
+                        self[key]=list([self[key]])
+                    else:
+                        self[key]=numpy.array(self[key])
+                if key not in self.metadata:
+                    if isinstance(newvalue, str):
+                        self[key]=list([newvalue])
+                    else:
+                        self[key]=numpy.array([newvalue])
+                else:
+                    if isinstance(self[key][0], str):
+                        self[key].append(newvalue)
+                    else:
+                        self[key]=numpy.append(self[key], newvalue)
+            else:
+                self.metadata[key]=newvalue
+        while(line!="*RAS_INT_START"):
+             line=f.next().strip()
+        self.data=numpy.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False)
+        self.column_headers=['Column'+str(i) for i in range(self.data.shape[1])]
+        self.column_headers[0:2]=[self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
+        for key in self.metadata:
+            if isinstance(self[key], list):
+                self[key]=numpy.array(self[key])
+        return self
 
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""

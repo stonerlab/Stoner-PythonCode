@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.59 2012/12/09 17:05:03 cvs Exp $
+# $Id: Core.py,v 1.60 2012/12/11 16:08:59 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.60  2012/12/11 16:08:59  cvs
+# Add a Rigaku file reader
+#
 # Revision 1.59  2012/12/09 17:05:03  cvs
 # Update find_col to interperate strings as integers if not string matching
 # Update documentation
@@ -123,10 +126,10 @@ class typeHintedDict(dict):
                                     # Match floating point types
     __regexBoolean = re.compile(r'^Boolean')
     __regexString = re.compile(r'^(String|Path|Enum)')
-    __regexEvaluatable = re.compile(r'^(Cluster|\dD Array)')
+    __regexEvaluatable = re.compile(r'^(Cluster|\dD Array|List)')
 
     __types = {'Boolean': bool, 'I32': int, 'Double Float': float,
-        'Cluster': dict, 'Array': numpy.ndarray, 'String': str}
+        'Cluster': dict, 'Array': numpy.ndarray,'List':list,  'String': str}
     # This is the inverse of the __tests below - this gives
     # the string type for standard Python classes
 
@@ -465,6 +468,8 @@ class DataFile(object):
             return self.data.view(dtype=dtype).reshape(len(self))
         elif name == "clone":
             return copy.deepcopy(self)
+        elif name=="subclasses":
+            return {x.__name__:x for x in itersubclasses(DataFile)}
         elif name=="mask":
             return ma.getmaskarray(self.data)
         else:
