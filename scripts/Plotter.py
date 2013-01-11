@@ -77,15 +77,16 @@ class StonerPlot(HasTraits, S.DataFile):
                  value_mapper=value_mapper,
                  orientation=orientation,
                  border_visible=True,
-                 bgcolor="transparent",
-                 color=self.color)
+                 bgcolor="transparent")
         if issubclass(p_type, ScatterPlot):
             plot.marker=self.marker
             plot.marker_size=self.marker_size
             plot.outline_color=self.line_color
+            plot.color=self.color
         elif issubclass(p_type, LinePlot):
             plot.line_wdith=self.outline_width
             plot.line_style=self.line_style
+            plot.color=self.line_color
         return plot
 
     def _create_plot_component(self):
@@ -98,7 +99,7 @@ class StonerPlot(HasTraits, S.DataFile):
         if len(self)>0: # Only create a plot if we ahve datat
             if self.p_type=="scatter and line":
                 lineplot = self._create_plot(p_type=LinePlot)
-                lineplot.selected_color = "none"
+                #lineplot.selected_color = "none"
                 scatter=self._create_plot(p_type=ScatterPlot)
                 scatter.bgcolor = "white"
                 scatter.index_mapper=lineplot.index_mapper
@@ -158,8 +159,8 @@ class StonerPlot(HasTraits, S.DataFile):
                 Item('p_type', label='Plot Type')
             ),
             HGroup(
-                Item('color', label="Colour", style="simple", width=75),
-                 Item('line_color', label="Line Colour", style="simple", visible_when='"scatter" in p_type and outline_width>0',  width=75),
+                Item('color', label="Colour", style="simple", width=75,  visible_when='"scatter" in p_type'),
+                 Item('line_color', label="Line Colour", style="simple", visible_when='outline_width>0',  width=75),
                 Item('marker', label="Marker", visible_when='"scatter" in p_type'),
                 Item('line_style',  label='Line Style',  visible_when="'line' in p_type"),
                 Item('marker_size', label="Marker Size",  visible_when='"scatter" in p_type'),
@@ -200,7 +201,6 @@ class StonerPlot(HasTraits, S.DataFile):
         self.metadata=d.metadata
         self.column_headers=d.column_headers
         self.data=d.data
-        print self.metadata
         acols=[(self.column_headers[i], i) for i in range(len(self.column_headers))]
         acols[:0]=[("index", "index")]
         self.adapter.columns=acols
@@ -215,9 +215,17 @@ class StonerPlot(HasTraits, S.DataFile):
 
 
     def _set_renderer(self, attr, value):
-        for plot in self.plot.components:
-            setattr(plot, attr, value)
-            print str(attr)+" "+str(value)
+        pp=range(len(self.plot.components))
+        pp.reverse()
+        t={attr:value}
+        for p in pp:
+            plot=self.plot.components[p]
+            if isinstance(plot, LinePlot) and attr=="outline_color":
+                print value
+                plot.set(**t)
+            else:
+                plot.set(**t)
+            plot.invalidate_and_redraw()
 
     def _color_changed(self):
         self._set_renderer("color", self.color)
