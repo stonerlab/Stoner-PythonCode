@@ -1,7 +1,10 @@
 ####################################################
 ## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.29 2012/12/11 16:08:59 cvs Exp $
+# $Id: FileFormats.py,v 1.30 2013/03/05 16:22:54 cvs Exp $
 # $Log: FileFormats.py,v $
+# Revision 1.30  2013/03/05 16:22:54  cvs
+# Fix to del_rows in Core, mask should not be indexed here
+#
 # Revision 1.29  2012/12/11 16:08:59  cvs
 # Add a Rigaku file reader
 #
@@ -531,8 +534,8 @@ class XRDFile(DataFile):
 
 class BNLFile(DataFile):
     """
-    Creates BNLFile a subclass of DataFile that caters for files in the format given
-    by BNL.
+    Creates BNLFile a subclass of DataFile that caters for files in the SPEC format given
+    by BNL (specifically u4b beamline but hopefully generalisable).
 
     Author Rowan 12/2011
 

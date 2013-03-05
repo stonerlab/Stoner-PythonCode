@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.60 2012/12/11 16:08:59 cvs Exp $
+# $Id: Core.py,v 1.61 2013/03/05 16:22:54 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.61  2013/03/05 16:22:54  cvs
+# Fix to del_rows in Core, mask should not be indexed here
+#
 # Revision 1.60  2012/12/11 16:08:59  cvs
 # Add a Rigaku file reader
 #
@@ -1124,7 +1127,7 @@ class DataFile(object):
             col = self.find_col(col)
             d = self.column(col)
             if callable(val):
-                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask[col]) for x in self])[0]
+                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask) for x in self])[0]
                 print rows
             elif isinstance(val, float):
                 rows = numpy.nonzero([x == val for x in d])[0]
