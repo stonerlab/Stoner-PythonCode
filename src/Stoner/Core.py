@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.61 2013/03/05 16:22:54 cvs Exp $
+# $Id: Core.py,v 1.62 2013/03/22 09:11:47 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.62  2013/03/22 09:11:47  cvs
+# Add more checks to help loading with 'odd' files
+#
 # Revision 1.61  2013/03/05 16:22:54  cvs
 # Fix to del_rows in Core, mask should not be indexed here
 #
@@ -827,12 +830,16 @@ class DataFile(object):
         cols=len(self.column_headers)
         self.data=ma.masked_array([])
         for r in reader:
-            row=r.split('\t')
+            if r.strip()=="": # Blank line
+                continue
+            row=r.rstrip().split('\t')
             cols=max(cols, len(row)-1)
             if row[0].strip()!='':
                 md=row[0].split('=')
                 if len(md)==2:
                     self.metadata[md[0].strip()]=md[1].strip()
+            if len(row)<2:
+                continue
             self.data=numpy.append(self.data, self._conv_float(row[1:]))
         self.data=numpy.reshape(self.data, (-1, cols))
 
