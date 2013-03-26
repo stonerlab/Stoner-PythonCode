@@ -2,9 +2,12 @@
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.62 2013/03/22 09:11:47 cvs Exp $
+# $Id: Core.py,v 1.63 2013/03/26 23:51:12 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.63  2013/03/26 23:51:12  cvs
+# Add start of extra gui package
+#
 # Revision 1.62  2013/03/22 09:11:47  cvs
 # Add more checks to help loading with 'odd' files
 #
@@ -1264,6 +1267,14 @@ class DataFile(object):
             newdata = numpy.append(newdata, numpy.atleast_2d(self.data[:,
                                                 self.find_col(col)]), axis=0)
         self.data = ma.masked_array(numpy.transpose(newdata))
+        return self
+        
+    def insert_rows(self, row, new_data):
+        """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
+        @param row Data row to insert into
+        @param new_data a numpy array with an equal number of columns as the main data array containing the new row(s) of data to insert
+        @return A copy of the modified DataFile object"""
+        self.data=numpy.insert(self.data, row,  new_data, 0)
         return self
 
     def rows(self):

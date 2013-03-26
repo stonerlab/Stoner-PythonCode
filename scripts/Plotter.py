@@ -8,7 +8,7 @@ from enthought.traits.ui.menu import Action, CloseAction, Menu, MenuBar, OKCance
 from enable.tools.api import DragTool
 
 from chaco.api import add_default_axes, add_default_grids, \
-        OverlayPlotContainer, PlotLabel, ScatterPlot, LinePlot, create_line_plot, create_scatter_plot,  \
+        OverlayPlotContainer, PlotLabel, ScatterPlot, LinePlot, ToolbarPlot,  create_line_plot, create_scatter_plot,  \
         marker_trait, Plot, ArrayPlotData, ArrayDataSource,  LinearMapper,  LogMapper, DataRange1D
 from chaco.tools.api import PanTool, ZoomTool
 from enthought.chaco.tools.cursor_tool import CursorTool, BaseCursorTool
@@ -53,7 +53,7 @@ class StonerPlot(HasTraits, S.DataFile):
     metadata=Dict
     column_headers=List(['X', 'Y'])
 
-    def _create_plot(self, orientation="h",p_type=ScatterPlot):
+    def _create_plot(self, orientation="h",p_type=ToolbarPlot):
         """
         Creates a plot from a single Nx2 data array or a tuple of
         two length-N 1-D arrays.  The data must be sorted on the index if any
