@@ -905,6 +905,20 @@ It is worth pointing out that these functions will respect the existing mask on 
 
 \subsubsection{Peak Finding}
 
+\subsection{Non-linear curve fitting with initialisation file}
+
+If you wish to fit your data to a non-linear function more complicated than a polynomial you can use \verb#Stoner.nlfit.nlfit(inifile, func, data=None)# or equivalently if you have an AnalyseFile instance of your data called d say you can call \verb#d.nlfit(inifile, func)#. This performs a non-linear least squares fitting algorithm to your data and returns the AnalyseFile instance used with an additional final column that is the fit, it also plots the fit. There is an example run script, ini file and data file in PythonCode\textbackslash Scripts, have a look at them to see how to use this function.
+
+The function to fit to can either be created by the user and passed in or one of a library of current existing functions can be used from the FittingFunctions.py file in Stoner\textbackslash src (just pass in the name of the function you wish to use as a string). The function takes it's fitting parameters information from a .ini file created by the user, look at the example .ini file mentioned above for the format, you can see that it allows for the parameters to be fixed or constrained which can be very useful for fitting. 
+
+Current functions existing in FittingFunctions.py:
+\begin{itemize}
+\item Various tunnelling I-V models including BDR, Simmons, Field emission and Tersoff Hamman STM.  
+\item 2D weak localisation
+\item Strijkers model for PCAR fitting
+\end{itemize}
+Please see the function documentation in FittingFunctions.py for more information about these models. Please do add functions you think would be of use to everybody, have a look at the current functions for examples, the main thing is that the function must take an x array and a list of parameters, apply a function and then return the resulting array.  
+ 
 \subsection{Working with Lots of Files}
 
 A common case is that you have measured lots of data curves and now have a large stack of data files sitting in a tree of folders on disc and now need to process all of them with some code. The \textbf{DataFolder} class is designed to make it easier to process lots of files.
