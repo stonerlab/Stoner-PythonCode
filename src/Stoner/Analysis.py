@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.23 2012/05/03 10:17:25 cvs Exp $
+# $Id: Analysis.py,v 1.24 2013/03/27 17:18:09 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.24  2013/03/27 17:18:09  cvs
+# Adding nlfit functionality to Stoner.Analysis
+#
 # Revision 1.23  2012/05/03 10:17:25  cvs
 # typo, elf to self
 #
@@ -84,6 +87,8 @@
 #############################################
 
 from .Core import DataFile
+import Stoner.FittingFuncs
+import Stoner.nlfit
 import scipy
 import numpy
 import math
@@ -565,5 +570,20 @@ class AnalyseFile(DataFile):
         func_args["func"]=func
         m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
         return m
+        
+    def nlfit(self, ini_file, func):
+        """Non-linear fitting using the nlfit module
+        @param ini_file: string giving path to ini file with model
+        @param func: string giving name of function to fit with (as seen in FittingFuncs.py module in Stoner)
+                or function instance to fit with
+        @return AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled)"""
+        return Stoner.nlfit.nlfit(ini_file, func, data=self)
+
+    def chi2mapping(self, ini_file, func):
+        """Non-linear fitting using the nlfit module
+        @param ini_file: string giving path to ini file with model
+        @param func_name: string giving name of function to fit with (as seen in FittingFuncs.py module in Stoner)
+        @return AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled), DataFile instance of parameter steps"""
+        return Stoner.nlfit.nlfit(ini_file, func, data=self, chi2mapping=True)
 
 
