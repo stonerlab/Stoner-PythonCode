@@ -20,7 +20,10 @@ class MultiplePlots(HasTraits):
         
     
     def trait_view(self, parent=None):
-        traits_view = View(VGroup(Item('datafiles@',
+        self.shell=self.__dict__
+        traits_view = View(VGroup(
+            Item('shell',editor=ShellEditor(), id="Shell"), 
+            Item('datafiles@',
                   id = 'notebook',
                   show_label = False,
                   editor = ListEditor(use_notebook = True,
@@ -28,8 +31,7 @@ class MultiplePlots(HasTraits):
                                            selected='selected', 
                                            export = 'DockWindowShell',
                                            page_name = '.filename')
-                ), 
-                Item('shell',editor=ShellEditor(), id="Shell")), 
+                )), 
                 width=1024,
                 height=768,
                 resizable=True,

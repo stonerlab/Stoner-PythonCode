@@ -2,9 +2,12 @@
 #
 # Classes to do a traitsui for DataFiles
 #
-# $Id: traits_Stoner.py,v 1.1 2013/03/26 23:51:12 cvs Exp $
+# $Id: traits_Stoner.py,v 1.2 2013/04/09 21:39:13 cvs Exp $
 #
 # $Log: traits_Stoner.py,v $
+# Revision 1.2  2013/04/09 21:39:13  cvs
+# Messing with Stoner Ploting and Traits
+#
 # Revision 1.1  2013/03/26 23:51:12  cvs
 # Add start of extra gui package
 #
@@ -70,7 +73,7 @@ class TraitsDataFile(S.DataFile, HasTraits):
                  show_label=False,
                  width=0.25,  height=640)
         )
-        traits_view = View(self.display_group)
+        traits_view = View(self.display_group,  height=640)
         return traits_view
     
     def load(self, *args, **kargs):
