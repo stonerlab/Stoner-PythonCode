@@ -20,16 +20,27 @@ import pylab ; pylab.ion() #interactive mode, works best with iPython
 
 def nlfit(ini_file, func, data=None, chi2mapping=False):
     """Runs nlfit, taking data from the file path given in the ini_file and a fitting function
+    @param ini_file either the name of a file or an open file descriptor
+    @param func either a string with the name of a function in Stoner.FittingFuncs or a callable object
+    @param dataEither a Stoner.DataFileObject or None to force a file open dialog
+    @param chi2mapping A boolean indicating whether chi^2 mappingmode is engaged
+    @return An NLFit instance
     """
-    if not hasattr(func, '__call__'):
-        try: func = getattr(Stoner.FittingFuncs, func)
-        except: raise ValueError('Supplied function not recognised')
+    if isinstance(func,str):
+        try: 
+            func = getattr(Stoner.FittingFuncs, func)
+        except: 
+            raise ValueError('Supplied function not recognised')
+    elif not callable(func):
+            raise ValueError('Supplied function must be either a string or callable object')
     try: 
-        f=open(ini_file, 'r')
-        f.close()
+        if isinstance(ini_file,str):
+            f=open(ini_file, 'r')
+            f.close()
+        elif not isinstance(ini_file,file):
+            raise ValueError
     except: 
-        print 'Could not open ini file'
-        return None
+        raise ValueError('Could not open ini file')
     t=NLFit(ini_file, func, data, chi2mapping)
     t.run()
     #Return Stoner.Analysis file instance of data and an instance of matplotlib.axes for the plot
@@ -37,13 +48,28 @@ def nlfit(ini_file, func, data=None, chi2mapping=False):
     return t.output, t.plotout
 
 class NLFit:
-    def __init__(self, ini_file, function, data=None, chi2mapping=False):
+    """Class containing the code to do a NLFit or chi^2 mapping of a set of data"""
+    
+    """I like to initialise some class properties here"""
+    simulate=None
+    function=None
+    ini_file=None
+    data_input=Stoner.DataFile()
+    
+    def __init__(self, ini_file, func, data=None, chi2mapping=False):
         """ini_file is file name for .ini options file
            function is a function that you wish to fit with (function takes x array and parameter list as its 2 arguments)
            defaults only needs changing if you don't have a TDI file
         """
         # Config file structure
-        self.fit_func = function
+        if isinstance(func,str):
+            try: 
+                func = getattr(Stoner.FittingFuncs, func)
+            except: 
+                raise ValueError('Supplied function not recognised')
+        elif not callable(func):
+                raise ValueError('Supplied function must be either a string or callable object')
+        self.fit_func = func
         self.ini_file = ini_file
         self.data_input = data
         self.chi2mapping = chi2mapping
@@ -55,9 +81,13 @@ class NLFit:
     def run(self):
         #Read ini file
         self.config = ConfigParser.SafeConfigParser()
-        self.config.read(self.ini_file) 
+        if isinstance(self.ini_file,str):
+            self.config.read(self.ini_file)
+        elif isinstance(self.ini_file,file):
+            self.config.readfp(self.ini_file) 
         #work out whether to simulate or not
-        self.simulate = self.config.getboolean('options', 'simulate')
+        if self.simulate is not None: #Only look in the config file if we're not overriding the simulate property
+            self.simulate = self.config.getboolean('options', 'simulate')
         #run sim
         if self.simulate:
             self._runsim()
