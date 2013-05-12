@@ -1,10 +1,13 @@
-############################################
+import pdb############################################
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.63 2013/03/26 23:51:12 cvs Exp $
+# $Id: Core.py,v 1.64 2013/05/12 17:17:57 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.64  2013/05/12 17:17:57  cvs
+# Updates to the DataFolder class and documentation updates.
+#
 # Revision 1.63  2013/03/26 23:51:12  cvs
 # Add start of extra gui package
 #
@@ -245,7 +248,7 @@ class typeHintedDict(dict):
         @param value String representation of he value
         @return A python object of the natural type for value"""
         if not isinstance(value, str):
-            raise TypeError("Value must be a string")
+            raise TypeError("Value must be a string not a "+str(type(value)))
         value=value.strip()
         if len(value)==0:
             return None
@@ -328,37 +331,6 @@ class typeHintedDict(dict):
         return key + "{" + self.type(key) + "}=" + str(self[key])
 
 
-class MyForm(wx.Frame):
-    """Provides an editable grid for the DataFile class to use display data"""
-
-    #----------------------------------------------------------------------
-    def __init__(self, dfile, **kwargs):
-        """Constructor
-        @param dfile An instance of the Stoner.DataFile object
-        @ param **kwargs Keyword arguments - recognised values include"""
-        import wx.grid as gridlib
-        if not isinstance(dfile, DataFile):
-            raise TypeError('First argument must be a Stoner.DataFile')
-        cols = max(len(dfile.column_headers), 4)
-        rows = max(len(dfile), 20)
-        wx.Frame.__init__(self, parent=None, title="Untitled")
-        self.Bind(wx.EVT_SIZE, self._OnSize)
-        self.panel = wx.Panel(self)
-
-        myGrid = gridlib.Grid(self.panel)
-        myGrid.CreateGrid(rows, cols)
-
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(myGrid, 1, wx.EXPAND)
-        self.panel.SetSizer(self.sizer)
-
-        for i in range(len(dfile.column_headers)):
-            myGrid.SetColLabelValue(i, dfile.column_headers[i])
-            for j in range(len(dfile)):
-                myGrid.SetCellValue(j, i, str(dfile.data[j, i]))
-
-    def _OnSize(self, evt):
-        evt.Skip()
 
 
 class DataFile(object):
@@ -571,6 +543,17 @@ class DataFile(object):
             @return Nothing."""
         self.metadata[name] = value
 
+    def __delitem__(self,item):
+        """Implements row or metadata deletion.
+        @param item either an ingteger to delete a row or a string to delete metadata"""
+        if isinstance(item,str):
+            del(self.metadata[item])
+        else:
+            self.del_rows[item]
+            
+    
+    
+    
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance
@@ -642,35 +625,40 @@ class DataFile(object):
         length of the \b Stoner.DataFile.column_headers is
         increased to match the actual number of columns.
         """
+        newdata=self.__class__(self.clone)
         if isinstance(other, numpy.ndarray):
             if len(other.shape) != 2:  # 1D array, make it 2D column
                 other = numpy.atleast_2d(other)
                 other = other.T
-            if other.shape[0] <= self.data.shape[0]:
-                    # DataFile + array with correct number of rows
+            if numpy.product(self.data.shape)==0: #Special case no data yet                
+                newdata.data=other
+                newdata.column_headers=["Coumn "+str(i) for i in range(other.shape[1])]
+            elif self.data.shape[0]==other.shape[0]:
+                newdata.data=numpy.append(newdata.data,other,1)
+                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])    
+            elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
+                newdata.data=numpy.append(self.data,numpy.zeros((other.shape[0]-self.data.shape[0],self.data.shape[1])),0)
+                newdata.data=numpy.append(self.data,other,1)
+                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])            
+            else:                    # DataFile + array with correct number of rows
                 if other.shape[0] < self.data.shape[0]:
                     # too few rows we can extend with zeros
                     other = numpy.append(other, numpy.zeros((self.data.shape[0]
                                     - other.shape[0], other.shape[1])), 0)
-                newdata = self.__class__(self)
                 newdata.column_headers.extend([""
                                                for x in range(other.shape[1])])
                 newdata.data = numpy.append(self.data, other, 1)
-                return newdata
-            else:
-                return NotImplemented
         elif isinstance(other, DataFile):  # Appending another datafile
             if self.data.shape[0] == other.data.shape[0]:
-                newdata = self.__class__(self)
                 newdata.column_headers.extend(other.column_headers)
                 for x in other.metadata:
                     newdata[x] = other[x]
                 newdata.data = numpy.append(self.data, other.data, 1)
-                return newdata
             else:
                 return NotImplemented
         else:
             return NotImplemented
+        return newdata
             
     def __lshift__(self, other):
         """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function

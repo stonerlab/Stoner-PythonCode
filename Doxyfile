@@ -797,7 +797,7 @@ IMAGE_PATH             =
 # to standard output.  If FILTER_PATTERNS is specified, this tag will be 
 # ignored.
 
-INPUT_FILTER           = doxypy.py
+INPUT_FILTER           = "C:\Progra~1\Python\python C:\Users\phygbu\Documents\Python\doxypy.py"
 
 # The FILTER_PATTERNS tag can be used to specify filters on a per file pattern 
 # basis.  Doxygen will compare the file name with each pattern and apply the 

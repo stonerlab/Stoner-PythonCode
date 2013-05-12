@@ -951,6 +951,8 @@ By default the \textbf{DataFolder} constructor will perform a recursive drectory
   >>> f.files
 \end{verbatim}
 
+\warning{In some circumstances entries in the \textit{f.files} attribute can be \textbf{DataFile} objects rather than strings. If you want to ensure that you get a list of strings representing the filenames, use \textit{f.ls} instead.}
+
 If you don't want the file listing to be recursive, this can be suppressed by using the \textit{recursive} keyword argument and the file listing can be suppressed altogether with the \textit{nolist} keyword:
 
 \begin{verbatim}
@@ -977,7 +979,7 @@ Sometimes a more complex filename matching mechanism than simple ``globbing'' is
   >>> f[0]['run']
 \end{verbatim}
 
-The second case illustrates a useful reature of regular expressions - they can be used to capture parts of the matched pattern -- and in the python version, one can name the capturing groups. In both cases above the \textbf{DataFolder} has the same file members (basically these would be runs produced by the i10 beamline at Diamond), but in the second case the run number (which comes after ``i10-'' would be captured and presented as the ``run'' parameter in the metadata when the file was read. \warning{Note that the files are not modified - the extra metadata is only added as the file is read by the \textbf{DataFlder}}. The loading process will also add the metadata key ``Loaded From'' to the file which will give you a note of the filename used to read the data.
+The second case illustrates a useful feature of regular expressions - they can be used to capture parts of the matched pattern -- and in the python version, one can name the capturing groups. In both cases above the \textbf{DataFolder} has the same file members (basically these would be runs produced by the i10 beamline at Diamond), but in the second case the run number (which comes after ``i10-'' would be captured and presented as the ``run'' parameter in the metadata when the file was read. \warning{Note that the files are not modified - the extra metadata is only added as the file is read by the \textbf{DataFlder}}. The loading process will also add the metadata key ``Loaded From'' to the file which will give you a note of the filename used to read the data.
 
 Finally, akin to \textbf{DataFile} you can force a dialog box to select a directory by passing \textit{False} into the constructor or getlist methods in place of a directory name.
 
@@ -1006,7 +1008,18 @@ or even more compacts:
   >>> f=DataFolder()
   >>> len(f)
   >>> f[0]
+  >>> f['filename']
 \end{verbatim}
+
+For the second case of indexing, the cose will search the list of filenames for a matching file and return that (roughly equivalent to doing \verb#f[f.files.index("filename")]#)
+
+If you want to know the filenames of all the files in the DataFolder then there is a handy attributes:
+\begin{verbatim}
+>>> f.ls
+>>> f.basenames
+\end{verbatim}
+
+The difference between these two is that \textit{f.basenames} will return only the file part of the filename whilst \textit{f.ls} returns the complete path from the root directory.
 
 \subsubsection{Sorting, Filtering and Grouping Data Files}
 
@@ -1050,6 +1063,27 @@ The \textbf{group} method splits the files in the \textbf{DataFolder} into sever
 \end{verbatim}
 
 would return a list of the files measured at 4.2K and 1T.
+
+If you try indexing a \textbf{DataFolder} with a string and there is no file with as it's filename and there is a group with a key of the same string then \textbf{dataFolder} will return the correspondign group. This allows a more compact navigation through an xtended group structure.
+
+\begin{verbatim}
+>>> f.group(['project','sample','device'])
+>>> f['ASF']['ASF038']['A']
+\end{verbatim}
+
+One task you might want to do would be to work through all the groups in a \textbf{DataFolder} and run some function either with each file in the group or on the whole group. This is further complicated if you want to iterate over all the sub-groups within a group. The \textit{walk\_groups()} method is useful here.
+\begin{verbatim}
+>>> f.walk_groups(func,group=True,replace_terminal=True,walker_args={"arg1":"value1"})
+\end{verbatim}
+
+This will iterate over the complete hierarchy of groups and sub groups in the folder and execute the function \textit{func} once for each group. If the \textit{group} parameter is False then it will execute \textit{func} once for each file. The function \textit{fun} should be defined something like:
+\begin{verbatim}
+>>> def func(group,list_of-group_keys,arg1,arg2...)
+\end{verbatim}
+The first parameter should expect and instance of \textbf{PDataFile} if \textit{group} is False or an instance of \textbf{DataFolder} if \textit{group} is True. The second parameter will be given a list of of strings representing the group key values from the topmost group to the lowest (terminal) group.
+
+The \textit{replace\_terminal} parameter applies when \textit{group} is True and the function returns a \textbf{DataFile} object. This indicates that the group on which the function was called should be removed from the list fo groups and the returned \textbf{DataFile} object should be added to the list of files in the folder. This operation is useful when one is processing a group of files to combined them into a single dataset. Combining a multi-level grouping operation and successive calls to \textit{walk\_groups} can rapidly reduce a large set of data files representing a multi-dimensional data set into a single file with minimal coding.
+
 
 In some cases you will want to work with sets of files coming from different groups in order. For example, if above we had a sequence of 10 data files for each field and temperature and we wanted to process the positive and negative field curves together for a given temperature in turn. In this case the \textbf{zip\_groups} method can be useful.
 

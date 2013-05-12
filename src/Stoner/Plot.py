@@ -2,9 +2,12 @@
 #
 #PlotFile object of the Stoner Package
 #
-# $Id: Plot.py,v 1.15 2012/01/04 22:35:32 cvs Exp $
+# $Id: Plot.py,v 1.16 2013/05/12 17:17:57 cvs Exp $
 #
 # $Log: Plot.py,v $
+# Revision 1.16  2013/05/12 17:17:57  cvs
+# Updates to the DataFolder class and documentation updates.
+#
 # Revision 1.15  2012/01/04 22:35:32  cvs
 # Give CSVFIle options to skip headers
 # Make PlotFile.plot_xy errornar friendly
@@ -115,7 +118,7 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
-    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, plotter=pyplot.plot,  **kwords):
+    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
 
                 @param column_x An integer or string that indexes the relevant column for the x data
@@ -139,14 +142,16 @@ class PlotFile(DataFile):
         y=self.column(column_y)
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
             if err in kwords:
+                if plotter is None:
+                    plotter=pyplot.errorbar
                 # If the keyword exists and is either an int or a string, then
                 # it will be a column index, so get the matching data
-                if reduce(lambda x, y: x or isinstance(kwords[err], y), [int, str], False):
+                if type(kwords[err]) in [int,str]:
                     kwords[err]=self.column(kwords[err])
                 elif isinstance(kwords[err], list):
                 # Ok, so it's a list, so redo the check for each  item.
                     for i in range(len(kwords[err])):
-                        if reduce(lambda x, y: x or isinstance(kwords[err][i], y), [int, str], False):
+                        if type(kwords[err][i]) in  [int, str]:
                             kwords[err][i]=self.column(kwords[err])
         # Now try to process the figure parameter
         if isinstance(figure, int):
@@ -161,6 +166,8 @@ class PlotFile(DataFile):
             figure=pyplot.figure()
         if show_plot == True:
             pyplot.ion()
+        if plotter is None: #Nothing has defined the plotter to use yet
+            plotter=pyplot.plot
         if isinstance(column_y, list):
             for ix in range(len(column_y)):
                 yt=y[:, ix]
@@ -171,6 +178,7 @@ class PlotFile(DataFile):
                 else:
                     plotter(x,y, format, figure=figure, **kwords)
         else:
+            print kwords
             if format==None:
                 plotter(x,y, figure=figure, **kwords)
             else:

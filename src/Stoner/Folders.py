@@ -2,9 +2,12 @@
 #
 # Classes for working directories of datafiles
 #
-# $Id: Folders.py,v 1.5 2012/04/06 19:36:08 cvs Exp $
+# $Id: Folders.py,v 1.6 2013/05/12 17:17:57 cvs Exp $
 #
 # $Log: Folders.py,v $
+# Revision 1.6  2013/05/12 17:17:57  cvs
+# Updates to the DataFolder class and documentation updates.
+#
 # Revision 1.5  2012/04/06 19:36:08  cvs
 # Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
 #
@@ -26,6 +29,8 @@ import os
 import re
 import os.path as path
 import fnmatch
+import numpy
+from copy import copy
 
 from .Core import DataFile
 
@@ -39,6 +44,7 @@ class DataFolder(object):
     directory=False
     files=[]
     groups={}
+    key=""
 
     def __init__(self, *args, **kargs):
         """Constructor of DataFolder.
@@ -70,13 +76,34 @@ class DataFolder(object):
                 self.directory=args[0]
         else:
             self.directory=os.getcwd()
-        if "recursive" in kargs:
-            recursive=kargs["recursive"]
-        else:
-            recursive=True
+        recursive=True
+        for v in kargs:
+            self.__setattr__(v,kargs[v])
         if not nolist:
             self.getlist(recursive=recursive)
 
+    def __read(self,f):
+        """Reads a single filename in and creates an instance of DataFile. If self.pattern
+        is a regular expression then use any named groups in it to create matadata from the
+        filename. If self.read_means is true then create metadata from the mean of the data columns.
+        
+        @param f A filename or DataFile object
+        @return A DataFile object
+        """
+        if isinstance(f,DataFile):
+            return f
+        tmp= self.type(f)
+        if isinstance(self.pattern,re._pattern_type ):
+            m=self.pattern.search(f)
+            for k in m.groupdict():
+                tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
+        if self.read_means:
+            for h in tmp.column_headers:
+                tmp[h]=numpy.mean(tmp.column(h))
+        tmp['Loaded from']=f
+        return tmp
+       
+        
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
 
@@ -102,11 +129,7 @@ class DataFolder(object):
         """Returns the files iterator object
         @return self.files.__iter__"""
         for f in self.files:
-            tmp= self.type(f)
-            if isinstance(self.pattern,re._pattern_type ):
-                m=self.pattern.search(f)
-                for k in m.groupdict():
-                    tmp.metadata[k]=tmp.metadata.string_to_type(m.groups(k))
+            tmp=self.__read(f)
             yield tmp
 
     def __len__(self):
@@ -127,16 +150,14 @@ class DataFolder(object):
         will be the name of the capturing group and the value will be the match to the group. This allows metadata to be imported from the filename as it is loaded."""""
         if isinstance(i, str): # Ok we've done a DataFolder['filename']
             try:
-                i=self.files.index(i)
+                i=self.ls.index(i)
             except ValueError:
-                i=self.basenames.index(i)
+                try:
+                    i=self.basenames.index(i)
+                except ValueError:
+                    return self.groups[i]
         files=self.files[i]
-        tmp= self.type(files)
-        if isinstance(self.pattern, re._pattern_type):
-            m=self.pattern.search(files)
-            for k in m.groupdict():
-                tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-            tmp['Loaded from']=files
+        tmp=self.__read(files)
         return tmp
 
     def __getattr__(self, item):
@@ -145,9 +166,29 @@ class DataFolder(object):
         @return Depends on the attribute
 
         Currently supported attributes:
-        \b basenames Returns the list of files after passing through os.path.basename()"""
+        \b basenames Returns the list of files after passing through os.path.basename()
+        \b ls Returns a list of filenames (either the matched filename patterns, or DataFile.filename if
+        DataFolder.files contains DataFile objects
+        \b lsgrp Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+        """
         if item=="basenames":
-            return [path.basename(x) for x in self.files]
+            ret=[]
+            for x in self.files:
+                if isinstance(x,DataFile):
+                    ret.append(path.basename(x.filename))
+                elif isinstance(x,str):
+                    ret.append(path.basename(x))
+            return ret
+        elif item=="lsgrp":
+            return self.groups.keys()
+        elif item=="ls":
+            ret=[]
+            for f in self.files:
+                if isinstance(f,str):
+                    ret.append(f)
+                elif isinstance(f,DataFile):
+                    ret.append(f.filename)
+            return ret
 
 
     def __repr__(self):
@@ -155,6 +196,17 @@ class DataFolder(object):
         @return A string representation of the current DataFolder object"""
         return "DataFolder("+self.directory+") with pattern "+str(self.pattern)+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
 
+    def __delitem__(self,item):
+        """Deelte and item or a group from the DataFolder
+        @param item the Item to be deleted. if @a item is an int, then assume that it is a file index
+        if @a item is a string then assume it is agroup."""
+        if isinstance(item, str) and item in self.groups:
+            del self.groups[item]
+        elif isinstance(item, int):
+            del self.files[item]
+        else:
+            raise NotImplemented
+            
     def getlist(self, recursive=True, directory=None):
         """Scans the current directory, optionally recursively to build a list of filenames
         @param recursive Do a walk through all the directories for files
@@ -187,7 +239,7 @@ class DataFolder(object):
                 newfiles=[]
                 for f in files:
                     if self.pattern.search(f) is not None:
-                        newfiles.append(f)
+                        newfiles.append(path.join(root, f))
                 self.files=newfiles
         return self
 
@@ -216,10 +268,10 @@ class DataFolder(object):
         elif filter is None:
             raise ValueError("A filter must be defined !")
         else:
-            for f in self.files:
-                x=self.type(f)
+            for i in range(len(self.files)):
+                x=self[i]
                 if filter(x)  ^ invert:
-                    files.append(f)
+                    files.append(self.files[i])
         self.files=files
         return self
 
@@ -233,7 +285,9 @@ class DataFolder(object):
         if isinstance(key, str):
             self.files=sorted(self.files, cmp=lambda x, y:cmp(self[x].get(key), self[y].get(key)), reverse=reverse)
         elif key is None:
-            self.files.sort(reverse=reverse)
+            fnames=self.ls
+            fnames.sort(reverse=reverse)
+            self.files=[self[f] for f in fnames]           
         else:
             self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
         return self
@@ -260,7 +314,8 @@ class DataFolder(object):
             x=self[f]
             v=key(x)
             if not v in self.groups:
-                self.groups[v]=DataFolder(self.directory, type=self.type, pattern=self.pattern, nolist=True)
+                self.groups[v]=DataFolder(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
+                self.groups[v].key=v
             self.groups[v].files.append(f)
         if len(next_keys)>0:
             for g in self.groups:
@@ -276,6 +331,55 @@ class DataFolder(object):
             raise SyntaxError("groups must be a list of groups")
         grps=[[y for y in self.groups[x]] for x in groups]
         return zip(*grps)
+		
+    def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
+        """Walks through a heirarchy of groups and calls walker for each file.
+        @param walker a callable object that takes either a DataFile instance or a DataFolder instance.
+        @param group (default False) determines whether the wealker function will expect to be given the DataFolder
+        representing the lowest level group or individual DataFile objects from the lowest level group
+        @param replace_terminal if group is True and the walker function returns an instance of DataFile then the return value is appended
+        to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
+        @param walker_args a dictionary of static arguments for the walker function.
+        @return Nothing
+        
+        The @a walker function should have a prototype of the form:
+        
+        walker(f,list_of_group_names,**walker_args) where f is either a DataFolder or DataFile."""
+	return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
+		
+    def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
+  	""""Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
+  		@param walker See \b walk_groups
+  		@param group See \b walk_groups
+  		@param replace_terminal see \b walk_groups
+  		@param walker_args See \b walk_groups
+  		@param bbreadcrumb a list of the group names or key values that we've walked through
+  		"""
+	if (len(self.groups)>0):
+            ret=[]
+            removeGroups=[]
+            if replace_terminal:
+                self.files=[]
+            for g in self.groups:
+                bcumb=copy(breadcrumb)
+                bcumb.append(g)
+                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
+                if group and  replace_terminal and isinstance (tmp, DataFile):
+                    removeGroups.append(g)                    
+                    tmp.filename=g
+                    self.files.append(tmp)
+                    ret.append(tmp)
+            for g in removeGroups:
+                del(self.groups[g])
+            return ret
+	else:
+	   if group:
+	       return walker(self,breadcrumb,**walker_args)
+	   else:
+	       ret=[]
+	       for f in self:
+	           ret.append(walker(f,breadcrumb,**walker_args))
+	       return ret
 
 
 
