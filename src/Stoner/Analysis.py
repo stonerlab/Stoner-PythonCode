@@ -3,9 +3,12 @@
 #
 # AnalysisFile object of the Stoner Package
 #
-# $Id: Analysis.py,v 1.24 2013/03/27 17:18:09 cvs Exp $
+# $Id: Analysis.py,v 1.25 2013/05/13 15:12:10 cvs Exp $
 #
 # $Log: Analysis.py,v $
+# Revision 1.25  2013/05/13 15:12:10  cvs
+# Reimplement the DataFile.search and add an AnalyseFile.integrate
+#
 # Revision 1.24  2013/03/27 17:18:09  cvs
 # Adding nlfit functionality to Stoner.Analysis
 #
@@ -91,6 +94,7 @@ import Stoner.FittingFuncs
 import Stoner.nlfit
 import scipy
 import numpy
+from scipy.integrate import cumtrapz
 import math
 import sys
 import inspect
@@ -542,6 +546,37 @@ class AnalyseFile(DataFile):
             z=numpy.take(z, numpy.argsort(d2(z)))
         return index(filter(lambda x: numpy.abs(d2(x))>significance, z))
 
+    def integrate(self,xcol,ycol,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
+        """Inegrate a column of data, optionally returning the cumulative integral
+        @param xcol The X data column index (or header)
+        @para ycol The Y data column index (or header)
+        @param result Either a column index (or header) to overwrite with the cumulative data, or True to add a new column
+        or None to not store the cumulative result.
+        @param result_name The new column header for the results column (if specified)
+        @bounds A function that evaluates for each row to determine if the data should be integrated over.
+        @param kargs Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
+        @return The final integration result"""
+        xc=self.find_col(xcol)
+        xdat=[]
+        ydat=[]
+        yc=self.find_col(ycol)
+        for r in self.rows():
+            xdat.append(r[xc])
+            if bounds(r[xc],r):
+                ydat.append(r[yc])
+            else:
+                ydat.append(0)
+        xdat=numpy.array(xdat)
+        ydata=numpy.array(ydat)
+        resultdata=cumtrapz(xdat,ydat,**kargs)
+        resultdata=numpy.append(numpy.array([0]),resultdata)
+        if result is not None:
+            if isinstance(result,str) or isinstance(result,int):
+                self.add_column(resultdata,result_name,index=result,replace=True)
+            elif isinstance(result,bool) and result:
+                self.add_column(resultdata,result_name)
+        return resultdata[-1]
+    
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
         """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
 

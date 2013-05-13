@@ -2,9 +2,12 @@ import pdb############################################
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.64 2013/05/12 17:17:57 cvs Exp $
+# $Id: Core.py,v 1.65 2013/05/13 15:12:10 cvs Exp $
 #
 # $Log: Core.py,v $
+# Revision 1.65  2013/05/13 15:12:10  cvs
+# Reimplement the DataFile.search and add an AnalyseFile.integrate
+#
 # Revision 1.64  2013/05/12 17:17:57  cvs
 # Updates to the DataFolder class and documentation updates.
 #
@@ -386,7 +389,6 @@ class DataFile(object):
          # Now check for arguments t the constructor
         self.metadata=typeHintedDict()
         if len(args) == 1:
-            #print type(args[0])
             if (isinstance(args[0], str) or isinstance(args[0], unicode) or (
                 isinstance(args[0], bool) and not args[0])):
                                         # Filename- load datafile
@@ -1045,52 +1047,43 @@ class DataFile(object):
         @return a list of all the keys in the metadata dictionary"""
         return self.dir(None)
 
-    def search(self, *args):
+    def search(self, xcol,value,columns=None):
         """Searches in the numerica data part of the file for lines
         that match and returns  the corresponding rows
+        
+        @param xcol is a Search Column Index
+        @value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
+        @columns is either a index or array of indices
 
-        Find row(s) that match the specified value in column:
-
-        search(Column,value,columns= [list])
-
-        Find rows that where the column is >= lower_limit and < upper_limit:
-
-        search(Column,function ,columns= [list])
-
-        Find rows where the function evaluates to true. Function should take
-        two parameters x (float) and y(numpy array of floats).
-        e.g. AnalysisFile.search('x',lambda x,y:
-        x < 10 and y[0] == 2, ['y1','y2'])
         """
-
-        if len(args) == 2:
-            col = args[0]
-            targets = []
-            val = args[1]
-        elif len(args) == 3:
-            col = args[0]
-            if not isinstance(args[2], list):
-                c = [args[2]]
+        rows=[]
+        for (r,x) in zip(range(len(self)),self.column(xcol)):
+            if isinstance(value,tuple) and value[0]<=x<=value[1]:
+                rows.append(r)
+            elif isinstance(value,list):
+                for v in value:
+                    if isinstance(v,tuple) and v[0]<=x<=v[1]:
+                        rows.append(r)
+                        break
+                    elif x==v:
+                        rows.append(r)
+                        break
+            elif callable(value) and value(x,self[r]):
+                rows.append(r)
+            elif x==value:
+                rows.append(r)
+        if columns is None: #Get the whole slice
+            return self.data[rows,:]
+        elif isinstance(columns,str) or isinstance(columns,int):
+            columns=self.find_col(columns)
+            if len(rows)==1:
+                return self.data[rows,columns]
             else:
-                c = args[2]
-            targets = map(self.find_col, c)
-            val = args[1]
-        col=self.find_col(col)
-        print col
-        if len(targets) == 0:
-            targets = range(self.data.shape[1])
-        if callable(val):
-            from inspect import getargspec
-            (args, varargs, keywords, defaults)=getargspec(val)
-            if len(args)==1: # Handle one argrument search function
-                val=lambda x, y:val(y)
-            if numpy.isscalar(self.data[0].mask): # check if the mask is defined or not
-                rows = numpy.nonzero([bool(val(x[col], x)) and not x.mask for x in self])[0]
-            else:
-                rows = numpy.nonzero([bool(val(x[col], x)) and not x.mask[col] for x in self])[0]
-        elif isinstance(val, float):
-            rows = numpy.nonzero([x[0] == val for x in d])[0]
-        return self.data[rows][:, targets]
+                return self.data[rows][:, columns]
+        else:
+            targets=[self.find_col(t) for t in columns]
+            return self.data[rows][:, targets]
+            
 
     def unique(self, col, return_index=False, return_inverse=False):
         """Return the unique values from the specified column - pass through
@@ -1126,7 +1119,6 @@ class DataFile(object):
             d = self.column(col)
             if callable(val):
                 rows = numpy.nonzero([bool(val(x[col], x) and not x.mask) for x in self])[0]
-                print rows
             elif isinstance(val, float):
                 rows = numpy.nonzero([x == val for x in d])[0]
             self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
@@ -1292,7 +1284,6 @@ class DataFile(object):
         else:
             order = [self.column_headers[self.find_col(order)]]
         d = numpy.sort(self.records, order=order)
-        #print d
         self.data = ma.masked_array(d.view(dtype='f8').reshape(len(self), len(self.
                                                               column_headers)))
         return self
