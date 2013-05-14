@@ -2,103 +2,7 @@ import pdb############################################
 #
 # Core object of the Stoner Package
 #
-# $Id: Core.py,v 1.65 2013/05/13 15:12:10 cvs Exp $
-#
-# $Log: Core.py,v $
-# Revision 1.65  2013/05/13 15:12:10  cvs
-# Reimplement the DataFile.search and add an AnalyseFile.integrate
-#
-# Revision 1.64  2013/05/12 17:17:57  cvs
-# Updates to the DataFolder class and documentation updates.
-#
-# Revision 1.63  2013/03/26 23:51:12  cvs
-# Add start of extra gui package
-#
-# Revision 1.62  2013/03/22 09:11:47  cvs
-# Add more checks to help loading with 'odd' files
-#
-# Revision 1.61  2013/03/05 16:22:54  cvs
-# Fix to del_rows in Core, mask should not be indexed here
-#
-# Revision 1.60  2012/12/11 16:08:59  cvs
-# Add a Rigaku file reader
-#
-# Revision 1.59  2012/12/09 17:05:03  cvs
-# Update find_col to interperate strings as integers if not string matching
-# Update documentation
-#
-# Revision 1.58  2012/12/09 15:55:50  cvs
-# Updates to documentation and make stoner Core at least partially Unicode aware
-#
-# Revision 1.57  2012/11/16 22:05:00  cvs
-# Add the << operator to read a DataFile from a string or an iterable object. Update documentation
-#
-# Revision 1.56  2012/05/04 22:13:13  cvs
-# Put back the 1.54 __repr__ fix
-#
-# Revision 1.55  2012/05/04 16:47:25  cvs
-# Fixed a string representation problem in __repr__. Minor changes to BNLFile format.
-#
-# Revision 1.54  2012/05/02 23:03:09  cvs
-# Update documentation, improve loading handling of external fileformats.
-#
-# Revision 1.53  2012/05/01 13:08:09  cvs
-# Restore an overwritten rename and fixed __repr__ methods
-#
-# Revision 1.52  2012/04/21 21:51:24  cvs
-# Fix a bug with AnalysFile polyfit
-#
-# Revision 1.51  2012/04/19 20:07:07  cvs
-# Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
-#
-# Revision 1.50  2012/04/06 19:36:08  cvs
-# Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
-#
-# Revision 1.49  2012/04/04 23:04:11  cvs
-# Improvements to AnalyseFile and DataFolders="This is 
-#
-# Revision 1.48  2012/04/02 11:58:07  cvs
-# Minor bug fixes and corrections
-#
-# Revision 1.47  2012/03/27 21:54:04  cvs
-# Fix a bug with loading DataFiles and in __repr__
-# Improve peak finding code a bit
-#
-# Revision 1.46  2012/03/26 21:57:55  cvs
-# Some improvements to auto-file detection
-#
-# Revision 1.45  2012/03/25 21:18:10  cvs
-# Documentation updates and minor fixes
-#
-# Revision 1.44  2012/03/25 20:35:06  cvs
-# More work to stop load recursiing badly
-#
-# Revision 1.43  2012/03/25 20:23:13  cvs
-# Try to stop recursive calling of the load routine
-#
-# Revision 1.42  2012/03/25 19:41:31  cvs
-# Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
-#
-# Revision 1.41  2012/03/22 12:17:16  cvs
-# Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
-#
-# Revision 1.40  2012/03/11 23:12:32  cvs
-# string_to_type function to do a better job of working out python type from string representation when no type hint give.
-#
-# Revision 1.39  2012/03/11 01:41:56  cvs
-# Recompile API help
-#
-# Revision 1.38  2012/03/10 20:17:15  cvs
-# Minor changes
-#
-# Revision 1.37  2012/01/03 21:51:04  cvs
-# Fix a bug with add_column
-# Upload new TDMS data
-#
-# Revision 1.36  2012/01/03 12:41:50  cvs
-# Made Core pep8 compliant
-# Added TDMS code and TDMSFile
-#
+
 
 #
 #############################################
@@ -1052,8 +956,9 @@ class DataFile(object):
         that match and returns  the corresponding rows
         
         @param xcol is a Search Column Index
-        @value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
-        @columns is either a index or array of indices
+        @param value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
+        @param columns is either a index or array of indices or None (default) for all columns.
+		@return numpy array of matching rows or column values depending on the arguements.
 
         """
         rows=[]
