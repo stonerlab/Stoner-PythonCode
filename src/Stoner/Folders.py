@@ -98,8 +98,14 @@ class DataFolder(object):
             for k in m.groupdict():
                 tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
         if self.read_means:
-            for h in tmp.column_headers:
-                tmp[h]=numpy.mean(tmp.column(h))
+            if len(tmp)==0:
+                pass
+            elif len(tmp)==1:
+                for h in tmp.column_headers:
+                    tmp[h]=tmp.column(h)[0]
+            else:
+                for h in tmp.column_headers:
+                    tmp[h]=numpy.mean(tmp.column(h))
         tmp['Loaded from']=f
         return tmp
        
