@@ -26,7 +26,7 @@ import itertools
 import collections
 
 
-class evaluatable:
+class __evaluatable:
     """A very simple class that is just a placeholder"""
 
 
@@ -54,7 +54,7 @@ class typeHintedDict(dict):
 
     __tests = [(__regexSignedInt, int), (__regexUnsignedInt, int),
              (__regexFloat, float), (__regexBoolean, bool),
-             (__regexString, str), (__regexEvaluatable, evaluatable())]
+             (__regexString, str), (__regexEvaluatable, __evaluatable())]
         # This is used to work out the correct python class for
         # some string types
 
@@ -136,7 +136,7 @@ class typeHintedDict(dict):
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
-                if isinstance(valuetype, evaluatable):
+                if isinstance(valuetype, __evaluatable):
                     try:
                         ret = eval(str(value), globals(), locals())
                     except NameError:
@@ -194,7 +194,7 @@ class typeHintedDict(dict):
             k = m.group(1)
             t = m.group(2)
             self._typehints[k] = t
-            if len(value) == 0:  # Empty data so reset to string and set empty
+            if len(str(value)) == 0:  # Empty data so reset to string and set empty
                 super(typeHintedDict, self).__setitem__(k, "")
                 self._typehints[k] = "String"
             else:
@@ -244,20 +244,30 @@ class DataFile(object):
     """@b Stoner.Core.DataFile is the base class object that represents
     a matrix of data, associated metadata and column headers.
 
-    @b DataFile provides the mthods to load, save, add and delete data, index
-    and slice data, manipulate metadata and column headings.
+    Attributes
+    ----------
+    
+    * @b data A 2D numpy masked array of data (usually floats)
+    * @b metadata A typeHintedDict of key-value metadata pairs. The dictionary
+    tries to retain information about the type of data so as to aid import and 
+    export from CM group labVIEw code.
+    * @b column_headers A list of strings of the column names of the data
+    * @b title A string giving the title of the measurement
+    * @filename A string giving the current filename of the data if loaded from or 
+    already saved to disc. This is the default filename used by the @b load() and @b save()
+    methods
+    
+    * @b mask Returns the current mask applied to the numerical data equivalent to self.data.mask
+    * @b shape Returns the shape of the data (rows,columns) - equivalent to self.data.shape
+    * @b records Returns the data in the form of a list of dictionaries
+    * @b clone Creates a deep copy of the DataFile object
+    
+    """
 
-    Authors: Matt Newman, Chris Allen and Gavin Burnell"""
-    #   CONSTANTS
-    defaultDumpLocation = 'C:\\dump.csv'
-
-    data = ma.masked_array([])
-    metadata = typeHintedDict()
-    filename = None
-    column_headers = list()
+    #Class attributes
+    #Priority is the load order for the class
     priority=32
-    debug=False
-    _masks=[False]
+
     _conv_string=numpy.vectorize(lambda x:str(x))
     _conv_float=numpy.vectorize(lambda x:float(x))
 
@@ -290,8 +300,14 @@ class DataFile(object):
         definitions above
         @return A new instance of the DataFile class.
         """
-         # Now check for arguments t the constructor
+        # init instance attributes
+        self.debug=False
+        self._masks=[False]
         self.metadata=typeHintedDict()
+        self.data = ma.masked_array([])
+        self.filename = None
+        self.column_headers = list()
+
         if len(args) == 1:
             if (isinstance(args[0], str) or isinstance(args[0], unicode) or (
                 isinstance(args[0], bool) and not args[0])):
@@ -359,6 +375,8 @@ class DataFile(object):
             return {x.__name__:x for x in itersubclasses(DataFile)}
         elif name=="mask":
             return ma.getmaskarray(self.data)
+        elif name=="shape":
+            return self.data.shape
         else:
             try:
                 return self.column(name)
@@ -532,6 +550,8 @@ class DataFile(object):
         increased to match the actual number of columns.
         """
         newdata=self.__class__(self.clone)
+        if len(newdata.data.shape)<2:
+            newdata.data=numpy.atleast_2d(newdata.data)
         if isinstance(other, numpy.ndarray):
             if len(other.shape) != 2:  # 1D array, make it 2D column
                 other = numpy.atleast_2d(other)
@@ -555,13 +575,20 @@ class DataFile(object):
                                                for x in range(other.shape[1])])
                 newdata.data = numpy.append(self.data, other, 1)
         elif isinstance(other, DataFile):  # Appending another datafile
-            if self.data.shape[0] == other.data.shape[0]:
-                newdata.column_headers.extend(other.column_headers)
-                for x in other.metadata:
-                    newdata[x] = other[x]
-                newdata.data = numpy.append(self.data, other.data, 1)
-            else:
-                return NotImplemented
+            if len(other.data.shape)<2:
+                other=other.clone
+                other.data=numpy.atleast_2d(other.data)
+            (myrows,mycols)=newdata.data.shape
+            (yourrows,yourcols)=other.data.shape
+            if myrows>yourrows:
+                other=other.clone
+                other.data=numpy.append(other.data,numpy.zeros((myrows-yourrows,yourcols)),0)
+            elif myrows<yourrows:
+                newdata.data=numpy.append(newdata.data,numpy.zeros((yourrows-myrows,mycols)),0)
+                
+            newdata.column_headers.extend(other.column_headers)
+            newdata.metadata.update(other.metadata)
+            newdata.data = numpy.append(newdata.data, other.data, 1)
         else:
             return NotImplemented
         return newdata
@@ -693,7 +720,7 @@ class DataFile(object):
         self.mask=False
         self.mask=self._masks.pop()
         if len(self._masks)==0:
-            self.__masks=[False]
+            self._masks=[False]
 
 
     
@@ -1080,6 +1107,22 @@ class DataFile(object):
             numpy_data=numpy.array(column_data)
         else:
             return NotImplemented
+        #Sort out the sizes of the arrays
+        cl=len(numpy_data)
+        if len(self.data.shape)==2:
+            (dr,dc)=self.data.shape
+        elif len(self.data.shape)==1:
+            self.data=numpy.atleast_2d(self.data).T
+            (dr,dc)=self.data.shape 
+        elif len(self.data.shape)==0:
+            self.data=numpy.array([[]])            
+            (dr,dc)=(0,0)
+        if cl>dr:
+            self.data=numpy.append(self.data,numpy.zeros((cl-dr,dc)),0)
+        elif cl<dr:
+            numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
+        
+        
         if replace:
             self.data[:, index] = numpy_data
         else:

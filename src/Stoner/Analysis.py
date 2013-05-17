@@ -571,10 +571,12 @@ class AnalyseFile(DataFile):
         resultdata=cumtrapz(xdat,ydat,**kargs)
         resultdata=numpy.append(numpy.array([0]),resultdata)
         if result is not None:
-            if isinstance(result,str) or isinstance(result,int):
-                self.add_column(resultdata,result_name,index=result,replace=True)
-            elif isinstance(result,bool) and result:
+            if isinstance(result,bool) and result:
                 self.add_column(resultdata,result_name)
+            elif isinstance(result,str) or isinstance(result,int):
+                print type(result)
+                print result
+                self.add_column(resultdata,result_name,index=result,replace=True)
         return resultdata[-1]
     
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
