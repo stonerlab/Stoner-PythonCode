@@ -466,13 +466,22 @@ arrays to the DataFile object to append additional data.
   >>>new_data=d+x
   >>>y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
   >>>new_data=d+y
+  >>>z={"X":1.0,"Y":2.1,"Z":7.5}
+  >>>new_data=d+z
+  >>>new_data=d+[x,y,z]
   >>>column=d.column[0]
   >>>new_data=d&column
 \end{verbatim}
 In the first example above, we add a single row of data to \textit{d}. This
 assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
-dimensional numpy array to the data. The third example appends a numpy array as
+dimensional numpy array to the data. The third example demonstrates adding data from a dictioary. In this case
+the keys of the dictionary are used to determine which column the values are added to. If their columns that
+don't match one of the dictionary keys, then a \textit{NaN} is inserted. If their are keys that don't match
+columns labels, then new columns are added to the data set, filled with \textit{NaN}. In the fourth example, each element
+in the list is added in turn to \textit{d}. A similar effect would be achieved by doing \verb#new_data=d+x+y+z#.
+
+The last example appends a numpy array as
 a column to \textit{d}. In this case the requirement is that the numpy array has
 the same or fewer rows of data as \textit{d}.
 

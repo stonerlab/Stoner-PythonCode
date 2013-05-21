@@ -482,7 +482,17 @@ class DataFile(object):
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance
-                of a \b DataFile object.
+                of a \b DataFile object or a dictionary or a list of any of the above.
+                
+                If other is a dictionary then the keys of the dictionary are passed to
+                \b self.find_col to see if they match a column, in which case the 
+                corresponding value will be used for theat column in the new row.
+                Columns which do not have a matching key will be set to NaN. If other has keys
+                that are not found as columns in self, additional columns are added.
+                
+                If other is a list, then the add method is called recursively for each element
+                of the list.
+                
                 @return A Datafile object with the rows of \a other appended
                 to the rows of the current object.
 
@@ -530,6 +540,34 @@ class DataFile(object):
             for x in self.metadata:
                 newdata[x] = self[x]
             newdata.data = numpy.append(self.data, new_data, 0)
+            return newdata
+        elif isinstance(other,dict):
+            newdata=self
+            added_row=False
+            for k in other:
+                try:
+                    newdata.find_col(k)
+                except KeyError:
+                    newdata=newdata.clone
+                    if len(newdata)==0:
+                        added_row=True
+                        cl=1
+                    else:
+                        cl=len(newdata)
+                    newdata=newdata&numpy.ones(cl)*numpy.nan
+                    newdata.column_headers[-1]=k
+            new_data=numpy.nan*numpy.ones(len((newdata.column_headers)))
+            for k in other:
+                new_data[newdata.find_col(k)]=other[k]
+            new_data=numpy.atleast_2d(new_data)
+            newdata.data=numpy.append(newdata.data,new_data,0)
+            if added_row:
+                newdata.data=newdata.data[1:,:]
+            return newdata
+        elif isinstance(other,list):
+            newdata=self
+            for o in other:
+                newdata=newdata+o
             return newdata
         else:
             return NotImplemented('Failed in DataFile')
@@ -1205,7 +1243,7 @@ class DataFile(object):
         @return A copy of the modified DataFile object"""
         self.data=numpy.insert(self.data, row,  new_data, 0)
         return self
-
+   
     def rows(self):
         """Generator method that will iterate over rows of data
         @return Returns the next row of data"""
@@ -1237,13 +1275,6 @@ class DataFile(object):
                                                               column_headers)))
         return self
 
-    def edit(self):
-        """Produce an editor window with a grid"""
-        app = wx.PySimpleApp()
-        frame = MyForm(self).Show()
-        app.MainLoop()
-        while app.IsMainLoopRunning:
-            pass
 
 def itersubclasses(cls, _seen=None):
     """
