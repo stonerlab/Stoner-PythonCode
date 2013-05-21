@@ -26,8 +26,9 @@ import itertools
 import collections
 
 
-class __evaluatable:
+class _evaluatable(object):
     """A very simple class that is just a placeholder"""
+    
 
 
 class typeHintedDict(dict):
@@ -54,7 +55,7 @@ class typeHintedDict(dict):
 
     __tests = [(__regexSignedInt, int), (__regexUnsignedInt, int),
              (__regexFloat, float), (__regexBoolean, bool),
-             (__regexString, str), (__regexEvaluatable, __evaluatable())]
+             (__regexString, str), (__regexEvaluatable, _evaluatable())]
         # This is used to work out the correct python class for
         # some string types
 
@@ -136,7 +137,7 @@ class typeHintedDict(dict):
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
-                if isinstance(valuetype, __evaluatable):
+                if isinstance(valuetype, _evaluatable):
                     try:
                         ret = eval(str(value), globals(), locals())
                     except NameError:
