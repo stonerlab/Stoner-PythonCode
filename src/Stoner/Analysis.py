@@ -230,8 +230,19 @@ class AnalyseFile(DataFile):
             self.add_column(numpy.polyval(p, self.column(column_x)), index=result, replace=False, column_header='Fitter with '+str(polynomial_order)+' order poylnomial')
         return p
 
-    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None ):
+    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ):
         """General curve fitting function passed through from numpy
+
+                @param func A callable object that represents the fitting function with the form def f(x,*p) where p is a list of fitting parameters
+                @param xcol The index of the x-column data to fit
+                @param ycol The index of the y-column data to fit
+                @param p0 A vector of initial parameter values to try
+                @sigma See scipy documentation
+                @bounds A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+                @result Determines whether the fitted data should be added into the DataFile object. If result is True then the last column
+                will be used. If result is a string or an integer then it is used as a column index. Default to None for not adding fitted data
+                @param replace Inidcatesa whether the fitted data replaces existing data or is inserted as a new column
+                @param header If this is a string then it is used as the name of the fitted data.
 
                 AnalysisFile.Curve_fit(fitting function, x-column,y_column, initial parameters=None, weighting=None, bounds function)
 
@@ -251,7 +262,11 @@ class AnalyseFile(DataFile):
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
             xc=self.find_col(xcol)
-            self.apply(lambda x:func(x[xc], *popt), result, replace=False, header='Fitted with '+func.__name__)
+            if not isinstance(header, str):
+                header='Fitted with '+func.__name__
+            if isinstance(result, bool) and result:
+                result=self.shape[1]-1
+            self.apply(lambda x:func(x[xc], *popt), result, replace=replace, header=header)
         return popt, pcov
 
     def max(self, column, bounds=None):
@@ -289,25 +304,25 @@ class AnalyseFile(DataFile):
         if bounds is not None:
             self._pop_mask()
         return result
-            
+
     def span(self, column, bounds=None):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
         @param column Column to look for the max and min values in
         @param bounds A callable function that takes a single argument list of numbers representing one row, and returns True for all rows to search in.
         @return A tuple of (min value, max value)"""
-        
+
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
-        
+
     def clip(self, column, clipper):
         """Clips the data based on the column and the clipper value
         @param column Column to look for the clipping value in
         @param clipper Either a tuple of (min,max) or a numpy.ndarray - in which case the max and min values in that array will be used as the clip limits"""
-        
+
         clipper=(min(clipper), max(clipper))
         self=self.del_rows(column, lambda x, y:x<clipper[0] or x>clipper[1])
         return self
-            
-        
+
+
 
     def mean(self, column, bounds=None):
         """FInd mean value of a data column
@@ -578,7 +593,7 @@ class AnalyseFile(DataFile):
                 print result
                 self.add_column(resultdata,result_name,index=result,replace=True)
         return resultdata[-1]
-    
+
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
         """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
 
@@ -607,7 +622,7 @@ class AnalyseFile(DataFile):
         func_args["func"]=func
         m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
         return m
-        
+
     def nlfit(self, ini_file, func):
         """Non-linear fitting using the nlfit module
         @param ini_file: string giving path to ini file with model

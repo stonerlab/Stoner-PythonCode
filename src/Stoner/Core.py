@@ -28,7 +28,7 @@ import collections
 
 class _evaluatable(object):
     """A very simple class that is just a placeholder"""
-    
+
 
 
 class typeHintedDict(dict):
@@ -247,22 +247,22 @@ class DataFile(object):
 
     Attributes
     ----------
-    
+
     * @b data A 2D numpy masked array of data (usually floats)
     * @b metadata A typeHintedDict of key-value metadata pairs. The dictionary
-    tries to retain information about the type of data so as to aid import and 
+    tries to retain information about the type of data so as to aid import and
     export from CM group labVIEw code.
     * @b column_headers A list of strings of the column names of the data
     * @b title A string giving the title of the measurement
-    * @filename A string giving the current filename of the data if loaded from or 
+    * @filename A string giving the current filename of the data if loaded from or
     already saved to disc. This is the default filename used by the @b load() and @b save()
     methods
-    
+
     * @b mask Returns the current mask applied to the numerical data equivalent to self.data.mask
     * @b shape Returns the shape of the data (rows,columns) - equivalent to self.data.shape
     * @b records Returns the data in the form of a list of dictionaries
     * @b clone Creates a deep copy of the DataFile object
-    
+
     """
 
     #Class attributes
@@ -389,7 +389,7 @@ class DataFile(object):
     def __setattr__(self, name, value):
         """Handles attempts to set attributes not covered with class attribute variables.
         @param name Name of attribute to set. Details of possible attributes below:
-        
+
         \b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
         the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
         if name=="mask":
@@ -398,8 +398,8 @@ class DataFile(object):
             else:
                 self.data.mask=value
         else:
-            self.__dict__[name] = value 
-    
+            self.__dict__[name] = value
+
     def __contains__(self, item):
         """Operator function for membertship tests - used to check metadata contents
         @param item String of metadata key
@@ -475,24 +475,24 @@ class DataFile(object):
             del(self.metadata[item])
         else:
             self.del_rows[item]
-            
-    
-    
-    
+
+
+
+
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance
                 of a \b DataFile object or a dictionary or a list of any of the above.
-                
+
                 If other is a dictionary then the keys of the dictionary are passed to
-                \b self.find_col to see if they match a column, in which case the 
+                \b self.find_col to see if they match a column, in which case the
                 corresponding value will be used for theat column in the new row.
                 Columns which do not have a matching key will be set to NaN. If other has keys
                 that are not found as columns in self, additional columns are added.
-                
+
                 If other is a list, then the add method is called recursively for each element
                 of the list.
-                
+
                 @return A Datafile object with the rows of \a other appended
                 to the rows of the current object.
 
@@ -595,16 +595,16 @@ class DataFile(object):
             if len(other.shape) != 2:  # 1D array, make it 2D column
                 other = numpy.atleast_2d(other)
                 other = other.T
-            if numpy.product(self.data.shape)==0: #Special case no data yet                
+            if numpy.product(self.data.shape)==0: #Special case no data yet
                 newdata.data=other
                 newdata.column_headers=["Coumn "+str(i) for i in range(other.shape[1])]
             elif self.data.shape[0]==other.shape[0]:
                 newdata.data=numpy.append(newdata.data,other,1)
-                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])    
+                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
             elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
                 newdata.data=numpy.append(self.data,numpy.zeros((other.shape[0]-self.data.shape[0],self.data.shape[1])),0)
                 newdata.data=numpy.append(self.data,other,1)
-                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])            
+                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
             else:                    # DataFile + array with correct number of rows
                 if other.shape[0] < self.data.shape[0]:
                     # too few rows we can extend with zeros
@@ -624,14 +624,14 @@ class DataFile(object):
                 other.data=numpy.append(other.data,numpy.zeros((myrows-yourrows,yourcols)),0)
             elif myrows<yourrows:
                 newdata.data=numpy.append(newdata.data,numpy.zeros((yourrows-myrows,mycols)),0)
-                
+
             newdata.column_headers.extend(other.column_headers)
             newdata.metadata.update(other.metadata)
             newdata.data = numpy.append(newdata.data, other.data, 1)
         else:
             return NotImplemented
         return newdata
-            
+
     def __lshift__(self, other):
         """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function
         @param other Either a string or iterable object used to source the DataFile object
@@ -644,7 +644,7 @@ class DataFile(object):
         elif isinstance(other, collections.Iterable):
             newdata._read_iterable(other)
         return newdata
-            
+
 
     def __repr__(self):
         """Outputs the \b Stoner.DataFile object in TDI format.
@@ -722,7 +722,7 @@ class DataFile(object):
         @param func A Callable object of the form lambda x:True where x is a row of data (numpy
         @pram invert Optionally invert te reult of the func test so that it unmasks data instead
         @param cumulative if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
-        
+
         i=-1
         args=len(inspect.getargs(func.__code__)[0])
         for r in self.rows():
@@ -742,7 +742,7 @@ class DataFile(object):
                         self.data[i, j]=ma.masked
                     elif not cumulative:
                         self.data[i, j]=self.data.data[i, j]
-                    
+
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied
         @param mask The new data mask to apply (defaults to None = unmask the data
@@ -752,7 +752,7 @@ class DataFile(object):
             self.data.mask=False
         else:
             self.mask=mask
-            
+
     def _pop_mask(self):
         """Replaces the mask on the data with the last one stored by _push_mask()
         @return None"""
@@ -762,7 +762,7 @@ class DataFile(object):
             self._masks=[False]
 
 
-    
+
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate
         dictionary from the metadata
@@ -782,15 +782,15 @@ class DataFile(object):
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
-        
+
         self._read_iterable(fileinput.FileInput(self.filename))
-        
+
     def _read_iterable(self, reader):
         row=reader.next().split('\t')
         if row[0].strip()!="TDI Format 1.5":
             raise RuntimeError("Not a TDI File")
-        self.column_headers=row[1:]
-        cols=len(self.column_headers)
+        col_headers_tmp=[x.strip() for x in row[1:]]
+        cols=len(col_headers_tmp)
         self.data=ma.masked_array([])
         for r in reader:
             if r.strip()=="": # Blank line
@@ -805,6 +805,9 @@ class DataFile(object):
                 continue
             self.data=numpy.append(self.data, self._conv_float(row[1:]))
         self.data=numpy.reshape(self.data, (-1, cols))
+        self.column_headers=["Column "+str(i) for i in range(cols)]
+        for i in range(len(col_headers_tmp)):
+            self.column_headers[i]=col_headers_tmp[i]
 
     #   PUBLIC METHODS
 
@@ -814,11 +817,11 @@ class DataFile(object):
         @param new_col New name of column
         @return A copy of self
         """
-        
+
         old_col=self.find_col(old_col)
         self.column_headers[old_col]=new_col
         return self
-    
+
     def get(self, item):
         """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
         @param item A string representing the metadata keyname
@@ -919,8 +922,8 @@ class DataFile(object):
         element of @a col is returned.
         """
         if isinstance(col, int):  # col is an int so pass on
-            if col < 0 or col >= len(self.column_headers):
-                raise IndexError('Attempting to index a non - existant column')
+            if not 0<=col<self.data.shape[0]:
+                raise IndexError('Attempting to index a non - existant column '+str(col))
             pass
         elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
             col=str(col)
@@ -933,8 +936,7 @@ class DataFile(object):
                     try:
                         col=int(col)
                     except ValueError:
-                        raise KeyError('Unable to find any possible column \
-                    matches')
+                        raise KeyError('Unable to find any possible column matches for '+str(col))
                     if col<0 or col>=self.data.shape[1]:
                         raise KeyError('Column index out of range')
                 else:
@@ -1020,11 +1022,11 @@ class DataFile(object):
     def search(self, xcol,value,columns=None):
         """Searches in the numerica data part of the file for lines
         that match and returns  the corresponding rows
-        
+
         @param xcol is a Search Column Index
         @param value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
         @param columns is either a index or array of indices or None (default) for all columns.
-		@return numpy array of matching rows or column values depending on the arguements.
+        @return numpy array of matching rows or column values depending on the arguements.
 
         """
         rows=[]
@@ -1054,7 +1056,7 @@ class DataFile(object):
         else:
             targets=[self.find_col(t) for t in columns]
             return self.data[rows][:, targets]
-            
+
 
     def unique(self, col, return_index=False, return_inverse=False):
         """Return the unique values from the specified column - pass through
@@ -1152,16 +1154,16 @@ class DataFile(object):
             (dr,dc)=self.data.shape
         elif len(self.data.shape)==1:
             self.data=numpy.atleast_2d(self.data).T
-            (dr,dc)=self.data.shape 
+            (dr,dc)=self.data.shape
         elif len(self.data.shape)==0:
-            self.data=numpy.array([[]])            
+            self.data=numpy.array([[]])
             (dr,dc)=(0,0)
         if cl>dr:
             self.data=numpy.append(self.data,numpy.zeros((cl-dr,dc)),0)
         elif cl<dr:
             numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
-        
-        
+
+
         if replace:
             self.data[:, index] = numpy_data
         else:
@@ -1235,7 +1237,7 @@ class DataFile(object):
                                                 self.find_col(col)]), axis=0)
         self.data = ma.masked_array(numpy.transpose(newdata))
         return self
-        
+
     def insert_rows(self, row, new_data):
         """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
         @param row Data row to insert into
@@ -1243,7 +1245,7 @@ class DataFile(object):
         @return A copy of the modified DataFile object"""
         self.data=numpy.insert(self.data, row,  new_data, 0)
         return self
-   
+
     def rows(self):
         """Generator method that will iterate over rows of data
         @return Returns the next row of data"""
