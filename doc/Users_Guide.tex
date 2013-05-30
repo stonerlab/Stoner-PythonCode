@@ -781,7 +781,8 @@ the same name.
 
 \begin{verbatim}
   >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
-                bounds=lambda x, y: True, result="New column" )
+                bounds=lambda x, y: True, result=True,
+                replace=False,header="New Column" )
 \end{verbatim}
 
 The first parameter is the fitting function. This should have prototype
@@ -798,7 +799,12 @@ of data.
 where \textit{popt} is an array of the optimal fitting parameters and
 \textit{pcov} is a 2D array of the co-variances between the parameters.
 
-If \textit{result} is specified then a new column with the header given by the result parameter will be created and the fitted function evaluated at each point.
+If \textit{result} is not \textbf{None} then the fitted data is added to the \textbf{AnalyseFile}
+object. Where it is added depends on the combination of the \textit{result}, \textit{replace}
+and \textit{header} parameters. If \textit{result} is a string or integer it is interpreted as a column
+index at which the fitted data will be inserted (\textit{replace} False) or overwritten over the existing data (\textit{replace} False).
+The fitted data will be given the column header \textit{header} unless \textit{header} is not a string, in which ase the column
+will be called `Fitted with ' and the name of the function \textit{func}.
 
 
 \subsubsection{Fitting with limits}
@@ -873,6 +879,16 @@ many.\\Default: 1 (all parameters printed)
 \end{description}
 
 \subsection{More AnalyseFile Functions}
+
+\subsubsection{Applying an arbitary function through the data}
+
+\begin{verbatim}
+>>> a.apply(func, col, replace = True, header = None)
+\end{verbatim}
+
+Here \textit{func} is an arbitrary function that will take a complete row in the form of a numpy 1D array, \textit{col}
+is the index of a column at which the resulting data is to be inserted or overwrite the existing data (depending on the values of \textit{replace} and \textit{header}).
+
 
 \subsubsection{Basic Data Inspection}
 \begin{verbatim}
