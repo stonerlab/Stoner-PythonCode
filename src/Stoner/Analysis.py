@@ -354,7 +354,7 @@ class AnalyseFile(DataFile):
         @return A copy of the current object"""
 
         if isinstance(base, float):
-            base=[base for x in self.rows()]
+            base=base*numpy.ones(len(self))
         elif isinstance(base, numpy.ndarray) and len(base.shape)==1 and len(base)==len(self):
             pass
         else:
@@ -365,10 +365,10 @@ class AnalyseFile(DataFile):
             target=[self.find_col(t) for t in target]
         for t in target:
             if header is None:
-                h2=self.column_headers[t]+"(norm)"
+                header=self.column_headers[t]+"(norm)"
             else:
-                h2=header
-            self.add_column(self.column(t)/numpy.array(base), h2, t, replace=replace)
+                header=str(header)
+            self.add_column(self.column(t)/numpy.array(base), header, t, replace=replace)
         return self
 
     def subtract(self, a, b, replace=False, header=None):
@@ -380,18 +380,18 @@ class AnalyseFile(DataFile):
         @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
-            self.add_column(self.column(a)-b, header, a, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"- "+str(b)
+            self.add_column(self.column(a)-b, header, a, replace=replace)
         elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            self.add_column(self.column(a)-numpy.array(b), h2, t, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"- data"
+            self.add_column(self.column(a)-numpy.array(b), header, a, replace=replace)
         else:
             b=self.find_col(b)
-            self.add_column(self.column(a)-self.column(b), header, a, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"-"+self.column_headers[b]
+            self.add_column(self.column(a)-self.column(b), header, a, replace=replace)
         return self
 
     def add(self, a, b, replace=False, header=None):
@@ -403,21 +403,21 @@ class AnalyseFile(DataFile):
         @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
+            if header is None:
+                header=self.column_headers[a]+"+ "+str(b)
             self.add_column(self.column(a)+b, header, a, replace=replace)
-            if header is None:
-                header=self.column_headers[a]+"- "+str(b)
         elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            self.add_column(self.column(a)+numpy.array(b), h2, t, replace=replace)
             if header is None:
-                header=self.column_headers[a]+"- data"
+                header=self.column_headers[a]+"+ data"
+            self.add_column(self.column(a)+numpy.array(b), header, a, replace=replace)
         else:
             b=self.find_col(b)
-            self.add_column(self.column(a)+self.column(b), header, a, replace=replace)
             if header is None:
-                header=self.column_headers[a]+"-"+self.column_headers[b]
+                header=self.column_headers[a]+"+"+self.column_headers[b]
+            self.add_column(self.column(a)+self.column(b), header, a, replace=replace)
         return self
 
-    def divide(self, target, base, replace=False, header=None):
+    def divide(self, a, b, replace=False, header=None):
         """Divide data columns by dividing through by a base column value. synonym of normalise, but note the opposite default to replace.
 
         @param target One or more target columns to normalise can be a string, integer or list of strings or integers.
@@ -425,7 +425,22 @@ class AnalyseFile(DataFile):
         @param replace Set True(default) to overwrite  the target data columns
         @param header The new column header - default is target name(norm)
         @return A copy of the current object"""
-        return normalise(target, base, replace=replace, header=header)
+        a=self.find_col(a)
+        if isinstance(b, float):
+            if header is None:
+                header=self.column_headers[a]+"/ "+str(b)
+            self.add_column(self.column(a)/b, header, a, replace=replace)
+        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
+            if header is None:
+                header=self.column_headers[a]+"/ data"
+            self.add_column(self.column(a)/numpy.array(b), header, a, replace=replace)
+        else:
+            b=self.find_col(b)
+            if header is None:
+                header=self.column_headers[a]+"/"+self.column_headers[b]
+            self.add_column(self.column(a)/self.column(b), header, a, replace=replace)
+        return self
+
 
     def mulitply(self, a, b, replace=False, header=None):
         """Subtract one column from another column
@@ -436,19 +451,20 @@ class AnalyseFile(DataFile):
         @return A copy of the new data object"""
         a=self.find_col(a)
         if isinstance(b, float):
-            self.add_column(self.column(a)*b, header, a, replace=replace)
             if header is None:
-                header=self.column_headers[a]+"*"+str(b)
+                header=self.column_headers[a]+"* "+str(b)
+            self.add_column(self.column(a)*b, header, a, replace=replace)
         elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            self.add_column(self.column(a)*numpy.array(b), h2, t, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"* data"
+            self.add_column(self.column(a)*numpy.array(b), header, a, replace=replace)
         else:
             b=self.find_col(b)
-            self.add_column(self.column(a)*self.column(b), header, a, replace=replace)
             if header is None:
                 header=self.column_headers[a]+"*"+self.column_headers[b]
+            self.add_column(self.column(a)*self.column(b), header, a, replace=replace)
         return self
+
 
     def apply(self, func, col, replace=True, header=None):
         """Applies the given function to each row in the data set and adds to the data set
