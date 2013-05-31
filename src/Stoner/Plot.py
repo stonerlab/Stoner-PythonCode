@@ -90,6 +90,14 @@ class PlotFile(DataFile):
         global pyplot
         super(PlotFile, self).__init__(*args, **kargs)
 
+    def __dir__(self):
+        """Handles the local attributes as well as the inherited ones"""
+        attr=self.__dict__.keys()
+        attr2=[a for a in super(PlotFile, self).__dir__() if a not in attr]
+        attr.extend(attr2)
+        attr.extend(["fig", "axes"])
+        return attr
+
     def __getattr__(self, name):
         """Attribute accessor
 
@@ -105,7 +113,7 @@ class PlotFile(DataFile):
             else:
                 return None
         else:
-            super(PlotFile, self).__getattr__(name)
+            return super(PlotFile, self).__getattr__(name)
 
     def __setattr__(self, name, value):
         """Sets the specified attribute

@@ -348,6 +348,15 @@ class DataFile(object):
 
     # Special Methods
 
+    def __dir__(self):
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
+        the attributes that __getattr__ will handle.
+        """
+        attr=self.__dict__.keys()
+        attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
+        return attr
+
+
     def __getattr__(self, name):
         """
         Called for \b DataFile.x to handle some special pseudo attributes
@@ -371,13 +380,15 @@ class DataFile(object):
             dtype = [(x, numpy.float64) for x in self.column_headers]
             return self.data.view(dtype=dtype).reshape(len(self))
         elif name == "clone":
-            return copy.deepcopy(self)
+            return self.__class__(copy.deepcopy(self))
         elif name=="subclasses":
             return {x.__name__:x for x in itersubclasses(DataFile)}
         elif name=="mask":
             return ma.getmaskarray(self.data)
         elif name=="shape":
             return self.data.shape
+        elif name=="dict_records":
+            return numpy.array([dict(zip(self.column_headers, r)) for r in self.rows()])
         else:
             try:
                 return self.column(name)
@@ -417,7 +428,8 @@ class DataFile(object):
         rturned
         \li if \a name is a slice, then the corresponding rows of data will be
         returned. \li If \a name is a string then the metadata dictionary item
-        with the correspondoing key will be returned.
+        with the correspondoing key will be returned. If \a name is a numpy
+        array then the corresponding rows of the data are returned.
 
         If a tuple is supplied as the arguement then there are a number of
         possible behaviours. If the first element of the tuple is a string,
@@ -440,6 +452,8 @@ class DataFile(object):
                 d = numpy.append(d, numpy.atleast_2d(self.data[x, :]), 0)
             return d
         elif isinstance(name, int):
+            return self.data[name, :]
+        elif isinstance(name, numpy.ndarray) and len(name.shape)==1:
             return self.data[name, :]
         elif isinstance(name, str) or isinstance(name, unicode):
             name=str(name)
