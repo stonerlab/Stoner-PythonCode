@@ -483,6 +483,57 @@ class AnalyseFile(DataFile):
             self.data[:, col]=numpy.reshape(nc, -1)
             self.column_headers[col]=header
         return self
+        
+    def split(self,xcol,func=None):
+        """Splits the current AnalyseFile object into multiple AnalyseFile objects where each one contains the rows
+        from the original object which had the same value of a given column.
+        
+        @param xcol The index of the column to look for values in. This can be a list in which case a DataFolder with groups
+        with subfiles is built up by applying each item in the xcol list recursively.
+        @param func A callable function that can be evaluated to find the value to determine which output object
+        each row belongs in. If this is left as the default None then the column value is converted to a string and that is used.
+        The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing the complete row.
+        The return value should be a hashable value. @a func can also be a list if @A xcol is a list, in which the @a func values are used along
+        with the @a xcol values.
+        @return A DataFolder object containing the individual AnalyseFile objects
+        """
+        from Stoner.Folders import DataFolder
+        out=DataFolder(nolist=True)
+        files=dict()
+        morecols=[]
+        morefuncs=None
+        if isinstance(xcol,list) and len(xcol)<=1:
+            xcol=xcol[0]
+        elif isinstance(xcol,list):
+            morecols=xcol[1:]
+            xcol=xcol[0]
+        if isinstance(func,list) and len(func)<=1:
+            func=func[0]
+        elif isinstance(func,list):
+            morefuncs=func[1:]
+            func=func[0]
+        if func is None:
+            for val in numpy.unique(self.column(xcol)):
+                files[str(val)]=self.clone
+                files[str(val)].data=self.search(xcol,val)
+        else:
+            xcol=self.find_col(xcol)
+            for r in self.rows():
+                x=r[xcol]
+                key=func(x,r)
+                if key not in files:
+                    files[key]=self.clone
+                    files[key].data=numpy.array([r])
+                else:
+                    files[key]=files[key]+r
+        for k in files:
+            files[k].filename="{}={}".format(xcol,k)
+        if len(morecols)>0:
+            for k in sorted(files.keys()):
+                out.groups[k]=files[k].split(morecols,morefuncs)
+        else:
+            out.files=[files[k] for k in sorted(files.keys())]
+        return out
 
     def SG_Filter(self, col, points, poly=1, order=0):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
