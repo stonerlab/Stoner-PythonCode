@@ -72,20 +72,13 @@ class typeHintedDict(dict):
         @return A dictionary like object that understands the type of data
                     stored in each key."""
 
-        parent = super(typeHintedDict, self)
-        parent.__init__(*args, **kargs)
+        parent = super(typeHintedDict, self).__init__(*args, **kargs)
         for key in self:  # Chekc through all the keys and see if they contain
                                     # type hints. If they do, move them to the
                                     # _typehint dict
-            m = self.__regexGetType.search(key)
-            if m is not None:
-                k = m.group(1)
-                t = m.group(2)
-                self._typehints[k] = t
-                super(typeHintedDict, self).__setitem__(k, self[key])
-                super(typeHintedDict, self).__delitem__(key)
-            else:
-                self._typehints[key] = self.__findtype(parent.__getitem__(key))
+            value=super(typeHintedDict,self).__getitem__(key)
+            super(typeHintedDict,self).__delitem__(key)
+            self[key]=value #__Setitem__ has the logic to handle embedded type hints correctly             
 
     def __getattr__(self, name):
         """Handles attribute access"""
@@ -181,6 +174,35 @@ class typeHintedDict(dict):
         except ValueError:
             return value.strip('"\'')
 
+    def _get_name_(self,name):
+        """Checks a string name for an embedded type hint and strips it out.
+        @param name String containing the name with possible type hint embedeed
+        @return (name,typehint) a tuple containing just the name of the mateadata and (if found
+        the type hint string),
+        """
+        name=str(name)
+        m = self.__regexGetType.search(name)
+        if m is not None:
+            k = m.group(1)
+            t = m.group(2)
+            return k,t
+        else:
+            k=name
+            t=None
+            return k,None
+
+    def __getitem__(self,name):
+        """Provides a get item method that checks whether its been given a typehint in the
+        item name and deals with it appropriately.
+        @param name metadata key to retrieve
+        @return metadata value
+        """
+        (name,typehint)=self._get_name_(name)
+        value=super(typeHintedDict,self).__getitem__(name)
+        if typehint is not None:
+            value=self.__mungevalue(typehint,value)
+        return value        
+    
     def __setitem__(self, name, value):
         """Provides a method to set an item in the dict, checking the key for
         an embedded type hint or inspecting the value as necessary.
@@ -189,18 +211,15 @@ class typeHintedDict(dict):
         to make sure that it correctly describes the actual data
         typehintDict does not verify that your data and type string are
         compatible."""
-        name=str(name)
-        m = self.__regexGetType.search(name)
-        if m is not None:
-            k = m.group(1)
-            t = m.group(2)
-            self._typehints[k] = t
+        name,typehint=self._get_name_(name)
+        if typehint is not None:
+            self._typehints[name] = typehint
             if len(str(value)) == 0:  # Empty data so reset to string and set empty
-                super(typeHintedDict, self).__setitem__(k, "")
-                self._typehints[k] = "String"
+                super(typeHintedDict, self).__setitem__(name, "")
+                self._typehints[name] = "String"
             else:
-                super(typeHintedDict, self).__setitem__(k,
-                                                self.__mungevalue(t, value))
+                super(typeHintedDict, self).__setitem__(name,
+                                                self.__mungevalue(typehint, value))
         else:
             self._typehints[name] = self.__findtype(value)
             super(typeHintedDict, self).__setitem__(name,
@@ -208,14 +227,18 @@ class typeHintedDict(dict):
 
     def __delitem__(self, name):
         """Deletes the specified key"""
-        name=str(name)
+        (name,t)=self._get_name_(name)
         del(self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
     def copy(self):
         """Provides a copy method that is aware of the type hinting strings"""
-        return typeHintedDict([(x + '{' + self.type(x) + '}', self[x])
-                                                             for x in self])
+        ret=typeHintedDict()
+        for k in self._typehints.keys():
+            t=self._typehints[k]
+            nk=k+"{"+t+"}"
+            ret[nk]=copy.deepcopy(self[k])
+        return ret
 
     def type(self, key):
         """Returns the typehint for the given k(s)
@@ -816,8 +839,11 @@ class DataFile(object):
             cols=max(cols, len(row)-1)
             if row[0].strip()!='':
                 md=row[0].split('=')
-                if len(md)==2:
-                    self.metadata[md[0].strip()]=md[1].strip()
+                if len(md)>2:
+                    md[1]="=".join(md[1:])
+                elif len(md)<2:
+                    md.extend('')
+                self.metadata[md[0].strip()]=md[1].strip()
             if len(row)<2:
                 continue
             self.data=numpy.append(self.data, self._conv_float(row[1:]))
