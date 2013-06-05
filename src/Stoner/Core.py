@@ -693,7 +693,10 @@ class DataFile(object):
 
         @param mode The mode of the file operation  'r' or 'w'
         @return A filename to be used for the file operation."""
-        from enthought.pyface.api import FileDialog, OK
+        try:
+            from enthought.pyface.api import FileDialog, OK
+        except ImportError:
+            from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
         file_wildcard = "Text file (*.txt)|*.txt|Data file (*.dat)|\
         *.dat|All files|*"
