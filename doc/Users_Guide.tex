@@ -749,6 +749,25 @@ For completeness we also have:
 
 with variants that take either a 1D array of data or a constant instead of the B column index.
 
+One might wish to split a single data file into several different data files each with the rows of the original
+that have a common unique value in one data column, or for which some function of the complete row determines which datafile
+each row belongs in. The \textit{split} method is useful for this case.
+
+\begin{verbatim}
+  >>> a.split('Polarisation')
+  >>> a.split('Temperature',lambda x,r:x>100)
+  >>> a.split(['Temperature','Polarisation'],[lambda x,r:x>100,None])
+\end{verbatim}
+
+In these examples we assume the \textbf{AnalyseFile} has a data column `Polarisation' that takes two (or more) discrete values
+and a column `Temperature' that contains numbers above and below 100.
+
+The first example would return a \textbf{DataFoder} object (see \ref{DataFolder}) containing separate \textbf{AnalyseFile} which
+would each contain the rows from the orginal data that had each unique value of the polarisation data. The second example would
+produce a \textbf{DataFolder} object containing two \textbf{AnalyseFile} objects for the rows with temperature abobe and below 100.
+The final example will result in a \textbf{DataFolder} object that has two groups each of which contains \textbf{AnalyseFile} objects for each
+polarisation value.
+
 \subsection{Curve Fitting}
 
 \subsubsection{Simple polynomial Fits}
@@ -944,7 +963,7 @@ Current functions existing in FittingFunctions.py:
 \end{itemize}
 Please see the function documentation in FittingFunctions.py for more information about these models. Please do add functions you think would be of use to everybody, have a look at the current functions for examples, the main thing is that the function must take an x array and a list of parameters, apply a function and then return the resulting array.  
  
-\subsection{Working with Lots of Files}
+\subsection{Working with Lots of Files}\label{DataFolder}
 
 A common case is that you have measured lots of data curves and now have a large stack of data files sitting in a tree of folders on disc and now need to process all of them with some code. The \textbf{DataFolder} class is designed to make it easier to process lots of files.
 
