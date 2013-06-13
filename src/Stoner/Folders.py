@@ -31,6 +31,8 @@ import os.path as path
 import fnmatch
 import numpy
 from copy import copy
+import unicodedata
+import string
 
 from .Core import DataFile
 
@@ -54,7 +56,9 @@ class DataFolder(object):
 
         Handles constructors like:
 
-        DataFolder('directory',type=DataFile,pattern='*.*', nolist=False)"""
+        DataFolder('directory',type=DataFile,pattern='*.*', nolist=False)
+        @TODO handle __init__(DataFolder) with subclasses
+        """
         self.files=[]
         self.groups={}
         if not "type" in kargs:
@@ -320,7 +324,7 @@ class DataFolder(object):
             x=self[f]
             v=key(x)
             if not v in self.groups:
-                self.groups[v]=DataFolder(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
+                self.groups[v]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
                 self.groups[v].key=v
             self.groups[v].files.append(f)
         if len(next_keys)>0:
@@ -353,6 +357,45 @@ class DataFolder(object):
         walker(f,list_of_group_names,**walker_args) where f is either a DataFolder or DataFile."""
 	return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
 		
+    def _removeDisallowedFilenameChars(filename):
+        """Utility method to clean characters in filenames
+        @param filename String filename
+        """
+        validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+        cleanedFilename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore')
+        return ''.join(c for c in cleanedFilename if c in validFilenameChars)
+
+
+    def _save(self,grp,trail,root=None):
+        """Save a group of files to disc by calling the save() method on each file. This internal method is called by walk_groups in turn
+        called from the public save() method. The trail of group keys is used to create a directory tree.
+        @param grp: A DataFolder group or a DataFile instance
+        @param trail: the trail of paths used to get here
+        @param root a replacement root directory
+        @return Saved Path
+        """
+
+        trail=[self._removeDisallowedFilenameChars(t) for t in trail]
+        grp.filename=self._removeDisallowedFilenameChars(grp.filename)
+        if root is None:
+            root=self.directory
+                    
+        pth=path.join(root,*trail)
+        os.makesdirs(pth)
+        grp.save(path.join(pth,grp.filename))
+        return grp.filename
+        
+    def save(self,root=None):
+        """Save the entire data folder out to disc using the groups as a directory tree,
+        calling the save method for each file in turn.
+        
+        @param root The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
+        diretory attribute will be used.
+        @return A list of the saved files
+        """
+        return self.walk_groups(self._save,walker_args={"root",root})
+        
+    
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
   	""""Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
   		@param walker See \b walk_groups
@@ -386,6 +429,7 @@ class DataFolder(object):
 	       for f in self:
 	           ret.append(walker(f,breadcrumb,**walker_args))
 	       return ret
+
 
 
 

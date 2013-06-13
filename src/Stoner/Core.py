@@ -1,14 +1,10 @@
-import pdb############################################
-#
-# Core object of the Stoner Package
-#
+"""Stoner.Core provides the core classes for the Stoner package. Classes include:
 
-
-#
-#############################################
-
-# Imports
-
+* @b DataFile - the main class that represents a set of experimental data
+* @b typeHintedDict - a dictionary subclass that tries to keep track of the type of data
+                       stored in each element to facilitate export to strongly typed
+                       languages (like NI LabVIEW) 
+"""
 import fileinput
 import re
 import scipy
@@ -20,7 +16,6 @@ import numpy.ma as ma
 import math
 import copy
 import linecache
-import wx
 import inspect
 import itertools
 import collections
@@ -350,7 +345,8 @@ class DataFile(object):
             elif isinstance(args[0], DataFile):
                 self.metadata = args[0].metadata.copy()
                 self.data = ma.masked_array(args[0].data)
-                self.column_headers = args[0].column_headers
+                self.column_headers = copy.copy(args[0].column_headers)
+                self.filename=args[0].filename
             else:
                 raise SyntaxError("No constructor")
         elif len(args) == 2:
@@ -431,6 +427,8 @@ class DataFile(object):
                 self._set_mask(value, invert=False)
             else:
                 self.data.mask=value
+        if name=="data":
+            self.__dict__[name]=ma.masked_array(value)
         else:
             self.__dict__[name] = value
 
