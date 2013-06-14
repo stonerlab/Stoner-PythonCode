@@ -78,6 +78,11 @@ class DataFolder(object):
         if len(args)>0:
             if isinstance(args[0], str):
                 self.directory=args[0]
+        elif isinstance(args[0],DataFolder):
+            other=args[0]
+            for k in other.__dict__:
+                self.__dict__[k]=other.__dict__[k]
+                return None
         else:
             self.directory=os.getcwd()
         recursive=True

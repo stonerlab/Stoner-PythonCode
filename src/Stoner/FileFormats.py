@@ -116,13 +116,23 @@ class CSVFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
         if header_line is not None:
             header_string=linecache.getline(self.filename, header_line)
             header_string=re.sub(r'["\n]', '', header_string)
-            self.column_headers=map(lambda x: x.strip(),  header_string.split(header_delim))
+            try:
+                print header_string.index(header_delim)
+            except ValueError:
+                raise RuntimeError("No Delimiters in header line")
+            self.column_headers=[x.strip() for x in header_string.split(header_delim)]
         else:
             self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
+            data_line=linecase.getline(self.filename,data_line)
+            try:
+                data_line.index(data_delim)
+            except ValueError:
+                raise RuntimeError("No delimiters in data lines")
+            
+        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
         return self
 
     def save(self,filename, deliminator=','):
@@ -145,6 +155,8 @@ class CSVFile(DataFile):
 
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
+    
+    priority=16 # Now makes a positive ID of its contents
 
     def __parse_VSM(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
@@ -158,8 +170,11 @@ class VSMFile(DataFile):
         """
         f=fileinput.FileInput(self.filename) # Read filename linewise
         self['Timestamp']=f.next().strip()
-        check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
-        f.next()
+        try:
+            check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
+            assert f.next().strip()==""
+        except ValueError,AssertionError:
+            raise RuntimeError('Not a VSM File')
         header_string=f.next()
         header_string=re.sub(r'["\n]', '', header_string)
         unit_string=f.next()
@@ -277,6 +292,9 @@ class RasorFile(OpenGDAFile):
 
 class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
+    
+    priority=64 # Can't make a positive ID of itself
+    
     def load(self,filename=None,*args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
 
@@ -395,9 +413,12 @@ class TDMSFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        line=f.netxt()
-        assert line[0:4] == "TDSm"
+        f=open(self.filename) # Read filename linewise
+        try:
+            assert f.read(4) == "TDSm"
+        except AssertionError:
+            f.close()
+            raise RuntimeError('Not a TDMS File')
         f.close()
         (metadata, data)=tdms_read(self.filename)
         for key in metadata:
