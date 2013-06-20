@@ -229,7 +229,7 @@ class typeHintedDict(dict):
     def copy(self):
         """Provides a copy method that is aware of the type hinting strings"""
         ret=typeHintedDict()
-        for k in self._typehints.keys():
+        for k in self.keys():
             t=self._typehints[k]
             nk=k+"{"+t+"}"
             ret[nk]=copy.deepcopy(self[k])

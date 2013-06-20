@@ -1,29 +1,9 @@
-#############################################
-#
-# Classes for working directories of datafiles
-#
-# $Id: Folders.py,v 1.6 2013/05/12 17:17:57 cvs Exp $
-#
-# $Log: Folders.py,v $
-# Revision 1.6  2013/05/12 17:17:57  cvs
-# Updates to the DataFolder class and documentation updates.
-#
-# Revision 1.5  2012/04/06 19:36:08  cvs
-# Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
-#
-# Revision 1.4  2012/04/04 23:04:11  cvs
-# Improvements to AnalyseFile and DataFolder
-#
-# Revision 1.3  2012/03/25 21:18:10  cvs
-# Documentation updates and minor fixes
-#
-# Revision 1.2  2012/03/24 22:39:40  cvs
-# Update focumentation for new DataFolder class. Add more functionality to DataFolder including indexing, representation and len support.
-#
-# Revision 1.1  2012/03/24 00:36:04  cvs
-# Add a new DataFolder class with methods for sorting and grouping data files
-#
-#
+"""
+ FStoner.Folders : Classes for working collections of data files
+ 
+ \b DataFolder - manages a list of individual data files (e.g. from a directory tree)
+"""
+
 
 import os
 import re
@@ -40,13 +20,6 @@ class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
     This class is intended to help process large groups of datasets in a natural and convenient way."""
-
-    type=DataFile
-    pattern="*.*"
-    directory=False
-    files=[]
-    groups={}
-    key=""
 
     def __init__(self, *args, **kargs):
         """Constructor of DataFolder.
@@ -78,10 +51,10 @@ class DataFolder(object):
         if len(args)>0:
             if isinstance(args[0], str):
                 self.directory=args[0]
-        elif isinstance(args[0],DataFolder):
-            other=args[0]
-            for k in other.__dict__:
-                self.__dict__[k]=other.__dict__[k]
+            elif isinstance(args[0],DataFolder):
+                other=args[0]
+                for k in other.__dict__:
+                    self.__dict__[k]=other.__dict__[k]
                 return None
         else:
             self.directory=os.getcwd()
@@ -91,7 +64,7 @@ class DataFolder(object):
         if not nolist:
             self.getlist(recursive=recursive)
 
-    def __read(self,f):
+    def __read__(self,f):
         """Reads a single filename in and creates an instance of DataFile. If self.pattern
         is a regular expression then use any named groups in it to create matadata from the
         filename. If self.read_means is true then create metadata from the mean of the data columns.
@@ -144,7 +117,7 @@ class DataFolder(object):
         """Returns the files iterator object
         @return self.files.__iter__"""
         for f in self.files:
-            tmp=self.__read(f)
+            tmp=self.__read__(f)
             yield tmp
 
     def __len__(self):
@@ -172,7 +145,7 @@ class DataFolder(object):
                 except ValueError:
                     return self.groups[i]
         files=self.files[i]
-        tmp=self.__read(files)
+        tmp=self.__read__(files)
         return tmp
 
     def __getattr__(self, item):
@@ -209,7 +182,7 @@ class DataFolder(object):
     def __repr__(self):
         """Prints a summary of the DataFolder structure
         @return A string representation of the current DataFolder object"""
-        return "DataFolder("+self.directory+") with pattern "+str(self.pattern)+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
+        return "DataFolder("+str(self.directory)+") with pattern "+str(self.pattern)+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
 
     def __delitem__(self,item):
         """Deelte and item or a group from the DataFolder
