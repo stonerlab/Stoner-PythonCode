@@ -7,15 +7,11 @@
 """
 import fileinput
 import re
-import scipy
 #import pdb # for debugging
 import os
-import sys
 import numpy
 import numpy.ma as ma
-import math
 import copy
-import linecache
 import inspect
 import itertools
 import collections
@@ -67,7 +63,7 @@ class typeHintedDict(dict):
         @return A dictionary like object that understands the type of data
                     stored in each key."""
 
-        parent = super(typeHintedDict, self).__init__(*args, **kargs)
+        super(typeHintedDict, self).__init__(*args, **kargs)
         for key in self:  # Chekc through all the keys and see if they contain
                                     # type hints. If they do, move them to the
                                     # _typehint dict
@@ -748,6 +744,8 @@ class DataFile(object):
             filename = ""
             dirname = ""
         dlg = FileDialog(action=mode, wildcard=file_wildcard)
+        dlg.default_filename=filename
+        dlg.default_directory=dirname
         dlg.open()
         if dlg.return_code == OK:
             self.filename = dlg.path
@@ -911,7 +909,7 @@ class DataFile(object):
                         test.load(self.filename, auto_load=False)
                         failed=False
                         break
-                    except Exception as inst:
+                    except Exception:
                         continue
 
         if failed:

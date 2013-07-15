@@ -92,7 +92,6 @@ import csv
 import string
 import struct
 from re import split
-import codecs
 from datetime import datetime
 
 from .Core import DataFile
@@ -126,7 +125,7 @@ class CSVFile(DataFile):
             self.column_headers=[x.strip() for x in header_string.split(header_delim)]
         else:
             self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
-            data_line=linecase.getline(self.filename,data_line)
+            data_line=linecache.getline(self.filename,data_line)
             try:
                 data_line.index(data_delim)
             except ValueError:
@@ -172,8 +171,9 @@ class VSMFile(DataFile):
         self['Timestamp']=f.next().strip()
         try:
             check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
+            assert check is not None            
             assert f.next().strip()==""
-        except ValueError,AssertionError:
+        except (ValueError, AssertionError):
             raise RuntimeError('Not a VSM File')
         header_string=f.next()
         header_string=re.sub(r'["\n]', '', header_string)
@@ -468,7 +468,7 @@ class RigakuFile(DataFile):
             value=header[key].strip()
             try:
                 newvalue=literal_eval(value.strip('"'))
-            except Exception, e:
+            except Exception:
                 newvalue=literal_eval(value)
             if m:
                 key=m.groups()[0]
@@ -513,7 +513,6 @@ class XRDFile(DataFile):
 
         Format is ini file like but not enough to do standard inifile processing - in particular one can have multiple sections with the same name (!)
     """
-        from ast import literal_eval
         if filename is None or not filename:
             self.get_filename('r')
         else:

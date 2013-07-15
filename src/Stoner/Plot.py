@@ -65,7 +65,6 @@
 #############################################
 
 from .Core import DataFile
-import scipy
 import numpy
 import matplotlib
 import os
@@ -297,7 +296,7 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
         #Sort out xvls values
-        if isinstance(xvals, int) or isinstance(xvals, string): # String or int means using a column index
+        if isinstance(xvals, int) or isinstance(xvals, str): # String or int means using a column index
             if xlabel is None:
                 xlabel=self.column_headers[self.find_col(xvals)]
             if rectang is None: # Do we need to init the rectan ?
@@ -320,7 +319,7 @@ class PlotFile(DataFile):
             rectang=(rectang[0], rectang[1], numpy.shape(self.data)[0]-rectang[0], numpy.shape(self.data)[1]-rectang[1])
         elif rectang is None:
             rectang=(0, 0, numpy.shape(self.data)[0], numpy.shape(self.data)[1])
-        elif isisntance(rectang, tuple) and len(rectang)==4: # Ok, just make sure we have enough data points left.
+        elif isinstance(rectang, tuple) and len(rectang)==4: # Ok, just make sure we have enough data points left.
             rectang=(rectang[0], rectang[1], min(rectang[2], numpy.shape(self.data)[0]-rectang[0]), min(rectang[3], numpy.shape(self.data)[1]-rectang[1]))
         else:
             raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
@@ -382,7 +381,6 @@ class PlotFile(DataFile):
         @return A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
-        from mpl_toolkits.mplot3d import Axes3D
         ax = self.fig.gca(projection='3d')
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5)

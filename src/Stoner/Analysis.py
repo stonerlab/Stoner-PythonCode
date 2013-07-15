@@ -92,12 +92,10 @@
 from .Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit
-import scipy
 import numpy
 from scipy.integrate import cumtrapz
 import math
 import sys
-import inspect
 
 def cov2corr(M):
     """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc"""
@@ -547,8 +545,8 @@ class AnalyseFile(DataFile):
             x=numpy.append(numpy.array([x[0]]*p), x)
             x=numpy.append(x, numpy.array([x[-1]]*p))
             y=self.column(col[1])
-            y=anumpy.append(numpy.array([y[0]]*p), y)
-            y=anumpy.append(y, numpy.array([y[-1]]*p))
+            y=numpy.append(numpy.array([y[0]]*p), y)
+            y=numpy.append(y, numpy.array([y[-1]]*p))
             dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
             dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
             r=dy/dx
@@ -649,7 +647,7 @@ class AnalyseFile(DataFile):
             else:
                 ydat.append(0)
         xdat=numpy.array(xdat)
-        ydata=numpy.array(ydat)
+        ydat=numpy.array(ydat)
         resultdata=cumtrapz(xdat,ydat,**kargs)
         resultdata=numpy.append(numpy.array([0]),resultdata)
         if result is not None:
