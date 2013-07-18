@@ -394,6 +394,10 @@ class DataFile(object):
         if name == "records":
             dtype = [(x, numpy.float64) for x in self.column_headers]
             return self.data.view(dtype=dtype).reshape(len(self))
+        elif name=="_sortable":
+            dtype = [("C{}".format(x), numpy.float64) for x in range(len(self.column_headers))]
+            return self.data.view(dtype=dtype).reshape(len(self))
+            
         elif name == "clone":
             return self.__class__(copy.deepcopy(self))
         elif name=="subclasses":
@@ -1308,10 +1312,10 @@ class DataFile(object):
         @return A copy of the sorted object
         """
         if isinstance(order, list) or isinstance(order, tuple):
-            order = [self.column_headers[self.find_col(x)] for x in order]
+            order = ["C{}".format(self.find_col(x)) for x in order]
         else:
-            order = [self.column_headers[self.find_col(order)]]
-        d = numpy.sort(self.records, order=order)
+            order = ["C{}".format(self.find_col(order))]
+        d = numpy.sort(self._sortable, order=order)
         self.data = ma.masked_array(d.view(dtype='f8').reshape(len(self), len(self.
                                                               column_headers)))
         return self
