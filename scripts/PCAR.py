@@ -1,46 +1,8 @@
-#
-# $Id: PCAR.py,v 1.11 2012/06/29 15:30:12 cvs Exp $
-#$Log: PCAR.py,v $
-#Revision 1.11  2012/06/29 15:30:12  cvs
-#Fixes to PCAR code
-#
-#Revision 1.10  2011/10/24 12:17:54  cvs
-#Update PCAR lab script to save data and fix a bug with save as mode in Stoner.Core
-#
-#Revision 1.9  2011/06/16 09:40:57  cvs
-#Ironed out a bug or two - csa
-#
-#Revision 1.8  2011/01/13 22:30:56  cvs
-#Enable chi^2 analysi where the parameters are varied and choi^2 calculated.
-#Extra comments in the ini file
-#Give DataFile some file dialog boxes
-#
-#Revision 1.7  2011/01/11 21:52:26  cvs
-#Change the script to make some of the more dangerous data manipulations into options to be turned on in the ini file
-#Commented the ini file. - GB
-#
-#Revision 1.6  2011/01/11 18:55:57  cvs
-#Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
-#
-#Revision 1.5  2011/01/11 16:26:52  cvs
-#Convert code to use a separate ini file to setup problem
-#
-#Revision 1.4  2011/01/10 23:49:13  cvs
-#Fix filename from easygui to be a string (only a problem on Windows !?) - GB
-#
-#Revision 1.3  2011/01/10 23:28:15  cvs
-#Improved comments in code added some pretty printing - GB
-#
-#Revision 1.2  2011/01/10 23:11:21  cvs
-#Switch to using GLC's version of the mpit module
-#Made PlotFile.plot_xy take keyword arguments and return the figure
-#Fixed a missing import math in AnalyseFile
-#Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
-#
-#Revision 1.1  2011/01/10 19:05:44  cvs
-#Start working on PCAR fitting code
-#
-# Script to fit PCAR data GB Jan 2011
+"""Python  script for Analysing PCAR data
+
+Gavin Burnell g.burnell@leeds.ac.uk
+
+"""
 
 # Import packages
 
@@ -48,9 +10,6 @@ import numpy
 import scipy
 import Stoner
 from scipy.stats import chisquare
-import wx
-import sys
-import math
 import os
 import time
 import ConfigParser
