@@ -1216,20 +1216,49 @@ class DataFile(object):
                 self.data = ma.masked_array(numpy.insert(self.data, index, numpy_data, 1))
         return self
 
-    def del_column(self, col):
+    def del_column(self, col=None,duplicates=False):
         """Deletes a column from the current @b DataFile object
-                @param col A column index (passed via @B DataFile.find_col)
-                to the column to be deleted
-                @return The @b DataFile object with the column deleted."""
-        c = self.find_col(col)
-        self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
-        if isinstance(c, list):
-            c.sort(reverse=True)
+            @param col A column index (passed via @B DataFile.find_col)
+            to the column to be deleted
+            @param duplicates (default False) look for duplicated columns
+            @return The @b DataFile object with the column deleted.            
+            If \a duplicates is True and \a col is None then all duplicate columns are removed,
+            if \a col is not None and \a duplicates is True then all duplicates of the specified
+            column are removed.
+            If \a duplicates is false then \a col must not be None otherwise a RuntimeError is raised.
+            If \a col is a list (\a duplicates should not be None) then the all the matching columns are found.
+            """
+        
+        if duplicates:
+            ch=self.column_headers
+            dups=[]
+            if col is None:
+                for i in range(len(ch)):
+                    if ch[i] in ch[i+1:]:
+                        dups.append(ch.index(ch[i],i+1))
+            else:
+                col=ch[self.find_col(col)]
+                i=ch.index(col)
+                while True:
+                    try:
+                        i=ch.index(col,i+1)
+                        dups.append(i)
+                    except ValueError:
+                        break
+            return self.del_column(dups,duplicates=False)
         else:
-            c = [c]
-        for col in c:
-            del self.column_headers[col]
-        return self
+            if col is None:
+                raise RuntimeError("Column must not be None unless removing duplicates in DataFile.del_column")
+            c = self.find_col(col)
+            self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
+            if isinstance(c, list):
+                c.sort(reverse=True)
+            else:
+                c = [c]
+            for col in c:
+                del self.column_headers[col]
+            return self
+
 
     def swap_column(self, swp, headers_too=True):
         """Swaps pairs of columns in the data. Useful for reordering
