@@ -2,10 +2,34 @@
 and a list of parmeters, they should then return an array of y values the same size as the x array.
 Please do keep documentation up to date, see other functions for documentation examples"""
 
-import numpy
-import scipy
+from numpy import exp,sqrt,abs,pi,log,trapz,zeros,arange
+from scipy.special import digamma
+import scipy.constants.codata as consts
 
-def quadratic(x, p):
+_kb=consts.physical_constants['Boltzmann constant'][0]/consts.physical_constants['elementary charge'][0]
+
+def Linear(x, m, c):
+    """Simple linear function"""
+    return m*x+c
+
+def Arrhenius(x, A, DE):
+    """Arrhenius Equation without T dependendent prefactor"""
+    return A*exp(-DE/(_kb*x))
+
+
+def NDimArrhenius(x, A, DE, n):
+    """Arrhenius Equation without T dependendent prefactor"""
+    return Arrhenius(x**n, A, DE)
+
+def  ModArrhenius(x, A, DE, n):
+    """Arrhenius Equation with a variable T power dependent prefactor"""
+    return (x**n)*Arrhenius(x, A, DE)
+
+def PowerLaw(x, A, n):
+    """Power Law Fitting Equation"""
+    return A*x**n
+
+def Quadratic(x, p):
     return p[0]*x*x
 
 def Simmons(V, params):
@@ -18,7 +42,7 @@ def Simmons(V, params):
     Simmons J. App. Phys. 34 6 1963
     """
     [A, phi, d] = params
-    I=6.2e6*A/d**2*((phi-V/2)*numpy.exp(-1.025*d*numpy.sqrt(phi-V/2))-(phi+V/2)*exp(-1.025*d*numpy.sqrt(phi+V/2)))
+    I=6.2e6*A/d**2*((phi-V/2)*exp(-1.025*d*sqrt(phi-V/2))-(phi+V/2)*exp(-1.025*d*sqrt(phi+V/2)))
     return I
 
 def BDR(V, params):
@@ -30,7 +54,7 @@ def BDR(V, params):
     See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
     or Tuan Comm. in Phys. 16, 1, (2006)"""
     [A, phi, dphi, d, mass] = params
-    I=3.16e10*A**2*numpy.sqrt(phi)/d*numpy.exp(-1.028*numpy.sqrt(phi)*d)*(V-0.0214*numpy.sqrt(mass)*d*dphi/phi**1.5*V**2+0.0110*mass*d**2/phi*V**3)
+    I=3.16e10*A**2*sqrt(phi)/d*exp(-1.028*sqrt(phi)*d)*(V-0.0214*sqrt(mass)*d*dphi/phi**1.5*V**2+0.0110*mass*d**2/phi*V**3)
     return I
 
 def FowlerNordheim(V, params):
@@ -43,7 +67,7 @@ def FowlerNordheim(V, params):
     Simmons J. App. Phys. 34 6 1963
     """
     [A, phi, d] = params
-    I=V/abs(V)*3.38e6*A*V**2/(d**2*phi)*numpy.exp(-0.689*phi**1.5*d/abs(V)) 
+    I=V/abs(V)*3.38e6*A*V**2/(d**2*phi)*exp(-0.689*phi**1.5*d/abs(V)) 
     return I
     
 def TersoffHammann(V, params):
@@ -73,23 +97,23 @@ def WLfit(B, params):
     e = 1.6e-19 #C
     h = 6.62e-34 #Js
     #Sets up conductivity fit array
-    cond=scipy.zeros(len(B));
+    cond=zeros(len(B));
     if B2 == B1:
         B2 = B1*1.00001 #prevent dividing by zero
 
         #performs calculation for all parts    
     for tt in range(len(B)):
         if B[tt] != 0: #prevent dividing by zero
-            WLpt1 = scipy.special.digamma( 0.5 + B2 / numpy.abs(B[tt]))
-            WLpt2 = scipy.special.digamma( 0.5 + B1 / numpy.abs(B[tt]))
+            WLpt1 = digamma( 0.5 + B2 / abs(B[tt]))
+            WLpt2 = digamma( 0.5 + B1 / abs(B[tt]))
         else:
-            WLpt1 = ( scipy.special.digamma( 0.5 + B2 / numpy.abs(B[tt - 1])) + scipy.special.digamma( 0.5 + B2 / numpy.abs(B[tt + 1])) ) / 2
-            WLpt2 = ( scipy.special.digamma( 0.5 + B1 / numpy.abs(B[tt - 1])) + scipy.special.digamma( 0.5 + B1 / numpy.abs(B[tt + 1])) ) / 2
+            WLpt1 = ( digamma( 0.5 + B2 / abs(B[tt - 1])) + digamma( 0.5 + B2 / abs(B[tt + 1])) ) / 2
+            WLpt2 = ( digamma( 0.5 + B1 / abs(B[tt - 1])) + digamma( 0.5 + B1 / abs(B[tt + 1])) ) / 2
 
-        WLpt3 = numpy.log(B2 / B1)
+        WLpt3 = log(B2 / B1)
 
     #Calculates fermi level smearing
-        cond[tt] = ( e**2 / (h*numpy.pi) )*( WLpt1 - WLpt2 - WLpt3 )
+        cond[tt] = ( e**2 / (h*pi) )*( WLpt1 - WLpt2 - WLpt3 )
     #cond = s0*cond / min(cond)
     cond = s0 + DS*cond
     return cond
@@ -111,12 +135,12 @@ def strijkers(V, params):
     P=params[2]         #Interface parameter 
     Z=params[3]         #Current spin polarization through contact
     
-    E = scipy.arange(-50, 50, 0.05) # Energy range in meV
+    E = arange(-50, 50, 0.05) # Energy range in meV
     
     #Reflection prob arrays
-    Au=scipy.zeros(len(E))
-    Bu=scipy.zeros(len(E))
-    Bp=scipy.zeros(len(E))
+    Au=zeros(len(E))
+    Bu=zeros(len(E))
+    Bp=zeros(len(E))
     
     #Conductance calculation
     """    
@@ -135,8 +159,8 @@ def strijkers(V, params):
             Bu[ss] = 1-Au[ss];
             Bp[ss] = 1;
         else:
-            Au[ss] = (((abs(E[ss])/(scipy.sqrt((E[ss]**2)-(delta**2))))**2)-1)/(((abs(E[ss])/(scipy.sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
-            Bu[ss] = (4*(Z**2)*(1+(Z**2)))/(((abs(E[ss])/(scipy.sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
+            Au[ss] = (((abs(E[ss])/(sqrt((E[ss]**2)-(delta**2))))**2)-1)/(((abs(E[ss])/(sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
+            Bu[ss] = (4*(Z**2)*(1+(Z**2)))/(((abs(E[ss])/(sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
             Bp[ss] = Bu[ss]/(1-Au[ss]);
         
     #  Calculates reflection 'probs' for pol and unpol currents
@@ -151,12 +175,12 @@ def strijkers(V, params):
     
     
     #Sets up gaus
-    gaus=scipy.zeros(len(V));
-    cond=scipy.zeros(len(V));
+    gaus=zeros(len(V));
+    cond=zeros(len(V));
     
     #computes gaussian and integrates over all E(more or less)
     for tt in range(len(V)):
     #Calculates fermi level smearing
-        gaus=(1/(2*omega*scipy.sqrt(scipy.pi)))*scipy.exp(-(((E-V[tt])/(2*omega))**2))
-        cond[tt]=numpy.trapz(gaus*G,E);
+        gaus=(1/(2*omega*sqrt(pi)))*exp(-(((E-V[tt])/(2*omega))**2))
+        cond[tt]=trapz(gaus*G,E);
     return cond

@@ -252,6 +252,24 @@ as the names of any of the attributes of the \textbf{DataFile} object:
 \end{verbatim}
 both return the same data.
 
+Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:
+\begin{itemize}
+\item As an integer where the first column on the left is index 0
+\item As a string. if the string matches a column header exactly then the index of that column is returned. If the string fails
+to match any column header it is compiled as a regular expression and then that is tried as a match. If multiple columns match then only
+the first is returned.
+\item As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
+expression in directly with any extra options (like case insensitivity flags) set.
+\item As a slice object (ee.g. \verb#0:10:2#) this is expanded to a list of integers.
+\item As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
+the final result would be to use a list of column indices.
+\end{itemize}
+\begin{verbatim}
+>>> import re
+>>> col=re.compile('^temp',re.IGNORECASE)
+>>> d.column(col)
+\end{verbatim}
+
 \subsubsection{Working with complete rows of data}
 
 Rows don't have labels, so are accessed directly by number:

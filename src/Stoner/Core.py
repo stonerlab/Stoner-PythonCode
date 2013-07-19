@@ -950,19 +950,21 @@ class DataFile(object):
 
     def find_col(self, col):
         """Indexes the column headers in order to locate a column of data.shape
+        Indexing can be by supplying an integer, a string, a regular experssion,
+        a slice or a list of any of the above.      
+        *   Integer indices are simply checked to ensure that they are in range
+        *   String indices are first checked for an exact match against a column header
+        if that fails they are then compiled to a regular expression and the first
+        match to a column header is taken.
+        *   A regular expression index is simply matched against the column headers and the
+        first match found is taken. This allows additional regular expression options
+        such as case insensitivity.
+        *   A slice index is converted to a list of integers and processed as below
+        *   A list index returns the results of feading each item in the list at \b find_col
+        in turn.        
         @param col Which column(s) to retuirn indices for.
 
-        @return  If @a col is an integer then simply returns the matching
-        integer assuming that the corresponding column exists. If @a col
-        is a string, then first attemps an exact string comparison, and then
-        falls back to a regular expression search on the column headers. If
-        either of these searches returns more than onbe match, then the
-        first is used. If neither string tests works, the tries casting the string to an integer and checking that
-        the result is in range for the size of the  dataset.
-        If @a col  is a slice then a list of the matching
-        indices is returned. If @a col is a list
-        then a list of the results of apply @b DataFile.find_col on each
-        element of @a col is returned.
+        @return  The matching column index as an integer or a \b KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
             if not 0<=col<self.data.shape[0]:
@@ -982,6 +984,13 @@ class DataFile(object):
                         raise KeyError('Unable to find any possible column matches for '+str(col))
                     if col<0 or col>=self.data.shape[1]:
                         raise KeyError('Column index out of range')
+                else:
+                    col = self.column_headers.index(possible[0])
+        elif isinstance(col,re._pattern_type):
+                test = col
+                possible = filter(test.search, self.column_headers)
+                if len(possible) == 0:
+                    raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
                 else:
                     col = self.column_headers.index(possible[0])
         elif isinstance(col, slice):
