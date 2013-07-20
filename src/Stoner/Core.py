@@ -363,157 +363,6 @@ class DataFile(object):
 
     # Special Methods
 
-    def __dir__(self):
-        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
-        the attributes that __getattr__ will handle.
-        """
-        attr=self.__dict__.keys()
-        attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
-        return attr
-
-
-    def __getattr__(self, name):
-        """
-        Called for \b DataFile.x to handle some special pseudo attributes
-        and otherwise to act as a shortcut for @b DataFile.column
-
-        @param name The name of the attribute to be returned.
-        These include: records
-        @return the DataFile object in various forms
-
-        Supported attributes:
-        @a records - return the DataFile data as a numpy structured
-        array - i.e. rows of elements whose keys are column headings
-        @a clone - returns a deep copy of the current DataFile instance
-
-        Otherwise the @a name parameter is tried as an argument to
-        ~b DataFile.column and the resultant column isreturned. If
-        @b DataFile.column raises a KeyError this is remapped as an
-        AttributeError.
-        """
-        if name == "records":
-            dtype = [(x, numpy.float64) for x in self.column_headers]
-            return self.data.view(dtype=dtype).reshape(len(self))
-        elif name=="_sortable":
-            dtype = [("C{}".format(x), numpy.float64) for x in range(len(self.column_headers))]
-            return self.data.view(dtype=dtype).reshape(len(self))
-            
-        elif name == "clone":
-            return self.__class__(copy.deepcopy(self))
-        elif name=="subclasses":
-            return {x.__name__:x for x in itersubclasses(DataFile)}
-        elif name=="mask":
-            return ma.getmaskarray(self.data)
-        elif name=="shape":
-            return self.data.shape
-        elif name=="dict_records":
-            return numpy.array([dict(zip(self.column_headers, r)) for r in self.rows()])
-        else:
-            try:
-                return self.column(name)
-            except KeyError:
-                raise AttributeError(name +
-                " is neither an attribute of DataFile, nor a column \
-                heading of this DataFile instance")
-
-    def __setattr__(self, name, value):
-        """Handles attempts to set attributes not covered with class attribute variables.
-        @param name Name of attribute to set. Details of possible attributes below:
-
-        \b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
-        the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
-        if name=="mask":
-            if callable(value):
-                self._set_mask(value, invert=False)
-            else:
-                self.data.mask=value
-        if name=="data":
-            self.__dict__[name]=ma.masked_array(value)
-        else:
-            self.__dict__[name] = value
-
-    def __contains__(self, item):
-        """Operator function for membertship tests - used to check metadata contents
-        @param item String of metadata key
-        @return iem in self.metadata"""
-        return item in self.metadata
-
-    def __getitem__(self, name):
-        """Called for \b DataFile[x] to return either a row or iterm of
-        metadata
-
-        @param name The name, slice or number of the part of the
-        \b DataFile to be returned.
-        @return an item of metadata or row(s) of data.
-        \li If \a name is an integer then the corresponding single row will be
-        rturned
-        \li if \a name is a slice, then the corresponding rows of data will be
-        returned. \li If \a name is a string then the metadata dictionary item
-        with the correspondoing key will be returned. If \a name is a numpy
-        array then the corresponding rows of the data are returned.
-
-        If a tuple is supplied as the arguement then there are a number of
-        possible behaviours. If the first element of the tuple is a string,
-        then it is assumed that it is the nth element of the named metadata is
-        required. Otherwise itis assumed that it is a particular element
-        within a column determined by the second part of the tuple that is
-        required. e.g. DataFile['Temp',5] would return the 6th element of the
-        list of elements in the metadata called 'Temp', while
-        DataFile[5,'Temp'] would return the 6th row of the data column
-        called 'Temp' and DataFile[5,3] would return the 6th element of the
-        4th column.
-
-        """
-        if isinstance(name, slice):
-            indices = name.indices(len(self))
-            name = range(*indices)
-            d = self.data[name[0], :]
-            d = numpy.atleast_2d(d)
-            for x in range(1, len(name)):
-                d = numpy.append(d, numpy.atleast_2d(self.data[x, :]), 0)
-            return d
-        elif isinstance(name, int):
-            return self.data[name, :]
-        elif isinstance(name, numpy.ndarray) and len(name.shape)==1:
-            return self.data[name, :]
-        elif isinstance(name, str) or isinstance(name, unicode):
-            name=str(name)
-            return self.meta(name)
-        elif isinstance(name, tuple) and len(name) == 2:
-            x, y = name
-            if isinstance(x, str):
-                return self[x][y]
-            else:
-                d = numpy.atleast_2d(self[x])
-                y = self.find_col(y)
-                r = d[:, y]
-                if len(r) == 1:
-                    r = r[0]
-                return r
-        else:
-            raise TypeError("Key must be either numeric of string")
-
-    def __setitem__(self, name, value):
-        """Called for \b DataFile[\em name ] = \em value to write mewtadata
-        entries.
-            @param name The string key used to access the metadata
-            @param value The value to be written into the metadata.
-            Currently bool, int, float and string values are correctly
-            handled. Everythign else is treated as a string.
-            @return Nothing."""
-        self.metadata[name] = value
-
-    def __delitem__(self,item):
-        """Implements row or metadata deletion.
-        @param item either an ingteger to delete a row or a string to delete metadata"""
-        if isinstance(item,str):
-            del(self.metadata[item])
-        else:
-            self.del_rows[item]
-
-
-
-
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance
@@ -667,61 +516,27 @@ class DataFile(object):
             return NotImplemented
         return newdata
 
-    def __lshift__(self, other):
-        """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function
-        @param other Either a string or iterable object used to source the DataFile object
-        @return A new DataFile object
+    def __contains__(self, item):
+        """Operator function for membertship tests - used to check metadata contents
+        @param item String of metadata key
+        @return iem in self.metadata"""
+        return item in self.metadata
+
+    def __delitem__(self,item):
+        """Implements row or metadata deletion.
+        @param item either an ingteger to delete a row or a string to delete metadata"""
+        if isinstance(item,str):
+            del(self.metadata[item])
+        else:
+            self.del_rows[item]
+
+    def __dir__(self):
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
+        the attributes that __getattr__ will handle.
         """
-        newdata=self.__class__()
-        if isinstance(other, str):
-            lines=itertools.imap(lambda x:x,  other.splitlines())
-            newdata._read_iterable(lines)
-        elif isinstance(other, collections.Iterable):
-            newdata._read_iterable(other)
-        return newdata
-
-
-    def __repr__(self):
-        """Outputs the \b Stoner.DataFile object in TDI format.
-        This allows one to print any \b Stoner.DataFile to a stream based
-                object andgenerate a reasonable textual representation of
-                the data.shape
-
-                @return \a self in a textual format. """
-        outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
-        m = len(self.metadata)
-        self.data=ma.masked_array(numpy.atleast_2d(self.data))
-        (r, c) = numpy.shape(self.data)
-        md = [self.metadata.export(x) for x in sorted(self.metadata)]
-        for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
-        if m > r:  # More metadata
-            for x in range(r, m):
-                    outp = outp + md[x] + "\n"
-        elif r > m:  # More data than metadata
-            for x in range(m, r):
-                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
-        return outp
-
-    def __len__(self):
-        """Return the length of the data.shape
-                @return Returns the number of rows of data
-                """
-        return numpy.shape(self.data)[0]
-
-    def __setstate__(self, state):
-        self.data = ma.masked_array(state["data"])
-        self.column_headers = state["column_headers"]
-        self.metadata = state["metadata"]
-
-    def __getstate__(self):
-        return {"data": self.data,  "column_headers":
-            self.column_headers,  "metadata": self.metadata}
-
-    def __reduce_ex__(self, p):
-        return (DataFile, (), self.__getstate__())
-
-    #   PRIVATE FUNCTIONS
+        attr=self.__dict__.keys()
+        attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
+        return attr
 
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b DataFile objects
@@ -756,6 +571,274 @@ class DataFile(object):
             return self.filename
         else:
             return None
+
+    def __getattr__(self, name):
+        """
+        Called for \b DataFile.x to handle some special pseudo attributes
+        and otherwise to act as a shortcut for @b DataFile.column
+
+        @param name The name of the attribute to be returned.
+        These include: records
+        @return the DataFile object in various forms
+
+        Supported attributes:
+        @a records - return the DataFile data as a numpy structured
+        array - i.e. rows of elements whose keys are column headings
+        @a clone - returns a deep copy of the current DataFile instance
+
+        Otherwise the @a name parameter is tried as an argument to
+        ~b DataFile.column and the resultant column isreturned. If
+        @b DataFile.column raises a KeyError this is remapped as an
+        AttributeError.
+       """
+
+        easy={"clone":self._getattr_clone,
+              "dict_records":self._getattr_dict_records,
+              "dtype":self._getattr_dtype,
+              "mask":self._getattr_mask,
+              "records":self._getattr_records,
+              "shape":self._getattr_shape,
+              "subclasses":self._getattr_subclasses
+              } 
+        if name in easy:
+            return easy[name]()
+        else:
+            try:
+                return self.column(name)
+            except KeyError:
+                raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
+
+    def _getattr_clone(self):
+        """Gets a deep copy of the current DataFile
+        """
+        return self.__class__(copy.deepcopy(self))
+        
+    def _getattr_dict_records(self):
+        """Return the data as a dictionary of single columns with column headers for the keys.
+        """
+        return numpy.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+
+    def _getattr_dtype(self):
+        """Return the numpy dtype attribute of the data
+        """
+        return self.data.dtype
+        
+    def _getattr_mask(self):
+        """Returns the mask of the data array.
+        """
+        return ma.getmaskarray(self.data)
+        
+    def _getattr_records(self):
+        """Returns the data as a numpy structured data array. If columns names are duplicated then they
+        are made unique
+        """
+        ch=copy.copy(self.column_headers) # renoved duplicated column headers for structured record
+        for i in range(len(ch)):
+            header=ch[i]
+            j=0
+            while ch[i] in ch[i+1:] or ch[i] in ch[0:i]:
+                j=j+1
+                ch[i]="{}_{}".format(header,j)
+        print ch
+        dtype = [(x, self.dtype) for x in ch]
+        return self.data.view(dtype=dtype).reshape(len(self))
+        
+    def _getattr_shape(self):
+        """Pass through the numpy shape attribute of the data
+        """        
+        return self.data.shape
+        
+    def _getattr_subclasses(self):
+        """Return a list of all in memory subclasses of this DataFile
+        """        
+        return {x.__name__:x for x in itersubclasses(DataFile)}
+    
+    def __getitem__(self, name):
+        """Called for \b DataFile[x] to return either a row or iterm of
+        metadata
+
+        @param name The name, slice or number of the part of the
+        \b DataFile to be returned.
+        @return an item of metadata or row(s) of data.
+        \li If \a name is an integer then the corresponding single row will be
+        rturned
+        \li if \a name is a slice, then the corresponding rows of data will be
+        returned. \li If \a name is a string then the metadata dictionary item
+        with the correspondoing key will be returned. If \a name is a numpy
+        array then the corresponding rows of the data are returned.
+
+        If a tuple is supplied as the arguement then there are a number of
+        possible behaviours. If the first element of the tuple is a string,
+        then it is assumed that it is the nth element of the named metadata is
+        required. Otherwise itis assumed that it is a particular element
+        within a column determined by the second part of the tuple that is
+        required. e.g. DataFile['Temp',5] would return the 6th element of the
+        list of elements in the metadata called 'Temp', while
+        DataFile[5,'Temp'] would return the 6th row of the data column
+        called 'Temp' and DataFile[5,3] would return the 6th element of the
+        4th column.
+
+        """
+        if isinstance(name, slice):
+            indices = name.indices(len(self))
+            name = range(*indices)
+            d = self.data[name[0], :]
+            d = numpy.atleast_2d(d)
+            for x in range(1, len(name)):
+                d = numpy.append(d, numpy.atleast_2d(self.data[x, :]), 0)
+            return d
+        elif isinstance(name, int):
+            return self.data[name, :]
+        elif isinstance(name, numpy.ndarray) and len(name.shape)==1:
+            return self.data[name, :]
+        elif isinstance(name, str) or isinstance(name, unicode):
+            name=str(name)
+            return self.meta(name)
+        elif isinstance(name, tuple) and len(name) == 2:
+            x, y = name
+            if isinstance(x, str):
+                return self[x][y]
+            else:
+                d = numpy.atleast_2d(self[x])
+                y = self.find_col(y)
+                r = d[:, y]
+                if len(r) == 1:
+                    r = r[0]
+                return r
+        else:
+            raise TypeError("Key must be either numeric of string")
+
+    def __getstate__(self):
+        return {"data": self.data,  "column_headers":
+            self.column_headers,  "metadata": self.metadata}
+
+    def __len__(self):
+        """Return the length of the data.shape
+                @return Returns the number of rows of data
+                """
+        return numpy.shape(self.data)[0]
+
+    def __lshift__(self, other):
+        """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function
+        @param other Either a string or iterable object used to source the DataFile object
+        @return A new DataFile object
+        """
+        newdata=self.__class__()
+        if isinstance(other, str):
+            lines=itertools.imap(lambda x:x,  other.splitlines())
+            newdata._read_iterable(lines)
+        elif isinstance(other, collections.Iterable):
+            newdata._read_iterable(other)
+        return newdata
+
+    def __parse_data(self):
+        """Internal function to parse the tab deliminated text file
+        """
+
+        self._read_iterable(fileinput.FileInput(self.filename))
+
+    def __parse_metadata(self, key, value):
+        """Parse the metadata string, removing the type hints into a separate
+        dictionary from the metadata
+
+        @param key The name of the metadata parameter to be written,
+        possibly including a type hinting string.
+        @value The value of the item of metadata.
+        @return Nothing, but the current instance's metadata is changed.
+
+        Uses the typehint to set the type correctly in the dictionary
+
+        NB All the clever work of managing the typehinting is done in the
+        metadata dictionary object now.
+        """
+        self.metadata[key] = value
+
+    def _read_iterable(self, reader):
+        row=reader.next().split('\t')
+        if row[0].strip()!="TDI Format 1.5":
+            raise RuntimeError("Not a TDI File")
+        col_headers_tmp=[x.strip() for x in row[1:]]
+        cols=len(col_headers_tmp)
+        self.data=ma.masked_array([])
+        for r in reader:
+            if r.strip()=="": # Blank line
+                continue
+            row=r.rstrip().split('\t')
+            cols=max(cols, len(row)-1)
+            if row[0].strip()!='':
+                md=row[0].split('=')
+                if len(md)>2:
+                    md[1]="=".join(md[1:])
+                elif len(md)<2:
+                    md.extend('')
+                self.metadata[md[0].strip()]=md[1].strip()
+            if len(row)<2:
+                continue
+            self.data=numpy.append(self.data, self._conv_float(row[1:]))
+        self.data=numpy.reshape(self.data, (-1, cols))
+        self.column_headers=["Column "+str(i) for i in range(cols)]
+        for i in range(len(col_headers_tmp)):
+            self.column_headers[i]=col_headers_tmp[i]
+
+
+    def __reduce_ex__(self, p):
+        return (DataFile, (), self.__getstate__())
+
+    def __repr__(self):
+        """Outputs the \b Stoner.DataFile object in TDI format.
+        This allows one to print any \b Stoner.DataFile to a stream based
+                object andgenerate a reasonable textual representation of
+                the data.shape
+
+                @return \a self in a textual format. """
+        outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
+        m = len(self.metadata)
+        self.data=ma.masked_array(numpy.atleast_2d(self.data))
+        (r, c) = numpy.shape(self.data)
+        md = [self.metadata.export(x) for x in sorted(self.metadata)]
+        for x in range(min(r, m)):
+            outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+        if m > r:  # More metadata
+            for x in range(r, m):
+                    outp = outp + md[x] + "\n"
+        elif r > m:  # More data than metadata
+            for x in range(m, r):
+                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+        return outp
+
+
+    def __setattr__(self, name, value):
+        """Handles attempts to set attributes not covered with class attribute variables.
+        @param name Name of attribute to set. Details of possible attributes below:
+
+        \b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
+        the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
+        if name=="mask":
+            if callable(value):
+                self._set_mask(value, invert=False)
+            else:
+                self.data.mask=value
+        if name=="data":
+            self.__dict__[name]=ma.masked_array(value)
+        else:
+            self.__dict__[name] = value
+
+    def __setitem__(self, name, value):
+        """Called for \b DataFile[\em name ] = \em value to write mewtadata
+        entries.
+            @param name The string key used to access the metadata
+            @param value The value to be written into the metadata.
+            Currently bool, int, float and string values are correctly
+            handled. Everythign else is treated as a string.
+            @return Nothing."""
+        self.metadata[name] = value
+
+    def __setstate__(self, state):
+        self.data = ma.masked_array(state["data"])
+        self.column_headers = state["column_headers"]
+        self.metadata = state["metadata"]
+
+    #Private Functions
 
     def _set_mask(self, func, invert=False,  cumulative=False, col=0):
         """Applies func to each row in self.data and uses the result to set the mask for the row
@@ -801,353 +884,7 @@ class DataFile(object):
         if len(self._masks)==0:
             self._masks=[False]
 
-
-
-    def __parse_metadata(self, key, value):
-        """Parse the metadata string, removing the type hints into a separate
-        dictionary from the metadata
-
-        @param key The name of the metadata parameter to be written,
-        possibly including a type hinting string.
-        @value The value of the item of metadata.
-        @return Nothing, but the current instance's metadata is changed.
-
-        Uses the typehint to set the type correctly in the dictionary
-
-        NB All the clever work of managing the typehinting is done in the
-        metadata dictionary object now.
-        """
-        self.metadata[key] = value
-
-    def __parse_data(self):
-        """Internal function to parse the tab deliminated text file
-        """
-
-        self._read_iterable(fileinput.FileInput(self.filename))
-
-    def _read_iterable(self, reader):
-        row=reader.next().split('\t')
-        if row[0].strip()!="TDI Format 1.5":
-            raise RuntimeError("Not a TDI File")
-        col_headers_tmp=[x.strip() for x in row[1:]]
-        cols=len(col_headers_tmp)
-        self.data=ma.masked_array([])
-        for r in reader:
-            if r.strip()=="": # Blank line
-                continue
-            row=r.rstrip().split('\t')
-            cols=max(cols, len(row)-1)
-            if row[0].strip()!='':
-                md=row[0].split('=')
-                if len(md)>2:
-                    md[1]="=".join(md[1:])
-                elif len(md)<2:
-                    md.extend('')
-                self.metadata[md[0].strip()]=md[1].strip()
-            if len(row)<2:
-                continue
-            self.data=numpy.append(self.data, self._conv_float(row[1:]))
-        self.data=numpy.reshape(self.data, (-1, cols))
-        self.column_headers=["Column "+str(i) for i in range(cols)]
-        for i in range(len(col_headers_tmp)):
-            self.column_headers[i]=col_headers_tmp[i]
-
     #   PUBLIC METHODS
-
-    def rename(self, old_col, new_col):
-        """Renames columns without changing the underlying data
-        @param old_col Old column index or name (using standard rules)
-        @param new_col New name of column
-        @return A copy of self
-        """
-
-        old_col=self.find_col(old_col)
-        self.column_headers[old_col]=new_col
-        return self
-
-    def get(self, item):
-        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
-        @param item A string representing the metadata keyname
-        @return self.metadata[item] or None if item not in self.metadata"""
-        try:
-            return self[item]
-        except KeyError:
-            return None
-
-
-    def get_filename(self, mode):
-        self.filename = self.__file_dialog(mode)
-        return self.filename
-
-    def load(self, filename=None, auto_load=True,  filetype=None,  *args, **kargs):
-        """DataFile.load(filename,type,*args)
-        @param filename path to file to load
-        @param auto_load If True (default) then the load routine tries all the subclasses of DataFile in turn to load the file
-        @param filetype If not none then tries using filetype as the loader
-        @return A copy of the loaded instance
-            """
-
-        if filename is None or (isinstance(filename, bool) and not filename):
-            filename = self.__file_dialog('r')
-        else:
-            self.filename = filename
-
-        failed=True
-        try:
-            if filetype is None:
-                self.__parse_data()
-                self["Loaded as"]="DataFile"
-            else:
-                self.__class__(filetype(filename))
-                self["Loaded as"]=filetype.__name__
-            failed=False
-            return self
-        except RuntimeError: # We failed to parse assuming this was a TDI
-            if auto_load: # We're going to try every subclass we can
-                subclasses={x:x.priority for x in itersubclasses(DataFile)}
-                for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
-                    if self.debug:
-                        print cls.__class__.__name__
-                    try:
-                        test=cls()
-                        test.load(self.filename, auto_load=False)
-                        failed=False
-                        break
-                    except Exception:
-                        continue
-
-        if failed:
-            raise SyntaxError("Failed to load file")
-        else:
-            self.data=ma.masked_array(test.data)
-            self.metadata=test.metadata
-            self.column_headers=test.column_headers
-            self["Loaded as"]=cls.__name__
-
-        return self
-
-    def save(self, filename=None):
-        """Saves a string representation of the current DataFile object into
-        the file 'filename'
-
-
-                @param filename = None  filename to save data as, if this is \
-                b None then the current filename for the object is used
-                    If this is not set, then then a file dialog is used. If f
-                    ilename is \b False then a file dialog is force.
-                @return The current object
-                """
-        if filename is None:
-            filename = self.filename
-        if filename is None or (isinstance(filename, bool) and not filename):
-            # now go and ask for one
-            filename = self.__file_dialog('w')
-        f = open(filename, 'w')
-        f.write(repr(self))
-        f.close()
-        self.filename = filename
-        return self
-
-    def find_col(self, col):
-        """Indexes the column headers in order to locate a column of data.shape
-        Indexing can be by supplying an integer, a string, a regular experssion,
-        a slice or a list of any of the above.      
-        *   Integer indices are simply checked to ensure that they are in range
-        *   String indices are first checked for an exact match against a column header
-        if that fails they are then compiled to a regular expression and the first
-        match to a column header is taken.
-        *   A regular expression index is simply matched against the column headers and the
-        first match found is taken. This allows additional regular expression options
-        such as case insensitivity.
-        *   A slice index is converted to a list of integers and processed as below
-        *   A list index returns the results of feading each item in the list at \b find_col
-        in turn.        
-        @param col Which column(s) to retuirn indices for.
-
-        @return  The matching column index as an integer or a \b KeyError
-        """
-        if isinstance(col, int):  # col is an int so pass on
-            if not 0<=col<self.data.shape[0]:
-                raise IndexError('Attempting to index a non - existant column '+str(col))
-            pass
-        elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
-            col=str(col)
-            if col in self.column_headers:  # and it is an exact string match
-                col = self.column_headers.index(col)
-            else:  # ok we'll try for a regular expression
-                test = re.compile(col)
-                possible = filter(test.search, self.column_headers)
-                if len(possible) == 0:
-                    try:
-                        col=int(col)
-                    except ValueError:
-                        raise KeyError('Unable to find any possible column matches for '+str(col))
-                    if col<0 or col>=self.data.shape[1]:
-                        raise KeyError('Column index out of range')
-                else:
-                    col = self.column_headers.index(possible[0])
-        elif isinstance(col,re._pattern_type):
-                test = col
-                possible = filter(test.search, self.column_headers)
-                if len(possible) == 0:
-                    raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
-                else:
-                    col = self.column_headers.index(possible[0])
-        elif isinstance(col, slice):
-            indices = col.indices(numpy.shape(self.data)[1])
-            col = range(*indices)
-            col = self.find_col(col)
-        elif isinstance(col, list):
-            col = map(self.find_col, col)
-        else:
-            raise TypeError('Column index must be an integer, string, \
-            list or slice')
-        return col
-
-    def column(self, col):
-        """Extracts a column of data by index or name
-
-        @param col is the column index as defined for @b DataFile.find_col
-        @returns one or more columns of data"""
-        if isinstance(col, slice):
-            # convert a slice into a list and then continue
-            indices = col.indices(numpy.shape(self.data)[1])
-            col = range(*indices)
-        if isinstance(col, list):
-            d = self.column(col[0])
-            d = numpy.reshape(d, (len(d), 1))
-            for x in range(1, len(col)):
-                t = self.column(col[x])
-                t = numpy.reshape(t, (len(t), 1))
-                d = numpy.append(d, t, 1)
-            return d
-        else:
-            return self.data[:, self.find_col(col)]
-
-    def meta(self, ky):
-        """Returns some metadata
-
-        @param ky The name of the metadata item to be returned.
-        If @a key is not an exact match for an item of metadata,
-        then a regular expression match is carried out.
-        @return Returns the item of metadata."""
-        if isinstance(ky, str):  # Ok we go at it with a string
-            if ky in self.metadata:
-                return self.metadata[ky]
-            else:
-                test = re.compile(ky)
-                possible = filter(test.search, self.metadata)
-                if len(possible) == 0:
-                    raise KeyError("No metadata with keyname: " + ky)
-                elif len(possible) == 1:
-                    return self.metadata[possible[0]]
-                else:
-                    d = dict()
-                    for p in possible:
-                        d[p] = self.metadata[p]
-                    return d
-        else:
-            raise TypeError("Only string are supported as search \
-            keys currently")
-            # Should implement using a list of strings as well
-
-    def dir(self, pattern=None):
-        """ Return a list of keys in the metadata, filtering wiht a regular
-        expression if necessary
-
-                @param pattern is a regular expression or None to
-                list all keys
-                @return Returns a list of metadata keys."""
-        if pattern == None:
-            return self.metadata.keys()
-        else:
-            test = re.compile(pattern)
-            possible = filter(test.search, self.metadata.keys())
-            return possible
-
-    def keys(self):
-        """An alias for @b DataFile.dir(None)
-
-        @return a list of all the keys in the metadata dictionary"""
-        return self.dir(None)
-
-    def search(self, xcol,value,columns=None):
-        """Searches in the numerica data part of the file for lines
-        that match and returns  the corresponding rows
-
-        @param xcol is a Search Column Index
-        @param value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
-        @param columns is either a index or array of indices or None (default) for all columns.
-        @return numpy array of matching rows or column values depending on the arguements.
-
-        """
-        rows=[]
-        for (r,x) in zip(range(len(self)),self.column(xcol)):
-            if isinstance(value,tuple) and value[0]<=x<=value[1]:
-                rows.append(r)
-            elif isinstance(value,list):
-                for v in value:
-                    if isinstance(v,tuple) and v[0]<=x<=v[1]:
-                        rows.append(r)
-                        break
-                    elif x==v:
-                        rows.append(r)
-                        break
-            elif callable(value) and value(x,self[r]):
-                rows.append(r)
-            elif x==value:
-                rows.append(r)
-        if columns is None: #Get the whole slice
-            return self.data[rows,:]
-        elif isinstance(columns,str) or isinstance(columns,int):
-            columns=self.find_col(columns)
-            if len(rows)==1:
-                return self.data[rows,columns]
-            else:
-                return self.data[rows][:, columns]
-        else:
-            targets=[self.find_col(t) for t in columns]
-            return self.data[rows][:, targets]
-
-
-    def unique(self, col, return_index=False, return_inverse=False):
-        """Return the unique values from the specified column - pass through
-        for numpy.unique"""
-        return numpy.unique(self.column(col), return_index, return_inverse)
-
-    def del_rows(self, col, val=None):
-        """Searchs in the numerica data for the lines that match and deletes
-        the corresponding rows
-        @param col Column containg values to search for. Maybe a list or slice
-        @param val Specifies rows to delete. Maybe None - in which case
-        whole columns are deleted, a float in which case rows whose column
-        \b col = \b val are deleted or a function - in which case rows where
-        the function evaluates to be true are deleted.
-        @return The current object
-
-        If \b val is a function it should take two arguments - a float and a
-        list. The float is the value of the
-        current row that corresponds to column \b col abd the second
-        argument is the current row.
-            """
-        if isinstance(col, slice) and val is None:
-            indices = col.indices(len(self))
-            col -= range(*indices)
-        if isinstance(col, list) and val is None:
-            col.sort(reverse=True)
-            for c in col:
-                self.del_rows(c)
-        elif isinstance(col,  int) and val is None:
-            self.data = numpy.delete(self.data, col, 0)
-        else:
-            col = self.find_col(col)
-            d = self.column(col)
-            if callable(val):
-                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask) for x in self])[0]
-            elif isinstance(val, float):
-                rows = numpy.nonzero([x == val for x in d])[0]
-            self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
-        return self
 
     def add_column(self, column_data, column_header=None, index=None,
                    func_args=None, replace=False):
@@ -1215,7 +952,6 @@ class DataFile(object):
         elif cl<dr:
             numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
 
-
         if replace:
             self.data[:, index] = numpy_data
         else:
@@ -1224,6 +960,21 @@ class DataFile(object):
             else:
                 self.data = ma.masked_array(numpy.insert(self.data, index, numpy_data, 1))
         return self
+
+    def column(self, col):
+        """Extracts a column of data by index or name
+
+        @param col is the column index as defined for @b DataFile.find_col
+        @returns one or more columns of data"""
+        return self.data[:, self.find_col(col)]
+
+    def columns(self):
+        """Generator method that will iterate over columns of data
+
+        @return Returns the next column of data."""
+        (r, c) = numpy.shape(self.data)
+        for col in range(c):
+            yield self.data[col]
 
     def del_column(self, col=None,duplicates=False):
         """Deletes a column from the current @b DataFile object
@@ -1268,6 +1019,329 @@ class DataFile(object):
                 del self.column_headers[col]
             return self
 
+    def del_rows(self, col, val=None):
+        """Searchs in the numerica data for the lines that match and deletes
+        the corresponding rows
+        @param col Column containg values to search for. Maybe a list or slice
+        @param val Specifies rows to delete. Maybe None - in which case
+        whole columns are deleted, a float in which case rows whose column
+        \b col = \b val are deleted or a function - in which case rows where
+        the function evaluates to be true are deleted.
+        @return The current object
+
+        If \b val is a function it should take two arguments - a float and a
+        list. The float is the value of the
+        current row that corresponds to column \b col abd the second
+        argument is the current row.
+            """
+        if isinstance(col, slice) and val is None:
+            indices = col.indices(len(self))
+            col -= range(*indices)
+        if isinstance(col, list) and val is None:
+            col.sort(reverse=True)
+            for c in col:
+                self.del_rows(c)
+        elif isinstance(col,  int) and val is None:
+            self.data = numpy.delete(self.data, col, 0)
+        else:
+            col = self.find_col(col)
+            d = self.column(col)
+            if callable(val):
+                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask) for x in self])[0]
+            elif isinstance(val, float):
+                rows = numpy.nonzero([x == val for x in d])[0]
+            self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
+        return self
+
+    def dir(self, pattern=None):
+        """ Return a list of keys in the metadata, filtering wiht a regular
+        expression if necessary
+
+                @param pattern is a regular expression or None to
+                list all keys
+                @return Returns a list of metadata keys."""
+        if pattern == None:
+            return self.metadata.keys()
+        else:
+            test = re.compile(pattern)
+            possible = filter(test.search, self.metadata.keys())
+            return possible
+
+    def find_col(self, col):
+        """Indexes the column headers in order to locate a column of data.shape
+        Indexing can be by supplying an integer, a string, a regular experssion,
+        a slice or a list of any of the above.      
+        *   Integer indices are simply checked to ensure that they are in range
+        *   String indices are first checked for an exact match against a column header
+        if that fails they are then compiled to a regular expression and the first
+        match to a column header is taken.
+        *   A regular expression index is simply matched against the column headers and the
+        first match found is taken. This allows additional regular expression options
+        such as case insensitivity.
+        *   A slice index is converted to a list of integers and processed as below
+        *   A list index returns the results of feading each item in the list at \b find_col
+        in turn.        
+        @param col Which column(s) to retuirn indices for.
+
+        @return  The matching column index as an integer or a \b KeyError
+        """
+        if isinstance(col, int):  # col is an int so pass on
+            if not 0<=col<self.data.shape[0]:
+                raise IndexError('Attempting to index a non - existant column '+str(col))
+            pass
+        elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
+            col=str(col)
+            if col in self.column_headers:  # and it is an exact string match
+                col = self.column_headers.index(col)
+            else:  # ok we'll try for a regular expression
+                test = re.compile(col)
+                possible = filter(test.search, self.column_headers)
+                if len(possible) == 0:
+                    try:
+                        col=int(col)
+                    except ValueError:
+                        raise KeyError('Unable to find any possible column matches for '+str(col))
+                    if col<0 or col>=self.data.shape[1]:
+                        raise KeyError('Column index out of range')
+                else:
+                    col = self.column_headers.index(possible[0])
+        elif isinstance(col,re._pattern_type):
+                test = col
+                possible = filter(test.search, self.column_headers)
+                if len(possible) == 0:
+                    raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
+                else:
+                    col = self.column_headers.index(possible[0])
+        elif isinstance(col, slice):
+            indices = col.indices(numpy.shape(self.data)[1])
+            col = range(*indices)
+            col = self.find_col(col)
+        elif isinstance(col, list):
+            col = map(self.find_col, col)
+        else:
+            raise TypeError('Column index must be an integer, string, \
+            list or slice')
+        return col
+
+
+    def get(self, item):
+        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
+        @param item A string representing the metadata keyname
+        @return self.metadata[item] or None if item not in self.metadata"""
+        try:
+            return self[item]
+        except KeyError:
+            return None
+
+    def get_filename(self, mode):
+        self.filename = self.__file_dialog(mode)
+        return self.filename
+
+    def insert_rows(self, row, new_data):
+        """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
+        @param row Data row to insert into
+        @param new_data a numpy array with an equal number of columns as the main data array containing the new row(s) of data to insert
+        @return A copy of the modified DataFile object"""
+        self.data=numpy.insert(self.data, row,  new_data, 0)
+        return self
+
+    def keys(self):
+        """An alias for @b DataFile.dir(None)
+
+        @return a list of all the keys in the metadata dictionary"""
+        return self.dir(None)
+
+    def load(self, filename=None, auto_load=True,  filetype=None,  *args, **kargs):
+        """DataFile.load(filename,type,*args)
+        @param filename path to file to load
+        @param auto_load If True (default) then the load routine tries all the subclasses of DataFile in turn to load the file
+        @param filetype If not none then tries using filetype as the loader
+        @return A copy of the loaded instance
+            """
+
+        if filename is None or (isinstance(filename, bool) and not filename):
+            filename = self.__file_dialog('r')
+        else:
+            self.filename = filename
+
+        failed=True
+        try:
+            if filetype is None:
+                self.__parse_data()
+                self["Loaded as"]="DataFile"
+            else:
+                self.__class__(filetype(filename))
+                self["Loaded as"]=filetype.__name__
+            failed=False
+            return self
+        except RuntimeError: # We failed to parse assuming this was a TDI
+            if auto_load: # We're going to try every subclass we can
+                subclasses={x:x.priority for x in itersubclasses(DataFile)}
+                for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
+                    if self.debug:
+                        print cls.__class__.__name__
+                    try:
+                        test=cls()
+                        test.load(self.filename, auto_load=False)
+                        failed=False
+                        break
+                    except Exception:
+                        continue
+
+        if failed:
+            raise SyntaxError("Failed to load file")
+        else:
+            self.data=ma.masked_array(test.data)
+            self.metadata=test.metadata
+            self.column_headers=test.column_headers
+            self["Loaded as"]=cls.__name__
+
+        return self
+
+    def meta(self, ky):
+        """Returns some metadata
+
+        @param ky The name of the metadata item to be returned.
+        If @a key is not an exact match for an item of metadata,
+        then a regular expression match is carried out.
+        @return Returns the item of metadata."""
+        if isinstance(ky, str):  # Ok we go at it with a string
+            if ky in self.metadata:
+                return self.metadata[ky]
+            else:
+                test = re.compile(ky)
+                possible = filter(test.search, self.metadata)
+                if len(possible) == 0:
+                    raise KeyError("No metadata with keyname: " + ky)
+                elif len(possible) == 1:
+                    return self.metadata[possible[0]]
+                else:
+                    d = dict()
+                    for p in possible:
+                        d[p] = self.metadata[p]
+                    return d
+        else:
+            raise TypeError("Only string are supported as search \
+            keys currently")
+            # Should implement using a list of strings as well
+
+    def rename(self, old_col, new_col):
+        """Renames columns without changing the underlying data
+        @param old_col Old column index or name (using standard rules)
+        @param new_col New name of column
+        @return A copy of self
+        """
+
+        old_col=self.find_col(old_col)
+        self.column_headers[old_col]=new_col
+        return self
+
+    def reorder_columns(self, cols, headers_too=True):
+        """Construct a new data array from the original data by assembling
+        the columns in the order given
+                @param cols A list of column indices (referred to the oriignal
+                data set) from which to assemble the new data set
+                @param headers_too Reorder the column headers in the same
+                way as the data (defaults to True)
+                @return A copy of the modified DataFile object"""
+        if headers_too:
+            self.column_headers = [self.column_headers[self.find_col(x)]
+                                                            for x in cols]
+
+        newdata = numpy.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
+        for col in cols:
+            newdata = numpy.append(newdata, numpy.atleast_2d(self.data[:,
+                                                self.find_col(col)]), axis=0)
+        self.data = ma.masked_array(numpy.transpose(newdata))
+        return self
+
+    def rows(self):
+        """Generator method that will iterate over rows of data
+        @return Returns the next row of data"""
+        (r, c) = numpy.shape(self.data)
+        for row in range(r):
+            yield self.data[row]
+
+
+    def save(self, filename=None):
+        """Saves a string representation of the current DataFile object into
+        the file 'filename'
+
+
+                @param filename = None  filename to save data as, if this is \
+                b None then the current filename for the object is used
+                    If this is not set, then then a file dialog is used. If f
+                    ilename is \b False then a file dialog is force.
+                @return The current object
+                """
+        if filename is None:
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):
+            # now go and ask for one
+            filename = self.__file_dialog('w')
+        f = open(filename, 'w')
+        f.write(repr(self))
+        f.close()
+        self.filename = filename
+        return self
+
+    def search(self, xcol,value,columns=None):
+        """Searches in the numerica data part of the file for lines
+        that match and returns  the corresponding rows
+
+        @param xcol is a Search Column Index
+        @param value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
+        @param columns is either a index or array of indices or None (default) for all columns.
+        @return numpy array of matching rows or column values depending on the arguements.
+
+        """
+        rows=[]
+        for (r,x) in zip(range(len(self)),self.column(xcol)):
+            if isinstance(value,tuple) and value[0]<=x<=value[1]:
+                rows.append(r)
+            elif isinstance(value,list):
+                for v in value:
+                    if isinstance(v,tuple) and v[0]<=x<=v[1]:
+                        rows.append(r)
+                        break
+                    elif x==v:
+                        rows.append(r)
+                        break
+            elif callable(value) and value(x,self[r]):
+                rows.append(r)
+            elif x==value:
+                rows.append(r)
+        if columns is None: #Get the whole slice
+            return self.data[rows,:]
+        elif isinstance(columns,str) or isinstance(columns,int):
+            columns=self.find_col(columns)
+            if len(rows)==1:
+                return self.data[rows,columns]
+            else:
+                return self.data[rows][:, columns]
+        else:
+            targets=[self.find_col(t) for t in columns]
+            return self.data[rows][:, targets]
+
+    def sort(self, order=None):
+        """Sorts the data by column name. Sorts in place and returns a
+        copy of the sorted data object for chaining methods
+        @param order Either a scalar integer or string or a list of integer
+        or strings that represent the sort order
+        @return A copy of the sorted object
+        """
+
+        if order is None:
+            order=range(len(self.column_headers))
+        recs=self.records
+        if isinstance(order, list) or isinstance(order, tuple):
+            order = [recs.dtype.names[self.find_col(x)] for x in order]
+        else:
+            order = [recs.dtype.names[self.find_col(order)]]
+        d = numpy.sort(recs, order=order)
+        self.data = ma.masked_array(d.view(dtype=self.dtype).reshape(len(self), len(self.
+                                                              column_headers)))
+        return self
 
     def swap_column(self, swp, headers_too=True):
         """Swaps pairs of columns in the data. Useful for reordering
@@ -1300,64 +1374,13 @@ class DataFile(object):
             list of tuples")
         return self
 
-    def reorder_columns(self, cols, headers_too=True):
-        """Construct a new data array from the original data by assembling
-        the columns in the order given
-                @param cols A list of column indices (referred to the oriignal
-                data set) from which to assemble the new data set
-                @param headers_too Reorder the column headers in the same
-                way as the data (defaults to True)
-                @return A copy of the modified DataFile object"""
-        if headers_too:
-            self.column_headers = [self.column_headers[self.find_col(x)]
-                                                            for x in cols]
+    def unique(self, col, return_index=False, return_inverse=False):
+        """Return the unique values from the specified column - pass through
+        for numpy.unique"""
+        return numpy.unique(self.column(col), return_index, return_inverse)
 
-        newdata = numpy.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
-        for col in cols:
-            newdata = numpy.append(newdata, numpy.atleast_2d(self.data[:,
-                                                self.find_col(col)]), axis=0)
-        self.data = ma.masked_array(numpy.transpose(newdata))
-        return self
 
-    def insert_rows(self, row, new_data):
-        """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
-        @param row Data row to insert into
-        @param new_data a numpy array with an equal number of columns as the main data array containing the new row(s) of data to insert
-        @return A copy of the modified DataFile object"""
-        self.data=numpy.insert(self.data, row,  new_data, 0)
-        return self
-
-    def rows(self):
-        """Generator method that will iterate over rows of data
-        @return Returns the next row of data"""
-        (r, c) = numpy.shape(self.data)
-        for row in range(r):
-            yield self.data[row]
-
-    def columns(self):
-        """Generator method that will iterate over columns of data
-
-        @return Returns the next column of data."""
-        (r, c) = numpy.shape(self.data)
-        for col in range(c):
-            yield self.data[col]
-
-    def sort(self, order):
-        """Sorts the data by column name. Sorts in place and returns a
-        copy of the sorted data object for chaining methods
-        @param order Either a scalar integer or string or a list of integer
-        or strings that represent the sort order
-        @return A copy of the sorted object
-        """
-        if isinstance(order, list) or isinstance(order, tuple):
-            order = ["C{}".format(self.find_col(x)) for x in order]
-        else:
-            order = ["C{}".format(self.find_col(order))]
-        d = numpy.sort(self._sortable, order=order)
-        self.data = ma.masked_array(d.view(dtype='f8').reshape(len(self), len(self.
-                                                              column_headers)))
-        return self
-
+# Module level functions
 
 def itersubclasses(cls, _seen=None):
     """
