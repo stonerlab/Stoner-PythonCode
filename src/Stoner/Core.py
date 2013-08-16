@@ -767,10 +767,11 @@ class DataFile(object):
             cols=max(cols, len(row)-1)
             if row[0].strip()!='':
                 md=row[0].split('=')
-                if len(md)>2:
+                if len(md)==2:
                     md[1]="=".join(md[1:])
-                elif len(md)<2:
-                    md.extend('')
+                elif len(md)<=1:
+                    md.extend(['',''])
+
                 self.metadata[md[0].strip()]=md[1].strip()
             if len(row)<2:
                 continue
