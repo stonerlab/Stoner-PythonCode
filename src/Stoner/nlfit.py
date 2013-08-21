@@ -42,7 +42,7 @@ def nlfit(ini_file, func, data=None, chi2mapping=False):
     except: 
         raise ValueError('Could not open ini file')
     t=NLFit(ini_file, func, data, chi2mapping)
-    t.run()
+    t.run()#
     #Return Stoner.Analysis file instance of data and an instance of matplotlib.axes for the plot
     if chi2mapping: return t.output, t.plotout, t.param_steps
     return t.output, t.plotout
