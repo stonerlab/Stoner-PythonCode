@@ -1068,6 +1068,24 @@ class DataFile(object):
             possible = filter(test.search, self.metadata.keys())
             return possible
 
+    def filter(self,func=None,cols=None):
+        """Function to set the mask on rows of data by evaluating a function for each row
+        @param is a callable object that should take a single listas a p[arameter representing one row.
+        @param cols a list of column indices that are used to form the list of values passed to func.
+        The default value of None results in a complete row being passed into func.
+        @return The current object with the mask set
+        """
+        if cols is None:
+            cols=range(self.data.shape[1])
+        cols=[self.find_col(c) for c in cols]
+        if self.data.mask.shape!=self.data.shape:
+            self.data.mask=numpy.zeros(self.data.shape)
+        i=0
+        for r in self.rows():
+            self.data.mask[i,:]=not func(r[cols])
+            i=i+1
+        return self
+        
     def find_col(self, col):
         """Indexes the column headers in order to locate a column of data.shape
         Indexing can be by supplying an integer, a string, a regular experssion,

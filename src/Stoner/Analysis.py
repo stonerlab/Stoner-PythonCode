@@ -1,94 +1,7 @@
+"""Stoner .Analysis provides a subclass of DataFile that has extra analysis routines builtin.
 
-#############################################
-#
-# AnalysisFile object of the Stoner Package
-#
-# $Id: Analysis.py,v 1.25 2013/05/13 15:12:10 cvs Exp $
-#
-# $Log: Analysis.py,v $
-# Revision 1.25  2013/05/13 15:12:10  cvs
-# Reimplement the DataFile.search and add an AnalyseFile.integrate
-#
-# Revision 1.24  2013/03/27 17:18:09  cvs
-# Adding nlfit functionality to Stoner.Analysis
-#
-# Revision 1.23  2012/05/03 10:17:25  cvs
-# typo, elf to self
-#
-# Revision 1.22  2012/05/02 23:03:09  cvs
-# Update documentation, improve loading handling of external fileformats.
-#
-# Revision 1.21  2012/04/21 21:51:24  cvs
-# Fix a bug with AnalysFile polyfit
-#
-# Revision 1.20  2012/04/19 20:07:07  cvs
-# Switch DataFile and friends to use masked arrays, adding methods to handle the mask.
-#
-# Revision 1.19  2012/04/04 23:04:11  cvs
-# Improvements to AnalyseFile and DataFolder
-#
-# Revision 1.18  2012/03/27 21:54:04  cvs
-# Fix a bug with loading DataFiles and in __repr__
-# Improve peak finding code a bit
-#
-# Revision 1.17  2012/03/22 12:17:16  cvs
-# Update documentation, add new multiply and divide methods to AnalyseFile, redo the + operator to try a bit harder to find data to add together.
-#
-# Revision 1.16  2012/03/19 23:04:23  cvs
-# Fixed a bug adding and subrtacting floats and also implemented a AnaluyseFile.mean()
-#
-# Revision 1.15  2012/03/18 17:58:10  cvs
-# Fix a bug in AnalyseFile.apply when not inserting a new column
-#
-# Revision 1.14  2012/03/12 16:20:30  cvs
-# Bounds on AnalyseFile.max and .min, documentation updates
-#
-# Revision 1.13  2012/03/12 15:04:00  cvs
-# Make add subtract and normalise a bit more clever
-#
-# Revision 1.12  2012/03/11 15:07:41  cvs
-# Demo CVS
-#
-# Revision 1.11  2012/03/11 01:41:56  cvs
-# Recompile API help
-#
-# Revision 1.10  2012/03/10 20:16:55  cvs
-# Add new methods to normalise, subtract and add data columns
-#
-# Revision 1.9  2011/12/04 23:09:16  cvs
-# Fixes to Keissig and plotting code
-#
-# Revision 1.8  2011/11/28 14:26:52  cvs
-# Merge latest versions
-#
-# Revision 1.7  2011/06/24 16:23:58  cvs
-# Update API documentation. Minor improvement to save method to force a dialog box.
-#
-# Revision 1.6  2011/05/10 22:10:31  cvs
-# Workaround new behaviou of deepcopy() in Python 2.7 and improve handling when a typehint for the metadata doesn't exist (printing the DataFile will fix the typehinting).
-#
-# Revision 1.5  2011/05/09 18:34:48  cvs
-# Minor changes to AnalyseFile
-#
-# Revision 1.4  2011/03/09 11:02:38  cvs
-# Fix bug in polyfit
-#
-# Revision 1.3  2011/01/11 18:55:57  cvs
-# Move mpfit into a method of AnalyseFile and make the API like AnalyseFile.curvefit
-#
-# Revision 1.2  2011/01/10 23:11:21  cvs
-# Switch to using GLC's version of the mpit module
-# Made PlotFile.plot_xy take keyword arguments and return the figure
-# Fixed a missing import math in AnalyseFile
-# Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
-#
-# Revision 1.1  2011/01/08 20:30:02  cvs
-# Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
-# Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
-#
-#
-#############################################
-
+@b AnalyseFile - @b DataFile with extra bells and whistles.
+"""
 from .Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit
@@ -557,15 +470,22 @@ class AnalyseFile(DataFile):
             d=numpy.append(d, numpy.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
             return r[p:-p]
-    def threshold(self, col, threshold, rising=True, falling=False):
-        """AnalysisFile.threshold(column, threshold, rising=True,falling=False)
-
-        Finds partial indices where the data in column passes the threshold, rising or falling"""
+    def threshold(self, col, threshold, rising=True, falling=False,xcol=None):
+        """Finds partial indices where the data in column passes the threshold, rising or falling
+        @param col Column index to look for data in
+        @param threshold Value to look for in column col
+        @param rising (defaukt True) look for case where the data is increasing in value
+        @param falling (default False) look for case where data is fallinh in value
+        @:param xcol (default None) rather than returning a fractional row index, return the
+        interpola,ted value in column xcol
+        @return Either a sing;le fractional row index, or an in terpolated x value"""
         current=self.column(col)
         if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
             ret=[self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
         else:
             ret=self.__threshold(threshold, current, rising=rising, falling=falling)[0]
+        if xcol is not None:
+            ret=self.interpolate(ret)[self.find_col(xcol)]
         return ret
 
     def interpolate(self, newX,kind='linear', xcol=None ):
@@ -607,6 +527,7 @@ class AnalyseFile(DataFile):
             @return If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
         from scipy.interpolate import interp1d
+        assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
         if significance is None: # Guess the significance based on the range of y and width settings
             dm, p=self.max(ycol)
             dp, p=self.min(ycol)
@@ -620,8 +541,9 @@ class AnalyseFile(DataFile):
         else:
             xcol=self.column(xcol)
         index=interp1d(i, xcol)
+        w=abs(xcol[0]-xcol[width]) # Approximate width of our search peak in xcol
         z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
-        z=z[:-1]
+        z=[zv for zv in z if zv>w/2.0 and zv<max(xcol)-w/2.0] #Throw out peaks or troughts too near the ends
         if sorted:
             z=numpy.take(z, numpy.argsort(d2(z)))
         return index(filter(lambda x: numpy.abs(d2(x))>significance, z))

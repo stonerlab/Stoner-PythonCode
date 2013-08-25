@@ -1,89 +1,12 @@
-####################################################
-## FileFormats - sub classes of DataFile for different machines
-# $Id: FileFormats.py,v 1.30 2013/03/05 16:22:54 cvs Exp $
-# $Log: FileFormats.py,v $
-# Revision 1.30  2013/03/05 16:22:54  cvs
-# Fix to del_rows in Core, mask should not be indexed here
-#
-# Revision 1.29  2012/12/11 16:08:59  cvs
-# Add a Rigaku file reader
-#
-# Revision 1.28  2012/05/04 16:47:25  cvs
-# Fixed a string representation problem in __repr__. Minor changes to BNLFile format.
-#
-# Revision 1.27  2012/05/02 21:30:25  cvs
-# Add more checks to help autofile laoding and priorities on it.
-#
-# Revision 1.26  2012/05/01 16:11:03  cvs
-# Workinf FmokeFile format
-#
-# Revision 1.23  2012/04/28 20:05:14  cvs
-# Switch RasorFile to OpenGDAFile and make it handle blank lines in metadata
-#
-# Revision 1.22  2012/04/06 19:36:08  cvs
-# Update DataFolder to support regexps in pattern and filter. When used as a pattern named capturing groups can be used to feed metadata. Minor improvements in Core and fix to RasorFile
-#
-# Revision 1.21  2012/04/05 11:32:38  cvs
-# Just modified some comments in BNLdata
-#
-# Revision 1.20  2012/04/03 15:13:44  cvs
-# Not sure what was done here !
-#
-# Revision 1.19  2012/04/02 11:58:07  cvs
-# Minor bug fixes and corrections
-#
-# Revision 1.18  2012/03/26 21:57:55  cvs
-# Some improvements to auto-file detection
-#
-# Revision 1.17  2012/03/25 20:35:06  cvs
-# More work to stop load recursiing badly
-#
-# Revision 1.16  2012/03/25 19:41:31  cvs
-# Teach DataFile.load() to try every possible subclass if at first it doesn't suceed.
-#
-# Revision 1.15  2012/03/11 23:12:33  cvs
-# string_to_type function to do a better job of working out python type from string representation when no type hint give.
-#
-# Revision 1.14  2012/03/11 01:41:56  cvs
-# Recompile API help
-#
-# Revision 1.13  2012/03/10 20:12:58  cvs
-# Add new formats for Diamond I10 files
-#
-# Revision 1.12  2012/01/04 23:07:54  cvs
-# Make BigBlueFile really a subclass of CSVFile
-#
-# Revision 1.11  2012/01/04 22:35:32  cvs
-# Give CSVFIle options to skip headers
-# Make PlotFile.plot_xy errornar friendly
-#
-# Revision 1.10  2012/01/03 21:51:04  cvs
-# Fix a bug with add_column
-# Upload new TDMS data
-#
-# Revision 1.9  2012/01/03 12:41:50  cvs
-# Made Core pep8 compliant
-# Added TDMS code and TDMSFile
-#
-# Revision 1.8  2011/12/12 10:26:32  cvs
-# Minor changes in BNLFile class to fix a metadata bug. Rowan
-#
-# Revision 1.7  2011/12/09 12:10:41  cvs
-# Remove cvs writing code from DataFile (use CSVFile.save()). Fixed BNLFile to always call the DataFile constructor
-#
-# Revision 1.6  2011/12/06 16:35:37  cvs
-# added import string line to sort a bug in BNLFile class. Rowan
-#
-# Revision 1.5  2011/12/06 09:48:49  cvs
-# Add BNLFile for Brookhaven Data (Rowan)
-#
-# Revision 1.4  2011/12/05 22:58:11  cvs
-# Make CSVFile able to save as a CSV file and remove csvdump from Core. Update docs
-#
-# Revision 1.3  2011/12/05 21:56:26  cvs
-# Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
-#
+"""Stoner.FileFormats is a module within the Stoner package that provides extra classes
+that can load data from various instruments into DataFile type objects.
 
+Eacg class has a priority attribute that is used to determine the order in which
+they are tried by DataFile and friends where trying to load data. High priority
+is run last.
+
+Eacg class should implement a load() method and optionally a save() method.
+"""
 import linecache
 import re
 import numpy
@@ -93,6 +16,7 @@ import string
 import struct
 from re import split
 from datetime import datetime
+import numpy.ma as ma
 
 from .Core import DataFile
 from .pyTDMS import read as tdms_read
@@ -184,7 +108,12 @@ class VSMFile(DataFile):
         f.next()
         f.next()
 
-        self.data=numpy.genfromtxt(f,dtype='float',delimiter=data_delim,skip_header=data_line-1, missing_values=['         ---'], invalid_raise=False)
+        self.data=numpy.genfromtxt(f,dtype='float',usemask=True, delimiter=data_delim,
+                                   skip_header=data_line-1, missing_values=['         6:0','         ---'],
+                                invalid_raise=False)
+        self.data=ma.mask_rows(self.data)
+        cols=self.data.shape[1]
+        self.data=numpy.reshape(self.data.compressed(),(-1,cols))
         f.close()
 
 
