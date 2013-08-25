@@ -204,7 +204,7 @@ These can be accessed like so:
   >>>d.metadata
 \end{verbatim}
 
-\subsubsection{Masked Data and Why You Care}
+\subsubsection{Masked Data and Why You Care}\label{(maskeddata)}
 Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements. This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean value or plotting some data. One could, of course, simply ignore the masking option and use the data as is, however, masking does have a number of practical uses.
 
 The data mask can be accessed via the \textit{mask} attribute of \textbf{DataFile}:
@@ -421,6 +421,22 @@ in the row to be returned. If the search function returns True, then the row is
 returned, otherwise it isn't. In thr last example, the final parameter can
 either be a list of columns or a single column. The rules for indexing columns
 are the same as used for the \textbf{DataFile.find\_col} method.
+
+Sometimes you may want not to get the rows of data that you are looking for as a
+separate array, but merely mark them for inclusion (or exclusion) from subsequent
+operations. This is where the masked array (see \ref{maskeddata}) comes into its own.
+To select which rows of data have been masked off, use the \textbf{filter} method.
+
+\begin{verbatim}
+>>> d.filter(lambda r:r[0]>5)
+>>> d.filter(lambda r:r[0]>5,['Temp'])
+\end{verbatim}
+
+With jsut a single argument, the filter method takes a complete row at a time and passes it
+to the first argument, expecting to get a boolean response (or list olf booleans equal in length
+to the number of columns). With a second argument as in the second example, you can sepcify which
+columns are passed to the filtering function in what order. The second argument must be a list
+of things which can be used to index a column (\ie strings, integers, regular expressions).
 
 \subsubsection{Find out more about the data}
 
