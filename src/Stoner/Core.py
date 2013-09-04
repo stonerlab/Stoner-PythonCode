@@ -1105,7 +1105,7 @@ class DataFile(object):
         @return  The matching column index as an integer or a \b KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
-            if not 0<=col<self.data.shape[0]:
+            if not 0<=col<self.data.shape[1]:
                 raise IndexError('Attempting to index a non - existant column '+str(col))
             pass
         elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
