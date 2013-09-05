@@ -167,6 +167,7 @@ class AnalyseFile(DataFile):
         from inspect import getargspec
 
         working=self.search(xcol, bounds, [xcol, ycol])
+        working=numpy.reshape(working[numpy.logical_not(working.mask)],(-1,2))
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
         if result is not None:
             (args, varargs, keywords, defaults)=getargspec(func)

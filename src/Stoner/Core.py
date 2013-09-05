@@ -1068,10 +1068,12 @@ class DataFile(object):
             possible = filter(test.search, self.metadata.keys())
             return possible
 
-    def filter(self,func=None,cols=None):
+    def filter(self,func=None,cols=None,reset=True):
         """Function to set the mask on rows of data by evaluating a function for each row
         @param is a callable object that should take a single listas a p[arameter representing one row.
         @param cols a list of column indices that are used to form the list of values passed to func.
+        @param reset determines whether the mask is reset before doing the filter (otherwise rows already masked
+        out will be ignored in the filter (so the filter is logically or'd))
         The default value of None results in a complete row being passed into func.
         @return The current object with the mask set
         """
@@ -1081,6 +1083,7 @@ class DataFile(object):
         if self.data.mask.shape!=self.data.shape:
             self.data.mask=numpy.zeros(self.data.shape)
         i=0
+        if reset: self.data.mask=False
         for r in self.rows():
             self.data.mask[i,:]=not func(r[cols])
             i=i+1
