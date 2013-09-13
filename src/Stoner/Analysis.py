@@ -471,7 +471,7 @@ class AnalyseFile(DataFile):
             d=numpy.append(d, numpy.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
             return r[p:-p]
-    def threshold(self, col, threshold, rising=True, falling=False,xcol=None):
+    def threshold(self, col, threshold, rising=True, falling=False,xcol=None,all=False):
         """Finds partial indices where the data in column passes the threshold, rising or falling
         @param col Column index to look for data in
         @param threshold Value to look for in column col
@@ -482,12 +482,18 @@ class AnalyseFile(DataFile):
         @return Either a sing;le fractional row index, or an in terpolated x value"""
         current=self.column(col)
         if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
-            ret=[self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+            ret=[self.__threshold(x, current, rising=rising, falling=falling,all=all) for x in threshold]
         else:
-            ret=self.__threshold(threshold, current, rising=rising, falling=falling)[0]
+            if all:
+                ret=self.__threshold(threshold, current, rising=rising, falling=falling)
+            else:
+                ret=[self.__threshold(threshold, current, rising=rising, falling=falling)[0]]               
         if xcol is not None:
-            ret=self.interpolate(ret)[self.find_col(xcol)]
-        return ret
+            ret=[self.interpolate(r)[self.find_col(xcol)] for r in ret]
+        if all:
+            return ret
+        else:
+            return ret[0]
 
     def interpolate(self, newX,kind='linear', xcol=None ):
         """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
