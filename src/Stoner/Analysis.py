@@ -477,8 +477,9 @@ class AnalyseFile(DataFile):
         @param threshold Value to look for in column col
         @param rising (defaukt True) look for case where the data is increasing in value
         @param falling (default False) look for case where data is fallinh in value
-        @:param xcol (default None) rather than returning a fractional row index, return the
+        @param xcol (default None) rather than returning a fractional row index, return the
         interpola,ted value in column xcol
+        @param all (default False) return all crossing points of the threshold or just the first.
         @return Either a sing;le fractional row index, or an in terpolated x value"""
         current=self.column(col)
         if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
