@@ -7,7 +7,19 @@ geometry}
 \usepackage{enumitem}
 \usepackage{setspace}
 \usepackage{hyperref}
+\usepackage{MnSymbol}
 \usepackage{gb_custom}
+
+
+\lstset{frame=tblr, 
+	framerule=0mm,
+	framesep=0.2mm,
+	resetmargins=true,
+	prebreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\rhookswarrow}},
+	backgroundcolor=\color{white}
+	linewidth=16cm,
+	breaklines=true
+	}
 
 \setlength\marginparsep{0cm}
 
@@ -48,9 +60,7 @@ be obtained by checking out the PythonCode module with a CVSROOT of \\
 \verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the
 cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
 
-The Stoner Package currently depends on a number of other modules. These are
-installed on the lab machines that have Python installed. Primarily these are
-Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\
+The Stoner Package currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\
 \verb#\\stonerlab\\data\software\Python\#.  The easiest way to get a Python
 installation with all the necessary dependencies for the Stoner Package is to
 install the \textit{Enthought Python Distribution}. Windows install file are
@@ -62,10 +72,10 @@ kept in \verb#\\stonerlab\data\software\python#
 The easiest way to use the Stoner Package is to add the path to the directory
 containing Stoner.py to your PYTHONPATH environment variable. This can be done
 on Macs and Linux by doing:
-\begin{verbatim}
+\begin{lstlisting}
   cd <path to PythonCode directory>/src
   export PYTHONPATH=`pwd`:$PYTHONPATH
-\end{verbatim}
+\end{lstlisting}
 On a windows machine the easiest way is to create a permanent entry to the
 folder in the system environment variables. Go to Control Panel -> System ->
 Advanced Tab -> click on Environment button and then add or edit an entry to the
@@ -74,15 +84,15 @@ system variable PYTHONPATH.
 One this has been done, the Stoner module may be loaded from python command
 line:
 
-\begin{verbatim}
-  >>> import Stoner
-\end{verbatim}
+\begin{lstlisting}
+   import Stoner
+\end{lstlisting}
 
 or
 
-\begin{verbatim}
-  >>> from Stoner import *
-\end{verbatim}
+\begin{lstlisting}
+   from Stoner import *
+\end{lstlisting}
 
 \subsection{Documentation}
 
@@ -111,11 +121,11 @@ and carry out other simple analysis operations.
 The first step in using the Stoner module is to load some data from a
 measurement.
 
-\begin{verbatim}
-  >>>import Stoner
-  >>>d=Stoner.DataFile('my_data.txt')
-  >>>d=Stoner.VSMFile('my_VSM_data.fld')
-\end{verbatim}
+\begin{lstlisting}
+  import Stoner
+  d=Stoner.DataFile('my_data.txt')
+  d=Stoner.VSMFile('my_VSM_data.fld')
+\end{lstlisting}
 
 In this example we have loaded data from my\_data.txt which should be in the
 current directory -- here we are assuming that my\_data.txt contains data in the
@@ -153,15 +163,15 @@ Raman spectrometers. This may also work for other instruments that produce spc f
 \item [FmokeFile] Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
 \end{description}
 
-\begin{verbatim}
-  >>>import Stoner
-  >>>d=Stoner.DataFile()
-  >>>d.load('my_data.txt')
-  >>> v=Stoner.VSMFIle()
-  >>>v.load('my_VSM_data.fld')
-  >>> c=Stoner.CSVFile()
-  >>> c.load('data.csv',1,0,',',',')
-\end{verbatim}
+\begin{lstlisting}
+  import Stoner
+  d=Stoner.DataFile()
+  d.load('my_data.txt')
+   v=Stoner.VSMFIle()
+  v.load('my_VSM_data.fld')
+   c=Stoner.CSVFile()
+   c.load('data.csv',1,0,',',',')
+\end{lstlisting}
 
 \keypoint{The load method, like many of the DataFile methods returns a copy of
 the Datafile object \textbf{as well as} modifying the object itself. The
@@ -177,19 +187,19 @@ Sometimes you won't know exactly which subclass of \textbf{DataFile} is the one 
 In some circumstances you may have a string representation of a \textbf{DataFile} object and want to transform this into a proper \textbf{DataFile} object.
 This might be, for example, from transmitting the data over a network connection or receiving it from another program. In these situations the \textit{left shift operator}, \verb#<<#, can be used.
 
-\begin{verbatim}
-  >>> data=Stoner.Core.DataFile() << string_of_data
-  >>> data=Stoner.Core.DataFile() << iterable_object
-\end{verbatim}
+\begin{lstlisting}
+   data=Stoner.Core.DataFile() << string_of_data
+   data=Stoner.Core.DataFile() << iterable_object
+\end{lstlisting}
 
 The second example would allow any object that can be iterated (i.e. has a \textit{next()} method that returns lines of the data file, to be used
 as the source of the data. The \textbf{Stoner.Core.DataFile()} creates an empty object so that the left shift operator calls the method
 in \textbf{DataFile} to read the data in. It also determines the type of the object \verb#data#. This also provides an alternative syntax for reading a file
 from disk:
 
-\begin{verbatim}
-  >>> data=Stoner.Core.DataFile()<<open("File on Disk.txt")
-\end{verbatim}
+\begin{lstlisting}
+   data=Stoner.Core.DataFile()<<open("File on Disk.txt")
+\end{lstlisting}
 
 \subsection{Examining Some Data}
 \subsubsection{Data, Column headers and metadata}
@@ -198,26 +208,25 @@ Internally, data is represented as a 2D numpy masked array of floating point num
 along with a list of column headers and a dictionary that keeps the metadata and
 also keeps track of the expected type of the metadata (\ie the meta-metadata).
 These can be accessed like so:
-\begin{verbatim}
-  >>>d.data
-  >>>d.column_headers
-  >>>d.metadata
-\end{verbatim}
+\begin{lstlisting}
+  d.data
+  d.column_headers
+  d.metadata
+\end{lstlisting}
 
 \subsubsection{Masked Data and Why You Care}\label{(maskeddata)}
 Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements. This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean value or plotting some data. One could, of course, simply ignore the masking option and use the data as is, however, masking does have a number of practical uses.
 
 The data mask can be accessed via the \textit{mask} attribute of \textbf{DataFile}:
-\begin{verbatim}
-  >>> import numpy.ma as ma
-  >>> print d.mask
-  >>> d.mask=False
-  >>> d.mask=ma.nomask
-  >>> d.mask=numpy.array([[True, True, Fale,...False],...,
-      [False,True,...True]])
-  >>> d.mask=lambda x: x[0]<50
-  >>> d.mask=lambda x:[y<50 for y in x]
-\end{verbatim}
+\begin{lstlisting}
+   import numpy.ma as ma
+   print d.mask
+   d.mask=False
+   d.mask=ma.nomask
+   d.mask=numpy.array([[True, True, Fale,...False],...,[False,True,...True]])
+   d.mask=lambda x: x[0]<50
+   d.mask=lambda x:[y<50 for y in x]
+\end{lstlisting}
 
 The first line is simply the import statement for the numpy masked arrays in order to get the \textit{nomask} symbol. The second line will simply print the current mask. The next two examples will unmask all the data \ie make the values visible and useable. The next example illustrates using a numpy array of booleans to set the mask - every element in the mask array that evaluates as a boolean True will be masked and every False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on the data via \verb'd.data.mask' but the final two examples illustrate an extension that setting the \textbf{DataFile} mask attribute allows. If you pass a callable object to the mask attribute it will be executed, passing each row of the data array to the user supplied function as a numpy array. The user supplied function can then either return a single boolean value -- in which case it will be used to mask the entire row -- or a list of booleans to mask individual cells in the current row.
 
@@ -229,11 +238,11 @@ By default when the \textbf{DataFile} object is printed or saved, data values th
 
 This is all very well, but often you want to examine a particular column of data
 or a particular row:
-\begin{verbatim}
-  >>>d.column(0)
-  >>>d.column('Temperature')
-  >>>d.column(['Temperature',0])
-\end{verbatim}
+\begin{lstlisting}
+  d.column(0)
+  d.column('Temperature')
+  d.column(['Temperature',0])
+\end{lstlisting}
 In the first example, the first column of numeric data will be returned. In the
 second example, the column headers will first be checked for one labeled exactly
 \textit{Temperature} and then if no column is found, the column headers will be
@@ -246,10 +255,10 @@ pass slices to select columns and should do the expected thing.
 
 There is a convenient shortcut for working with cases where the column headers are not the same
 as the names of any of the attributes of the \textbf{DataFile} object:
-\begin{verbatim}
-  >>>d.Temperature
-  >>>d.column('Temperature')
-\end{verbatim}
+\begin{lstlisting}
+  d.Temperature
+  d.column('Temperature')
+\end{lstlisting}
 both return the same data.
 
 Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:
@@ -264,19 +273,19 @@ expression in directly with any extra options (like case insensitivity flags) se
 \item As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
 the final result would be to use a list of column indices.
 \end{itemize}
-\begin{verbatim}
->>> import re
->>> col=re.compile('^temp',re.IGNORECASE)
->>> d.column(col)
-\end{verbatim}
+\begin{lstlisting}
+ import re
+ col=re.compile('^temp',re.IGNORECASE)
+ d.column(col)
+\end{lstlisting}
 
 \subsubsection{Working with complete rows of data}
 
 Rows don't have labels, so are accessed directly by number:
-\begin{verbatim}
-  >>>d[1]
-  >>>d[1:4]
-\end{verbatim}
+\begin{lstlisting}
+  d[1]
+  d[1:4]
+\end{lstlisting}
 The second example uses a slice to pull out more than one row. This syntax also
 supports the full slice syntax which allows one to, for example, decimate the
 rows, or directly pull out the last fews rows in the file.
@@ -284,33 +293,33 @@ rows, or directly pull out the last fews rows in the file.
 \subsubsection{Manipulating the metadata}
 
 What happens if you use a string and not a number in the above examples ?
-\begin{verbatim}
-  >>>d['User']
-\end{verbatim}
+\begin{lstlisting}
+  d['User']
+\end{lstlisting}
 in this case, it is assumed that you meant the metadata with key \textit{User}.
 To get a list of possible keys in the metadata, you can do:
-\begin{verbatim}
-  >>>d.dir()
-  >>>d.dir('Option\:.*')
-\end{verbatim}
+\begin{lstlisting}
+  d.dir()
+  d.dir('Option\:.*')
+\end{lstlisting}
 In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned -- all keys containing
-\textit{Option:}. For compatibility with normal opython semantics: \verb#>>>d.keys()# is
-synonymous with \verb#>>>d.dir()#.
+\textit{Option:}. For compatibility with normal opython semantics: \verb#d.keys()# is
+synonymous with \verb#d.dir()#.
 
 We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:
-\begin{verbatim}
-  >>>d.metadata.type('User')
-\end{verbatim}
+\begin{lstlisting}
+  d.metadata.type('User')
+\end{lstlisting}
 to get a dictionary of all of the types associated with each key you could do:
-\begin{verbatim}
-  >>>dict(zip(d.dir(),d.metadata.type(d.dir())))
-\end{verbatim}
+\begin{lstlisting}
+  dict(zip(d.dir(),d.metadata.type(d.dir())))
+\end{lstlisting}
 but an easier way would be to use the \textbf{typeHintedDict.types} attribute:
-\begin{verbatim}
-   >>>d.metadata.types
-\end{verbatim}
+\begin{lstlisting}
+   d.metadata.types
+\end{lstlisting}
 .
 
 \subsubsection{More on Indexing the data}
@@ -318,12 +327,12 @@ but an easier way would be to use the \textbf{typeHintedDict.types} attribute:
 There are a number o other forms of indexing supported for \textbf{DataFile}
 objects.
 
-\begin{verbatim}
-  >>>d[10,0]
-  >>>d[0:10,0]
-  >>>d[10,'Temp']
-  >>>d[0:10,['Voltage','Temp']
-\end{verbatim}
+\begin{lstlisting}
+  d[10,0]
+  d[0:10,0]
+  d[10,'Temp']
+  d[0:10,['Voltage','Temp']
+\end{lstlisting}
 
 The first variant just returns the data in the 11th row, first column (remember
 indexing starts at 0). The second variant returns the first 10 values in the
@@ -338,9 +347,9 @@ and the \textbf{DataFile} object provides the \textit{DataFile.records}
 attribute to d this. This read-only attribute is just providing an alternative
 view of the same data.
 
-\begin{verbatim}
-  >>> d.records
-\end{verbatim}
+\begin{lstlisting}
+   d.records
+\end{lstlisting}
 
 \subsubsection{Selecting Individual rows and columns of data}
 
@@ -348,14 +357,14 @@ Many of the function in the Stoner module index columns by searching the column
 headings. If one wishes to find the numeric index of a column then the
 \textbf{DataFile.find\_col} method can be used:
 
-\begin{verbatim}
-  >>> index=d.find_col(1)
-  >>> index=d.find_col('Temperature')
-  >>> index=d.find_col('Temp.*')
-  >>> index=d.find_col('1')
-  >>> index=d.find_col(1:10:2)
-  >>> index=d.find_col(['Temperature',2,'Resistance'])
-\end{verbatim}
+\begin{lstlisting}
+   index=d.find_col(1)
+   index=d.find_col('Temperature')
+   index=d.find_col('Temp.*')
+   index=d.find_col('1')
+   index=d.find_col(1:10:2)
+   index=d.find_col(['Temperature',2,'Resistance'])
+\end{lstlisting}
 
  \textbf{DataFile.find\_col} takes a number of different forms. If the argument
 is an integer then it returns (trivially) the same integer, a string argument is
@@ -377,30 +386,30 @@ columns.
 
 Sometimes you may want to iterate over all of the rows or columns in a data set.
 This can be done quite easily:
-\begin{verbatim}
-  >>>for row in d.rows():
-  ......print row
+\begin{lstlisting}
+  for row in d.rows():
+  	print row
+  
+  for column in d.columns():
+  	print column
   ......
-  >>>for column in d.columns():
-  ......print column
-  ......
-\end{verbatim}
+\end{lstlisting}
 The first example could also have been written more compactly as:
-\begin{verbatim}
-  >>>for row in d:
-  ......print row
+\begin{lstlisting}
+  for row in d:
+  	print row
   ......
-\end{verbatim}
+\end{lstlisting}
 
 In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.
-\begin{verbatim}
-  >>>d.search('Temperature',4.2)
-  >>>d.search('Temperature',4.2,['Temperature','Resistance'])
-  >>>d.search('Temperature',lambda x,y: x>10 and x<100)
-  >>>d.search('Temperature',lambda x,y: x>10 and
+\begin{lstlisting}
+  d.search('Temperature',4.2)
+  d.search('Temperature',4.2,['Temperature','Resistance'])
+  d.search('Temperature',lambda x,y: x>10 and x<100)
+  d.search('Temperature',lambda x,y: x>10 and
                 x<1000 and y[1]<1000,['Temperature','Resistance'])
-\end{verbatim}
+\end{lstlisting}
 The general form is \\\verb:DataFile.search(<search column>,<search term>[,<listof return columns>]):
 
 The first example will return all the rows where the value of the
@@ -427,10 +436,10 @@ separate array, but merely mark them for inclusion (or exclusion) from subsequen
 operations. This is where the masked array (see \ref{maskeddata}) comes into its own.
 To select which rows of data have been masked off, use the \textbf{filter} method.
 
-\begin{verbatim}
->>> d.filter(lambda r:r[0]>5)
->>> d.filter(lambda r:r[0]>5,['Temp'])
-\end{verbatim}
+\begin{lstlisting}
+ d.filter(lambda r:r[0]>5)
+ d.filter(lambda r:r[0]>5,['Temp'])
+\end{lstlisting}
 
 With jsut a single argument, the filter method takes a complete row at a time and passes it
 to the first argument, expecting to get a boolean response (or list olf booleans equal in length
@@ -445,10 +454,10 @@ values of data in a given column (or set of columns). The Python numpy
 package has a function to do this and we have a direct pass through
 from the DataFile object for this:
 
-\begin{verbatim}
-  >>> d.unique('Temp')
-  >>> d.unique(column,return_index=False, return_inverse=False)
-\end{verbatim}
+\begin{lstlisting}
+   d.unique('Temp')
+   d.unique(column,return_index=False, return_inverse=False)
+\end{lstlisting}
 
 The two optional keywords cause the numpy routine to return the
 indices of the unique and all non-unique values in the array. The
@@ -463,9 +472,9 @@ and not by value. This can lead to unexcted results as you can end up modifying 
 
 \keypoint{This is an attribute not a method, so there are no brackets here !}
 
-\begin{verbatim}
-   >>> t=d.clone
-\end{verbatim}
+\begin{lstlisting}
+    t=d.clone
+\end{lstlisting}
 
 
 \subsection{Modifying Data}
@@ -475,11 +484,11 @@ and not by value. This can lead to unexcted results as you can end up modifying 
 The simplest way to modify some data might be to append some columns or rows.
 The Stoner mpodule redefines two standard operators, \verb:+: and \verb:&: to
 have special meanings:
-\begin{verbatim}
-  >>>a=Stoner.DataFile('some_new_data.txt')
-  >>>add_rows=d+a
-  >>>add_columns=d&a
-\end{verbatim}
+\begin{lstlisting}
+  a=Stoner.DataFile('some_new_data.txt')
+  add_rows=d+a
+  add_columns=d&a
+\end{lstlisting}
 In these example, \textit{a} is a second DataFile object that contains some
 data. In the first example, a new DataFile object is created where the contents
 of \textit{a} are added as new rows after the data in \textit{d}. Any metadata
@@ -494,18 +503,18 @@ objects have the same number of rows.
 
 These operators are not limited just to DataFile objects, you can also add numpy
 arrays to the DataFile object to append additional data.
-\begin{verbatim}
-  >>>import numpy as np
-  >>>x=np.array([1,2,3])
-  >>>new_data=d+x
-  >>>y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
-  >>>new_data=d+y
-  >>>z={"X":1.0,"Y":2.1,"Z":7.5}
-  >>>new_data=d+z
-  >>>new_data=d+[x,y,z]
-  >>>column=d.column[0]
-  >>>new_data=d&column
-\end{verbatim}
+\begin{lstlisting}
+  import numpy as np
+  x=np.array([1,2,3])
+  new_data=d+x
+  y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
+  new_data=d+y
+  z={"X":1.0,"Y":2.1,"Z":7.5}
+  new_data=d+z
+  new_data=d+[x,y,z]
+  column=d.column[0]
+  new_data=d&column
+\end{lstlisting}
 In the first example above, we add a single row of data to \textit{d}. This
 assumes that the number of elements in the array matches the number of columns
 in the data file. The second example is similar but this time appends a 2
@@ -522,23 +531,23 @@ the same or fewer rows of data as \textit{d}.
 \subsubsection{Working with Columns of Data}
 \subsubsection{Rearranging Columns of Data}
 Sometimes it is useful to rearrange columns of data. \textbf{DataFile} offers a couple of methods to help with this.
-\begin{verbatim}
-  >>> d.swap_column(('Resistance','Temperature'))
-  >>> d.swap_column(('Resistance','Temperature'),headers_too=False)
-  >>> d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
-  >>> d.reorder([1,3,'Volt','Temp'])
-  >>> d.reorder([1,3,'Volt','Temp'],header_too=False)
-\end{verbatim}
+\begin{lstlisting}
+   d.swap_column(('Resistance','Temperature'))
+   d.swap_column(('Resistance','Temperature'),headers_too=False)
+   d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
+   d.reorder([1,3,'Volt','Temp'])
+   d.reorder([1,3,'Volt','Temp'],header_too=False)
+\end{lstlisting}
 
 The \textbf{swap} method takes either a tuple of column names/indices or a list of such tuples and swaps the columns accordingly, whilst the \textbf{reorder} method takes a list of column labels/indices and constructs a new data matrix out of those columns in the new order. The \textit{headers\_too=False} options, as the name suggests, cause the column headers not be rearranged.
 
 \subsubsection{Renaming Columns of Data}
 As a convenience, \textbf{DataFile} also offers a useful method to rename data columns:
 
-\begin{verbatim}
-  >>> d.rename('old_name','new_name')
-  >>> d.rename(0,'new_name')
-\end{verbatim}
+\begin{lstlisting}
+   d.rename('old_name','new_name')
+   d.rename(0,'new_name')
+\end{lstlisting}
 
 Alternatively,of course, one could just edit the column\_headers attribute.
 
@@ -547,11 +556,11 @@ The append columns operator \verb#&# will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the \textbf{add\_column} method.
 
-\begin{verbatim}
-  >>>d.add_column(numpy.array(range(100)),'Column Header')
-  >>>d.add_column(numpy.array(range(100)),'Column Header',Index)
-  >>>d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
-\end{verbatim}
+\begin{lstlisting}
+  d.add_column(numpy.array(range(100)),'Column Header')
+  d.add_column(numpy.array(range(100)),'Column Header',Index)
+  d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
+\end{lstlisting}
 
 The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before
@@ -570,11 +579,11 @@ up with other methods for more compact code writing.
 Removing complete rows of data is achieved using the \textbf{DataFile.del\_row}
 method.
 
-\begin{verbatim}
-  >>>d.del_rows(10)
-  >>>d.del_rows('X Col',value)
-  >>>d.del_rows('X Col',lambda x,y:x>300)
-\end{verbatim}
+\begin{lstlisting}
+  d.del_rows(10)
+  d.del_rows('X Col',value)
+  d.del_rows('X Col',lambda x,y:x>300)
+\end{lstlisting}
 
 The first variant will delete row 10 from the data set (where the first row will
 be row 0). You can also supply a list or slice to \textbf{DataFile.del\_rows} to
@@ -593,10 +602,10 @@ Deleting whole columns of data can be done by referring to a column by index or
 column header - the indexing rules are the same as used for the
 \textbf{DataFile.column} method.
 
-\begin{verbatim}
-  >>>d.del_column('Temperature')
-  >>>d.del_column(1)
-\end{verbatim}
+\begin{lstlisting}
+  d.del_column('Temperature')
+  d.del_column(1)
+\end{lstlisting}
 
 \subsubsection{Sorting Data}
 
@@ -604,10 +613,10 @@ Data can be sorted by one or more columns, specifying the columns as a number or
 string for single columns or a list or tuple of strings or numbers for multiple
 columns. Currently only ascending sorts are supported.
 
-\begin{verbatim}
-  >>>d.sort('Temp')
-  >>>d.sort(['Temp','Gate'])
-\end{verbatim}
+\begin{lstlisting}
+  d.sort('Temp')
+  d.sort(['Temp','Gate'])
+\end{lstlisting}
 
 \subsection{Saving Data}\label{save}
 
@@ -615,13 +624,13 @@ Only saving data in the \textit{TDI} format and as comma or tab deliminated form
 
 \warning{The \textbf{CSVFile} comma or tab deliminated files discard all metadata about the measurement. You absolutely must not use this as your primary data format -- always keep the \textit{TDI} format files as well.}
 
-\begin{verbatim}
-  >>>d.save()
-  >>>d.save(filename)
-  >>>d=Stoner.CSVFile(d)
-  >>>d.save()
-  >>>d.save(filename,'\t')
-\end{verbatim}
+\begin{lstlisting}
+  d.save()
+  d.save(filename)
+  d=Stoner.CSVFile(d)
+  d.save()
+  d.save(filename,'\t')
+\end{lstlisting}
 
 In the first case, the filename used tosave the data is determined from the
 filename attribute of the DataFile object. This will have been set when the
@@ -641,10 +650,10 @@ The third is similar but convert the file to \textit{cvs} format while the fourt
 
 Data plotting and visualisation is handled by the PlotFile sub-class of DataFile. The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing publication ready figures.
 
-\begin{verbatim}
-  >>> import Stoner.Plot as plot
-  >>> p=plot.PlotFile(d)
-\end{verbatim}
+\begin{lstlisting}
+   import Stoner.Plot as plot
+   p=plot.PlotFile(d)
+\end{lstlisting}
 
 The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnecessary as the Plot module's namespace is imported when the Stoner package as a whole is imported. The second line creates an instance of the \textbf{PlotFile} class. PlotFile inherits the constructor method of \textbf{DataFile} and so all the variations detailed above work with PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance for plotting.
 
@@ -652,31 +661,28 @@ The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnece
 
 \textit{x-y} plots are produced by the \textbf{PlotFile.plot\_xy} method:
 
-\begin{verbatim}
-  >>> p.plot_xy(column_x, column_y)
-  >>> p.plot_xy(column_x, [y1,y2])
-  >>> p.plot_xy(x,y,'ro')
-  >>> p.plot_xy(x,[y1,y2],['ro','b-'])
-  >>> p.plot_xy(x,y,title='My Plot')
-  >>> p.plot_xy(x,y,figure=2)
-  >>> p.plot_xy(x,y,plotter=pyplot.semilogy)
-\end{verbatim}
+\begin{lstlisting}
+   p.plot_xy(column_x, column_y)
+   p.plot_xy(column_x, [y1,y2])
+   p.plot_xy(x,y,'ro')
+   p.plot_xy(x,[y1,y2],['ro','b-'])
+   p.plot_xy(x,y,title='My Plot')
+   p.plot_xy(x,y,figure=2)
+   p.plot_xy(x,y,plotter=pyplot.semilogy)
+\end{lstlisting}
 
 The examples above demonstrate several use cases of the \textbf{plot\_xy} method. The first parameter is always the x column that contains the data, the second is the y-data either as a single column or list of columns. The third parameter is the style of the plot (lines, points, colours \etc) and can either be a list if the y-column data is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log plots. By default, \textbf{plotxy} uses the \textbf{pyplot.plot} function to produce linear scaler plots. There are a number of useful plotter functions that will work like this:
 \begin{description}
   \item[pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making the x-axes the log one and semilogy the y-axis.
   \item[pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.
   \item[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are passed as keyword arguments, \textit{xerr} or \textit{yerr}. In standard matplotlib, these can be numpy arrays or constants. \textbf{PlotFile.plot\_xy} extends this by intercepting these arguements and offering some short cuts:
-      \begin{verbatim}
-        >>> p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',
-                                            xerr=[5,'dTemp+'])
-      \end{verbatim}
+      \begin{lstlisting}
+         p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
+      \end{lstlisting}
       This is equivalent to doing something like:
-       \begin{verbatim}
-        >>> p.plot_xy(x,y,plotter=errorbar,
-                yerr=p.column('dResistance'),
-                xerr=[p.column(5),p.column('dTemp+')])
-      \end{verbatim}
+       \begin{lstlisting}
+         p.plot_xy(x,y,plotter=errorbar,yerr=p.column('dResistance'),xerr=[p.column(5),p.column('dTemp+')])
+      \end{lstlisting}
     If you actually want to pass a constant to the \textit{x/yerr} keywords you should use a float rather than an integer.
 \end{description}
 
@@ -686,11 +692,11 @@ The X and Y axis label will be set from the column headers.
 
  A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot these on a surface plot or 3D plot. The \textbf{PlotFile.plot\_xyz} method can be used for this.
 
- \begin{verbatim}
-   >>> p.plot_xyz(col_x,col_y,col_z)
-   >>> p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
-   >>> p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
- \end{verbatim}
+ \begin{lstlisting}
+    p.plot_xyz(col_x,col_y,col_z)
+    p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
+    p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
+ \end{lstlisting}
 
  By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overriden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
 
@@ -698,12 +704,11 @@ The X and Y axis label will be set from the column headers.
 
  Alternatively, if your data is already in the form of a matrix, you can use the \textbf{PlotFile.plot\_matrix} method:
 
- \begin{verbatim}
-   >>> p.plot_matrix()
-   >>> p.plot_matrix(xvals,yvals,rectang,title="Title",xlabel="X Axis",
-                ylabel="Y Axis",zlabel="Z Axis",cmap=matplotlib.cm.jet)
-   >>> p.plot_matrix(plotter=pyplot.pcolor,figure=False)
- \end{verbatim}
+ \begin{lstlisting}
+    p.plot_matrix()
+    p.plot_matrix(xvals,yvals,rectang,title="Title",xlabel="X Axis",ylabel="Y Axis",zlabel="Z Axis",cmap=matplotlib.cm.jet)
+    p.plot_matrix(plotter=pyplot.pcolor,figure=False)
+ \end{lstlisting}
 
  The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set either from the meta data item ``ylabel'' or to ``Y Data''. Likewise the z axis label is set from the corresponding metadata item or defaults to ``Z Data''. In the second form these parameters are all set explicitly. The \textit{xvals} parameter can be either a column index (integer or sring) or a list, tuple or numpy array. The \textit{yvals} parameter can be either an row number (integer) or list,tuple or numpy array. Other parameters (including \textit{plotter}, \textit{figure} \etc) work as for the \textbf{PlotFile.plot\_xyz} method. The \textit{rectang} parameter is used to select only part of the data array to use as the matrix. It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth elements are the number of rows and columns to include. If \textit{xvals} or \textit{yvals} specify particular column or rows then the origin of the matrix is moved to be one column further over and one row further down (\ie the matrix is to the right and below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a new 2D surface plot in a new window using default matrix setup.
 
@@ -711,19 +716,19 @@ The X and Y axis label will be set from the column headers.
 
  It is useful to be able to get access to the matplotlib figure that is used for each \textbf{PlotFle} instance. The \textbf{PlotFile.fig} attribute can do this, thus allowing plots from multiple \textbf{PlotFile} instances to be combined in a single figure.
 
- \begin{verbatim}
-   >>> p1.plot_xy(0,1,'r-')
-   >>> p2.plot_xy(0,1,'bo',figure=p1.fig)
- \end{verbatim}
+ \begin{lstlisting}
+    p1.plot_xy(0,1,'r-')
+    p2.plot_xy(0,1,'bo',figure=p1.fig)
+ \end{lstlisting}
 
  Likewise the \textbf{PlotFile.axes} attribute returns the current axes object of the current figure in use by the \textbf{PlotFile} instance.
 
  There's a couple of extra methods that just pass through to the pyplot equivalents:
 
- \begin{verbatim}
-   >>> p.draw()
-   >>> p.show()
- \end{verbatim}
+ \begin{lstlisting}
+    p.draw()
+    p.show()
+ \end{lstlisting}
 
 
 
@@ -731,13 +736,13 @@ The X and Y axis label will be set from the column headers.
 
 Curve fitting, data manipulation, and other analysis functions  is handled by a sub-class of the DataFile object -- AnalyseFile
 
-\begin{verbatim}
-  >>> import Stoner.Analysis as Analysis
-  >>> a=Analysis.AnalyseFile('Data')
-  >>>  a2=Analysis.AnalyseFile()
-  >>> a2=d
-  >>> a3=Analysis.AnalyseFile(d)
-\end{verbatim}
+\begin{lstlisting}
+   import Stoner.Analysis as Analysis
+   a=Analysis.AnalyseFile('Data')
+    a2=Analysis.AnalyseFile()
+   a2=d
+   a3=Analysis.AnalyseFile(d)
+\end{lstlisting}
 
 The first line imports the AnaylseFile class. Since the AnalyseFile is a child
 class of DataFile, everything you can do with a DataFile also works with an
@@ -749,37 +754,37 @@ dataFile object. The final variant shows how to cast one child-class of \textbf{
 
 Several methods are provided to assist with common data fitting and preparation tasks, such as normalising columns, adding and subtracting columns.
 
-\begin{verbatim}
-  >>> a.normalise('data','reference',header='Normalised Data',replace=True)
-  >>> a.normalise(0,1)
-  >>> a.normalise(0,3.141592654)
-  >>> a.normalise(0,a2.column(0))
-\end{verbatim}
+\begin{lstlisting}
+   a.normalise('data','reference',header='Normalised Data',replace=True)
+   a.normalise(0,1)
+   a.normalise(0,3.141592654)
+   a.normalise(0,a2.column(0))
+\end{lstlisting}
 
 The \textit{normalise} method simply divides the data column by the reference column. By default the normalise method replaces the data column with the new (normalised) data and appends ``(norm)'' to the column header. The keyword arguments header and replace can override this behaviour. The third variant illustrates normalising to a constant (note, however, that if the second argument is an integer it is treated as a column index and not a constant). The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to. A typical example might be to have some baseline scan that one is normalising to.
 
-\begin{verbatim}
-  >>> a.subtract('A','B'm header="A-B",replace=True)
-  >>> a.subtract(0,1)
-  >>> a.subtract(0,3.141592654)
-  >>> a.subtract(0,a2.column(0))
-\end{verbatim}
+\begin{lstlisting}
+   a.subtract('A','B'm header="A-B",replace=True)
+   a.subtract(0,1)
+   a.subtract(0,3.141592654)
+   a.subtract(0,a2.column(0))
+\end{lstlisting}
 
 As one might expect form the name, the \textit{subtract} method subtracts the second column form the first. Unlike \textit{normalise} the first data column will not be replaced but a new column inserted and a new header (defaulting to column header 1 - column header 2) will be created. This can be overridden with the header and replace keyword arguments. The next two variants of the \textit{subtract} method work in an analogous manner to the \textit{normalise} methods. Finally the \text{add} method allows one to add two columns in a similar fashion:
 
-\begin{verbatim}
-  >>> a.add('A','B',header='A plus B',replace=False)
-  >>> a.add(0,1)
-  >>> a.add(0,3.141592654)
-  >>> a.add(0,a2.column(0))
-\end{verbatim}
+\begin{lstlisting}
+   a.add('A','B',header='A plus B',replace=False)
+   a.add(0,1)
+   a.add(0,3.141592654)
+   a.add(0,a2.column(0))
+\end{lstlisting}
 
 For completeness we also have:
 
-\begin{verbatim}
-  >>> a.divide('A','B',header='A/B', replace=True)
-  >>> a.multiply('A','B',header='A*B', replace=True)
-\end{verbatim}
+\begin{lstlisting}
+   a.divide('A','B',header='A/B', replace=True)
+   a.multiply('A','B',header='A*B', replace=True)
+\end{lstlisting}
 
 with variants that take either a 1D array of data or a constant instead of the B column index.
 
@@ -787,11 +792,11 @@ One might wish to split a single data file into several different data files eac
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
 each row belongs in. The \textit{split} method is useful for this case.
 
-\begin{verbatim}
-  >>> a.split('Polarisation')
-  >>> a.split('Temperature',lambda x,r:x>100)
-  >>> a.split(['Temperature','Polarisation'],[lambda x,r:x>100,None])
-\end{verbatim}
+\begin{lstlisting}
+   a.split('Polarisation')
+   a.split('Temperature',lambda x,r:x>100)
+   a.split(['Temperature','Polarisation'],[lambda x,r:x>100,None])
+\end{lstlisting}
 
 In these examples we assume the \textbf{AnalyseFile} has a data column `Polarisation' that takes two (or more) discrete values
 and a column `Temperature' that contains numbers above and below 100.
@@ -809,10 +814,9 @@ polarisation value.
 Simple least squares fitting of polynomial functions is handled by the
 \textbf{AnalyseFile.polyfit} method:
 
-\begin{verbatim}
-  >>> a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,
-                                                        result="New Column")
-\end{verbatim}
+\begin{lstlisting}
+   a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
+\end{lstlisting}
 
 This is a simple pass through to the numpy routine of the same name. The x and y
 columns are specified in the first two arguments using the usual index rules for
@@ -832,11 +836,9 @@ For more general curve fitting operations the \textbf{AnalyseFile.cruve\_fit}
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.
 
-\begin{verbatim}
-  >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
-                bounds=lambda x, y: True, result=True,
-                replace=False,header="New Column" )
-\end{verbatim}
+\begin{lstlisting}
+   a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,bounds=lambda x, y: True, result=True,replace=False,header="New Column" )
+\end{lstlisting}
 
 The first parameter is the fitting function. This should have prototype
 \\\verb:y=func(x,p[0],p[1],p[2]...): where p is a list of fitting parameters.
@@ -866,10 +868,9 @@ For cases where one requires more flexibility in fitting data, in particular
 where the fitting parameters are constrained, the \textbf{AnalyzeFile.mpfit}
 method is provided. This is a pass through to the \textbf{mpfit} module.
 
-\begin{verbatim}
-  >>> a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,
-               bounds=lambda x, y: True, **mpfit_kargs )
-\end{verbatim}
+\begin{lstlisting}
+   a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,bounds=lambda x, y: True, **mpfit_kargs )
+\end{lstlisting}
 
 In this case, the \textit{func} argument takes a slightly different
 prototype:\\\verb:def func(x,parameters, **func_args): where \textit{parameters}
@@ -935,49 +936,49 @@ many.\\Default: 1 (all parameters printed)
 
 \subsubsection{Applying an arbitary function through the data}
 
-\begin{verbatim}
->>> a.apply(func, col, replace = True, header = None)
-\end{verbatim}
+\begin{lstlisting}
+ a.apply(func, col, replace = True, header = None)
+\end{lstlisting}
 
 Here \textit{func} is an arbitrary function that will take a complete row in the form of a numpy 1D array, \textit{col}
 is the index of a column at which the resulting data is to be inserted or overwrite the existing data (depending on the values of \textit{replace} and \textit{header}).
 
 
 \subsubsection{Basic Data Inspection}
-\begin{verbatim}
-  >>> a.max(column)
-  >>> a.min(column)
-  >>> a.max(column,bounds=labda x,y:y[2]>1 and y[2]<10)
-  >>> a.min(column,bounds=labda x,y:y[2]>1 and y[2]<10)
-\end{verbatim}
+\begin{lstlisting}
+   a.max(column)
+   a.min(column)
+   a.max(column,bounds=labda x,y:y[2]>1 and y[2]<10)
+   a.min(column,bounds=labda x,y:y[2]>1 and y[2]<10)
+\end{lstlisting}
 
 Hopefully all of the above are fairly obvious ! In the last two cases, one can use a function to limit the search to particular rows (\eg to search for the maximum y value subject to some constraint in x). One important point to note is that the routines return a tuple of two numbers, the maximum (or minimum) and the row number where the maximum or minimum was found.
 
 There are a couple of related functions to help here:
 
-\begin{verbatim}
-  >>> a.span(column)
-  >>> a.span(column, bounds=lambda x,y:y[2]>100)
-  >>> a.clip(column,(max_v,min_v)
-  >>> a.clip(column,b.span(column))
-\end{verbatim}
+\begin{lstlisting}
+   a.span(column)
+   a.span(column, bounds=lambda x,y:y[2]>100)
+   a.clip(column,(max_v,min_v)
+   a.clip(column,b.span(column))
+\end{lstlisting}
 
 The span method simply returns a tuple of minimum and maximum values within either the whole column or bounded data. Internally this is just calling the \textbf{max} and \textbf{min} methods. The \textbf{clip} method deletes rows for which the specified column as a value that is either larger or smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple -- \eg the result of the \textbf{span} method, or a complete list as in the last example above. Specifying a single float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
 
 It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set, in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around, however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the bounds function:
 
-\begin{verbatim}
-  >>> a.span(column,bounds=lambda x,y:y[2]>10 or not numpy.any(y.mask))
-\end{verbatim}
+\begin{lstlisting}
+   a.span(column,bounds=lambda x,y:y[2]>10 or not numpy.any(y.mask))
+\end{lstlisting}
 
 \subsubsection{Thresholding and Interpolating Data}
-\begin{verbatim}
-  >>> a.threshold(col, threshold, rising=True, falling=False)
-\end{verbatim}
+\begin{lstlisting}
+   a.threshold(col, threshold, rising=True, falling=False)
+\end{lstlisting}
 
-\begin{verbatim}
-  >>> a.interpolate(newX,kind='linear' )
-\end{verbatim}
+\begin{lstlisting}
+   a.interpolate(newX,kind='linear' )
+\end{lstlisting}
 
 \subsubsection{Smoothing and Differentiating Data}
 
@@ -1005,57 +1006,57 @@ A common case is that you have measured lots of data curves and now have a large
 
 The first thing you probably want to do is to get a list of data files in a directory (possibly including its subdirectories) and probably matching some sort of filename pattern.
 
-\begin{verbatim}
-  >>> from Stoner.Folders import DataFolder
-  >>> f=DataFolder(pattern='*.dat')
-\end{verbatim}
+\begin{lstlisting}
+   from Stoner.Folders import DataFolder
+   f=DataFolder(pattern='*.dat')
+\end{lstlisting}
 
 In this very simple example, the \textbf{DataFolder} class is imported in the first line and then a new instance \textit{f} is created. The optional \textit{pattern} keyword is used to only collect the files with a .dat extension. In this example, it is assumed that the files are readable by \textbf{DataFile}, if they are in some other format then the \textit{type} keyword can be used:
 
-\begin{verbatim}
-  >>> from Stoner.FileFormats import XRDFile
-  >>> f=DataFolder(type=XRDFile,pattern='*.dql')
-\end{verbatim}
+\begin{lstlisting}
+   from Stoner.FileFormats import XRDFile
+   f=DataFolder(type=XRDFile,pattern='*.dql')
+\end{lstlisting}
 
 To specify a particular directory to look in, simply give the directory as the first argument - otherwise the current duirectory will be used.
 
-\begin{verbatim}
-  >>> f=DataFolder('/home/phygbu/Data',pattern='*.tdi')
-\end{verbatim}
+\begin{lstlisting}
+   f=DataFolder('/home/phygbu/Data',pattern='*.tdi')
+\end{lstlisting}
 
 By default the \textbf{DataFolder} constructor will perform a recursive drectory listing of the working folder. The resulting list of files can be accessed via the \textit{files} attribute:
 
-\begin{verbatim}
-  >>> f.files
-\end{verbatim}
+\begin{lstlisting}
+   f.files
+\end{lstlisting}
 
 \warning{In some circumstances entries in the \textit{f.files} attribute can be \textbf{DataFile} objects rather than strings. If you want to ensure that you get a list of strings representing the filenames, use \textit{f.ls} instead.}
 
 If you don't want the file listing to be recursive, this can be suppressed by using the \textit{recursive} keyword argument and the file listing can be suppressed altogether with the \textit{nolist} keyword:
 
-\begin{verbatim}
-  >>> f=DataFolder(pattern='*.dat',recursive=False)
-  >>> f2=DataFolder(nolist=True)
-\end{verbatim}
+\begin{lstlisting}
+   f=DataFolder(pattern='*.dat',recursive=False)
+   f2=DataFolder(nolist=True)
+\end{lstlisting}
 
 The current root directory and pattern are stored in the \textit{directory} and \textit{pattern} keywords and the \textbf{getlist} method can be used to force a new listing of files.
 
-\begin{verbatim}
-  >>> f.dirctory='/home/phygbu/Data'
-  >>> f.pattern='*.txt'
-  >>> f.getlist()
-\end{verbatim}
+\begin{lstlisting}
+   f.dirctory='/home/phygbu/Data'
+   f.pattern='*.txt'
+   f.getlist()
+\end{lstlisting}
 
 Sometimes a more complex filename matching mechanism than simple ``globbing'' is useful. The \textit{patter} keyword can also be a compiled regular expression:
 
-\begin{verbatim}
-  >>> import re
-  >>> p=re.compile('i10-\d*.dat')
-  >>> f=DataFolder(pattern=p)
-  >>> p2=re.compile('i10-(?P<run>\d*)')
-  >>> f=DataFolder(pattern=p)
-  >>> f[0]['run']
-\end{verbatim}
+\begin{lstlisting}
+   import re
+   p=re.compile('i10-\d*.dat')
+   f=DataFolder(pattern=p)
+   p2=re.compile('i10-(?P<run>\d*)')
+   f=DataFolder(pattern=p)
+   f[0]['run']
+\end{lstlisting}
 
 The second case illustrates a useful feature of regular expressions - they can be used to capture parts of the matched pattern -- and in the python version, one can name the capturing groups. In both cases above the \textbf{DataFolder} has the same file members (basically these would be runs produced by the i10 beamline at Diamond), but in the second case the run number (which comes after ``i10-'' would be captured and presented as the ``run'' parameter in the metadata when the file was read. \warning{Note that the files are not modified - the extra metadata is only added as the file is read by the \textbf{DataFlder}}. The loading process will also add the metadata key ``Loaded From'' to the file which will give you a note of the filename used to read the data.
 
@@ -1065,37 +1066,36 @@ Finally, akin to \textbf{DataFile} you can force a dialog box to select a direct
 
 A \textbf{DataFolder} is an object that you can iterate over, lading the \textbf{DataFile} type object for each of the files in turn. This probides an easy way to run through a set of files, performing the same operation on each:
 
-\begin{verbatim}
-  >>> folder=DataFolder(pattern='*.tdi')
-  >>> for f in folder:
-  ....   f=AnalyseFile(f)
-  ....   f.normalise('mac116','mac119')
-  ....   f.save()
-\end{verbatim}
+\begin{lstlisting}
+folder=DataFolder(pattern='*.tdi')
+for f in folder:
+	f=AnalyseFile(f)
+  	f.normalise('mac116','mac119')
+ 	f.save()
+\end{lstlisting}
 
 or even more compacts:
 
-\begin{verbatim}
-  >>>[f.normalise('mac116','macc119').save() for f in
-          DataFolder(pattern='*.tdi',type=AnalyseFile)]
-\end{verbatim}
+\begin{lstlisting}
+  [f.normalise('mac116','macc119').save() for f in DataFolder(pattern='*.tdi',type=AnalyseFile)]
+\end{lstlisting}
 
 \textbf{DataFolder} is also indexable and has a length:
 
-\begin{verbatim}
-  >>> f=DataFolder()
-  >>> len(f)
-  >>> f[0]
-  >>> f['filename']
-\end{verbatim}
+\begin{lstlisting}
+   f=DataFolder()
+   len(f)
+   f[0]
+   f['filename']
+\end{lstlisting}
 
 For the second case of indexing, the cose will search the list of filenames for a matching file and return that (roughly equivalent to doing \verb#f[f.files.index("filename")]#)
 
 If you want to know the filenames of all the files in the DataFolder then there is a handy attributes:
-\begin{verbatim}
->>> f.ls
->>> f.basenames
-\end{verbatim}
+\begin{lstlisting}
+ f.ls
+ f.basenames
+\end{lstlisting}
 
 The difference between these two is that \textit{f.basenames} will return only the file part of the filename whilst \textit{f.ls} returns the complete path from the root directory.
 
@@ -1103,61 +1103,60 @@ The difference between these two is that \textit{f.basenames} will return only t
 
 The order of the files in a \textbf{DataFolder} is arbitary. If it is important to process them in a given order then the \textit{sort} method can be used:
 
-\begin{verbatim}
-  >>> f.sort()
-  >>> f.sort('tmperature')
-  >>> f.sort('Temperature',reverse=True)
-  >>> f.sort(lambda x:len(x))
-\end{verbatim}
+\begin{lstlisting}
+   f.sort()
+   f.sort('tmperature')
+   f.sort('Temperature',reverse=True)
+   f.sort(lambda x:len(x))
+\end{lstlisting}
 
 The first variant simply sorts the files by filename. The second and third variants both look at the ``temperature'' metadata in each file and use that as the sort key. In the third variant, the \textit{revers} keyword is used to reverse the order of the sort. In the final variant, each file is loaded in turn and the supplied function is called and evaluated to find a sort key.
 
 The \textbf{filter} method can be used to prune the list of files to be used by the \textbf{DataFoler}:
 
-\begin{verbatim}
-  >>> f.filter('[ab]*.dat')
-  >>> import re
-  >>> f.filter(re.compile('i10-\d*\.dat'))
-  >>> f.filter(lambda x: x['Temperature']>150)
-  >>> f.filter(lambda x: x['Temperature']>150,invert=True)
-\end{verbatim}
+\begin{lstlisting}
+   f.filter('[ab]*.dat')
+   import re
+   f.filter(re.compile('i10-\d*\.dat'))
+   f.filter(lambda x: x['Temperature']>150)
+   f.filter(lambda x: x['Temperature']>150,invert=True)
+\end{lstlisting}
 
 The first form performs the filter on the filenames (using the standard python fnmatch module). One can also use a regular expression as illustrated int he second example -- although unlike using the \textit{pattern} keyword in \textbf{getlist}, there is no option to capture metadata (although one could then subsequently set the pattern to achieve this). The third variant calls the supplied function, passing the current file as a \textbf{DataFile} object in each time. If the function evaluates to be True then the file is kept. The \textit{invert} keyword is used to invert the sense of the filter (a particularly silly example here, since the greater than sign could simply be replaced with a less than or equals sign !).
 
 One of the more common tasks is to group a long list of data files into separate groups according to some logical test --  for example gathering files with magnetic field sweeps in a positive direction together and those with magnetic field in a negative direction together. The \textbf{group} method provides a powerful way to do this. Suppose we have a series of data curves taken at a variety of temperatures and with three different magnetic fields:
 
-\begin{verbatim}
-  >>> f.group{'temperature'}
-  >>> f.group(lambda x:"positive" if x['B-Field']>0 else "negative")
-  >>> f.group(['temperature',lambda x:"positive"
-                                 if x['B-Field']>0 else "negative"])
-  >>> f.groups
-\end{verbatim}
+\begin{lstlisting}
+   f.group{'temperature'}
+   f.group(lambda x:"positive" if x['B-Field']>0 else "negative")
+   f.group(['temperature',lambda x:"positive" if x['B-Field']>0 else "negative"])
+   f.groups
+\end{lstlisting}
 
 The \textbf{group} method splits the files in the \textbf{DataFolder} into several groups each of which share a common value of the arguement supplied to the \textbf{group} method. A group is itself another isntanceinstance of the \textbf{DataFolder} class. Each \textbf{DataFolder} object maintains a dictionary called \textit{groups} whose keys are the distinct values of the argument of the \textbf{group} methods and whose values are \textbf{DataFolder} objects. So, if our \textbf{DataFolder} f contained files measured at 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and 300 each one of which would be a \textbf{DataFolder} object containg the files measured at those temperatures. The second varaint would produce 2 groups -- ``postive'' containing the files measured with magnetic field of 1T and ``negative'' containing the files measured at -1T. The third variant then goes one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed via the \textit{group} attribute:
 
-\begin{verbatim}
-  >>> f.groups[4.2].groups["positive"].files
-\end{verbatim}
+\begin{lstlisting}
+   f.groups[4.2].groups["positive"].files
+\end{lstlisting}
 
 would return a list of the files measured at 4.2K and 1T.
 
 If you try indexing a \textbf{DataFolder} with a string and there is no file with as it's filename and there is a group with a key of the same string then \textbf{dataFolder} will return the correspondign group. This allows a more compact navigation through an xtended group structure.
 
-\begin{verbatim}
->>> f.group(['project','sample','device'])
->>> f['ASF']['ASF038']['A']
-\end{verbatim}
+\begin{lstlisting}
+ f.group(['project','sample','device'])
+ f['ASF']['ASF038']['A']
+\end{lstlisting}
 
 One task you might want to do would be to work through all the groups in a \textbf{DataFolder} and run some function either with each file in the group or on the whole group. This is further complicated if you want to iterate over all the sub-groups within a group. The \textit{walk\_groups()} method is useful here.
-\begin{verbatim}
->>> f.walk_groups(func,group=True,replace_terminal=True,walker_args={"arg1":"value1"})
-\end{verbatim}
+\begin{lstlisting}
+ f.walk_groups(func,group=True,replace_terminal=True,walker_args={"arg1":"value1"})
+\end{lstlisting}
 
 This will iterate over the complete hierarchy of groups and sub groups in the folder and execute the function \textit{func} once for each group. If the \textit{group} parameter is False then it will execute \textit{func} once for each file. The function \textit{fun} should be defined something like:
-\begin{verbatim}
->>> def func(group,list_of-group_keys,arg1,arg2...)
-\end{verbatim}
+\begin{lstlisting}
+ def func(group,list_of-group_keys,arg1,arg2...)
+\end{lstlisting}
 The first parameter should expect and instance of \textbf{PDataFile} if \textit{group} is False or an instance of \textbf{DataFolder} if \textit{group} is True. The second parameter will be given a list of of strings representing the group key values from the topmost group to the lowest (terminal) group.
 
 The \textit{replace\_terminal} parameter applies when \textit{group} is True and the function returns a \textbf{DataFile} object. This indicates that the group on which the function was called should be removed from the list fo groups and the returned \textbf{DataFile} object should be added to the list of files in the folder. This operation is useful when one is processing a group of files to combined them into a single dataset. Combining a multi-level grouping operation and successive calls to \textit{walk\_groups} can rapidly reduce a large set of data files representing a multi-dimensional data set into a single file with minimal coding.
@@ -1165,9 +1164,9 @@ The \textit{replace\_terminal} parameter applies when \textit{group} is True and
 
 In some cases you will want to work with sets of files coming from different groups in order. For example, if above we had a sequence of 10 data files for each field and temperature and we wanted to process the positive and negative field curves together for a given temperature in turn. In this case the \textbf{zip\_groups} method can be useful.
 
-\begin{verbatim}
-  >>> f.groups[4.2].zip_groups(['positive','negative'])
-\end{verbatim}
+\begin{lstlisting}
+   f.groups[4.2].zip_groups(['positive','negative'])
+\end{lstlisting}
 
 This would return a list of tuples of DataFile objects where the tuples would be the first positive and first negative field files, then the second of each, then third of each and so. This presupposes that the files started of sorted by some suitable parameter (\eg a gate voltage).
 
@@ -1185,13 +1184,13 @@ Z and one wishes to extract X-Y as a function of constant Z. For example, $I-V$
 sweeps as a function of gate voltage $V_G$. Assuming we have a data file with
 columns \textit{Current}, \textit{Voltage},\textit{Gate}:
 
-\begin{verbatim}
-  >>> d=DataFile('data.txt')
-  >>> t=d
-  >>> for gate in d.unique('Gate'):
-  >>>     t.data=d.search('Gate',gate)
-  >>>     t.save('Data Gate='+str(gate)+'.txt')
-\end{verbatim}
+\begin{lstlisting}
+   d=DataFile('data.txt')
+   t=d
+   for gate in d.unique('Gate'):
+       t.data=d.search('Gate',gate)
+       t.save('Data Gate='+str(gate)+'.txt')
+\end{lstlisting}
 
 The first line opens the data file containing the $I-V(V_G)$ data. The second
 creates a temporary copy of the DataFile object - ensuring that we get a copy of
@@ -1206,14 +1205,14 @@ In a similar fashion to the previous section, where data has been recorded with
 fixed values of $X$ and $Y$ \eg $I$ measured for fixed $V$ and $V_G$, it can be
 useful to map the data to a matrix.
 
-\begin{verbatim}
-  >>> d=DataFile('Data,.txt')
-  >>> t=d
-  >>> for gate in d.unique('Gate'):
-  >>>    t=t+d.search('Gate',gate)[:,d.find_col('Current')]
-  >>> t.column_headers=['Bias='+str(x) for x in d.unique('Voltage')]
-  >>> t.add_column(d.unique('Gate'),'Gate Voltage',0)
-\end{verbatim}
+\begin{lstlisting}
+   d=DataFile('Data,.txt')
+   t=d
+   for gate in d.unique('Gate'):
+      t=t+d.search('Gate',gate)[:,d.find_col('Current')]
+   t.column_headers=['Bias='+str(x) for x in d.unique('Voltage')]
+   t.add_column(d.unique('Gate'),'Gate Voltage',0)
+\end{lstlisting}
 
 The start of the script follows the previous section, however this time in the
 for loop the addition operator is used to add a single row to the temporary
@@ -1233,31 +1232,31 @@ This section provides some notes and guidance on extending the Stoner Package.
 The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using. If so, then the best thing would be to include it in the \textbf{fileFormats} module in the package, otherwise you should just write the class in your own script files. In either case, develop the class in your own script files first.
 
 The best way to implement handling a new data format is to write a new subclass of DataFile:
- \begin{verbatim}
+ \begin{lstlisting}
 class NewInstrumentFile(DataFile):
     """Extends DataFile to load files from somewhere else
 
     Written by Gavin Burnell 11/3/2012"""
- \end{verbatim}
+ \end{lstlisting}
  A document string should be provided that will help the user identify the function of the new class (and avoid using names that might be commonly replicated !). Only one method needs to be implemented: a new \textit{load}method. The \textit{load} method should have the following structure:
-\begin{verbatim}
+\begin{lstlisting}
       def load(self,filename=None,*args):
         """Just call the parent class but with the right parameters set"""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
-\end{verbatim}
+\end{lstlisting}
 then follows the code to actually read the file. It \underline{must} at the very least provide a column header for every column of data and read in as much numeric data as possible and it \underline{should} read as much of the meta data as possible. The function terminates by returning a copy of the current object:
-\begin{verbatim}
+\begin{lstlisting}
         return self
-\end{verbatim}
+\end{lstlisting}
 One useful function for reading metadata from files is \textit{self.metadata.string\_to\_type()} which will try to convert a string representation of data into a sensible Python type.
 
 There is one global attribute that can be used to tweak the automatic file importing code.
-\begin{verbatim}
+\begin{lstlisting}
       f.priority=32
-\end{verbatim}
+\end{lstlisting}
 
 When the subclasses are tried to see if they can load an undetermined file, they are tried in order of priority. If your load code can make a positive determination that it has the correct file (\eg by looking for some magic combination of characters at the start of the file) and can throw an exception if it tries loading an incorrect file, then you can give it a lower priority number to force it to run earlier. Conversely if your only way of identifying your own files is seeing they make sense when you try to load them and that you might partially succeed with a file from another system (as can happen if you have a tab or comma separated text file), then you should raise the priority number. Currently \textbf{DataFolder} defaults to 32, \textbf{CSVFile} and \textbf{BigBlueFile} have values of 128 and 64 respectively.
 
