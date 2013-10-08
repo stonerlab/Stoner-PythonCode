@@ -280,6 +280,21 @@ class DataFolder(object):
             self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
         return self
 
+    def add_group(self,key):
+        """Add a new group to the current Folder with the given key.
+        
+        @param key A hashable value to be used as the dictionary key in the groups dictionary
+        @return A copy of the DataFolder
+        
+        If key already exists in the groups dictionary then no action is taken.
+        """
+        if key in self.groups: # do nothing here
+            pass
+        else:
+            self.groups[key]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
+            self.groups[key].key=key
+        return self
+    
     def group(self, key):
         """Take the files and sort them into a series of separate DataFolder objects according to the value of the key
         @param key Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
@@ -301,16 +316,14 @@ class DataFolder(object):
         for f in self.files:
             x=self[f]
             v=key(x)
-            if not v in self.groups:
-                self.groups[v]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
-                self.groups[v].key=v
+            seld.add_group(v)
             self.groups[v].files.append(f)
         if len(next_keys)>0:
             for g in self.groups:
                 self.groups[g].group(next_keys)
         return self
 
-    def zipp_groups(self, groups):
+    def zip_groups(self, groups):
         """Return a list of tuples of DataFiles drawn from the specified groups
         @param groups A list of keys of groups in the DataFolder
         @return A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]

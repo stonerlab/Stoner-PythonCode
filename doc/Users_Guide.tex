@@ -1148,6 +1148,12 @@ If you try indexing a \textbf{DataFolder} with a string and there is no file wit
  f['ASF']['ASF038']['A']
 \end{lstlisting}
 
+If you just ant to create a new empty group in your \textbf{DataFoler}, you can use the \textit{add\_group} method.
+\begin{lstlisting}
+f.add_group("key_value")
+\end{lstlisting}
+which will create the new group with a key of ``key\_value''.
+
 One task you might want to do would be to work through all the groups in a \textbf{DataFolder} and run some function either with each file in the group or on the whole group. This is further complicated if you want to iterate over all the sub-groups within a group. The \textit{walk\_groups()} method is useful here.
 \begin{lstlisting}
  f.walk_groups(func,group=True,replace_terminal=True,walker_args={"arg1":"value1"})
@@ -1176,6 +1182,18 @@ This would return a list of tuples of DataFile objects where the tuples would be
 
 This section gives some short examples to give an idea of things that can be
 done with the Stoner python module in just a few lines.
+
+\subsection{The Utils module}
+
+The \textbf{Stoner} package comes with an extra \textbf{Utils} module that includes some handy utility functions.
+So far the module just contains one function that will take a single \textbf{dataFile} object and split it
+into a series of \textbf{DataFile} objects where one column is either rising or falling. This is designed to help
+deal with analysis problems involving hysteretic data.
+\begin{lstlisting}
+from Stoner.Utils import split_up_down
+folder=split_up_down(data,column)
+\end{lstlisting}
+\textit{folder} is a DataFolder instance with two groups, one for rising values of the column and one for falling values of the column. The \textit{split\_up\_down} will take an optional third parameter which is an existing \textbf{DataFolder} instance to which the new groups (if they don't already exist) and files will be added.  
 
 \subsection{Extract X-Y(Z) from X-Y-Z data}
 
