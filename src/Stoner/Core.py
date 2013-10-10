@@ -1048,7 +1048,7 @@ class DataFile(object):
             col = self.find_col(col)
             d = self.column(col)
             if callable(val):
-                rows = numpy.nonzero([bool(val(x[col], x) and not x.mask) for x in self])[0]
+                rows = numpy.nonzero([bool(val(x[col], x) and x[col] is not ma.masked) for x in self])[0]
             elif isinstance(val, float):
                 rows = numpy.nonzero([x == val for x in d])[0]
             self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
