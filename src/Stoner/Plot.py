@@ -1,69 +1,71 @@
-#############################################
-#
-#PlotFile object of the Stoner Package
-#
-# $Id: Plot.py,v 1.16 2013/05/12 17:17:57 cvs Exp $
-#
-# $Log: Plot.py,v $
-# Revision 1.16  2013/05/12 17:17:57  cvs
-# Updates to the DataFolder class and documentation updates.
-#
-# Revision 1.15  2012/01/04 22:35:32  cvs
-# Give CSVFIle options to skip headers
-# Make PlotFile.plot_xy errornar friendly
-#
-# Revision 1.14  2011/12/19 23:08:54  cvs
-# Add a PlotFile.plot_matrix command and update documentation
-#
-# Revision 1.13  2011/12/18 20:18:27  cvs
-# Fixed minor regression following removal of PlotFile.axes() method in favour of PlotFile.axes attribute
-#
-# Revision 1.12  2011/12/17 20:41:39  cvs
-# Implement a PlotFile.plot_xyz method, make plot_xy work with multiple y columns and formats a little better. Update documentation. - Gavin
-#
-# Revision 1.11  2011/12/05 21:56:26  cvs
-# Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
-#
-# Revision 1.10  2011/12/04 23:09:16  cvs
-# Fixes to Keissig and plotting code
-#
-# Revision 1.9  2011/06/24 16:23:58  cvs
-# Update API documentation. Minor improvement to save method to force a dialog box.
-#
-# Revision 1.8  2011/06/22 22:54:29  cvs
-# Look at getting PlotFile.plot_xy to plot to the same window and update API documentation
-#
-# Revision 1.7  2011/06/14 08:14:38  cvs
-# Ammended platform.system()=Darwin for correct MacOSx implementation. - CSA
-#
-# Revision 1.6  2011/05/09 18:47:32  cvs
-# Try to improve handling of Mac OSX detection
-#
-# Revision 1.5  2011/05/08 18:25:00  cvs
-# Correct the Raman load to include the last point in the Xdata
-#
-# Revision 1.4  2011/02/18 22:37:13  cvs
-# Make PlotFile return the matplotlib figure when plotting and allow it to handle multiple figures. Add methofs to force a redraw and also to access the Axes object. -Gavin
-#
-# Revision 1.3  2011/02/13 15:51:08  cvs
-# Merge in ma gui branch back to HEAD
-#
-# Revision 1.2.2.1  2011/01/19 16:43:50  cvs
-# Added OSX specific backend for matplotlib graphics
-#
-# Revision 1.2  2011/01/10 23:11:21  cvs
-# Switch to using GLC's version of the mpit module
-# Made PlotFile.plot_xy take keyword arguments and return the figure
-# Fixed a missing import math in AnalyseFile
-# Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
-#
-# Revision 1.1  2011/01/08 20:30:02  cvs
-# Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
-# Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
-#
-#
-#############################################
+"""#############################################
+Stoner.Plot provides the a class to facilitate easier plotting of Stoner Data:
 
+* @b PlotFile - A class that uses matplotlib to plot data
+
+ **History **
+ $Id: Plot.py,v 1.16 2013/05/12 17:17:57 cvs Exp $
+
+ $Log: Plot.py,v $
+ Revision 1.16  2013/05/12 17:17:57  cvs
+ Updates to the DataFolder class and documentation updates.
+
+ Revision 1.15  2012/01/04 22:35:32  cvs
+ Give CSVFIle options to skip headers
+ Make PlotFile.plot_xy errornar friendly
+
+ Revision 1.14  2011/12/19 23:08:54  cvs
+ Add a PlotFile.plot_matrix command and update documentation
+
+ Revision 1.13  2011/12/18 20:18:27  cvs
+ Fixed minor regression following removal of PlotFile.axes() method in favour of PlotFile.axes attribute
+
+ Revision 1.12  2011/12/17 20:41:39  cvs
+ Implement a PlotFile.plot_xyz method, make plot_xy work with multiple y columns and formats a little better. Update documentation. - Gavin
+
+ Revision 1.11  2011/12/05 21:56:26  cvs
+ Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
+
+ Revision 1.10  2011/12/04 23:09:16  cvs
+ Fixes to Keissig and plotting code
+
+ Revision 1.9  2011/06/24 16:23:58  cvs
+ Update API documentation. Minor improvement to save method to force a dialog box.
+
+ Revision 1.8  2011/06/22 22:54:29  cvs
+ Look at getting PlotFile.plot_xy to plot to the same window and update API documentation
+
+ Revision 1.7  2011/06/14 08:14:38  cvs
+ Ammended platform.system()=Darwin for correct MacOSx implementation. - CSA
+
+ Revision 1.6  2011/05/09 18:47:32  cvs
+ Try to improve handling of Mac OSX detection
+
+ Revision 1.5  2011/05/08 18:25:00  cvs
+ Correct the Raman load to include the last point in the Xdata
+
+ Revision 1.4  2011/02/18 22:37:13  cvs
+ Make PlotFile return the matplotlib figure when plotting and allow it to handle multiple figures. Add methofs to force a redraw and also to access the Axes object. -Gavin
+
+ Revision 1.3  2011/02/13 15:51:08  cvs
+ Merge in ma gui branch back to HEAD
+
+ Revision 1.2.2.1  2011/01/19 16:43:50  cvs
+ Added OSX specific backend for matplotlib graphics
+
+ Revision 1.2  2011/01/10 23:11:21  cvs
+ Switch to using GLC's version of the mpit module
+ Made PlotFile.plot_xy take keyword arguments and return the figure
+ Fixed a missing import math in AnalyseFile
+ Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
+
+ Revision 1.1  2011/01/08 20:30:02  cvs
+ Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
+ Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
+
+
+#############################################
+"""
 from .Core import DataFile
 import numpy
 import matplotlib
@@ -72,6 +74,8 @@ import platform
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
+from scipy.interpolate import griddata
+
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
@@ -256,6 +260,79 @@ class PlotFile(DataFile):
         pyplot.draw()
 
         return self.__figure
+
+    def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="cubic"):
+        """Function to convert xyz data onto a regular grid
+        
+        @param xc Column to be used for the X-Data
+        @param yc column to be used for Y-Data - default value is column to the right of the x-data column
+        @param zc column to be used for the Z-data - default value is the column to the right of the y-data column
+        @param shaoe two-tuple of the number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+        @param xlim tuple of the xlimits
+        @param ylim tuple of the ylimits
+        @param method type of interploation to use, default is cubic
+        @return X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
+        """
+        
+        xc=self.find_col(xc)
+        if yc is None:
+            yc=xc+1
+        else:
+            yc=self.find_col(yc)
+        if zc is None:
+            zc=yc+1
+        else:
+            zc=self.find_col(zc)
+        if shape is None or not(isinstance(shape,tuple) and len(shape)==2):
+            shape=(numpy.floor(numpy.sqrt(len(self))),numpy.floor(numpy.sqrt(len(self))))
+        if xlim is None:
+            xlim=(min(self.column(xc)),max(self.column(xc)))
+        if isinstance(xlim,tuple) and len(xlim)==2:
+            xlim=(xlim[0].xlim[1],shape[0])
+        elif isinstance(xlim,tuple) and len(xlim)==3:
+            xlim[2]=len(range(*xlim))
+        else:
+            raise RuntimeError("X limit specification not good.")
+        if ylim is None:
+            ylim=(min(self.column(yc)),max(self.column(yc)))
+        if isinstance(ylim,tuple) and len(ylim)==2:
+            ylim=(ylim[0].ylim[1],shape[1])
+        elif isinstance(ylim,tuple) and len(ylim)==3:
+            ylim[2]=len(range(*ylim))
+        else:
+            raise RuntimeError("Y limit specification not good.")
+            
+        np=numpy.mgrid(slice(*xlim),slice(*ylim))
+        
+        points=numpy.array(self.column(xc),self.column(yc)).T     
+        Z=griddata(points,self.column(zc),np,method=method)
+        
+        return np[:,:,0],np[:,:,1],Z
+        
+    def contour_xyz(self,xc,yc,zc,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
+        """Grid up the three columns of data and plot
+         @param xc X column
+         @param yc Y column
+         @param zc Z cilumn
+         @param shape Tuple containing shape of the data
+         @param xlim X limits to plot over
+         @param ylim Y Limits to plot over
+         @return A matplotlib figure
+         """
+         
+        X,Y,Z=self.griddata(xc,yc,zc,shape,xlim,ylim)
+        if plotter is None:
+            plotter=pyplot.contour
+             
+        fig=plotter(X,Y,Z,**kargs)
+        pyplot.xlabel(self.column_headers[self.find_col(xc)])
+        pyplot.ylabel(self.column_headers[self.find_col(yc)])
+        pyplot.title(self.filename + " "+ self.column_headers[zc])
+        
+        return fig
+        
+        
+            
 
     def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
