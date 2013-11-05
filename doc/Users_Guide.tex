@@ -696,11 +696,28 @@ The X and Y axis label will be set from the column headers.
     p.plot_xyz(col_x,col_y,col_z)
     p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
     p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
+    p.plot_xyz(col_x,col_y,col_z,xlim=(-10,10,100),ylim=(-10,10,100))
  \end{lstlisting}
 
  By default the plot\_xyz will produce a 3D surface plot with the z-axis coded with a rainbow colourmap (specifically, the matplotlib provided \textit{matplotlib.cm.jet} colourmap. This can be overriden with the \textit{cmap} keyword parameter. If a simple 2D surface plot is required, then the \textit{plotter} parameter should be set to a suitable function such as \textbf{pyplot.pcolor}.
 
  Like \textbf{plot\_xy}, a \textit{figure} parameter can be used to control the figure being used and any additional keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
+ 
+ Another option is a contour plot based on $(x,y,z)$ data points. This can be done with the \textbf{contour\_xyz} method.
+ 
+ \begin{lstlisting}
+ 	p.contour_xyz(xcol,ycol,zcol,shape=(50,50))
+ 	p.contour_xyz(xcol,ycol,zcol,xlim=(10,10,100),ylim=(-10,10,100))
+\end{lstlisting} 	
+
+Both \textbf{plot\_xyz} and \textbf{contour\_xyz} make use of a call to \textbf{griddata} which is a utility method of the \textbf{PlotFile} -- essentially this is just a pass through method to the underlying \textit{scipy.interpolate.griddata} function. The shape of the grid is determined through a combination of the \textit{xlim}, \textit{ylim} and \textit{shape} arguments.
+
+\begin{lstlisting}
+X,Y,Z=p.griddata(xcol,ycol,zcol,shape=(100,100))
+X,Y,Z=p.griddata(xcol,ycol,zcol,xlim=(-10,10,100),ylim=(-10,10,100))
+\end{lstlisting}
+
+If a \textit{xlim} or \textit{ylim} arguments are provided and are two tuples, then they set the maximum and minimum values of the relevant axis. If they are three tuples, then the third argument is the number of points along that axis and overrides any setting in the \textit{shape} parameter. If the \textit{xlim} or \textit{ylim} parameters are not presents, then the maximum and minimum values of the relevant axis are used. If not shape information is provided, the default is to make the shape a square of sidelength given by the square root of the number of points.
 
  Alternatively, if your data is already in the form of a matrix, you can use the \textbf{PlotFile.plot\_matrix} method:
 

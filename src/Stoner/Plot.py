@@ -3,66 +3,6 @@ Stoner.Plot provides the a class to facilitate easier plotting of Stoner Data:
 
 * @b PlotFile - A class that uses matplotlib to plot data
 
- **History **
- $Id: Plot.py,v 1.16 2013/05/12 17:17:57 cvs Exp $
-
- $Log: Plot.py,v $
- Revision 1.16  2013/05/12 17:17:57  cvs
- Updates to the DataFolder class and documentation updates.
-
- Revision 1.15  2012/01/04 22:35:32  cvs
- Give CSVFIle options to skip headers
- Make PlotFile.plot_xy errornar friendly
-
- Revision 1.14  2011/12/19 23:08:54  cvs
- Add a PlotFile.plot_matrix command and update documentation
-
- Revision 1.13  2011/12/18 20:18:27  cvs
- Fixed minor regression following removal of PlotFile.axes() method in favour of PlotFile.axes attribute
-
- Revision 1.12  2011/12/17 20:41:39  cvs
- Implement a PlotFile.plot_xyz method, make plot_xy work with multiple y columns and formats a little better. Update documentation. - Gavin
-
- Revision 1.11  2011/12/05 21:56:26  cvs
- Add in DataFile methods swap_column and reorder_columns and update API documentation. Fix some Doxygen problems.
-
- Revision 1.10  2011/12/04 23:09:16  cvs
- Fixes to Keissig and plotting code
-
- Revision 1.9  2011/06/24 16:23:58  cvs
- Update API documentation. Minor improvement to save method to force a dialog box.
-
- Revision 1.8  2011/06/22 22:54:29  cvs
- Look at getting PlotFile.plot_xy to plot to the same window and update API documentation
-
- Revision 1.7  2011/06/14 08:14:38  cvs
- Ammended platform.system()=Darwin for correct MacOSx implementation. - CSA
-
- Revision 1.6  2011/05/09 18:47:32  cvs
- Try to improve handling of Mac OSX detection
-
- Revision 1.5  2011/05/08 18:25:00  cvs
- Correct the Raman load to include the last point in the Xdata
-
- Revision 1.4  2011/02/18 22:37:13  cvs
- Make PlotFile return the matplotlib figure when plotting and allow it to handle multiple figures. Add methofs to force a redraw and also to access the Axes object. -Gavin
-
- Revision 1.3  2011/02/13 15:51:08  cvs
- Merge in ma gui branch back to HEAD
-
- Revision 1.2.2.1  2011/01/19 16:43:50  cvs
- Added OSX specific backend for matplotlib graphics
-
- Revision 1.2  2011/01/10 23:11:21  cvs
- Switch to using GLC's version of the mpit module
- Made PlotFile.plot_xy take keyword arguments and return the figure
- Fixed a missing import math in AnalyseFile
- Major rewrite of CSA's PCAR fitting code to use mpfit and all the glory of the Stoner module - GB
-
- Revision 1.1  2011/01/08 20:30:02  cvs
- Complete splitting Stoner into a package with sub-packages - Core, Analysis and Plot.
- Setup some imports in __init__ so that import Stoner still gets all the subclasses - Gavin
-
 
 #############################################
 """
@@ -213,13 +153,15 @@ class PlotFile(DataFile):
         self.__figure=figure
         return self.__figure
 
-    def plot_xyz(self, xcol, ycol, zcol, shape=None, cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
+    def plot_xyz(self, xcol, ycol, zcol, shape=None, xlim=None, ylim=None,cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
 
             @param xcol Xcolumn index or label
             @param ycol Y column index or label
             @param zcol Z column index or label
             @param shape A tuple that defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
+            @param xlim A tuple that defines the x-axis limits and grid of the data to be plotted
+            @param ylim A tuple that defines the Y-axis limits and grid of the data data to be plotted            
             @param cmap A matplotlib colour map - defaults to the jet colour map
             @param show_plot Interactive plotting on
             @param title Text to use as the title - defaults to the filename of the dataset
@@ -229,11 +171,7 @@ class PlotFile(DataFile):
 
             @return The matplotib figure with the data plotted"""
 
-        if shape is None:
-            shape=(len(self.unique(xcol)), len(self.unique(ycol)))
-        xdata=numpy.reshape(self.column(xcol), shape)
-        ydata=numpy.reshape(self.column(ycol), shape)
-        zdata=numpy.reshape(self.column(zcol), shape)
+        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -261,7 +199,7 @@ class PlotFile(DataFile):
 
         return self.__figure
 
-    def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="cubic"):
+    def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="linear"):
         """Function to convert xyz data onto a regular grid
         
         @param xc Column to be used for the X-Data
@@ -270,7 +208,7 @@ class PlotFile(DataFile):
         @param shaoe two-tuple of the number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
         @param xlim tuple of the xlimits
         @param ylim tuple of the ylimits
-        @param method type of interploation to use, default is cubic
+        @param method type of interploation to use, default is linear
         @return X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
         
@@ -286,25 +224,25 @@ class PlotFile(DataFile):
         if shape is None or not(isinstance(shape,tuple) and len(shape)==2):
             shape=(numpy.floor(numpy.sqrt(len(self))),numpy.floor(numpy.sqrt(len(self))))
         if xlim is None:
-            xlim=(min(self.column(xc)),max(self.column(xc)))
+            xlim=(numpy.min(self.column(xc)),numpy.max(self.column(xc)))
         if isinstance(xlim,tuple) and len(xlim)==2:
-            xlim=(xlim[0].xlim[1],shape[0])
+            xlim=(xlim[0],xlim[1],(xlim[1]-xlim[0])/shape[0])
         elif isinstance(xlim,tuple) and len(xlim)==3:
             xlim[2]=len(range(*xlim))
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim=(min(self.column(yc)),max(self.column(yc)))
+            ylim=(numpy.min(self.column(yc)),numpy.max(self.column(yc)))
         if isinstance(ylim,tuple) and len(ylim)==2:
-            ylim=(ylim[0].ylim[1],shape[1])
+            ylim=(ylim[0],ylim[1],(ylim[1]-ylim[0])/shape[1])
         elif isinstance(ylim,tuple) and len(ylim)==3:
             ylim[2]=len(range(*ylim))
         else:
             raise RuntimeError("Y limit specification not good.")
             
-        np=numpy.mgrid(slice(*xlim),slice(*ylim))
+        np=numpy.mgrid[slice(*xlim),slice(*ylim)].T
         
-        points=numpy.array(self.column(xc),self.column(yc)).T     
+        points=numpy.array([self.column(xc),self.column(yc)]).T     
         Z=griddata(points,self.column(zc),np,method=method)
         
         return np[:,:,0],np[:,:,1],Z
