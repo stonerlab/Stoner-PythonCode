@@ -187,7 +187,7 @@ if config.has_option("options", "remove_offset") and config.getboolean("options"
 #Plot the data while we do the fitting
 if show_plot:
     p=Stoner.PlotFile(d)
-    p.plot_xy(vcol,gcol, 'ro',title=filenameonly)
+    f=p.plot_xy(vcol,gcol, 'ro',title=filenameonly)    
     time.sleep(2)
 
 
@@ -224,8 +224,9 @@ for step in steps:
             if show_plot:
                 # And show the fit and the data in a nice plot
                 p=Stoner.PlotFile(d)
-                p.plot_xy(vcol,gcol,'ro',title=filenameonly)
-                pylab.plot(p.column(vcol), p.column('Fit'),'b-')
+                p.fig=f
+                #p.plot_xy(vcol,gcol,'ro',title=filenameonly)
+                f=pylab.plot(p.column(vcol), p.column('Fit'),'b-')
             # Ok now we can print the answer
             for i in range(len(parinfo)):
                 print parinfo[i]['parname']+"="+str(m.params[i])

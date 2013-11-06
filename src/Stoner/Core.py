@@ -548,8 +548,7 @@ class DataFile(object):
         except ImportError:
             from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
-        file_wildcard = "Text file (*.txt)|*.txt|Data file (*.dat)|\
-        *.dat|All files|*"
+        file_wildcard = "Text file (*.txt)|*.txt|Data files|*.dat|Comma Separated Value files|*.csv|All files|*.*"
 
         if mode == "r":
             mode = "open"
