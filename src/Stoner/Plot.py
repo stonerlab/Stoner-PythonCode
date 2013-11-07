@@ -15,7 +15,7 @@ if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
-
+from copy import copy
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions"""
@@ -120,16 +120,21 @@ class PlotFile(DataFile):
         if plotter is None: #Nothing has defined the plotter to use yet
             plotter=pyplot.plot
         if isinstance(column_y, list):
+            temp_kwords=kwords
             for ix in range(len(column_y)):
+                if "label" not in temp_kwords:
+                    kwords=copy(temp_kwords)
+                    kwords["label"]=self.column_headers[column_y[ix]]
                 yt=y[:, ix]
                 if isinstance(format, list):
-                    plotter(x,yt, format[ix], figure=figure, **kwords)
+                    plotter(x,yt, format[ix], figure=figure,**kwords)
                 elif format==None:
                     plotter(x,y, figure=figure, **kwords)
                 else:
-                    plotter(x,y, format, figure=figure, **kwords)
+                    plotter(x,y, format, figure=figure, label=self.column_headers[column_y[ix]],**kwords)
         else:
-            print kwords
+            if "label" not in kwords:
+                kwords["label"]=self.column_headers[column_y]
             if format==None:
                 plotter(x,y, figure=figure, **kwords)
             else:

@@ -33,6 +33,7 @@ for section in parnames:
     pars[section]['limited']=[config.getboolean(section, 'lower_limited'), config.getboolean(section, 'upper_limited')]
     pars[section]['limits']=[config.getfloat(section, 'lower_limit'), config.getfloat(section, 'upper_limit')]
     pars[section]['parname']=config.get(section, 'name')
+    pars[section]['symbol']=config.get(section, 'symbol')
     pars[section]['step']=config.getfloat(section, 'step')
     pars[section]['mpside']=config.getint(section, 'side')
     pars[section]['mpmaxstep']=config.getfloat(section, 'maxstep')
@@ -225,21 +226,28 @@ for step in steps:
                 # And show the fit and the data in a nice plot
                 p=Stoner.PlotFile(d)
                 p.fig=f
-                #p.plot_xy(vcol,gcol,'ro',title=filenameonly)
-                f=pylab.plot(p.column(vcol), p.column('Fit'),'b-')
-            # Ok now we can print the answer
+                # Ok now we can print the answer
+                answer=[ "${}$={}".format(parinfo[i]['symbol'],round(m.params[i],3)) for i in range(len(parinfo))]
+                if len(steps)==1:
+                    p.plot_xy(vcol,"Fit","b-",title=filenameonly)
+                    pylab.legend()
+                    bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="b", lw=2)
+                    pylab.annotate("\n".join(answer), xy=(0.05, 0.75), xycoords='axes fraction',bbox=bbox_props,fontsize=14)
+                else:
+                    p.plot_xy(vcol,"Fit",label=" ".join(answer),title=filenameonly)
+                    pylab.legend()                    
+            print "\n".join(answer)
             for i in range(len(parinfo)):
-                print parinfo[i]['parname']+"="+str(m.params[i])
                 d[parinfo[i]['parname']]=m.params[i]
             
-            chi2=chisquare(d.column(gcol), d.column('Fit'))
+            chi2,pp=chisquare(d.column(gcol), d.column('Fit'))
             d["Chi^2"]=chi2
-            print "Chi^2:"+str(chi2)
+            print "Chi^2: {}".format(round(chi2,5))
             if save_fit:
                 d.save(False)
 
             row=m.params
-            row=numpy.append(row, chi2[0])
+            row=numpy.append(row, chi2)
             r=r+row            
     elif isinstance(step, tuple):
         (p, x)=step

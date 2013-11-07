@@ -285,7 +285,7 @@ class DataFile(object):
 
     _conv_string=numpy.vectorize(lambda x:str(x))
     _conv_float=numpy.vectorize(lambda x:float(x))
-
+    file_pattern="Data Files (*.csv;*.dat;*.txt;*.dql;*.fld;*.*.tdi;*.spc)|*.csv *.dat *.txt *.dql *.fld *.tdi *.spc| All Files (*.*)|*.*|" 
 
     #   INITIALISATION
 
@@ -548,7 +548,7 @@ class DataFile(object):
         except ImportError:
             from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
-        file_wildcard = "Text file (*.txt)|*.txt|Data files|*.dat|Comma Separated Value files|*.csv|All files|*.*"
+        file_wildcard = self.file_pattern
 
         if mode == "r":
             mode = "open"
