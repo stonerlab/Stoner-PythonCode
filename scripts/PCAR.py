@@ -244,6 +244,11 @@ for step in steps:
             d["Chi^2"]=chi2
             print "Chi^2: {}".format(round(chi2,5))
             if save_fit:
+                for section in pars:
+                   sec=pars[section]
+                   for key in sec:
+                       k="{}.{}".format(section,key)
+                       d[k]=sec[key]
                 d.save(False)
 
             row=m.params
