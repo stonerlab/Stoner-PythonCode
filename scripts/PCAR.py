@@ -16,13 +16,12 @@ import ConfigParser
 import pylab
 
 # Read the co nfig file for the model
-defaults={"filetype":"TDI", "header_line":1,"start_line":2, "separator":",", "v_scale":1,"discard":False,"v_limit":1000.0 }
-config=ConfigParser.SafeConfigParser(defaults)
+config=ConfigParser.SafeConfigParser()
 config.read("pcar.ini")
 
-show_plot=config.getboolean('options', 'show_plot')
-save_fit=config.getboolean('options', 'save_fit')
-user_iterfunct=config.getboolean('options', 'print_each_step')
+show_plot=config.getboolean('prefs', 'show_plot')
+save_fit=config.getboolean('prefs', 'save_fit')
+user_iterfunct=config.getboolean('prefs', 'print_each_step')
 
 pars=dict()
 parnames=['omega', 'delta', 'P', 'Z']
@@ -40,20 +39,20 @@ for section in parnames:
     pars[section]['tied']=config.get(section, 'tied')
     pars[section]['mpprint']=config.getboolean(section, 'print')
 
-gcol=config.get('data', 'y-column')
-vcol=config.get('data', 'x-column')
-discard=config.get('data','discard')
+gcol=config.get("data_format", 'y-column')
+vcol=config.get("data_format", 'x-column')
+discard=config.get("data_format",'discard')
 if discard:
-    v_limit=config.get('data','v_limit')
+    v_limit=config.get("data_format",'v_limit')
 omega=pars['omega']
 delta=pars['delta']
 P=pars['P']
 Z=pars['Z']
 
-format=config.get("data", "filetype")
-header=config.getint("data", "header_line")
-start=config.getint("data", "start_line")
-delim=config.get("data", "separator")
+format=config.get("data_format", "filetype")
+header=config.getint("data_format", "header_line")
+start=config.getint("data_format", "start_line")
+delim=config.get("data_format", "separator")
 
        
 #import data
@@ -70,13 +69,9 @@ else:
 # Convert string column headers to numeric column indices
 gcol=d.find_col(gcol)
 vcol=d.find_col(vcol)
-print v_limit
+
 if discard:
     d=d.del_rows(vcol,lambda x,y:abs(x)>v_limit)
-
-print d
-
-
 
 # Get filename for title
 filenameonly=os.path.basename(d.filename)
@@ -152,19 +147,21 @@ def strijkers(V, params):
 
 def Normalise(config, d, gcol, vcol):
     # Normalise the data
-    Gn=config.getfloat('data', 'Normal_conductance')
-    v_scale=config.getfloat("data", "v_scale")
-    if config.has_option("options", "fancy_normaliser") and config.getboolean("options", "fancy_normaliser"):
+    Gn=config.getfloat("data_format", 'Normal_conductance')
+    v_scale=config.getfloat("data_format", "v_scale")
+    if config.has_option("prefs", "fancy_normaliser") and config.getboolean("prefs", "fancy_normaliser"):
         def quad(x, a, b, c): # linear fitting function
             return x*x*a+x*b+c
         vmax, vp=d.max(vcol)
         vmin, vp=d.min(vcol)
         p, pv=d.curve_fit(quad, vcol, gcol, bounds=lambda x, y:(x>0.9*vmax) or (x<0.9*vmin)) #fit a striaght line to the outer 10% of data
         print "Fitted normal conductance background of G="+str(p[0])+"V^2 +"+str(p[1])+"V+"+str(p[2])
-        d.apply(lambda x:x[gcol]/quad(x[vcol], p[0], p[1], p[2]), gcol)
+        d["normalise.coeffs"]=p
+        d["normalise.coeffs_err"]=numpy.sqrt(numpy.diag(pv))
+        d.apply(lambda x:x[gcol]/quad(x[vcol], *p), gcol)
     else:
         d.apply(lambda x:x[gcol]/Gn, gcol)
-    if config.has_option("options", "rescale_v") and config.getboolean("options", "rescale_v"):    
+    if config.has_option("prefs", "rescale_v") and config.getboolean("prefs", "rescale_v"):    
         d.apply(lambda x:x[vcol]*v_scale, vcol)
     return d
 
@@ -179,10 +176,10 @@ def offset_correct(config, d, gcol, vcol):
     d.apply(lambda x:x[vcol]-offset, vcol)
     return d
 
-if config.has_option("options", "normalise") and config.getboolean("options", "normalise"):
+if config.has_option("prefs", "normalise") and config.getboolean("prefs", "normalise"):
     d=Normalise(config, d, gcol, vcol)
     
-if config.has_option("options", "remove_offset") and config.getboolean("options", "remove_offset"): 
+if config.has_option("prefs", "remove_offset") and config.getboolean("prefs", "remove_offset"): 
     d=offset_correct(config, d, gcol, vcol)
     
 #Plot the data while we do the fitting
@@ -201,7 +198,7 @@ r.column_headers=[x["parname"] for x in parinfo]
 r.column_headers.append("chi^2")
 
 steps=["fit"]
-if config.has_option("options", "chi2_mapping") and config.getboolean("options", "chi2_mapping"):
+if config.has_option("prefs", "chi2_mapping") and config.getboolean("prefs", "chi2_mapping"):
     for p in parinfo:
             if p["fixed"]==True and p["step"]<>0:
                 t=steps
@@ -241,14 +238,13 @@ for step in steps:
                 d[parinfo[i]['parname']]=m.params[i]
             
             chi2,pp=chisquare(d.column(gcol), d.column('Fit'))
-            d["Chi^2"]=chi2
+            d["Chi^2"]=float(chi2)
             print "Chi^2: {}".format(round(chi2,5))
             if save_fit:
-                for section in pars:
-                   sec=pars[section]
-                   for key in sec:
-                       k="{}.{}".format(section,key)
-                       d[k]=sec[key]
+                for section in config.sections():
+                   for key,value in config.items(section):
+                       k="{}.{}".format(section.lower(),key.lower())
+                       d[k]=d.metadata.string_to_type(value)
                 d.save(False)
 
             row=m.params
