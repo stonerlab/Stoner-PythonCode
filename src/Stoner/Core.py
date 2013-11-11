@@ -3,7 +3,7 @@
 * @b DataFile - the main class that represents a set of experimental data
 * @b typeHintedDict - a dictionary subclass that tries to keep track of the type of data
                        stored in each element to facilitate export to strongly typed
-                       languages (like NI LabVIEW) 
+                       languages (like NI LabVIEW)
 """
 import fileinput
 import re
@@ -69,7 +69,7 @@ class typeHintedDict(dict):
                                     # _typehint dict
             value=super(typeHintedDict,self).__getitem__(key)
             super(typeHintedDict,self).__delitem__(key)
-            self[key]=value #__Setitem__ has the logic to handle embedded type hints correctly             
+            self[key]=value #__Setitem__ has the logic to handle embedded type hints correctly
 
     def __getattr__(self, name):
         """Handles attribute access"""
@@ -118,6 +118,7 @@ class typeHintedDict(dict):
         constructed with instances of the matching Python classes. These
         are tested in turn and if the type string matches the constructor of
         the associated python class is called with value as its argument."""
+        ret=None
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
             if m is not None:
@@ -128,42 +129,40 @@ class typeHintedDict(dict):
                         ret = str(value)
                     except SyntaxError:
                         ret = ""
-                    return ret
                     break
                 else:
-                    return valuetype(value)
+                    ret=valuetype(value)
                     break
-        return str(value)
+        else:
+            ret=str(value)
+        return ret
 
     def string_to_type(self, value):
         """Given a string value try to work out if there is a better python type dor the value
         @param value String representation of he value
         @return A python object of the natural type for value"""
+        ret=None        
         if not isinstance(value, str):
             raise TypeError("Value must be a string not a "+str(type(value)))
         value=value.strip()
-        if len(value)==0:
-            return None
-        if value[0]=="[":
-            try:
-                return eval('list('+value+')') #List
-            except SyntaxError:
-                pass
-        if value[0]=="{":
-            try:
-                return eval('dict('+value+')') #Dict
-            except SyntaxError:
-                pass
-        if value in ['True', 'TRUE','true', 'Yes', 'YES', 'yes'] or value in ['False', 'FALSE', 'false', 'No','NO', 'no']:
-            return value in ['True', 'TRUE','true', 'Yes', 'YES', 'yes'] #Booleab
-        try:
-            return int(value) # try as an int
-        except ValueError:
-            pass
-        try:
-            return float(value) # Ok try as a float
-        except ValueError:
-            return value.strip('"\'')
+        if len(value)!=0:
+            tests=['list('+value+')','dict('+value+')']
+            try:            
+                i="[{".index(value[0])
+                ret=eval(tests[i])
+            except SyntaxError,ValueError:
+                if value.lower() in ['true', 'ues','on','false','no','off']:
+                    ret=value.lower() in ['true','yes','on'] #Booleab
+                else:
+                    for trial in [int,float,str]:
+                        try:
+                            ret=trial(value)
+                            break
+                        except ValueError:
+                            continue
+                    else:
+                        ret=None
+        return ret
 
     def _get_name_(self,name):
         """Checks a string name for an embedded type hint and strips it out.
@@ -192,8 +191,8 @@ class typeHintedDict(dict):
         value=super(typeHintedDict,self).__getitem__(name)
         if typehint is not None:
             value=self.__mungevalue(typehint,value)
-        return value        
-    
+        return value
+
     def __setitem__(self, name, value):
         """Provides a method to set an item in the dict, checking the key for
         an embedded type hint or inspecting the value as necessary.
@@ -218,7 +217,7 @@ class typeHintedDict(dict):
 
     def __delitem__(self, name):
         """Deletes the specified key"""
-        (name,t)=self._get_name_(name)
+        name=self._get_name_(name)[0]
         del(self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
@@ -285,7 +284,7 @@ class DataFile(object):
 
     _conv_string=numpy.vectorize(lambda x:str(x))
     _conv_float=numpy.vectorize(lambda x:float(x))
-    file_pattern="Data Files (*.csv;*.dat;*.txt;*.dql;*.fld;*.*.tdi;*.spc)|*.csv *.dat *.txt *.dql *.fld *.tdi *.spc| All Files (*.*)|*.*|" 
+    file_pattern="Data Files (*.csv;*.dat;*.txt;*.dql;*.fld;*.*.tdi;*.spc)|*.csv *.dat *.txt *.dql *.fld *.tdi *.spc| All Files (*.*)|*.*|"
 
     #   INITIALISATION
 
@@ -294,20 +293,20 @@ class DataFile(object):
 
         various forms are recognised:
         @li DataFile('filename',<optional filetype>,<args>)
-        Creates the new DataFile object and then executes the \b DataFile.load
-        method to load data from the given \a filename
+        Creates the new DataFile object and then executes the @b DataFile.load
+        method to load data from the given @a filename
         @li DataFile(array)
-        Creates a new DataFile object and assigns the \a array to the
-        \b DataFile.data  attribute.
+        Creates a new DataFile object and assigns the @a array to the
+        @b DataFile.data  attribute.
         @li DataFile(dictionary)
         Creates the new DataFile object, but initialises the metadata with
-        \a dictionary
+        @a dictionary
         @li  DataFile(array,dictionary),
         Creates the new DataFile object and does the combination of the
         previous two forms.
         @li DataFile(DataFile)
         Creates the new DataFile object and initialises all data from the
-        existing \b DataFile instance. This on the face of it does the same as
+        existing @b DataFile instance. This on the face of it does the same as
         the assignment operator, but is more useful when one or other of the
         DataFile objects is an instance of a sub - class of DataFile
 
@@ -322,54 +321,65 @@ class DataFile(object):
         self.data = ma.masked_array([])
         self.filename = None
         self.column_headers = list()
-
-        if len(args) == 1:
-            if (isinstance(args[0], str) or isinstance(args[0], unicode) or (
-                isinstance(args[0], bool) and not args[0])):
-                                        # Filename- load datafile
-                t = self.load(*args, **kargs)
-                self.data = ma.masked_array(t.data)
-                self.metadata = t.metadata
-                self.column_headers = t.column_headers
-            elif isinstance(args[0], numpy.ndarray):
-                                                    # numpy.array - set data
-                self.data = ma.masked_array(args[0])
-                self.column_headers = ['Column' + str(x)
-                                    for x in range(numpy.shape(args[0])[1])]
-            elif isinstance(args[0], dict):  # Dictionary - use as metadata
-                self.metadata = args[0].copy()
-            elif isinstance(args[0], DataFile):
-                self.metadata = args[0].metadata.copy()
-                self.data = ma.masked_array(args[0].data)
-                self.column_headers = copy.copy(args[0].column_headers)
-                self.filename=args[0].filename
-            else:
-                raise SyntaxError("No constructor")
-        elif len(args) == 2:
-                            # 2 argument forms either array,dict or dict,array
-            if isinstance(args[0], numpy.ndarray):
-                self.data = ma.masked_array(args[0])
-            elif isinstance(args[0], dict):
-                self.metadata = args[0].copy()
-            elif isinstance(args[0], str) and isinstance(args[1], str):
-                self.load(args[0], args[1])
-            if isinstance(args[1], numpy.ndarray):
-                self.data = ma.masked_array(args[1])
-            elif isinstance(args[1], dict):
-                self.metadata = args[1].copy()
-        elif len(args) > 2:
-            self.load(*args, **kargs)
+        i=len(args) if len(args)<2 else 2
+        handler=[None,self._init_single,self._init_double,self._init_many][i]
+        if handler is not None:
+            handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
+        self.mask=False
 
     # Special Methods
+
+    def _init_single(self,*args,**kargs):
+        """Handles constructor with 1 arguement - called from __init__."""
+        arg=args[0]
+        if (isinstance(arg, (str,unicode)) or (isinstance(arg, bool) and not arg)):
+                                    # Filename- load datafile
+            t = self.load(arg, **kargs)
+            self.data = ma.masked_array(t.data)
+            self.metadata = t.metadata
+            self.column_headers = t.column_headers
+        elif isinstance(arg, numpy.ndarray):
+                                                # numpy.array - set data
+            self.data = ma.masked_array(arg)
+            self.column_headers = ['Column' + str(x)
+                                for x in range(numpy.shape(args[0])[1])]
+        elif isinstance(arg, dict):  # Dictionary - use as metadata
+            self.metadata = arg.copy()
+        elif isinstance(arg, DataFile):
+            self.metadata = arg.metadata.copy()
+            self.data = ma.masked_array(arg.data)
+            self.column_headers = copy.copy(arg.column_headers)
+            self.filename=arg.filename
+        else:
+            raise SyntaxError("No constructor")
+            
+    def _init_double(self,*args,**kargs):
+        """Two argument constructors handled here. Called form __init__"""
+        (arg0,arg1)=args
+        if isinstance(arg0, numpy.ndarray):
+            self.data = ma.masked_array(arg0)
+        elif isinstance(arg0, dict):
+            self.metadata = arg0.copy()
+        elif isinstance(arg0, str) and isinstance(arg1, str):
+            self.load(arg0, arg1)
+        if isinstance(arg1, numpy.ndarray):
+            self.data = ma.masked_array(arg1)
+        elif isinstance(arg1, dict):
+            self.metadata = arg1.copy()
+        
+    def _init_many(self,*args,**kargs):
+        """Handles more than two arguments to the constructor - called from init."""
+        self.load(*args, **kargs)
+        
 
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
                 @param other Either a numpy array object or an instance
-                of a \b DataFile object or a dictionary or a list of any of the above.
+                of a @b DataFile object or a dictionary or a list of any of the above.
 
                 If other is a dictionary then the keys of the dictionary are passed to
-                \b self.find_col to see if they match a column, in which case the
+                @b self.find_col to see if they match a column, in which case the
                 corresponding value will be used for theat column in the new row.
                 Columns which do not have a matching key will be set to NaN. If other has keys
                 that are not found as columns in self, additional columns are added.
@@ -377,41 +387,40 @@ class DataFile(object):
                 If other is a list, then the add method is called recursively for each element
                 of the list.
 
-                @return A Datafile object with the rows of \a other appended
+                @return A Datafile object with the rows of @a other appended
                 to the rows of the current object.
 
-                If \a other is a 1D numopy array with the same number of
-                elements as their are columns in \a self.data then the numpy
-               array is treated as a new row of data If \a ither is a 2D numpy
+                If @a other is a 1D numopy array with the same number of
+                elements as their are columns in @a self.data then the numpy
+               array is treated as a new row of data If @a ither is a 2D numpy
                array then it is appended if it has the same number of
-               columns and \a self.data."""
+               columns and @a self.data."""
         if isinstance(other, numpy.ndarray):
             if len(self.data) == 0:
                 t = numpy.atleast_2d(other)
                 c = numpy.shape(t)[1]
                 if len(self.column_headers) < c:
-                    self.column_headers.extend(map(lambda x: "Column_" +
-                                str(x), range(c - len(self.column_headers))))
+                    self.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
                 newdata = self.__class__(self)
                 newdata.data = t
-                return newdata
+                ret=newdata
             elif len(numpy.shape(other)) == 1:
                                     # 1D array, so assume a single row of data
                 if numpy.shape(other)[0] == numpy.shape(self.data)[1]:
                     newdata = self.__class__(self)
                     newdata.data = numpy.append(self.data,
                                                 numpy.atleast_2d(other), 0)
-                    return newdata
+                    ret=newdata
                 else:
-                    return NotImplemented
+                    ret=NotImplemented
             elif len(numpy.shape(other)) == 2 and numpy.shape(
                     other)[1] == numpy.shape(self.data)[1]:
                             # DataFile + array with correct number of columns
                 newdata = self.__class__(self)
                 newdata.data = numpy.append(self.data, other, 0)
-                return newdata
+                ret=newdata
             else:
-                return NotImplemented
+                ret=NotImplemented
         elif isinstance(other, DataFile):  # Appending another DataFile
             new_data=numpy.zeros((len(other), len(self.column_headers)))*numpy.nan
             for i in range(len(self.column_headers)):
@@ -424,7 +433,7 @@ class DataFile(object):
             for x in self.metadata:
                 newdata[x] = self[x]
             newdata.data = numpy.append(self.data, new_data, 0)
-            return newdata
+            ret=newdata
         elif isinstance(other,dict):
             newdata=self
             added_row=False
@@ -447,29 +456,30 @@ class DataFile(object):
             newdata.data=numpy.append(newdata.data,new_data,0)
             if added_row:
                 newdata.data=newdata.data[1:,:]
-            return newdata
+            ret=newdata
         elif isinstance(other,list):
             newdata=self
             for o in other:
                 newdata=newdata+o
-            return newdata
+            ret=newdata
         else:
-            return NotImplemented('Failed in DataFile')
+            ret=NotImplemented('Failed in DataFile')
+        return ret
 
     def __and__(self, other):
         """Implements the & operator to concatenate columns of data in a
-        \b Stoner.DataFile object.
+        @b Stoner.DataFile object.
 
-        @param other Either a numpy array or \b Stoner.DataFile object
-        @return A \b Stoner.DataFile object with the columns of other con
+        @param other Either a numpy array or @b Stoner.DataFile object
+        @return A @b Stoner.DataFile object with the columns of other con
         catenated as new columns at the end of the self object.
 
-        Whether \a other is a numopy array of \b Stoner.DataFile, it must
+        Whether @a other is a numopy array of @b Stoner.DataFile, it must
         have the same or fewer rows than the self object.
-        The size of \a other is increased with zeros for the extra rows.
-        If \a other is a 1D numpy array it is treated as a column vector.
+        The size of @a other is increased with zeros for the extra rows.
+        If @a other is a 1D numpy array it is treated as a column vector.
         The new columns are given blank column headers, but the
-        length of the \b Stoner.DataFile.column_headers is
+        length of the @b Stoner.DataFile.column_headers is
         increased to match the actual number of columns.
         """
         newdata=self.__class__(self.clone)
@@ -513,7 +523,7 @@ class DataFile(object):
             newdata.metadata.update(other.metadata)
             newdata.data = numpy.append(newdata.data, other.data, 1)
         else:
-            return NotImplemented
+            newdata=NotImplemented
         return newdata
 
     def __contains__(self, item):
@@ -528,7 +538,7 @@ class DataFile(object):
         if isinstance(item,str):
             del(self.metadata[item])
         else:
-            self.del_rows[item]
+            self.del_rows(item)
 
     def __dir__(self):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
@@ -573,7 +583,7 @@ class DataFile(object):
 
     def __getattr__(self, name):
         """
-        Called for \b DataFile.x to handle some special pseudo attributes
+        Called for @b DataFile.x to handle some special pseudo attributes
         and otherwise to act as a shortcut for @b DataFile.column
 
         @param name The name of the attribute to be returned.
@@ -598,20 +608,22 @@ class DataFile(object):
               "records":self._getattr_records,
               "shape":self._getattr_shape,
               "subclasses":self._getattr_subclasses
-              } 
+              }
         if name in easy:
             return easy[name]()
-        else:
+        elif len(self.column_headers)>0:
             try:
-                return self.column(name)
+                col=self.find_col(name)
+                return self.column(col)
             except KeyError:
-                raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
+                pass
+        raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
 
     def _getattr_clone(self):
         """Gets a deep copy of the current DataFile
         """
         return self.__class__(copy.deepcopy(self))
-        
+
     def _getattr_dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys.
         """
@@ -621,12 +633,12 @@ class DataFile(object):
         """Return the numpy dtype attribute of the data
         """
         return self.data.dtype
-        
+
     def _getattr_mask(self):
         """Returns the mask of the data array.
         """
         return ma.getmaskarray(self.data)
-        
+
     def _getattr_records(self):
         """Returns the data as a numpy structured data array. If columns names are duplicated then they
         are made unique
@@ -641,29 +653,29 @@ class DataFile(object):
         print ch
         dtype = [(x, self.dtype) for x in ch]
         return self.data.view(dtype=dtype).reshape(len(self))
-        
+
     def _getattr_shape(self):
         """Pass through the numpy shape attribute of the data
-        """        
+        """
         return self.data.shape
-        
+
     def _getattr_subclasses(self):
         """Return a list of all in memory subclasses of this DataFile
-        """        
+        """
         return {x.__name__:x for x in itersubclasses(DataFile)}
-    
+
     def __getitem__(self, name):
-        """Called for \b DataFile[x] to return either a row or iterm of
+        """Called for @b DataFile[x] to return either a row or iterm of
         metadata
 
         @param name The name, slice or number of the part of the
-        \b DataFile to be returned.
+        @b DataFile to be returned.
         @return an item of metadata or row(s) of data.
-        \li If \a name is an integer then the corresponding single row will be
+        @li If @a name is an integer then the corresponding single row will be
         rturned
-        \li if \a name is a slice, then the corresponding rows of data will be
-        returned. \li If \a name is a string then the metadata dictionary item
-        with the correspondoing key will be returned. If \a name is a numpy
+        @li if @a name is a slice, then the corresponding rows of data will be
+        returned. @li If @a name is a string then the metadata dictionary item
+        with the correspondoing key will be returned. If @a name is a numpy
         array then the corresponding rows of the data are returned.
 
         If a tuple is supplied as the arguement then there are a number of
@@ -725,16 +737,16 @@ class DataFile(object):
         newdata=self.__class__()
         if isinstance(other, str):
             lines=itertools.imap(lambda x:x,  other.splitlines())
-            newdata._read_iterable(lines)
+            newdata.__read_iterable(lines)
         elif isinstance(other, collections.Iterable):
-            newdata._read_iterable(other)
+            newdata.__read_iterable(other)
         return newdata
 
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
 
-        self._read_iterable(fileinput.FileInput(self.filename))
+        self.__read_iterable(fileinput.FileInput(self.filename))
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate
@@ -752,7 +764,7 @@ class DataFile(object):
         """
         self.metadata[key] = value
 
-    def _read_iterable(self, reader):
+    def __read_iterable(self, reader):
         row=reader.next().split('\t')
         if row[0].strip()!="TDI Format 1.5":
             raise RuntimeError("Not a TDI File")
@@ -785,25 +797,25 @@ class DataFile(object):
         return (DataFile, (), self.__getstate__())
 
     def __repr__(self):
-        """Outputs the \b Stoner.DataFile object in TDI format.
-        This allows one to print any \b Stoner.DataFile to a stream based
+        """Outputs the @b Stoner.DataFile object in TDI format.
+        This allows one to print any @b Stoner.DataFile to a stream based
                 object andgenerate a reasonable textual representation of
                 the data.shape
 
-                @return \a self in a textual format. """
+                @return @a self in a textual format. """
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
         self.data=ma.masked_array(numpy.atleast_2d(self.data))
-        (r, c) = numpy.shape(self.data)
+        r = numpy.shape(self.data)[0]
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
             outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
         if m > r:  # More metadata
             for x in range(r, m):
-                    outp = outp + md[x] + "\n"
+                outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             for x in range(m, r):
-                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+                outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
         return outp
 
 
@@ -811,7 +823,7 @@ class DataFile(object):
         """Handles attempts to set attributes not covered with class attribute variables.
         @param name Name of attribute to set. Details of possible attributes below:
 
-        \b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
+        @b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
         the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
         if name=="mask":
             if callable(value):
@@ -824,7 +836,7 @@ class DataFile(object):
             self.__dict__[name] = value
 
     def __setitem__(self, name, value):
-        """Called for \b DataFile[\em name ] = \em value to write mewtadata
+        """Called for @b DataFile[@em name ] = @em value to write mewtadata
         entries.
             @param name The string key used to access the metadata
             @param value The value to be written into the metadata.
@@ -972,7 +984,7 @@ class DataFile(object):
         """Generator method that will iterate over columns of data
 
         @return Returns the next column of data."""
-        (r, c) = numpy.shape(self.data)
+        c = numpy.shape(self.data)[1]
         for col in range(c):
             yield self.data[col]
 
@@ -981,14 +993,14 @@ class DataFile(object):
             @param col A column index (passed via @B DataFile.find_col)
             to the column to be deleted
             @param duplicates (default False) look for duplicated columns
-            @return The @b DataFile object with the column deleted.            
-            If \a duplicates is True and \a col is None then all duplicate columns are removed,
-            if \a col is not None and \a duplicates is True then all duplicates of the specified
+            @return The @b DataFile object with the column deleted.
+            If @a duplicates is True and @a col is None then all duplicate columns are removed,
+            if @a col is not None and @a duplicates is True then all duplicates of the specified
             column are removed.
-            If \a duplicates is false then \a col must not be None otherwise a RuntimeError is raised.
-            If \a col is a list (\a duplicates should not be None) then the all the matching columns are found.
+            If @a duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
+            If @a col is a list (@a duplicates should not be None) then the all the matching columns are found.
             """
-        
+
         if duplicates:
             ch=self.column_headers
             dups=[]
@@ -1025,13 +1037,13 @@ class DataFile(object):
         @param col Column containg values to search for. Maybe a list or slice
         @param val Specifies rows to delete. Maybe None - in which case
         whole columns are deleted, a float in which case rows whose column
-        \b col = \b val are deleted or a function - in which case rows where
+        @b col = @b val are deleted or a function - in which case rows where
         the function evaluates to be true are deleted.
         @return The current object
 
-        If \b val is a function it should take two arguments - a float and a
+        If @b val is a function it should take two arguments - a float and a
         list. The float is the value of the
-        current row that corresponds to column \b col abd the second
+        current row that corresponds to column @b col abd the second
         argument is the current row.
             """
         if isinstance(col, slice) and val is None:
@@ -1064,7 +1076,7 @@ class DataFile(object):
             return self.metadata.keys()
         else:
             test = re.compile(pattern)
-            possible = filter(test.search, self.metadata.keys())
+            possible = [x for x in self.metadata.keys() if test.search(x)]
             return possible
 
     def filter(self,func=None,cols=None,reset=True):
@@ -1079,19 +1091,18 @@ class DataFile(object):
         if cols is None:
             cols=range(self.data.shape[1])
         cols=[self.find_col(c) for c in cols]
-        if self.data.mask.shape!=self.data.shape:
-            self.data.mask=numpy.zeros(self.data.shape)
+        self.data.mask=ma.getmaskarray(self.data)
         i=0
         if reset: self.data.mask=False
         for r in self.rows():
             self.data.mask[i,:]=not func(r[cols])
             i=i+1
         return self
-        
+
     def find_col(self, col):
         """Indexes the column headers in order to locate a column of data.shape
         Indexing can be by supplying an integer, a string, a regular experssion,
-        a slice or a list of any of the above.      
+        a slice or a list of any of the above.
         *   Integer indices are simply checked to ensure that they are in range
         *   String indices are first checked for an exact match against a column header
         if that fails they are then compiled to a regular expression and the first
@@ -1100,23 +1111,22 @@ class DataFile(object):
         first match found is taken. This allows additional regular expression options
         such as case insensitivity.
         *   A slice index is converted to a list of integers and processed as below
-        *   A list index returns the results of feading each item in the list at \b find_col
-        in turn.        
+        *   A list index returns the results of feading each item in the list at @b find_col
+        in turn.
         @param col Which column(s) to retuirn indices for.
 
-        @return  The matching column index as an integer or a \b KeyError
+        @return  The matching column index as an integer or a @b KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
             if not 0<=col<self.data.shape[1]:
                 raise IndexError('Attempting to index a non - existant column '+str(col))
-            pass
         elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
             col=str(col)
             if col in self.column_headers:  # and it is an exact string match
                 col = self.column_headers.index(col)
             else:  # ok we'll try for a regular expression
                 test = re.compile(col)
-                possible = filter(test.search, self.column_headers)
+                possible =[x for x in self.column_headers if test.search(x)]
                 if len(possible) == 0:
                     try:
                         col=int(col)
@@ -1127,18 +1137,18 @@ class DataFile(object):
                 else:
                     col = self.column_headers.index(possible[0])
         elif isinstance(col,re._pattern_type):
-                test = col
-                possible = filter(test.search, self.column_headers)
-                if len(possible) == 0:
-                    raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
-                else:
-                    col = self.column_headers.index(possible[0])
+            test = col
+            possible = [x for x in self.column_headers if test.search(x)]
+            if len(possible) == 0:
+                raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
+            else:
+                col = self.column_headers.index(possible[0])
         elif isinstance(col, slice):
             indices = col.indices(numpy.shape(self.data)[1])
             col = range(*indices)
             col = self.find_col(col)
         elif isinstance(col, list):
-            col = map(self.find_col, col)
+            col = [self.find_col(x) for x in col]
         else:
             raise TypeError('Column index must be an integer, string, \
             list or slice')
@@ -1186,10 +1196,11 @@ class DataFile(object):
             self.filename = filename
 
         failed=True
+        cls=self.__class__
         try:
             if filetype is None:
                 self.__parse_data()
-                self["Loaded as"]="DataFile"
+                self["Loaded as"]=cls.__name__
             else:
                 self.__class__(filetype(filename))
                 self["Loaded as"]=filetype.__name__
@@ -1231,7 +1242,7 @@ class DataFile(object):
                 return self.metadata[ky]
             else:
                 test = re.compile(ky)
-                possible = filter(test.search, self.metadata)
+                possible = [x for x in self.metadata if test.search(x)]
                 if len(possible) == 0:
                     raise KeyError("No metadata with keyname: " + ky)
                 elif len(possible) == 1:
@@ -1279,7 +1290,7 @@ class DataFile(object):
     def rows(self):
         """Generator method that will iterate over rows of data
         @return Returns the next row of data"""
-        (r, c) = numpy.shape(self.data)
+        r = numpy.shape(self.data)[0]
         for row in range(r):
             yield self.data[row]
 
@@ -1289,10 +1300,10 @@ class DataFile(object):
         the file 'filename'
 
 
-                @param filename = None  filename to save data as, if this is \
-                b None then the current filename for the object is used
+                @param filename = None  filename to save data as, if this is @b
+                None then the current filename for the object is used
                     If this is not set, then then a file dialog is used. If f
-                    ilename is \b False then a file dialog is force.
+                    ilename is @b False then a file dialog is force.
                 @return The current object
                 """
         if filename is None:
