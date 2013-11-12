@@ -150,7 +150,7 @@ class typeHintedDict(dict):
             try:            
                 i="[{".index(value[0])
                 ret=eval(tests[i])
-            except SyntaxError,ValueError:
+            except (SyntaxError,ValueError):
                 if value.lower() in ['true', 'ues','on','false','no','off']:
                     ret=value.lower() in ['true','yes','on'] #Booleab
                 else:
