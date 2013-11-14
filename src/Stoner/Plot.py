@@ -69,12 +69,12 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
-    def plot_xy(self,column_x, column_y, format=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
+    def plot_xy(self,column_x, column_y, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
 
                 @param column_x An integer or string that indexes the relevant column for the x data
                 @param column_y An integer go string that indexes the y-data column
-                @param format Optional string parameter that specifies the format for the plot - see matplotlib documentation for details
+                @param fmt Optional string parameter that specifies the format for the plot - see matplotlib documentation for details
                 @param show_plot = True Turns on interactive plot control
                 @param title Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 @param save_filename Filename used to save the plot
@@ -126,19 +126,19 @@ class PlotFile(DataFile):
                     kwords=copy(temp_kwords)
                     kwords["label"]=self.column_headers[column_y[ix]]
                 yt=y[:, ix]
-                if isinstance(format, list):
-                    plotter(x,yt, format[ix], figure=figure,**kwords)
-                elif format==None:
+                if isinstance(fmt, list):
+                    plotter(x,yt, fmt[ix], figure=figure,**kwords)
+                elif fmt==None:
                     plotter(x,y, figure=figure, **kwords)
                 else:
-                    plotter(x,y, format, figure=figure, label=self.column_headers[column_y[ix]],**kwords)
+                    plotter(x,y, fmt, figure=figure, label=self.column_headers[column_y[ix]],**kwords)
         else:
             if "label" not in kwords:
                 kwords["label"]=self.column_headers[column_y]
-            if format==None:
+            if fmt==None:
                 plotter(x,y, figure=figure, **kwords)
             else:
-                plotter(x,y, format, figure=figure, **kwords)
+                plotter(x,y, fmt, figure=figure, **kwords)
 
         pyplot.xlabel(str(self.column_headers[column_x]))
         if isinstance(column_y, list):
