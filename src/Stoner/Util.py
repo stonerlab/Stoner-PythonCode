@@ -9,6 +9,7 @@ Created on Tue Oct 08 20:14:34 2013
 
 from Stoner.Analysis import AnalyseFile as _AF_
 from Stoner.Folders import DataFolder as _SF_
+from numpy import log10,floor
 
 def split_up_down(data,col,folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
@@ -51,3 +52,28 @@ def split_up_down(data,col,folder=None):
         output.groups["rising"].files.append(working1)
         output.groups["falling"].files.append(working2)
     return output
+
+def format_error(value,error,latex=False):
+    """This handles the printing out of the answer with the uncertaintly to 1sf and the
+    value to no more sf's than the uncertainty."""
+    if error==0.0: # special case for zero uncertainty
+        return repr(value)
+    e2=error
+    u_mag=floor(log10(abs(error))) #work out the scale of the error
+    error=round(error/10**u_mag)*10**u_mag # round the error, but this could round to 0.x0
+    u_mag=floor(log10(error)) # so go round the loop again
+    error=round(e2/10**u_mag)*10**u_mag # and get a new error magnitude
+    if latex:
+        if u_mag<0:        
+            fmt_str=r"${}\pm{:."+str(int(abs(u_mag)))+"f}$"
+        else:
+            fmt_str=r"{}\pm{}$"
+    else:
+        if u_mag<0:        
+            fmt_str=r"{}+/-{:."+str(int(abs(u_mag)))+"f}"
+        else:
+            fmt_str=r"{}+/-{}"
+        
+
+    value=round(value/10**u_mag)*10**u_mag
+    return fmt_str.format(value,error)
