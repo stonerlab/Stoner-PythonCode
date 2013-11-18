@@ -6,6 +6,7 @@ from .Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit
 import numpy
+import numpy.ma as ma
 from scipy.integrate import cumtrapz
 import math
 import sys
@@ -64,7 +65,7 @@ class AnalyseFile(DataFile):
         A = numpy.zeros((2*num_points+1, pol_degree+1), float)
         for i in range(2*num_points+1):
             for j in range(pol_degree+1):
-                A[i,j] = numpy.pow(x[i], j)
+                A[i,j] = x[i]**j
 
         # calculate diff_order-th row of inv(A^T A)
         ATA = numpy.dot(A.transpose(), A)
@@ -167,7 +168,7 @@ class AnalyseFile(DataFile):
         from inspect import getargspec
 
         working=self.search(xcol, bounds, [xcol, ycol])
-        working=numpy.reshape(working[numpy.logical_not(working.mask)],(-1,2))
+        working=ma.mask_rowcols(working,axis=0)
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
         if result is not None:
             args=getargspec(func)[0]
@@ -587,9 +588,8 @@ class AnalyseFile(DataFile):
         if result is not None:
             if isinstance(result,bool) and result:
                 self.add_column(resultdata,result_name)
-            elif isinstance(result,str) or isinstance(result,int):
-                print type(result)
-                print result
+            else:
+                result_name=self.column_headers[self.find_col(result)]
                 self.add_column(resultdata,result_name,index=result,replace=True)
         return resultdata[-1]
 
