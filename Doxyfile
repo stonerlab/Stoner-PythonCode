@@ -1269,7 +1269,7 @@ MATHJAX_EXTENSIONS     =
 # typically be disabled. For large projects the javascript based search engine 
 # can be slow, then enabling SERVER_BASED_SEARCH may provide a better solution.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES
 
 # When the SERVER_BASED_SEARCH tag is enabled the search engine will be 
 # implemented using a web server instead of a web client using Javascript. 
@@ -1498,7 +1498,7 @@ MAN_LINKS              = NO
 # generate an XML file that captures the structure of 
 # the code including all documentation.
 
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 

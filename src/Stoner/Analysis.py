@@ -6,6 +6,7 @@ from .Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit
 import numpy
+import numpy.ma as ma
 from scipy.integrate import cumtrapz
 import math
 import sys
@@ -60,12 +61,11 @@ class AnalyseFile(DataFile):
         # and maybe other functions than monomials ....
 
         x = numpy.arange(-num_points, num_points+1, dtype=int)
-        monom = lambda x, deg : math.pow(x, deg)
 
         A = numpy.zeros((2*num_points+1, pol_degree+1), float)
         for i in range(2*num_points+1):
             for j in range(pol_degree+1):
-                A[i,j] = monom(x[i], j)
+                A[i,j] = x[i]**j
 
         # calculate diff_order-th row of inv(A^T A)
         ATA = numpy.dot(A.transpose(), A)
@@ -100,7 +100,8 @@ class AnalyseFile(DataFile):
             expr=lambda x:(x[1]<=threshold) & (x[2]>threshold)
         else:
             expr=lambda x:False
-        return filter(lambda x:x>0,  map(lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2]), filter(expr, sdat)))
+        intr=lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2])
+        return [intr(x) for x in sdat if expr(x) and intr(x)>0]
 
     def __mpf_fn(self, p, **fa):
         # Parameter values are passed in "p"
@@ -121,7 +122,7 @@ class AnalyseFile(DataFile):
         status = 0
         return [status, (y-model)/err]
 
-    def mpfit_iterfunct(self, myfunct, p, iter, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
+    def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
         # Prints a single . for each iteration
         sys.stdout.write('.')
         sys.stdout.flush()
@@ -167,10 +168,10 @@ class AnalyseFile(DataFile):
         from inspect import getargspec
 
         working=self.search(xcol, bounds, [xcol, ycol])
-        working=numpy.reshape(working[numpy.logical_not(working.mask)],(-1,2))
+        working=ma.mask_rowcols(working,axis=0)
         popt, pcov=curve_fit(func,  working[:, 0], working[:, 1], p0, sigma)
         if result is not None:
-            (args, varargs, keywords, defaults)=getargspec(func)
+            args=getargspec(func)[0]
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
             xc=self.find_col(xcol)
@@ -471,7 +472,7 @@ class AnalyseFile(DataFile):
             d=numpy.append(d, numpy.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
             return r[p:-p]
-    def threshold(self, col, threshold, rising=True, falling=False,xcol=None,all=False):
+    def threshold(self, col, threshold, rising=True, falling=False,xcol=None,all_vals=False):
         """Finds partial indices where the data in column passes the threshold, rising or falling
         @param col Column index to look for data in
         @param threshold Value to look for in column col
@@ -479,19 +480,22 @@ class AnalyseFile(DataFile):
         @param falling (default False) look for case where data is fallinh in value
         @param xcol (default None) rather than returning a fractional row index, return the
         interpola,ted value in column xcol
-        @param all (default False) return all crossing points of the threshold or just the first.
+        @param all_vals (default False) return all crossing points of the threshold or just the first.
         @return Either a sing;le fractional row index, or an in terpolated x value"""
         current=self.column(col)
         if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
-            ret=[self.__threshold(x, current, rising=rising, falling=falling,all=all) for x in threshold]
-        else:
-            if all:
+            if all_vals:
+                ret=[self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
+            else:
+                ret=[self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+#        else:
+            if all_vals:
                 ret=self.__threshold(threshold, current, rising=rising, falling=falling)
             else:
                 ret=[self.__threshold(threshold, current, rising=rising, falling=falling)[0]]               
         if xcol is not None:
             ret=[self.interpolate(r)[self.find_col(xcol)] for r in ret]
-        if all:
+        if all_vals:
             return ret
         else:
             return ret[0]
@@ -516,7 +520,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def peaks(self, ycol, width, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sorted=False):
+    def peaks(self, ycol, width, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
         """AnalysisFile.peaks(ycol,width,signficance, xcol=None.peaks=True, troughs=False)
 
         Locates peaks and/or troughs in a column of data by using SG-differentiation.
@@ -532,13 +536,14 @@ class AnalyseFile(DataFile):
             @param xcol name or index of data column that p[rovides the x-coordinate (default None)
             @param peaks select whether to measure peaks in data (default True)
             @param troughs select whether to measure troughs in data (default False)
+            @param sort: Sor the results by significance of peak
             @return If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
         from scipy.interpolate import interp1d
         assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
         if significance is None: # Guess the significance based on the range of y and width settings
-            dm, p=self.max(ycol)
-            dp, p=self.min(ycol)
+            dm=self.max(ycol)[0]
+            dp=self.min(ycol)[0]
             dm=dm-dp
             significance=0.2*dm/(4*width**2)
         d1=self.SG_Filter(ycol, width, poly, 1)
@@ -552,9 +557,9 @@ class AnalyseFile(DataFile):
         w=abs(xcol[0]-xcol[width]) # Approximate width of our search peak in xcol
         z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
         z=[zv for zv in z if zv>w/2.0 and zv<max(xcol)-w/2.0] #Throw out peaks or troughts too near the ends
-        if sorted:
+        if sort:
             z=numpy.take(z, numpy.argsort(d2(z)))
-        return index(filter(lambda x: numpy.abs(d2(x))>significance, z))
+        return index([x for x in z if numpy.abs(d2(x))>significance])
 
     def integrate(self,xcol,ycol,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
         """Inegrate a column of data, optionally returning the cumulative integral
@@ -583,9 +588,8 @@ class AnalyseFile(DataFile):
         if result is not None:
             if isinstance(result,bool) and result:
                 self.add_column(resultdata,result_name)
-            elif isinstance(result,str) or isinstance(result,int):
-                print type(result)
-                print result
+            else:
+                result_name=self.column_headers[self.find_col(result)]
                 self.add_column(resultdata,result_name,index=result,replace=True)
         return resultdata[-1]
 
