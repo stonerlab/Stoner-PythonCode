@@ -233,7 +233,7 @@ for step in steps:
                 else:
                     p.plot_xy(vcol,"Fit",label=" ".join(answer),title=filenameonly)
                     pylab.legend()                    
-            print "\n".join(answer)
+                print "\n".join(answer)
             for i in range(len(parinfo)):
                 d[parinfo[i]['parname']]=m.params[i]
             
