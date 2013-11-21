@@ -1,9 +1,10 @@
-"""Stoner.Core provides the core classes for the Stoner package. Classes include:
+"""Stoner.Core provides the core classes for the Stoner package.
 
-* @b DataFile - the main class that represents a set of experimental data
-* @b typeHintedDict - a dictionary subclass that tries to keep track of the type of data
-                       stored in each element to facilitate export to strongly typed
-                       languages (like NI LabVIEW)
+Classes:
+    `DataFile` :the base class for representing a single data set of experimental data.
+    `typeHintedDict`: a dictionary subclass that tries to keep track of the underlying type of data
+                    stored in each element. This class facilitates the export to strongly typed
+                    languages such as LabVIEW.
 """
 import fileinput
 import re
@@ -19,12 +20,24 @@ import collections
 
 class _evaluatable(object):
     """A very simple class that is just a placeholder"""
-
+    pass
 
 
 class typeHintedDict(dict):
-    """Extends a regular dict to include type hints of what
-    each key contains."""
+    """Extends a regular dict to include type hints of what each key contains.
+
+    Attributes:
+        _typehints (dict): The backing store for the type hint information
+        __regexGetType (re): USed to extract the type hint from a string
+        __regexSignedInt (re): matches type hint strings for signed intergers
+        __regexUnsignedInt (re): matches the type hint string for unsigned integers
+        __regexFloat (re): matches the type hint strings for floats
+        __regexBoolean (re): matches the type hint string for a boolean
+        __regexStrng (re): matches the type hint string for a string variable
+        __regexEvaluatable (re): matches the type hint string for a compoind data type
+        __types (dict): mapping of type hinted types to actual Python types
+        __tests (dict): mapping of the regex patterns to actual python types    
+    """
     _typehints = dict()
 
     __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}')
@@ -51,17 +64,18 @@ class typeHintedDict(dict):
         # some string types
 
     def __init__(self, *args, **kargs):
-        """Calls the dict() constructor, then runs through the keys of the
+        """typeHintedDict constructor method.
+        
+        Args:
+            *args, **kargs: Pass any parameters through to the dict() constructor.
+            
+        
+        Calls the dict() constructor, then runs through the keys of the
         created dictionary and either uses the string type embedded in
         the keyname to generate the type hint (and remove the
         embedded string type from the keyname) or determines the likely
         type hint from the value of the dict element.
-
-        @param *args Pass through all parameters to the dict() constructor.
-        @param **kargs Pass through all keyword parameters to dict()
-                                constructor
-        @return A dictionary like object that understands the type of data
-                    stored in each key."""
+        """
 
         super(typeHintedDict, self).__init__(*args, **kargs)
         for key in self:  # Chekc through all the keys and see if they contain
@@ -82,9 +96,13 @@ class typeHintedDict(dict):
         """Determines the correct string type to return for common python
         classes. Understands booleans, strings, integers, floats and numpy
         arrays(as arrays), and dictionaries (as clusters).
-
-                @param value The data value to determine the type hint for.
-                @return A type hint string"""
+        
+        Args:
+            value (any): The data value to determine the type hint for.
+            
+        Returns:
+            A type hint string
+        """
         typ = "String"
         for t in self.__types:
             if isinstance(value, self.__types[t]):
@@ -108,16 +126,19 @@ class typeHintedDict(dict):
         """Based on a string type t, return value cast to an
         appropriate python class
 
-        @param t is a string representing the type
-        @param value is the data value to be munged into the
-                    correct class
-        @return Returns the munged data value
+        Args:
+            t (string): is a string representing the type
+            value (any): is the data value to be munged into the
+                        correct class
+        Returns:
+            Returns the munged data value
 
-        Detail: The class has a series of precompiled regular
-        expressions that will match type strings, a list of these has been
-        constructed with instances of the matching Python classes. These
-        are tested in turn and if the type string matches the constructor of
-        the associated python class is called with value as its argument."""
+        Detail: 
+            The class has a series of precompiled regular
+            expressions that will match type strings, a list of these has been
+            constructed with instances of the matching Python classes. These
+            are tested in turn and if the type string matches the constructor of
+            the associated python class is called with value as its argument."""
         ret=None
         for (regexp, valuetype) in self.__tests:
             m = regexp.search(t)
@@ -139,8 +160,11 @@ class typeHintedDict(dict):
 
     def string_to_type(self, value):
         """Given a string value try to work out if there is a better python type dor the value
-        @param value String representation of he value
-        @return A python object of the natural type for value"""
+        
+        Args:
+            value (string): string representation of he value
+        Returns: 
+            A python object of the natural type for value"""
         ret=None        
         if not isinstance(value, str):
             raise TypeError("Value must be a string not a "+str(type(value)))
@@ -166,8 +190,10 @@ class typeHintedDict(dict):
 
     def _get_name_(self,name):
         """Checks a string name for an embedded type hint and strips it out.
-        @param name String containing the name with possible type hint embedeed
-        @return (name,typehint) a tuple containing just the name of the mateadata and (if found
+        Args:
+            name(string): String containing the name with possible type hint embedeed
+        Returns: 
+            (name,typehint) (tuple): A tuple containing just the name of the mateadata and (if found
         the type hint string),
         """
         name=str(name)
@@ -184,8 +210,10 @@ class typeHintedDict(dict):
     def __getitem__(self,name):
         """Provides a get item method that checks whether its been given a typehint in the
         item name and deals with it appropriately.
-        @param name metadata key to retrieve
-        @return metadata value
+        Args:
+            name (string): metadata key to retrieve
+        Returns: 
+            metadata value
         """
         (name,typehint)=self._get_name_(name)
         value=super(typeHintedDict,self).__getitem__(name)
@@ -197,10 +225,15 @@ class typeHintedDict(dict):
         """Provides a method to set an item in the dict, checking the key for
         an embedded type hint or inspecting the value as necessary.
 
-        NB If you provide an embedded type string it is your responsibility
-        to make sure that it correctly describes the actual data
-        typehintDict does not verify that your data and type string are
-        compatible."""
+        Args:
+            name (string): The metadata keyname
+            value (any): The value to store in the metadata string
+
+        Note:
+            If you provide an embedded type string it is your responsibility
+            to make sure that it correctly describes the actual data
+            typehintDict does not verify that your data and type string are
+            compatible."""
         name,typehint=self._get_name_(name)
         if typehint is not None:
             self._typehints[name] = typehint
@@ -216,13 +249,20 @@ class typeHintedDict(dict):
                 self.__mungevalue(self._typehints[name], value))
 
     def __delitem__(self, name):
-        """Deletes the specified key"""
+        """Deletes the specified key
+        
+        Args:
+            name (string): The keyname to be deleted"""
         name=self._get_name_(name)[0]
         del(self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
     def copy(self):
-        """Provides a copy method that is aware of the type hinting strings"""
+        """Provides a copy method that is aware of the type hinting strings
+
+        Returns:
+            A copy of the current typeHintedDict
+        """
         ret=typeHintedDict()
         for k in self.keys():
             t=self._typehints[k]
@@ -232,10 +272,12 @@ class typeHintedDict(dict):
 
     def type(self, key):
         """Returns the typehint for the given k(s)
-
-        @param key Either a single string key or a iterable type containing
+        
+        Args:
+            key (string or sequence of strings): Either a single string key or a iterable type containing
                 keys
-        @return the string type hint (or a list of string type hints)"""
+        Returns: 
+            The string type hint (or a list of string type hints)"""
         if isinstance(key, str):
             return self._typehints[key]
         else:
@@ -247,35 +289,35 @@ class typeHintedDict(dict):
     def export(self, key):
         """Exports a single metadata value to a string representation with type
         hint
-        @param key The metadata key to export
-        @return A string of the format : key{type hint} = value"""
+        
+        Args:
+            key (string): The metadata key to export
+        Returns: 
+            A string of the format : key{type hint} = value"""
         return key + "{" + self.type(key) + "}=" + str(self[key])
 
 
 
 
 class DataFile(object):
-    """@b Stoner.Core.DataFile is the base class object that represents
+    """:py:class:`Stoner.Core.DataFile` is the base class object that represents
     a matrix of data, associated metadata and column headers.
 
-    Attributes
-    ----------
-
-    * @b data A 2D numpy masked array of data (usually floats)
-    * @b metadata A typeHintedDict of key-value metadata pairs. The dictionary
-    tries to retain information about the type of data so as to aid import and
-    export from CM group labVIEw code.
-    * @b column_headers A list of strings of the column names of the data
-    * @b title A string giving the title of the measurement
-    * @filename A string giving the current filename of the data if loaded from or
-    already saved to disc. This is the default filename used by the @b load() and @b save()
-    methods
-
-    * @b mask Returns the current mask applied to the numerical data equivalent to self.data.mask
-    * @b shape Returns the shape of the data (rows,columns) - equivalent to self.data.shape
-    * @b records Returns the data in the form of a list of dictionaries
-    * @b clone Creates a deep copy of the DataFile object
-
+    Attributes:
+        data (2D Array) A numpy masked array of data (usually floats)
+        metadata (typeHintedDict): of key-value metadata pairs. The dictionary
+            tries to retain information about the type of data so as to aid import and
+            export from CM group LabVIEw code.
+        column_headers (list): of strings of the column names of the data
+        title (string): The title of the measurement
+        filename (string): The current filename of the data if loaded from or
+            already saved to disc. This is the default filename used by the @b load() and @b save()
+    
+    Methods:
+        mask: Returns the current mask applied to the numerical data equivalent to self.data.mask
+        shape: Returns the shape of the data (rows,columns) - equivalent to self.data.shape
+        records: Returns the data in the form of a list of dictionaries
+        clone: Creates a deep copy of the :py:class`DataFile` object
     """
 
     #Class attributes
@@ -289,30 +331,32 @@ class DataFile(object):
     #   INITIALISATION
 
     def __init__(self, *args, **kargs):
-        """Constructor method
+        """Constructor method for :py:class:`DataFile`
 
         various forms are recognised:
-        @li DataFile('filename',<optional filetype>,<args>)
-        Creates the new DataFile object and then executes the @b DataFile.load
-        method to load data from the given @a filename
-        @li DataFile(array)
-        Creates a new DataFile object and assigns the @a array to the
-        @b DataFile.data  attribute.
-        @li DataFile(dictionary)
-        Creates the new DataFile object, but initialises the metadata with
-        @a dictionary
-        @li  DataFile(array,dictionary),
-        Creates the new DataFile object and does the combination of the
-        previous two forms.
-        @li DataFile(DataFile)
-        Creates the new DataFile object and initialises all data from the
-        existing @b DataFile instance. This on the face of it does the same as
-        the assignment operator, but is more useful when one or other of the
-        DataFile objects is an instance of a sub - class of DataFile
+        :function DataFile('filename',<optional filetype>,<args>)
+            Creates the new DataFile object and then executes the @b DataFile.load
+            method to load data from the given @a filename
+        :function DataFile(array)
+            Creates a new DataFile object and assigns the @a array to the
+            `DataFile.data`  attribute.
+        :function DataFile(dictionary)
+            Creates the new DataFile object, but initialises the metadata with 
+            :parameter dictionary
+        :function DataFile(array,dictionary),
+            Creates the new DataFile object and does the combination of the
+            previous two forms.
+        :function DataFile(DataFile)
+            Creates the new DataFile object and initialises all data from the
+            existing :py:class:`DataFile` instance. This on the face of it does the same as
+            the assignment operator, but is more useful when one or other of the
+            DataFile objects is an instance of a sub - class of DataFile
 
-        @param *args Variable number of arguments that match one of the
-        definitions above
-        @return A new instance of the DataFile class.
+        Args:
+            *args Variable number of arguments that match one of the
+            definitions above
+        Returns: 
+            A new instance of the DataFile class.
         """
         # init instance attributes
         self.debug=False
@@ -375,11 +419,11 @@ class DataFile(object):
 
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data
-                @param other Either a numpy array object or an instance
-                of a @b DataFile object or a dictionary or a list of any of the above.
-
+        
+        Args:
+            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
                 If other is a dictionary then the keys of the dictionary are passed to
-                @b self.find_col to see if they match a column, in which case the
+                :py:meth:`find_col` to see if they match a column, in which case the
                 corresponding value will be used for theat column in the new row.
                 Columns which do not have a matching key will be set to NaN. If other has keys
                 that are not found as columns in self, additional columns are added.
@@ -387,10 +431,10 @@ class DataFile(object):
                 If other is a list, then the add method is called recursively for each element
                 of the list.
 
-                @return A Datafile object with the rows of @a other appended
+                Returns: A Datafile object with the rows of @a other appended
                 to the rows of the current object.
 
-                If @a other is a 1D numopy array with the same number of
+                If other is a 1D numopy array with the same number of
                 elements as their are columns in @a self.data then the numpy
                array is treated as a new row of data If @a ither is a 2D numpy
                array then it is appended if it has the same number of
@@ -468,19 +512,23 @@ class DataFile(object):
 
     def __and__(self, other):
         """Implements the & operator to concatenate columns of data in a
-        @b Stoner.DataFile object.
+        :py:class:`DataFile` object.
 
-        @param other Either a numpy array or @b Stoner.DataFile object
-        @return A @b Stoner.DataFile object with the columns of other con
+        Args:
+            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
+        
+        Returns:
+            A :py:class:`DataFile` object with the columns of other con
         catenated as new columns at the end of the self object.
 
-        Whether @a other is a numopy array of @b Stoner.DataFile, it must
-        have the same or fewer rows than the self object.
-        The size of @a other is increased with zeros for the extra rows.
-        If @a other is a 1D numpy array it is treated as a column vector.
-        The new columns are given blank column headers, but the
-        length of the @b Stoner.DataFile.column_headers is
-        increased to match the actual number of columns.
+        Note:        
+            Whether other is a numopy array of :py:class:`DataFile`, it must
+            have the same or fewer rows than the self object.
+            The size of @a other is increased with zeros for the extra rows.
+            If other is a 1D numpy array it is treated as a column vector.
+            The new columns are given blank column headers, but the
+            length of the @b Stoner.DataFile.column_headers is
+            increased to match the actual number of columns.
         """
         newdata=self.__class__(self.clone)
         if len(newdata.data.shape)<2:
@@ -528,13 +576,19 @@ class DataFile(object):
 
     def __contains__(self, item):
         """Operator function for membertship tests - used to check metadata contents
-        @param item String of metadata key
-        @return iem in self.metadata"""
+
+        Args:
+            item(string): name of metadata key
+        
+        Returns:
+            iem in self.metadata"""
         return item in self.metadata
 
     def __delitem__(self,item):
         """Implements row or metadata deletion.
-        @param item either an ingteger to delete a row or a string to delete metadata"""
+        
+        Args:
+            item (ingteger or string):  row index or name of metadata to delete"""
         if isinstance(item,str):
             del(self.metadata[item])
         else:
@@ -551,8 +605,11 @@ class DataFile(object):
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b DataFile objects
 
-        @param mode The mode of the file operation  'r' or 'w'
-        @return A filename to be used for the file operation."""
+        Args:
+            mode (string): The mode of the file operation  'r' or 'w'
+        
+        Returns: 
+            A filename to be used for the file operation."""
         try:
             from enthought.pyface.api import FileDialog, OK
         except ImportError:
@@ -583,21 +640,23 @@ class DataFile(object):
 
     def __getattr__(self, name):
         """
-        Called for @b DataFile.x to handle some special pseudo attributes
+        Called for :py:class:`DataFile`.x to handle some special pseudo attributes
         and otherwise to act as a shortcut for @b DataFile.column
 
-        @param name The name of the attribute to be returned.
-        These include: records
-        @return the DataFile object in various forms
+        Args:        
+            name (string): The name of the attribute to be returned.
+        
+        Returns: 
+            the DataFile object in various forms
 
         Supported attributes:
-        @a records - return the DataFile data as a numpy structured
+        - records - return the DataFile data as a numpy structured
         array - i.e. rows of elements whose keys are column headings
-        @a clone - returns a deep copy of the current DataFile instance
+        - clone - returns a deep copy of the current DataFile instance
 
-        Otherwise the @a name parameter is tried as an argument to
-        ~b DataFile.column and the resultant column isreturned. If
-        @b DataFile.column raises a KeyError this is remapped as an
+        Otherwise the name parameter is tried as an argument to
+        :py:meth:`DataFile.column` and the resultant column isreturned. If
+        DataFile.column raises a KeyError this is remapped as an
         AttributeError.
        """
 
@@ -665,30 +724,33 @@ class DataFile(object):
         return {x.__name__:x for x in itersubclasses(DataFile)}
 
     def __getitem__(self, name):
-        """Called for @b DataFile[x] to return either a row or iterm of
+        """Called for DataFile[x] to return either a row or iterm of
         metadata
 
-        @param name The name, slice or number of the part of the
-        @b DataFile to be returned.
-        @return an item of metadata or row(s) of data.
-        @li If @a name is an integer then the corresponding single row will be
-        rturned
-        @li if @a name is a slice, then the corresponding rows of data will be
-        returned. @li If @a name is a string then the metadata dictionary item
-        with the correspondoing key will be returned. If @a name is a numpy
-        array then the corresponding rows of the data are returned.
-
-        If a tuple is supplied as the arguement then there are a number of
-        possible behaviours. If the first element of the tuple is a string,
-        then it is assumed that it is the nth element of the named metadata is
-        required. Otherwise itis assumed that it is a particular element
-        within a column determined by the second part of the tuple that is
-        required. e.g. DataFile['Temp',5] would return the 6th element of the
-        list of elements in the metadata called 'Temp', while
-        DataFile[5,'Temp'] would return the 6th row of the data column
-        called 'Temp' and DataFile[5,3] would return the 6th element of the
-        4th column.
-
+        Args:
+            name (string or slice or int): The name, slice or number of the part of the
+            :py:class:`DataFile` to be returned.
+        
+        Returns:
+            an item of metadata or row(s) of data.
+            
+        - If name is an integer then the corresponding single row will be returned
+        - if name is a slice, then the corresponding rows of data will be returned. 
+        - If name is a string then the metadata dictionary item             with the correspondoing key will be returned. 
+        - If name is a numpy array then the corresponding rows of the data are returned.
+        - If a tuple is supplied as the arguement then there are a number of possible behaviours.
+            - If the first element of the tuple is a string, then it is assumed that it is the nth element of the named metadata is required. 
+            - Otherwise itis assumed that it is a particular element within a column determined by the second part of the tuple that is required. 
+            
+        Examples:
+            DataFile['Temp',5] would return the 6th element of the
+            list of elements in the metadata called 'Temp', while
+        
+            DataFile[5,'Temp'] would return the 6th row of the data column
+            called 'Temp' 
+            
+            and DataFile[5,3] would return the 6th element of the
+            4th column.
         """
         if isinstance(name, slice):
             indices = name.indices(len(self))
@@ -725,14 +787,21 @@ class DataFile(object):
 
     def __len__(self):
         """Return the length of the data.shape
-                @return Returns the number of rows of data
+                Returns: Returns the number of rows of data
                 """
         return numpy.shape(self.data)[0]
 
     def __lshift__(self, other):
-        """Overird the left shift << operator for a string or an iterable object to import using the __read_iterable() function
-        @param other Either a string or iterable object used to source the DataFile object
-        @return A new DataFile object
+        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function
+        
+        Args:
+            other (string or iterable object): Used to source the DataFile object
+        
+        Returns: 
+            A new DataFile object
+            
+        TODO:
+            Make code work better with streams
         """
         newdata=self.__class__()
         if isinstance(other, str):
@@ -752,19 +821,25 @@ class DataFile(object):
         """Parse the metadata string, removing the type hints into a separate
         dictionary from the metadata
 
-        @param key The name of the metadata parameter to be written,
+        Args:
+            key (string): The name of the metadata parameter to be written,
         possibly including a type hinting string.
-        @value The value of the item of metadata.
-        @return Nothing, but the current instance's metadata is changed.
+            value (any): The value of the item of metadata.
+            
+        Returns: 
+            Nothing, but the current instance's metadata is changed.
 
-        Uses the typehint to set the type correctly in the dictionary
+        Notes:
+            Uses the typehint to set the type correctly in the dictionary
 
-        NB All the clever work of managing the typehinting is done in the
+            All the clever work of managing the typehinting is done in the
         metadata dictionary object now.
         """
         self.metadata[key] = value
 
     def __read_iterable(self, reader):
+        """Internal method to read a string representation of py:class:`DataFile` in line by line."""
+        
         row=reader.next().split('\t')
         if row[0].strip()!="TDI Format 1.5":
             raise RuntimeError("Not a TDI File")
@@ -797,12 +872,13 @@ class DataFile(object):
         return (DataFile, (), self.__getstate__())
 
     def __repr__(self):
-        """Outputs the @b Stoner.DataFile object in TDI format.
-        This allows one to print any @b Stoner.DataFile to a stream based
+        """Outputs the :py:class:`DataFile` object in TDI format.
+        This allows one to print any :py:class:`DataFile` to a stream based
                 object andgenerate a reasonable textual representation of
                 the data.shape
 
-                @return @a self in a textual format. """
+                Returns: 
+                    self in a textual format. """
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
         self.data=ma.masked_array(numpy.atleast_2d(self.data))
@@ -821,10 +897,13 @@ class DataFile(object):
 
     def __setattr__(self, name, value):
         """Handles attempts to set attributes not covered with class attribute variables.
-        @param name Name of attribute to set. Details of possible attributes below:
+        
+        Args:
+            name (string): Name of attribute to set. Details of possible attributes below:
 
-        @b mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles
-        the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask"""
+        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask
+        - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
+        """
         if name=="mask":
             if callable(value):
                 self._set_mask(value, invert=False)
@@ -838,14 +917,17 @@ class DataFile(object):
     def __setitem__(self, name, value):
         """Called for @b DataFile[@em name ] = @em value to write mewtadata
         entries.
-            @param name The string key used to access the metadata
-            @param value The value to be written into the metadata.
-            Currently bool, int, float and string values are correctly
-            handled. Everythign else is treated as a string.
-            @return Nothing."""
+        
+        Args:
+            name (string): The string key used to access the metadata
+            value (any): The value to be written into the metadata. Currently bool, int, float and string values are correctly handled. Everythign else is treated as a string.
+        
+        Returns: 
+            Nothing."""
         self.metadata[name] = value
 
     def __setstate__(self, state):
+        """Internal function for pickling."""
         self.data = ma.masked_array(state["data"])
         self.column_headers = state["column_headers"]
         self.metadata = state["metadata"]
@@ -854,9 +936,11 @@ class DataFile(object):
 
     def _set_mask(self, func, invert=False,  cumulative=False, col=0):
         """Applies func to each row in self.data and uses the result to set the mask for the row
-        @param func A Callable object of the form lambda x:True where x is a row of data (numpy
-        @pram invert Optionally invert te reult of the func test so that it unmasks data instead
-        @param cumulative if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
+        
+        Args:
+            func (callable): A Callable object of the form lambda x:True where x is a row of data (numpy
+            invert (bool): Optionally invert te reult of the func test so that it unmasks data instead
+            cumulative (bool): if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
 
         i=-1
         args=len(inspect.getargs(func.__code__)[0])
@@ -880,8 +964,13 @@ class DataFile(object):
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied
-        @param mask The new data mask to apply (defaults to None = unmask the data
-        @return None"""
+        
+        Args:
+            mask (:py:class:numpy.array of bool or bool or None): 
+                The new data mask to apply (defaults to None = unmask the data
+
+        Returns: 
+            Nothing"""
         self._masks.append(self.mask)
         if mask is None:
             self.data.mask=False
@@ -890,7 +979,9 @@ class DataFile(object):
 
     def _pop_mask(self):
         """Replaces the mask on the data with the last one stored by _push_mask()
-        @return None"""
+        
+        Returns: 
+            Nothing"""
         self.mask=False
         self.mask=self._masks.pop()
         if len(self._masks)==0:
@@ -902,18 +993,20 @@ class DataFile(object):
                    func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile
 
-        @param column_data An array or list of data to append or insert or
-        a callable function that will generate new data
-        @param column_header The text to set the column header to, if
-        not supplied then defaults to 'col#'
-        @param index The  index (numeric or string) to insert (or
-        replace) the data
-        @param func_args If @a column_data is a callable object, then this
-        argument can be used to supply a dictionary of function arguments
-        to the callable object.
-        @param replace Replace the data or insert the data (default)
-        @return The @b DataFile instance with the additonal column inserted.
-        NB also modifies the original DataFile Instance."""
+        Args:
+            column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
+            
+        Keywords:            
+            column_header (string): The text to set the column header to, if not supplied then defaults to 'col#'
+            index (int or string): The  index (numeric or string) to insert (or replace) the data
+            func_args (dict): If column_data is a callable object, then this argument can be used to supply a dictionary of function arguments to the callable object.
+        :   replace (bool): Replace the data or insert the data (default)
+        
+        Returns: 
+            The :py:class:`DataFile` instance with the additonal column inserted.
+        
+        Note:
+            Also modifies the original DataFile Instance."""
         if index is None:
             index = len(self.column_headers)
             replace = False
@@ -975,30 +1068,40 @@ class DataFile(object):
 
     def column(self, col):
         """Extracts a column of data by index or name
-
-        @param col is the column index as defined for @b DataFile.find_col
-        @returns one or more columns of data"""
+        
+        Args:
+            col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`
+            
+        Returns:s 
+            one or more columns of data"""
         return self.data[:, self.find_col(col)]
 
     def columns(self):
         """Generator method that will iterate over columns of data
 
-        @return Returns the next column of data."""
+        Yields: 
+            Returns the next column of data."""
         c = numpy.shape(self.data)[1]
         for col in range(c):
             yield self.data[col]
 
     def del_column(self, col=None,duplicates=False):
         """Deletes a column from the current @b DataFile object
-            @param col A column index (passed via @B DataFile.find_col)
-            to the column to be deleted
-            @param duplicates (default False) look for duplicated columns
-            @return The @b DataFile object with the column deleted.
-            If @a duplicates is True and @a col is None then all duplicate columns are removed,
-            if @a col is not None and @a duplicates is True then all duplicates of the specified
-            column are removed.
-            If @a duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
-            If @a col is a list (@a duplicates should not be None) then the all the matching columns are found.
+        
+        Args:
+            col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
+            
+        Keywords:            
+            duplicates (bool): (default False) look for duplicated columns
+            
+        Returns: 
+            The :py:class:`DataFile` object with the column deleted.
+            
+        Notes:
+            - If duplicates is True and col is None then all duplicate columns are removed,
+            - if col is not None and duplicates is True then all duplicates of the specified column are removed.
+            - If duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
+            - If col is a list (duplicates should not be None) then the all the matching columns are found.
             """
 
         if duplicates:
@@ -1034,17 +1137,24 @@ class DataFile(object):
     def del_rows(self, col, val=None):
         """Searchs in the numerica data for the lines that match and deletes
         the corresponding rows
-        @param col Column containg values to search for. Maybe a list or slice
-        @param val Specifies rows to delete. Maybe None - in which case
-        whole columns are deleted, a float in which case rows whose column
-        @b col = @b val are deleted or a function - in which case rows where
-        the function evaluates to be true are deleted.
-        @return The current object
+        
+        Args:
+            col (list,slice,int,string or re) Column containg values to search for.
+            val (float or callable): Specifies rows to delete. Maybe 
+                - None - in which case whole columns are deleted, 
+                - a float in which case rows whose columncol = val are deleted 
+                - or a function - in which case rows where the function evaluates to be true are deleted.
+                
+        Returns: 
+            The current object
 
-        If @b val is a function it should take two arguments - a float and a
-        list. The float is the value of the
-        current row that corresponds to column @b col abd the second
-        argument is the current row.
+        Notes:
+            If val is a function it should take two arguments - a float and a
+            list. The float is the value of the current row that corresponds to column col abd the second
+            argument is the current row.
+            
+        TODO:
+            Implement val is a tuple for deletinging in a range of values.
             """
         if isinstance(col, slice) and val is None:
             indices = col.indices(len(self))
@@ -1068,10 +1178,12 @@ class DataFile(object):
     def dir(self, pattern=None):
         """ Return a list of keys in the metadata, filtering wiht a regular
         expression if necessary
-
-                @param pattern is a regular expression or None to
-                list all keys
-                @return Returns a list of metadata keys."""
+        
+        Keywords:
+            pattern (re): is a regular expression or None to list all keys
+            
+        Returns: 
+            Returns a list of metadata keys."""
         if pattern == None:
             return self.metadata.keys()
         else:
@@ -1081,12 +1193,14 @@ class DataFile(object):
 
     def filter(self,func=None,cols=None,reset=True):
         """Function to set the mask on rows of data by evaluating a function for each row
-        @param is a callable object that should take a single listas a p[arameter representing one row.
-        @param cols a list of column indices that are used to form the list of values passed to func.
-        @param reset determines whether the mask is reset before doing the filter (otherwise rows already masked
-        out will be ignored in the filter (so the filter is logically or'd))
-        The default value of None results in a complete row being passed into func.
-        @return The current object with the mask set
+
+        Args:
+            func (callable): is a callable object that should take a single listas a p[arameter representing one row.
+            cols (list): a list of column indices that are used to form the list of values passed to func.
+            reset (bool): determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored in the filter (so the filter is logically or'd)) The default value of None results in a complete row being passed into func.
+        
+        Returns: 
+            The current object with the mask set
         """
         if cols is None:
             cols=range(self.data.shape[1])
@@ -1101,21 +1215,24 @@ class DataFile(object):
 
     def find_col(self, col):
         """Indexes the column headers in order to locate a column of data.shape
-        Indexing can be by supplying an integer, a string, a regular experssion,
-        a slice or a list of any of the above.
-        *   Integer indices are simply checked to ensure that they are in range
-        *   String indices are first checked for an exact match against a column header
-        if that fails they are then compiled to a regular expression and the first
-        match to a column header is taken.
-        *   A regular expression index is simply matched against the column headers and the
-        first match found is taken. This allows additional regular expression options
-        such as case insensitivity.
-        *   A slice index is converted to a list of integers and processed as below
-        *   A list index returns the results of feading each item in the list at @b find_col
-        in turn.
-        @param col Which column(s) to retuirn indices for.
 
-        @return  The matching column index as an integer or a @b KeyError
+        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
+        -   Integer indices are simply checked to ensure that they are in range
+        -   String indices are first checked for an exact match against a column header
+            if that fails they are then compiled to a regular expression and the first
+            match to a column header is taken.
+        -   A regular expression index is simply matched against the column headers and the
+            first match found is taken. This allows additional regular expression options
+            such as case insensitivity.
+        -   A slice index is converted to a list of integers and processed as below
+        -   A list index returns the results of feading each item in the list at @b find_col
+            in turn.
+        
+        Args:        
+            col (int, a string, a re, a slice or a list):  Which column(s) to retuirn indices for.
+
+        Returns:
+            The matching column index as an integer or a @b KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
             if not 0<=col<self.data.shape[1]:
@@ -1156,9 +1273,13 @@ class DataFile(object):
 
 
     def get(self, item):
-        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the DataFolder class
-        @param item A string representing the metadata keyname
-        @return self.metadata[item] or None if item not in self.metadata"""
+        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the :py:class:`Stoner.Folder.DataFolder` class
+        
+        Args:        
+            item (string): A string representing the metadata keyname
+        
+        Returns: 
+            self.metadata[item] or None if item not in self.metadata"""
         try:
             return self[item]
         except KeyError:
@@ -1170,24 +1291,46 @@ class DataFile(object):
 
     def insert_rows(self, row, new_data):
         """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
-        @param row Data row to insert into
-        @param new_data a numpy array with an equal number of columns as the main data array containing the new row(s) of data to insert
-        @return A copy of the modified DataFile object"""
+
+        Args:
+            row (int):  Data row to insert into
+            new_data (numpy array): An array with an equal number of columns as the main data array containing the new row(s) of data to insert
+        
+        Returns: 
+            A copy of the modified DataFile object"""
         self.data=numpy.insert(self.data, row,  new_data, 0)
         return self
 
     def keys(self):
         """An alias for @b DataFile.dir(None)
 
-        @return a list of all the keys in the metadata dictionary"""
+        Returns: 
+            a list of all the keys in the metadata dictionary"""
         return self.dir(None)
 
     def load(self, filename=None, auto_load=True,  filetype=None,  *args, **kargs):
-        """DataFile.load(filename,type,*args)
-        @param filename path to file to load
-        @param auto_load If True (default) then the load routine tries all the subclasses of DataFile in turn to load the file
-        @param filetype If not none then tries using filetype as the loader
-        @return A copy of the loaded instance
+        """Loads the :py:class:`DataFile` in from disc guessing a better subclass if necessary.
+        
+        Args:
+            filename (string or None): path to file to load
+
+        Keywords:            
+            auto_load (bool): If True (default) then the load routine tries all the subclasses of :py:class:`DataFile` in turn to load the file
+            filetype (:py:class:`DataFile`): If not none then tries using filetype as the loader
+        
+        Returns: 
+            A copy of the loaded instance
+            
+        Notes:
+            Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.
+            
+            Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
+            
+            Each subclass is scanned in turn for a class attribute priority which governs the order in which they are tried. Subclasses which can
+            make an early positive determination that a file has the correct format can have higher priority levels. Classes should return
+            a suitable expcetion if they fail to load the file.
+            
+            If not class can load a file successfully then a RunttimeError exception is raised.
             """
 
         if filename is None or (isinstance(filename, bool) and not filename):
@@ -1232,11 +1375,17 @@ class DataFile(object):
 
     def meta(self, ky):
         """Returns some metadata
+        
+        Args:
+            ky (string): The name of the metadata item to be returned.
+        
+        Returns: 
+            Returns the item of metadata.
 
-        @param ky The name of the metadata item to be returned.
-        If @a key is not an exact match for an item of metadata,
-        then a regular expression match is carried out.
-        @return Returns the item of metadata."""
+        Notes:
+           If key is not an exact match for an item of metadata,
+            then a regular expression match is carried out.            
+            """
         if isinstance(ky, str):  # Ok we go at it with a string
             if ky in self.metadata:
                 return self.metadata[ky]
@@ -1259,9 +1408,13 @@ class DataFile(object):
 
     def rename(self, old_col, new_col):
         """Renames columns without changing the underlying data
-        @param old_col Old column index or name (using standard rules)
-        @param new_col New name of column
-        @return A copy of self
+        
+        Args:
+            old_col (string, int, re):  Old column index or name (using standard rules)
+            new_col (string): New name of column
+            
+        Returns: 
+            A copy of self
         """
 
         old_col=self.find_col(old_col)
@@ -1271,11 +1424,15 @@ class DataFile(object):
     def reorder_columns(self, cols, headers_too=True):
         """Construct a new data array from the original data by assembling
         the columns in the order given
-                @param cols A list of column indices (referred to the oriignal
+        
+        Args:
+            cols (list of column indices): (referred to the oriignal
                 data set) from which to assemble the new data set
-                @param headers_too Reorder the column headers in the same
+            headers_too (bool): Reorder the column headers in the same
                 way as the data (defaults to True)
-                @return A copy of the modified DataFile object"""
+        
+        Returns: 
+            A copy of the modified DataFile object"""
         if headers_too:
             self.column_headers = [self.column_headers[self.find_col(x)]
                                                             for x in cols]
@@ -1289,7 +1446,9 @@ class DataFile(object):
 
     def rows(self):
         """Generator method that will iterate over rows of data
-        @return Returns the next row of data"""
+        
+        Yields:
+            Returns the next row of data"""
         r = numpy.shape(self.data)[0]
         for row in range(r):
             yield self.data[row]
@@ -1299,12 +1458,14 @@ class DataFile(object):
         """Saves a string representation of the current DataFile object into
         the file 'filename'
 
-
-                @param filename = None  filename to save data as, if this is @b
+        Args:
+            filename (string, bool or None): Filename to save data as, if this is 
                 None then the current filename for the object is used
-                    If this is not set, then then a file dialog is used. If f
-                    ilename is @b False then a file dialog is force.
-                @return The current object
+                If this is not set, then then a file dialog is used. If f
+                ilename is False then a file dialog is forced.
+        
+        Returns: 
+            The current object
                 """
         if filename is None:
             filename = self.filename
@@ -1321,10 +1482,22 @@ class DataFile(object):
         """Searches in the numerica data part of the file for lines
         that match and returns  the corresponding rows
 
-        @param xcol is a Search Column Index
-        @param value is a numerical value, a tuple, a list of numbers or tuples, or a callable function
-        @param columns is either a index or array of indices or None (default) for all columns.
-        @return numpy array of matching rows or column values depending on the arguements.
+        Args:
+            col (int,string.re) is a Search Column Index
+            value (float, tuple, list or callable): Value to look for
+            columns (index or array of indices or None (default)): columns of data to return - none represents all columns.
+            
+        Returns: 
+            numpy array of matching rows or column values depending on the arguements.
+
+        Notes:
+            The value is interpreted as follows:
+            - a float looks for an exact match
+            - a list is a list of exact matches
+            - a tuple should contain a (min,max) value.
+            - A callable object should have accept a float and an array representing the value of
+                the search col for the the current row and the entire row.
+
 
         """
         rows=[]
@@ -1358,9 +1531,15 @@ class DataFile(object):
     def sort(self, order=None):
         """Sorts the data by column name. Sorts in place and returns a
         copy of the sorted data object for chaining methods
-        @param order Either a scalar integer or string or a list of integer
-        or strings that represent the sort order
-        @return A copy of the sorted object
+        
+        Args:
+            order (column index or list of indices): Represent the sort order
+            
+        Returns: 
+            A copy of the sorted object
+            
+        TODO:
+            Add a reversed keyword and also a key keyword to take a sorting function
         """
 
         if order is None:
@@ -1379,17 +1558,21 @@ class DataFile(object):
         """Swaps pairs of columns in the data. Useful for reordering
         data for idiot programs that expect columns in a fixed order.
 
-            @param swp  A tuple of list of tuples of two elements. Each
-            element will be iused as a column index (using the normal rules
-            for matching columns).  The two elements represent the two
-            columns that are to be swapped.
-            @param headers_too A boolean that indicates the column headers
-            are swapped as well
-            @return A copy of the modified DataFile objects
+        Args:
+            swp  (tuple of list of tuples of two elements): Each
+                element will be iused as a column index (using the normal rules
+                for matching columns).  The two elements represent the two
+                columns that are to be swapped.
+            headers_too (bool): Indicates the column headers
+                are swapped as well
+            
+            Returns: 
+                A copy of the modified DataFile objects
 
-            If @swp is a list, then the function is called recursively on each
-            element of the list. Thus in principle the @swp could contain
-            lists of lists of tuples
+            Notes:
+                If swp is a list, then the function is called recursively on each
+                element of the list. Thus in principle the @swp could contain
+                lists of lists of tuples
         """
         if isinstance(swp, list):
             for item in swp:
