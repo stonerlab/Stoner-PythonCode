@@ -71,6 +71,8 @@ htmlhelp:
 	@echo
 	@echo "Build finished; now you can run HTML Help Workshop with the" \
 	      ".hhp project file in $(BUILDDIR)/htmlhelp."
+	-hhc.exe $(BUILDDIR)/htmlhelp/StonerPackagedoc.hhp
+	cp $(BUILDDIR)/htmlhelp/StonerPackagedoc.chm ../Pythoncode_API.chm
 
 qthelp:
 	$(SPHINXBUILD) -b qthelp $(ALLSPHINXOPTS) $(BUILDDIR)/qthelp
