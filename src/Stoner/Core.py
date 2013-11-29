@@ -996,7 +996,7 @@ class DataFile(object):
         Args:
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
             
-        Keywords:            
+        Keyword Arguments:            
             column_header (string): The text to set the column header to, if not supplied then defaults to 'col#'
             index (int or string): The  index (numeric or string) to insert (or replace) the data
             func_args (dict): If column_data is a callable object, then this argument can be used to supply a dictionary of function arguments to the callable object.
@@ -1091,7 +1091,7 @@ class DataFile(object):
         Args:
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
             
-        Keywords:            
+        Keyword Arguments:            
             duplicates (bool): (default False) look for duplicated columns
             
         Returns: 
@@ -1179,7 +1179,7 @@ class DataFile(object):
         """ Return a list of keys in the metadata, filtering wiht a regular
         expression if necessary
         
-        Keywords:
+        Keyword Arguments:
             pattern (re): is a regular expression or None to list all keys
             
         Returns: 
@@ -1314,7 +1314,7 @@ class DataFile(object):
         Args:
             filename (string or None): path to file to load
 
-        Keywords:            
+        Keyword Arguments:            
             auto_load (bool): If True (default) then the load routine tries all the subclasses of :py:class:`DataFile` in turn to load the file
             filetype (:py:class:`DataFile`): If not none then tries using filetype as the loader
         
@@ -1591,7 +1591,14 @@ class DataFile(object):
 
     def unique(self, col, return_index=False, return_inverse=False):
         """Return the unique values from the specified column - pass through
-        for numpy.unique"""
+        for numpy.unique
+        
+        Args:
+            col (index): Column to look for unique values in
+            
+        Keyword Arguments:
+        
+        """
         return numpy.unique(self.column(col), return_index, return_inverse)
 
 

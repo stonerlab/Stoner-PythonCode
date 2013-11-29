@@ -77,3 +77,22 @@ def format_error(value,error,latex=False):
 
     value=round(value/10**u_mag)*10**u_mag
     return fmt_str.format(value,error)
+    
+def ordinal(value):
+    """Format an integer into an ordinal string.
+    
+    Args:
+        value (int): Number to be written as an ordinal string
+        
+    Return:
+        Ordinal String such as '1st','2nd' etc."""
+    if not isinstance(value,int):
+        raise ValueError
+        
+    last_digit=value%10
+    if value%100 in [11,12,13]:
+        suffix="th"
+    else:
+        suffix=["th","st","nd","rd","th","th","th","th","th","th"][last_digit]
+        
+    return "{}{}".format(value,suffix)
