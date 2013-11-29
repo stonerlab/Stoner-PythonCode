@@ -30,11 +30,21 @@ class CSVFile(DataFile):
 
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
-
-        @param filename File to load. If None then the existing filename is used,
-        if False, then a file dialog will be used.
-        @param header_line The line in the file that contains the column headers.
-        If None, then column headers are auotmatically generated."""
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+            
+        Keyword Arguments:            
+            header_line (int): The line in the file that contains the column headers.
+                If None, then column headers are auotmatically generated.
+            data_line (int): The line on which the data starts
+            data_delim (string): Thge delimiter used for separating data values
+            header_delim (strong): The delimiter used for separating header values
+            
+        Returns:
+            A copy of the current object after loading the data.
+                """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -60,9 +70,15 @@ class CSVFile(DataFile):
 
     def save(self,filename, deliminator=','):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
-                @param filename Fielname to save as (using the same rules as for the load routines)
-                @param deliminator Record deliniminator (defaults to a comma)
-                @return A copy of itself."""
+        
+        Args:
+            filename (string): Fielname to save as (using the same rules as for the load routines)
+            
+        Keyword Arguments:            
+            deliminator (string): Record deliniminator (defaults to a comma)
+            
+        Returns:
+            A copy of itself."""
         if filename is None:
             filename=self.filename
         if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
@@ -83,13 +99,19 @@ class VSMFile(DataFile):
 
     def __parse_VSM(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
-        @param header_line is the line on which the column headers are recorded (default 3)
-        @param data_line is the first line of tabulated data (default 7)
-        @param data_delim is the deliminator for the data rows (default = space)
-        @param header_delim is the deliminator for the header values (default = tab)
-        @return Nothing, but updates the current instances data
 
-        NBThe default values are configured fir read VSM data files
+        Keyword Arguments:            
+            header_line (int): The line in the file that contains the column headers.
+                If None, then column headers are auotmatically generated.
+            data_line (int): The line on which the data starts
+            data_delim (string): Thge delimiter used for separating data values
+            header_delim (strong): The delimiter used for separating header values
+            
+        Returns:
+            Nothing, but modifies the current object.
+
+        Note:
+            The default values are configured fir read VSM data files
         """
         f=fileinput.FileInput(self.filename) # Read filename linewise
         self['Timestamp']=f.next().strip()
@@ -118,6 +140,15 @@ class VSMFile(DataFile):
 
 
     def load(self,filename=None,*args, **kargs):
+        """VSM file loader routine.
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -132,7 +163,16 @@ class BigBlueFile(CSVFile):
     priority=64 # Also rather generic file format so make a lower priority
 
     def load(self,filename=None,*args, **kargs):
-        """Just call the parent class but with the right parameters set"""
+        """Just call the parent class but with the right parameters set
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
+
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -147,7 +187,15 @@ class QDSquidVSMFile(DataFile):
     priority=16 # Is able to make a positive ID of its file content, so get priority to check
 
     def load(self,filename=None,*args, **kargs):
-        """Just call the parent class but with the right parameters set"""
+        """QDSquidVSM file loader routine.
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -187,7 +235,15 @@ class OpenGDAFile(DataFile):
     priority=16 # Makes a positive ID of it's file type so give priority
 
     def load(self,filename=None,*args, **kargs):
-        """Just call the parent class but with the right parameters set"""
+        """OpenGDA file loader routine.
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -226,14 +282,19 @@ class SPCFile(DataFile):
     
     def load(self,filename=None,*args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
 
-        @param filename String containing file to be loaded
-        @param args Pass through all other arguements
-        @return An instance of Stoner.DataFile with the data loaded
+        Todo:
+            Implement the second form of the file that stores multiple x-y curves in the one file.
 
-        @todo Implement the second form of the file that stores multiple x-y curves in the one file.
-
-        @note Metadata keys are pretty much as specified in the spc.h file that defines the filerformat."""
+        Notes:
+            Metadata keys are pretty much as specified in the spc.h file that defines the filerformat."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -332,11 +393,15 @@ class TDMSFile(DataFile):
     priority=16 # Makes a positive ID of its file contents
 
     def load(self, filename=None, *args, **kargs):
-        """Reads a TDMS File
-
-        @param filename String containing file to be loaded
-        @param args Pass through all other arguements
-        @return An instance of Stoner.DataFile with the data loaded"""
+        """TDMS file loader routine.
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -364,11 +429,15 @@ class RigakuFile(DataFile):
     priority=16 #Can make a positive id of file from first line
     
     def load(self, filename=None, *args, **kargs):
-        """Reads an Rigaku ras file including handling the metadata nicely
-        
-        @param filename String containing the file to be laoded
-        @param args Passthrough of of all other positional arguments
-        @kargs Holds all keyword arguments"""
+        """Reads an Rigaku ras file including handling the metadata nicely        
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         from ast import literal_eval
         if filename is None or not filename:
             self.get_filename('r')
@@ -435,12 +504,17 @@ class XRDFile(DataFile):
 
     def load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
 
-        @param filename String containing file to be loaded
-        @param args Pass through all other arguements
-        @return An instance of Stoner.DataFile with the data loaded
-
-        Format is ini file like but not enough to do standard inifile processing - in particular one can have multiple sections with the same name (!)
+        Notes:
+            Format is ini file like but not enough to do standard inifile processing - in particular 
+            one can have multiple sections with the same name (!)
     """
         if filename is None or not filename:
             self.get_filename('r')
@@ -552,14 +626,21 @@ class BNLFile(DataFile):
 
     def load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
         """BNLFile.load(filename)
-        @param filename  Filename to be loaded
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
 
-        Overwrites load method in DataFile class, no header positions and data
-        positions are needed because of the hash title structure used in BNL files.
-
-        Normally its good to use _parse_plain_data method from DataFile class
-        to load data but unfortunately Brookhaven data isn't very plain so there's
-        a new method below.
+        Notes:
+            Overwrites load method in DataFile class, no header positions and data
+            positions are needed because of the hash title structure used in BNL files.
+    
+            Normally its good to use _parse_plain_data method from DataFile class
+            to load data but unfortunately Brookhaven data isn't very plain so there's
+            a new method below.
         """
         self.filename=filename
         self.__parse_BNL_data() #call an internal function rather than put it in load function
@@ -572,7 +653,15 @@ class FmokeFile(DataFile):
     priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
 
     def load(self,filename=None,*args, **kargs):
-        """Just call the parent class but with the right parameters set"""
+        """Sheffield Fovussed MOKE file loader routine.
+        
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+                
+        Returns:
+            A copy of the itself after loading the data.
+            """
         if filename is None or not filename:
             self.get_filename('r')
         else:

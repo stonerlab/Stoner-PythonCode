@@ -16,9 +16,14 @@
 #
 
 """
+                            MPFit Module
+                            ============
+
 Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 
-								   AUTHORS
+                            Authors
+                            -------
+           
   The original version of this software, called LMFIT, was written in FORTRAN
   as part of the MINPACK-1 package by XXX.
 
@@ -41,8 +46,14 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 	Madingley road, CB3 0HA, Cambridge, UK
 	koposov@ast.cam.ac.uk
 	Updated versions can be found at http://code.google.com/p/astrolibpy/source/browse/trunk/
+ 
+ Gavin Burnell added this to the Stoner Package
+     Gavin Burnell, University of Leeds, School of Physics and Astronomy
+     Woodhouse Lane, Leeds, LS2 9JT, UK
+     Updated versions can be found at http://github.com/~gb119/Stoner-package/
 
-								 DESCRIPTION
+                                Description
+                                -----------
 
  MPFIT uses the Levenberg-Marquardt technique to solve the
  least-squares problem.  In its typical use, MPFIT will be used to
@@ -95,8 +106,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
  instead.  MPFIT is customized, based on MINPACK-1, to the
  least-squares minimization problem.
 
-
-							   USER FUNCTION
+                            User Function
+                            -------------
 
  The user must define a function which returns the appropriate
  values as specified above.  The function should return the weighted
@@ -132,8 +143,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
  status return described above. If status is set to a number between
  -15 and -1 then MPFIT will stop the calculation and return to the caller.
 
-
-							ANALYTIC DERIVATIVES
+                            Analytical Derovatives
+                            ----------------------
 
  In the search for the best-fit solution, MPFIT by default
  calculates derivatives numerically via a finite difference
@@ -187,7 +198,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
  50x50 image, "dp" should be 50x50xNPAR.
 
 
-		   CONSTRAINING PARAMETER VALUES WITH THE PARINFO KEYWORD
+		   Constraining Paremeters with the parinfo keyword
+             ------------------------------------------------
 
  The behavior of MPFIT can be modified with respect to each
  parameter to be fitted.  A parameter value can be fixed; simple
@@ -203,35 +215,35 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
  numerical order.  The dictionary can have the following keys
  (none are required, keys are case insensitive):
 
-	'value' - the starting parameter value (but see the START_PARAMS
+	- 'value' : the starting parameter value (but see the START_PARAMS
 			 parameter for more information).
 
-	'fixed' - a boolean value, whether the parameter is to be held
+	- 'fixed' : a boolean value, whether the parameter is to be held
 			 fixed or not.  Fixed parameters are not varied by
 			 MPFIT, but are passed on to MYFUNCT for evaluation.
 
-	'limited' - a two-element boolean array.  If the first/second
+	- 'limited' : a two-element boolean array.  If the first/second
 			   element is set, then the parameter is bounded on the
 			   lower/upper side.  A parameter can be bounded on both
 			   sides.  Both LIMITED and LIMITS must be given
 			   together.
 
-	'limits' - a two-element float array.  Gives the
+	- 'limits' : a two-element float array.  Gives the
 			  parameter limits on the lower and upper sides,
 			  respectively.  Zero, one or two of these values can be
 			  set, depending on the values of LIMITED.  Both LIMITED
 			  and LIMITS must be given together.
 
-	'parname' - a string, giving the name of the parameter.  The
+	- 'parname' : a string, giving the name of the parameter.  The
 			   fitting code of MPFIT does not use this tag in any
 			   way.  However, the default iterfunct will print the
 			   parameter name if available.
 
-	'step' - the step size to be used in calculating the numerical
+	- 'step' : the step size to be used in calculating the numerical
 			derivatives.  If set to zero, then the step size is
 			computed automatically.  Ignored when AUTODERIVATIVE=0.
 
-	'mpside' - the sidedness of the finite difference when computing
+	- 'mpside' : the sidedness of the finite difference when computing
 			  numerical derivatives.  This field can take four
 			  values:
 
@@ -248,14 +260,14 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 			 principle more precise, but requires twice as many
 			 function evaluations.  Default: 0.
 
-	'mpmaxstep' - the maximum change to be made in the parameter
+	- 'mpmaxstep' : the maximum change to be made in the parameter
 				 value.  During the fitting process, the parameter
 				 will never be changed by more than this value in
 				 one iteration.
 
 				 A value of 0 indicates no maximum.  Default: 0.
 
-	'tied' - a string expression which "ties" the parameter to other
+	- 'tied' : a string expression which "ties" the parameter to other
 			free or fixed parameters.  Any expression involving
 			constants and the parameter array P are permitted.
 			Example: if parameter 2 is always to be twice parameter
@@ -264,7 +276,7 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 			considered to be fixed; no errors are computed for them.
 			[ NOTE: the PARNAME can't be used in expressions. ]
 
-	'mpprint' - if set to 1, then the default iterfunct will print the
+	- 'mpprint' : if set to 1, then the default iterfunct will print the
 			   parameter value.  If set to 0, the parameter value
 			   will not be printed.  This tag can be used to
 			   selectively print only a few parameter values out of
@@ -291,8 +303,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
  is fixed at a value of 5.7, and the last parameter is
  constrained to be above 50.
 
-
-								   EXAMPLE
+                                Example
+                                -------
 
    import mpfit
    import numpy.oldnumeric as Numeric
@@ -310,8 +322,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
    Y, and ERR keyword parameters that are given by FUNCTKW.  The
    results can be obtained from the returned object m.
 
-
-							THEORY OF OPERATION
+                            Theory of Opertation
+                            --------------------
 
    There are many specific strategies for function minimization.  One
    very popular technique is to use function gradient information to
@@ -401,7 +413,8 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
    pivoting, and MPFIT_QRSOLV provides the solution for dx.
 
 
-								 REFERENCES
+                            REeferences
+                            -----------
 
    MINPACK-1, Jorge More', available from netlib (www.netlib.org).
    "Optimization Software Guide," Jorge More' and Stephen Wright,
@@ -410,19 +423,20 @@ Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 	 Implementation and Theory," in *Numerical Analysis*, ed. Watson,
 	 G. A., Lecture Notes in Mathematics 630, Springer-Verlag, 1977.
 
+                    Modification History
+                    --------------------
 
-						   MODIFICATION HISTORY
+   - Translated from MINPACK-1 in FORTRAN, Apr-Jul 1998, CM
+         Copyright (C) 1997-2002, Craig Markwardt
+         This software is provided as is without any warranty whatsoever.
+         Permission to use, copy, modify, and distribute modified or
+         unmodified copies is granted, provided this copyright and disclaimer
+         are included unchanged.
 
-   Translated from MINPACK-1 in FORTRAN, Apr-Jul 1998, CM
- Copyright (C) 1997-2002, Craig Markwardt
- This software is provided as is without any warranty whatsoever.
- Permission to use, copy, modify, and distribute modified or
- unmodified copies is granted, provided this copyright and disclaimer
- are included unchanged.
-
-   Translated from MPFIT (Craig Markwardt's IDL package) to Python,
-   August, 2002.  Mark Rivers
-   Converted from Numeric to numpy (Sergey Koposov, July 2008)
+   - Translated from MPFIT (Craig Markwardt's IDL package) to Python,
+          August, 2002.  Mark Rivers
+   - Converted from Numeric to numpy (Sergey Koposov, July 2008)
+   - Incorporated in Stoner package Gavin Burnell (2013)
 """
 
 import numpy
@@ -612,24 +626,13 @@ import scipy.lib.blas
 #	 **********
 
 class mpfit:
-
-	blas_enorm32, = scipy.lib.blas.get_blas_funcs(['nrm2'],numpy.array([0],dtype=numpy.float32))
-	blas_enorm64, = scipy.lib.blas.get_blas_funcs(['nrm2'],numpy.array([0],dtype=numpy.float64))
-
-
-	def __init__(self, fcn, xall=None, functkw={}, parinfo=None,
-				 ftol=1.e-10, xtol=1.e-10, gtol=1.e-10,
-				 damp=0., maxiter=200, factor=100., nprint=1,
-				 iterfunct='default', iterkw={}, nocovar=0,
-				 rescale=0, autoderivative=1, quiet=0,
-				 diag=None, epsfcn=None, debug=0):
 		"""
-  Inputs:
-	fcn:
+  Args:
+	fcn (callable):
 	   The function to be minimized.  The function should return the weighted
 	   deviations between the model and the data, as described above.
 
-	xall:
+	xall (array):
 	   An array of starting values for each of the parameters of the model.
 	   The number of parameters should be fewer than the number of measurements.
 
@@ -637,9 +640,9 @@ class mpfit:
 	   parinfo).  The parinfo keyword provides a mechanism to fix or constrain
 	   individual parameters.
 
-  Keywords:
+  Keyword Arguments:
 
-	 autoderivative:
+	 autoderivative (int):
 		If this is set, derivatives of the function will be computed
 		automatically via a finite differencing procedure.  If not set, then
 		fcn must provide the (analytical) derivatives.
@@ -647,14 +650,14 @@ class mpfit:
 		   NOTE: to supply your own analytical derivatives,
 				 explicitly pass autoderivative=0
 
-	 ftol:
+	 ftol (float):
 		A nonnegative input variable. Termination occurs when both the actual
 		and predicted relative reductions in the sum of squares are at most
 		ftol (and status is accordingly set to 1 or 3).  Therefore, ftol
 		measures the relative error desired in the sum of squares.
 		   Default: 1E-10
 
-	 functkw:
+	 functkw (dict):
 		A dictionary which contains the parameters to be passed to the
 		user-supplied function specified by fcn via the standard Python
 		keyword dictionary mechanism.  This is the way you can pass additional
@@ -669,7 +672,7 @@ class mpfit:
 		Default: {}   No extra parameters are passed to the user-supplied
 					  function.
 
-	 gtol:
+	 gtol (float):
 		A nonnegative input variable. Termination occurs when the cosine of
 		the angle between fvec and any column of the jacobian is at most gtol
 		in absolute value (and status is accordingly set to 4). Therefore,
@@ -677,13 +680,13 @@ class mpfit:
 		and the columns of the jacobian.
 		   Default: 1e-10
 
-	 iterkw:
+	 iterkw (dict):
 		The keyword arguments to be passed to iterfunct via the dictionary
 		keyword mechanism.  This should be a dictionary and is similar in
 		operation to FUNCTKW.
 		   Default: {}  No arguments are passed.
 
-	 iterfunct:
+	 iterfunct (callable):
 		The name of a function to be called upon each NPRINT iteration of the
 		MPFIT routine.  It should be declared in the following way:
 		   def iterfunct(myfunct, p, iter, fnorm, functkw=None,
@@ -717,24 +720,24 @@ class mpfit:
 		Set iterfunct=None if there is no user-defined routine and you don't
 		want the internal default routine be called.
 
-	 maxiter:
+	 maxiter: (int):
 		The maximum number of iterations to perform.  If the number is exceeded,
 		then the status value is set to 5 and MPFIT returns.
 		Default: 200 iterations
 
-	 nocovar:
+	 nocovar (int):
 		Set this keyword to prevent the calculation of the covariance matrix
 		before returning (see COVAR)
 		Default: clear (=0)  The covariance matrix is returned
 
-	 nprint:
+	 nprint (int):
 		The frequency with which iterfunct is called.  A value of 1 indicates
 		that iterfunct is called with every iteration, while 2 indicates every
 		other iteration, etc.  Note that several Levenberg-Marquardt attempts
 		can be made in a single iteration.
 		Default value: 1
 
-	 parinfo
+	 parinfo (list of dicts):
 		Provides a mechanism for more sophisticated constraints to be placed on
 		parameter values.  When parinfo is not passed, then it is assumed that
 		all parameters are free and unconstrained.  Values in parinfo are never
@@ -744,10 +747,10 @@ class mpfit:
 
 		Default value: None  All parameters are free and unconstrained.
 
-	 quiet:
+	 quiet (int):
 		Set this keyword when no textual output should be printed by MPFIT
 
-	 damp:
+	 damp (float):
 		A scalar number, indicating the cut-off value of residuals where
 		"damping" will occur.  Residuals with magnitudes greater than this
 		number will be replaced by their hyperbolic tangent.  This partially
@@ -759,14 +762,14 @@ class mpfit:
 
 		Note: DAMP doesn't work with autoderivative=0
 
-	 xtol:
+	 xtol (float):
 		A nonnegative input variable. Termination occurs when the relative error
 		between two consecutive iterates is at most xtol (and status is
 		accordingly set to 2 or 3).  Therefore, xtol measures the relative error
 		desired in the approximate solution.
 		Default: 1E-10
 
-   Outputs:
+   Returns:
 
 	 Returns an object of type mpfit.  The results are attributes of this class,
 	 e.g. mpfit.status, mpfit.errmsg, mpfit.params, npfit.niter, mpfit.covar.
@@ -858,6 +861,17 @@ class mpfit:
 		   pcerror = mpfit.perror * sqrt(mpfit.fnorm / dof)
 
 		"""
+
+	blas_enorm32, = scipy.lib.blas.get_blas_funcs(['nrm2'],numpy.array([0],dtype=numpy.float32))
+	blas_enorm64, = scipy.lib.blas.get_blas_funcs(['nrm2'],numpy.array([0],dtype=numpy.float64))
+
+
+	def __init__(self, fcn, xall=None, functkw={}, parinfo=None,
+				 ftol=1.e-10, xtol=1.e-10, gtol=1.e-10,
+				 damp=0., maxiter=200, factor=100., nprint=1,
+				 iterfunct='default', iterkw={}, nocovar=0,
+				 rescale=0, autoderivative=1, quiet=0,
+				 diag=None, epsfcn=None, debug=0):
 		self.niter = 0
 		self.params = None
 		self.covar = None
@@ -1405,6 +1419,7 @@ class mpfit:
 
 
 	def __str__(self):
+     """Set string representation of mpfit object."""
 		return {'params': self.params,
 			   'niter': self.niter,
 			   'params': self.params,
@@ -1418,11 +1433,24 @@ class mpfit:
 			   #,'machar':self.machar
 			   }.__str__()
 
-	# Default procedure to be called every iteration.  It simply prints
-	# the parameter values.
+	#
 	def defiter(self, fcn, x, iter, fnorm=None, functkw=None,
 					   quiet=0, iterstop=None, parinfo=None,
 					   format=None, pformat='%.10g', dof=1):
+    """ Default procedure to be called every iteration.  It simply prints
+	# the parameter values.
+    
+    Args:
+        fcn (callable): fitting function
+        x (array): current parameter values
+        iter (int): Current iterator number
+    
+    Keyword Arguments:
+        fnorm (float): chi suqare for fit
+        functkw (dict): Dictiornary of keyword arguments supplied to function
+        quiet (int): suppress output
+        
+    """
 
 		if self.debug:
 			print 'Entering defiter...'
@@ -1492,9 +1520,9 @@ class mpfit:
 			values = numpy.asarray(values, float)
 		return values
 	
-	# Call user function or procedure, with _EXTRA or not, with
-	# derivatives or not.
+
 	def call(self, fcn, x, functkw, fjac=None):
+     """Call user function or procedure, with _EXTRA or not, with derivatives or not."""
 		if self.debug:
 			print 'Entering call...'
 		if self.qanytied:

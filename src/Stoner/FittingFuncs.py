@@ -4,6 +4,7 @@ Please do keep documentation up to date, see other functions for documentation e
 
 from numpy import exp,sqrt,abs,pi,log,trapz,zeros,arange
 from scipy.special import digamma
+from scipy.integrate import quad
 import scipy.constants.codata as consts
 
 _kb=consts.physical_constants['Boltzmann constant'][0]/consts.physical_constants['elementary charge'][0]
@@ -184,3 +185,33 @@ def strijkers(V, params):
         gaus=(1/(2*omega*sqrt(pi)))*exp(-(((E-V[tt])/(2*omega))**2))
         cond[tt]=trapz(gaus*G,E);
     return cond
+
+
+def FluchsSondheimer(t,params):
+    """Evaluate a Fluchs-Sondheumer model function for conductivity.
+    
+    Args:
+        t (array): Thickness values
+        params (array): [mean-free-path, reflection co-efficient,sigma_0]
+        
+    Returns:
+        Reduced Resistivity
+        
+    Note:
+        Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
+"""
+        
+    l=params[0]
+    p=params[1]
+    sigma_0=params[2]
+    k=t/l
+    
+    kernel=lambda x,k:(x-x**3)*exp(-k*x)/(1-exp(-k*x))
+    
+    result=zeros(k.shape)
+    for i in range(len(k)):
+        v=k[i]
+        result[i]=1-(3*(1-p)/(8*v))+(3*(1-p)/(2*v))*quad(kernel,0,1,v)
+    return result/sigma_0
+    
+    

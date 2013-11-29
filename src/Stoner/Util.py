@@ -13,12 +13,15 @@ from numpy import log10,floor
 
 def split_up_down(data,col,folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
-    
-    @param data is a \b Stoner.Core.DataFile or subclass
-    @param col is something that Stoner.Core.DataFile.find_col can use
-    @param folder if this is an instance of \b Stoner.Folders.DataFolder then add 
-    rising and falling files to groups of this DataFolder, otherwise create a new one
-    @return A DataFolder object with two groups, rising and falling
+
+    Args:
+        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
+        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
+        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add 
+            rising and falling files to groups of this DataFolder, otherwise create a new one
+            
+    Returns:
+        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
     a=_AF_(data)
     width=len(a)/10
@@ -55,7 +58,16 @@ def split_up_down(data,col,folder=None):
 
 def format_error(value,error,latex=False):
     """This handles the printing out of the answer with the uncertaintly to 1sf and the
-    value to no more sf's than the uncertainty."""
+    value to no more sf's than the uncertainty.
+
+    Args:
+        value (float): The value to be formated
+        error (float): The uncertainty in the value
+        latex (bool): If true, then latex formula codes will be used for +/- symbol for matplotlib annotations
+        
+    Returns:
+        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
+    """
     if error==0.0: # special case for zero uncertainty
         return repr(value)
     e2=error
