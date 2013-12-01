@@ -43,7 +43,7 @@ def cov2corr(M):
 class AnalyseFile(DataFile):
     """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
 
-    Notes:
+    Note:
         There is no separate constructor for this class - it inherits from DataFile
     """
 
@@ -59,7 +59,7 @@ class AnalyseFile(DataFile):
         Returns:
             A 1D array to convolve with the data
             
-        Notes:
+        Note:
             num_points   means that 2*num_points+1 values contribute to the smoother.
         """
 
@@ -166,7 +166,7 @@ class AnalyseFile(DataFile):
             quiet (int): 0 to suppress output
             dof (float): Figure of merit ?
         
-        Notes:
+        Note:
             This functionb just prints a full stop for every iteration.
         
         """
@@ -220,7 +220,7 @@ class AnalyseFile(DataFile):
             popt (array): Optimal values of the fitting parameters p
             pcov (2d array): The variance-co-variance matrix for the fitting parameters.
             
-        Notes:
+        Note:
             The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
             The x-column and y-column can be anything that :py:meth:`Stoner.Core.DataFile.find_col` can use as an index
             but typucally either strings to be matched against column headings or integers.
@@ -341,7 +341,7 @@ class AnalyseFile(DataFile):
         Returns:
             The mean of the data.
 
-        TODO:
+        .. todo::
             Fix the row index when the bounds function is used - see note of \b max
         """
         col=self.find_col(column)
@@ -556,7 +556,7 @@ class AnalyseFile(DataFile):
         Returns:
             A :py:class:`Stoner.Folders.DataFolder` object containing the individual :py:class:`AnalyseFile` objects
             
-        Notes:
+        Note:
             The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing 
             the complete row. The return value should be a hashable value. func can also be a list if xcol is a list, 
             in which the func values are used along with the @a xcol values.
@@ -687,7 +687,7 @@ class AnalyseFile(DataFile):
         ReturnsL
             2D numpy array representing a section of the current object's data.
 
-        Notes:
+        Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
             Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
         """
@@ -761,7 +761,7 @@ class AnalyseFile(DataFile):
         Returns:
             The final integration result
             
-        Notes:
+        Note:
             This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
             to offer a variety of methods including simpson's rule and interpolation of data."""
         xc=self.find_col(xcol)

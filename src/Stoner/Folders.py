@@ -1,7 +1,8 @@
 """
  FStoner.Folders : Classes for working collections of data files
  
- \b DataFolder - manages a list of individual data files (e.g. from a directory tree)
+ Classes:
+     :py:class:`DataFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 
 
@@ -19,19 +20,39 @@ from .Core import DataFile
 class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
-    This class is intended to help process large groups of datasets in a natural and convenient way."""
+    Attributes:
+        directgory (string): Root directory of the files handled by the DataFolder
+        files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
+        groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
+        read_means (bool): If tru, create memtadata when reading each file that is the mean of each column
+        pattern (string or re): Matches which files in the  directory tree are included. If pattern is a compiled
+            reular expression with named groups then the named groups generare used to generate metadata in the :py:class:`Stoner.DataFile`
+            object.
+        basenames (list of string): Returns the list of files after passing through os.path.basename()
+        ls (list of strings): Returns a list of filenames (either the matched filename patterns, or 
+            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
+        lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+                
+    Args:
+        directory (string or :py:class:`DataFolder` instance): Where to get the data files from
+        
+    Keyword Arguments:
+        type (class): An subclass of :py:class:`Stoner.Core.DataFolder` that will be used to construct the individual DataFile objects in the folder
+        pattern (string or re): A filename pattern - either globbing string or regular expression
+        nolist (bool): Delay doing a directory scan to get data files
+        
+    Returns:
+        The newly constructed instance
+
+    Note:
+        All other keywords are set as attributes of the DataFolder.
+
+    Todo:
+        Handle :pyth:meth:`__init__(DataFolder)` with subclasses
+
+    """
 
     def __init__(self, *args, **kargs):
-        """Constructor of DataFolder.
-        @param args Non keyword arguments
-        @param kargs keyword arguments
-        @return The newly constructed instance
-
-        Handles constructors like:
-
-        DataFolder('directory',type=DataFile,pattern='*.*', nolist=False)
-        @TODO handle __init__(DataFolder) with subclasses
-        """
         self.files=[]
         self.groups={}
         if not "type" in kargs:
@@ -65,12 +86,17 @@ class DataFolder(object):
             self.getlist(recursive=recursive)
 
     def __read__(self,f):
-        """Reads a single filename in and creates an instance of DataFile. If self.pattern
-        is a regular expression then use any named groups in it to create matadata from the
-        filename. If self.read_means is true then create metadata from the mean of the data columns.
+        """Reads a single filename in and creates an instance of DataFile.
         
-        @param f A filename or DataFile object
-        @return A DataFile object
+        Args:
+            f(string or :py:class:`Stoner.Core.DataFile`): A filename or DataFile object
+            
+        Returns:
+            A DataFile object
+        
+        Note:
+             If self.pattern is a regular expression then use any named groups in it to create matadata from the
+            filename. If self.read_means is true then create metadata from the mean of the data columns.
         """
         if isinstance(f,DataFile):
             return f
@@ -95,9 +121,12 @@ class DataFolder(object):
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
 
-        @param message Message to display in dialog
-        @param new_directory True if allowed to create new directory
-        @return A directory to be used for the file operation."""
+        Keyword Arguments:
+            message (string): Message to display in dialog
+            new_directory (bool): True if allowed to create new directory
+            
+        Returns:
+            A directory to be used for the file operation."""
         from enthought.pyface.api import DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
 
@@ -115,27 +144,35 @@ class DataFolder(object):
 
     def __iter__(self):
         """Returns the files iterator object
-        @return self.files.__iter__"""
+
+        Returns:
+            self.files.__iter__"""
         for f in self.files:
             tmp=self.__read__(f)
             yield tmp
 
     def __len__(self):
         """Pass through to return the length of the files array
-        @return len(self.files)"""
+
+        Returns:
+            len(self.files)"""
         return len(self.files)
 
     def __getitem__(self, i):
         """Load and returen DataFile type objects based on the filenames in self.files
-        @param i The index(eces) of the files to return Can also be a string in which case it is interpreted as one of self.files
-        @return One or more instances of DataFile objects
+        
+        Args:
+            i(int or slice): The index(eces) of the files to return Can also be a string in which case it is interpreted as one of self.files
+        
+        Returns:        
+            One or more instances of DataFile objects
 
         This is the canonical method for producing a DataFile from a DataFolder. Various substitutions are done as the file is created:
-
-        Firstly, the filename is inserted into the metadata key "Loaded From"
-
-        Secondly, if the pattern was given as a regular exression then any named matching groups are interpreted as metadata key-value pairs (where the key
-        will be the name of the capturing group and the value will be the match to the group. This allows metadata to be imported from the filename as it is loaded."""""
+        1.  Firstly, the filename is inserted into the metadata key "Loaded From"
+        2.  Secondly, if the pattern was given as a regular exression then any named matching groups are 
+            interpreted as metadata key-value pairs (where the key will be the name of the capturing 
+            group and the value will be the match to the group. This allows metadata to be imported 
+            from the filename as it is loaded."""""
         if isinstance(i, str): # Ok we've done a DataFolder['filename']
             try:
                 i=self.ls.index(i)
@@ -150,14 +187,19 @@ class DataFolder(object):
 
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the DataFolder
-        @param  item The attribute name being requested
-        @return Depends on the attribute
 
-        Currently supported attributes:
-        \b basenames Returns the list of files after passing through os.path.basename()
-        \b ls Returns a list of filenames (either the matched filename patterns, or DataFile.filename if
-        DataFolder.files contains DataFile objects
-        \b lsgrp Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+        Args: 
+            item (string): The attribute name being requested
+        
+        Returns:        
+            Depends on the attribute
+
+        Attributes:
+            basenames (list of string): Returns the list of files after passing through os.path.basename()
+            ls (list of strings): Returns a list of filenames (either the matched filename patterns, or 
+                :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
+            lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+            
         """
         if item=="basenames":
             ret=[]
@@ -181,13 +223,19 @@ class DataFolder(object):
 
     def __repr__(self):
         """Prints a summary of the DataFolder structure
-        @return A string representation of the current DataFolder object"""
+        
+        Returns:
+            A string representation of the current DataFolder object"""
         return "DataFolder("+str(self.directory)+") with pattern "+str(self.pattern)+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
 
     def __delitem__(self,item):
         """Deelte and item or a group from the DataFolder
-        @param item the Item to be deleted. if @a item is an int, then assume that it is a file index
-        if @a item is a string then assume it is agroup."""
+        
+        Args:
+            item(string or int): the Item to be deleted. 
+                If item is an int, then assume that it is a file index
+                otherwise it is assumed to be a group key
+        """
         if isinstance(item, str) and item in self.groups:
             del self.groups[item]
         elif isinstance(item, int):
@@ -197,9 +245,13 @@ class DataFolder(object):
             
     def getlist(self, recursive=True, directory=None):
         """Scans the current directory, optionally recursively to build a list of filenames
-        @param recursive Do a walk through all the directories for files
-        @param directory Either a string path ot a new directory or False to open a dialog box or not set in which case existing director is used.
-        @return A copy of the current DataFoder directory with the files stored in the files attribute"""
+        
+        Keyword Arguments:
+            recursive (bool): Do a walk through all the directories for files
+            directory (string or False): Either a string path ot a new directory or False to open a dialog box or not set in which case existing director is used.
+        
+        Returns:        
+            A copy of the current DataFoder directory with the files stored in the files attribute"""
         self.files=[]
         if isinstance(directory,  bool) and not directory:
             self._dialog()
@@ -234,15 +286,21 @@ class DataFolder(object):
     def filterout(self, filter):
         """Synonym for self.filter(filter,invert=True)
 
-        @param filter Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
-        @return The current DataFolder object with the files in the file list filtered."""
+        Args:
+        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
+        
+        Returns:        
+            The current DataFolder object with the files in the file list filtered."""
         return self.filter(filter, invert=True)
 
     def filter(self, filter=None,  invert=False):
         """Filter the current set of files by some criterion
-        @param filter Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
-        @param invert Invert the sense of the filter (done by doing an XOR whith the filter condition
-        @return The current DataFolder object"""
+        
+        Args:
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
+            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
+        Returns:
+            The current DataFolder object"""
 
         files=[]
         if isinstance(filter, str):
@@ -265,17 +323,24 @@ class DataFolder(object):
 
     def sort(self, key=None, reverse=False):
         """Sort the files by some key
-        @param key Either a string or a callable function. If a string then this is interpreted as a
-        metadata key, if callable then it is assumed that this is a a function of one paramater x
-        that is a DataFile object and that returns a key value. If key is not specified, then a sort is performed on the filename
-        @param reverse Optionally sort in reverse order
-        @return A copy of the current DataFolder object"""
+
+        Keyword Arguments:
+            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
+                metadata key, if callable then it is assumed that this is a a function of one paramater x
+                that is a :py:class:`Stoner.Core.DataFile` object and that returns a key value.
+                If key is not specified (default), then a sort is performed on the filename
+        reverse (bool): Optionally sort in reverse order
+        
+        Returns:
+            A copy of the current DataFolder object"""
         if isinstance(key, str):
             self.files=sorted(self.files, cmp=lambda x, y:cmp(self[x].get(key), self[y].get(key)), reverse=reverse)
         elif key is None:
             fnames=self.ls
             fnames.sort(reverse=reverse)
-            self.files=[self[f] for f in fnames]           
+            self.files=[self[f] for f in fnames]
+        elif isinstance(key,re._pattern_type):
+            self.files=sorted(self.files,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)            
         else:
             self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
         return self
@@ -283,10 +348,16 @@ class DataFolder(object):
     def add_group(self,key):
         """Add a new group to the current Folder with the given key.
         
-        @param key A hashable value to be used as the dictionary key in the groups dictionary
-        @return A copy of the DataFolder
-        
-        If key already exists in the groups dictionary then no action is taken.
+        Args:
+            key(string): A hashable value to be used as the dictionary key in the groups dictionary
+        Returns:
+            A copy of the DataFolder
+
+        Note:
+            If key already exists in the groups dictionary then no action is taken.
+            
+        Todo:
+            Propagate any extra attributes into the groups.
         """
         if key in self.groups: # do nothing here
             pass
@@ -297,10 +368,13 @@ class DataFolder(object):
     
     def group(self, key):
         """Take the files and sort them into a series of separate DataFolder objects according to the value of the key
-        @param key Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
-        takes a single argument x which should be an instance of a DataFile and returns some vale. If key is a list then the grouping is done recursively for each element
-        in key.
-        @return A copy of the current DataFolder object in which the groups attribute is a dictionary of DataFolder objects with sub lists of files
+        
+        Args:        
+            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
+                takes a single argument x which should be an instance of a DataFile and returns some vale. If key is a list then the grouping is done recursively for each element
+                in key.
+        Returns:
+            A copy of the current DataFolder object in which the groups attribute is a dictionary of DataFolder objects with sub lists of files
 
         If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
         are generated from the filename are supported."""
@@ -316,7 +390,7 @@ class DataFolder(object):
         for f in self.files:
             x=self[f]
             v=key(x)
-            seld.add_group(v)
+            self.add_group(v)
             self.groups[v].files.append(f)
         if len(next_keys)>0:
             for g in self.groups:
@@ -325,8 +399,12 @@ class DataFolder(object):
 
     def zip_groups(self, groups):
         """Return a list of tuples of DataFiles drawn from the specified groups
-        @param groups A list of keys of groups in the DataFolder
-        @return A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
+        
+        Args:
+            groups(list of strings): A list of keys of groups in the Lpy:class:`DataFolder`
+        
+        ReturnsL        
+            A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
         """
         if not isinstance(groups, list):
             raise SyntaxError("groups must be a list of groups")
@@ -335,17 +413,21 @@ class DataFolder(object):
 		
     def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
         """Walks through a heirarchy of groups and calls walker for each file.
-        @param walker a callable object that takes either a DataFile instance or a DataFolder instance.
-        @param group (default False) determines whether the wealker function will expect to be given the DataFolder
-        representing the lowest level group or individual DataFile objects from the lowest level group
-        @param replace_terminal if group is True and the walker function returns an instance of DataFile then the return value is appended
-        to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
-        @param walker_args a dictionary of static arguments for the walker function.
-        @return Nothing
         
-        The @a walker function should have a prototype of the form:
+        Args:
+            walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.
         
-        walker(f,list_of_group_names,**walker_args) where f is either a DataFolder or DataFile."""
+        Keyword Arguments:        
+            group (bool): (default False) determines whether the wealker function will expect to be given the DataFolder
+                representing the lowest level group or individual DataFile objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of DataFile then the return value is appended
+                to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
+            walker_args (dict): a dictionary of static arguments for the walker function.
+        
+        Notes:        
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args) 
+                where f is either a DataFolder or DataFile."""
 	return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
 		
     def _removeDisallowedFilenameChars(filename):
@@ -360,10 +442,14 @@ class DataFolder(object):
     def _save(self,grp,trail,root=None):
         """Save a group of files to disc by calling the save() method on each file. This internal method is called by walk_groups in turn
         called from the public save() method. The trail of group keys is used to create a directory tree.
-        @param grp: A DataFolder group or a DataFile instance
-        @param trail: the trail of paths used to get here
-        @param root a replacement root directory
-        @return Saved Path
+        
+        Args:
+            grp (:py:class:`DataFolder` or :py:calss:`Stoner.DataFile`): A group or file to save
+            trail (list of strings): the trail of paths used to get here
+            root (string or None): a replacement root directory
+            
+        Returns:
+            Saved Path
         """
 
         trail=[self._removeDisallowedFilenameChars(t) for t in trail]
@@ -380,21 +466,33 @@ class DataFolder(object):
         """Save the entire data folder out to disc using the groups as a directory tree,
         calling the save method for each file in turn.
         
-        @param root The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
-        diretory attribute will be used.
-        @return A list of the saved files
+        Args:
+            root (string): The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
+                diretory attribute will be used.
+        Returns:
+            A list of the saved files
         """
         return self.walk_groups(self._save,walker_args={"root",root})
         
     
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
   	""""Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
-  		@param walker See \b walk_groups
-  		@param group See \b walk_groups
-  		@param replace_terminal see \b walk_groups
-  		@param walker_args See \b walk_groups
-  		@param bbreadcrumb a list of the group names or key values that we've walked through
-  		"""
+ 
+        Args:
+            walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.
+        
+        Keyword Arguments:        
+            group (bool): (default False) determines whether the wealker function will expect to be given the DataFolder
+                representing the lowest level group or individual DataFile objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of DataFile then the return value is appended
+                to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
+            walker_args (dict): a dictionary of static arguments for the walker function.
+            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
+        
+        Notes:        
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args) 
+                where f is either a DataFolder or DataFile."""
 	if (len(self.groups)>0):
             ret=[]
             removeGroups=[]
@@ -420,8 +518,3 @@ class DataFolder(object):
 	       for f in self:
 	           ret.append(walker(f,breadcrumb,**walker_args))
 	       return ret
-
-
-
-
-

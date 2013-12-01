@@ -3,8 +3,9 @@
 Classes:
     `DataFile` :the base class for representing a single data set of experimental data.
     `typeHintedDict`: a dictionary subclass that tries to keep track of the underlying type of data
-                    stored in each element. This class facilitates the export to strongly typed
-                    languages such as LabVIEW.
+        stored in each element. This class facilitates the export to strongly typed
+        languages such as LabVIEW.
+        
 """
 import fileinput
 import re
@@ -422,23 +423,22 @@ class DataFile(object):
         
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
-                If other is a dictionary then the keys of the dictionary are passed to
-                :py:meth:`find_col` to see if they match a column, in which case the
-                corresponding value will be used for theat column in the new row.
-                Columns which do not have a matching key will be set to NaN. If other has keys
-                that are not found as columns in self, additional columns are added.
-
-                If other is a list, then the add method is called recursively for each element
-                of the list.
-
-                Returns: A Datafile object with the rows of @a other appended
-                to the rows of the current object.
-
-                If other is a 1D numopy array with the same number of
-                elements as their are columns in @a self.data then the numpy
-               array is treated as a new row of data If @a ither is a 2D numpy
-               array then it is appended if it has the same number of
-               columns and @a self.data."""
+            
+        Note:
+            * If other is a dictionary then the keys of the dictionary are passed to
+            :py:meth:`find_col` to see if they match a column, in which case the
+            corresponding value will be used for theat column in the new row.
+            Columns which do not have a matching key will be set to NaN. If other has keys
+            that are not found as columns in self, additional columns are added.
+            * If other is a list, then the add method is called recursively for each element
+            of the list.
+            * Returns: A Datafile object with the rows of @a other appended
+            to the rows of the current object.
+            * If other is a 1D numopy array with the same number of
+            elements as their are columns in @a self.data then the numpy
+            array is treated as a new row of data If @a ither is a 2D numpy
+            array then it is appended if it has the same number of
+            columns and @a self.data."""
         if isinstance(other, numpy.ndarray):
             if len(self.data) == 0:
                 t = numpy.atleast_2d(other)
@@ -829,7 +829,7 @@ class DataFile(object):
         Returns: 
             Nothing, but the current instance's metadata is changed.
 
-        Notes:
+        Note:
             Uses the typehint to set the type correctly in the dictionary
 
             All the clever work of managing the typehinting is done in the
@@ -1097,7 +1097,7 @@ class DataFile(object):
         Returns: 
             The :py:class:`DataFile` object with the column deleted.
             
-        Notes:
+        Note:
             - If duplicates is True and col is None then all duplicate columns are removed,
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
             - If duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
@@ -1148,7 +1148,7 @@ class DataFile(object):
         Returns: 
             The current object
 
-        Notes:
+        Note:
             If val is a function it should take two arguments - a float and a
             list. The float is the value of the current row that corresponds to column col abd the second
             argument is the current row.
@@ -1321,7 +1321,7 @@ class DataFile(object):
         Returns: 
             A copy of the loaded instance
             
-        Notes:
+        Note:
             Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.
             
             Some subclasses can be found in the :py:mod:`Stoner.FileFormats` module.
@@ -1382,7 +1382,7 @@ class DataFile(object):
         Returns: 
             Returns the item of metadata.
 
-        Notes:
+        Note:
            If key is not an exact match for an item of metadata,
             then a regular expression match is carried out.            
             """
@@ -1490,7 +1490,7 @@ class DataFile(object):
         Returns: 
             numpy array of matching rows or column values depending on the arguements.
 
-        Notes:
+        Note:
             The value is interpreted as follows:
             - a float looks for an exact match
             - a list is a list of exact matches
@@ -1569,7 +1569,7 @@ class DataFile(object):
             Returns: 
                 A copy of the modified DataFile objects
 
-            Notes:
+            Note:
                 If swp is a list, then the function is called recursively on each
                 element of the list. Thus in principle the @swp could contain
                 lists of lists of tuples
