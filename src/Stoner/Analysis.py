@@ -662,7 +662,7 @@ class AnalyseFile(DataFile):
                 ret=[self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
             else:
                 ret=[self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
-#        else:
+        else:
             if all_vals:
                 ret=self.__threshold(threshold, current, rising=rising, falling=falling)
             else:
@@ -684,7 +684,7 @@ class AnalyseFile(DataFile):
             kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
             xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
 
-        ReturnsL
+        Returns:
             2D numpy array representing a section of the current object's data.
 
         Note:
