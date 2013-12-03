@@ -1,10 +1,10 @@
-"""#############################################
-Stoner.Plot provides the a class to facilitate easier plotting of Stoner Data:
+"""         Stoner.Plot 
+            ============
 
-* @b PlotFile - A class that uses matplotlib to plot data
+Provides the a class to facilitate easier plotting of Stoner Data:
 
-
-#############################################
+Classes:
+    PlotFile - A class that uses matplotlib to plot data
 """
 from .Core import DataFile
 import numpy
@@ -18,16 +18,31 @@ from scipy.interpolate import griddata
 from copy import copy
 
 class PlotFile(DataFile):
-    """Extends DataFile with plotting functions"""
+    """Extends DataFile with plotting functions
+
+    Args:
+        args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+        kargs (dict):  keyword arguments to pass to \b DataFile.__init__
+
+    Methods:
+        plot_xy: Basic 2D plotting function
+        plot_xyz: 3D plotting function
+        griddata: Method to transform xyz data to a matrix
+        contour_xyz: Plots x,y,z points as a contour plot
+        plot_matrix: Plots a matrix as a 2D colour image plot
+        draw: Pass throuygh to matplotlib draw
+        show: Pass through to matploitlib show
+        figure: Pass through to maplotlib figure.
+        
+    Attributes:
+        fig (matplotlib.figure): The current figure object being worked with
+    
+    """
 
     __figure=None
 
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
-                @param args Arguements to pass to \b DataFile.__init__
-                @param kargs Dictionary of keyword arguments to pass to \b DataFile.__init__
-
-                @return This instance
 
         """
         global pyplot
@@ -44,7 +59,9 @@ class PlotFile(DataFile):
     def __getattr__(self, name):
         """Attribute accessor
 
-                @param name Name of attribute: only "fig" is supported here to return the current figure refernce
+        Args:
+            name (string):  Name of attribute: 
+                only "fig" is supported here to return the current figure refernce
 
                 All other attrbiutes are passed over to the parent class
                 """
@@ -61,8 +78,9 @@ class PlotFile(DataFile):
     def __setattr__(self, name, value):
         """Sets the specified attribute
 
-                @param name The name of the attribute to set. Only "fig" is supported in this class - everything else drops through to the parent class
-                @param value The value of the attribute to set.
+        Args:
+            name (string): The name of the attribute to set. Only "fig" is supported in this class - everything else drops through to the parent class
+            value (any): The value of the attribute to set.
     """
         if name=="fig":
             self.figure(value)
@@ -72,19 +90,21 @@ class PlotFile(DataFile):
     def plot_xy(self,column_x, column_y, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
 
-                @param column_x An integer or string that indexes the relevant column for the x data
-                @param column_y An integer go string that indexes the y-data column
-                @param fmt Optional string parameter that specifies the format for the plot - see matplotlib documentation for details
-                @param show_plot = True Turns on interactive plot control
-                @param title Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-                @param save_filename Filename used to save the plot
-                @param figure Optional argument that controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
-                @param plotter Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
-                @param kwords A dictionary of other keyword arguments to pass into the plot function.
-
-                @return a matplotlib.figure isntance
-
-
+            Args:
+                column_x (index): Which column has the X-Data
+                column_y (index): Which column(s) has(have) the y-data to plot
+            
+            Keyword Arguments:            
+                fmt (strong or sequence of strings): Specifies the format for the plot - see matplotlib documentation for details
+                show_plot (bool): True Turns on interactive plot control
+                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                save_filename (string): Filename used to save the plot
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+    
+            Returns:
+                A matplotlib.figure isntance
 
         """
         column_x=self.find_col(column_x)
@@ -160,22 +180,27 @@ class PlotFile(DataFile):
 
     def plot_xyz(self, xcol, ycol, zcol, shape=None, xlim=None, ylim=None,cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
+        
+            Args:
+                xcol (index): Xcolumn index or label
+                ycol (index): Y column index or label
+                zcol (index): Z column index or label
+            
+            Keyword Arguments:            
+                shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
+                xlim (tuple): Defines the x-axis limits and grid of the data to be plotted
+                ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted
+                cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
+                show_plot (bool): True Turns on interactive plot control
+                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                save_filename (string): Filename used to save the plot
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
 
-            @param xcol Xcolumn index or label
-            @param ycol Y column index or label
-            @param zcol Z column index or label
-            @param shape A tuple that defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
-            @param xlim A tuple that defines the x-axis limits and grid of the data to be plotted
-            @param ylim A tuple that defines the Y-axis limits and grid of the data data to be plotted
-            @param cmap A matplotlib colour map - defaults to the jet colour map
-            @param show_plot Interactive plotting on
-            @param title Text to use as the title - defaults to the filename of the dataset
-            @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
-            @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
-            @param kwords Other keywords to pass into the plot function.
-
-            @return The matplotib figure with the data plotted"""
-
+            Returns:
+                A matplotlib.figure isntance
+        """
         xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
@@ -207,14 +232,19 @@ class PlotFile(DataFile):
     def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="linear"):
         """Function to convert xyz data onto a regular grid
 
-        @param xc Column to be used for the X-Data
-        @param yc column to be used for Y-Data - default value is column to the right of the x-data column
-        @param zc column to be used for the Z-data - default value is the column to the right of the y-data column
-        @param shaoe two-tuple of the number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
-        @param xlim tuple of the xlimits
-        @param ylim tuple of the ylimits
-        @param method type of interploation to use, default is linear
-        @return X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
+            Args:
+                xc (index): Column to be used for the X-Data
+                yc (index): column to be used for Y-Data - default value is column to the right of the x-data column
+                zc (index): column to be used for the Z-data - default value is the column to the right of the y-data column
+            
+            Keyword Arguments:        
+                shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+                xlim (tuple): The xlimits
+                ylim (tuple) The ylimits
+                method (string): Type of interploation to use, default is linear
+            
+            ReturnsL
+                X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
 
         xc=self.find_col(xc)
@@ -254,13 +284,19 @@ class PlotFile(DataFile):
 
     def contour_xyz(self,xc,yc,zc,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
         """Grid up the three columns of data and plot
-         @param xc X column
-         @param yc Y column
-         @param zc Z cilumn
-         @param shape Tuple containing shape of the data
-         @param xlim X limits to plot over
-         @param ylim Y Limits to plot over
-         @return A matplotlib figure
+
+        Args:
+            xc (index): Column to be used for the X-Data
+            yc (index): column to be used for Y-Data - default value is column to the right of the x-data column
+            zc (index): column to be used for the Z-data - default value is the column to the right of the y-data column
+        
+        Keyword Arguments:        
+            shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+            xlim (tuple): The xlimits
+            ylim (tuple) The ylimits
+
+        Returns:
+            A matplotlib figure
          """
 
         X,Y,Z=self.griddata(xc,yc,zc,shape,xlim,ylim)
@@ -280,20 +316,24 @@ class PlotFile(DataFile):
     def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
 
-            @param xvals Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
-            @param yvals Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
-            @param rectang a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
-            @param cmap A matplotlib colour map - defaults to the jet colour map
-            @param show_plot Interactive plotting on
-            @param title Text to use as the title - defaults to the filename of the dataset
-            @param xlabel X axes label. Deafult is None - guess from xvals or metadata
-            @param ylabel Y axes label, Default is None - guess from metadata
-            @param zlabel Z axis label, Default is None - guess from metadata
-            @param figure Controls what figure to use for the plot. If an integer, use that figure number; if a boolean and false, create a new figuire; if a matplotlib figure instance, use that figure; otherwisem reuse the existing figure for this dataset
-            @param plotter A function to use for plotting the data - defaults to matplotlib.pcolor()
-            @param kwords Other keywords to pass into the plot function.
-
-            @return The matplotib figure with the data plotted"""
+            Args:
+                xvals (index, list or numpy.array): Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
+                yvals (int or list): Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
+                rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
+            
+            Keyword Arguments:
+                cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
+                show_plot (bool): True Turns on interactive plot control
+                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
+                ylabel (string): Y axes label, Default is None - guess from metadata
+                zlabel (string): Z axis label, Default is None - guess from metadata
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+            
+            Returns:
+                The matplotib figure with the data plotted"""
         # Sortout yvals values
         if isinstance(yvals, int): #  Int means we're sepcifying a data row
             if rectang is None: # we need to intitialise the rectang
@@ -393,12 +433,15 @@ class PlotFile(DataFile):
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface
-        @param X X dataFile
-        @param Y Y data
-        @param Z Z data
-        @param kargs Other keywords to pass through
+        
+        Args:
+            X data
+            Y Y data
+            Z data
+            kargs (dict): Other keywords to pass through
 
-        @return A matplotib Figure
+        ReturnsL
+            A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
         ax = self.fig.gca(projection='3d')
@@ -416,9 +459,13 @@ class PlotFile(DataFile):
         self.fig.show()
 
     def figure(self, figure):
-        """Set the figure used by \b Stoner.PlotFile
-         @param figure A matplotlib figure or figure number
-         @return The current \b Stoner.PlotFile instance"""
+        """Set the figure used by :py:class:`Stoner.Plot.PlotFile`
+        
+        Args:
+            figure A matplotlib figure or figure number
+            
+        Returns:
+            The current \b Stoner.PlotFile instance"""
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):

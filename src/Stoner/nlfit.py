@@ -1,5 +1,6 @@
-"""
-Name: nlfit.py  (non linear fitting)
+"""                     Stoner.nlfit  (non linear fitting)
+                        ===================================
+
 Authors: Gavin Burnell, Rowan Temple, Nick Porter
 Date: Original fitting code for PCAR GB 2011, sim adaptation and WL model NAP Feb 2013,
         rewritten and updated as object orientated code for generic functions and tunnelling models RCT March 2013
@@ -10,21 +11,26 @@ Description:  Generic non linear function fitting code using Levenberg Marquardt
 ## Import packages
 
 import numpy
-import scipy
 import Stoner
 from scipy.stats import chisquare
-import os,sys
+import os
 import time
 import ConfigParser
 import pylab ; pylab.ion() #interactive mode, works best with iPython
 
 def nlfit(ini_file, func, data=None, chi2mapping=False):
     """Runs nlfit, taking data from the file path given in the ini_file and a fitting function
-    @param ini_file either the name of a file or an open file descriptor
-    @param func either a string with the name of a function in Stoner.FittingFuncs or a callable object
-    @param dataEither a Stoner.DataFileObject or None to force a file open dialog
-    @param chi2mapping A boolean indicating whether chi^2 mappingmode is engaged
-    @return An NLFit instance
+    
+    Args:
+        ini_file(string or file): Either the name of a file or an open file descriptor
+        func (string or callable): either a string with the name of a function in Stoner.FittingFuncs or a callable object
+
+    Keyword Arguments:
+        data (string or DataFile): Either a Stoner.DataFile instance or None to force a file open dialog
+        chi2mapping (bool): Indicates whether chi^2 mappingmode is engaged
+        
+    Return:
+        An NLFit instance
     """
     if isinstance(func,str):
         try:
@@ -48,13 +54,16 @@ def nlfit(ini_file, func, data=None, chi2mapping=False):
     return t.output, t.plotout
 
 class NLFit:
-    """Class containing the code to do a NLFit or chi^2 mapping of a set of data"""
+    """Class containing the code to do a NLFit or chi^2 mapping of a set of data
+    
+    Attributes:
+        simulate (bool): Just calculate data, don't fit
+        function (callable): Function to fit
+        ini_file (string): File containing settings for fitting
+    
+    
+    """
 
-    """I like to initialise some class properties here"""
-    simulate=None
-    function=None
-    ini_file=None
-    data_input=Stoner.DataFile()
 
     def __init__(self, ini_file, func, data=None, chi2mapping=False):
         """ini_file is file name for .ini options file
@@ -70,7 +79,35 @@ class NLFit:
         elif not callable(func):
                 raise ValueError('Supplied function must be either a string or callable object')
         self.fit_func = func
-        self.ini_file = ini_file
+        self.ini_file = ini_file    
+
+        #Read ini file
+        self.config = ConfigParser.SafeConfigParser()
+        if isinstance(self.ini_file,str):
+            self.config.read(self.ini_file)
+        elif isinstance(self.ini_file,file):
+            self.config.readfp(self.ini_file)
+
+        parnames = self.config.get('data', 'parnames') #returns a list of comma separated names of parameters
+        parnames = [i.strip() for i in parnames.split(',')]
+        self.parameter_names=parnames
+        for section in parnames:
+            pars={  'value': self.config.getfloat(section, 'value'),
+                      'fixed': self.config.getboolean(section, 'fixed'),
+                     'limited': (self.config.getboolean(section, 'lower_limited'), self.config.getboolean(section, 'upper_limited')),
+                      'limits':(self.config.getfloat(section, 'lower_limit'), self.config.getfloat(section, 'upper_limit')),
+                      'parname': self.config.get(section, 'name'),
+                      'step': self.config.getfloat(section, 'step'),
+                      'mpside':self.config.getint(section, 'side'),
+                      'mpmaxstep':self.config.getfloat(section, 'maxstep'),
+                      'tied':self.config.get(section, 'tied'),
+                      'mpprint': self.config.getboolean(section, 'print')}
+            self.__setattr__(section,pars[section]) # make each parameter into an attribute of this class
+
+
+
+
+        self.data_input=Stoner.DataFile()
         self.data_input = data
         self.chi2mapping = chi2mapping
         assert hasattr(function, '__call__') #check function is actually a function
@@ -78,20 +115,38 @@ class NLFit:
         self.plotout = None #initialise an instance variable later used for storing plot axes instance
         self.param_steps = None
 
-    def run(self):
-        #Read ini file
-        self.config = ConfigParser.SafeConfigParser()
-        if isinstance(self.ini_file,str):
-            self.config.read(self.ini_file)
-        elif isinstance(self.ini_file,file):
-            self.config.readfp(self.ini_file)
+    def run(self,action=None):
+        """Simple wrapper to do the default action for the fitting isntance.
+
+        Keyword Arguements:
+            action (string or None): What to go an do, may be "simulate","fit", "map" or None (default)
+            
+        Returns:
+            Nothing.
+        
+        """
+        
         #work out whether to simulate or not
-        if self.simulate is not None: #Only look in the config file if we're not overriding the simulate property
-            self.simulate = self.config.getboolean('options', 'simulate')
+        
+        if action is None:
+            if self.simulate is None: #Only look in the config file if we're not overriding the simulate property
+                self.simulate = self.config.getboolean('options', 'simulate')
+        elif action=="simulate":
+            self.simulate=True
+        elif action=="fit":
+            self.simulate=False
+            self.chi2mapping=False
+        elif action=="map":
+            self.simulate=False
+            self.chi2mapping=True
+        else:
+            raise RuntimeError("Unable to decide what to do in run()!")
+            
         #run sim
         if self.simulate:
             self._runsim()
-        else: self._runfit()
+        else: 
+            self._runfit()
 
     def _runsim(self):
         """
@@ -135,26 +190,7 @@ class NLFit:
         save_fit = self.config.getboolean('options', 'save_fit')
         print_iterfunct = self.config.getboolean('options', 'print_each_step')
 
-        parnames = self.config.get('data', 'parnames') #returns a list of comma separated names of parameters
-        parnames = [i.strip() for i in parnames.split(',')]
-
-        #build a 2 level dictionary of parameters and parameter info
-        pars = dict()
-        for section in parnames:
-            pars[section] = dict()
-            pars[section]['value'] = self.config.getfloat(section, 'value')
-            pars[section]['fixed'] = self.config.getboolean(section, 'fixed')
-            pars[section]['limited'] = [self.config.getboolean(section, 'lower_limited'), self.config.getboolean(section, 'upper_limited')]
-            pars[section]['limits'] = [self.config.getfloat(section, 'lower_limit'), self.config.getfloat(section, 'upper_limit')]
-            pars[section]['parname'] = self.config.get(section, 'name')
-            pars[section]['step'] = self.config.getfloat(section, 'step')
-            pars[section]['mpside'] = self.config.getint(section, 'side')
-            pars[section]['mpmaxstep'] = self.config.getfloat(section, 'maxstep')
-            pars[section]['tied'] = self.config.get(section, 'tied')
-            pars[section]['mpprint'] = self.config.getboolean(section, 'print')
-
-        #build a list of parameter info dictionaries
-        parlist=[pars[section] for section in parnames]
+        parlist=[self.__getattr__(section) for section in self.parameter_names]
 
         #import data
         if self.data_input == None:
@@ -199,12 +235,21 @@ class NLFit:
         if d.filename is not None:
             filenameonly=os.path.basename(d.filename)
             filenameonly=os.path.splitext(filenameonly)[0]
-
-        #possible extension here for pre processing of data before fit for example:
-        # if self.config.has_attribute('user_options', 'preprocess') and self.config.getboolean('user_options', 'preprocess'):
-            # PPscript=self.config.get('user_options', 'PreProcessScript')
-            # from PPscript import PPfunction
-            # d=PPfunction(d, config)
+            
+        self.data_input=d
+        # Here is some code to allow the user to supply a preprocessing script.
+        # Simply subclass NLFit with a preprocessing method and set the method name in
+        # config file key user_options.preprocess
+        if self.cconfig.has_attribute('user_options','preprocess'):
+            try:
+                preproc=self.__getattr__(self.config.get('user_options','preprocess'))
+            except AttributeError:
+                pass
+            else:
+                if callable(preproc):
+                    preproc(self)
+                    
+            d=self.data_input
 
         ################## Fitting ###########################
         #Plot the data while we do the fitting
@@ -251,9 +296,9 @@ class NLFit:
                         ax = pylab.gca() #axes instance for further internal use
                         self.plotout = plotfig #output a figure instance for further editing
                     # Ok now we can print the answer
-                    for i in range(len(pars)):
-                        print parnames[i]+'='+str(m.params[i])
-                        d[parnames[i]]=m.params[i]
+                    for i in range(len(parlist)):
+                        print self.parameter_names[i]+'='+str(m.params[i])
+                        d[self.parameter_names[i]]=m.params[i]
 
                     chi2=chisquare(d.column(ycol), d.column('Fit'))
                     d['Chi^2']=chi2[0]  #chi2 is [chi2 value, p value]
@@ -262,7 +307,7 @@ class NLFit:
                         d.save(False)
                     self.output = d.clone
                     if show_plot and annotate_plot:
-                        param_text = [name+'='+'{:.4g}'.format(d[name]) for name in parnames]
+                        param_text = [name+'='+'{:.4g}'.format(d[name]) for name in self.parameter_names]
                         param_text = '\n'.join(param_text)
                         pylab.text(0.1,0.9,param_text,ha='left',va='top',transform=ax.transAxes)
                     row=m.params
