@@ -198,7 +198,7 @@ class AnalyseFile(DataFile):
             self.add_column(numpy.polyval(p, self.column(column_x)), index=result, replace=replace, column_header=header)
         return p
 
-    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ):
+    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -215,10 +215,12 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            asrow (bool): Instead of returning popt,pcov, return a single array of popt, interleaved with the standard error in popt
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
             pcov (2d array): The variance-co-variance matrix for the fitting parameters.
+            If asrow is True, then return [popt[0],sqrt(pcov[0,0]),popt[1],sqrt(pcov[1,1])...popt[n],sqrt(pcov[n,n])]
 
         Note:
             The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
@@ -248,8 +250,13 @@ class AnalyseFile(DataFile):
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
             self.apply(lambda x:func(x[xc], *popt), result, replace=replace, header=header)
-        return popt, pcov
-
+        if not asrow:
+            return popt, pcov
+        else:
+            rc=numpy.array([])
+            for i in range(len(popt)):
+                rc=numpy.append(rc,[popt[i],numpy.sqrt(pcov[i,i])])
+            return rc
     def max(self, column, bounds=None):
         """FInd maximum value and index in a column of data
 

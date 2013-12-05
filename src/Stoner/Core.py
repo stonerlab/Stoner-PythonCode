@@ -664,6 +664,7 @@ class DataFile(object):
               "dict_records":self._getattr_dict_records,
               "dtype":self._getattr_dtype,
               "mask":self._getattr_mask,
+              "T":self._getattr_by_columns,
               "records":self._getattr_records,
               "shape":self._getattr_shape,
               "subclasses":self._getattr_subclasses
@@ -677,6 +678,12 @@ class DataFile(object):
             except KeyError:
                 pass
         raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
+
+    def _getattr_by_columns(self):
+        """Gets the current data transposed
+        """
+        return self.data.T
+
 
     def _getattr_clone(self):
         """Gets a deep copy of the current DataFile
@@ -909,8 +916,10 @@ class DataFile(object):
                 self._set_mask(value, invert=False)
             else:
                 self.data.mask=value
-        if name=="data":
+        elif name=="data":
             self.__dict__[name]=ma.masked_array(value)
+        elif name=="T":
+            self.data.T=value
         else:
             self.__dict__[name] = value
 
@@ -1052,15 +1061,15 @@ class DataFile(object):
         elif len(self.data.shape)==0:
             self.data=numpy.array([[]])
             (dr,dc)=(0,0)
-        if cl>dr:
+        if cl>dr and dc*dr>0:
             self.data=numpy.append(self.data,numpy.zeros((cl-dr,dc)),0)
         elif cl<dr:
             numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
-
+        print dr,dc,cl
         if replace:
             self.data[:, index] = numpy_data
         else:
-            if len(self.data) == 0:
+            if dc*dr == 0:
                 self.data=ma.masked_array(numpy.transpose(numpy.atleast_2d(numpy_data)))
             else:
                 self.data = ma.masked_array(numpy.insert(self.data, index, numpy_data, 1))
