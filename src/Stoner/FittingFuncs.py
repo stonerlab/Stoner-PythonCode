@@ -34,12 +34,12 @@ def PowerLaw(x,p):
     return _SF.PowerLaw(x,*p)
 
 def Quadratic(x, p):
+    """Simple Qudratic Function."""
     return _SF.Quadratic(x,*p)
 
 
 def Simmons(V, params):
-    """
-    Simmons model tunnelling
+    """Simmons model tunnelling
     V=bias voltage, params=[A, phi, d]
     A in m^2, phi barrier height in eV, d barrier width in angstrom
 
@@ -59,8 +59,7 @@ def BDR(V, params):
     return _SF.BDR(V,*params)
 
 def FowlerNordheim(V, params):
-    """
-    Simmons model tunnelling at V>phi
+    """Simmons model tunnelling at V>phi
     V=bias voltage, params=[A, phi, d]
     A in m^2, phi barrier height in eV, d barrier width in angstrom
 
@@ -76,8 +75,7 @@ def TersoffHammann(V, params):
     return _SF.TersoffHammann(V,*params)
 
 def WLfit(B, params):
-    """
-    Weak localisation
+    """Weak localisation
     VRH(B, params):
     B = mag. field, params=list of parameter values, s0, B1, B2
 
@@ -88,14 +86,17 @@ def WLfit(B, params):
     return _SF.WLfit(B,*params)
 
 def strijkers(V, params):
-    """
-    strijkers(V, params):
-    V = bias voltages, params=list of parameter values, imega, delta,P and Z
-    PCAR fitting
-    Strijkers modified BTK model
+    """strijkers(V, params):
+    
+    Args:
+    V (array): bias voltages
+    params (list): parameter values: omega, delta,P and Z
+    
+    Note:
+        PCAR fitting Strijkers modified BTK model
         BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
-
-    Only using 1 delta, not modified for proximity
+        
+        Only using 1 delta, not modified for proximity
     """
     return _SF.Strijkers(V,*params)
 

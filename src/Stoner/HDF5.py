@@ -1,7 +1,4 @@
-"""                 Stoner.HDF5 
-                    ===========
-                    
-Defines classes that use the hdf5 file format to store data on disc.
+"""Stoner.HDF5 - Defines classes that use the hdf5 file format to store data on disc.
 
 Classes include
 

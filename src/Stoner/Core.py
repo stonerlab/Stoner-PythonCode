@@ -312,7 +312,7 @@ class DataFile(object):
         column_headers (list): of strings of the column names of the data
         title (string): The title of the measurement
         filename (string): The current filename of the data if loaded from or
-            already saved to disc. This is the default filename used by the @b load() and @b save()
+            already saved to disc. This is the default filename used by the :py:math:`load` and  :py:meth:`save`
 
     Methods:
         mask: Returns the current mask applied to the numerical data equivalent to self.data.mask
@@ -336,7 +336,7 @@ class DataFile(object):
 
         various forms are recognised:
         :function DataFile('filename',<optional filetype>,<args>)
-            Creates the new DataFile object and then executes the @b DataFile.load
+            Creates the new DataFile object and then executes the :py:class:`DataFile`.load
             method to load data from the given @a filename
         :function DataFile(array)
             Creates a new DataFile object and assigns the @a array to the
@@ -527,7 +527,7 @@ class DataFile(object):
             The size of @a other is increased with zeros for the extra rows.
             If other is a 1D numpy array it is treated as a column vector.
             The new columns are given blank column headers, but the
-            length of the @b Stoner.DataFile.column_headers is
+            length of the :py:meth:`column_headers` is
             increased to match the actual number of columns.
         """
         newdata=self.__class__(self.clone)
@@ -641,7 +641,7 @@ class DataFile(object):
     def __getattr__(self, name):
         """
         Called for :py:class:`DataFile`.x to handle some special pseudo attributes
-        and otherwise to act as a shortcut for @b DataFile.column
+        and otherwise to act as a shortcut for :py:math:`column`
 
         Args:
             name (string): The name of the attribute to be returned.
@@ -924,7 +924,7 @@ class DataFile(object):
             self.__dict__[name] = value
 
     def __setitem__(self, name, value):
-        """Called for @b DataFile[@em name ] = @em value to write mewtadata
+        """Called for :py:class:`DataFile`[name ] = value to write mewtadata
         entries.
 
         Args:
@@ -1095,7 +1095,7 @@ class DataFile(object):
             yield self.data[col]
 
     def del_column(self, col=None,duplicates=False):
-        """Deletes a column from the current @b DataFile object
+        """Deletes a column from the current :py:class:`DataFile` object
 
         Args:
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
@@ -1234,14 +1234,14 @@ class DataFile(object):
             first match found is taken. This allows additional regular expression options
             such as case insensitivity.
         -   A slice index is converted to a list of integers and processed as below
-        -   A list index returns the results of feading each item in the list at @b find_col
+        -   A list index returns the results of feading each item in the list at :py:math:`find_col`
             in turn.
 
         Args:
             col (int, a string, a re, a slice or a list):  Which column(s) to retuirn indices for.
 
         Returns:
-            The matching column index as an integer or a @b KeyError
+            The matching column index as an integer or a KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
             if not 0<=col<self.data.shape[1]:
@@ -1311,7 +1311,7 @@ class DataFile(object):
         return self
 
     def keys(self):
-        """An alias for @b DataFile.dir(None)
+        """An alias for :py:math:`dir`(None)
 
         Returns:
             a list of all the keys in the metadata dictionary"""
