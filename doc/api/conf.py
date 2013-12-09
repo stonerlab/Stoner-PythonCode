@@ -28,7 +28,7 @@ import sys, os
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
 'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary',
 'sphinxcontrib.napoleon','sphinx.ext.graphviz','sphinx.ext.inheritance_diagram',
-'sphinx.ext.todo']
+'sphinx.ext.todo','astropy.sphinx.ext.automodapi','astropy.sphinx.ext.automodsumm']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -91,7 +91,7 @@ pygments_style = 'sphinx'
 
 autosummary_generate = True
 
-autodoc_default_flags =[ 'members', 'undoc-members', 'private-members','show-inheritance']
+#autodoc_default_flags =[ 'members', 'undoc-members', 'private-members','show-inheritance']
 
 # -- Options for HTML output ---------------------------------------------------
 

@@ -6,10 +6,9 @@ Stoner Package
 
 .. currentmodule:: Stoner.Core
 
-
 .. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
+    :toctree: classes
+    :template: classdocs.rst
 
     typeHintedDict
     DataFile
@@ -53,36 +52,59 @@ Stoner Package
     DataFolder
 
 :mod:`FileFormats` Module
--------------------------
+=========================
 
-.. automodule:: Stoner.FileFormats
+.. currentmodule:: Stoner.FileFormats
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    BNLFile
+    BigBlueFile
+    CSVFile
+    FmokeFile
+    OpenGDAFile
+    QDSquidVSMFile
+    RasorFile
+    RigakuFile
+    SPCFile
+    TDMSFile
+    VSMFile
+    XRDFile
 
 
 :mod:`FittingFuncs` Module
---------------------------
+==========================
 
 .. automodule:: Stoner.FittingFuncs
 
+.. autosummary::
 
 :mod:`HDF5` Module
-------------------
+=========================
 
-.. automodule:: Stoner.HDF5
+.. currentmodule:: Stoner.HDF5
 
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+    HDF5File
+    HDF5Folder
 
 :mod:`Util` Module
-------------------
+==================
 
 .. automodule:: Stoner.Util
 
 
 :mod:`mpfit` Module
--------------------
+===================
 
 .. automodule:: Stoner.mpfit
 
 :mod:`nlfit` Module
--------------------
+===================
 
 .. automodule:: Stoner.nlfit
 
