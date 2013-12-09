@@ -45,6 +45,7 @@ class AnalyseFile(DataFile):
 
     Note:
         There is no separate constructor for this class - it inherits from DataFile
+
     """
 
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):

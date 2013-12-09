@@ -1,92 +1,88 @@
 """MPFit Module - Perform Levenberg-Marquardt least-squares minimization, based on MINPACK-1.
 
                             Authors
-                            -------
 
-  The original version of this software, called LMFIT, was written in FORTRAN
-  as part of the MINPACK-1 package by XXX.
+The original version of this software, called LMFIT, was written in FORTRAN
+as part of the MINPACK-1 package by XXX.
 
-  Craig Markwardt converted the FORTRAN code to IDL.  The information for the
-  IDL version is:
-     Craig B. Markwardt, NASA/GSFC Code 662, Greenbelt, MD 20770
-     craigm@lheamail.gsfc.nasa.gov
-     UPDATED VERSIONs can be found on my WEB PAGE:
-        http://cow.physics.wisc.edu/~craigm/idl/idl.html
+Craig Markwardt converted the FORTRAN code to IDL.  The information for the
+    IDL version is:
+    Craig B. Markwardt, NASA/GSFC Code 662, Greenbelt, MD 20770
+    craigm@lheamail.gsfc.nasa.gov
+    UPDATED VERSIONs can be found on my WEB PAGE:
+    http://cow.physics.wisc.edu/~craigm/idl/idl.html
 
-  Mark Rivers created this Python version from Craig's IDL version.
+Mark Rivers created this Python version from Craig's IDL version.
     Mark Rivers, University of Chicago
     Building 434A, Argonne National Laboratory
     9700 South Cass Avenue, Argonne, IL 60439
     rivers@cars.uchicago.edu
     Updated versions can be found at http://cars.uchicago.edu/software
 
- Sergey Koposov converted the Mark's Python version from Numeric to numpy
+Sergey Koposov converted the Mark's Python version from Numeric to numpy
     Sergey Koposov, University of Cambridge, Institute of Astronomy,
     Madingley road, CB3 0HA, Cambridge, UK
     koposov@ast.cam.ac.uk
     Updated versions can be found at http://code.google.com/p/astrolibpy/source/browse/trunk/
 
- Gavin Burnell added this to the Stoner Package
-     Gavin Burnell, University of Leeds, School of Physics and Astronomy
-     Woodhouse Lane, Leeds, LS2 9JT, UK
-     Updated versions can be found at http://github.com/~gb119/Stoner-package/
+Gavin Burnell added this to the Stoner Package
+    Gavin Burnell, University of Leeds, School of Physics and Astronomy
+    Woodhouse Lane, Leeds, LS2 9JT, UK
+    Updated versions can be found at http://github.com/~gb119/Stoner-package/
 
-                                Description
-                                -----------
+Description
 
- MPFIT uses the Levenberg-Marquardt technique to solve the
- least-squares problem.  In its typical use, MPFIT will be used to
- fit a user-supplied function (the "model") to user-supplied data
- points (the "data") by adjusting a set of parameters.  MPFIT is
- based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
-
- For example, a researcher may think that a set of observed data
- points is best modelled with a Gaussian curve.  A Gaussian curve is
- parameterized by its mean, standard deviation and normalization.
- MPFIT will, within certain constraints, find the set of parameters
- which best fits the data.  The fit is "best" in the least-squares
- sense; that is, the sum of the weighted squared differences between
- the model and data is minimized.
-
- The Levenberg-Marquardt technique is a particular strategy for
- iteratively searching for the best fit.  This particular
- implementation is drawn from MINPACK-1 (see NETLIB), and is much faster
- and more accurate than the version provided in the Scientific Python package
- in Scientific.Functions.LeastSquares.
- This version allows upper and lower bounding constraints to be placed on each
- parameter, or the parameter can be held fixed.
-
- The user-supplied Python function should return an array of weighted
- deviations between model and data.  In a typical scientific problem
- the residuals should be weighted so that each deviate has a
- gaussian sigma of 1.0.  If X represents values of the independent
- variable, Y represents a measurement for each value of X, and ERR
- represents the error in the measurements, then the deviates could
- be calculated as follows:
+MPFIT uses the Levenberg-Marquardt technique to solve the
+least-squares problem.  In its typical use, MPFIT will be used to
+fit a user-supplied function (the "model") to user-supplied data
+points (the "data") by adjusting a set of parameters.  MPFIT is
+based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
+ 
+For example, a researcher may think that a set of observed data
+points is best modelled with a Gaussian curve.  A Gaussian curve is
+parameterized by its mean, standard deviation and normalization.
+MPFIT will, within certain constraints, find the set of parameters
+which best fits the data.  The fit is "best" in the least-squares
+sense; that is, the sum of the weighted squared differences between
+the model and data is minimized.
+ 
+The Levenberg-Marquardt technique is a particular strategy for
+iteratively searching for the best fit.  This particular
+implementation is drawn from MINPACK-1 (see NETLIB), and is much faster
+and more accurate than the version provided in the Scientific Python package
+in Scientific.Functions.LeastSquares.
+This version allows upper and lower bounding constraints to be placed on each
+parameter, or the parameter can be held fixed.
+ 
+The user-supplied Python function should return an array of weighted
+deviations between model and data.  In a typical scientific problem
+the residuals should be weighted so that each deviate has a
+gaussian sigma of 1.0.  If X represents values of the independent
+variable, Y represents a measurement for each value of X, and ERR
+represents the error in the measurements, then the deviates could
+be calculated as follows:
 
    DEVIATES = (Y - F(X)) / ERR
 
- where F is the analytical function representing the model.  You are
- recommended to use the convenience functions MPFITFUN and
- MPFITEXPR, which are driver functions that calculate the deviates
- for you.  If ERR are the 1-sigma uncertainties in Y, then
+where F is the analytical function representing the model.  You are
+recommended to use the convenience functions MPFITFUN and
+MPFITEXPR, which are driver functions that calculate the deviates
+for you.  If ERR are the 1-sigma uncertainties in Y, then
 
    TOTAL( DEVIATES^2 )
-
- will be the total chi-squared value.  MPFIT will minimize the
- chi-square value.  The values of X, Y and ERR are passed through
- MPFIT to the user-supplied function via the FUNCTKW keyword.
-
+ 
+will be the total chi-squared value.  MPFIT will minimize the
+chi-square value.  The values of X, Y and ERR are passed through
+MPFIT to the user-supplied function via the FUNCTKW keyword.
  Simple constraints can be placed on parameter values by using the
  PARINFO keyword to MPFIT.  See below for a description of this
- keyword.
+keyword.
 
- MPFIT does not perform more general optimization tasks.  See TNMIN
- instead.  MPFIT is customized, based on MINPACK-1, to the
- least-squares minimization problem.
+MPFIT does not perform more general optimization tasks.  See TNMIN
+instead.  MPFIT is customized, based on MINPACK-1, to the
+least-squares minimization problem.
 
                             User Function
-                            -------------
 
  The user must define a function which returns the appropriate
  values as specified above.  The function should return the weighted
@@ -123,7 +119,6 @@
  -15 and -1 then MPFIT will stop the calculation and return to the caller.
 
                             Analytical Derovatives
-                            ----------------------
 
  In the search for the best-fit solution, MPFIT by default
  calculates derivatives numerically via a finite difference
@@ -137,6 +132,7 @@
  If AUTODERIVATIVE=0 is used then the user function must check the parameter
  FJAC, and if FJAC!=None then return the partial derivative array in the
  return list.
+::
    def myfunct(p, fjac=None, x=None, y=None, err=None)
     # Parameter values are passed in "p"
     # If FJAC!=None then partial derivatives must be comptuer.
@@ -178,7 +174,6 @@
 
 
            Constraining Paremeters with the parinfo keyword
-             ------------------------------------------------
 
  The behavior of MPFIT can be modified with respect to each
  parameter to be fitted.  A parameter value can be fixed; simple
@@ -282,9 +277,7 @@
  is fixed at a value of 5.7, and the last parameter is
  constrained to be above 50.
 
-                                Example
-                                -------
-
+    Example::
    import mpfit
    import numpy.oldnumeric as Numeric
    x = arange(100, float)
@@ -302,7 +295,6 @@
    results can be obtained from the returned object m.
 
                             Theory of Opertation
-                            --------------------
 
    There are many specific strategies for function minimization.  One
    very popular technique is to use function gradient information to
@@ -310,7 +302,7 @@
    the function value can be taylor expanded about x0 as follows:
 
       f(x) = f(x0) + f'(x0) . (x-x0) + (1/2) (x-x0) . f''(x0) . (x-x0)
-             -----   ---------------   -------------------------------  (1)
+                                                                         (1)
      Order    0th          1st                      2nd
 
    Here f'(x) is the gradient vector of f at x, and f''(x) is the
@@ -393,7 +385,6 @@
 
 
                             REeferences
-                            -----------
 
    MINPACK-1, Jorge More', available from netlib (www.netlib.org).
    "Optimization Software Guide," Jorge More' and Stephen Wright,
@@ -403,7 +394,6 @@
      G. A., Lecture Notes in Mathematics 630, Springer-Verlag, 1977.
 
                     Modification History
-                    --------------------
 
    - Translated from MINPACK-1 in FORTRAN, Apr-Jul 1998, CM
          Copyright (C) 1997-2002, Craig Markwardt
@@ -1418,12 +1408,12 @@ class mpfit:
                        format=None, pformat='%.10g', dof=1):
         """ Default procedure to be called every iteration.  It simply prints
             the parameter values.
-        
+
             Args:
                 fcn (callable): fitting function
                 x (array): current parameter values
                 iter (int): Current iterator number
-        
+
             Keyword Arguments:
                 fnorm (float): chi suqare for fit
                 functkw (dict): Dictiornary of keyword arguments supplied to function

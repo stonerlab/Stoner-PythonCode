@@ -22,11 +22,12 @@ def byteToHex( byteStr ):
     
     Note:
         Uses list comprehension which is a fractionally faster implementation than
-        the alternative, more readable, implementation below
+        the alternative, more readable, implementation below::
         hex = []
         for aChar in byteStr:
             hex.append( "%02X " % ord( aChar ) )
         return ''.join( hex ).strip()
+
     """
     return ''.join( [ "%02X " % ord( x ) for x in byteStr ] ).strip()
 
