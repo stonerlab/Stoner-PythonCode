@@ -53,7 +53,7 @@ class CSVFile(DataFile):
             header_string=linecache.getline(self.filename, header_line)
             header_string=re.sub(r'["\n]', '', header_string)
             try:
-                print header_string.index(header_delim)
+                tmp=header_string.index(header_delim)
             except ValueError:
                 raise RuntimeError("No Delimiters in header line")
             self.column_headers=[x.strip() for x in header_string.split(header_delim)]
@@ -678,4 +678,40 @@ class FmokeFile(DataFile):
         self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
-
+class GenXFile(DataFile):
+    """Extends DataFile for GenX Exported data."""
+    priority=16
+    
+    def load(self,filename=None,*args, **kargs):
+        """Load function. File format has space delimited columns from row 3 onwards."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        pattern=re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
+        pattern2=re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
+        with open(self.filename,"r") as datafile:
+            line=datafile.next()
+            match=pattern.match(line)
+            match2=pattern2.match(line)
+            if match is not None:
+                dataset=match.groups()[0]
+                date=match.groups()[1]
+                line=datafile.next()
+                line=datafile.next()
+                line=line[1:]
+                self["date"]=date
+            elif match2 is not None:
+                line=datafile.next()
+                self["date"]=line.split(':')[1].strip()
+                datafile.next()
+                line=datafile.next()
+                line=line[1:]
+                dataset="asymmetry"
+            else:
+                raise RuntimeError("Not a GenXFile")
+            self.column_headers=[f.strip() for f in line.strip().split('\t')]
+            self.data=numpy.genfromtxt(datafile)
+            self["dataset"]=dataset
+        return self
+ 
