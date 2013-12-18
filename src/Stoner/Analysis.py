@@ -361,6 +361,36 @@ class AnalyseFile(DataFile):
             self._pop_mask()
         return result
 
+    def diffsum(self, a, b, replace=False, header=None):
+        """Subtract one column, number or array (b) from another column (a) and divide by their sums
+
+        Args:
+            a (index): First column to work with
+            b (index, float or 1D array):  Second column to work with.
+
+        Keyword Arguments:
+            header (string or None): new column header  (defaults to a-b
+            replace (bool): Replace the a column with the new data
+
+        Returns:
+            A copy of the new data object"""
+        a=self.find_col(a)
+        if isinstance(b, float):
+            if header is None:
+                header=self.column_headers[a]+"-"+str(b)+"/"+self.column_headers[a]+"+"+str(b)
+            self.add_column((self.column(a)-b)/(self.column(a)+b), header, a, replace=replace)
+        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
+            if header is None:
+                header=self.column_headers[a]+"-data/"+self.column_headers[a]+"+data"
+            self.add_column((self.column(a)+numpy.array(b))/((self.column(a)+numpy.array(b))), header, a, replace=replace)
+        elif isinstance(b, numpy.ndarray):
+            raise ValueError("Can only Add  an array that is 1D and the same length as the data.")
+        else:
+            b=self.find_col(b)
+            if header is None:
+                header=self.column_headers[a]+"-"+self.column_headers[b]+"/"+self.column_headers[a]+"+"+self.column_headers[b]
+            self.add_column((self.column(a)-self.column(b))/(self.column(a)+self.column(b)), header, a, replace=replace)
+        return self
 
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
