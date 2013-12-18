@@ -716,7 +716,6 @@ class DataFile(object):
             while ch[i] in ch[i+1:] or ch[i] in ch[0:i]:
                 j=j+1
                 ch[i]="{}_{}".format(header,j)
-        print ch
         dtype = [(x, self.dtype) for x in ch]
         return self.data.view(dtype=dtype).reshape(len(self))
 
@@ -1065,7 +1064,6 @@ class DataFile(object):
             self.data=numpy.append(self.data,numpy.zeros((cl-dr,dc)),0)
         elif cl<dr:
             numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
-        print dr,dc,cl
         if replace:
             self.data[:, index] = numpy_data
         else:
