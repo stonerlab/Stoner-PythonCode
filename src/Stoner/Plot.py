@@ -16,6 +16,7 @@ if os.name=="posix" and platform.system()=="Darwin":
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
 from copy import copy
+import re
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -87,6 +88,34 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
+    def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
+        """Private method for plotting a single plot to a figure.
+        
+        Args:
+            ix (int): COlumn index of x data
+            iy (int): Column index of y data
+            fmt (str): Format of this plot
+            plotter (callable): Routine used to plot this data
+            figure (matplotlib.figure): Figure to plot data
+            **kwords (dict): Other keyword arguments to pass through
+
+        """
+        if "label" not in kwords:
+            kwords["label"]=self.column_headers[iy]
+        x=self.column(ix)
+        y=self.column(iy)
+        if plotter in (pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog): #plots with positional fmt
+            if fmt is None:
+                plotter(x,y, figure=figure, **kwords)
+            else:
+                plotter(x,y, fmt, figure=figure, **kwords)
+        else:
+            if fmt is None:
+                fmt="-"
+            plotter(x,y, fmt=fmt,figure=figure, **kwords)
+
+
+
     def plot_xy(self,column_x, column_y, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
 
@@ -109,21 +138,18 @@ class PlotFile(DataFile):
         """
         column_x=self.find_col(column_x)
         column_y=self.find_col(column_y)
-        x=self.column(column_x)
-        y=self.column(column_y)
+        if "xerr" in kwords or "yerr" in kwords and plotter is None: # USe and errorbar blotter by default for errors
+            plotter=pyplot.errorbar
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
             if err in kwords:
-                if plotter is None:
-                    plotter=pyplot.errorbar
-                # If the keyword exists and is either an int or a string, then
-                # it will be a column index, so get the matching data
-                if type(kwords[err]) in [int,str]:
+                if isinstance(kwords[err],(int,str,unicode,re._pattern_type)):
                     kwords[err]=self.column(kwords[err])
-                elif isinstance(kwords[err], list):
+                elif isinstance(kwords[err], list) and isinstance(column_y,list) and len(kwords[err])==len(column_y):
                 # Ok, so it's a list, so redo the check for each  item.
                     for i in range(len(kwords[err])):
-                        if type(kwords[err][i]) in  [int, str]:
+                        if isinstance(kwords[err],(int,str,unicode,re._pattern_type)):
                             kwords[err][i]=self.column(kwords[err])
+        
         # Now try to process the figure parameter
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
@@ -135,38 +161,29 @@ class PlotFile(DataFile):
             figure=self.__figure
         else:
             figure=pyplot.figure()
+        
         if show_plot == True:
             pyplot.ion()
         if plotter is None: #Nothing has defined the plotter to use yet
-            plotter=pyplot.plot
-        if isinstance(column_y, list):
-            temp_kwords=kwords
-            for ix in range(len(column_y)):
-                if "label" not in temp_kwords:
-                    kwords=copy(temp_kwords)
-                    kwords["label"]=self.column_headers[column_y[ix]]
-                yt=y[:, ix]
-                if isinstance(fmt, list):
-                    plotter(x,yt, fmt[ix], figure=figure,**kwords)
-                elif fmt==None:
-                    plotter(x,y, figure=figure, **kwords)
-                else:
-                    plotter(x,y, fmt, figure=figure, label=self.column_headers[column_y[ix]],**kwords)
+            plotter=pyplot.plot  
+        if not isinstance(column_y, list):
+            ylabel=self.column_headers[column_y]
+            column_y=[column_y]
         else:
-            if "label" not in kwords:
-                kwords["label"]=self.column_headers[column_y]
-            if fmt==None:
-                plotter(x,y, figure=figure, **kwords)
+            ylabel=",".join([self.column_headers[ix] for ix in column_y])
+        temp_kwords=kwords
+        for ix in range(len(column_y)):
+            if isinstance(fmt,list): # Fix up the format
+                fmt_t=fmt[ix]
             else:
-                plotter(x,y, fmt, figure=figure, **kwords)
+                fmt_t=fmt
+            if "label" in kwords and isinstance(kwords["label"],list): # Fix label keywords
+                temp_kwords["label"]=kwords["label"][ix]
+            # Call plot
+            self._plot(column_x,column_y[ix],fmt_t,plotter,figure,**temp_kwords)
+
 
         pyplot.xlabel(str(self.column_headers[column_x]))
-        if isinstance(column_y, list):
-            ylabel=column_y
-            ylabel[0]=self.column_headers[column_y[0]]
-            ylabel=reduce(lambda x, y: x+","+self.column_headers[y],  ylabel)
-        else:
-            ylabel=self.column_headers[column_y]
         pyplot.ylabel(str(ylabel))
         if title=='':
             title=self.filename
