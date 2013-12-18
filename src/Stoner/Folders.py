@@ -334,7 +334,9 @@ class DataFolder(object):
         Returns:
             A copy of the current DataFolder object"""
         if isinstance(key, str):
-            self.files=sorted(self.files, cmp=lambda x, y:cmp(self[x].get(key), self[y].get(key)), reverse=reverse)
+            k=[(self[i].get(key),i) for i in range(len(self.files))]
+            k=sorted(k,reverse=reverse)
+            self.files=[self.files[y] for (x,y) in k]
         elif key is None:
             fnames=self.ls
             fnames.sort(reverse=reverse)
@@ -493,7 +495,7 @@ class DataFolder(object):
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a DataFolder or DataFile."""
-	if (len(self.groups)>0):
+        if (len(self.groups)>0):
             ret=[]
             removeGroups=[]
             if replace_terminal:
@@ -510,7 +512,7 @@ class DataFolder(object):
             for g in removeGroups:
                 del(self.groups[g])
             return ret
-	else:
+        else:
 	   if group:
 	       return walker(self,breadcrumb,**walker_args)
 	   else:
