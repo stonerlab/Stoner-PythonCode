@@ -76,18 +76,20 @@ def format_error(value,error,latex=False):
     u_mag=floor(log10(error)) # so go round the loop again
     error=round(e2/10**u_mag)*10**u_mag # and get a new error magnitude
     if latex:
-        if u_mag<0:
-            fmt_str=r"${}\pm{:."+str(int(abs(u_mag)))+"f}$"
-        else:
-            fmt_str=r"{}\pm{}$"
+        val_fmt_str=r"${}\pm "
+        suffix_fmt="$"
     else:
-        if u_mag<0:
-            fmt_str=r"{}+/-{:."+str(int(abs(u_mag)))+"f}"
-        else:
-            fmt_str=r"{}+/-{}"
-
-
+        val_fmt_str=r"{}+/-"
+        suffix_fmt=""
+    if u_mag<0:
+        err_fmt_str=r"{:."+str(int(abs(u_mag)))+"f}"
+    else:
+        err_fmt_str=r"{}"
+    fmt_str=val_fmt_str+err_fmt_str+suffix_fmt
     value=round(value/10**u_mag)*10**u_mag
+    if error>=1.0:
+        error=int(error)
+        value=int(value)
     return fmt_str.format(value,error)
 
 def ordinal(value):

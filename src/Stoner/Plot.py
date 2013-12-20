@@ -55,14 +55,18 @@ class PlotFile(DataFile):
         attr2=[a for a in super(PlotFile, self).__dir__() if a not in attr]
         attr.extend(attr2)
         attr.extend(["fig", "axes"])
+        attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
         return attr
 
     def __getattr__(self, name):
         """Attribute accessor
 
         Args:
-            name (string):  Name of attribute: 
-                only "fig" is supported here to return the current figure refernce
+            name (string):  Name of attribute the following attributes are supported:
+                * fig - the current pyplot figure reference
+                * axes - the pyplot axes object for the current plot
+                * xlim - the X axis limits
+                * ylim - the Y axis limits
 
                 All other attrbiutes are passed over to the parent class
                 """
@@ -73,6 +77,8 @@ class PlotFile(DataFile):
                 return self.__figure.axes
             else:
                 return None
+        elif name in ('xlim','ylim'):
+            return pyplot.__dict__[name]()
         else:
             return super(PlotFile, self).__getattr__(name)
 
@@ -80,11 +86,28 @@ class PlotFile(DataFile):
         """Sets the specified attribute
 
         Args:
-            name (string): The name of the attribute to set. Only "fig" is supported in this class - everything else drops through to the parent class
+            name (string): The name of the attribute to set. The cuirrent attributes are supported:
+                * fig - set the pyplot figure isntance to use
+                * xlabel - set the X axis label text
+                * ylabel - set the Y axis label text
+                * title - set the plot title
+                * subtitle - set the plot subtitle
+                * xlim - set the x-axis limits
+                * ylim - set the y-axis limits
+            
+            Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
     """
         if name=="fig":
-            self.figure(value)
+            self.__figure=value
+            pyplot.figure(value.number)
+        elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
+            if isinstance(value,tuple):
+                pyplot.__dict__[name](*value)
+            elif isinstance(value,dict):
+                pyplot.__dict__[name](**value)
+            else:
+                pyplot.__dict__[name](value)
         else:
             super(PlotFile, self).__setattr__(name, value)
 
@@ -161,6 +184,8 @@ class PlotFile(DataFile):
             figure=self.__figure
         else:
             figure=pyplot.figure()
+        
+        pyplot.figure(figure.number)
         
         if show_plot == True:
             pyplot.ion()

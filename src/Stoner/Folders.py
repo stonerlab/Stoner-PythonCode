@@ -214,7 +214,7 @@ class DataFolder(object):
         elif item=="ls":
             ret=[]
             for f in self.files:
-                if isinstance(f,str):
+                if isinstance(f,(str,unicode)):
                     ret.append(f)
                 elif isinstance(f,DataFile):
                     ret.append(f.filename)
@@ -242,45 +242,78 @@ class DataFolder(object):
             del self.files[item]
         else:
             raise NotImplemented
-
-    def getlist(self, recursive=True, directory=None):
+        
+    def _pathsplit(self,pathstr, maxsplit=1):
+        """split relative path into list"""
+        path = [pathstr]
+        while True:
+            oldpath = path[:]
+            path[:1] = list(os.path.split(path[0]))
+            if path[0] == '':
+                path = path[1:]
+            elif path[1] == '':
+                path = path[:1] + path[2:]
+            if path == oldpath:
+                return path
+            if maxsplit is not None and len(path) > maxsplit:
+                return path       
+    
+    def getlist(self, recursive=True, directory=None,flatten=False):
         """Scans the current directory, optionally recursively to build a list of filenames
 
         Keyword Arguments:
             recursive (bool): Do a walk through all the directories for files
             directory (string or False): Either a string path ot a new directory or False to open a dialog box or not set in which case existing director is used.
-
+            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of :py:meth:`getlist()`)
+        
         Returns:
-            A copy of the current DataFoder directory with the files stored in the files attribute"""
+            A copy of the current DataFoder directory with the files stored in the files attribute
+            
+        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
+        directory tree finding sub directories and creating groups in the data folder for each sub directory.
+        """
         self.files=[]
         if isinstance(directory,  bool) and not directory:
             self._dialog()
-        elif isinstance(directory, str):
+        elif isinstance(directory, (str,unicode)):
             self.directory=directory
         if isinstance(self.directory, bool) and not self.directory:
-            self._dialog()
-        if not recursive:
-            root=self.directory
-            dirs=[]
-            files=[]
-            for f in os.listdir(root):
-                if path.isdir(path.join(root, f)):
-                    dirs.append(f)
-                elif path.isfile(path.join(root, f)):
-                    files.append(f)
-            target=[(root, dirs, files)]
-        else:
-            target=[x for x in os.walk(self.directory)]
-        for root, dirs, files in target:
-            if isinstance(self.pattern, str):
-                for f in fnmatch.filter(files, self.pattern):
-                    self.files.append(path.join(root, f))
-            elif isinstance(self.pattern, re._pattern_type):
-                newfiles=[]
-                for f in files:
-                    if self.pattern.search(f) is not None:
-                        newfiles.append(path.join(root, f))
-                self.files=newfiles
+            self._dialog()        
+        root=self.directory
+        dirs=[]
+        files=[]
+        for f in os.listdir(root):
+            if path.isdir(path.join(root, f)):
+                dirs.append(f)
+            elif path.isfile(path.join(root, f)):
+                files.append(f)
+        if isinstance(self.pattern, str):
+            for f in fnmatch.filter(files, self.pattern):
+                self.files.append(path.join(root, f))
+        elif isinstance(self.pattern, re._pattern_type):
+            newfiles=[]
+            for f in files:
+                if self.pattern.search(f) is not None:
+                    newfiles.append(path.join(root, f))
+            self.files=newfiles
+        if recursive:
+            for d in dirs:
+                self.add_group(d)
+                self.groups[d].directory=path.join(self.directory,d)
+                self.groups[d].getlist(recursive=recursive,flatten=flatten)
+        if flatten:
+            self.flatten()
+        return self
+
+    def flatten(self):
+        """Compresses all the groups and sub-groups iunto a single flat file list.
+        
+        Returns:
+            A copy of the now flattened DatFolder"""
+        for g in self.groups:
+            self.groups[g].flatten()
+            self.files.extend(self.groups[g].files)
+        self.groups={}
         return self
 
     def filterout(self, filter):
@@ -398,7 +431,7 @@ class DataFolder(object):
             for g in self.groups:
                 self.groups[g].group(next_keys)
         return self
-
+    
     def zip_groups(self, groups):
         """Return a list of tuples of DataFiles drawn from the specified groups
 
