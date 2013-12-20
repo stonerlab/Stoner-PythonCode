@@ -37,3 +37,5 @@ from Plot import *
 from FileFormats import *
 from Folders import *
 
+version="0.1.0"
+

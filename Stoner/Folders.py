@@ -316,6 +316,31 @@ class DataFolder(object):
         self.groups={}
         return self
 
+    def prune(self):
+        """Traverse the groups recursively and remove all groups that are empty of both
+        files and groups.
+        
+        Returns:
+            A copy of the pruned DataFolder.
+        """
+        self._prune()
+        return self
+        
+    def _prune(self):
+        """Traverse the groups recursively and remove all groups that are empty of both
+        files and groups.
+        
+        Returns:
+            Boolean indicating whether we can prune this DataFolder.
+        """
+        to_be_removed=[]
+        for g in self.groups:
+            if self.groups[g]._prune():
+                to_be_removed.append(g)
+        for g in to_be_removed:
+            del(self.groups[g])
+        return len(self.files)==0 and len(self.groups)==0        
+
     def filterout(self, filter):
         """Synonym for self.filter(filter,invert=True)
 
