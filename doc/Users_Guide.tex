@@ -53,27 +53,44 @@ Condensed Matter Physics Group at the University of Leeds.
 
 \subsection{Getting the Stoner Package}
 
-The source code for the Stoner python module is kept in CVS revision control on
-the stonerlab server. A stable release of the code is available for copying and
-use in \verb#\\stonerlab\data\software\python\PythonCode\#. The development code can
-be obtained by checking out the PythonCode module with a CVSROOT of \\
-\verb#:ext:cvs@stonerlab.leeds.ac.uk:/home/cvs/#. Appropriate ssh keys for the
-cvs user account are kept in \verb#\\stonerlab\data\software\CVS\#.
+The easiest way to get and install the package is to make use of the EGG
+package on PyPi. This will install a reasonably stable release into your
+Python setup. Open a command prompt and run:
 
-The Stoner Package currently depends on a number of other modules. These are installed on the lab machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib. Windows installable versions are kept in \\
-\verb#\\stonerlab\\data\software\Python\#.  The easiest way to get a Python
-installation with all the necessary dependencies for the Stoner Package is to
-install the \textit{Enthought Python Distribution}. Windows install file are
-kept in \verb#\\stonerlab\data\software\python#
+\begin{verbatim}
+easy_install Stoner
+\end{verbatim}
+
+The advantage of getting the package this way is that it is installed into your Python path properly.
+The disadvantage is that you don't get this user guide and the version may not be the most
+up to date (although given the fragile and continuously being broken state of the code that may be
+a good thing !).
+
+\subsubsection{Getting the Latest Development Code}
+
+\keypoint{These isntrctions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
+download the source from GitHub}
+
+The source code for the Stoner python module is kept on github using the git 
+revision control tool. A nightly development release of the code is available for copying and
+use in \verb#\\stonerlab\data\software\python\PythonCode\#. 
+
+The Stoner Package currently depends on a number of other modules. These are installed on the lab 
+machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib.  The easiest way to get a Python
+installation with all the necessary dependencies for the Stoner Package is to install the \textit{Enthought Python Distribution, Canopy}. Installers for Windows, MacOS and Linux are
+kept in \\ \verb#\\stonerlab\data\software\Python#
 
 
 \subsection{Using the Stoner Package}
+
+\keypoint{If you have installed the Stoner Package with the easy\_install command
+given above, then you can disregard this section.}
 
 The easiest way to use the Stoner Package is to add the path to the directory
 containing Stoner.py to your PYTHONPATH environment variable. This can be done
 on Macs and Linux by doing:
 \begin{lstlisting}
-  cd <path to PythonCode directory>/src
+  cd <path to PythonCode directory>
   export PYTHONPATH=`pwd`:$PYTHONPATH
 \end{lstlisting}
 On a windows machine the easiest way is to create a permanent entry to the
@@ -1041,7 +1058,7 @@ To specify a particular directory to look in, simply give the directory as the f
    f=DataFolder('/home/phygbu/Data',pattern='*.tdi')
 \end{lstlisting}
 
-By default the \textbf{DataFolder} constructor will perform a recursive drectory listing of the working folder. The resulting list of files can be accessed via the \textit{files} attribute:
+By default the \textbf{DataFolder} constructor will perform a recursive drectory listing of the working folder. Each sub-directory is given a separate \textit{group} within the structure. This allows the \textbf{DataFolder} to logically represent the on-disc layout of the files. The resulting list of files can be accessed via the \textit{files} attribute and sub groups with the \textit{group} attribute (see \ref{groups}:
 
 \begin{lstlisting}
    f.files
@@ -1054,6 +1071,13 @@ If you don't want the file listing to be recursive, this can be suppressed by us
 \begin{lstlisting}
    f=DataFolder(pattern='*.dat',recursive=False)
    f2=DataFolder(nolist=True)
+\end{lstlisting}
+
+If you don't want to create groups for each sub-directory, then set the keyword parameter \textit{flatten} True, or call the \textit{flatten()} method. You can also use the \textit{prune} method to remove groups (including nested groups) that have no data files in them.
+
+\begin{lstlisting}
+	f.prune()
+	f.flatten()
 \end{lstlisting}
 
 The current root directory and pattern are stored in the \textit{directory} and \textit{pattern} keywords and the \textbf{getlist} method can be used to force a new listing of files.
@@ -1116,7 +1140,7 @@ If you want to know the filenames of all the files in the DataFolder then there 
 
 The difference between these two is that \textit{f.basenames} will return only the file part of the filename whilst \textit{f.ls} returns the complete path from the root directory.
 
-\subsubsection{Sorting, Filtering and Grouping Data Files}
+\subsubsection{Sorting, Filtering and Grouping Data Files}\label{groups}
 
 The order of the files in a \textbf{DataFolder} is arbitary. If it is important to process them in a given order then the \textit{sort} method can be used:
 
