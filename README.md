@@ -54,5 +54,5 @@ Contact and Licensing
 The lead developer for this code is Dr Gavin Burnell <g.burnell@leeds.ac.uk> http://www.stoner.leeds.ac.uk/people/gb. 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indficated in the source file. 
+This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indicated in the source file. 
 The contents of this package are licensed under the terms of the GNU Public License v3
