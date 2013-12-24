@@ -15,7 +15,6 @@ if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
-from copy import copy
 import re
 
 class PlotFile(DataFile):
@@ -37,6 +36,8 @@ class PlotFile(DataFile):
         
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
+        _setas (list): Used for automatically doing plots
+        labels (list of string): List of axis labels as aternates to the column_headers
     
     """
 
@@ -46,15 +47,17 @@ class PlotFile(DataFile):
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
 
         """
-        global pyplot
         super(PlotFile, self).__init__(*args, **kargs)
+        self._setas=[]
+        self._labels=self.column_headers
+        self._subplots=[]
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
         attr=self.__dict__.keys()
         attr2=[a for a in super(PlotFile, self).__dir__() if a not in attr]
         attr.extend(attr2)
-        attr.extend(["fig", "axes"])
+        attr.extend(["fig", "axes","labels","subplots"])
         attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
         return attr
 
@@ -72,6 +75,16 @@ class PlotFile(DataFile):
                 """
         if name=="fig":
             return self.__figure
+        elif name=="setas":
+            return self._setas
+        elif name=="labels":
+            if len(self._labels)<len(self.column_headers):
+                self._labels.extend(self.column_headers[len(self._labels):])
+            return self._labels
+        elif name=="subplots":
+            if len(self.__figure.axes)>len(self._subplots):
+                self._subplots=self.__figure.axes
+            return self._subplots
         elif name=="axes":
             if isinstance(self.__figure, matplotlib.figure.Figure):
                 return self.__figure.axes
@@ -101,6 +114,10 @@ class PlotFile(DataFile):
         if name=="fig":
             self.__figure=value
             pyplot.figure(value.number)
+        elif name=="setas":
+            self._set_setas(value)
+        elif name=="labels":
+            self._labels=value
         elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
             if isinstance(value,tuple):
                 pyplot.__dict__[name](*value)
@@ -110,6 +127,42 @@ class PlotFile(DataFile):
                 pyplot.__dict__[name](value)
         else:
             super(PlotFile, self).__setattr__(name, value)
+
+    def _set_setas(self,value):
+        if isinstance(value,list):
+            if len(value)> len(self.column_headers):
+                value=value[:len(self.column_headers)]
+            for v in value:
+                if v not in "xyzedf.":
+                    raise ValueError("Set as column element is invalid: {}".format(v))
+            self._setas=value
+        elif isinstance(value,(unicode,str)):
+            value=list(str(value)).reverse()
+            i=0
+            if len(self._setas)<len(self.column_headers):
+                self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+            while value:
+                char=value.pop()
+                count=""
+                while char:
+                    if char in "0123456789":
+                        count+=char
+                        char=value.pop()
+                    elif char in "xyzedf.":
+                        if count=="":
+                            count=1
+                        else:
+                            count=int(count)
+                        break
+                    else:
+                        raise ValueError("Set as column character invalid:{}".format(char))
+                else:
+                    raise ValueError("Set as column string ended with a number")
+                if i+count<=len(self._setas):
+                    self._setas[i:i+count]=char
+                else:
+                    raise ValueError("Set as column string has more values than data had columns.")
+                        
 
     def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
@@ -139,7 +192,7 @@ class PlotFile(DataFile):
 
 
 
-    def plot_xy(self,column_x, column_y, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
+    def plot_xy(self,column_x=None, column_y=None, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
 
             Args:
@@ -159,6 +212,38 @@ class PlotFile(DataFile):
                 A matplotlib.figure isntance
 
         """
+        #This block sorts out the column_x and column_y where they are not defined in the signature
+        # We return the first column marked as an 'X' column and then all the 'Y' columns between there
+        # and the next 'X' column or the end of the file. If the yerr keyword is specified and is Ture
+        # then  we look for an equal number of matching 'e' columns for the error bars.
+        if (column_x is None and self._setas.index('x') is None) or (column_y is None and self._setas.index('y') is None):
+            raise RuntimeError("Unable to locate an X and Y axes in the data")
+        if column_x is None:
+            column_x=self._setas.index('x')
+            try:
+                maxx=self._setas[column_x+1:].index('x')
+            except ValueError:
+                maxx=len(self.column_headers)
+        if column_y is None:
+            column_y=list()
+            x=column_x
+            while True:
+                try:
+                    y=self._setas[x:maxx].index('u')
+                except ValueError:
+                    break
+                column_y.append(y)
+        if "yerr" in kwords and isinstance(kwords["yerr"],bool) and kwords["yerr"]:
+            yerr=list()
+            if not isinstance(column_y,list):
+                column_y=[column_y]
+            for y in column_y:
+                try:
+                    e=self._setas[y:].index('e')
+                except ValueError:
+                    raise RuntimeError("yerr was True, but not enough error columns in data.")
+                yerr.append(e)
+            kwords["yerr"]=yerr
         column_x=self.find_col(column_x)
         column_y=self.find_col(column_y)
         if "xerr" in kwords or "yerr" in kwords and plotter is None: # USe and errorbar blotter by default for errors
@@ -192,10 +277,10 @@ class PlotFile(DataFile):
         if plotter is None: #Nothing has defined the plotter to use yet
             plotter=pyplot.plot  
         if not isinstance(column_y, list):
-            ylabel=self.column_headers[column_y]
+            ylabel=self.labels[column_y]
             column_y=[column_y]
         else:
-            ylabel=",".join([self.column_headers[ix] for ix in column_y])
+            ylabel=",".join([self.labels[ix] for ix in column_y])
         temp_kwords=kwords
         for ix in range(len(column_y)):
             if isinstance(fmt,list): # Fix up the format
@@ -500,7 +585,7 @@ class PlotFile(DataFile):
         """Pass through for pyplot Figure.show()"""
         self.fig.show()
 
-    def figure(self, figure):
+    def figure(self, figure=None):
         """Set the figure used by :py:class:`Stoner.Plot.PlotFile`
         
         Args:
@@ -508,11 +593,45 @@ class PlotFile(DataFile):
             
         Returns:
             The current \b Stoner.PlotFile instance"""
-        if isinstance(figure, int):
+        if figure is None:
+            figure=pyplot.figure()
+        elif isinstance(figure, int):
             figure=pyplot.figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):
-            pyplot.figure(figure.number)
+            figure=pyplot.figure(figure.number)        
         self.__figure=figure
         return self
+        
+    def subplot(self,*args,**kargs):
+        """Pass throuygh for pyplot.subplot()
+        
+        Args:
+            rows (int): If this is the only argument, then a three digit number representing
+                the rows,columns,index arguments. If seperate rows, column and index are provided,
+                then this is the number of rows of sub-plots in one figure.
+            columns (int): The number of columns of sub-plots in one figure.
+            index (int): Index (1 based) of the current sub-plot.
+            
+        Returns:
+            A matplotlib.Axes instance representing the current sub-plot
+            
+        As well as passing through to the plyplot routine of the same name, this 
+        function maintains a list of the current sub-plot axes via the subplots attribute.
+        """        
+        pyplot.figure(self.__figure.number)
+        sp=pyplot.subplot(*args,**kargs)
+        if len(args)==1:
+            rows=args[0]//100
+            cols=(args[0]//10)%10
+            index=args[0]%10
+        else:
+            rows=args[0]
+            cols=args[1]
+            index=args[2]
+        if len(self._subplots)<rows*cols:
+            self.subplots.extend([None for i in range(rows*cols-len(self._subplots))])
+        self._subplots[index-1]=sp
+        return sp
+        
 
 
