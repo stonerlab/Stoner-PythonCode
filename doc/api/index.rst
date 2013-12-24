@@ -1,23 +1,23 @@
+=================
 Stoner-PythonCode
 =================
-
-Contents:
 
 .. toctree::
    :maxdepth: 2
 
 Introduction
-------------
-This is the  *Stoner* Python package for writing data analysis code. It was written within the Condensed Matter Physis 
-group at the University of Leeds as a shared resource for quickly writing simple programs to do things list fit functions
-to data, extract curve parameters and churn through large numbers of data files.
+============
+This is the  *Stoner* Python package for writing data analysis code. It was written within the `Condensed Matter Physis 
+group <http://www.stoner.leeds.ac.uk>`_ at the `University of Leeds <http://www.leeds.ac.uk/>`_ as a shared resource for 
+quickly writing simple programs to do things like fitting functions to data, extracting curve parameters and 
+churn through large numbers of data files.
 
 For a general introduction, users are referered to the User Guide pdf file that can be found in the *doc* directory. 
 There is also an API reference in the form of a compiled help file in the *doc* directory that is generated from the
-Doxygen formatted comments in the source code.
+Sphinx formatted comments in the source code.
  
 Overview
--------- 
+======== 
 The **Stoner** package provides two basic top-level classes that describe an individual file of experimental data and a 
 list (such as a directory on disc) of many experimental files. For our research, a typical single experimental data file
 is essentially a single 2D table of floating point numbers with associated metadata. This seems to cover most experiemnts
@@ -46,7 +46,7 @@ brutal to your computer's OS than having directory trees with millions of indivi
 
  
 Resources
----------
+==========
  
 Included in the package are a (small) collection of sample scripts for carrying out various operations and some sample data 
 files for testing the loading and processing of data. Finally, this folder contains the LaTeX source code, dvi file and 
@@ -54,7 +54,7 @@ pdf version of the User Guide and this compiled help file which has been gerneat
 python docstrings in the source code. 
 
 Contact and Licensing
----------------------
+=====================
 
 The lead developer for this code is Dr Gavin Burnell <g.burnell@leeds.ac.uk> http://www.stoner.leeds.ac.uk/people/gb. 
 The User Guide gives the current list of other contributors to the project.
@@ -63,6 +63,6 @@ This code and the sample data are all (C) The University of Leeds 2008-2013 unle
 The contents of this package are licensed under the terms of the GNU Public License v3
 
 Modules Documentatuion
-----------------------
+======================
 
-:doc:`Documentation for each module <./modules>`
+:doc:`Documentation for each module <./Stoner>`

@@ -91,7 +91,7 @@ pygments_style = 'sphinx'
 
 autosummary_generate = True
 
-#autodoc_default_flags =[ 'members', 'undoc-members', 'private-members','show-inheritance']
+autodoc_default_flags =[ 'members', 'undoc-members', 'private-members','show-inheritance']
 
 # -- Options for HTML output ---------------------------------------------------
 
