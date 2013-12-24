@@ -70,8 +70,10 @@ class DataFolder(object):
         else:
             nolist=kargs["nolist"]
         if len(args)>0:
-            if isinstance(args[0], str):
+            if isinstance(args[0], (str,unicode)):
                 self.directory=args[0]
+            elif isinstance(args[0],bool) and not args[0]:
+                self._dialog()
             elif isinstance(args[0],DataFolder):
                 other=args[0]
                 for k in other.__dict__:
@@ -130,7 +132,7 @@ class DataFolder(object):
         from enthought.pyface.api import DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
 
-        if isinstance(self.directory, str):
+        if isinstance(self.directory, (str,unicode)):
             dirname = self.directory
         else:
             dirname = os.getcwd()
@@ -173,17 +175,21 @@ class DataFolder(object):
             interpreted as metadata key-value pairs (where the key will be the name of the capturing
             group and the value will be the match to the group. This allows metadata to be imported
             from the filename as it is loaded."""""
-        if isinstance(i, str): # Ok we've done a DataFolder['filename']
+        if isinstance(i,int):
+            files=self.files[i]
+            tmp=self.__read__(files)
+            return tmp            
+        elif isinstance(i, (str,unicode)): # Ok we've done a DataFolder['filename']
             try:
                 i=self.ls.index(i)
+                return self.__read__(self.files[i])
             except ValueError:
                 try:
                     i=self.basenames.index(i)
                 except ValueError:
                     return self.groups[i]
-        files=self.files[i]
-        tmp=self.__read__(files)
-        return tmp
+        else:
+            return self.groups[i]
 
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the DataFolder
@@ -206,7 +212,7 @@ class DataFolder(object):
             for x in self.files:
                 if isinstance(x,DataFile):
                     ret.append(path.basename(x.filename))
-                elif isinstance(x,str):
+                elif isinstance(x,(str,unicode)):
                     ret.append(path.basename(x))
             return ret
         elif item=="lsgrp":
@@ -236,7 +242,7 @@ class DataFolder(object):
                 If item is an int, then assume that it is a file index
                 otherwise it is assumed to be a group key
         """
-        if isinstance(item, str) and item in self.groups:
+        if isinstance(item, (str,unicode)) and item in self.groups:
             del self.groups[item]
         elif isinstance(item, int):
             del self.files[item]
@@ -287,7 +293,7 @@ class DataFolder(object):
                 dirs.append(f)
             elif path.isfile(path.join(root, f)):
                 files.append(f)
-        if isinstance(self.pattern, str):
+        if isinstance(self.pattern, (str,unicode)):
             for f in fnmatch.filter(files, self.pattern):
                 self.files.append(path.join(root, f))
         elif isinstance(self.pattern, re._pattern_type):
@@ -316,31 +322,6 @@ class DataFolder(object):
         self.groups={}
         return self
 
-    def prune(self):
-        """Traverse the groups recursively and remove all groups that are empty of both
-        files and groups.
-        
-        Returns:
-            A copy of the pruned DataFolder.
-        """
-        self._prune()
-        return self
-        
-    def _prune(self):
-        """Traverse the groups recursively and remove all groups that are empty of both
-        files and groups.
-        
-        Returns:
-            Boolean indicating whether we can prune this DataFolder.
-        """
-        to_be_removed=[]
-        for g in self.groups:
-            if self.groups[g]._prune():
-                to_be_removed.append(g)
-        for g in to_be_removed:
-            del(self.groups[g])
-        return len(self.files)==0 and len(self.groups)==0        
-
     def filterout(self, filter):
         """Synonym for self.filter(filter,invert=True)
 
@@ -361,7 +342,7 @@ class DataFolder(object):
             The current DataFolder object"""
 
         files=[]
-        if isinstance(filter, str):
+        if isinstance(filter, (str,unicode)):
             for f in self.files:
                 if fnmatch.fnmatch(f, filter)  ^ invert:
                     files.append(f)
@@ -391,7 +372,7 @@ class DataFolder(object):
 
         Returns:
             A copy of the current DataFolder object"""
-        if isinstance(key, str):
+        if isinstance(key, (str,unicode)):
             k=[(self[i].get(key),i) for i in range(len(self.files))]
             k=sorted(k,reverse=reverse)
             self.files=[self.files[y] for (x,y) in k]
@@ -444,7 +425,7 @@ class DataFolder(object):
             key=key[0]
         else:
             next_keys=[]
-        if isinstance(key, str):
+        if isinstance(key, (str,unicode)):
             k=key
             key=lambda x:x.get(k)
         for f in self.files:
@@ -452,6 +433,7 @@ class DataFolder(object):
             v=key(x)
             self.add_group(v)
             self.groups[v].files.append(f)
+        self.files=[]
         if len(next_keys)>0:
             for g in self.groups:
                 self.groups[g].group(next_keys)
@@ -534,6 +516,57 @@ class DataFolder(object):
         """
         return self.walk_groups(self._save,walker_args={"root",root})
 
+    def select(self,*args,**kargs):
+        """A generator that can be used to select particular data files from the DataFolder
+        
+        Args:
+            args (various): A single positional argument if present is interpreted as follows:
+                * If a callable function is given, the entire DataFile is presented to it.
+                    If it evaluates True then that DataFile is selected. This allows arbitary select operations
+                * If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles
+            
+        Keyword Arguments:
+            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                metadata values. The value of the argument is used as follows:
+                * if is a scalar, then an equality test is carried out
+                * If is a list then a membership test is carried out
+                * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
+                
+        Yields:
+            A DataFile that matches the select requirements
+        """
+        if len(args)!=0:
+            arg=args[0]
+            if callable(arg):
+                mode="call"
+            elif isinstance(arg,dict):
+                kargs.update(arg)
+                mode="dict"
+            else:
+                raise RuntimeError("Bad select specification")
+        else:
+            mode="dict"
+        for f in self:
+            if mode=="call":
+                result=arg(f)
+            elif mode=="dict":
+                result=True
+                for k in kargs:
+                    v=kargs[k]
+                    if isinstance(v,tuple) and len(v)==2:
+                        l1=v[0]
+                        l2=v[1]
+                        result&=l1<=f[k]<l2
+                    elif isinstance(v,tuple) and len(v)==1:
+                        v=v[0]
+                    if isinstance(v,list):
+                        result&=f[k] in v
+                    else:
+                        result&=f[k]==v
+            else:
+                raise RuntimeError("oops what happened here?")
+            if result:
+                yield f
 
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
   	""""Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
@@ -571,10 +604,7 @@ class DataFolder(object):
                 del(self.groups[g])
             return ret
         else:
-	   if group:
-	       return walker(self,breadcrumb,**walker_args)
-	   else:
-	       ret=[]
-	       for f in self:
-	           ret.append(walker(f,breadcrumb,**walker_args))
-	       return ret
+            if group:
+                return walker(self,breadcrumb,**walker_args)
+            else:
+                return [walker(f,breadcrumb,**walker_args) for f in self]
