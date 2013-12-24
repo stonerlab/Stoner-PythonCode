@@ -10,6 +10,7 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 import math
 import sys
+import re
 
 def cov2corr(M):
     """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc
@@ -123,6 +124,33 @@ class AnalyseFile(DataFile):
         intr=lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2])
         return numpy.array([intr(x) for x in sdat if expr(x) and intr(x)>0])
 
+    def __get_math_val(self,col):
+        """Utility routine to interpret col as either a column index or value or an array of values.
+        
+        Args:
+            col (various): If col can be interpreted as a column index then return the first matching column.
+                If col is a 1D array of the same length as the data then just return the data. If col is a
+                float then just return it as a float.
+        
+        Returns:
+            The matching data.
+        """
+        if isinstance(col,(int,str,unicode,re._pattern_type)):
+            col=self.find_col(col)
+            if isinstance(col,list):
+                col=col[0]
+            data=self.column(col)
+            name=self.column_headers[col]
+        elif isinstance(col,numpy.ndarray) and len(col.shape)==1 and len(col)==len(self):
+            data=col
+            name="data"
+        elif isinstance(col,float):
+            data=col*numpy.ones(len(self))
+            name=str(col)
+        else:
+            raise RuntimeError("Bad column index: {}".format(col))
+        return data,name
+    
     def __mpf_fn(self, p, **fa):
         """Internal routine for general non-linear least squeares fitting.
 
@@ -246,7 +274,7 @@ class AnalyseFile(DataFile):
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
             xc=self.find_col(xcol)
-            if not isinstance(header, str):
+            if not isinstance(header, (unicode,str)):
                 header='Fitted with '+func.__name__
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
@@ -362,7 +390,7 @@ class AnalyseFile(DataFile):
         return result
 
     def diffsum(self, a, b, replace=False, header=None):
-        """Subtract one column, number or array (b) from another column (a) and divide by their sums
+        """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums
 
         Args:
             a (index): First column to work with
@@ -373,23 +401,33 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object"""
-        a=self.find_col(a)
-        if isinstance(b, float):
-            if header is None:
-                header=self.column_headers[a]+"-"+str(b)+"/"+self.column_headers[a]+"+"+str(b)
-            self.add_column((self.column(a)-b)/(self.column(a)+b), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            if header is None:
-                header=self.column_headers[a]+"-data/"+self.column_headers[a]+"+data"
-            self.add_column((self.column(a)+numpy.array(b))/((self.column(a)+numpy.array(b))), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray):
-            raise ValueError("Can only Add  an array that is 1D and the same length as the data.")
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((1.0/(adata+bdata)-(adata-bdata)/(adata+bdata)**2)**2*e1data**2+(-1.0/(adata+bdata)-(adata-bdata) / (adata+bdata)**2)**2*e2data**2)
         else:
-            b=self.find_col(b)
-            if header is None:
-                header=self.column_headers[a]+"-"+self.column_headers[b]+"/"+self.column_headers[a]+"+"+self.column_headers[b]
-            self.add_column((self.column(a)-self.column(b))/(self.column(a)+self.column(b)), header, a, replace=replace)
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="({}-{})/({}+{})".format(aname,bname,aname,bname)
+        if err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata-bdata)/(adata+bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
         return self
 
     def normalise(self, target, base, replace=True, header=None):
@@ -404,24 +442,20 @@ class AnalyseFile(DataFile):
             header (string or None): The new column header - default is target name(norm)
 
         Returns:
-            A copy of the current object"""
+            A copy of the current object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
 
-        if isinstance(base, float):
-            base=base*numpy.ones(len(self))
-        elif isinstance(base, numpy.ndarray) and len(base.shape)==1 and len(base)==len(self):
-            pass
-        else:
-            base=self.column(base)
         if not isinstance(target, list):
             target=[self.find_col(target)]
-        else:
-            target=[self.find_col(t) for t in target]
         for t in target:
             if header is None:
-                header=self.column_headers[t]+"(norm)"
+                header=self.column_headers[self.find_col(t)]+"(norm)"
             else:
                 header=str(header)
-            self.add_column(self.column(t)/numpy.array(base), header, t, replace=replace)
+            self.divide(t,base,header=header,replace=replace)                
         return self
 
     def subtract(self, a, b, replace=False, header=None):
@@ -436,23 +470,34 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object"""
-        a=self.find_col(a)
-        if isinstance(b, float):
-            if header is None:
-                header=self.column_headers[a]+"- "+str(b)
-            self.add_column(self.column(a)-b, header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            if header is None:
-                header=self.column_headers[a]+"- data"
-            self.add_column(self.column(a)-numpy.array(b), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray):
-            raise ValueError("Can only subtract an array that is 1D and the same length as the data.")
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+            
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt(e1data**2+e2data**2)
         else:
-            b=self.find_col(b)
-            if header is None:
-                header=self.column_headers[a]+"-"+self.column_headers[b]
-            self.add_column(self.column(a)-self.column(b), header, a, replace=replace)
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}-{}".format(aname,bname)
+        if err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata-bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
         return self
 
     def add(self, a, b, replace=False, header=None):
@@ -467,23 +512,34 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object"""
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
         a=self.find_col(a)
-        if isinstance(b, float):
-            if header is None:
-                header=self.column_headers[a]+"+ "+str(b)
-            self.add_column(self.column(a)+b, header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            if header is None:
-                header=self.column_headers[a]+"+ data"
-            self.add_column(self.column(a)+numpy.array(b), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray):
-            raise ValueError("Can only Add  an array that is 1D and the same length as the data.")
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt(e1data**2+e2data**2)
         else:
-            b=self.find_col(b)
-            if header is None:
-                header=self.column_headers[a]+"+"+self.column_headers[b]
-            self.add_column(self.column(a)+self.column(b), header, a, replace=replace)
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}+{}".format(aname,bname)
+        if err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata+bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
         return self
 
     def divide(self, a, b, replace=False, header=None):
@@ -498,25 +554,34 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object"""
-        a=self.find_col(a)
-        if isinstance(b, float):
-            if header is None:
-                header=self.column_headers[a]+"/ "+str(b)
-            self.add_column(self.column(a)/b, header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            if header is None:
-                header=self.column_headers[a]+"/ data"
-            self.add_column(self.column(a)/numpy.array(b), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray):
-            raise ValueError("Can only divide by an array that is 1D and the same length as the data.")
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
-            b=self.find_col(b)
-            if header is None:
-                header=self.column_headers[a]+"/"+self.column_headers[b]
-            self.add_column(self.column(a)/self.column(b), header, a, replace=replace)
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}/{}".format(aname,bname)
+        if err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata/bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
         return self
-
 
     def mulitply(self, a, b, replace=False, header=None):
         """Multiply one column (a) by  another column, number or array (b)
@@ -530,25 +595,35 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object"""
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
         a=self.find_col(a)
-        if isinstance(b, float):
-            if header is None:
-                header=self.column_headers[a]+"* "+str(b)
-            self.add_column(self.column(a)*b, header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray) and len(b.shape)==1 and len(b)==len(self):
-            if header is None:
-                header=self.column_headers[a]+"* data"
-            self.add_column(self.column(a)*numpy.array(b), header, a, replace=replace)
-        elif isinstance(b, numpy.ndarray):
-            raise ValueError("Can only multiply by an array that is 1D and the same length as the data.")
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
-            b=self.find_col(b)
-            if header is None:
-                header=self.column_headers[a]+"*"+self.column_headers[b]
-            self.add_column(self.column(a)*self.column(b), header, a, replace=replace)
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}*{}".format(aname,bname)
+        if err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata*bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
         return self
-
 
     def apply(self, func, col, replace=True, header=None):
         """Applies the given function to each row in the data set and adds to the data set
@@ -669,7 +744,7 @@ class AnalyseFile(DataFile):
             d=numpy.append(d, numpy.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
         if result is not None:
-            if not isinstance(header, str):
+            if not isinstance(header, (unicode,str)):
                 header='{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],ordinal(order))
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
