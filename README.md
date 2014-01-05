@@ -7,9 +7,20 @@ This is the  *Stoner* Python package for writing data analysis code. It was writ
 group at the University of Leeds as a shared resource for quickly writing simple programs to do things list fit functions
 to data, extract curve parameters and churn through large numbers of data files.
 
-For a general introduction, users are referered to the User Guide pdf file that can be found in the *doc* directory. 
-There is also an API reference in the form of a compiled help file in the *doc* directory that is generated from the
-Doxygen formatted comments in the source code.
+For a general introduction, users are referred to the Users Guide pdf file that can be found in the *doc/UserGuide* directory in 
+the github repository.  There is also an API reference in the form of a compiled help file in the *doc* directory that is 
+generated with Sphinx from the embedded docstrings in the source code.
+
+Getting this Code
+-----------------
+
+The easiest way to install this code is via seuptools' easy_install:
+
+    easy_install Stoner
+    
+ This will install the Stoner package into your current Python environment. Since the package is under fairly
+ constant updates, you might want to follow the development with git. The source code, along with example scripts
+ and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
  
 Overview
 -------- 
@@ -43,7 +54,7 @@ brutal to your computer's OS than having directory trees with millions of indivi
 Resources
 ---------
  
-Included in the package are a (small) collection of sample scripts for carrying out various operations and some sample data 
+Included in the source repository are a (small) collection of sample scripts for carrying out various operations and some sample data 
 files for testing the loading and processing of data. Finally, this folder contains the LaTeX source code, dvi file and 
 pdf version of the User Guide and this compiled help file which has been gerneated by Doxygen from the contents of the 
 python docstrings in the source code. 
@@ -52,7 +63,7 @@ Contact and Licensing
 ---------------------
 
 The lead developer for this code is Dr Gavin Burnell <g.burnell@leeds.ac.uk> http://www.stoner.leeds.ac.uk/people/gb. 
-The User Guide gives the current list of other contributors to the project.
+The Users Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indicated in the source file. 
+This code and the sample data are all (C) The University of Leeds 2008-2014 unless otherwise indicated in the source file. 
 The contents of this package are licensed under the terms of the GNU Public License v3
