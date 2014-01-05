@@ -77,9 +77,11 @@ Stoner Package
 :mod:`FittingFuncs` Module
 ==========================
 
-.. automodule:: Stoner.FittingFuncs
+.. currentmodule:: Stoner.FittingFuncs
 
 .. autosummary::
+    :toctree: functions
+    :template: autosummary/module.rst
 
 :mod:`HDF5` Module
 =========================
@@ -89,6 +91,7 @@ Stoner Package
 .. autosummary::
    :toctree: classes
    :template: classdocs.rst
+
     HDF5File
     HDF5Folder
 
