@@ -1088,9 +1088,8 @@ class DataFile(object):
 
         Yields:
             Returns the next column of data."""
-        c = numpy.shape(self.data)[1]
-        for col in range(c):
-            yield self.data[col]
+        for col in range(self.data.shape[1]):
+            yield self.column(col)
 
     def del_column(self, col=None,duplicates=False):
         """Deletes a column from the current :py:class:`DataFile` object
