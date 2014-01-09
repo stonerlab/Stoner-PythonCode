@@ -117,7 +117,7 @@ This document provides a user guide to the Stoner package and its various module
 
 \warning{The code is still under active development to fix bugs and add features. Generally things don't get deliberately broken, but accidents happen, so if something stops working, please either fix and commit the code or tell Gavin.}
 
-\section{Users' Guide}
+\subsection{Users' Guide}
 
 The Users'Guide provides a brief overview of the functions contained within the
 Stoner module and so basic examples of how the module can be used.
@@ -133,7 +133,7 @@ graphically. The AnalyseFile class is another descendent of DataFile, but
 provides extra methods to fit curves, smooth and differentiate data, find peaks
 and carry out other simple analysis operations.
 
-\subsection{Loading a data file}
+\section{Loading a data file}
 
 The first step in using the Stoner module is to load some data from a
 measurement.
@@ -199,7 +199,7 @@ Sometimes you won't know exactly which subclass of \textbf{DataFile} is the one 
 
 \warning{The automatic loading assumes that each load routine does sufficient sanity checking that it will throw and error if it gets bad data. Whilst one might wish this was always true it relies on whoever writes the load method to make sure of this ! If you want to stop the automatic guessing from happening use the auto\_load=False keyword in the \textbf{load} method.}
 
-\subsubsection{Loading Data from a stromg or iterable object}
+\subsection{Loading Data from a stromg or iterable object}
 
 In some circumstances you may have a string representation of a \textbf{DataFile} object and want to transform this into a proper \textbf{DataFile} object.
 This might be, for example, from transmitting the data over a network connection or receiving it from another program. In these situations the \textit{left shift operator}, \verb#<<#, can be used.
@@ -218,7 +218,8 @@ from disk:
    data=Stoner.Core.DataFile()<<open("File on Disk.txt")
 \end{lstlisting}
 
-\subsection{Examining Some Data}
+\section{Examining and Basic Manipulations of Data}
+\subsection{Data Structure}
 \subsubsection{Data, Column headers and metadata}
 Having loaded some data, the next stage might be to take a look at it.
 Internally, data is represented as a 2D numpy masked array of floating point numbers,
@@ -663,7 +664,7 @@ filename used for a load or save operation.
 
 The third is similar but convert the file to \textit{cvs} format while the fourth also specifies that the deliminator is a tab character.
 
-\subsection{Plotting Data}
+\section{Plotting Data}
 
 Data plotting and visualisation is handled by the PlotFile sub-class of DataFile. The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing publication ready figures.
 
@@ -674,7 +675,7 @@ Data plotting and visualisation is handled by the PlotFile sub-class of DataFile
 
 The first line imports the \textbf{Stoner.Plot} module. Strictly, this is unnecessary as the Plot module's namespace is imported when the Stoner package as a whole is imported. The second line creates an instance of the \textbf{PlotFile} class. PlotFile inherits the constructor method of \textbf{DataFile} and so all the variations detailed above work with PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance for plotting.
 
-\subsubsection{Plotting 2D data}
+\subsection{Plotting 2D data}
 
 \textit{x-y} plots are produced by the \textbf{PlotFile.plot\_xy} method:
 
@@ -705,7 +706,7 @@ The examples above demonstrate several use cases of the \textbf{plot\_xy} method
 
 The X and Y axis label will be set from the column headers.
 
-\subsubsection{Plotting 3D Data}
+\subsection{Plotting 3D Data}
 
  A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot these on a surface plot or 3D plot. The \textbf{PlotFile.plot\_xyz} method can be used for this.
 
@@ -746,7 +747,7 @@ If a \textit{xlim} or \textit{ylim} arguments are provided and are two tuples, t
 
  The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set either from the meta data item ``ylabel'' or to ``Y Data''. Likewise the z axis label is set from the corresponding metadata item or defaults to ``Z Data''. In the second form these parameters are all set explicitly. The \textit{xvals} parameter can be either a column index (integer or sring) or a list, tuple or numpy array. The \textit{yvals} parameter can be either an row number (integer) or list,tuple or numpy array. Other parameters (including \textit{plotter}, \textit{figure} \etc) work as for the \textbf{PlotFile.plot\_xyz} method. The \textit{rectang} parameter is used to select only part of the data array to use as the matrix. It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth elements are the number of rows and columns to include. If \textit{xvals} or \textit{yvals} specify particular column or rows then the origin of the matrix is moved to be one column further over and one row further down (\ie the matrix is to the right and below the columns and rows used to generate the x and y data values). The final example illustrates how to generate a new 2D surface plot in a new window using default matrix setup.
 
- \subsubsection{Getting More Control on the Figure}
+ \subsection{Getting More Control on the Figure}
 
  It is useful to be able to get access to the matplotlib figure that is used for each \textbf{PlotFle} instance. The \textbf{PlotFile.fig} attribute can do this, thus allowing plots from multiple \textbf{PlotFile} instances to be combined in a single figure.
 
@@ -766,7 +767,7 @@ If a \textit{xlim} or \textit{ylim} arguments are provided and are two tuples, t
 
 
 
-\subsection{Manipulating and Analysing Data}
+\section{Manipulating and Analysing Data}
 
 Curve fitting, data manipulation, and other analysis functions  is handled by a sub-class of the DataFile object -- AnalyseFile
 
@@ -1032,11 +1033,11 @@ Current functions existing in FittingFunctions.py:
 \end{itemize}
 Please see the function documentation in FittingFunctions.py for more information about these models. Please do add functions you think would be of use to everybody, have a look at the current functions for examples, the main thing is that the function must take an x array and a list of parameters, apply a function and then return the resulting array.  
  
-\subsection{Working with Lots of Files}\label{DataFolder}
+\section{Working with Lots of Files}\label{DataFolder}
 
 A common case is that you have measured lots of data curves and now have a large stack of data files sitting in a tree of folders on disc and now need to process all of them with some code. The \textbf{DataFolder} class is designed to make it easier to process lots of files.
 
-\subsubsection{Getting a List of Files}
+\subsection{Getting a List of Files}
 
 The first thing you probably want to do is to get a list of data files in a directory (possibly including its subdirectories) and probably matching some sort of filename pattern.
 
@@ -1103,7 +1104,7 @@ The second case illustrates a useful feature of regular expressions - they can b
 
 Finally, akin to \textbf{DataFile} you can force a dialog box to select a directory by passing \textit{False} into the constructor or getlist methods in place of a directory name.
 
-\subsubsection{Doing Something With Each File}
+\subsection{Doing Something With Each File}
 
 A \textbf{DataFolder} is an object that you can iterate over, lading the \textbf{DataFile} type object for each of the files in turn. This probides an easy way to run through a set of files, performing the same operation on each:
 
@@ -1140,7 +1141,7 @@ If you want to know the filenames of all the files in the DataFolder then there 
 
 The difference between these two is that \textit{f.basenames} will return only the file part of the filename whilst \textit{f.ls} returns the complete path from the root directory.
 
-\subsubsection{Sorting, Filtering and Grouping Data Files}\label{groups}
+\subsection{Sorting, Filtering and Grouping Data Files}\label{groups}
 
 The order of the files in a \textbf{DataFolder} is arbitary. If it is important to process them in a given order then the \textit{sort} method can be used:
 
