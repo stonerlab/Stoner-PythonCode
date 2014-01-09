@@ -688,7 +688,9 @@ class DataFile(object):
     def _getattr_clone(self):
         """Gets a deep copy of the current DataFile
         """
-        return self.__class__(copy.deepcopy(self))
+        c=self.__class__(copy.deepcopy(self))
+        c.data=self.data.copy()
+        return c
 
     def _getattr_dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys.
@@ -703,7 +705,8 @@ class DataFile(object):
     def _getattr_mask(self):
         """Returns the mask of the data array.
         """
-        return ma.getmaskarray(self.data)
+        self.data.mask=ma.getmaskarray(self.data)
+        return self.data.mask
 
     def _getattr_records(self):
         """Returns the data as a numpy structured data array. If columns names are duplicated then they
@@ -1108,6 +1111,8 @@ class DataFile(object):
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
             - If duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
+            - if col is None and duplicates is None, then all columns with at least one elelemtn masked
+                will be deleted
             """
 
         if duplicates:
@@ -1129,23 +1134,28 @@ class DataFile(object):
             return self.del_column(dups,duplicates=False)
         else:
             if col is None:
-                raise RuntimeError("Column must not be None unless removing duplicates in DataFile.del_column")
-            c = self.find_col(col)
-            self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
-            if isinstance(c, list):
-                c.sort(reverse=True)
+                self.data=ma.mask_cols(self.data)
+                t=ma.masked_array(self.column_headers)
+                t.mask=self.mask[0]
+                self.column_headers=list(ma.compressed(t))
+                self.data=ma.compress_cols(self.data)
             else:
-                c = [c]
-            for col in c:
-                del self.column_headers[col]
+                c = self.find_col(col)
+                self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
+                if isinstance(c, list):
+                    c.sort(reverse=True)
+                else:
+                    c = [c]
+                for col in c:
+                    del self.column_headers[col]
             return self
 
-    def del_rows(self, col, val=None):
+    def del_rows(self, col=None, val=None):
         """Searchs in the numerica data for the lines that match and deletes
         the corresponding rows
 
         Args:
-            col (list,slice,int,string or re) Column containg values to search for.
+            col (list,slice,int,string, re or None) Column containg values to search for.
             val (float or callable): Specifies rows to delete. Maybe
                 - None - in which case whole columns are deleted,
                 - a float in which case rows whose columncol = val are deleted
@@ -1155,6 +1165,8 @@ class DataFile(object):
             The current object
 
         Note:
+            If col is None, then all rows with masked data are deleted
+            
             If val is a function it should take two arguments - a float and a
             list. The float is the value of the current row that corresponds to column col abd the second
             argument is the current row.
@@ -1162,23 +1174,27 @@ class DataFile(object):
         TODO:
             Implement val is a tuple for deletinging in a range of values.
             """
-        if isinstance(col, slice) and val is None:
-            indices = col.indices(len(self))
-            col -= range(*indices)
-        if isinstance(col, list) and val is None:
-            col.sort(reverse=True)
-            for c in col:
-                self.del_rows(c)
-        elif isinstance(col,  int) and val is None:
-            self.data = numpy.delete(self.data, col, 0)
+        if col is None:
+            self.data=ma.mask_rows(self.data)
+            self.data=ma.compress_rows(self.data)
         else:
-            col = self.find_col(col)
-            d = self.column(col)
-            if callable(val):
-                rows = numpy.nonzero([bool(val(x[col], x) and x[col] is not ma.masked) for x in self])[0]
-            elif isinstance(val, float):
-                rows = numpy.nonzero([x == val for x in d])[0]
-            self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
+            if isinstance(col, slice) and val is None:
+                indices = col.indices(len(self))
+                col -= range(*indices)
+            if isinstance(col, list) and val is None:
+                col.sort(reverse=True)
+                for c in col:
+                    self.del_rows(c)
+            elif isinstance(col,  int) and val is None:
+                self.data = numpy.delete(self.data, col, 0)
+            else:
+                col = self.find_col(col)
+                d = self.column(col)
+                if callable(val):
+                    rows = numpy.nonzero([bool(val(x[col], x) and x[col] is not ma.masked) for x in self])[0]
+                elif isinstance(val, float):
+                    rows = numpy.nonzero([x == val for x in d])[0]
+                self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
         return self
 
     def dir(self, pattern=None):
