@@ -4,7 +4,7 @@ Stoner Package
 :mod:`Core` Module
 ==================
 
-.. currentmodule:: Stoner.Core
+.. module:: Stoner.Core
 
 .. autosummary::
     :toctree: classes
@@ -16,7 +16,7 @@ Stoner Package
 :mod:`Analysis` Module
 =======================
 
-.. currentmodule:: Stoner.Analysis
+.. module:: Stoner.Analysis
 
 
 .. autosummary::
@@ -29,7 +29,7 @@ Stoner Package
 :mod:`Plot` Module
 ==================
 
-.. currentmodule:: Stoner.Plot
+.. module:: Stoner.Plot
 
 
 .. autosummary::
@@ -42,7 +42,7 @@ Stoner Package
 :mod:`Folders` Module
 ======================
 
-.. currentmodule:: Stoner.Folders
+.. module:: Stoner.Folders
 
 
 .. autosummary::
@@ -54,7 +54,7 @@ Stoner Package
 :mod:`FileFormats` Module
 =========================
 
-.. currentmodule:: Stoner.FileFormats
+.. module:: Stoner.FileFormats
 
 .. autosummary::
    :toctree: classes
@@ -77,7 +77,7 @@ Stoner Package
 :mod:`FittingFuncs` Module
 ==========================
 
-.. currentmodule:: Stoner.FittingFuncs
+.. module:: Stoner.FittingFuncs
 
 .. autosummary::
     :toctree: functions
@@ -86,7 +86,7 @@ Stoner Package
 :mod:`HDF5` Module
 =========================
 
-.. currentmodule:: Stoner.HDF5
+.. module:: Stoner.HDF5
 
 .. autosummary::
    :toctree: classes

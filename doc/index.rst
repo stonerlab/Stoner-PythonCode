@@ -4,6 +4,7 @@ Stoner-PythonCode
 
 .. toctree::
    :maxdepth: 2
+   :includehidden:
 
 Introduction
 ============
@@ -49,9 +50,15 @@ Resources
 ==========
  
 Included in the package are a (small) collection of sample scripts for carrying out various operations and some sample data 
-files for testing the loading and processing of data. Finally, this folder contains the LaTeX source code, dvi file and 
-pdf version of the User Guide and this compiled help file which has been gerneated by Doxygen from the contents of the 
-python docstrings in the source code. 
+files for testing the loading and processing of data. There is also a  :doc:`user guide <UserGuide/ugindex>` as part of
+this help file, along with a complete API reference:
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+
+    User Guide <UserGuide/ugindex>
+    
 
 Contact and Licensing
 =====================
@@ -64,5 +71,8 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 
 Modules Documentatuion
 ======================
+.. toctree::
+   :maxdepth: 2
 
-:doc:`Documentation for each module <./Stoner>`
+   Module Api Documentation <Stoner>
+
