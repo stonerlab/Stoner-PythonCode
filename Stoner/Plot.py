@@ -54,7 +54,7 @@ class PlotFile(DataFile):
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
-        attr=self.__dict__.keys()
+        attr=list(self.__dict__.keys())
         attr2=[a for a in super(PlotFile, self).__dir__() if a not in attr]
         attr.extend(attr2)
         attr.extend(["fig", "axes","labels","subplots"])
@@ -512,7 +512,6 @@ class PlotFile(DataFile):
             raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
 
         #Now we can create X,Y and Z 2D arrays
-        print rectang
         zdata=self.data[rectang[0]:rectang[0]+rectang[2], rectang[1]:rectang[1]+rectang[3]]
         xvals=xvals[0:rectang[2]]
         yvals=yvals[0:rectang[3]]

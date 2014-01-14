@@ -7,6 +7,7 @@ is run last.
 
 Eacg class should implement a load() method and optionally a save() method.
 """
+from .compat import *
 import linecache
 import re
 import numpy
@@ -114,21 +115,21 @@ class VSMFile(DataFile):
             The default values are configured fir read VSM data files
         """
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        self['Timestamp']=f.next().strip()
+        self['Timestamp']=f.readline().strip()
         try:
             check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
             assert check is not None
-            assert f.next().strip()==""
+            assert f.readline().strip()==""
         except (ValueError, AssertionError):
             raise RuntimeError('Not a VSM File')
-        header_string=f.next()
+        header_string=f.readline()
         header_string=re.sub(r'["\n]', '', header_string)
-        unit_string=f.next()
+        unit_string=f.readline()
         unit_string=re.sub(r'["\n]', '', unit_string)
         column_headers=zip(header_string.split(header_delim), unit_string.split(header_delim))
         self.column_headers=map(lambda x: x[0].strip()+" ("+x[1].strip()+")",  column_headers)
-        f.next()
-        f.next()
+        f.readline()
+        f.readline()
 
         self.data=numpy.genfromtxt(f,dtype='float',usemask=True, delimiter=data_delim,
                                    skip_header=data_line-1, missing_values=['         6:0','         ---'],
@@ -201,15 +202,15 @@ class QDSquidVSMFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        while f.next().strip()!="[Header]":
+        while f.readline().strip()!="[Header]":
             pass
-        line=f.next().strip()
-        line=f.next().strip()
+        line=f.readline().strip()
+        line=f.readline().strip()
         if "Quantum Design" not in line:
             raise RuntimeError("Not a Quantum Design File !")
         while line!="[Data]":
             if line[0]==";":
-                line=f.next().strip()
+                line=f.readline().strip()
                 continue
             parts=line.split(',')
             if parts[0]=="INFO":
@@ -224,8 +225,8 @@ class QDSquidVSMFile(DataFile):
                 key=key.title()
                 value=' '.join(parts[2:])
             self.metadata[key]=self.metadata.string_to_type(value)
-            line=f.next().strip()
-        self.column_headers=f.next().strip().split(',')
+            line=f.readline().strip()
+        self.column_headers=f.readline().strip().split(',')
         self.data=numpy.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
         return self
 
@@ -249,24 +250,24 @@ class OpenGDAFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        line=f.next().strip()
+        line=f.readline().strip()
         if line!="&SRS":
             raise RuntimeError("Not a GDA File from Rasor ?"+str(line))
-        while f.next().strip()!="<MetaDataAtStart>":
+        while f.readline().strip()!="<MetaDataAtStart>":
             pass
-        line=f.next().strip()
+        line=f.readline().strip()
         while line!="</MetaDataAtStart>":
             parts=line.split('=')
             if len(parts)!=2:
-                line=f.next().strip()
+                line=f.readline().strip()
                 continue
             key=parts[0]
             value=parts[1].strip()
             self.metadata[key]=self.metadata.string_to_type(value)
-            line=f.next().strip()
-        while f.next().strip()!="&END":
+            line=f.readline().strip()
+        while f.readline().strip()!="&END":
             pass
-        self.column_headers=f.next().strip().split("\t")
+        self.column_headers=f.readline().strip().split("\t")
         self.data=numpy.genfromtxt(f,dtype='float', invalid_raise=False)
         return self
 
@@ -301,7 +302,7 @@ class SPCFile(DataFile):
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
         f=open(filename, 'rb')
-        spchdr=struct.unpack('BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
+        spchdr=struct.unpack(b'BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
         keys=("ftflgs","fversn","fexper","fexp","fnpts","ffirst","flast","fnsub","fxtype","fytype","fztype","fpost","fres","fsource","fpeakpt","fspare1","fspare2","fspare3","fspare4","fspare5","fspare6","fspare7","fspare8","fcm","nt","fcatx","flogoff","fmods","fprocs","flevel","fsampin","ffactor","fmethod","fzinc","fwplanes","fwinc","fwtype","fwtype","fresv")
         header=dict(zip(keys, spchdr))
 
@@ -312,7 +313,7 @@ class SPCFile(DataFile):
             pts=header['fnpts']
             if header['ftflgs'] & 128: # We need to read some X Data
                 xvals=f.read(4*pts) # I think storing X vals directly implies that each one is 4 bytes....
-                xdata=numpy.array(struct.unpack(str(pts)+"f", xvals))
+                xdata=numpy.array(struct.unpack(str2bytes(str(pts)+"f"), xvals))
             else: # Generate the X Data ourselves
                 first=header['ffirst']
                 last=header['flast']
@@ -339,15 +340,15 @@ class SPCFile(DataFile):
 
             for j in range(n): # We have n sub-scans
                 # Read the subheader and import into the main metadata dictionary as scan#:<subheader item>
-                subhdr=struct.unpack('BBHfffIIf4s', f.read(32))
+                subhdr=struct.unpack(b'BBHfffIIf4s', f.read(32))
                 subheader=dict(zip(["scan"+str(j)+":"+x for x in subhdr_keys], subhdr))
 
                 # Now read the y-data
                 exponent=subheader["scan"+str(j)+':subexp']
                 if int(exponent) & -128: # Data is unscaled direct floats
-                    ydata=numpy.array(struct.unpack(str(pts)+"f", f.read(pts*y_width)))
+                    ydata=numpy.array(struct.unpack(str2bytes(str(pts)+"f"), f.read(pts*y_width)))
                 else: # Data is scaled by exponent
-                    yvals=struct.unpack(str(pts)+y_fmt, f.read(pts*y_width))
+                    yvals=struct.unpack(str2bytes(str(pts)+y_fmt), f.read(pts*y_width))
                     ydata=numpy.array(yvals, dtype='float64')*(2**exponent)/divisor
 
                 # Pop the y-data into the array and merge the matadata in too.
@@ -357,7 +358,7 @@ class SPCFile(DataFile):
 
             # Now we're going to read any log information
             if header['flogoff']!=0: # Ok, we've got a log, so read the log header and merge into metadata
-                logstc=struct.unpack('IIIII44s', f.read(64))
+                logstc=struct.unpack(b'IIIII44s', f.read(64))
                 logstc_keys=("logsizd", "logsizm", "logtxto", "logbins", "logdsks", "logrsvr")
                 logheader=dict(zip(logstc_keys, logstc))
                 header=dict(header, **logheader)
@@ -370,11 +371,11 @@ class SPCFile(DataFile):
                 # Now read the rest of the file as log text
                 logtext=f.read()
                 # We expect things to be single lines terminated with a CR-LF of the format key=value
-                for line in split("[\r\n]+", logtext):
-                    if "=" in line:
-                        parts= line.split('=')
-                        key=parts[0]
-                        value=parts[1]
+                for line in split(b"[\r\n]+", logtext):
+                    if b"=" in line:
+                        parts= line.split(b'=')
+                        key=parts[0].decode()
+                        value=parts[1].decode()
                         header[key]=value
             # Ok now build the Stoner.DataFile instance to return
             self.data=data
@@ -446,14 +447,14 @@ class RigakuFile(DataFile):
         sh=re.compile(r'^\*([^\s]+)\s+(.*)$') # Regexp to grab the keys
         ka=re.compile(r'(.*)\-(\d+)$')
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        if f.next().strip()!="*RAS_DATA_START": # Check we have the corrrect fileformat
+        if f.readline().strip()!="*RAS_DATA_START": # Check we have the corrrect fileformat
                 raise RuntimeError("File Format Not Recognized !")
-        line=f.next().strip()
+        line=f.readline().strip()
         while line!="*RAS_HEADER_START":
-            line=f.next().strip()
+            line=f.readline().strip()
         header=dict()
         while line!="*RAS_HEADER_END":
-            line=f.next().strip()
+            line=f.readline().strip()
             m=sh.match(line)
             if m:
                 key=m.groups()[0].lower().replace('_','.')
@@ -488,7 +489,7 @@ class RigakuFile(DataFile):
             else:
                 self.metadata[key]=newvalue
         while(line!="*RAS_INT_START"):
-             line=f.next().strip()
+             line=f.readline().strip()
         self.data=numpy.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False)
         self.column_headers=['Column'+str(i) for i in range(self.data.shape[1])]
         self.column_headers[0:2]=[self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
@@ -522,7 +523,7 @@ class XRDFile(DataFile):
             self.filename = filename
         sh=re.compile(r'\[(.+)\]') # Regexp to grab section name
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        if f.next().strip()!=";RAW4.00": # Check we have the corrrect fileformat
+        if f.readline().strip()!=";RAW4.00": # Check we have the corrrect fileformat
                 raise RuntimeError("File Format Not Recognized !")
         drive=0
         for line in f: #for each line
@@ -533,7 +534,7 @@ class XRDFile(DataFile):
                     section=section+str(drive)
                     drive=drive+1
                 elif section=="Data": # Data section contains the business but has a redundant first line
-                    f.next()
+                    f.readline()
                 for line in f: #Now start reading lines in this section...
                     if line.strip()=="": # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
                         break
@@ -621,7 +622,7 @@ class BNLFile(DataFile):
         try: self.data=numpy.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
         except IOError:
             self.data=numpy.array([0])
-            print 'Did not import any data for %s'% self.filename
+            print('Did not import any data for {}'.format(self.filename))
 
 
     def load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
@@ -667,14 +668,14 @@ class FmokeFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        value=[float(x.strip()) for x in f.next().split('\t')]
-        label=[ x.strip() for x in f.next().split('\t')]
+        value=[float(x.strip()) for x in f.readline().split('\t')]
+        label=[ x.strip() for x in f.readline().split('\t')]
         if label[0]!="Header:":
             raise RuntimeError("Not a Focussed MOKE file !")
         del(label[0])
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
-        self.column_headers=[ x.strip() for x in f.next().split('\t')]
+        self.column_headers=[ x.strip() for x in f.readline().split('\t')]
         self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
@@ -691,21 +692,21 @@ class GenXFile(DataFile):
         pattern=re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
         pattern2=re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
         with open(self.filename,"r") as datafile:
-            line=datafile.next()
+            line=datafile.readline()
             match=pattern.match(line)
             match2=pattern2.match(line)
             if match is not None:
                 dataset=match.groups()[0]
                 date=match.groups()[1]
-                line=datafile.next()
-                line=datafile.next()
+                line=datafile.readline()
+                line=datafile.readline()
                 line=line[1:]
                 self["date"]=date
             elif match2 is not None:
-                line=datafile.next()
+                line=datafile.readline()
                 self["date"]=line.split(':')[1].strip()
-                datafile.next()
-                line=datafile.next()
+                datafile.readline()
+                line=datafile.readline()
                 line=line[1:]
                 dataset="asymmetry"
             else:

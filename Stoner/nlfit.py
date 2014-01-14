@@ -9,13 +9,16 @@ Description:  Generic non linear function fitting code using Levenberg Marquardt
 """
 
 ## Import packages
-
+from compat import *
 import numpy
 import Stoner
 from scipy.stats import chisquare
 import os
 import time
-import ConfigParser
+if python_v3:
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 import pylab ; pylab.ion() #interactive mode, works best with iPython
 
 def nlfit(ini_file, func, data=None, chi2mapping=False):
@@ -166,7 +169,7 @@ class NLFit:
         ycolname = self.config.get('data', 'y-column')
         sim.column_headers=[xcolname, ycolname]
         for i in range(len(params)):
-            print parnames[i]+'='+str(params[i])
+            print(parnames[i]+'='+str(params[i]))
             sim[parnames[i]]=params[i]
 
         if self.config.getboolean('options', 'save_fit'):
@@ -188,7 +191,7 @@ class NLFit:
         show_plot = self.config.getboolean('options', 'show_plot')
         annotate_plot = self.config.getboolean('options', 'annotate_plot')
         save_fit = self.config.getboolean('options', 'save_fit')
-        print_iterfunct = self.config.getboolean('options', 'print_each_step')
+        print(iterfunct = self.config.getboolean('options', 'print_each_step'))
 
         parlist=[self.__getattr__(section) for section in self.parameter_names]
 
@@ -203,14 +206,14 @@ class NLFit:
                 header = self.config.getint('data', 'header_line')
                 start = self.config.getint('data', 'start_line')
                 d=Stoner.FileFormats.CSVFile()
-                if fit_file==None: print 'Open data file to fit'
+                if fit_file==None: print('Open data file to fit')
                 d.load(fit_file,header,start)
                 filename=d.filename
                 d=Stoner.AnalyseFile(d)
                 d.filename=filename
             else:
                 d=Stoner.AnalyseFile()
-                if fit_file==None: print 'Open data file to fit'
+                if fit_file==None: print('Open data file to fit')
                 d.load(fit_file)
         else:
             assert(isinstance(self.data_input, Stoner.AnalyseFile) or \
@@ -227,7 +230,7 @@ class NLFit:
         if discard:
             x_limits = self.config.get('data','x_limits')
             x_limits = [float(i) for i in x_limits.split(',')]
-            print 'x_limits=', x_limits
+            print('x_limits=', x_limits)
             d=d.del_rows(xcol,lambda x,y:x>x_limits[1] or x<x_limits[0])
 
         # Get filename for title
@@ -267,7 +270,7 @@ class NLFit:
         steps=['fit'] #one step for no chi^2 mapping
         if self.chi2mapping:
             for p in parlist:
-                    if p['fixed']==True and p['step']<>0:
+                    if p['fixed']==True and p['step']!=0:
                         t=steps
                         steps=[]
                         for x in numpy.arange(p['limits'][0], p['limits'][1], p['step']):
@@ -281,7 +284,7 @@ class NLFit:
                 if print_iterfunct==False:
                     # Here is the engine that does the work
                     m = d.mpfit(self.fit_func, xcol, ycol, parlist, iterfunct=d.mpfit_iterfunct)
-                    print 'Finished!'
+                    print('Finished!')
                 else:
                     m = d.mpfit(self.fit_func,xcol, ycol, parlist)
                 if (m.status <= 0): # error message ?
@@ -297,12 +300,12 @@ class NLFit:
                         self.plotout = plotfig #output a figure instance for further editing
                     # Ok now we can print the answer
                     for i in range(len(parlist)):
-                        print self.parameter_names[i]+'='+str(m.params[i])
+                        print(self.parameter_names[i]+'='+str(m.params[i]))
                         d[self.parameter_names[i]]=m.params[i]
 
                     chi2=chisquare(d.column(ycol), d.column('Fit'))
                     d['Chi^2']=chi2[0]  #chi2 is [chi2 value, p value]
-                    print 'Chi^2:'+str(chi2[0])
+                    print('Chi^2:'+str(chi2[0]))
                     if save_fit:
                         d.save(False)
                     self.output = d.clone

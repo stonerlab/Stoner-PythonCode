@@ -7,6 +7,7 @@ Floris van Vugt
 IMMM Hannover
 http://florisvanvugt.free.fr/
 """
+from .compat import *
 import struct
 import os
 
@@ -31,13 +32,19 @@ def byteToHex( byteStr ):
     """
     return ''.join( [ "%02X " % ord( x ) for x in byteStr ] ).strip()
 
+if python_v3:
+    one=1
+else:
+    one=eval("1L")
+    
+
 tocProperties = {
-    'kTocMetaData'         : (1L<<1),
-    'kTocRawData'          : (1L<<3),
-    'kTocDAQmxRawData'     : (1L<<7),
-    'kTocInterleavedData'  : (1L<<5),
-    'kTocBigEndian'        : (1L<<6),
-    'kTocNewObjList'       : (1L<<2),
+    'kTocMetaData'         : (one<<1),
+    'kTocRawData'          : (one<<3),
+    'kTocDAQmxRawData'     : (one<<7),
+    'kTocInterleavedData'  : (one<<5),
+    'kTocBigEndian'        : (one<<6),
+    'kTocNewObjList'       : (one<<2),
     }
 
 tdsDataTypes = [
@@ -325,7 +332,7 @@ def mergeObject( obj, newobj ):
 
     # We assume that objectpath is the same
     if (newobjectpath!=objectpath):
-        print "Error: trying to merge non-same objectpaths:",newobjectpath,objectpath
+        print("Error: trying to merge non-same objectpaths:",newobjectpath,objectpath)
         exit()
 
 
@@ -395,7 +402,7 @@ def readMetaData( f ):
          properties) = obj
 
         if verbose:
-            print "Read object",objectpath
+            print("Read object",objectpath)
 
         # Add this object, or, if an object with the same objectpath
         # exists already, make it update that one.
@@ -452,7 +459,7 @@ def readRawData( f, leadin, segmentobjects, objectorder, filesize ):
         (rawdata_datatype, rawdata_dim, rawdata_values) = rawdata
 
         if (rawdata_dim!=1):
-            print "Error! Raw data dimension is ",rawdata_dim," and should have been 1."
+            print("Error! Raw data dimension is ",rawdata_dim," and should have been 1.")
             exit()
 
         # Calculate how many bytes a single value is
@@ -484,11 +491,11 @@ def readRawData( f, leadin, segmentobjects, objectorder, filesize ):
 
 
     if verbose:
-        print "Ready for reading",total_chunks,"bytes (",chunk_size, ") in",n_chunks,"chunks",
+        print("Ready for reading",total_chunks,"bytes (",chunk_size, ") in",n_chunks,"chunks",)
 
     if interleaved:
 
-        print " ==> Interleaved"
+        print(" ==> Interleaved")
 
         # Initialise data to be empty
         data = {}
@@ -522,7 +529,7 @@ def readRawData( f, leadin, segmentobjects, objectorder, filesize ):
     else:
 
         if verbose:
-            print " ==> Not Interleaved"
+            print(" ==> Not Interleaved")
         data = {}
 
         for c in channels:
@@ -610,9 +617,10 @@ def dumpProperties(props):
         ret = ret + (pr+'=') + str(val) + ", "
     return ret
 
-def csvDump((objects,data)):
+def csvDump(args):
     """Dump the (objects,rawdata) that we read from a TDMS file straight into a CSV file.
     """
+    (objects,data)=args
 
     ret = ''
     for obj in objects.keys():

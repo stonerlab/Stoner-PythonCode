@@ -216,7 +216,7 @@ class DataFolder(object):
                     ret.append(path.basename(x))
             return ret
         elif item=="lsgrp":
-            return self.groups.keys()
+            return list(self.groups.keys())
         elif item=="ls":
             ret=[]
             for f in self.files:
@@ -470,7 +470,7 @@ class DataFolder(object):
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a DataFolder or DataFile."""
-	return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
+        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
 
     def _removeDisallowedFilenameChars(filename):
         """Utility method to clean characters in filenames
@@ -569,7 +569,7 @@ class DataFolder(object):
                 yield f
 
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
-  	""""Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
+        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
 
         Args:
             walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.

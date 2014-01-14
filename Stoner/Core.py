@@ -7,6 +7,7 @@ Classes:
         languages such as LabVIEW.
 
 """
+from compat import *
 import fileinput
 import re
 #import pdb # for debugging
@@ -378,7 +379,7 @@ class DataFile(object):
     def _init_single(self,*args,**kargs):
         """Handles constructor with 1 arguement - called from __init__."""
         arg=args[0]
-        if (isinstance(arg, (str,unicode)) or (isinstance(arg, bool) and not arg)):
+        if (isinstance(arg, string_types) or (isinstance(arg, bool) and not arg)):
                                     # Filename- load datafile
             t = self.load(arg, **kargs)
             self.data = ma.masked_array(t.data)
@@ -598,7 +599,7 @@ class DataFile(object):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
         the attributes that __getattr__ will handle.
         """
-        attr=self.__dict__.keys()
+        attr=list(self.__dict__.keys())
         attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
         return attr
 
@@ -773,7 +774,7 @@ class DataFile(object):
             return self.data[name, :]
         elif isinstance(name, numpy.ndarray) and len(name.shape)==1:
             return self.data[name, :]
-        elif isinstance(name, str) or isinstance(name, unicode):
+        elif isinstance(name, string_types):
             name=str(name)
             return self.meta(name)
         elif isinstance(name, tuple) and len(name) == 2:
@@ -823,8 +824,8 @@ class DataFile(object):
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
-
-        self.__read_iterable(fileinput.FileInput(self.filename))
+        with open(self.filename,"r") as in_file:
+            self.__read_iterable(in_file)
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate
@@ -848,8 +849,14 @@ class DataFile(object):
 
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
-
-        row=reader.next().split('\t')
+        
+        if "next" in dir(reader):
+            readline=reader.next
+        elif "readline" in dir(reader):
+            readline=reader.readline
+        else:
+            raise AttributeError("No method to read a line in {}".format(reader))
+        row=readline().split('\t')
         if row[0].strip()!="TDI Format 1.5":
             raise RuntimeError("Not a TDI File")
         col_headers_tmp=[x.strip() for x in row[1:]]
@@ -1207,7 +1214,7 @@ class DataFile(object):
         Returns:
             Returns a list of metadata keys."""
         if pattern == None:
-            return self.metadata.keys()
+            return list(self.metadata.keys())
         else:
             test = re.compile(pattern)
             possible = [x for x in self.metadata.keys() if test.search(x)]
@@ -1259,7 +1266,7 @@ class DataFile(object):
         if isinstance(col, int):  # col is an int so pass on
             if not 0<=col<self.data.shape[1]:
                 raise IndexError('Attempting to index a non - existant column '+str(col))
-        elif isinstance(col, str) or isinstance(col, unicode):  # Ok we have a string
+        elif isinstance(col, string_types):  # Ok we have a string
             col=str(col)
             if col in self.column_headers:  # and it is an exact string match
                 col = self.column_headers.index(col)
@@ -1371,18 +1378,18 @@ class DataFile(object):
                 self["Loaded as"]=filetype.__name__
             failed=False
             return self
-        except RuntimeError: # We failed to parse assuming this was a TDI
+        except Exception: # We failed to parse assuming this was a TDI
             if auto_load: # We're going to try every subclass we can
                 subclasses={x:x.priority for x in itersubclasses(DataFile)}
-                for cls, priority in sorted(subclasses.iteritems(), key=lambda (k,v): (v,k)):
+                for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
                     if self.debug:
-                        print cls.__class__.__name__
+                        print(cls.__class__.__name__)
                     try:
                         test=cls()
                         test.load(self.filename, auto_load=False)
                         failed=False
                         break
-                    except Exception:
+                    except Exception as e:
                         continue
 
         if failed:

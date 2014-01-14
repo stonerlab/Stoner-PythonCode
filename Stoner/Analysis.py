@@ -706,7 +706,7 @@ class AnalyseFile(DataFile):
         for k in files:
             files[k].filename="{}={}".format(xcol,k)
         if len(morecols)>0:
-            for k in sorted(files.keys()):
+            for k in sorted(list(files.keys())):
                 out.groups[k]=files[k].split(morecols,morefuncs)
         else:
             out.files=[files[k] for k in sorted(files.keys())]
