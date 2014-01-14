@@ -6,7 +6,8 @@ Provides the a class to facilitate easier plotting of Stoner Data:
 Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
-from .Core import DataFile
+from Stoner.compat import *
+from Stoner.Core import DataFile
 import numpy
 import matplotlib
 import os

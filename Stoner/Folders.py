@@ -5,7 +5,7 @@
      :py:class:`DataFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 
-
+from Stoner.compat import *
 import os
 import re
 import os.path as path

@@ -6,7 +6,7 @@ Classes include
 * HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file
 
 """
-
+from Stoner.compat import *
 import h5py
 import numpy
 from .Core import DataFile

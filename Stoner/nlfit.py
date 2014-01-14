@@ -9,7 +9,7 @@ Description:  Generic non linear function fitting code using Levenberg Marquardt
 """
 
 ## Import packages
-from compat import *
+from Stoner.compat import *
 import numpy
 import Stoner
 from scipy.stats import chisquare

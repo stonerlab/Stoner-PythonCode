@@ -2,6 +2,7 @@
 
 Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
 """
+from Stoner.compat import *
 from Stoner.Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit

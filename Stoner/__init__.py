@@ -7,7 +7,7 @@ __all__=['Core', 'Analysis', 'Plot', 'FileFormats', 'Folders']
 # These fake the old namespace if you do an import Stoner
 
 # Support both Python 2.7 and 3
-from compat import *
+from Stoner.compat import *
 
 
 from .Core import *

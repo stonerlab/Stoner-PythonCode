@@ -7,7 +7,7 @@ Classes:
         languages such as LabVIEW.
 
 """
-from compat import *
+from Stoner.compat import *
 import fileinput
 import re
 #import pdb # for debugging

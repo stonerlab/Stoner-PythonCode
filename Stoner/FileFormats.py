@@ -7,7 +7,7 @@ is run last.
 
 Eacg class should implement a load() method and optionally a save() method.
 """
-from .compat import *
+from Stoner.compat import *
 import linecache
 import re
 import numpy
