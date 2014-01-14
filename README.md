@@ -43,10 +43,10 @@ It provides basic methods to examine and manipulate data, manage metadata and lo
 It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific 
 file formats. Two, however, contain additional functionality for writing analysis programs.
      
-    *   **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out 
-    basic calculations on data. 
+*   **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out 
+basic calculations on data. 
 
-    * **Stoner.Plot.PlotFile** provides additional routines for plotting data on 2D or 3D plots. 
+* **Stoner.Plot.PlotFile** provides additional routines for plotting data on 2D or 3D plots. 
     
 As mentioned above, there are subclasses of **DataFile** in the **Stoner.FileFormats** module that support 
 loading many of the common file formats used in our research.
