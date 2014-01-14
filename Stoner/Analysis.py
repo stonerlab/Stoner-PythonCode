@@ -414,14 +414,14 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((1.0/(adata+bdata)-(adata-bdata)/(adata+bdata)**2)**2*e1data**2+(-1.0/(adata+bdata)-(adata-bdata) / (adata+bdata)**2)**2*e2data**2)
         else:
-            err_calc=None                
+            err_calc=None              
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
             header,err_header=header
         if header is None:
             header="({}-{})/({}+{})".format(aname,bname,aname,bname)
-        if err_header is None:
+        if err_calc is not None and err_header is None:
             err_header="Error in "+header            
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
@@ -491,7 +491,7 @@ class AnalyseFile(DataFile):
             header,err_header=header
         if header is None:
             header="{}-{}".format(aname,bname)
-        if err_header is None:
+        if err_calc is not None and err_header is None:
             err_header="Error in "+header            
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
@@ -533,7 +533,7 @@ class AnalyseFile(DataFile):
             header,err_header=header
         if header is None:
             header="{}+{}".format(aname,bname)
-        if err_header is None:
+        if err_calc is not None and err_header is None:
             err_header="Error in "+header            
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
@@ -574,7 +574,7 @@ class AnalyseFile(DataFile):
             header,err_header=header
         if header is None:
             header="{}/{}".format(aname,bname)
-        if err_header is None:
+        if err_calc is not None and err_header is None:
             err_header="Error in "+header            
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
@@ -616,7 +616,7 @@ class AnalyseFile(DataFile):
             header,err_header=header
         if header is None:
             header="{}*{}".format(aname,bname)
-        if err_header is None:
+        if err_calc is not None and err_header is None:
             err_header="Error in "+header            
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
