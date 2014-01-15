@@ -6,8 +6,10 @@ http://zone.ni.com/devzone/cda/tut/p/id/5696
 Floris van Vugt
 IMMM Hannover
 http://florisvanvugt.free.fr/
+
+Updated with Python3 tweaks by Gavin Burnell
 """
-from .compat import *
+from Stoner.compat import *
 import struct
 import os
 
@@ -102,11 +104,11 @@ tdsDataTypesTranscriptions = {
 def dataTypeFrom( s ):
     """Find back the data type from raw input data.
     """
-    repr = struct.unpack("<L", s)[0]
-    if (repr in tdsDataTypesDefined.keys()):
-        return tdsDataTypesDefined[repr]
+    idx = struct.unpack(b"<L", s)[0]
+    if idx in tdsDataTypesDefined:
+        return tdsDataTypesDefined[idx]
     else:
-        return tdsDataTypes[repr]
+        return tdsDataTypes[idx]
 
 def dataTypeLength( datatype ):
     """How many bytes we need to read to read in an object of the given datatype
@@ -148,7 +150,7 @@ def getValue( s, endianness, datatype ):
     """
 
     if datatype=='tdsTypeTimeStamp':
-        t = struct.unpack(endianness+"Qq", s)
+        t = struct.unpack(str2bytes(endianness+"Qq"), s)
 
         return (t[1],         # the number of seconds since the 1904 epoch
                 t[0]*(2**-64) # plus the number of 2^-64 seconds
@@ -156,7 +158,7 @@ def getValue( s, endianness, datatype ):
 
     else:
         code = endianness+dataTypeTranscription(datatype)
-        return struct.unpack(code, s)[0]
+        return struct.unpack(str2bytes(code), s)[0]
 
 
     return False
@@ -165,13 +167,12 @@ def readLeadIn( f ):
     """Read the lead-in of a segment
     """
     s = f.read(4) # read 4 bytes
-    if (not s in ['TDSm']):
-        print ("Error: segment does not start with TDSm, but with ",s)
-        exit()
+    if (not s in [b'TDSm']):
+        raise RuntimeError("Error: segment does not start with TDSm, but with {}".format(s))
 
 
     s = f.read(4)
-    toc = struct.unpack("<i", s)[0]
+    toc = struct.unpack(b"<i", s)[0]
 
     metadata = {}
     for prop in tocProperties.keys():
@@ -183,11 +184,11 @@ def readLeadIn( f ):
 
     # The version number
     s = f.read(4)
-    version = struct.unpack("<i", s)[0]
+    version = struct.unpack(b"<i", s)[0]
 
 
     s = f.read(16)
-    (next_segment_offset,raw_data_offset) = struct.unpack("<QQ", s)
+    (next_segment_offset,raw_data_offset) = struct.unpack(b"<QQ", s)
     #print ("Length remaining: "+str(length_remaining))
 
 
@@ -202,12 +203,12 @@ def readObject( f ):
 
     # Read the object path
     s = f.read(4)
-    lnth = struct.unpack("<L", s)[0]
+    lnth = struct.unpack(b"<L", s)[0]
     objectpath = f.read(lnth)
 
 
     s = f.read(4)
-    rawdataindex = struct.unpack("<L", s)[0]
+    rawdataindex = struct.unpack(b"<L", s)[0]
 
     # No raw data associated
     if   (rawdataindex==0xFFFFFFFF):
@@ -234,13 +235,13 @@ def readObject( f ):
         # Dimension of the raw data array
         s = f.read(4)
         #print "Dimension: ",byteToHex(s)
-        rawdata_dim = struct.unpack("<L", s)[0]
+        rawdata_dim = struct.unpack(b"<L", s)[0]
 
 
 
         # Number of raw data values
         s = f.read(8)
-        rawdata_values = struct.unpack("<Q", s)[0]
+        rawdata_values = struct.unpack(b"<Q", s)[0]
 
         rawdata=(
             rawdata_datatype,
@@ -255,7 +256,7 @@ def readObject( f ):
 
     # Read the number of properties
     s = f.read(4)
-    nProp = struct.unpack("<L", s)[0]
+    nProp = struct.unpack(b"<L", s)[0]
     #print "Has",nProp,"properties"
 
     properties = {}
@@ -266,7 +267,7 @@ def readObject( f ):
 
         # Read the property name
         s = f.read(4)
-        numb = struct.unpack("<L", s)[0]
+        numb = struct.unpack(b"<L", s)[0]
         name = f.read(numb)
         #print name
 
@@ -282,17 +283,18 @@ def readObject( f ):
         # If it's a string, read the length
         if (datatype=='tdsTypeString'):
             s = f.read(4)
-            lengte = struct.unpack("<L", s)[0]
+            lengte = struct.unpack(b"<L", s)[0]
             value = f.read(lengte)
 
         else:
             nm = dataTypeLength( datatype )
 
             s = f.read(nm)
+            assert len(s)==nm,"Failed to read correct number of bytes {} vs {}".format(len(s),nm)
             value = getValue( s, "<", datatype )
 
 
-        properties[name]=(datatype,value)
+        properties[str(name)]=(datatype,value)
 
 
 
@@ -331,9 +333,7 @@ def mergeObject( obj, newobj ):
 
 
     # We assume that objectpath is the same
-    if (newobjectpath!=objectpath):
-        print("Error: trying to merge non-same objectpaths:",newobjectpath,objectpath)
-        exit()
+    assert newobjectpath==objectpath,"Error: trying to merge non-same objectpaths:{} {}".format(newobjectpath,objectpath)
 
 
     # If there is some change in the raw data associated
@@ -386,7 +386,7 @@ def readMetaData( f ):
 
     # The number of objects in this metadata
     s = f.read(4)
-    nObjects = struct.unpack("<l", s)[0]
+    nObjects = struct.unpack(b"<l", s)[0]
 
 
     objects     = {}
@@ -407,10 +407,10 @@ def readMetaData( f ):
         # Add this object, or, if an object with the same objectpath
         # exists already, make it update that one.
         if (objectpath in objects.keys()):
-            objects[objectpath] = mergeObjects(objects[objectpath],obj)
+            objects[str(objectpath)] = mergeObjects(objects[str(objectpath)],obj)
         else:
             # We add it anew
-            objects[objectpath] = obj
+            objects[str(objectpath)] = obj
             objectorder.append( objectpath )
 
     return (objects,objectorder)
@@ -458,9 +458,7 @@ def readRawData( f, leadin, segmentobjects, objectorder, filesize ):
 
         (rawdata_datatype, rawdata_dim, rawdata_values) = rawdata
 
-        if (rawdata_dim!=1):
-            print("Error! Raw data dimension is ",rawdata_dim," and should have been 1.")
-            exit()
+        assert (rawdata_dim==1),"Error! Raw data dimension is {} and should have been 1.".format(rawdata_dim)
 
         # Calculate how many bytes a single value is
         datapointsize= dataTypeLength(rawdata_datatype)
@@ -494,8 +492,8 @@ def readRawData( f, leadin, segmentobjects, objectorder, filesize ):
         print("Ready for reading",total_chunks,"bytes (",chunk_size, ") in",n_chunks,"chunks",)
 
     if interleaved:
-
-        print(" ==> Interleaved")
+        if verbose:
+            print(" ==> Interleaved")
 
         # Initialise data to be empty
         data = {}

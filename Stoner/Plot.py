@@ -137,7 +137,7 @@ class PlotFile(DataFile):
                 if v not in "xyzedf.":
                     raise ValueError("Set as column element is invalid: {}".format(v))
             self._setas=value
-        elif isinstance(value,(unicode,str)):
+        elif isinstance(value,string_types):
             value=list(str(value)).reverse()
             i=0
             if len(self._setas)<len(self.column_headers):
@@ -251,12 +251,12 @@ class PlotFile(DataFile):
             plotter=pyplot.errorbar
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
             if err in kwords:
-                if isinstance(kwords[err],(int,str,unicode,re._pattern_type)):
+                if isinstance(kwords[err],index_types):
                     kwords[err]=self.column(kwords[err])
                 elif isinstance(kwords[err], list) and isinstance(column_y,list) and len(kwords[err])==len(column_y):
                 # Ok, so it's a list, so redo the check for each  item.
                     for i in range(len(kwords[err])):
-                        if isinstance(kwords[err],(int,str,unicode,re._pattern_type)):
+                        if isinstance(kwords[err],index_types):
                             kwords[err][i]=self.column(kwords[err])
         
         # Now try to process the figure parameter
@@ -469,10 +469,10 @@ class PlotFile(DataFile):
             elif isinstance(rectang, tuple) and rectang[1]<=yvals: # We have a rectang, but we need to adjust the row origin
                 rectang[0]=yvals+1
             yvals=self[yvals] # change the yvals into a numpy array
-        elif isinstance(yvals, list) or isinstance(yvals, tuple): # We're given the yvals as a list already
+        elif isinstance(yvals,(list, tuple)): # We're given the yvals as a list already
             yvals=numpy.array(yvals)
         elif yvals is None: # No yvals, so we'l try column headings
-            if isinstance(xvals, int) or isinstance(xvals, str): # Do we have an xcolumn header to take away ?
+            if isinstance(xvals, index_types): # Do we have an xcolumn header to take away ?
                 xvals=self.find_col(xvals)
                 headers=self.column_headers[xvals+1:]
             elif xvals is None: # No xvals so we're going to be using the first column
@@ -484,7 +484,7 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
         #Sort out xvls values
-        if isinstance(xvals, int) or isinstance(xvals, str): # String or int means using a column index
+        if isinstance(xvals, index_types): # String or int means using a column index
             if xlabel is None:
                 xlabel=self.column_headers[self.find_col(xvals)]
             if rectang is None: # Do we need to init the rectan ?
@@ -492,7 +492,7 @@ class PlotFile(DataFile):
             elif isinstance(rectang, tuple): # Do we need to adjust the rectan column origin ?
                 rectang[1]=xvals+1
             xvals=self.column(xvals)
-        elif isinstance(xvals, list) or isinstance(xvals, tuple): # Xvals as a data item
+        elif isinstance(xvals, (list,tuple)): # Xvals as a data item
             xvals=numpy.array(xvals)
         elif isinstance(xvals, numpy.ndarray):
             pass

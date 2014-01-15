@@ -21,4 +21,6 @@ elif __vi__[0]==3:
     python_v3=True
     def str2bytes(s):
         return bytes(str(s),"utf-8")
+        
+index_types=string_types+(int,re._pattern_type)
 

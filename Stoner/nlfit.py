@@ -191,7 +191,7 @@ class NLFit:
         show_plot = self.config.getboolean('options', 'show_plot')
         annotate_plot = self.config.getboolean('options', 'annotate_plot')
         save_fit = self.config.getboolean('options', 'save_fit')
-        print(iterfunct = self.config.getboolean('options', 'print_each_step'))
+        print_iterfunct = self.config.getboolean('options', 'print_each_step')
 
         parlist=[self.__getattr__(section) for section in self.parameter_names]
 

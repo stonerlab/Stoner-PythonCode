@@ -408,9 +408,9 @@ class TDMSFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        f=open(self.filename) # Read filename linewise
+        f=open(self.filename,"rb") # Read filename linewise
         try:
-            assert f.read(4) == "TDSm"
+            assert f.read(4) == b"TDSm"
         except AssertionError:
             f.close()
             raise RuntimeError('Not a TDMS File')

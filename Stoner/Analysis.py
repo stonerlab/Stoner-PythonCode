@@ -136,7 +136,7 @@ class AnalyseFile(DataFile):
         Returns:
             The matching data.
         """
-        if isinstance(col,(int,str,unicode,re._pattern_type)):
+        if isinstance(col,index_types):
             col=self.find_col(col)
             if isinstance(col,list):
                 col=col[0]
@@ -275,7 +275,7 @@ class AnalyseFile(DataFile):
             for i in range(len(popt)):
                 self['Fit '+func.__name__+'.'+str(args[i+1])]=popt[i]
             xc=self.find_col(xcol)
-            if not isinstance(header, (unicode,str)):
+            if not isinstance(header, string_types):
                 header='Fitted with '+func.__name__
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
@@ -745,7 +745,7 @@ class AnalyseFile(DataFile):
             d=numpy.append(d, numpy.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
         if result is not None:
-            if not isinstance(header, (unicode,str)):
+            if not isinstance(header, string_types):
                 header='{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],ordinal(order))
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
@@ -771,7 +771,7 @@ class AnalyseFile(DataFile):
         Returns:
             Either a sing;le fractional row index, or an in terpolated x value"""
         current=self.column(col)
-        if isinstance(threshold, list) or isinstance(threshold, numpy.ndarray):
+        if isinstance(threshold, (list,numpy.ndarray)):
             if all_vals:
                 ret=[self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
             else:
