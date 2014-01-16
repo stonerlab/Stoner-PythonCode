@@ -8,6 +8,7 @@ Created on Tue Jan 14 19:53:11 2014
 """
 from __future__ import print_function,absolute_import,division,unicode_literals
 from sys import version_info as __vi__
+from re import _pattern_type
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0]==2:
@@ -22,5 +23,5 @@ elif __vi__[0]==3:
     def str2bytes(s):
         return bytes(str(s),"utf-8")
         
-index_types=string_types+(int,re._pattern_type)
+index_types=string_types+(int,_pattern_type)
 

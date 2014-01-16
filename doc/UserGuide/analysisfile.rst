@@ -56,10 +56,10 @@ each row belongs in. The :py:meth:`AnalyseFile.split` method is useful for this 
 In these examples we assume the :py:class:`AnalyseFile` has a data column 'Polarisation' that takes two (or more) discrete values
 and a column 'Temperature' that contains numbers above and below 100.
 
-The first example would return a :py:class:`Stoner.Folder.DataFoder` object  containing separate :py:class:`AnalyseFile`s which
+The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalyseFile`  which
 would each contain the rows from the orginal data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.Folder.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature abobe and below 100.
-The final example will result in a :py:class:`Stoner.Folder.DataFolder` object that has two groups each of which contains 
+produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature abobe and below 100.
+The final example will result in a :py:class:`Stoners.Folder.DataFolder` object that has two groups each of which contains 
 :py:class:`AnalyseFile` objects for each polarisation value.
 
 Curve Fitting
@@ -124,7 +124,7 @@ Non-linear curve fitting with initialisation file
 
 For cases where one requires more flexibility in fitting data, in particular
 where the fitting parameters are constrained, the :py:meth:`AnalyseFile.mpfit`
-method is provided. This is a pass through to the :py:module:`Stoner.mpfit` module.::
+method is provided. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
 
    a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,bounds=lambda x, y: True, **mpfit_kargs )
 
@@ -135,7 +135,7 @@ dictionary of fixed \ie non-fitting parameters. *xcol* and *ycol*
 are the column indices for the x and y data, *bounds* is a bounding
 function to select only those rows to use for fitting the function, and
 *sigma* are the weightings for each datapoint. The remaining arguments
-are a dictionary of keywords to pass through to the :py:module:`Stoner.mpfit` routine and
+are a dictionary of keywords to pass through to the :py:mod:`Stoner.mpfit` routine and
 *p_info* which is a list of dictionaries which is used to control the
 parameters in the fit. This described below.
 
@@ -143,48 +143,49 @@ parameters in the fit. This described below.
 Each element is a dictionary with the following keys:
 
 *   [value] the starting parameter value (but see the START_PARAMS parameter
-   for more information).
+       for more information).
 *   [fixed] a boolean value, whether the parameter is to be held fixed or
-   not.  Fixed parameters are not varied by MPFIT, but are passed on to MYFUNCT for
-   evaluation.
+       not.  Fixed parameters are not varied by MPFIT, but are passed on to MYFUNCT for
+       evaluation.
 *   [limited] a two-element boolean array.  If the first/second element is
-   set, then the parameter is bounded on the lower/upper side.  A parameter can be
-   bounded on both sides.  Both LIMITED and LIMITS must be given together.
+       set, then the parameter is bounded on the lower/upper side.  A parameter can be
+       bounded on both sides.  Both LIMITED and LIMITS must be given together.
 *   [limits] a two-element float array.  Gives the parameter limits on the
-   lower and upper sides, respectively.  Zero, one or two of these values can be
-   set, depending on the values of LIMITED.  Both LIMITED and LIMITS must be given
-   together.
+       lower and upper sides, respectively.  Zero, one or two of these values can be
+       set, depending on the values of LIMITED.  Both LIMITED and LIMITS must be given
+       together.
 *   [parname] a string, giving the name of the parameter.  The fitting code
-   of MPFIT does not use this tag in any way.  However, the default iterfunct will
-   print the parameter name if available.
+       of MPFIT does not use this tag in any way.  However, the default iterfunct will
+       print the parameter name if available.
 *   [step] the step size to be used in calculating the numerical derivatives.
-    If set to zero, then the step size is	computed automatically.  Ignored when
-   AUTODERIVATIVE=0.
+        If set to zero, then the step size is	computed automatically.  Ignored when
+       AUTODERIVATIVE=0.
 *   [mpside] the sidedness of the finite difference when computing numerical
-   derivatives.  This field can take four values:
-   *    [0]one-sided derivative computed automatically
-   *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
-   *    [-1] one-sided derivative $(f(x)   - f(x-h))/h``
-   *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
-	Where H is the STEP parameter described above.  The "automatic"
-   one-sided derivative method will chose a direction for the finite difference
-   which does not violate any constraints.  The other methods do
-   not perform this check.  The two-sided method is in principle more precise, but
-   requires twice as many function evaluations.  **Default: 0**.
-*   [mpmaxstep] the maximum change to be made in the parameter value.  During
-   the fitting process, the parameter will never be changed by more than this value
-   in one iteration. A value of 0 indicates no maximum.  **Default: 0**.
-*   [tied] a string expression which 'ties' the parameter to other	free or
-   fixed parameters.  Any expression involving	constants and the parameter
-   array P are permitted.Example: if parameter 2 is always to be twice parameter 1
-   then use the following: ``parinfo(2).tied = '2 * p(1)'``. Since they are
-   totally constrained, tied parameters are considered to be fixed; no errors are
-   computed for them.[ NOTE: the PARNAME can't be used in expressions. ]
-*   [mpprint] if set to 1, then the default iterfunct will print the
-   parameter value.  If set to 0, the parameter value will not be printed.  This
-   tag can be used to selectively print only a few parameter values out of
-   many.**Default: 1** (all parameters printed)
+       derivatives.  This field can take four values:
 
+       *    [0]one-sided derivative computed automatically
+       *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
+       *    [-1] one-sided derivative $(f(x)   - f(x-h))/h``
+       *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
+            	Where H is the STEP parameter described above.  The "automatic"
+               one-sided derivative method will chose a direction for the finite difference
+               which does not violate any constraints.  The other methods do
+               not perform this check.  The two-sided method is in principle more precise, but
+               requires twice as many function evaluations.  **Default: 0**.
+
+*   [mpmaxstep] the maximum change to be made in the parameter value.  During
+       the fitting process, the parameter will never be changed by more than this value
+       in one iteration. A value of 0 indicates no maximum.  **Default: 0**.
+*   [tied] a string expression which 'ties' the parameter to other	free or
+       fixed parameters.  Any expression involving	constants and the parameter
+       array P are permitted.Example: if parameter 2 is always to be twice parameter 1
+       then use the following: ``parinfo(2).tied = '2 * p(1)'``. Since they are
+       totally constrained, tied parameters are considered to be fixed; no errors are
+       computed for them.[ NOTE: the PARNAME can't be used in expressions. ]
+*   [mpprint] if set to 1, then the default iterfunct will print the
+       parameter value.  If set to 0, the parameter value will not be printed.  This
+       tag can be used to selectively print only a few parameter values out of
+       many.**Default: 1** (all parameters printed)
 
 Non-linear curve fitting with initialisation file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -197,7 +198,7 @@ it also plots the fit. There is an example run script, ini file and data file in
 Hhave a look at them to see how to use this function.
 
 The function to fit to can either be created by the user and passed in or one of a library of current existing functions
-can be used from the :py:module:`Stoner.FittingFuncs` (just pass in the name of the function you wish to use as a string). 
+can be used from the :py:mod:`Stoner.FittingFuncs` (just pass in the name of the function you wish to use as a string). 
 The function takes its fitting parameters information from a .ini file created by the user, 
 look at the example .ini file mentioned above for the format, you can see that it allows for the parameters to be fixed 
 or constrained which can be very useful for fitting. 
@@ -208,7 +209,7 @@ Current functions existing in FittingFunctions.py:
 *    2D weak localisation
 *    Strijkers model for PCAR fitting
 
-Please see the function documentation in :py:module:`Stoner.FittingFuncs` for more information about these models. 
+Please see the function documentation in :py:mod:`Stoner.FittingFuncs` for more information about these models. 
 Please do add functions you think would be of use to everybody, have a look at the current functions for examples, 
 the main thing is that the function must take an x array and a list of parameters, apply a function and then 
 return the resulting array.  

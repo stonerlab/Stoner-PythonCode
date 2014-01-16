@@ -3,14 +3,14 @@ Plotting Data
 *************
 .. currentmodule:: Stoner.Plot
 
-Data plotting and visualisation is handled by the :py:class:`PlotFile` sub-class of :py:class:`Sonter.DataFile`. 
+Data plotting and visualisation is handled by the :py:class:`PlotFile` sub-class of :py:class:`Stoner.Core.DataFile`. 
 The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing 
 publication ready figures.::
 
    import Stoner.Plot as plot
    p=plot.PlotFile(d)
 
-The first line imports the :py:module:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's namespace is 
+The first line imports the :py:mod:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's namespace is 
 imported when the Stoner package as a whole is imported. The second line creates an instance of the :py:class:`PlotFile` class. 
 PlotFile inherits the constructor method of :[y:class:`Stoner.Core.DataFile` and so all the variations detailed above work with 
 PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance 
@@ -74,13 +74,13 @@ such as **pyplot.pcolor**.
  Like :py:meth:`PlotFile.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional 
 keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
  
- Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotFile.contour_xyz``
+ Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotFile.contour_xyz`
  method.::
 
  	p.contour_xyz(xcol,ycol,zcol,shape=(50,50))
  	p.contour_xyz(xcol,ycol,zcol,xlim=(10,10,100),ylim=(-10,10,100))
 
-Both :py:meth:`PlotFile.plot_xyz` and :py:meth:`PlotFile.contour\_xyz` make use of a call to :py:meth:`PlotFile.griddata`
+Both :py:meth:`PlotFile.plot_xyz` and :py:meth:`PlotFile.contour_xyz` make use of a call to :py:meth:`PlotFile.griddata`
  which is a utility method of the :py:class:`PlotFile` -- essentially this is just a pass through method to the underlying 
 *scipy.interpolate.griddata** function. The shape of the grid is determined through a combination of the *xlim*, *ylim*
  and *shape* arguments.::
@@ -103,7 +103,7 @@ number of points.
 The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the 
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and 
 the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults 
-to the built in `jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set 
+to the built in 'jet' theme. The x axis label is set to be the column header for the first column, the y axis label is set 
 either from the meta data item 'ylabel or to 'Y Data'. Likewise the z axis label is set from the corresponding metadata 
 item or defaults to 'Z Data;. In the second form these parameters are all set explicitly. The *xvals* parameter can be 
 either a column index (integer or sring) or a list, tuple or numpy array. The *yvals* parameter can be either a row number 
@@ -118,7 +118,7 @@ new 2D surface plot in a new window using default matrix setup.
 Getting More Control on the Figure
 ==================================
 
-It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`PlotFle` instance. The 
+It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`PlotFile` instance. The 
 :py:attr:`PlotFile.fig` attribute can do this, thus allowing plots from multiple :py:class:`PlotFile` instances to be 
 combined in a single figure.::
 
