@@ -8,12 +8,11 @@ Classes:
 
 """
 from Stoner.compat import *
-import fileinput
 import re
 #import pdb # for debugging
 import os
-import numpy
-import numpy.ma as ma
+import numpy as _np_
+import numpy.ma as _ma_
 import copy
 import inspect
 import itertools
@@ -55,7 +54,7 @@ class typeHintedDict(dict):
     __regexEvaluatable = re.compile(r'^(Cluster|\dD Array|List)')
 
     __types = {'Boolean': bool, 'I32': int, 'Double Float': float,
-        'Cluster': dict, 'Array': numpy.ndarray,'List':list,  'String': str}
+        'Cluster': dict, 'Array': _np_.ndarray,'List':list,  'String': str}
     # This is the inverse of the __tests below - this gives
     # the string type for standard Python classes
 
@@ -96,7 +95,7 @@ class typeHintedDict(dict):
 
     def __findtype(self,  value):
         """Determines the correct string type to return for common python
-        classes. Understands booleans, strings, integers, floats and numpy
+        classes. Understands booleans, strings, integers, floats and _np_
         arrays(as arrays), and dictionaries (as clusters).
 
         Args:
@@ -116,8 +115,8 @@ class typeHintedDict(dict):
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
                 elif t == 'Array':
-                    z = numpy.zeros(1, dtype=value.dtype)
-                    typ = (str(len(numpy.shape(value))) + "D Array (" +
+                    z = _np_.zeros(1, dtype=value.dtype)
+                    typ = (str(len(_np_.shape(value))) + "D Array (" +
                                                 self.__findtype(z[0]) + ")")
                 else:
                     typ = t
@@ -313,7 +312,7 @@ class DataFile(object):
         column_headers (list): of strings of the column names of the data
         title (string): The title of the measurement
         filename (string): The current filename of the data if loaded from or
-            already saved to disc. This is the default filename used by the :py:math:`load` and  :py:meth:`save`
+            already saved to disc. This is the default filename used by the :py:meth:`load` and  :py:meth:`save`
 
     Methods:
         mask: Returns the current mask applied to the numerical data equivalent to self.data.mask
@@ -326,8 +325,8 @@ class DataFile(object):
     #Priority is the load order for the class
     priority=32
 
-    _conv_string=numpy.vectorize(lambda x:str(x))
-    _conv_float=numpy.vectorize(lambda x:float(x))
+    _conv_string=_np_.vectorize(lambda x:str(x))
+    _conv_float=_np_.vectorize(lambda x:float(x))
     file_pattern="Data Files (*.csv;*.dat;*.txt;*.dql;*.fld;*.*.tdi;*.spc)|*.csv *.dat *.txt *.dql *.fld *.tdi *.spc| All Files (*.*)|*.*|"
 
     #   INITIALISATION
@@ -364,7 +363,7 @@ class DataFile(object):
         self.debug=False
         self._masks=[False]
         self.metadata=typeHintedDict()
-        self.data = ma.masked_array([])
+        self.data = _ma_.masked_array([])
         self.filename = None
         self.column_headers = list()
         i=len(args) if len(args)<2 else 2
@@ -382,19 +381,19 @@ class DataFile(object):
         if (isinstance(arg, string_types) or (isinstance(arg, bool) and not arg)):
                                     # Filename- load datafile
             t = self.load(arg, **kargs)
-            self.data = ma.masked_array(t.data)
+            self.data = _ma_.masked_array(t.data)
             self.metadata = t.metadata
             self.column_headers = t.column_headers
-        elif isinstance(arg, numpy.ndarray):
+        elif isinstance(arg, _np_.ndarray):
                                                 # numpy.array - set data
-            self.data = ma.masked_array(arg)
+            self.data = _ma_.masked_array(arg)
             self.column_headers = ['Column' + str(x)
-                                for x in range(numpy.shape(args[0])[1])]
+                                for x in range(_np_.shape(args[0])[1])]
         elif isinstance(arg, dict):  # Dictionary - use as metadata
             self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             self.metadata = arg.metadata.copy()
-            self.data = ma.masked_array(arg.data)
+            self.data = _ma_.masked_array(arg.data)
             self.column_headers = copy.copy(arg.column_headers)
             self.filename=arg.filename
         else:
@@ -403,14 +402,14 @@ class DataFile(object):
     def _init_double(self,*args,**kargs):
         """Two argument constructors handled here. Called form __init__"""
         (arg0,arg1)=args
-        if isinstance(arg0, numpy.ndarray):
-            self.data = ma.masked_array(arg0)
+        if isinstance(arg0, _np_.ndarray):
+            self.data = _ma_.masked_array(arg0)
         elif isinstance(arg0, dict):
             self.metadata = arg0.copy()
         elif isinstance(arg0, str) and isinstance(arg1, str):
             self.load(arg0, arg1)
-        if isinstance(arg1, numpy.ndarray):
-            self.data = ma.masked_array(arg1)
+        if isinstance(arg1, _np_.ndarray):
+            self.data = _ma_.masked_array(arg1)
         elif isinstance(arg1, dict):
             self.metadata = arg1.copy()
 
@@ -440,34 +439,34 @@ class DataFile(object):
             array is treated as a new row of data If @a ither is a 2D numpy
             array then it is appended if it has the same number of
             columns and @a self.data."""
-        if isinstance(other, numpy.ndarray):
+        if isinstance(other, _np_.ndarray):
             if len(self.data) == 0:
-                t = numpy.atleast_2d(other)
-                c = numpy.shape(t)[1]
+                t = _np_.atleast_2d(other)
+                c = _np_.shape(t)[1]
                 if len(self.column_headers) < c:
                     self.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
                 newdata = self.__class__(self)
                 newdata.data = t
                 ret=newdata
-            elif len(numpy.shape(other)) == 1:
+            elif len(_np_.shape(other)) == 1:
                                     # 1D array, so assume a single row of data
-                if numpy.shape(other)[0] == numpy.shape(self.data)[1]:
+                if _np_.shape(other)[0] == _np_.shape(self.data)[1]:
                     newdata = self.__class__(self)
-                    newdata.data = numpy.append(self.data,
-                                                numpy.atleast_2d(other), 0)
+                    newdata.data = _np_.append(self.data,
+                                                _np_.atleast_2d(other), 0)
                     ret=newdata
                 else:
                     ret=NotImplemented
-            elif len(numpy.shape(other)) == 2 and numpy.shape(
-                    other)[1] == numpy.shape(self.data)[1]:
+            elif len(_np_.shape(other)) == 2 and _np_.shape(
+                    other)[1] == _np_.shape(self.data)[1]:
                             # DataFile + array with correct number of columns
                 newdata = self.__class__(self)
-                newdata.data = numpy.append(self.data, other, 0)
+                newdata.data = _np_.append(self.data, other, 0)
                 ret=newdata
             else:
                 ret=NotImplemented
         elif isinstance(other, DataFile):  # Appending another DataFile
-            new_data=numpy.zeros((len(other), len(self.column_headers)))*numpy.nan
+            new_data=_np_.zeros((len(other), len(self.column_headers)))*_np_.nan
             for i in range(len(self.column_headers)):
                 column=self.column_headers[i]
                 try:
@@ -477,7 +476,7 @@ class DataFile(object):
             newdata = self.__class__(other)
             for x in self.metadata:
                 newdata[x] = self[x]
-            newdata.data = numpy.append(self.data, new_data, 0)
+            newdata.data = _np_.append(self.data, new_data, 0)
             ret=newdata
         elif isinstance(other,dict):
             newdata=self
@@ -492,13 +491,13 @@ class DataFile(object):
                         cl=1
                     else:
                         cl=len(newdata)
-                    newdata=newdata&numpy.ones(cl)*numpy.nan
+                    newdata=newdata&_np_.ones(cl)*_np_.nan
                     newdata.column_headers[-1]=k
-            new_data=numpy.nan*numpy.ones(len((newdata.column_headers)))
+            new_data=_np_.nan*_np_.ones(len((newdata.column_headers)))
             for k in other:
                 new_data[newdata.find_col(k)]=other[k]
-            new_data=numpy.atleast_2d(new_data)
-            newdata.data=numpy.append(newdata.data,new_data,0)
+            new_data=_np_.atleast_2d(new_data)
+            newdata.data=_np_.append(newdata.data,new_data,0)
             if added_row:
                 newdata.data=newdata.data[1:,:]
             ret=newdata
@@ -533,44 +532,44 @@ class DataFile(object):
         """
         newdata=self.__class__(self.clone)
         if len(newdata.data.shape)<2:
-            newdata.data=numpy.atleast_2d(newdata.data)
-        if isinstance(other, numpy.ndarray):
+            newdata.data=_np_.atleast_2d(newdata.data)
+        if isinstance(other, _np_.ndarray):
             if len(other.shape) != 2:  # 1D array, make it 2D column
-                other = numpy.atleast_2d(other)
+                other = _np_.atleast_2d(other)
                 other = other.T
-            if numpy.product(self.data.shape)==0: #Special case no data yet
+            if _np_.product(self.data.shape)==0: #Special case no data yet
                 newdata.data=other
                 newdata.column_headers=["Coumn "+str(i) for i in range(other.shape[1])]
             elif self.data.shape[0]==other.shape[0]:
-                newdata.data=numpy.append(newdata.data,other,1)
+                newdata.data=_np_.append(newdata.data,other,1)
                 newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
             elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
-                newdata.data=numpy.append(self.data,numpy.zeros((other.shape[0]-self.data.shape[0],self.data.shape[1])),0)
-                newdata.data=numpy.append(self.data,other,1)
+                newdata.data=_np_.append(self.data,_np_.zeros((other.shape[0]-self.data.shape[0],self.data.shape[1])),0)
+                newdata.data=_np_.append(self.data,other,1)
                 newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
             else:                    # DataFile + array with correct number of rows
                 if other.shape[0] < self.data.shape[0]:
                     # too few rows we can extend with zeros
-                    other = numpy.append(other, numpy.zeros((self.data.shape[0]
+                    other = _np_.append(other, _np_.zeros((self.data.shape[0]
                                     - other.shape[0], other.shape[1])), 0)
                 newdata.column_headers.extend([""
                                                for x in range(other.shape[1])])
-                newdata.data = numpy.append(self.data, other, 1)
+                newdata.data = _np_.append(self.data, other, 1)
         elif isinstance(other, DataFile):  # Appending another datafile
             if len(other.data.shape)<2:
                 other=other.clone
-                other.data=numpy.atleast_2d(other.data)
+                other.data=_np_.atleast_2d(other.data)
             (myrows,mycols)=newdata.data.shape
             (yourrows,yourcols)=other.data.shape
             if myrows>yourrows:
                 other=other.clone
-                other.data=numpy.append(other.data,numpy.zeros((myrows-yourrows,yourcols)),0)
+                other.data=_np_.append(other.data,_np_.zeros((myrows-yourrows,yourcols)),0)
             elif myrows<yourrows:
-                newdata.data=numpy.append(newdata.data,numpy.zeros((yourrows-myrows,mycols)),0)
+                newdata.data=_np_.append(newdata.data,_np_.zeros((yourrows-myrows,mycols)),0)
 
             newdata.column_headers.extend(other.column_headers)
             newdata.metadata.update(other.metadata)
-            newdata.data = numpy.append(newdata.data, other.data, 1)
+            newdata.data = _np_.append(newdata.data, other.data, 1)
         else:
             newdata=NotImplemented
         return newdata
@@ -642,7 +641,7 @@ class DataFile(object):
     def __getattr__(self, name):
         """
         Called for :py:class:`DataFile`.x to handle some special pseudo attributes
-        and otherwise to act as a shortcut for :py:math:`column`
+        and otherwise to act as a shortcut for :py:meth:`column`
 
         Args:
             name (string): The name of the attribute to be returned.
@@ -696,21 +695,21 @@ class DataFile(object):
     def _getattr_dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys.
         """
-        return numpy.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+        return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
 
     def _getattr_dtype(self):
-        """Return the numpy dtype attribute of the data
+        """Return the _np_ dtype attribute of the data
         """
         return self.data.dtype
 
     def _getattr_mask(self):
         """Returns the mask of the data array.
         """
-        self.data.mask=ma.getmaskarray(self.data)
+        self.data.mask=_ma_.getmaskarray(self.data)
         return self.data.mask
 
     def _getattr_records(self):
-        """Returns the data as a numpy structured data array. If columns names are duplicated then they
+        """Returns the data as a _np_ structured data array. If columns names are duplicated then they
         are made unique
         """
         ch=copy.copy(self.column_headers) # renoved duplicated column headers for structured record
@@ -766,13 +765,13 @@ class DataFile(object):
             indices = name.indices(len(self))
             name = range(*indices)
             d = self.data[name[0], :]
-            d = numpy.atleast_2d(d)
+            d = _np_.atleast_2d(d)
             for x in range(1, len(name)):
-                d = numpy.append(d, numpy.atleast_2d(self.data[x, :]), 0)
+                d = _np_.append(d, _np_.atleast_2d(self.data[x, :]), 0)
             return d
         elif isinstance(name, int):
             return self.data[name, :]
-        elif isinstance(name, numpy.ndarray) and len(name.shape)==1:
+        elif isinstance(name, _np_.ndarray) and len(name.shape)==1:
             return self.data[name, :]
         elif isinstance(name, string_types):
             name=str(name)
@@ -782,7 +781,7 @@ class DataFile(object):
             if isinstance(x, str):
                 return self[x][y]
             else:
-                d = numpy.atleast_2d(self[x])
+                d = _np_.atleast_2d(self[x])
                 y = self.find_col(y)
                 r = d[:, y]
                 if len(r) == 1:
@@ -799,7 +798,7 @@ class DataFile(object):
         """Return the length of the data.shape
                 Returns: Returns the number of rows of data
                 """
-        return numpy.shape(self.data)[0]
+        return _np_.shape(self.data)[0]
 
     def __lshift__(self, other):
         """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function
@@ -861,7 +860,7 @@ class DataFile(object):
             raise RuntimeError("Not a TDI File")
         col_headers_tmp=[x.strip() for x in row[1:]]
         cols=len(col_headers_tmp)
-        self.data=ma.masked_array([])
+        self.data=_ma_.masked_array([])
         for r in reader:
             if r.strip()=="": # Blank line
                 continue
@@ -877,8 +876,8 @@ class DataFile(object):
                 self.metadata[md[0].strip()]=md[1].strip()
             if len(row)<2:
                 continue
-            self.data=numpy.append(self.data, self._conv_float(row[1:]))
-        self.data=numpy.reshape(self.data, (-1, cols))
+            self.data=_np_.append(self.data, self._conv_float(row[1:]))
+        self.data=_np_.reshape(self.data, (-1, cols))
         self.column_headers=["Column "+str(i) for i in range(cols)]
         for i in range(len(col_headers_tmp)):
             self.column_headers[i]=col_headers_tmp[i]
@@ -897,8 +896,8 @@ class DataFile(object):
                     self in a textual format. """
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
-        self.data=ma.masked_array(numpy.atleast_2d(self.data))
-        r = numpy.shape(self.data)[0]
+        self.data=_ma_.masked_array(_np_.atleast_2d(self.data))
+        r = _np_.shape(self.data)[0]
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
             outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
@@ -926,7 +925,7 @@ class DataFile(object):
             else:
                 self.data.mask=value
         elif name=="data":
-            self.__dict__[name]=ma.masked_array(value)
+            self.__dict__[name]=_ma_.masked_array(value)
         elif name=="T":
             self.data.T=value
         else:
@@ -946,7 +945,7 @@ class DataFile(object):
 
     def __setstate__(self, state):
         """Internal function for pickling."""
-        self.data = ma.masked_array(state["data"])
+        self.data = _ma_.masked_array(state["data"])
         self.column_headers = state["column_headers"]
         self.metadata = state["metadata"]
 
@@ -968,15 +967,15 @@ class DataFile(object):
                 t=func(r[col], r)
             else:
                 t=func(r)
-            if isinstance(t, bool) or isinstance(t, numpy.bool_):
+            if isinstance(t, bool) or isinstance(t, _np_.bool_):
                 if t^invert:
-                    self.data[i]=ma.masked
+                    self.data[i]=_ma_.masked
                 elif not cumulative:
                     self.data[i]=self.data.data[i]
             else:
-                for j in range(min(len(t), numpy.shape(self.data)[1])):
+                for j in range(min(len(t), _np_.shape(self.data)[1])):
                     if t[j]^invert:
-                        self.data[i, j]=ma.masked
+                        self.data[i, j]=_ma_.masked
                     elif not cumulative:
                         self.data[i, j]=self.data.data[i, j]
 
@@ -1045,42 +1044,42 @@ class DataFile(object):
         # The following 2 lines make the array we are adding a
         # [1, x] array, i.e. a column by first making it 2d and
         # then transposing it.
-        if isinstance(column_data, numpy.ndarray):
-            if len(numpy.shape(column_data)) != 1:
+        if isinstance(column_data, _np_.ndarray):
+            if len(_np_.shape(column_data)) != 1:
                 raise ValueError('Column data must be 1 dimensional')
             else:
-                numpy_data = column_data
+                _np__data = column_data
         elif callable(column_data):
             if isinstance(func_args, dict):
                 new_data = [column_data(x, **func_args) for x in self]
             else:
                 new_data = [column_data(x) for x in self]
-            numpy_data = numpy.array(new_data)
+            _np__data = _np_.array(new_data)
         elif isinstance(column_data,  list):
-            numpy_data=numpy.array(column_data)
+            _np__data=_np_.array(column_data)
         else:
             return NotImplemented
         #Sort out the sizes of the arrays
-        cl=len(numpy_data)
+        cl=len(_np__data)
         if len(self.data.shape)==2:
             (dr,dc)=self.data.shape
         elif len(self.data.shape)==1:
-            self.data=numpy.atleast_2d(self.data).T
+            self.data=_np_.atleast_2d(self.data).T
             (dr,dc)=self.data.shape
         elif len(self.data.shape)==0:
-            self.data=numpy.array([[]])
+            self.data=_np_.array([[]])
             (dr,dc)=(0,0)
         if cl>dr and dc*dr>0:
-            self.data=numpy.append(self.data,numpy.zeros((cl-dr,dc)),0)
+            self.data=_np_.append(self.data,_np_.zeros((cl-dr,dc)),0)
         elif cl<dr:
-            numpy_data=numpy.append(numpy_data,numpy.zeros(dr-cl))
+            _np__data=_np_.append(_np__data,_np_.zeros(dr-cl))
         if replace:
-            self.data[:, index] = numpy_data
+            self.data[:, index] = _np__data
         else:
             if dc*dr == 0:
-                self.data=ma.masked_array(numpy.transpose(numpy.atleast_2d(numpy_data)))
+                self.data=_ma_.masked_array(_np_.transpose(_np_.atleast_2d(_np__data)))
             else:
-                self.data = ma.masked_array(numpy.insert(self.data, index, numpy_data, 1))
+                self.data = _ma_.masked_array(_np_.insert(self.data, index, _np__data, 1))
         return self
 
     def column(self, col):
@@ -1141,14 +1140,14 @@ class DataFile(object):
             return self.del_column(dups,duplicates=False)
         else:
             if col is None:
-                self.data=ma.mask_cols(self.data)
-                t=ma.masked_array(self.column_headers)
+                self.data=_ma_.mask_cols(self.data)
+                t=_ma_.masked_array(self.column_headers)
                 t.mask=self.mask[0]
-                self.column_headers=list(ma.compressed(t))
-                self.data=ma.compress_cols(self.data)
+                self.column_headers=list(_ma_.compressed(t))
+                self.data=_ma_.compress_cols(self.data)
             else:
                 c = self.find_col(col)
-                self.data = numpy.ma.masked_array(numpy.delete(self.data, c, 1), mask=numpy.delete(self.data.mask, c, 1))
+                self.data = _np_._ma_.masked_array(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
                 if isinstance(c, list):
                     c.sort(reverse=True)
                 else:
@@ -1182,8 +1181,8 @@ class DataFile(object):
             Implement val is a tuple for deletinging in a range of values.
             """
         if col is None:
-            self.data=ma.mask_rows(self.data)
-            self.data=ma.compress_rows(self.data)
+            self.data=_ma_.mask_rows(self.data)
+            self.data=_ma_.compress_rows(self.data)
         else:
             if isinstance(col, slice) and val is None:
                 indices = col.indices(len(self))
@@ -1193,15 +1192,15 @@ class DataFile(object):
                 for c in col:
                     self.del_rows(c)
             elif isinstance(col,  int) and val is None:
-                self.data = numpy.delete(self.data, col, 0)
+                self.data = _np_.delete(self.data, col, 0)
             else:
                 col = self.find_col(col)
                 d = self.column(col)
                 if callable(val):
-                    rows = numpy.nonzero([bool(val(x[col], x) and x[col] is not ma.masked) for x in self])[0]
+                    rows = _np_.nonzero([bool(val(x[col], x) and x[col] is not _ma_.masked) for x in self])[0]
                 elif isinstance(val, float):
-                    rows = numpy.nonzero([x == val for x in d])[0]
-                self.data = ma.masked_array(numpy.delete(self.data, rows, 0), mask=numpy.delete(self.data.mask, rows, 0))
+                    rows = _np_.nonzero([x == val for x in d])[0]
+                self.data = _ma_.masked_array(_np_.delete(self.data, rows, 0), mask=_np_.delete(self.data.mask, rows, 0))
         return self
 
     def dir(self, pattern=None):
@@ -1234,7 +1233,7 @@ class DataFile(object):
         if cols is None:
             cols=range(self.data.shape[1])
         cols=[self.find_col(c) for c in cols]
-        self.data.mask=ma.getmaskarray(self.data)
+        self.data.mask=_ma_.getmaskarray(self.data)
         i=0
         if reset: self.data.mask=False
         for r in self.rows():
@@ -1254,7 +1253,7 @@ class DataFile(object):
             first match found is taken. This allows additional regular expression options
             such as case insensitivity.
         -   A slice index is converted to a list of integers and processed as below
-        -   A list index returns the results of feading each item in the list at :py:math:`find_col`
+        -   A list index returns the results of feading each item in the list at :py:meth:`find_col`
             in turn.
 
         Args:
@@ -1290,7 +1289,7 @@ class DataFile(object):
             else:
                 col = self.column_headers.index(possible[0])
         elif isinstance(col, slice):
-            indices = col.indices(numpy.shape(self.data)[1])
+            indices = col.indices(_np_.shape(self.data)[1])
             col = range(*indices)
             col = self.find_col(col)
         elif isinstance(col, list):
@@ -1327,11 +1326,11 @@ class DataFile(object):
 
         Returns:
             A copy of the modified DataFile object"""
-        self.data=numpy.insert(self.data, row,  new_data, 0)
+        self.data=_np_.insert(self.data, row,  new_data, 0)
         return self
 
     def keys(self):
-        """An alias for :py:math:`dir`(None)
+        """An alias for :py:meth:`dir`(None)
 
         Returns:
             a list of all the keys in the metadata dictionary"""
@@ -1395,7 +1394,7 @@ class DataFile(object):
         if failed:
             raise SyntaxError("Failed to load file")
         else:
-            self.data=ma.masked_array(test.data)
+            self.data=_ma_.masked_array(test.data)
             self.metadata=test.metadata
             self.column_headers=test.column_headers
             self["Loaded as"]=cls.__name__
@@ -1466,11 +1465,11 @@ class DataFile(object):
             self.column_headers = [self.column_headers[self.find_col(x)]
                                                             for x in cols]
 
-        newdata = numpy.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
+        newdata = _np_.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
         for col in cols:
-            newdata = numpy.append(newdata, numpy.atleast_2d(self.data[:,
+            newdata = _np_.append(newdata, _np_.atleast_2d(self.data[:,
                                                 self.find_col(col)]), axis=0)
-        self.data = ma.masked_array(numpy.transpose(newdata))
+        self.data = _ma_.masked_array(_np_.transpose(newdata))
         return self
 
     def rows(self):
@@ -1478,7 +1477,7 @@ class DataFile(object):
 
         Yields:
             Returns the next row of data"""
-        r = numpy.shape(self.data)[0]
+        r = _np_.shape(self.data)[0]
         for row in range(r):
             yield self.data[row]
 
@@ -1578,8 +1577,8 @@ class DataFile(object):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
         else:
             order = [recs.dtype.names[self.find_col(order)]]
-        d = numpy.sort(recs, order=order)
-        self.data = ma.masked_array(d.view(dtype=self.dtype).reshape(len(self), len(self.
+        d = _np_.sort(recs, order=order)
+        self.data = _ma_.masked_array(d.view(dtype=self.dtype).reshape(len(self), len(self.
                                                               column_headers)))
         return self
 
@@ -1628,7 +1627,7 @@ class DataFile(object):
         Keyword Arguments:
 
         """
-        return numpy.unique(self.column(col), return_index, return_inverse)
+        return _np_.unique(self.column(col), return_index, return_inverse)
 
 
 # Module level functions

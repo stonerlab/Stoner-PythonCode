@@ -18,7 +18,7 @@ setup(
     packages=['Stoner'],
     test_suite="tests",
     install_requires=["numpy>=1.4","scipy>=0.12","matplotlib>=1.1","h5py"],
-    long_description=read('README.md'),
+    long_description=read('doc/readme.rst'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Scientific/Engineering",

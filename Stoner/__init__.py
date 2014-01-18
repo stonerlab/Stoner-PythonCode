@@ -16,6 +16,6 @@ from .Plot import *
 from .FileFormats import *
 from .Folders import *
 
-__version_info__ = ('0', '1', '6')
+__version_info__ = ('0', '1', '7')
 __version__ = '.'.join(__version_info__)
 
