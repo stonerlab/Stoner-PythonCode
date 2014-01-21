@@ -18,12 +18,13 @@ The *Stoner* package requires numpy >=1.4, scipy >=0.12, matplotlib >=1.1 and h5
 the Enthought Tools Suite packages.
 
 The easiest way to install this code is via seuptools' easy_install:
+.. code-block:: sh
 
-    easy_install Stoner
+   easy_install Stoner
     
- This will install the Stoner package into your current Python environment. Since the package is under fairly
- constant updates, you might want to follow the development with git. The source code, along with example scripts
- and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
+This will install the Stoner package into your current Python environment. Since the package is under fairly
+constant updates, you might want to follow the development with git. The source code, along with example scripts
+and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
 
 Overview
