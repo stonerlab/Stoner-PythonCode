@@ -29,8 +29,9 @@ Getting the Latest Development Code
 
 
 .. note::
-   These isntrctions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
-    download the source from GitHub
+   
+   These instructions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
+   download the source from GitHub
 
 
 The source code for the Stoner python module is kept on github using the git 
