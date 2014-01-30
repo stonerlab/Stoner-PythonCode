@@ -16,7 +16,7 @@ if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
-import re
+
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -55,12 +55,13 @@ class PlotFile(DataFile):
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
-        attr=list(self.__dict__.keys())
-        attr2=[a for a in super(PlotFile, self).__dir__() if a not in attr]
-        attr.extend(attr2)
+        attr=dir(type(self))
+        attr.extend(super(PlotFile,self).__dir__())
+        attr.extend(list(self.__dict__.keys()))
         attr.extend(["fig", "axes","labels","subplots"])
         attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
-        return attr
+        attr=list(set(attr))
+        return sorted(attr)
 
     def __getattr__(self, name):
         """Attribute accessor

@@ -14,7 +14,7 @@ import os
 import numpy as _np_
 import numpy.ma as _ma_
 import copy
-import inspect
+import inspect as _inspect_
 import itertools
 import collections
 
@@ -598,9 +598,10 @@ class DataFile(object):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
         the attributes that __getattr__ will handle.
         """
-        attr=list(self.__dict__.keys())
+        attr=dir(type(self))
+        attr.extend(list(self.__dict__.keys()))
         attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
-        return attr
+        return sorted(attr)
 
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b DataFile objects
@@ -960,7 +961,7 @@ class DataFile(object):
             cumulative (bool): if tru, then an unmask value doesn't unmask the data, it just leaves it as it is."""
 
         i=-1
-        args=len(inspect.getargs(func.__code__)[0])
+        args=len(_inspect_.getargs(func.__code__)[0])
         for r in self.rows():
             i+=1
             if args==2:

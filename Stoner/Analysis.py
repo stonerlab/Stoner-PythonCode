@@ -50,6 +50,15 @@ class AnalyseFile(DataFile):
 
     """
 
+    def __dir__(self):
+        """Handles the local attributes as well as the inherited ones"""
+        attr=dir(type(self))
+        attr.extend(super(AnalyseFile,self).__dir__())
+        attr.extend(list(self.__dict__.keys()))
+        attr=list(set(attr))
+        return sorted(attr)
+
+
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
         """ calculates filter coefficients for symmetric savitzky-golay filter.
             see: http://www.nrbook.com/a/bookcpdf/c14-8.pdf
