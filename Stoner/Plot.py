@@ -8,14 +8,16 @@ Classes:
 """
 from Stoner.compat import *
 from Stoner.Core import DataFile
-import numpy
+import numpy as _np_
 import matplotlib
 import os
 import platform
+import re
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class PlotFile(DataFile):
@@ -58,7 +60,7 @@ class PlotFile(DataFile):
         attr=dir(type(self))
         attr.extend(super(PlotFile,self).__dir__())
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(["fig", "axes","labels","subplots"])
+        attr.extend(["fig", "axes","labels","subplots","setas"])
         attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
         attr=list(set(attr))
         return sorted(attr)
@@ -131,40 +133,93 @@ class PlotFile(DataFile):
             super(PlotFile, self).__setattr__(name, value)
 
     def _set_setas(self,value):
+        """Handle the interpretation of the setas attribute. This includes parsing a string or a list
+        that describes if the columns are to be used for x-y plotting."""
+        if len(self._setas)<len(self.column_headers):
+            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
         if isinstance(value,list):
             if len(value)> len(self.column_headers):
                 value=value[:len(self.column_headers)]
-            for v in value:
+            for v in value.lower():
                 if v not in "xyzedf.":
                     raise ValueError("Set as column element is invalid: {}".format(v))
-            self._setas=value
+            self._setas[:len(value)]=[v.lower() for v in value]
         elif isinstance(value,string_types):
-            value=list(str(value)).reverse()
+            value=value.lower()
+            pattern=re.compile("^(x|y|z|d|e|f|\.)([0-9]*?)")
             i=0
-            if len(self._setas)<len(self.column_headers):
-                self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
-            while value:
-                char=value.pop()
-                count=""
-                while char:
-                    if char in "0123456789":
-                        count+=char
-                        char=value.pop()
-                    elif char in "xyzedf.":
-                        if count=="":
-                            count=1
-                        else:
-                            count=int(count)
+            while pattern.match(value):
+                res=pattern.match(value)
+                (code,count)=res.groups()
+                value=value[res.end():]
+                if count=="":
+                    count=1
+                else:
+                    count=int(count)
+                for j in range(count):
+                    self._setas[i]=code
+                    i+=1
+                    if i>=len(self.column_headers):
                         break
-                    else:
-                        raise ValueError("Set as column character invalid:{}".format(char))
-                else:
-                    raise ValueError("Set as column string ended with a number")
-                if i+count<=len(self._setas):
-                    self._setas[i:i+count]=char
-                else:
-                    raise ValueError("Set as column string has more values than data had columns.")
-                        
+                if i>=len(self.column_headers):
+                    break
+        else:
+            raise ValueError("Set as column string ended with a number")
+
+    def _get_cols(self,startx=0):
+        """Uses the setas attribute to work out which columns to use for x,y,z etc."""
+        
+        if len(self._setas)<len(self.column_headers):
+            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+            
+        xcol=self._setas[startx:].index("x")+startx
+        try:
+            maxcol=self._setas[xcol+1:].index("x")+xcol+1
+        except ValueError:
+            maxcol=len(self.column_headers)
+        try:
+            xerr=self._setas[startx:maxcol-startx].index("d")+startx
+        except ValueError:
+            xerr=None
+        ycol=list()
+        yerr=list()
+        starty=startx
+        has_yerr=False
+        while True:
+            try:
+                ycol.append(self._setas[starty:maxcol-starty].index("y")+starty)
+            except ValueError:
+                break
+            try:
+                yerr.append(self._setas[starty:maxcol-starty].index("e")+starty)
+                has_yerr=True
+            except ValueError:
+                yerr.append(None)
+            starty=ycol[-1]+1
+        zcol=list()
+        zerr=list()
+        startz=startx
+        has_zerr=False
+        while True:
+            try:
+                zcol.append(self._setas[startz:maxcol-startz].index("z")+startz)
+            except ValueError:
+                break
+            startz=zcol[-1]+1
+            try:
+                zerr.append(self._setas[startz:maxcol-startz].index("g")+startz)
+                has_zerr=True
+            except ValueError:
+                zerr.append(None)
+        if len(zcol)==0:
+            axes=2
+        else:
+            axes=3
+        ret={"xcol":xcol,"xerr":xerr,"ycol":ycol,"yerr":yerr,"zcol":zcol,"zerr":zerr,"axes":axes}
+        ret["has_xerr"]=xerr is not None
+        ret["has_yerr"]=has_yerr
+        ret["has_zerr"]=has_zerr
+        return ret
 
     def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
@@ -178,6 +233,7 @@ class PlotFile(DataFile):
             **kwords (dict): Other keyword arguments to pass through
 
         """
+        print kwords
         if "label" not in kwords:
             kwords["label"]=self.column_headers[iy]
         x=self.column(ix)
@@ -192,6 +248,21 @@ class PlotFile(DataFile):
                 fmt="-"
             plotter(x,y, fmt=fmt,figure=figure, **kwords)
 
+
+    def plot(self,**kargs):
+        """Try to make an appropriate plot based on the defined column assignments.
+        
+        The column assignments are examined to determine whether to plot and x,y plot or an x,y,z plot
+        and whether to plot error bars (for an x,y plot). All keyword argume nts are passed through to
+        the selected plotting routine.
+        """
+        cols=self._get_cols()
+        if cols["axes"]==2:
+            return self.plot_xy(**kargs)
+        elif cols["axes"]==3:
+            return self.plot_xyz(**kargs)
+        else:
+            raise RuntimeError("Unable to work out plot type !")
 
 
     def plot_xy(self,column_x=None, column_y=None, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
@@ -218,34 +289,14 @@ class PlotFile(DataFile):
         # We return the first column marked as an 'X' column and then all the 'Y' columns between there
         # and the next 'X' column or the end of the file. If the yerr keyword is specified and is Ture
         # then  we look for an equal number of matching 'e' columns for the error bars.
-        if (column_x is None and self._setas.index('x') is None) or (column_y is None and self._setas.index('y') is None):
-            raise RuntimeError("Unable to locate an X and Y axes in the data")
-        if column_x is None:
-            column_x=self._setas.index('x')
-            try:
-                maxx=self._setas[column_x+1:].index('x')
-            except ValueError:
-                maxx=len(self.column_headers)
-        if column_y is None:
-            column_y=list()
-            x=column_x
-            while True:
-                try:
-                    y=self._setas[x:maxx].index('u')
-                except ValueError:
-                    break
-                column_y.append(y)
-        if "yerr" in kwords and isinstance(kwords["yerr"],bool) and kwords["yerr"]:
-            yerr=list()
-            if not isinstance(column_y,list):
-                column_y=[column_y]
-            for y in column_y:
-                try:
-                    e=self._setas[y:].index('e')
-                except ValueError:
-                    raise RuntimeError("yerr was True, but not enough error columns in data.")
-                yerr.append(e)
-            kwords["yerr"]=yerr
+        if column_x is None and column_y is None:
+            cols=self._get_cols()
+            column_x=cols["xcol"]
+            column_y=cols["ycol"]
+            if "xerr" not in kwords and cols["has_xerr"]:
+                kwords["xerr"]=cols["xerr"]
+            if "yerr" not in kwords and cols["has_yerr"]:
+                kwords["yerr"]=cols["yerr"]
         column_x=self.find_col(column_x)
         column_y=self.find_col(column_y)
         if "xerr" in kwords or "yerr" in kwords and plotter is None: # USe and errorbar blotter by default for errors
@@ -257,8 +308,13 @@ class PlotFile(DataFile):
                 elif isinstance(kwords[err], list) and isinstance(column_y,list) and len(kwords[err])==len(column_y):
                 # Ok, so it's a list, so redo the check for each  item.
                     for i in range(len(kwords[err])):
-                        if isinstance(kwords[err],index_types):
-                            kwords[err][i]=self.column(kwords[err])
+                        if isinstance(kwords[err][i],index_types):
+                            kwords[err][i]=self.column(kwords[err][i])
+                        else:
+                            kwords[err][i]=_np_.zeros(len(self))
+                else:
+                    kwords[err]=_np_.zeros(len(self))
+                            
         
         # Now try to process the figure parameter
         if isinstance(figure, int):
@@ -291,6 +347,8 @@ class PlotFile(DataFile):
                 fmt_t=fmt
             if "label" in kwords and isinstance(kwords["label"],list): # Fix label keywords
                 temp_kwords["label"]=kwords["label"][ix]
+            if "yerr" in kwords and isinstance(kwords["yerr"],list): # Fix yerr keywords
+                temp_kwords["yerr"]=kwords["yerr"][ix]
             # Call plot
             self._plot(column_x,column_y[ix],fmt_t,plotter,figure,**temp_kwords)
 
@@ -307,7 +365,7 @@ class PlotFile(DataFile):
         self.__figure=figure
         return self.__figure
 
-    def plot_xyz(self, xcol, ycol, zcol, shape=None, xlim=None, ylim=None,cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
+    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
         
             Args:
@@ -330,6 +388,14 @@ class PlotFile(DataFile):
             Returns:
                 A matplotlib.figure isntance
         """
+        if None in (xcol,ycol,zcol):
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if zcol is None:
+                zcol=cols["zcol"][0]
         xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
@@ -386,9 +452,9 @@ class PlotFile(DataFile):
         else:
             zc=self.find_col(zc)
         if shape is None or not(isinstance(shape,tuple) and len(shape)==2):
-            shape=(numpy.floor(numpy.sqrt(len(self))),numpy.floor(numpy.sqrt(len(self))))
+            shape=(_np_.floor(_np_.sqrt(len(self))),_np_.floor(_np_.sqrt(len(self))))
         if xlim is None:
-            xlim=(numpy.min(self.column(xc)),numpy.max(self.column(xc)))
+            xlim=(_np_.min(self.column(xc)),_np_.max(self.column(xc)))
         if isinstance(xlim,tuple) and len(xlim)==2:
             xlim=(xlim[0],xlim[1],(xlim[1]-xlim[0])/shape[0])
         elif isinstance(xlim,tuple) and len(xlim)==3:
@@ -396,7 +462,7 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim=(numpy.min(self.column(yc)),numpy.max(self.column(yc)))
+            ylim=(_np_.min(self.column(yc)),_np_.max(self.column(yc)))
         if isinstance(ylim,tuple) and len(ylim)==2:
             ylim=(ylim[0],ylim[1],(ylim[1]-ylim[0])/shape[1])
         elif isinstance(ylim,tuple) and len(ylim)==3:
@@ -404,9 +470,9 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("Y limit specification not good.")
 
-        np=numpy.mgrid[slice(*xlim),slice(*ylim)].T
+        np=_np_.mgrid[slice(*xlim),slice(*ylim)].T
 
-        points=numpy.array([self.column(xc),self.column(yc)]).T
+        points=_np_.array([self.column(xc),self.column(yc)]).T
         Z=griddata(points,self.column(zc),np,method=method)
 
         return np[:,:,0],np[:,:,1],Z
@@ -471,7 +537,7 @@ class PlotFile(DataFile):
                 rectang[0]=yvals+1
             yvals=self[yvals] # change the yvals into a numpy array
         elif isinstance(yvals,(list, tuple)): # We're given the yvals as a list already
-            yvals=numpy.array(yvals)
+            yvals=_np_.array(yvals)
         elif yvals is None: # No yvals, so we'l try column headings
             if isinstance(xvals, index_types): # Do we have an xcolumn header to take away ?
                 xvals=self.find_col(xvals)
@@ -481,7 +547,7 @@ class PlotFile(DataFile):
                 headers=self.column_headers[1:]
             else:
                 headers=self.column_headers
-            yvals=numpy.array([float(x) for x in headers]) #Ok try to construct yvals aray
+            yvals=_np_.array([float(x) for x in headers]) #Ok try to construct yvals aray
         else:
             raise RuntimeError("uvals must be either an integer, list, tuple, numpy array or None")
         #Sort out xvls values
@@ -494,8 +560,8 @@ class PlotFile(DataFile):
                 rectang[1]=xvals+1
             xvals=self.column(xvals)
         elif isinstance(xvals, (list,tuple)): # Xvals as a data item
-            xvals=numpy.array(xvals)
-        elif isinstance(xvals, numpy.ndarray):
+            xvals=_np_.array(xvals)
+        elif isinstance(xvals, _np_.ndarray):
             pass
         elif xvals is None: # xvals from column 0
             xvals=self.column(0)
@@ -505,11 +571,11 @@ class PlotFile(DataFile):
             raise RuntimeError("xvals must be a string, integer, list, tuple or numpy array or None")
 
         if isinstance(rectang, tuple) and len(rectang)==2: # Sort the rectang value
-            rectang=(rectang[0], rectang[1], numpy.shape(self.data)[0]-rectang[0], numpy.shape(self.data)[1]-rectang[1])
+            rectang=(rectang[0], rectang[1], _np_.shape(self.data)[0]-rectang[0], _np_.shape(self.data)[1]-rectang[1])
         elif rectang is None:
-            rectang=(0, 0, numpy.shape(self.data)[0], numpy.shape(self.data)[1])
+            rectang=(0, 0, _np_.shape(self.data)[0], _np_.shape(self.data)[1])
         elif isinstance(rectang, tuple) and len(rectang)==4: # Ok, just make sure we have enough data points left.
-            rectang=(rectang[0], rectang[1], min(rectang[2], numpy.shape(self.data)[0]-rectang[0]), min(rectang[3], numpy.shape(self.data)[1]-rectang[1]))
+            rectang=(rectang[0], rectang[1], min(rectang[2], _np_.shape(self.data)[0]-rectang[0]), min(rectang[3], _np_.shape(self.data)[1]-rectang[1]))
         else:
             raise RuntimeError("rectang should either be a 2 or 4 tuple or None")
 
@@ -517,7 +583,7 @@ class PlotFile(DataFile):
         zdata=self.data[rectang[0]:rectang[0]+rectang[2], rectang[1]:rectang[1]+rectang[3]]
         xvals=xvals[0:rectang[2]]
         yvals=yvals[0:rectang[3]]
-        xdata, ydata=numpy.meshgrid(xvals, yvals)
+        xdata, ydata=_np_.meshgrid(xvals, yvals)
 
         #This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
@@ -572,9 +638,10 @@ class PlotFile(DataFile):
             A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
-        ax = self.fig.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, **kargs)
-        self.fig.colorbar(surf, shrink=0.5, aspect=5)
+        print X.shape,Y.shape,Z.shape
+        ax = self.fig.add_subplot(111, projection='3d')
+        surf = ax.plot_surface(X, Y, Z, **kargs)
+        self.fig.colorbar(surf, shrink=0.5, aspect=5,extend="both")
         return surf
 
     def draw(self):
