@@ -18,7 +18,8 @@ if os.name=="posix" and platform.system()=="Darwin":
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
-
+from matplotlib import cm
+import matplotlib.colors as colors
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -365,7 +366,7 @@ class PlotFile(DataFile):
         self.__figure=figure
         return self.__figure
 
-    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,cmap=pyplot.cm.jet,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
+    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
         
             Args:
@@ -396,7 +397,7 @@ class PlotFile(DataFile):
                 ycol=cols["ycol"][0]
             if zcol is None:
                 zcol=cols["zcol"][0]
-        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
+        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)     
         if isinstance(figure, int):
             figure=pyplot.figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -412,11 +413,13 @@ class PlotFile(DataFile):
             pyplot.ion()
         if plotter is None:
             plotter=self.__SurfPlotter
-        plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
+        if "cmap" not in kwords:
+            kwords["cmap"]=cm.jet
+        plotter(xdata, ydata, zdata, **kwords)
         pyplot.xlabel(str(self.column_headers[self.find_col(xcol)]))
         pyplot.ylabel(str(self.column_headers[self.find_col(ycol)]))
         if plotter==self.__SurfPlotter:
-            self.axes[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
+            self.fig.axes[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
         if title=='':
             title=self.filename
         pyplot.title(title)
@@ -454,7 +457,7 @@ class PlotFile(DataFile):
         if shape is None or not(isinstance(shape,tuple) and len(shape)==2):
             shape=(_np_.floor(_np_.sqrt(len(self))),_np_.floor(_np_.sqrt(len(self))))
         if xlim is None:
-            xlim=(_np_.min(self.column(xc)),_np_.max(self.column(xc)))
+            xlim=(_np_.min(self.column(xc))*(shape[0]-1)/shape[0],_np_.max(self.column(xc))*(shape[0]-1)/shape[0])
         if isinstance(xlim,tuple) and len(xlim)==2:
             xlim=(xlim[0],xlim[1],(xlim[1]-xlim[0])/shape[0])
         elif isinstance(xlim,tuple) and len(xlim)==3:
@@ -462,7 +465,7 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim=(_np_.min(self.column(yc)),_np_.max(self.column(yc)))
+            ylim=(_np_.min(self.column(yc))*(shape[1]-1)/shape[1],_np_.max(self.column(yc))*(shape[0]-1)/shape[0])
         if isinstance(ylim,tuple) and len(ylim)==2:
             ylim=(ylim[0],ylim[1],(ylim[1]-ylim[0])/shape[1])
         elif isinstance(ylim,tuple) and len(ylim)==3:
@@ -474,7 +477,6 @@ class PlotFile(DataFile):
 
         points=_np_.array([self.column(xc),self.column(yc)]).T
         Z=griddata(points,self.column(zc),np,method=method)
-
         return np[:,:,0],np[:,:,1],Z
 
     def contour_xyz(self,xc,yc,zc,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
@@ -638,10 +640,11 @@ class PlotFile(DataFile):
             A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
-        print X.shape,Y.shape,Z.shape
+        Z=_np_.nan_to_num(Z)
         ax = self.fig.add_subplot(111, projection='3d')
         surf = ax.plot_surface(X, Y, Z, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5,extend="both")
+
         return surf
 
     def draw(self):
