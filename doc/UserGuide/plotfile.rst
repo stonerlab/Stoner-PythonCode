@@ -16,6 +16,27 @@ PlotFile inherits the constructor method of :[y:class:`Stoner.Core.DataFile` and
 PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance 
 for plotting.
 
+Quick Plots
+===========
+
+:py:class:`PlotFile` is intended to help you make plots that look reasonably good with as little hassle as possible.
+In common with many graph plottig programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
+for containing error bars. Once this is done, the plotting methods will use these to try to make a sensible plot.::
+
+   p.setas="xye"
+   p.setas=["x","y","e"]
+   print(p.setas)
+   
+The :py:attr:`PlotFile.setas` attribute can be set either as a list or as a string. In either case, the available characters are [x, y, z, d, e, f]
+where [x,y,z] identifies the columns as containing the corresponding axes and [d,e,f] the uncertainties for the values of x,y and z respectively.
+For the string form of the attriburte it is also possible to prefix the letter with one or more digits - this will set that number of columns to containing 
+the corresponding type of data.
+
+Once the columns are identified, the :py:meth:`PlotFile.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
+available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`Plotfile.plot_xyz` as appropriate. All keyword arguments to :
+py:meth:`PlotFile.plot` are passed on to the actual plotting method.
+
+
 Plotting 2D data
 ================
 
@@ -136,8 +157,51 @@ There's a couple of extra methods that just pass through to the pyplot equivalen
 Setting Axes Labels, Plot Titles and Legends
 --------------------------------------------
 
-.. todo::
-   Document the other attributes of :py:xlass:`PlotFile`
+:py:class:`PlotFile` provides some useful attributes for setting specific aspects of the figures.
+
+-   :py:attr:`PlotFile.xlabel`, :py:attr:`PlotFile.ylabel` will set the x and y axes labels
+-   :py:attr:`PlotFile.title` will set the plot title
+-   :py:attr:`PlotFile.xlim`, :py:attr:`PlotFile.ylim` will accept a tuple to set the x- and y-axes limits.
+-   :py:attr:`PlotFile.labels` sets a list of strings that are the preferred name for each column. This is to
+        allow the plotting routines to provide a default name for an axis label that can be different from the
+        name of the column used for indexing purposes. If the label for a column is not set, then the column
+        header is used instead.
+
+Plot Templates
+--------------
+
+Frrequently one wishes to create many plots that have a similar set of formatting options - for example 
+in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.PlotFormats` in conjunctions with
+the :py:attr:`PlotFile.template` attribute can help here.
+
+A :py:attr:`PlotFile.template` template is a set of instructions that controls the default settings for many
+aspects of a matplotlib figure's style. In addition the template allows for pyplot formatting commands to be
+executed during the process of plotting a figure.::
+
+    from Stoner.PlotFormats import JTBStylePlot
+    p=PlotFile()
+    p.template=JTBStylePlot()
+    p.plot()
+
+    p.template=JTBStylePlot(axes_color__cycle=["r","b","g"])
+    p.figure()
+    p.plot()
+
+The template can either be set by passing a subclass of :py:class:`Stoner.PlotFormats.DefaultPlotStyle` or
+a particular instance of such a subclass. This latter option allows you to override the default plot attribute
+settings defined by the template class with your own choice - or indeed, to add further style attributes. You
+can also copy the style template from one plot to the next::
+
+    q=SP.PlotFile()
+    q.template=p.template
+
+The possible attributes that can be passed over to the template are essentially all the rc parameters for matplotlib
+(see :py:func:`matplotlib.pyplot.rcParams`) except that periods '.' are replced with underscores '_' and single underscores
+are replaced with double underscores.
+
+Further customisation is possible by creating a subclass of :py:class:`Stoner.PlotFornats.DefaultPlotStyle` and overriding the
+:py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise` method and :py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise_axes` method.
+
 
 Making Multi-plot Figures
 -------------------------

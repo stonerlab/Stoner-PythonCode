@@ -8,6 +8,7 @@ Classes:
 """
 from Stoner.compat import *
 from Stoner.Core import DataFile
+from Stoner.PlotFormats import DefaultPlotStyle
 import numpy as _np_
 import matplotlib
 import os
@@ -46,14 +47,23 @@ class PlotFile(DataFile):
     """
 
     __figure=None
+    _labels=None
+    
+    _template=None
 
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
 
         """
+        if "template" in kargs: #Setup the template
+            self.template=kargs["template"]
+            del(kargs["template"])
+        else:
+            self.template=DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
         self._setas=[]
         self._labels=self.column_headers
+        self.legend=True
         self._subplots=[]
 
     def __dir__(self):
@@ -80,6 +90,8 @@ class PlotFile(DataFile):
                 """
         if name=="fig":
             return self.__figure
+        elif name=="template":
+            return self._template
         elif name=="setas":
             return self._setas
         elif name=="labels":
@@ -123,6 +135,12 @@ class PlotFile(DataFile):
             self._set_setas(value)
         elif name=="labels":
             self._labels=value
+        elif name=="template":
+            if isinstance(value,DefaultPlotStyle):
+                self._template=value
+            elif type(value)==type(object) and issubclass(value,DefaultPlotStyle):
+                self._template=value()
+            self._template.apply()
         elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
             if isinstance(value,tuple):
                 pyplot.__dict__[name](*value)
@@ -147,11 +165,11 @@ class PlotFile(DataFile):
             self._setas[:len(value)]=[v.lower() for v in value]
         elif isinstance(value,string_types):
             value=value.lower()
-            pattern=re.compile("^(x|y|z|d|e|f|\.)([0-9]*?)")
+            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|\.)")
             i=0
             while pattern.match(value):
                 res=pattern.match(value)
-                (code,count)=res.groups()
+                (count,code)=res.groups()
                 value=value[res.end():]
                 if count=="":
                     count=1
@@ -221,6 +239,24 @@ class PlotFile(DataFile):
         ret["has_yerr"]=has_yerr
         ret["has_zerr"]=has_zerr
         return ret
+        
+    def _col_label(self,index):
+        """Look up a column and see if it exists in self._lables, otherwise get from self.column_headers.
+        
+        Args:
+            index (column index type): Column to return label for
+            
+        Returns:
+            String type representing the column label.
+        """
+        ix=self.find_col(index)
+        if isinstance(ix,list):
+            return [self._col_label(i) for i in ix]
+        else:
+            if isinstance(self._labels,list) and len(self._labels)>ix:
+                return self._labels[ix]
+            else:
+                return self.column_headers[ix]
 
     def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
@@ -234,9 +270,9 @@ class PlotFile(DataFile):
             **kwords (dict): Other keyword arguments to pass through
 
         """
-        print kwords
+
         if "label" not in kwords:
-            kwords["label"]=self.column_headers[iy]
+            kwords["label"]=self._col_label(iy)
         x=self.column(ix)
         y=self.column(iy)
         if plotter in (pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog): #plots with positional fmt
@@ -248,6 +284,8 @@ class PlotFile(DataFile):
             if fmt is None:
                 fmt="-"
             plotter(x,y, fmt=fmt,figure=figure, **kwords)
+        for ax in figure.axes:
+            self._template.customise_axes(ax)
 
 
     def plot(self,**kargs):
@@ -354,15 +392,17 @@ class PlotFile(DataFile):
             self._plot(column_x,column_y[ix],fmt_t,plotter,figure,**temp_kwords)
 
 
-        pyplot.xlabel(str(self.column_headers[column_x]))
+        pyplot.xlabel(str(self._col_label(column_x)))
         pyplot.ylabel(str(ylabel))
         if title=='':
             title=self.filename
         pyplot.title(title)
-        pyplot.grid(True)
+        if self.legend:
+            pyplot.legend()
         if save_filename != '':
             pyplot.savefig(str(save_filename))
         pyplot.draw()
+        pyplot.show()
         self.__figure=figure
         return self.__figure
 
@@ -416,14 +456,15 @@ class PlotFile(DataFile):
         if "cmap" not in kwords:
             kwords["cmap"]=cm.jet
         plotter(xdata, ydata, zdata, **kwords)
-        pyplot.xlabel(str(self.column_headers[self.find_col(xcol)]))
-        pyplot.ylabel(str(self.column_headers[self.find_col(ycol)]))
+        pyplot.xlabel(str(self._col_label(xcol)))
+        pyplot.ylabel(str(self._col_label(ycol)))
         if plotter==self.__SurfPlotter:
-            self.fig.axes[0].set_zlabel(str(self.column_headers[self.find_col(zcol)]))
+            self.fig.axes[0].set_zlabel(str(self._col_label(zcol)))
         if title=='':
             title=self.filename
         pyplot.title(title)
         pyplot.draw()
+        pyplot.show()
 
         return self.__figure
 
@@ -501,9 +542,9 @@ class PlotFile(DataFile):
             plotter=pyplot.contour
 
         fig=plotter(X,Y,Z,**kargs)
-        pyplot.xlabel(self.column_headers[self.find_col(xc)])
-        pyplot.ylabel(self.column_headers[self.find_col(yc)])
-        pyplot.title(self.filename + " "+ self.column_headers[zc])
+        pyplot.xlabel(self._col_label(xc))
+        pyplot.ylabel(self._col_label(yc))
+        pyplot.title(self.filename + " "+ self._col_label(zc))
 
         return fig
 
@@ -555,7 +596,7 @@ class PlotFile(DataFile):
         #Sort out xvls values
         if isinstance(xvals, index_types): # String or int means using a column index
             if xlabel is None:
-                xlabel=self.column_headers[self.find_col(xvals)]
+                xlabel=self._col_clabel(xvals)
             if rectang is None: # Do we need to init the rectan ?
                 rectang=(0, xvals+1)
             elif isinstance(rectang, tuple): # Do we need to adjust the rectan column origin ?

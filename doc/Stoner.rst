@@ -73,6 +73,18 @@ Stoner Package
     VSMFile
     XRDFile
 
+:mod:`PlotFormats` Module
+==================
+
+.. module:: Stoner.PlotFormats
+
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    DefaultPlotStyle
+
 
 :mod:`FittingFuncs` Module
 ==========================
