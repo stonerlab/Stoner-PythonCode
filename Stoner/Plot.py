@@ -140,6 +140,8 @@ class PlotFile(DataFile):
                 self._template=value
             elif type(value)==type(object) and issubclass(value,DefaultPlotStyle):
                 self._template=value()
+            else:
+                raise ValueError("Template is not of the right class")
             self._template.apply()
         elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
             if isinstance(value,tuple):
@@ -391,14 +393,10 @@ class PlotFile(DataFile):
             # Call plot
             self._plot(column_x,column_y[ix],fmt_t,plotter,figure,**temp_kwords)
 
-
-        pyplot.xlabel(str(self._col_label(column_x)))
-        pyplot.ylabel(str(ylabel))
+        xlabel=str(self._col_label(column_x))
         if title=='':
             title=self.filename
-        pyplot.title(title)
-        if self.legend:
-            pyplot.legend()
+        self._template.annotate(self,xlabel=xlabel,ylabel=ylabel,title=title)
         if save_filename != '':
             pyplot.savefig(str(save_filename))
         pyplot.draw()
@@ -456,13 +454,16 @@ class PlotFile(DataFile):
         if "cmap" not in kwords:
             kwords["cmap"]=cm.jet
         plotter(xdata, ydata, zdata, **kwords)
-        pyplot.xlabel(str(self._col_label(xcol)))
-        pyplot.ylabel(str(self._col_label(ycol)))
-        if plotter==self.__SurfPlotter:
-            self.fig.axes[0].set_zlabel(str(self._col_label(zcol)))
+        params={}
+        params["xlabel"]=str(self._col_label(xcol))
+        params["ylabel"]=str(self._col_label(ycol))
+        params["zlabel"]=str(self._col_label(zcol))
         if title=='':
             title=self.filename
-        pyplot.title(title)
+        params["title"]=title
+        if plotter is not self._SurfPlotter:
+            del(params["zlabel"])
+        self._template.annotate(self,**params)
         pyplot.draw()
         pyplot.show()
 

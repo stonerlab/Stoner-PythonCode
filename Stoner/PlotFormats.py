@@ -22,6 +22,12 @@ class DefaultPlotStyle(object):
     method to carry out additional plot formatting.
     
     Attributes:
+        fig_width_pt (float): Preferred width of plot in points
+        show_xlabel (bool): Show the title in the plot
+        show_ylabel (bool): Show the x-axis Labels
+        show_zlabel (bool): show the y-xaxis labels
+        show_title (bool): show the title
+        show_legend (bool): show the legend
         templat_axes_labelsize (int): Axes Label size
         template_text_fontsize (int): Text font size
         template_legend_fontsize (int): Legend font size
@@ -49,8 +55,8 @@ class DefaultPlotStyle(object):
     """
     
     """Internal class attributes."""
-    _fig_width_pt = 433.62 # Get this from LaTeX using \showthe\columnwidth
     _inches_per_pt = 1.0/72.27               # Convert pt to inch
+    _mm_per_inch = 25.4
     _golden_mean = (sqrt(5)-1.0)/2.0         # Aesthetic ratio
 
 
@@ -58,6 +64,12 @@ class DefaultPlotStyle(object):
     will be used. Once the leading template_ is stripped, all _ characters are replaced
     with . and then the attributes are mapped to a dictionary and used to update the rcParams
     dictionary"""
+    fig_width_pt = 433.62
+    show_xlabel=True
+    show_ylabel=True
+    show_zlabel=True
+    show_title=True
+    show_legend=True
     templat_axes_labelsize=12
     template_text_fontsize=12
     template_legend_fontsize=10
@@ -67,7 +79,6 @@ class DefaultPlotStyle(object):
     template_ytick_direction='in'
     template_xtick_major_size=5
     template_ytick_major_size=5
-    template_font_family="Times New Roman"
     template_xtick_major_pad=4
     template_ytick_major_pad=4
     template_font_size=14
@@ -99,17 +110,21 @@ class DefaultPlotStyle(object):
             if not k.startswith("_"):
                 self.__setattr__("template_"+k,kargs[k])
         if "fig_width" not in kargs:
-            self.fig_width=self._fig_width_pt*self._inches_per_pt
+            self.fig_width=self.fig_width_pt*self._inches_per_pt
         if "fig_height" not in kargs:
             self.fig_height=self.fig_width*self._golden_mean      # height in inches
-        self.template_figure_figsize =  [self.fig_width,self.fig_height]
 
     def apply(self):
         """Scan for all attributes that start templtate_ and build them into a dictionary
         to update matplotlib settings with.
         """
         params=dict()
-        
+
+        if self.fig_width is None:
+            self.fig_width=self.fig_width_pt*self._inches_per_pt            
+        if self.fig_height is None:
+            self.fig_height=self.fig_width*self._golden_mean      # height in inches            
+        self.template_figure_figsize =  [self.fig_width,self.fig_height]        
         for attr in dir(self):
             if attr.startswith("template_"):
                 attrname=attr[9:].replace("_",".").replace("..","_")
@@ -137,12 +152,28 @@ class DefaultPlotStyle(object):
         ax.xaxis.set_major_formatter(EngFormatter())
         ax.yaxis.set_major_formatter(EngFormatter())
 
-    
+    def annotate(self,plot,**kargs):
+        """Call all the routines necessary to annotate the axes etc.
+        
+        Args:
+            plot (Stoner.PlotFile): The PlotFile boject we're working with
+        """
+        if "xlabel" in kargs and self.show_xlabel:        
+            plt.xlabel(str(kargs["xlabel"]))
+        if "ylabel" in kargs and self.show_ylabel:
+            plt.ylabel(str(kargs["ylabel"]))
+        if "zlabel" in kargs and self.show_zlabel:
+            plot.fig.axes[0].set_zlabel(kargs["zlabel"])
+        if "title" in kargs and self.show_title:
+            plt.title(kargs["title"])
+        if self.show_legend:
+            plt.legend()
+        
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 
-    _fig_width_pt = 700.0 # Get this from LaTeX using \showthe\columnwidth
+    fig_width_pt = 700.0 # Get this from LaTeX using \showthe\columnwidth
     templat_axes_labelsize=36
     template_text_fontsize=36
     template_legend_fontsize=24
@@ -164,3 +195,47 @@ class JTBPlotStyle(DefaultPlotStyle):
     template_figure_subplot_top=0.875 
     template_figure_autolayout=False 
 
+    def customise_axes(self,ax):
+        pass
+
+class PRBPlotStyle(DefaultPlotStyle):
+    """A figure Style for making figures for Phys Rev * Jounrals."""
+    fig_width_pt=244
+    show_title=False
+    templat_axes_labelsize=10
+    template_text_fontsize=10
+    template_legend_fontsize=10
+    template_xtick_labelsize=10
+    template_ytick_labelsize=10
+    template_xtick_direction='in'
+    template_ytick_direction='in'
+    template_xtick_major_size=5
+    template_ytick_major_size=5
+    template_font_family="Times New Roman"
+    template_xtick_major_pad=2
+    template_ytick_major_pad=2
+    template_font_size=10
+    template_lines_linewidth=1
+    template_axes_formatter_limits=(-4, 4)
+    template_axes_grid=False
+    template_axes_color__cycle=['k','r','g','b','c','m','y']
+    template_figure_facecolor=(1,1,1)
+    template_figure_autolayout=True
+    template_lines_markersize=3
+    template_legend_isaxes       =True
+    template_legend_numpoints    =2      # the number of points in the legend line
+    template_legend_fontsize     =9
+    template_legend_borderpad    =0    # border whitespace in fontsize units
+    template_legend_markerscale  =1.0    # the relative size of legend markers vs. original
+    template_legend_labelspacing =0.5    # the vertical space between the legend entries in fraction of fontsize
+    template_legend_handlelength =2.     # the length of the legend lines in fraction of fontsize
+    template_legend_handleheight =0.7     # the height of the legend handle in fraction of fontsize
+    template_legend_handletextpad=0.8    # the space between the legend line and legend text in fraction of fontsize
+    template_legend_borderaxespad=0.5   # the border between the axes and legend edge in fraction of fontsize
+    template_legend_columnspacing=2.    # the border between the axes and legend edge in fraction of fontsize
+    template_legend_shadow       =False
+    template_legend_frameon      =False   # whether or not to draw a frame around legend
+    template_legend_scatterpoints=3 # number of scatter points
+
+    def customise_axes(self,ax):
+        ax.locator_params(tight=True, nbins=4)
