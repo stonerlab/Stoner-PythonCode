@@ -71,7 +71,7 @@ class PlotFile(DataFile):
         attr=dir(type(self))
         attr.extend(super(PlotFile,self).__dir__())
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(["fig", "axes","labels","subplots","setas"])
+        attr.extend(["fig", "axes","labels","subplots","setas","template"])
         attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
         attr=list(set(attr))
         return sorted(attr)
