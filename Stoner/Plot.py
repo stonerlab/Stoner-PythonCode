@@ -71,7 +71,7 @@ class PlotFile(DataFile):
         attr=dir(type(self))
         attr.extend(super(PlotFile,self).__dir__())
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(["fig", "axes","labels","subplots","setas","template"])
+        attr.extend(["fig", "axes","labels","subplots","template"])
         attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
         attr=list(set(attr))
         return sorted(attr)
@@ -92,8 +92,6 @@ class PlotFile(DataFile):
             return self.__figure
         elif name=="template":
             return self._template
-        elif name=="setas":
-            return self._setas
         elif name=="labels":
             if len(self._labels)<len(self.column_headers):
                 self._labels.extend(self.column_headers[len(self._labels):])
@@ -131,8 +129,6 @@ class PlotFile(DataFile):
         if name=="fig":
             self.__figure=value
             pyplot.figure(value.number)
-        elif name=="setas":
-            self._set_setas(value)
         elif name=="labels":
             self._labels=value
         elif name=="template":
@@ -152,95 +148,6 @@ class PlotFile(DataFile):
                 pyplot.__dict__[name](value)
         else:
             super(PlotFile, self).__setattr__(name, value)
-
-    def _set_setas(self,value):
-        """Handle the interpretation of the setas attribute. This includes parsing a string or a list
-        that describes if the columns are to be used for x-y plotting."""
-        if len(self._setas)<len(self.column_headers):
-            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
-        if isinstance(value,list):
-            if len(value)> len(self.column_headers):
-                value=value[:len(self.column_headers)]
-            for v in value.lower():
-                if v not in "xyzedf.":
-                    raise ValueError("Set as column element is invalid: {}".format(v))
-            self._setas[:len(value)]=[v.lower() for v in value]
-        elif isinstance(value,string_types):
-            value=value.lower()
-            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|\.)")
-            i=0
-            while pattern.match(value):
-                res=pattern.match(value)
-                (count,code)=res.groups()
-                value=value[res.end():]
-                if count=="":
-                    count=1
-                else:
-                    count=int(count)
-                for j in range(count):
-                    self._setas[i]=code
-                    i+=1
-                    if i>=len(self.column_headers):
-                        break
-                if i>=len(self.column_headers):
-                    break
-        else:
-            raise ValueError("Set as column string ended with a number")
-
-    def _get_cols(self,startx=0):
-        """Uses the setas attribute to work out which columns to use for x,y,z etc."""
-        
-        if len(self._setas)<len(self.column_headers):
-            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
-            
-        xcol=self._setas[startx:].index("x")+startx
-        try:
-            maxcol=self._setas[xcol+1:].index("x")+xcol+1
-        except ValueError:
-            maxcol=len(self.column_headers)
-        try:
-            xerr=self._setas[startx:maxcol-startx].index("d")+startx
-        except ValueError:
-            xerr=None
-        ycol=list()
-        yerr=list()
-        starty=startx
-        has_yerr=False
-        while True:
-            try:
-                ycol.append(self._setas[starty:maxcol-starty].index("y")+starty)
-            except ValueError:
-                break
-            try:
-                yerr.append(self._setas[starty:maxcol-starty].index("e")+starty)
-                has_yerr=True
-            except ValueError:
-                yerr.append(None)
-            starty=ycol[-1]+1
-        zcol=list()
-        zerr=list()
-        startz=startx
-        has_zerr=False
-        while True:
-            try:
-                zcol.append(self._setas[startz:maxcol-startz].index("z")+startz)
-            except ValueError:
-                break
-            startz=zcol[-1]+1
-            try:
-                zerr.append(self._setas[startz:maxcol-startz].index("g")+startz)
-                has_zerr=True
-            except ValueError:
-                zerr.append(None)
-        if len(zcol)==0:
-            axes=2
-        else:
-            axes=3
-        ret={"xcol":xcol,"xerr":xerr,"ycol":ycol,"yerr":yerr,"zcol":zcol,"zerr":zerr,"axes":axes}
-        ret["has_xerr"]=xerr is not None
-        ret["has_yerr"]=has_yerr
-        ret["has_zerr"]=has_zerr
-        return ret
         
     def _col_label(self,index):
         """Look up a column and see if it exists in self._lables, otherwise get from self.column_headers.
@@ -461,7 +368,7 @@ class PlotFile(DataFile):
         if title=='':
             title=self.filename
         params["title"]=title
-        if plotter is not self._SurfPlotter:
+        if plotter is not self.__SurfPlotter:
             del(params["zlabel"])
         self._template.annotate(self,**params)
         pyplot.draw()

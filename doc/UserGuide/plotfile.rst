@@ -21,16 +21,12 @@ Quick Plots
 
 :py:class:`PlotFile` is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plottig programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
-for containing error bars. Once this is done, the plotting methods will use these to try to make a sensible plot.::
+for containing error bars. This is done with the :py:attr:`DataFile.setas` attribute. Once this is done, the plotting methods will use these to try to make a sensible plot.::
 
    p.setas="xye"
    p.setas=["x","y","e"]
    print(p.setas)
    
-The :py:attr:`PlotFile.setas` attribute can be set either as a list or as a string. In either case, the available characters are [x, y, z, d, e, f]
-where [x,y,z] identifies the columns as containing the corresponding axes and [d,e,f] the uncertainties for the values of x,y and z respectively.
-For the string form of the attriburte it is also possible to prefix the letter with one or more digits - this will set that number of columns to containing 
-the corresponding type of data.
 
 Once the columns are identified, the :py:meth:`PlotFile.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
 available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`Plotfile.plot_xyz` as appropriate. All keyword arguments to :

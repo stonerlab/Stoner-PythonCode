@@ -208,9 +208,40 @@ Whenever the Stoner package needs to refer to a column of data, you cn specify i
       the final result would be to use a list of column indices.
 
 For example::
- import re
- col=re.compile('^temp',re.IGNORECASE)
- d.column(col)
+    import re
+    col=re.compile('^temp',re.IGNORECASE)
+    d.column(col)
+
+
+Otherways to Identify Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
+or indeed having 'z' column data and uncretainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
+so that 'e' data is the error in the y data). DataFile has a concept of marking a column as containing such data and
+will then use these by default in many methods when appropriate to have 'x' and 'y' data.
+
+To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
+either a list of single character strings from the set 'x','y','z','d','e', 'f' or '.' where each element of the list refers to
+the columns of data in order. To specify that a column has unmarked data use the '.' string.
+
+Alternaitvely, you can pass :py:attr:`DataFile.setas` a string. In the simplest case, the string is just read in the same way that
+the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
+non-numeric character will be interpretted that many times, so::
+
+    d.setas="3.xy"
+    d.setas="...xy"
+    d.setas=['.','.','.','x','y']
+
+all achieve the same effect.
+
+Once you have identified columns for the various types, you also have access to utility attributes to access those columns:
+
+    d.setas="3.xye'
+    d.x == d.column(3)
+    d.y == d.column(4)
+    d.e == d.column(5)
+
 
 Working with complete rows of data
 ----------------------------------

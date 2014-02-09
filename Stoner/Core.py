@@ -336,6 +336,7 @@ class DataFile(object):
         filename (string): The current filename of the data if loaded from or
             already saved to disc. This is the default filename used by the :py:meth:`load` and  :py:meth:`save`
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask
+        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape
         records (numpoy record array): Returns the data in the form of a list of dictionaries
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object
@@ -397,6 +398,8 @@ class DataFile(object):
             handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
         self.mask=False
+        self._setas=[]
+        self._cols=self._get_cols()
 
     # Special Methods
 
@@ -625,7 +628,15 @@ class DataFile(object):
         """
         attr=dir(type(self))
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records'])
+        attr.extend(['records', 'clone','subclasses', 'shape', 'mask', 'dict_records','setas'])
+        col_check={"xcol":"x","xerr":"d","ycol":"y","yerr":"e","zcol":"z","zerr":"f"}
+        for k in col_check:
+            if k.startswith("x"):
+                if self._cols[k] is not None:
+                    attr.append(col_check[k])
+            else:
+                if len(self._cols[k])>0:
+                    attr.append(col_check[k])
         return sorted(attr)
 
     def __file_dialog(self, mode):
@@ -693,10 +704,17 @@ class DataFile(object):
               "T":self._getattr_by_columns,
               "records":self._getattr_records,
               "shape":self._getattr_shape,
-              "subclasses":self._getattr_subclasses
+              "subclasses":self._getattr_subclasses,
+              "setas":self._getattr_setas
               }
         if name in easy:
             return easy[name]()
+        elif name in ("x","y","z","d","e","f"):
+            ret=self._getattr_col(name)
+        else:
+            ret=None
+        if ret is not None:
+            return ret
         elif len(self.column_headers)>0:
             try:
                 col=self.find_col(name)
@@ -717,6 +735,24 @@ class DataFile(object):
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
         return c
+
+    def _getattr_col(self,name):
+        """Get a column using the setas attribute."""
+        col_check={"x":"xcol","d":"xerr","y":"ycol","e":"yerr","z":"zcol","f":"zerr"}
+        col=col_check[name]
+        if col.startswith("x"):
+            if self._cols[col] is not None:
+                ret= self.column(self._cols[col])
+            else:
+                ret=None
+        else:
+            if len(self._cols[col])>0:
+                ret=self.column(self._cols[col])
+                if len(self._cols[col])==1:
+                    ret=ret[:,0]
+            else:
+                ret=None
+        return ret
 
     def _getattr_dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys.
@@ -752,11 +788,95 @@ class DataFile(object):
         """Pass through the numpy shape attribute of the data
         """
         return self.data.shape
+        
+    def _getattr_setas(self):
+        """Get the list of column assignments."""
+        if len(self._setas)> len(self.column_headers):
+            selt._setas=self._setas[:len(self.column_headers)]
+        elif len(self._setas)<len(self.column_headers):
+            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+        return self._setas
 
     def _getattr_subclasses(self):
         """Return a list of all in memory subclasses of this DataFile
         """
         return {x.__name__:x for x in itersubclasses(DataFile)}
+
+    def _get_cols(self,what=None,startx=0):
+        """Uses the setas attribute to work out which columns to use for x,y,z etc.
+        
+        Keyword Arguments:
+            what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary
+            starts (int): Start looking for x columns at this column.
+            
+        Returns:
+            A single integer, a list of integers or a dictionary of all columns.
+        """
+        
+        if len(self._setas)<len(self.column_headers):
+            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+        try:
+            xcol=self._setas[startx:].index("x")+startx
+            maxcol=self._setas[xcol+1:].index("x")+xcol+1
+        except ValueError:
+            if "x" not in self._setas:
+                xcol=None
+                maxcol=startx
+            else:
+                maxcol=len(self.column_headers)
+        try:
+            xerr=self._setas[startx:maxcol-startx].index("d")+startx
+        except ValueError:
+            xerr=None
+        ycol=list()
+        yerr=list()
+        starty=startx
+        has_yerr=False
+        while True:
+            try:
+                ycol.append(self._setas[starty:maxcol-starty].index("y")+starty)
+            except ValueError:
+                break
+            try:
+                yerr.append(self._setas[starty:maxcol-starty].index("e")+starty)
+                has_yerr=True
+            except ValueError:
+                yerr.append(None)
+            starty=ycol[-1]+1
+        zcol=list()
+        zerr=list()
+        startz=startx
+        has_zerr=False
+        while True:
+            try:
+                zcol.append(self._setas[startz:maxcol-startz].index("z")+startz)
+            except ValueError:
+                break
+            startz=zcol[-1]+1
+            try:
+                zerr.append(self._setas[startz:maxcol-startz].index("g")+startz)
+                has_zerr=True
+            except ValueError:
+                zerr.append(None)
+        if xcol is None:
+            axes=0
+        elif len(ycol)==0 and len(zcol)==0:
+            axes=1
+        if len(zcol)==0 or len(ycol)==0:
+            axes=2
+        else:
+            axes=3
+        ret={"xcol":xcol,"xerr":xerr,"ycol":ycol,"yerr":yerr,"zcol":zcol,"zerr":zerr,"axes":axes}
+        ret["has_xerr"]=xerr is not None
+        ret["has_yerr"]=has_yerr
+        ret["has_zerr"]=has_zerr
+        if what=="xcol":
+            ret=ret["xcol"]
+        elif what in ("ycol","zcol"):
+            ret=ret[what][0]
+        elif what in ("ycols","zcols"):
+            ret=ret[what[0:-1]]
+        return ret
 
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of
@@ -954,8 +1074,46 @@ class DataFile(object):
             self.__dict__[name]=_ma_.masked_array(value)
         elif name=="T":
             self.data.T=value
+        elif name=="setas":
+            self._set_setas(value)
         else:
             self.__dict__[name] = value
+            
+    def _set_setas(self,value):
+        """Handle the interpretation of the setas attribute. This includes parsing a string or a list
+        that describes if the columns are to be used for x-y plotting."""
+        if len(self._setas)<len(self.column_headers):
+            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+        if isinstance(value,list):
+            if len(value)> len(self.column_headers):
+                value=value[:len(self.column_headers)]
+            for v in value.lower():
+                if v not in "xyzedf.":
+                    raise ValueError("Set as column element is invalid: {}".format(v))
+            self._setas[:len(value)]=[v.lower() for v in value]
+        elif isinstance(value,string_types):
+            value=value.lower()
+            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|\.)")
+            i=0
+            while pattern.match(value):
+                res=pattern.match(value)
+                (count,code)=res.groups()
+                value=value[res.end():]
+                if count=="":
+                    count=1
+                else:
+                    count=int(count)
+                for j in range(count):
+                    self._setas[i]=code
+                    i+=1
+                    if i>=len(self.column_headers):
+                        break
+                if i>=len(self.column_headers):
+                    break
+        else:
+            raise ValueError("Set as column string ended with a number")
+        self._cols=self._get_cols()
+
 
     def __setitem__(self, name, value):
         """Called for :py:class:`DataFile`[name ] = value to write mewtadata

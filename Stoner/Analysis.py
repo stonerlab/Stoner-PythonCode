@@ -6,10 +6,10 @@ from Stoner.compat import *
 from Stoner.Core import DataFile
 import Stoner.FittingFuncs
 import Stoner.nlfit
-import numpy
+import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
-import math
+from scipy.interpolate import interp1d
 import sys
 import re
 
@@ -17,15 +17,15 @@ def cov2corr(M):
     """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc
 
     Args:
-        M (2D numpy.array): Co-varriance Matric
+        M (2D _np_.array): Co-varriance Matric
 
     Returns:
         Correlation Matrix.
     """
-    if (not isinstance(M, numpy.ndarray)) or (not (len(M.shape) == 2)) or (not(M.shape[0] == M.shape[1])):
+    if (not isinstance(M, _np_.ndarray)) or (not (len(M.shape) == 2)) or (not(M.shape[0] == M.shape[1])):
         raise ValueError('cov2corr expects a square ndarray, got %s' % M)
 
-    if numpy.isnan(M).any():
+    if _np_.isnan(M).any():
         raise ValueError('Found NaNs in my covariance matrix: %s' % M)
 
     # TODO check Nan and positive diagonal
@@ -34,10 +34,10 @@ def cov2corr(M):
         raise ValueError('Expected positive elements for square matrix, got diag = %s' % d)
 
     n = M.shape[0]
-    R = numpy.ndarray((n, n))
+    R = _np_.ndarray((n, n))
     for i in range(n):
         for j in range(n):
-            d = M[i, j] / math.sqrt(M[i, i] * M[j, j])
+            d = M[i, j] / _np_.sqrt(M[i, i] * M[j, j])
             R[i, j] = d
 
     return R
@@ -79,21 +79,21 @@ class AnalyseFile(DataFile):
         # ... you might use other interpolation points
         # and maybe other functions than monomials ....
 
-        x = numpy.arange(-num_points, num_points+1, dtype=int)
+        x = _np_.arange(-num_points, num_points+1, dtype=int)
 
-        A = numpy.zeros((2*num_points+1, pol_degree+1), float)
+        A = _np_.zeros((2*num_points+1, pol_degree+1), float)
         for i in range(2*num_points+1):
             for j in range(pol_degree+1):
                 A[i,j] = x[i]**j
 
         # calculate diff_order-th row of inv(A^T A)
-        ATA = numpy.dot(A.transpose(), A)
-        rhs = numpy.zeros((pol_degree+1,), float)
+        ATA = _np_.dot(A.transpose(), A)
+        rhs = _np_.zeros((pol_degree+1,), float)
         rhs[diff_order] = (-1)**diff_order
-        wvec = numpy.linalg.solve(ATA, rhs)
+        wvec = _np_.linalg.solve(ATA, rhs)
 
         # calculate filter-coefficients
-        coeff = numpy.dot(A, wvec)
+        coeff = _np_.dot(A, wvec)
 
         return coeff
 
@@ -103,8 +103,8 @@ class AnalyseFile(DataFile):
         Really just a pass through to numpy convolve
         """
 
-        N = numpy.size(coeff-1)/2
-        res = numpy.convolve(signal, coeff)
+        N = _np_.size(coeff-1)/2
+        res = _np_.convolve(signal, coeff)
         return res[N:-N]
 
     def __threshold(self, threshold, data, rising=True, falling=False):
@@ -120,9 +120,9 @@ class AnalyseFile(DataFile):
             straight line interpolation between two points.
         """
         current=data
-        previous=numpy.roll(current, 1)
-        index=numpy.arange(len(current))
-        sdat=numpy.column_stack((index, current, previous))
+        previous=_np_.roll(current, 1)
+        index=_np_.arange(len(current))
+        sdat=_np_.column_stack((index, current, previous))
         if rising==True and falling==False:
             expr=lambda x:(x[1]>=threshold) & (x[2]<threshold)
         elif rising==True and falling==True:
@@ -132,7 +132,7 @@ class AnalyseFile(DataFile):
         else:
             expr=lambda x:False
         intr=lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2])
-        return numpy.array([intr(x) for x in sdat if expr(x) and intr(x)>0])
+        return _np_.array([intr(x) for x in sdat if expr(x) and intr(x)>0])
 
     def __get_math_val(self,col):
         """Utility routine to interpret col as either a column index or value or an array of values.
@@ -151,11 +151,11 @@ class AnalyseFile(DataFile):
                 col=col[0]
             data=self.column(col)
             name=self.column_headers[col]
-        elif isinstance(col,numpy.ndarray) and len(col.shape)==1 and len(col)==len(self):
+        elif isinstance(col,_np_.ndarray) and len(col.shape)==1 and len(col)==len(self):
             data=col
             name="data"
         elif isinstance(col,float):
-            data=col*numpy.ones(len(self))
+            data=col*_np_.ones(len(self))
             name=str(col)
         else:
             raise RuntimeError("Bad column index: {}".format(col))
@@ -213,13 +213,13 @@ class AnalyseFile(DataFile):
         sys.stdout.flush()
 
 
-    def polyfit(self,column_x,column_y,polynomial_order, bounds=lambda x, y:True, result=None,replace=False,header=None):
+    def polyfit(self,xcol=None,ycol=None,polynomial_order=2, bounds=lambda x, y:True, result=None,replace=False,header=None):
         """ Pass through to numpy.polyfit
 
             Args:
-                column_x (index): Index to the column in the data with the X data in it
-                column_y (index): Index to the column int he data with the Y data in it
-                polynomial_order: Order of polynomial to fit
+                xcol (index): Index to the column in the data with the X data in it
+                ycol (index): Index to the column int he data with the Y data in it
+                polynomial_order: Order of polynomial to fit (default 2)
                 bounds (callable): A function that evaluates True if the current row should be included in the fit
                 result (index or None): Add the fitted data to the current data object in a new column (default don't add)
                 replace (bool): Overwrite or insert new data if result is not None (default False)
@@ -227,17 +227,30 @@ class AnalyseFile(DataFile):
 
             Returns:
                 The best fit polynomial as a numpy.poly object.
+                
+            Note:
+                If the x or y columns are not specified (or are None) the the setas attribute is used instead.
+                
+                This method is depricated and may be removed in a future version in favour of the more general curve_fit
             """
         from Stoner.Util import ordinal
-        working=self.search(column_x, bounds)
-        p= numpy.polyfit(working[:, self.find_col(column_x)],working[:, self.find_col(column_y)],polynomial_order)
+
+        if None in (xcol,ycol):
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+        
+        working=self.search(xcol, bounds)
+        p= _np_.polyfit(working[:, self.find_col(xcol)],working[:, self.find_col(ycol)],polynomial_order)
         if result is not None:
             if header is None:
-                header="Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(column_y)],ordinal(polynomial_order))
-            self.add_column(numpy.polyval(p, self.column(column_x)), index=result, replace=replace, column_header=header)
+                header="Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],ordinal(polynomial_order))
+            self.add_column(_np_.polyval(p, self.column(xcol)), index=result, replace=replace, column_header=header)
         return p
 
-    def curve_fit(self, func,  xcol, ycol, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -262,6 +275,9 @@ class AnalyseFile(DataFile):
             If asrow is True, then return [popt[0],sqrt(pcov[0,0]),popt[1],sqrt(pcov[1,1])...popt[n],sqrt(pcov[n,n])]
 
         Note:
+            If the columns are not specified (or set to None) then the X and Y data are taken using the 
+            :py:attr:`DataFile.setas` attribute.
+        
             The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
             The x-column and y-column can be anything that :py:meth:`Stoner.Core.DataFile.find_col` can use as an index
             but typucally either strings to be matched against column headings or integers.
@@ -271,6 +287,13 @@ class AnalyseFile(DataFile):
         """
         from scipy.optimize import curve_fit
         from inspect import getargspec
+        
+        if None in (xcol,ycol):
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
 
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
@@ -292,11 +315,11 @@ class AnalyseFile(DataFile):
         if not asrow:
             return popt, pcov
         else:
-            rc=numpy.array([])
+            rc=_np_.array([])
             for i in range(len(popt)):
-                rc=numpy.append(rc,[popt[i],numpy.sqrt(pcov[i,i])])
+                rc=_np_.append(rc,[popt[i],_np_.sqrt(pcov[i,i])])
             return rc
-    def max(self, column, bounds=None):
+    def max(self, column=None, bounds=None):
         """FInd maximum value and index in a column of data
 
         Args:
@@ -308,8 +331,15 @@ class AnalyseFile(DataFile):
 
         Returns:
             (maximum value,row index of max value)
+            
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
         """
-        col=self.find_col(column)
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
         if bounds is not None:
             self._push_mask()
             self._set_mask(bounds, True, col)
@@ -318,7 +348,7 @@ class AnalyseFile(DataFile):
             self._pop_mask()
         return result
 
-    def min(self, column, bounds=None):
+    def min(self, column=None, bounds=None):
         """FInd minimum value and index in a column of data
 
         Args:
@@ -330,8 +360,16 @@ class AnalyseFile(DataFile):
 
         Returns:
             (minimum value,row index of min value)
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
                 """
-        col=self.find_col(column)
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
         if bounds is not None:
             self._push_mask()
             self._set_mask(bounds, True, col)
@@ -340,7 +378,7 @@ class AnalyseFile(DataFile):
             self._pop_mask()
         return result
 
-    def span(self, column, bounds=None):
+    def span(self, column=None, bounds=None):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
 
         Args:
@@ -352,10 +390,15 @@ class AnalyseFile(DataFile):
 
         Returns:
             A tuple of (min value, max value)
+            
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
         """
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
 
-    def clip(self, column, clipper):
+    def clip(self, clipper,column=None):
         """Clips the data based on the column and the clipper value
 
         Args:
@@ -365,16 +408,22 @@ class AnalyseFile(DataFile):
                 used as the clip limits
         Returns:
             This instance."
-        @param column Column to look for the clipping value in
-        @param clipper
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
         """
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
         clipper=(min(clipper), max(clipper))
-        self=self.del_rows(column, lambda x, y:x<clipper[0] or x>clipper[1])
+        self=self.del_rows(col, lambda x, y:x<clipper[0] or x>clipper[1])
         return self
 
 
 
-    def mean(self, column, bounds=None):
+    def mean(self, column=None, bounds=None):
         """FInd mean value of a data column
 
         Args:
@@ -387,10 +436,17 @@ class AnalyseFile(DataFile):
         Returns:
             The mean of the data.
 
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
         .. todo::
             Fix the row index when the bounds function is used - see note of \b max
         """
-        col=self.find_col(column)
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
         if bounds is not None:
             self._push_mask()
             self._set_mask(bounds, True, col)
@@ -422,7 +478,7 @@ class AnalyseFile(DataFile):
             e1data=self.__get_math_val(e1)[0]
             e2data=self.__get_math_val(e2)[0]
             err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((1.0/(adata+bdata)-(adata-bdata)/(adata+bdata)**2)**2*e1data**2+(-1.0/(adata+bdata)-(adata-bdata) / (adata+bdata)**2)**2*e2data**2)
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((1.0/(adata+bdata)-(adata-bdata)/(adata+bdata)**2)**2*e1data**2+(-1.0/(adata+bdata)-(adata-bdata) / (adata+bdata)**2)**2*e2data**2)
         else:
             err_calc=None              
         adata,aname=self.__get_math_val(a)
@@ -492,7 +548,7 @@ class AnalyseFile(DataFile):
             e1data=self.__get_math_val(e1)[0]
             e2data=self.__get_math_val(e2)[0]
             err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt(e1data**2+e2data**2)
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
         else:
             err_calc=None                
         adata,aname=self.__get_math_val(a)
@@ -534,7 +590,7 @@ class AnalyseFile(DataFile):
             e1data=self.__get_math_val(e1)[0]
             e2data=self.__get_math_val(e2)[0]
             err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt(e1data**2+e2data**2)
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
         else:
             err_calc=None                
         adata,aname=self.__get_math_val(a)
@@ -575,7 +631,7 @@ class AnalyseFile(DataFile):
             e1data=self.__get_math_val(e1)[0]
             e2data=self.__get_math_val(e2)[0]
             err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
             err_calc=None                
         adata,aname=self.__get_math_val(a)
@@ -617,7 +673,7 @@ class AnalyseFile(DataFile):
             e1data=self.__get_math_val(e1)[0]
             e2data=self.__get_math_val(e2)[0]
             err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: numpy.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
             err_calc=None                
         adata,aname=self.__get_math_val(a)
@@ -650,7 +706,7 @@ class AnalyseFile(DataFile):
             A copy of the current instance
         """
         col=self.find_col(col)
-        nc=numpy.zeros(len(self))
+        nc=_np_.zeros(len(self))
         i=0
         for r in self.rows():
             nc[i]=func(r)
@@ -660,7 +716,7 @@ class AnalyseFile(DataFile):
         if replace!=True:
             self=self.add_column(nc, header, col)
         else:
-            self.data[:, col]=numpy.reshape(nc, -1)
+            self.data[:, col]=_np_.reshape(nc, -1)
             self.column_headers[col]=header
         return self
 
@@ -700,7 +756,7 @@ class AnalyseFile(DataFile):
             morefuncs=func[1:]
             func=func[0]
         if func is None:
-            for val in numpy.unique(self.column(xcol)):
+            for val in _np_.unique(self.column(xcol)):
                 files[str(val)]=self.clone
                 files[str(val)].data=self.search(xcol,val)
         else:
@@ -710,7 +766,7 @@ class AnalyseFile(DataFile):
                 key=func(x,r)
                 if key not in files:
                     files[key]=self.clone
-                    files[key].data=numpy.array([r])
+                    files[key].data=_np_.array([r])
                 else:
                     files[key]=files[key]+r
         for k in files:
@@ -722,36 +778,44 @@ class AnalyseFile(DataFile):
             out.files=[files[k] for k in sorted(files.keys())]
         return out
 
-    def SG_Filter(self, col, points, poly=1, order=0,result=None, replace=False, header=None):
+    def SG_Filter(self, col=None, points=15, poly=1, order=0,result=None, replace=False, header=None):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
 
         Args:
             col (index): Column of Data to be filtered
-            prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1
+            prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
 
         Keyword Arguments:
             poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
             order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
 
-        SG_Filter(column,points, polynomial order, order of differentuation)
-        or
-        SG_Filter((x-col,y,col),points,polynomial order, order of differentuation)"""
+        Returns:
+            A numpy array representing the smoothed or differentiated data.
+
+        Notes:
+            If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
+            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
+            for differentiating data.
+        """
         from Stoner.Util import ordinal
+        if col is None:
+            cols=self._get_cols()
+            col=(cols["xcol"],cols["ycols"][0])
         p=points
         if isinstance(col, tuple):
             x=self.column(col[0])
-            x=numpy.append(numpy.array([x[0]]*p), x)
-            x=numpy.append(x, numpy.array([x[-1]]*p))
+            x=_np_.append(_np_.array([x[0]]*p), x)
+            x=_np_.append(x, _np_.array([x[-1]]*p))
             y=self.column(col[1])
-            y=numpy.append(numpy.array([y[0]]*p), y)
-            y=numpy.append(y, numpy.array([y[-1]]*p))
+            y=_np_.append(_np_.array([y[0]]*p), y)
+            y=_np_.append(y, _np_.array([y[-1]]*p))
             dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
             dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
             r=dy/dx
         else:
             d=self.column(col)
-            d=numpy.append(numpy.array([d[0]]*p),d)
-            d=numpy.append(d, numpy.array([d[-1]]*p))
+            d=_np_.append(_np_.array([d[0]]*p),d)
+            d=_np_.append(d, _np_.array([d[-1]]*p))
             r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
         if result is not None:
             if not isinstance(header, string_types):
@@ -763,7 +827,7 @@ class AnalyseFile(DataFile):
         return r[p:-p]
 
 
-    def threshold(self, col, threshold, rising=True, falling=False,xcol=None,all_vals=False):
+    def threshold(self, threshold,col=None, rising=True, falling=False,xcol=None,all_vals=False,transpose=False):
         """Finds partial indices where the data in column passes the threshold, rising or falling
 
         Args:
@@ -776,11 +840,27 @@ class AnalyseFile(DataFile):
             xcol (index or None): rather than returning a fractional row index, return the
                 interpolated value in column xcol
                 all_vals (bool): return all crossing points of the threshold or just the first. (default False)
+            transpose (bbool): Swap the x and y columns around - this is most useful when the column assignments
+                have been done via the setas attribute
+            all_vals (bool): Return all values that match the criteria, or just the first in the file.
 
         Returns:
-            Either a sing;le fractional row index, or an in terpolated x value"""
+            Either a sing;le fractional row index, or an in terpolated x value
+            
+        Note:
+            If you don't sepcify a col value or set it to None, then the assigned columns via the
+            :py:attr:`DataFile.setas` attribute will be used.
+            
+        Warning:
+            There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
+            argument list. In order to support the use of assigned columns, this has been swapped to the present order.            
+            """
+        if col is None:
+            col=self._get_cols("ycol")
+            xcol=self._get_cols("xcol")
+
         current=self.column(col)
-        if isinstance(threshold, (list,numpy.ndarray)):
+        if isinstance(threshold, (list,_np_.ndarray)):
             if all_vals:
                 ret=[self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
             else:
@@ -815,15 +895,15 @@ class AnalyseFile(DataFile):
             Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
         """
         from scipy.interpolate import interp1d
-        l=numpy.shape(self.data)[0]
-        index=numpy.arange(l)
+        l=_np_.shape(self.data)[0]
+        index=_np_.arange(l)
         if xcol is not None: # We need to convert newX to row indices
             xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
             newX=xfunc(newX)
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def peaks(self, ycol, width, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
+    def peaks(self, ycol=None, width=None, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
         Args:
@@ -845,7 +925,12 @@ class AnalyseFile(DataFile):
         Returns:
             If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
-        from scipy.interpolate import interp1d
+            
+        if ycol is None:
+            ycol=self._get_cols("ycol")
+            xcol=self._get_cols("xcol")
+        if width is None: # Set Width to be length of data/20
+            width=len(self)/20
         assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
         if significance is None: # Guess the significance based on the range of y and width settings
             dm=self.max(ycol)[0]
@@ -853,7 +938,7 @@ class AnalyseFile(DataFile):
             dm=dm-dp
             significance=0.2*dm/(4*width**2)
         d1=self.SG_Filter(ycol, width, poly, 1)
-        i=numpy.arange(len(d1))
+        i=_np_.arange(len(d1))
         d2=interp1d(i, self.SG_Filter(ycol, width, poly, 2))
         if xcol==None:
             xcol=i
@@ -861,11 +946,11 @@ class AnalyseFile(DataFile):
             xcol=self.column(xcol)
         index=interp1d(i, xcol)
         w=abs(xcol[0]-xcol[width]) # Approximate width of our search peak in xcol
-        z=numpy.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
+        z=_np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
         z=[zv for zv in z if zv>w/2.0 and zv<max(xcol)-w/2.0] #Throw out peaks or troughts too near the ends
         if sort:
-            z=numpy.take(z, numpy.argsort(d2(z)))
-        return index([x for x in z if numpy.abs(d2(x))>significance])
+            z=_np_.take(z, _np_.argsort(d2(z)))
+        return index([x for x in z if _np_.abs(d2(x))>significance])
 
     def integrate(self,xcol,ycol,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
         """Inegrate a column of data, optionally returning the cumulative integral
@@ -897,10 +982,10 @@ class AnalyseFile(DataFile):
                 ydat.append(r[yc])
             else:
                 ydat.append(0)
-        xdat=numpy.array(xdat)
-        ydat=numpy.array(ydat)
+        xdat=_np_.array(xdat)
+        ydat=_np_.array(ydat)
         resultdata=cumtrapz(xdat,ydat,**kargs)
-        resultdata=numpy.append(numpy.array([0]),resultdata)
+        resultdata=_np_.append(_np_.array([0]),resultdata)
         if result is not None:
             if isinstance(result,bool) and result:
                 self.add_column(resultdata,result_name)
@@ -932,7 +1017,7 @@ class AnalyseFile(DataFile):
             working=self.search(xcol, bounds, [xcol, ycol])
             x=working[:, 0]
             y=working[:, 1]
-            sigma=numpy.ones(numpy.shape(y), numpy.float64)
+            sigma=_np_.ones(_np_.shape(y), _np_.float64)
         else:
             working=self.search(xcol, bounds, [xcol, ycol, sigma])
             x=working[:, 0]
