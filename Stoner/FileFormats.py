@@ -202,8 +202,7 @@ class QDSquidVSMFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename) # Read filename linewise
-        while f.readline().strip()!="[Header]":
-            pass
+        line=f.readline().strip()
         line=f.readline().strip()
         line=f.readline().strip()
         if "Quantum Design" not in line:
