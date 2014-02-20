@@ -21,12 +21,12 @@ class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
     Attributes:
-        directgory (string): Root directory of the files handled by the DataFolder
+        directory (string): Root directory of the files handled by the DataFolder
         files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
         groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
-        read_means (bool): If tru, create memtadata when reading each file that is the mean of each column
+        read_means (bool): If true, create metadata when reading each file that is the mean of each column
         pattern (string or re): Matches which files in the  directory tree are included. If pattern is a compiled
-            reular expression with named groups then the named groups generare used to generate metadata in the :py:class:`Stoner.DataFile`
+            reular expression with named groups then the named groups are used to generate metadata in the :py:class:`Stoner.DataFile`
             object.
         basenames (list of string): Returns the list of files after passing through os.path.basename()
         ls (list of strings): Returns a list of filenames (either the matched filename patterns, or
@@ -59,19 +59,33 @@ class DataFolder(object):
             self.type=DataFile
         elif issubclass(kargs["type"], DataFile):
             self.type=kargs["type"]
-        else:
-            raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
+        else: raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
         if not "pattern" in kargs:
-            self.pattern="*.*"
-        else:
+            self.pattern=["*.*",]
+        elif isinstance(kargs["pattern"],(str,unicode)):
+            self.pattern=[kargs["pattern"],]
+        elif isinstance(kargs["pattern"],list):
             self.pattern=kargs["pattern"]
+        else: raise ValueError("pattern should be a string or tuple object")
+        if not "meta_pattern" in kargs:
+            self.meta_pattern=None
+        elif isinstance(kargs["meta_pattern"], re._pattern_type):
+            self.meta_pattern=kargs["meta_pattern"]
+        else: raise ValueError("meta_pattern should be a compiled regex expression")
         if not "nolist" in kargs:
             nolist=False
         else:
             nolist=kargs["nolist"]
+        if not "mode" in kargs:
+            self.mode = "directory"
+        elif kargs["mode"] in ["directory","multifile"]:
+            self.mode=kargs["mode"]    
+        else:  raise ValueError("mode argument must be \'directory\' or \'multifile\'")
         if len(args)>0:
-            if isinstance(args[0], (str,unicode)):
+            if isinstance(args[0], (str,unicode)):  
                 self.directory=args[0]
+                if self.mode=="multifile":
+                    self._dialog()
             elif isinstance(args[0],bool) and not args[0]:
                 self._dialog()
             elif isinstance(args[0],DataFolder):
@@ -81,6 +95,8 @@ class DataFolder(object):
                 return None
         else:
             self.directory=os.getcwd()
+            if self.mode=="multifile":
+                self._dialog()
         recursive=True
         for v in kargs:
             self.__setattr__(v,kargs[v])
@@ -103,8 +119,8 @@ class DataFolder(object):
         if isinstance(f,DataFile):
             return f
         tmp= self.type(f)
-        if isinstance(self.pattern,re._pattern_type ):
-            m=self.pattern.search(f)
+        if (self.meta_pattern is not None) and (self.meta_pattern.search(f) is not None):
+            m=self.meta_pattern.search(f)
             for k in m.groupdict():
                 tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
         if self.read_means:
@@ -129,20 +145,28 @@ class DataFolder(object):
 
         Returns:
             A directory to be used for the file operation."""
-        from enthought.pyface.api import DirectoryDialog, OK
+        from enthought.pyface.api import FileDialog, DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
 
         if isinstance(self.directory, (str,unicode)):
             dirname = self.directory
         else:
             dirname = os.getcwd()
-        dlg = DirectoryDialog(action="open",  default_path=dirname,  message=message,  new_directory=new_directory)
-        dlg.open()
-        if dlg.return_code == OK:
-            self.directory = dlg.path
-            return self.directory
+        if self.mode=="directory":
+            dlg = DirectoryDialog(action="open",  default_path=dirname,  message=message,  new_directory=new_directory)
+            dlg.open()
+            if dlg.return_code == OK:
+                self.directory = dlg.path
+                return self.directory
+        elif self.mode=="multifile":
+            dlg = FileDialog(action="open files",  default_path=dirname,  message="Select Files")
+            dlg.open()
+            if dlg.return_code == OK:
+                self.pattern=[path.basename(name) for name in dlg.paths]
+                self.directory = dlg.directory
+                return self.directory
         else:
-            return None
+            raise ValueError("mode argument must be \'directory\' or \'multifile\'")
 
     def __iter__(self):
         """Returns the files iterator object
@@ -269,7 +293,7 @@ class DataFolder(object):
 
         Keyword Arguments:
             recursive (bool): Do a walk through all the directories for files
-            directory (string or False): Either a string path ot a new directory or False to open a dialog box or not set in which case existing director is used.
+            directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
             flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of :py:meth:`getlist()`)
         
         Returns:
@@ -293,15 +317,9 @@ class DataFolder(object):
                 dirs.append(f)
             elif path.isfile(path.join(root, f)):
                 files.append(f)
-        if isinstance(self.pattern, (str,unicode)):
-            for f in fnmatch.filter(files, self.pattern):
+        for p in self.pattern:
+            for f in fnmatch.filter(files, p):
                 self.files.append(path.join(root, f))
-        elif isinstance(self.pattern, re._pattern_type):
-            newfiles=[]
-            for f in files:
-                if self.pattern.search(f) is not None:
-                    newfiles.append(path.join(root, f))
-            self.files=newfiles
         if recursive:
             for d in dirs:
                 self.add_group(d)
