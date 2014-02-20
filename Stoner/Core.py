@@ -408,7 +408,7 @@ class DataFile(object):
         arg=args[0]
         if (isinstance(arg, string_types) or (isinstance(arg, bool) and not arg)):
                                     # Filename- load datafile
-            t = self.load(arg, **kargs)
+            t = self.load(filename=arg, **kargs)
             self.data = _ma_.masked_array(t.data)
             self.metadata = t.metadata
             self.column_headers = t.column_headers
