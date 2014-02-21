@@ -14,6 +14,7 @@ import numpy
 from copy import copy
 import unicodedata
 import string
+from collections import Iterable
 
 from .Core import DataFile
 
@@ -59,30 +60,35 @@ class DataFolder(object):
             self.type=DataFile
         elif issubclass(kargs["type"], DataFile):
             self.type=kargs["type"]
-        else: raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
+            del kargs["type"]
+        else: 
+            raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
         if not "pattern" in kargs:
-            self.pattern=["*.*",]
-        elif isinstance(kargs["pattern"],(str,unicode)):
-            self.pattern=[kargs["pattern"],]
-        elif isinstance(kargs["pattern"],list):
-            self.pattern=kargs["pattern"]
-        else: raise ValueError("pattern should be a string or tuple object")
-        if not "meta_pattern" in kargs:
-            self.meta_pattern=None
-        elif isinstance(kargs["meta_pattern"], re._pattern_type):
-            self.meta_pattern=kargs["meta_pattern"]
-        else: raise ValueError("meta_pattern should be a compiled regex expression")
+            self.pattern=("*.*",)
+        else:
+            if isinstance(kargs["pattern"],string_types):
+                self.pattern=(kargs["pattern"],)
+            elif isinstance(kargs["pattern"],re._pattern_type):
+                self.pattern=(kargs["pattern"],)
+            elif isinstance(kargs["pattern"],Iterable):
+                self.pattern=[x for x in kargs["pattern"]]
+            else: 
+                raise ValueError("pattern should be a string, regular expression or iterable object")
+            del kargs["pattern"]
         if not "nolist" in kargs:
             nolist=False
         else:
             nolist=kargs["nolist"]
+            del kargs["nolist"]
         if not "mode" in kargs:
             self.mode = "directory"
         elif kargs["mode"] in ["directory","multifile"]:
-            self.mode=kargs["mode"]    
-        else:  raise ValueError("mode argument must be \'directory\' or \'multifile\'")
+            self.mode=kargs["mode"]
+            del kargs["mode"]
+        else:  
+            raise ValueError("mode argument must be \'directory\' or \'multifile\'")
         if len(args)>0:
-            if isinstance(args[0], (str,unicode)):  
+            if isinstance(args[0], string_types):  
                 self.directory=args[0]
                 if self.mode=="multifile":
                     self._dialog()
@@ -119,10 +125,11 @@ class DataFolder(object):
         if isinstance(f,DataFile):
             return f
         tmp= self.type(f)
-        if (self.meta_pattern is not None) and (self.meta_pattern.search(f) is not None):
-            m=self.meta_pattern.search(f)
-            for k in m.groupdict():
-                tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
+        for p in self.pattern:
+            if isinstance(p,re._pattern_type) and (p.search(f) is not None):
+                m=p.search(f)
+                for k in m.groupdict():
+                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
         if self.read_means:
             if len(tmp)==0:
                 pass
@@ -317,9 +324,24 @@ class DataFolder(object):
                 dirs.append(f)
             elif path.isfile(path.join(root, f)):
                 files.append(f)
-        for p in self.pattern:
-            for f in fnmatch.filter(files, p):
-                self.files.append(path.join(root, f))
+        for p in self.pattern: # pattern is a list of strings and regeps
+            if isinstance(p,string_types):
+                for f in fnmatch.filter(files, p):
+                    self.files.append(path.join(root, f))
+                    # Now delete the matched file from the list of candidates
+                    #This stops us double adding fles that match multiple patterns
+                    del(files[files.index(f)])
+            if isinstance(p,re._pattern_type):
+                matched=[]
+                # For reg expts we iterate over all files, but we can't delete matched
+                # files as we go as we're iterating over them - so we store the
+                # indices and delete them later.
+                for f in files:
+                    if p.search(f):
+                        self.files.append(path.join(root,f))
+                        matched.append(files.index(f))
+                for i in matched.sort(reverse=True): # reverse sort the matching indices to safely delete
+                    del(files[i])
         if recursive:
             for d in dirs:
                 self.add_group(d)
