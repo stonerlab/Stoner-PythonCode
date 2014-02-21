@@ -26,9 +26,12 @@ class DataFolder(object):
         files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
         groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
         read_means (bool): If true, create metadata when reading each file that is the mean of each column
-        pattern (string or re): Matches which files in the  directory tree are included. If pattern is a compiled
-            reular expression with named groups then the named groups are used to generate metadata in the :py:class:`Stoner.DataFile`
-            object.
+        pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included. 
+            If pattern is a compiled reular expression with named groups then the named groups are used to 
+            generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of
+            files included in the py:class:`DataFolder` is the union of files that match any single pattern.
+        mode (string): specifies whether multi-file dialog box is used *mode="multifile"* or in whole
+            directory mode (*mode="directory"*)
         basenames (list of string): Returns the list of files after passing through os.path.basename()
         ls (list of strings): Returns a list of filenames (either the matched filename patterns, or
             :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
