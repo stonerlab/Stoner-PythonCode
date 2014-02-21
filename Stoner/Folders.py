@@ -32,6 +32,8 @@ class DataFolder(object):
             files included in the py:class:`DataFolder` is the union of files that match any single pattern.
         mode (string): specifies whether multi-file dialog box is used *mode="multifile"* or in whole
             directory mode (*mode="directory"*)
+        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`
+           objects.
         basenames (list of string): Returns the list of files after passing through os.path.basename()
         ls (list of strings): Returns a list of filenames (either the matched filename patterns, or
             :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
@@ -90,6 +92,10 @@ class DataFolder(object):
             del kargs["mode"]
         else:  
             raise ValueError("mode argument must be \'directory\' or \'multifile\'")
+        if "extra_args" in kargs:
+            self.extra_args=kargs["extra_args"]
+        else:
+            self.extra_args=dict()
         if len(args)>0:
             if isinstance(args[0], string_types):  
                 self.directory=args[0]
@@ -127,7 +133,7 @@ class DataFolder(object):
         """
         if isinstance(f,DataFile):
             return f
-        tmp= self.type(f)
+        tmp= self.type(f,**self.extra_args)
         for p in self.pattern:
             if isinstance(p,re._pattern_type) and (p.search(f) is not None):
                 m=p.search(f)
