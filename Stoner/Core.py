@@ -380,8 +380,11 @@ class DataFile(object):
             DataFile objects is an instance of a sub - class of DataFile
 
         Args:
-            *args Variable number of arguments that match one of the
-            definitions above
+            *args (positional arguments) Variable number of arguments that match one of the
+                definitions above
+            **kargs (keyword Arguments) All keyword arguments that match public attributes are
+                used to set those public attributes.
+                
         Returns:
             A new instance of the DataFile class.
         """
@@ -400,6 +403,17 @@ class DataFile(object):
         self.mask=False
         self._setas=[]
         self._cols=self._get_cols()
+        if len(kargs)>0: # set public attributes from keywords 
+            myattrs=[]
+            for x in dir(self):
+                try:
+                    if not (x.startswith("_") or callable(self.__getattr__(x))):
+                        myattrs.append(x)
+                except:
+                    pass
+            for k in kargs:
+                if k in myattrs:
+                    self.__setattr__(k,kargs[k])
 
     # Special Methods
 
@@ -711,6 +725,8 @@ class DataFile(object):
             return easy[name]()
         elif name in ("x","y","z","d","e","f"):
             ret=self._getattr_col(name)
+        elif name in dir(self):
+            return super(DataFile,self).__getattribute__(name)
         else:
             ret=None
         if ret is not None:

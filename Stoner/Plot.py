@@ -41,15 +41,16 @@ class PlotFile(DataFile):
         
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
-        _setas (list): Used for automatically doing plots
         labels (list of string): List of axis labels as aternates to the column_headers
     
     """
 
     __figure=None
+    _subplots=[]
     _labels=None
     
     _template=None
+    _labels=[]
 
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
@@ -61,7 +62,6 @@ class PlotFile(DataFile):
         else:
             self.template=DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
-        self._setas=[]
         self._labels=self.column_headers
         self.legend=True
         self._subplots=[]
@@ -72,7 +72,7 @@ class PlotFile(DataFile):
         attr.extend(super(PlotFile,self).__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr.extend(["fig", "axes","labels","subplots","template"])
-        attr.extend(('xlabel','ylabel','title','subtitle','xlim','ylim'))
+        attr.extend(('xlabel','ylabel','title','xlim','ylim'))
         attr=list(set(attr))
         return sorted(attr)
 
@@ -97,7 +97,7 @@ class PlotFile(DataFile):
                 self._labels.extend(self.column_headers[len(self._labels):])
             return self._labels
         elif name=="subplots":
-            if len(self.__figure.axes)>len(self._subplots):
+            if self.__figure is not None and len(self.__figure.axes)>len(self._subplots):
                 self._subplots=self.__figure.axes
             return self._subplots
         elif name=="axes":
