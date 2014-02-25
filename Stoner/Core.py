@@ -397,12 +397,12 @@ class DataFile(object):
         self.column_headers = list()
         i=len(args) if len(args)<2 else 2
         handler=[None,self._init_single,self._init_double,self._init_many][i]
-        if handler is not None:
-            handler(*args,**kargs)
-        self.metadata["Stoner.class"]=self.__class__.__name__
         self.mask=False
         self._setas=[]
         self._cols=self._get_cols()
+        if handler is not None:
+            handler(*args,**kargs)
+        self.metadata["Stoner.class"]=self.__class__.__name__
         if len(kargs)>0: # set public attributes from keywords 
             myattrs=[]
             for x in dir(self):
@@ -434,12 +434,12 @@ class DataFile(object):
         elif isinstance(arg, dict):  # Dictionary - use as metadata
             self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
+            for a in arg.__dict__:
+                super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = _ma_.masked_array(arg.data)
-            self.column_headers = copy.copy(arg.column_headers)
-            self.filename=arg.filename
         else:
-            raise SyntaxError("No constructor")
+            raise SyntaxError("No constructor for {}".format(type(arg)))
 
     def _init_double(self,*args,**kargs):
         """Two argument constructors handled here. Called form __init__"""
@@ -839,7 +839,7 @@ class DataFile(object):
                 xcol=None
                 maxcol=startx
             else:
-                maxcol=len(self.column_headers)
+                maxcol=len(self.column_headers)+1
         try:
             xerr=self._setas[startx:maxcol-startx].index("d")+startx
         except ValueError:
@@ -850,27 +850,27 @@ class DataFile(object):
         has_yerr=False
         while True:
             try:
-                ycol.append(self._setas[starty:maxcol-starty].index("y")+starty)
+                ycol.append(self._setas[starty:maxcol].index("y")+starty)
             except ValueError:
                 break
             try:
-                yerr.append(self._setas[starty:maxcol-starty].index("e")+starty)
+                yerr.append(self._setas[starty:maxcol].index("e")+starty)
                 has_yerr=True
             except ValueError:
                 yerr.append(None)
-            starty=ycol[-1]+1
+            starty=ycol[-1]+1            
         zcol=list()
         zerr=list()
         startz=startx
         has_zerr=False
         while True:
             try:
-                zcol.append(self._setas[startz:maxcol-startz].index("z")+startz)
+                zcol.append(self._setas[startz:maxcol].index("z")+startz)
             except ValueError:
                 break
             startz=zcol[-1]+1
             try:
-                zerr.append(self._setas[startz:maxcol-startz].index("g")+startz)
+                zerr.append(self._setas[startz:maxcol].index("g")+startz)
                 has_zerr=True
             except ValueError:
                 zerr.append(None)

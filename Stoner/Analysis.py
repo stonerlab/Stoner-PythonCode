@@ -288,12 +288,15 @@ class AnalyseFile(DataFile):
         from scipy.optimize import curve_fit
         from inspect import getargspec
         
-        if None in (xcol,ycol):
+        if None in (xcol,ycol,sigma):
             cols=self._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
                 ycol=cols["ycol"][0]
+            if sigma is None:
+                if len(cols["yerr"])>0:
+                    sigma=cols["yerr"][0]
 
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
@@ -720,8 +723,8 @@ class AnalyseFile(DataFile):
             self.column_headers[col]=header
         return self
 
-    def split(self,xcol,func=None):
-        """Splits the current :py:calss:`AnalyseFile` object into multiple :py:class@`AnalyseFile` objects where each one contains the rows
+    def split(self,xcol=None,func=None):
+        """Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows
         from the original object which had the same value of a given column.
 
         Args:
@@ -741,6 +744,10 @@ class AnalyseFile(DataFile):
             in which the func values are used along with the @a xcol values.
         """
         from Stoner.Folders import DataFolder
+        if xcol is None:
+            xcol=self._get_cols("xcol")
+        else:
+            xcol=self.find_col(xcol)
         out=DataFolder(nolist=True)
         files=dict()
         morecols=[]
@@ -897,6 +904,8 @@ class AnalyseFile(DataFile):
         from scipy.interpolate import interp1d
         l=_np_.shape(self.data)[0]
         index=_np_.arange(l)
+        if xcol is None:
+            xcol=self._get_cols("xcol")
         if xcol is not None: # We need to convert newX to row indices
             xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
             newX=xfunc(newX)
@@ -952,7 +961,7 @@ class AnalyseFile(DataFile):
             z=_np_.take(z, _np_.argsort(d2(z)))
         return index([x for x in z if _np_.abs(d2(x))>significance])
 
-    def integrate(self,xcol,ycol,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
+    def integrate(self,xcol=None,ycol=None,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
         """Inegrate a column of data, optionally returning the cumulative integral
 
         Args:
@@ -960,8 +969,8 @@ class AnalyseFile(DataFile):
             ycol (index) The Y data column index (or header)
 
         Keyword Arguments:
-            result (index or None): Either a column index (or header) to overwrite with the cumulative data, or True to add a new column
-                or None to not store the cumulative result.
+            result (index or None): Either a column index (or header) to overwrite with the cumulative data, 
+                or True to add a new column or None to not store the cumulative result.
             result_name (string): The new column header for the results column (if specified)
             bounds (callable): A function that evaluates for each row to determine if the data should be integrated over.
             kargs: Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
@@ -971,28 +980,38 @@ class AnalyseFile(DataFile):
 
         Note:
             This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
-            to offer a variety of methods including simpson's rule and interpolation of data."""
-        xc=self.find_col(xcol)
-        xdat=[]
-        ydat=[]
-        yc=self.find_col(ycol)
-        for r in self.rows():
-            xdat.append(r[xc])
-            if bounds(r[xc],r):
-                ydat.append(r[yc])
-            else:
-                ydat.append(0)
-        xdat=_np_.array(xdat)
-        ydat=_np_.array(ydat)
-        resultdata=cumtrapz(xdat,ydat,**kargs)
-        resultdata=_np_.append(_np_.array([0]),resultdata)
-        if result is not None:
-            if isinstance(result,bool) and result:
-                self.add_column(resultdata,result_name)
-            else:
-                result_name=self.column_headers[self.find_col(result)]
-                self.add_column(resultdata,result_name,index=result,replace=True)
-        return resultdata[-1]
+            to offer a variety of methods including simpson's rule and interpolation of data. If xcol or ycol are not specified then
+            the current values from the :py:attr:`Stoner.Core.DataFile.setas` attribute are used.
+            
+            
+            """        
+        if xcol is None or ycol is None:
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"]
+        working=self.search(xcol, bounds)
+        working=ma.mask_rowcols(working,axis=0)
+        xdat=working[:,self.find_col(xcol)]
+        ydat=working[:,self.find_col(ycol)]
+        final=[]
+        for i in range(ydat.shape[1]):
+            yd=ydat[:,i]
+            resultdata=cumtrapz(xdat,yd,**kargs)
+            resultdata=_np_.append(_np_.array([0]),resultdata)
+            if result is not None:
+                if isinstance(result,bool) and result:
+                    self.add_column(resultdata,result_name,replace=False)
+                else:
+                    result_name=self.column_headers[self.find_col(result)]
+                    self.add_column(resultdata,result_name,index=result,replace=(i==0))
+            final.append(resultdata[-1])
+        if len(final)==1:
+            final=final[0]
+        else:
+            final=_np_.array(final)
+        return final
 
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
         """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
