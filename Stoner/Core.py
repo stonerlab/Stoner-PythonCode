@@ -1349,7 +1349,7 @@ class DataFile(object):
                 self.data=_ma_.compress_cols(self.data)
             else:
                 c = self.find_col(col)
-                self.data = _np_._ma_.masked_array(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
+                self.data = _ma_.masked_array(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
                 if isinstance(c, list):
                     c.sort(reverse=True)
                 else:

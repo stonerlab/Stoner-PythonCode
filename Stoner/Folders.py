@@ -30,8 +30,7 @@ class DataFolder(object):
             If pattern is a compiled reular expression with named groups then the named groups are used to 
             generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of
             files included in the py:class:`DataFolder` is the union of files that match any single pattern.
-        mode (string): specifies whether multi-file dialog box is used *mode="multifile"* or in whole
-            directory mode (*mode="directory"*)
+        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
         extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`
            objects.
         basenames (list of string): Returns the list of files after passing through os.path.basename()
@@ -40,12 +39,13 @@ class DataFolder(object):
         lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
 
     Args:
-        directory (string or :py:class:`DataFolder` instance): Where to get the data files from
+        directory (string or :py:class:`DataFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
 
     Keyword Arguments:
         type (class): An subclass of :py:class:`Stoner.Core.DataFolder` that will be used to construct the individual DataFile objects in the folder
         pattern (string or re): A filename pattern - either globbing string or regular expression
         nolist (bool): Delay doing a directory scan to get data files
+        multifile (bool): if True brings up a dialog for selecting files from a directory.
 
     Returns:
         The newly constructed instance
@@ -85,13 +85,13 @@ class DataFolder(object):
         else:
             nolist=kargs["nolist"]
             del kargs["nolist"]
-        if not "mode" in kargs:
-            self.mode = "directory"
-        elif kargs["mode"] in ["directory","multifile"]:
-            self.mode=kargs["mode"]
-            del kargs["mode"]
+        if not "multifile" in kargs:
+            self.multifile = False
+        elif isinstance(kargs["multifile"], bool):
+            self.multifile=kargs["multifile"]
+            del kargs["multifile"]
         else:  
-            raise ValueError("mode argument must be \'directory\' or \'multifile\'")
+            raise ValueError("multifile argument must be boolean")
         if "extra_args" in kargs:
             self.extra_args=kargs["extra_args"]
         else:
@@ -99,7 +99,7 @@ class DataFolder(object):
         if len(args)>0:
             if isinstance(args[0], string_types):  
                 self.directory=args[0]
-                if self.mode=="multifile":
+                if self.multifile:
                     self._dialog()
             elif isinstance(args[0],bool) and not args[0]:
                 self._dialog()
@@ -110,9 +110,11 @@ class DataFolder(object):
                 return None
         else:
             self.directory=os.getcwd()
-            if self.mode=="multifile":
+            if self.multifile:
                 self._dialog()
-        recursive=True
+        if self.multifile: 
+            recursive=False
+        else: recursive=True
         for v in kargs:
             self.__setattr__(v,kargs[v])
         if not nolist:
@@ -168,21 +170,19 @@ class DataFolder(object):
             dirname = self.directory
         else:
             dirname = os.getcwd()
-        if self.mode=="directory":
+        if not self.multifile:
             dlg = DirectoryDialog(action="open",  default_path=dirname,  message=message,  new_directory=new_directory)
             dlg.open()
             if dlg.return_code == OK:
                 self.directory = dlg.path
                 return self.directory
-        elif self.mode=="multifile":
+        else:
             dlg = FileDialog(action="open files",  default_path=dirname,  message="Select Files")
             dlg.open()
             if dlg.return_code == OK:
                 self.pattern=[path.basename(name) for name in dlg.paths]
                 self.directory = dlg.directory
                 return self.directory
-        else:
-            raise ValueError("mode argument must be \'directory\' or \'multifile\'")
 
     def __iter__(self):
         """Returns the files iterator object
@@ -323,6 +323,8 @@ class DataFolder(object):
             self._dialog()
         elif isinstance(directory, (str,unicode)):
             self.directory=directory
+            if self.multifile:
+                self._dialog()
         if isinstance(self.directory, bool) and not self.directory:
             self._dialog()        
         root=self.directory
