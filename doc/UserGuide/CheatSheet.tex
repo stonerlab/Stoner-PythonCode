@@ -8,17 +8,16 @@
 \setlength{\parindent}{0pt}
 \columnsep 1cm
 \columnseprule 0.4pt
-\begin{multicols}{3}{
+\begin{multicols}{3}
 {\huge \textbf{Stoner Cheat Sheet}}
 \vspace{0.5cm}
 
 \textbf {Loading a data file}
-\vspace{0.2cm}
-\normalfont
 \begin{verbatim}
-  >>>import Stoner
-  >>>d=Stoner.DataFile('my_data.txt')
-  >>>d=Stoner.VSMFile('my_VSM_data.fld')
+  >>> import Stoner
+  >>> d=Stoner.DataFile('my_data.txt')
+  >>> d=Stoner.DataFile(False) 
+        #brings up a file dialog box
 \end{verbatim}
 Valid file types:
 DataFile,
@@ -40,50 +39,47 @@ FmokeFile
 
 \normalfont As a whole:
 \begin{verbatim}
-  >>>d.data
-  >>>d.column_headers
-  >>>d.metadata
+  >>> d.data
+  >>> d.column_headers
+  >>> d.metadata
 \end{verbatim}
 Columns:
 \begin{verbatim}
-  >>>d.column(0)
-  >>>d.column('Temperature')
-  >>>d.column(['Temperature',0])
-  >>>d.Temperature
+  >>> d.column(0)
+  >>> d.column('Temperature')
+  >>> d.column('Temp') #complete label unnecessary
+  >>> d.column(['Temperature',0])
+  >>> d.Temperature
 \end{verbatim}
 Rows:
 \begin{verbatim}
-  >>>d[1]
-  >>>d[1:4]
+  >>> d[1]
+  >>> d[1:4]
 \end{verbatim}
 Specific:
 \begin{verbatim}
-  >>>d[10,0]
-  >>>d[10,'Temp']
-  >>>d[0:10,['Voltage','Temp']
+  >>> d[10,0]
+  >>> d[10,'Temp']
+  >>> d[0:10,['Voltage','Temp']]
 \end{verbatim}
 Getting the index of a column:
 \begin{verbatim}
-  >>> index=d.find_col(1)
-  >>> index=d.find_col('Temperature')
-  >>> index=d.find_col('Temp.*')
-  >>> index=d.find_col(['Temperature',2,'Resistance'])
+  >>> i=d.find_col('Temp')
+  >>> [i1,i2]=d.find_col(['Temperature','Resistance'])
 \end{verbatim}
 Getting an iterable of the column/row:
 \begin{verbatim}
   >>> d.rows()
   >>> d.columns()
-  >>> for row in d:
+  >>> for row in d: ...
 \end{verbatim}
 Searching:
 \begin{verbatim}
-  >>>d.search('Temperature',4.2)
-  >>>d.search('Temperature',4.2,['Temperature',
-                                   'Resistance'])
-  >>>d.search('Temperature',lambda x,y: x>10 and x<100)
-  >>>d.search('Temperature',lambda x,y: x>10 and
-            x<1000 and y[1]<1000,['Temperature',
-                                    'Resistance'])
+  >>> d.search('Temperature',4.2)
+  >>> d.search('Temperature',4.2,['Temp',
+                 'Resist']) #returns only 2 columns
+  >>> d.search('Temperature',
+  				lambda x,y: x>10 and x<100)
   >>> d.unique('Temp')
   >>> d.unique(column,return_index=False, 
                               return_inverse=False)          
@@ -93,50 +89,43 @@ Copying:
    >>> t=d.clone
 \end{verbatim}
 
-\vspace{0.5cm}
+\vspace{0.2cm}
 \textbf {Modifying data}
 \vspace{0.2cm}\normalfont
 
 Appending data
 \begin{verbatim}
-  >>>a=Stoner.DataFile('some_new_data.txt')
-  >>>d=d+a
-  >>>d=d&a
-  >>>d.add_column(numpy.array(range(100)),
-                              'Column Header')
-  >>>d.add_column(numpy.array(range(100)),
-                       'Column Header',Index)
-  >>>d.add_column(lambda x: x[0]-x[1],
-                 'Column Header',func_args=None)
+  >>> a=Stoner.DataFile('some_new_data.txt')
+  >>> d=d+a   # + used to append rows of data
+  >>> d=d&a   # & used to append columns of data
+  >>> d.add_column(numpy.arange(100), 'NewCol')
+  >>> d.add_column(lambda x: x[0]-x[1], 'NewCol')
+      #see also AnalyseFile.apply
 \end{verbatim}
-(here \verb:+: is add rows and \verb:&: is add columns)
-\vspace{0.4cm}
+\vspace{0cm}
 
 Swap, reorder and rename columns:
 \begin{verbatim}
   >>> d.swap_column(('Resistance','Temperature'))
   >>> d.swap_column(('Resistance','Temperature'),
-                                 headers_too=False)
-  >>> d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
+                                 headers_too=False))
   >>> d.reorder([1,3,'Volt','Temp'])
-  >>> d.reorder([1,3,'Volt','Temp'],header_too=False)
   >>> d.rename('old_name','new_name')
   >>> d.rename(0,'new_name')
 \end{verbatim}
 
-Sort columns ascending:
+Sort columns:
 \begin{verbatim}
-  >>>d.sort('Temp')
-  >>>d.sort(['Temp','Gate'])
+  >>> d.sort('Temp',reverse=False)
 \end{verbatim}
 
 Delete rows and columns:
 \begin{verbatim}
-  >>>d.del_rows(10)
-  >>>d.del_rows('X Col',value)
-  >>>d.del_rows('X Col',lambda x,y:x>300)
-  >>>d.del_column('Temperature')
-  >>>d.del_column(1)
+  >>> d.del_rows(10)
+  >>> d.del_rows('X Col',value)
+  >>> d.del_rows('X Col',lambda x,y:x>300)
+   	#x is value in 'X Col' y is complete row
+  >>> d.del_column('Temperature')
 \end{verbatim}
 
 \vspace{0.5cm}
@@ -145,75 +134,110 @@ Delete rows and columns:
 
 Data saved in TDI format (tab delimited with first column reserved for metadata), or CSV formatted with no metadata.
 \begin{verbatim}
-  >>>d.save()   #saves with the filename 
-                #that it was loaded with
-  >>>d.save(filename)
-    >>>d=Stoner.CSVFile(d)
-  >>>d.save()
-  >>>d.save(filename,'\t')
+  >>> d.save() 
+  #saves with the filename that it was loaded with
+  >>> d.save('edited_data.txt')
 \end{verbatim}
 
-\vspace{0.5cm}
+\vspace{0.2cm}
+\textbf {Multiple data files}
+\vspace{0.2cm}\normalfont
+
+Recursively import a folder structure:
+\begin{verbatim}
+  >>> f=Stoner.DataFolder('C:\MyData\')
+  >>> f=Stoner.DataFolder(False) #dialog window
+  >>> f=Stoner.DataFolder(multifile=True)
+   #select a few files from a folder to process
+  >>> f=Stoner.DataFolder(False, pattern='*.txt')
+  	#only .txt files in folder picked
+\end{verbatim}
+Look at files and do something with them:
+\begin{verbatim}
+  >>> f.files
+  >>> for fi in f: fi.save() #fi is a DataFile
+  >>> f[1].column_headers
+\end{verbatim}
+
+\vspace{0.2cm}
 \textbf {Plotting data}
 \vspace{0.2cm}\normalfont
 
 2D:
 \begin{verbatim}
-  >>> import Stoner.Plot as plot
-  >>> p.plot_xy(column_x, column_y)
-  >>> p.plot_xy(column_x, [y1,y2])
-  >>> p.plot_xy(x,y,'ro')
-  >>> p.plot_xy(x,[y1,y2],['ro','b-'])
-  >>> p.plot_xy(x,y,title='My Plot')
-  >>> p.plot_xy(x,y,figure=2)
-  >>> p.plot_xy(x,y,plotter=pyplot.semilogy)
-  >>> p.plot_xy(x,y,plotter=errorbar,
-               yerr='dResistance', xerr=[5,'dTemp+'])
+  >>> p=Stoner.PlotFile(d)  #where d is a DataFile
+  >>> p=Stoner.PlotFile('mydata.dat')
+  >>> p.plot_xy('Magnetic F', ['Moment', 'Suscepti'])
+  		#only partial column label required
+  >>> p.plot_xy(2,3) #plot column 2 against 3
+  >>> p.plot_xy(colx,coly,'ro') #use red circles
+  >>> p.plot_xy(x,[y1,y2],['ro','b-'],figure=2, \
+        yerr='Moment err',plotter=errorbar )
+\end{verbatim}
+and after - options for editing the plot:
+\begin{verbatim}
+  >>> p.xlabel='new label'
+  >>> p.title='new title'
+  >>> p.xlim=(-10,10)
+  >>> import matplotlib.pyplot as plt
+  >>> plt.semilogy()
 \end{verbatim}
 3D:
 \begin{verbatim}
-   >>> p.plot_xyz(col_x,col_y,col_z)
-   >>> p.plot_xyz(col_x,col_y,col_z,
+   >>> p.plot_xyz(xcol,ycol,zcol,
                        cmap=matplotlib.cm.jet)
-   >>> p.plot)xyz(col-x,col-y,col-z,
-                       plotter=pyplot.pcolor)
- \end{verbatim}
-
-\vspace{0.5cm}
+\end{verbatim}
+\end{multicols}
+\newpage
+\begin{multicols}{2}
+\vspace{0.2cm}
 \textbf {Analysing data}
 \vspace{0.2cm}\normalfont
 
 Load the data:
 \begin{verbatim}
-  >>> import Stoner.Analysis as Analysis
-  >>> a=Analysis.AnalyseFile('Data')
-  >>>  a2=Analysis.AnalyseFile()
-  >>> a2=d
-  >>> a3=Analysis.AnalyseFile(d)
+  >>> a=Stoner.AnalyseFile(d) #d is a DataFile
 \end{verbatim}
-
 Do maths on the data:
 \begin{verbatim}
-  >>> a.subtract('A','B'm header="A-B",replace=True)
-  >>> a.subtract(0,1)
-  >>> a.subtract(0,3.141592654)
+  >>> a.subtract('A','B', header="A-B",replace=True)
+  >>> a.subtract(0,1) #subtract col 1 from col 0
+  >>> a.subtract(0,3.141592654) #subtract pi from col 0
   >>> a.subtract(0,a2.column(0))
-  >>> a.add('A','B',header='A plus B',replace=False)
-  >>> a.normalise('data','reference',
-               header='Normalised Data',replace=True)
+    #also can use a.add, a.multiply, a.divide similarly
+  >>> a.apply(func, 'Momen', replace=True, header='data_edit')
+      #func accepts a row of data and returns a float 
+  >>> a.normalise('Signal_col', 'Reference_col')
+  >>> a.normalise('Moment', max(a.column('Moment'))
+  		#last example normalises the column maximum to 1
 \end{verbatim}
+Other functions available are interpolate, threshold, integrate and peaks.\\
 
+Split the data into a DataFolder object according to the value in a certain column:
+\begin{verbatim}
+  >>> f=a.split('Temperature', lambda x,r: x>100)
+  	#x is the Temperature value, r is a list of all values in row
+  >>> max( f[0].Temperature ) #outputs 99.5
+  >>> max( f[1].Temperature ) #outputs 300.1
+\end{verbatim} 
 Fit the data:
 \begin{verbatim}
-  >>> a.polyfit(column_x,column_y,polynomial_order, 
-        bounds=lambda x, y:True, result="New Column")
+  >>> a.polyfit(xcol,ycol,order, result="New Column")
   >>> a.curve_fit(func,  xcol, ycol, p0=None, sigma=None,
-        bounds=lambda x, y: True, result="New column" )
+        bounds=lambda x, y: True, result="New column")
+  >>> (Stoner.PlotFile(a)).plot_xy(xcol, "New Col")
 \end{verbatim}
+\verb+polyfit+ and \verb+curve_fit+ are the same as the scipy functions. Both accept bounds on fitting region. func should be \verb+def f(xdata,p[0],p[1]...)+.
+\verb+p0+ is the initial parameter guess.
 
-
+More sophisticated fitting using nlfit. In this case build a .ini file to define fit (see example in scripts)).
+\begin{verbatim}
+  >>> a.nlfit("fit.ini", func)
+\end{verbatim}
+\verb+def func(xcolumn, params)+ and returns a column of data.
+func can also be a str naming one of the functions in FittingFuncs.py eg 'BDR', 'Simmons', 'Arrhenious', 'WLfit'.
  
 
-}%end multicols
+%end multicols
 \end{multicols}
 \end{document}
