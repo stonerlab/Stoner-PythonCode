@@ -9,9 +9,36 @@ Created on Fri Feb 07 19:57:30 2014
 
 from Stoner.compat import *
 import matplotlib.pyplot as plt
-from matplotlib.ticker import EngFormatter
-from numpy import sqrt
+from matplotlib.ticker import EngFormatter,Formatter
 
+import numpy as _np_
+
+class TexFormatter(Formatter):
+    """An axis tick label formatter that emits Tex formula mode code
+    so that large numbers are registered as \\times 10^{power}
+    rather than ysing E notation."""
+
+    def __call__(self, value, pos=None):
+        """Return the value ina  suitable texable format"""
+        if value is None or _np_.isnan(value):
+            ret=""
+        elif value!=0.0:        
+            power=_np_.floor(_np_.log10(_np_.abs(value)))
+            if _np_.abs(power)<4:
+                ret="${}$".format(value)
+            else:
+                v=value/(10**power)
+                ret="${}\\times 10^{{{:.0f}}}$".format(v,power)
+        else:
+            ret="$0.0$"
+        return ret
+    
+    def format_data(self,value):
+        return self.__call__(value)
+        
+    def format_data_short(self,value):
+        return "{:g}".format(value)
+        
 
 class DefaultPlotStyle(object):
     """Produces a default plot style.
@@ -57,7 +84,7 @@ class DefaultPlotStyle(object):
     """Internal class attributes."""
     _inches_per_pt = 1.0/72.27               # Convert pt to inch
     _mm_per_inch = 25.4
-    _golden_mean = (sqrt(5)-1.0)/2.0         # Aesthetic ratio
+    _golden_mean = (_np_.sqrt(5)-1.0)/2.0         # Aesthetic ratio
 
 
     """Settings for this figure type. All instance attributes which start template_
@@ -73,6 +100,7 @@ class DefaultPlotStyle(object):
     templat_axes_labelsize=12
     template_text_fontsize=12
     template_legend_fontsize=10
+    template_legend_frameon=False
     template_xtick_labelsize=11
     template_ytick_labelsize=11
     template_xtick_direction='in'
@@ -109,22 +137,19 @@ class DefaultPlotStyle(object):
         for k in kargs:
             if not k.startswith("_"):
                 self.__setattr__("template_"+k,kargs[k])
-        if "fig_width" not in kargs:
+        if "fig_width" not in kargs and self.fig_width is None:
             self.fig_width=self.fig_width_pt*self._inches_per_pt
-        if "fig_height" not in kargs:
+        if "fig_height" not in kargs and self.fig_height is None:
             self.fig_height=self.fig_width*self._golden_mean      # height in inches
 
-    def apply(self):
-        """Scan for all attributes that start templtate_ and build them into a dictionary
-        to update matplotlib settings with.
-        """
+    def new_figure(self,figure=False):
+        """This is called by PlotFile to setup a new figure before we do anything."""
         params=dict()
-
         if self.fig_width is None:
             self.fig_width=self.fig_width_pt*self._inches_per_pt            
         if self.fig_height is None:
             self.fig_height=self.fig_width*self._golden_mean      # height in inches            
-        self.template_figure_figsize =  [self.fig_width,self.fig_height]        
+        self.template_figure_figsize =  (self.fig_width,self.fig_height)        
         for attr in dir(self):
             if attr.startswith("template_"):
                 attrname=attr[9:].replace("_",".").replace("..","_")
@@ -132,6 +157,21 @@ class DefaultPlotStyle(object):
                 params[attrname]=value
         plt.rcdefaults() #Reset to defaults
         plt.rcParams.update(params) # Apply these parameters
+
+        if isinstance(figure,bool) and not figure:
+            ret=None
+        elif figure is not None:
+            ret=plt.figure(figure,figsize=self.template_figure_figsize)
+        else:
+            ret=plt.figure(figsize=self.template_figure_figsize)
+        return ret
+
+    def apply(self):
+        """Scan for all attributes that start templtate_ and build them into a dictionary
+        to update matplotlib settings with.
+        """
+        self.new_figure(False)
+
         self.customise()
         
     def customise(self):
@@ -149,9 +189,12 @@ class DefaultPlotStyle(object):
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """
-        ax.xaxis.set_major_formatter(EngFormatter())
-        ax.yaxis.set_major_formatter(EngFormatter())
-
+        ax.set_xticklabels(ax.get_xticks(),size=self.template_xtick_labelsize)
+        ax.set_yticklabels(ax.get_yticks(),size=self.template_ytick_labelsize)
+        ax.xaxis.set_major_formatter(TexFormatter())
+        ax.yaxis.set_major_formatter(TexFormatter())
+        
+        
     def annotate(self,plot,**kargs):
         """Call all the routines necessary to annotate the axes etc.
         
@@ -159,14 +202,14 @@ class DefaultPlotStyle(object):
             plot (Stoner.PlotFile): The PlotFile boject we're working with
         """
         if "xlabel" in kargs and self.show_xlabel:        
-            plt.xlabel(str(kargs["xlabel"]))
+            plt.xlabel(str(kargs["xlabel"]),size=self.templat_axes_labelsize)
         if "ylabel" in kargs and self.show_ylabel:
-            plt.ylabel(str(kargs["ylabel"]))
+            plt.ylabel(str(kargs["ylabel"]),size=self.templat_axes_labelsize)
         if "zlabel" in kargs and self.show_zlabel:
-            plot.fig.axes[0].set_zlabel(kargs["zlabel"])
+            plot.fig.axes[0].set_zlabel(kargs["zlabel"],size=self.templat_axes_labelsize)
         if "title" in kargs and self.show_title:
             plt.title(kargs["title"])
-        if self.show_legend:
+        if self.show_legend and len(plt.gca().get_legend_handles_labels()[1])>1:
             plt.legend()
         
 
@@ -193,10 +236,38 @@ class JTBPlotStyle(DefaultPlotStyle):
     template_figure_subplot_right=0.95
     template_figure_subplot_bottom=0.2
     template_figure_subplot_top=0.875 
-    template_figure_autolayout=False 
+    template_figure_autolayout=True 
 
     def customise_axes(self,ax):
         pass
+
+class ThesisPlotStyle(DefaultPlotStyle):
+    """Template class for Joe's Plot settings."""
+
+    fig_width = 6.0
+    fig_height= 4.0# 6"x4" plot
+    show_title=False
+    templat_axes_labelsize=11
+    template_text_fontsize=11
+    template_legend_fontsize=11
+    template_xtick_labelsize=11
+    template_ytick_labelsize=11
+    template_xtick_direction='in'
+    template_ytick_direction='in'
+    template_xtick_major_size=8
+    template_ytick_major_size=8
+    template_font_family="Times"
+    template_xtick_major_pad=5
+    template_ytick_major_pad=5
+    template_font_size=9
+    template_lines_linewidth=2
+    template_axes_formatter_limits=(-5, 5)
+    template_figure_subplot_left=0.15
+    template_figure_subplot_right=0.95
+    template_figure_subplot_bottom=0.2
+    template_figure_subplot_top=0.875 
+    template_figure_autolayout=False  
+
 
 class PRBPlotStyle(DefaultPlotStyle):
     """A figure Style for making figures for Phys Rev * Jounrals."""

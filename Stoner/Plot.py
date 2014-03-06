@@ -128,7 +128,7 @@ class PlotFile(DataFile):
     """
         if name=="fig":
             self.__figure=value
-            pyplot.figure(value.number)
+            self.template.new_figure(value.number)
         elif name=="labels":
             self._labels=value
         elif name=="template":
@@ -266,18 +266,17 @@ class PlotFile(DataFile):
         
         # Now try to process the figure parameter
         if isinstance(figure, int):
-            figure=pyplot.figure(figure)
+            figure=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=pyplot.figure(figure.number)
+            figure=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
         else:
-            figure=pyplot.figure()
-        
-        pyplot.figure(figure.number)
-        
+            figure=self.template.new_figure(None)
+      
+        self.__figure=figure        
         if show_plot == True:
             pyplot.ion()
         if plotter is None: #Nothing has defined the plotter to use yet
@@ -308,7 +307,6 @@ class PlotFile(DataFile):
             pyplot.savefig(str(save_filename))
         pyplot.draw()
         pyplot.show()
-        self.__figure=figure
         return self.__figure
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
@@ -344,15 +342,15 @@ class PlotFile(DataFile):
                 zcol=cols["zcol"][0]
         xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)     
         if isinstance(figure, int):
-            figure=pyplot.figure(figure)
+            figure=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=pyplot.figure(figure.number)
+            figure=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
         else:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         self.__figure=figure
         if show_plot == True:
             pyplot.ion()
@@ -538,15 +536,15 @@ class PlotFile(DataFile):
 
         #This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
-            figure=pyplot.figure(figure)
+            figure=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=pyplot.figure(figure.number)
+            figure=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
         else:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         self.__figure=figure
         if show_plot == True:
             pyplot.ion()
@@ -598,7 +596,7 @@ class PlotFile(DataFile):
 
     def draw(self):
         """Pass through to pyplot to force figure redraw"""
-        pyplot.figure(self.__figure.number)
+        self.template.new_figure(self.__figure.number)
         pyplot.draw()
 
     def show(self):
@@ -614,11 +612,11 @@ class PlotFile(DataFile):
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
-            figure=pyplot.figure()
+            figure=self.template.new_figure(None)
         elif isinstance(figure, int):
-            figure=pyplot.figure(figure)
+            figure=self.template.new_figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=pyplot.figure(figure.number)        
+            figure=self.template.new_figure(figure.number)        
         self.__figure=figure
         return self
         
@@ -638,7 +636,7 @@ class PlotFile(DataFile):
         As well as passing through to the plyplot routine of the same name, this 
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """        
-        pyplot.figure(self.__figure.number)
+        self.template.new_figure(self.__figure.number)
         sp=pyplot.subplot(*args,**kargs)
         if len(args)==1:
             rows=args[0]//100
