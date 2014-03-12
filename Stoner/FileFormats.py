@@ -457,7 +457,7 @@ class RigakuFile(DataFile):
             m=sh.match(line)
             if m:
                 key=m.groups()[0].lower().replace('_','.')
-                value=m.groups()[1]
+                value=m.groups()[1].decode('utf-8','ignore')
                 header[key]=value
         keys=header.keys()
         keys.sort()
@@ -489,7 +489,7 @@ class RigakuFile(DataFile):
                 self.metadata[key]=newvalue
         while(line!="*RAS_INT_START"):
              line=f.readline().strip()
-        self.data=numpy.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False)
+        self.data=numpy.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False,comments="*")
         self.column_headers=['Column'+str(i) for i in range(self.data.shape[1])]
         self.column_headers[0:2]=[self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
         for key in self.metadata:

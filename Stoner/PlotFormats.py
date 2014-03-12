@@ -92,6 +92,8 @@ class DefaultPlotStyle(object):
     with . and then the attributes are mapped to a dictionary and used to update the rcParams
     dictionary"""
     fig_width_pt = 433.62
+    fig_width=None
+    fig_height=None
     show_xlabel=True
     show_ylabel=True
     show_zlabel=True

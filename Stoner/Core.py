@@ -317,7 +317,7 @@ class typeHintedDict(dict):
             key (string): The metadata key to export
         Returns:
             A string of the format : key{type hint} = value"""
-        return key + "{" + self.type(key) + "}=" + str(self[key])
+        return "{}{{{}}}={}".format(key,self.type(key),self[key])
 
 
 
@@ -550,6 +550,7 @@ class DataFile(object):
             ret=newdata
         else:
             ret=NotImplemented('Failed in DataFile')
+        ret.setas=self.setas        
         return ret
 
     def __and__(self, other):
@@ -614,6 +615,7 @@ class DataFile(object):
             newdata.data = _np_.append(newdata.data, other.data, 1)
         else:
             newdata=NotImplemented
+        newdata.setas=self.setas
         return newdata
 
     def __contains__(self, item):
@@ -1103,8 +1105,8 @@ class DataFile(object):
         if isinstance(value,list):
             if len(value)> len(self.column_headers):
                 value=value[:len(self.column_headers)]
-            for v in value.lower():
-                if v not in "xyzedf.":
+            for v in value:
+                if v.lower() not in "xyzedf.":
                     raise ValueError("Set as column element is invalid: {}".format(v))
             self._setas[:len(value)]=[v.lower() for v in value]
         elif isinstance(value,string_types):

@@ -10,7 +10,7 @@ import os
 import re
 import os.path as path
 import fnmatch
-import numpy
+import numpy as _np_
 from copy import copy
 import unicodedata
 import string
@@ -37,6 +37,8 @@ class DataFolder(object):
         ls (list of strings): Returns a list of filenames (either the matched filename patterns, or
             :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
         lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+        setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.DataFile.setas` attribute for each
+            :py:class:`Stoner.Core.DataFile` in the folder.
 
     Args:
         directory (string or :py:class:`DataFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
@@ -61,6 +63,7 @@ class DataFolder(object):
     def __init__(self, *args, **kargs):
         self.files=[]
         self.groups={}
+        self._file_attrs=dict()
         if not "type" in kargs:
             self.type=DataFile
         elif issubclass(kargs["type"], DataFile):
@@ -149,8 +152,10 @@ class DataFolder(object):
                     tmp[h]=tmp.column(h)[0]
             else:
                 for h in tmp.column_headers:
-                    tmp[h]=numpy.mean(tmp.column(h))
+                    tmp[h]=_np_.mean(tmp.column(h))
         tmp['Loaded from']=f
+        for k in self._file_attrs:
+            tmp.__setattr__(k,self._file_attrs[k])
         return tmp
 
 
@@ -265,6 +270,21 @@ class DataFolder(object):
                 elif isinstance(f,DataFile):
                     ret.append(f.filename)
             return ret
+        elif item in ("setas",):
+            return __get_file_attr__(item)
+            
+    def __get_file_attr__(self,item):
+        if item in self._file_attrs:
+            return self._file_attrs[item]
+        else:
+            raise KeyError()
+            
+    def __setattr__(self,name,value):
+        """Pass through to set the sample attributes."""
+        if name in dir(DataFile()):
+            self._file_attrs[name]=value
+        super(DataFolder,self).__setattr__(name,value)
+        
 
 
     def __repr__(self):
@@ -326,7 +346,9 @@ class DataFolder(object):
             if self.multifile:
                 self._dialog()
         if isinstance(self.directory, bool) and not self.directory:
-            self._dialog()        
+            self._dialog() 
+        elif self.diretory is None:
+            self.directory=os.getcwd()
         root=self.directory
         dirs=[]
         files=[]
@@ -523,9 +545,73 @@ class DataFolder(object):
                 where f is either a DataFolder or DataFile."""
         return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
 
+    def gather(self,xcol=None,ycol=None):
+        """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.DataFile`
+        
+        Keyword Arguments:
+            xcol (index or None): Column in each file that has x data. if None, then the setas settings are used
+            ycol (index or None): Column(s) in each filwe that contain the y data. If none, then the setas settings are used.
+            
+        Notes:
+            This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.
+            
+        """
+        def _gatherer(group,trail,xcol=None,ycol=None):
+            yerr=None
+            xerr=None
+            if xcol is None and ycol is None:
+                lookup=True
+                cols=group[0]._get_cols()
+                xcol=cols["xcol"]
+                ycol=cols["ycol"]
+                if  cols["has_xerr"]:
+                    xerr=cols["xerr"]
+                if cols["has_yerr"]:
+                    yerr=cols["yerr"]
+            else:
+                lookup=False
+            xcol=group[0].find_col(xcol)
+            ycol=group[0].find_col(ycol)            
+
+            results=group.type()
+            results.metadata=group[0].metadata
+            xbase=group[0].column(xcol)
+            xtitle=group[0].column_headers[xcol]
+            results&=xbase
+            results.column_headers[0]=xtitle
+            results.setas[-1]="x"
+            for f in group:
+                if lookup:
+                    cols=f._get_cols()
+                    xcol=cols["xcol"]
+                    ycol=cols["ycol"]
+                    if cols["has_xerr"]:
+                        xerr=cols["xerr"]
+                    if cols["has_yerr"]:
+                        yerr=cols["yerr"]
+                xdata=f.column(xcol)
+                ydata=f.column(ycol)
+                if _np_.any(xdata!=xbase):
+                    results&=xdata
+                    results.column_headers[-1]=f.column_headers[xcol]
+                    xbase=xdata
+                    results.setas[-1]="x"
+                for i in range(len(ycol)):
+                    results&=ydata[:,i]
+                    results.setas[-1]="y"
+                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[ycol[i]])
+            return results
+            
+        return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
+    
     def _removeDisallowedFilenameChars(filename):
         """Utility method to clean characters in filenames
-        @param filename String filename
+        
+        Args:
+            filename (string): filename to cleanse
+            
+        Returns:
+            A filename with non ASCII characters stripped out
         """
         validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
         cleanedFilename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore')

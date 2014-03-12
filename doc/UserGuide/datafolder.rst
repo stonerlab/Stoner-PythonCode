@@ -204,6 +204,24 @@ the :py:meth:`DataFolder.add_group` method.::
 
 which will create the new group with a key of ''key_value''.
 
+Reducing Data
+-------------
+
+An important driver for the development of the :py:class:`DataFolder` class has been to aid
+data reduction tasks. The simplest form of data reduction would be to gather one or more
+columns from each of a folder of files and return it as a single large table or matrix. This task is
+easily accomplished by the :py:meth:`DataFolder.gather` method:
+
+    f.gather("X Data","Y Data")
+    f.gather("X Data",["Ydata 1","Y Data 2"])
+    f.gather()
+
+In the first two forms you specify the x column and one or more y columns. In the third form, the
+x and y columns are determined by the values from the :py:attr:`Stoner.Core.DataFile.setas` attribute.
+(you can set the value of this attribute for all files in the :py:class:`DataFolder` by setting the 
+:py:attr:`DataFolder.setas` attribute.)
+
+
 One task you might want to do would be to work through all the groups in a :py:class:`DataFolder` 
 and run some function either with each file in the group or on the whole group. This is further 
 complicated if you want to iterate over all the sub-groups within a group. The 
