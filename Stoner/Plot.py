@@ -204,14 +204,16 @@ class PlotFile(DataFile):
         and whether to plot error bars (for an x,y plot). All keyword argume nts are passed through to
         the selected plotting routine.
         """
-        cols=self._get_cols()
-        if cols["axes"]==2:
-            return self.plot_xy(**kargs)
-        elif cols["axes"]==3:
-            return self.plot_xyz(**kargs)
-        else:
-            raise RuntimeError("Unable to work out plot type !")
-
+        for x in [i for i in range(len(self.setas)) if self.setas[i]=="x"]:
+            cols=self._get_cols(startx=x)
+            kargs["_startx"]=x
+            if cols["axes"]==2:
+                ret=self.plot_xy(**kargs)
+            elif cols["axes"]==3:
+                ret=self.plot_xyz(**kargs)
+            else:
+                raise RuntimeError("Unable to work out plot type !")
+        return ret
 
     def plot_xy(self,column_x=None, column_y=None, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
         """Makes a simple X-Y plot of the specified data.
@@ -238,7 +240,12 @@ class PlotFile(DataFile):
         # and the next 'X' column or the end of the file. If the yerr keyword is specified and is Ture
         # then  we look for an equal number of matching 'e' columns for the error bars.
         if column_x is None and column_y is None:
-            cols=self._get_cols()
+            if "_startx" in kwords:
+                startx=kwords["_startx"]
+                del kwords["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
             column_x=cols["xcol"]
             column_y=cols["ycol"]
             if "xerr" not in kwords and cols["has_xerr"]:
@@ -333,7 +340,12 @@ class PlotFile(DataFile):
                 A matplotlib.figure isntance
         """
         if None in (xcol,ycol,zcol):
-            cols=self._get_cols()
+            if "_startx" in kwords:
+                startx=kwords["_startx"]
+                del kwords["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:

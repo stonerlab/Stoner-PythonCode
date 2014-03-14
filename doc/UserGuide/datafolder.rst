@@ -210,7 +210,7 @@ Reducing Data
 An important driver for the development of the :py:class:`DataFolder` class has been to aid
 data reduction tasks. The simplest form of data reduction would be to gather one or more
 columns from each of a folder of files and return it as a single large table or matrix. This task is
-easily accomplished by the :py:meth:`DataFolder.gather` method:
+easily accomplished by the :py:meth:`DataFolder.gather` method::
 
     f.gather("X Data","Y Data")
     f.gather("X Data",["Ydata 1","Y Data 2"])

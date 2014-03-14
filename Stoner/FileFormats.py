@@ -10,7 +10,7 @@ Eacg class should implement a load() method and optionally a save() method.
 from Stoner.compat import *
 import linecache
 import re
-import numpy
+import numpy as _np_
 import fileinput
 import csv
 import string
@@ -59,14 +59,14 @@ class CSVFile(DataFile):
                 raise RuntimeError("No Delimiters in header line")
             self.column_headers=[x.strip() for x in header_string.split(header_delim)]
         else:
-            self.column_headers=["Column"+str(x) for x in range(numpy.shape(self.data)[1])]
+            self.column_headers=["Column"+str(x) for x in range(_np_.shape(self.data)[1])]
             data_line=linecache.getline(self.filename,data_line)
             try:
                 data_line.index(data_delim)
             except ValueError:
                 raise RuntimeError("No delimiters in data lines")
 
-        self.data=numpy.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
+        self.data=_np_.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
         return self
 
     def save(self,filename, deliminator=','):
@@ -131,12 +131,12 @@ class VSMFile(DataFile):
         f.readline()
         f.readline()
 
-        self.data=numpy.genfromtxt(f,dtype='float',usemask=True, delimiter=data_delim,
+        self.data=_np_.genfromtxt(f,dtype='float',usemask=True, delimiter=data_delim,
                                    skip_header=data_line-1, missing_values=['         6:0','         ---'],
                                 invalid_raise=False)
         self.data=ma.mask_rows(self.data)
         cols=self.data.shape[1]
-        self.data=numpy.reshape(self.data.compressed(),(-1,cols))
+        self.data=_np_.reshape(self.data.compressed(),(-1,cols))
         f.close()
 
 
@@ -226,7 +226,7 @@ class QDSquidVSMFile(DataFile):
             self.metadata[key]=self.metadata.string_to_type(value)
             line=f.readline().strip()
         self.column_headers=f.readline().strip().split(',')
-        self.data=numpy.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
+        self.data=_np_.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
         return self
 
 class OpenGDAFile(DataFile):
@@ -267,7 +267,7 @@ class OpenGDAFile(DataFile):
         while f.readline().strip()!="&END":
             pass
         self.column_headers=f.readline().strip().split("\t")
-        self.data=numpy.genfromtxt(f,dtype='float', invalid_raise=False)
+        self.data=_np_.genfromtxt(f,dtype='float', invalid_raise=False)
         return self
 
 class RasorFile(OpenGDAFile):
@@ -312,13 +312,13 @@ class SPCFile(DataFile):
             pts=header['fnpts']
             if header['ftflgs'] & 128: # We need to read some X Data
                 xvals=f.read(4*pts) # I think storing X vals directly implies that each one is 4 bytes....
-                xdata=numpy.array(struct.unpack(str2bytes(str(pts)+"f"), xvals))
+                xdata=_np_.array(struct.unpack(str2bytes(str(pts)+"f"), xvals))
             else: # Generate the X Data ourselves
                 first=header['ffirst']
                 last=header['flast']
                 incr=(last-first)/(pts-1) # make sure we get first to last inclusive
-                xdata=numpy.arange(first, last+(incr/2), incr)
-            data=numpy.zeros((pts,  (n+1))) # initialise the data soace
+                xdata=_np_.arange(first, last+(incr/2), incr)
+            data=_np_.zeros((pts,  (n+1))) # initialise the data soace
             data[:, 0]=xdata # Put in the X-Data
             xvars=["Arbitrary","Wavenumber (cm-1)","Micrometers (um)","Nanometers (nm)","Seconds","Minutes","Hertz (Hz)","Kilohertz (KHz)","Megahertz (MHz)","Mass (M/z)","Parts per million (PPM)","Days","Years","Raman Shift (cm-1)","Raman Shift (cm-1)","eV","XYZ text labels in fcatxt (old 0x4D version only)","Diode Number","Channel","Degrees","Temperature (F)","Temperature (C)","Temperature (K)","Data Points","Milliseconds (mSec)","Microseconds (uSec)","Nanoseconds (nSec)","Gigahertz (GHz)","Centimeters (cm)","Meters (m)","Millimeters (mm)","Hours","Hours"]
             yvars=["Arbitrary Intensity","Interferogram","Absorbance","Kubelka-Monk","Counts","Volts","Degrees","Milliamps","Millimeters","Millivolts","Log(1/R)","Percent","Percent","Intensity","Relative Intensity","Energy","Decibel","Temperature (F)","Temperature (C)","Temperature (K)","Index of Refraction [N]","Extinction Coeff. [K]","Real","Imaginary","Complex","Complex","Transmission (ALL HIGHER MUST HAVE VALLEYS!)","Reflectance","Arbitrary or Single Beam with Valley Peaks","Emission","Emission"]
@@ -345,10 +345,10 @@ class SPCFile(DataFile):
                 # Now read the y-data
                 exponent=subheader["scan"+str(j)+':subexp']
                 if int(exponent) & -128: # Data is unscaled direct floats
-                    ydata=numpy.array(struct.unpack(str2bytes(str(pts)+"f"), f.read(pts*y_width)))
+                    ydata=_np_.array(struct.unpack(str2bytes(str(pts)+"f"), f.read(pts*y_width)))
                 else: # Data is scaled by exponent
                     yvals=struct.unpack(str2bytes(str(pts)+y_fmt), f.read(pts*y_width))
-                    ydata=numpy.array(yvals, dtype='float64')*(2**exponent)/divisor
+                    ydata=_np_.array(yvals, dtype='float64')*(2**exponent)/divisor
 
                 # Pop the y-data into the array and merge the matadata in too.
                 data[:, j+1]=ydata
@@ -470,31 +470,31 @@ class RigakuFile(DataFile):
                 newvalue=literal_eval(value)
             if m:
                 key=m.groups()[0]
-                if key in self.metadata and not (isinstance(self[key], numpy.ndarray) or isinstance(self[key], list)):
+                if key in self.metadata and not (isinstance(self[key], _np_.ndarray) or isinstance(self[key], list)):
                     if isinstance(self[key], str):
                         self[key]=list([self[key]])
                     else:
-                        self[key]=numpy.array(self[key])
+                        self[key]=_np_.array(self[key])
                 if key not in self.metadata:
                     if isinstance(newvalue, str):
                         self[key]=list([newvalue])
                     else:
-                        self[key]=numpy.array([newvalue])
+                        self[key]=_np_.array([newvalue])
                 else:
                     if isinstance(self[key][0], str):
                         self[key].append(newvalue)
                     else:
-                        self[key]=numpy.append(self[key], newvalue)
+                        self[key]=_np_.append(self[key], newvalue)
             else:
                 self.metadata[key]=newvalue
         while(line!="*RAS_INT_START"):
              line=f.readline().strip()
-        self.data=numpy.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False,comments="*")
+        self.data=_np_.genfromtxt(f, dtype='float', delimiter=' ', invalid_raise=False,comments="*")
         self.column_headers=['Column'+str(i) for i in range(self.data.shape[1])]
         self.column_headers[0:2]=[self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
         for key in self.metadata:
             if isinstance(self[key], list):
-                self[key]=numpy.array(self[key])
+                self[key]=_np_.array(self[key])
         return self
 
 class XRDFile(DataFile):
@@ -541,8 +541,8 @@ class XRDFile(DataFile):
                         parts=line.split(',')
                         angle=parts[0].strip()
                         counts=parts[1].strip()
-                        dataline=numpy.array([float(angle), float(counts)])
-                        self.data=numpy.append(self.data, dataline)
+                        dataline=_np_.array([float(angle), float(counts)])
+                        self.data=_np_.append(self.data, dataline)
                     else: # Other sections contain metadata
                         parts=line.split('=')
                         key=parts[0].strip()
@@ -551,7 +551,7 @@ class XRDFile(DataFile):
         self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
         f.close()# Cleanup
-        self.data=numpy.reshape(self.data, (-1, 2))
+        self.data=_np_.reshape(self.data, (-1, 2))
         return self
 
 
@@ -618,9 +618,9 @@ class BNLFile(DataFile):
         header_string=re.sub(r'#L', '', header_string) #get rid of line indicator character
         self.column_headers=map(lambda x: x.strip(),  header_string.split())
         self.__get_metadata()
-        try: self.data=numpy.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
+        try: self.data=_np_.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
         except IOError:
-            self.data=numpy.array([0])
+            self.data=_np_.array([0])
             print('Did not import any data for {}'.format(self.filename))
 
 
@@ -675,7 +675,7 @@ class FmokeFile(DataFile):
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
         self.column_headers=[ x.strip() for x in f.readline().split('\t')]
-        self.data=numpy.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
+        self.data=_np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
 class GenXFile(DataFile):
@@ -711,7 +711,67 @@ class GenXFile(DataFile):
             else:
                 raise RuntimeError("Not a GenXFile")
             self.column_headers=[f.strip() for f in line.strip().split('\t')]
-            self.data=numpy.genfromtxt(datafile)
+            self.data=_np_.genfromtxt(datafile)
             self["dataset"]=dataset
         return self
- 
+        
+class SNSFile(DataFile):
+    """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from
+    BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
+    
+    File has a large header marked up with # prefixes which include several section is []
+    Each section seems to have a slightly different format
+    
+    """
+    
+    priority=16
+    
+    def load(self,filename=None,*args, **kargs):
+        """Load function. File format has space delimited columns from row 3 onwards."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+
+        with open(self.filename,"r") as data: # Slightly ugly text handling
+            line=data.readline()
+            if line.strip()!="# Datafile created by QuickNXS 0.9.39": # bug out oif we don't like the header
+                raise RuntimeError("Not a file from the SNS BL4A line")
+            for line in data:
+                if line.startswith("# "): # We're in the header
+                    line=line[2:].strip() # strip the header and whitespace
+                
+                if line.startswith("["): # Look for a section header
+                    section=line.strip().strip("[]")
+                    if section=="Data": # The Data section has one line of colum headers and then data
+                        header=data.next()[2:].split("\t")
+                        self.column_headers=[h.strip().decode('ascii','ignore') for h in header]
+                        self.data=_np_.genfromtxt(data) # we end by reading the raw data
+                    elif section=="Global Options": # This section can go into metadata
+                        for line in data:
+                            line=line[2:].strip()
+                            if line.strip()=="":
+                                break
+                            else:
+                                self[line[2:10].strip()]=line[11:].strip()
+                    elif section=="Direct Beam Runs" or section=="Data Runs": # These are constructed into lists ofg dictionaries for each file
+                        sec=list()
+                        header=data.next()
+                        header=header[2:].strip()
+                        keys = [s.strip() for s in header.split('  ') if s.strip()]
+                        for line in data:
+                            line=line[2:].strip()
+                            if line=="":
+                                break
+                            else:
+                                values = [s.strip() for s in line.split('  ') if s.strip()]
+                                sec.append(dict(zip(keys,values)))
+                        self[section]=sec
+                else: # We must still be in the opening un-labelled section of meta data
+                    if ":" in line:
+                        i=line.index(":")
+                        key=line[:i].strip()
+                        value=line[i+1:].strip()
+                        self[key.strip()]=value.strip()
+        return self
+                

@@ -843,12 +843,12 @@ class DataFile(object):
             else:
                 maxcol=len(self.column_headers)+1
         try:
-            xerr=self._setas[startx:maxcol-startx].index("d")+startx
+            xerr=self._setas[startx:maxcol].index("d")+startx
         except ValueError:
             xerr=None
         ycol=list()
         yerr=list()
-        starty=startx
+        starty=xcol
         has_yerr=False
         while True:
             try:
@@ -863,7 +863,7 @@ class DataFile(object):
             starty=ycol[-1]+1            
         zcol=list()
         zerr=list()
-        startz=startx
+        startz=xcol
         has_zerr=False
         while True:
             try:
