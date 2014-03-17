@@ -12,7 +12,7 @@
    Loading and Examining Data <datafile>
    Plotting Data <plotfile>
    Manipilating and Analysing Data <analysisfile>
-   Workign with Lots of Data Files <datafolder>
+   Working with Lots of Data Files <datafolder>
    Cookbook <cookbook>
    Developing and Extending <developer>
 

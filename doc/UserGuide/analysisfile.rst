@@ -215,10 +215,10 @@ the main thing is that the function must take an x array and a list of parameter
 return the resulting array.  
  
 More AnalyseFile Functions
---------------------------
+==========================
 
 Applying an arbitary function through the data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------
 
 :py:meth:`AnalyseFile.apply`::
 
@@ -229,7 +229,7 @@ is the index of a column at which the resulting data is to be inserted or overwr
 existing data (depending on the values of *replace* and *header*).
 
 Basic Data Inspection
-^^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`::
 
@@ -264,25 +264,68 @@ bounds function::
 
    a.span(column,bounds=lambda x,y:y[2]>10 or not numpy.any(y.mask))
 
+Data Reduction Methods
+======================
+
+:py:class:`AnalyseFile` offers a number of methods to assist in data reduction and data processing.
+
+(Re)Binning Data
+----------------
+
+Data binning is the process of taking approximately continuous (x,y) data and grouping them into "bins" of specified x, and average y. Since
+this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.
+
+:py:class:`AnalyseFile` provides a simple :py:meth:`AnalyseFile.bin` method that can re-bin data::
+
+   (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=100,mode="lin")
+   (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=0.02,mode="log",yerr="dCounts")
+   (x_bin,y_bin,dy)=a.bin(mode="log",bins=0.02,bin_start=0.001,bin_stop=0.1)
+
+The mode parameter controls whether linear binning or logarithmic binning is used. The bins parameter is either an integer
+in which case it specifies the number of bins to be used, or a float in which case it specifies the bin width. For logarithmic binning
+the bin width for bin n is defined as :math:`x_n * w` with :math:`w` being the bin width parameter. Thus the bin boundaries are at
+:math:`x_n` and :math:`x_{n+1}=x_n(1+w)` whilst the bin centre is at :math:`x_n(1+\frac{w}{2})`. If a number of bins is specified in logarithmic mode
+then the bin boundaries are set from equal logspace boundaries.
+
+If the keyword **yerr** is supplied then the y values in each bin are weighted by their respective error bars when calculating the mean. In this case the
+error bar on the bin bceomes the quadrature sum of the individual error bars on each point included in the bin. If **yerr** is nopt specified, then the error bar
+is the standard error in the y points in the bin and the y value is the simple mean of the data.
+
+If **xcol** and/or **ycol** are not specified, then they are looked up from the :py:attr:`Stoner.Core.DataFile.setas` attribute. In this case, the **yerr**
+is also taken from this attribute if not specified spearately.
+
+Three 1D numpy arrays are returned, representing the x, y and y-errors for the new bins.
+
 Thresholding and Interpolating Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
-:py:meth:`AnalyseFile.threshold`::
+Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
+:math:`y=f(x)-y_{threshold}`). This is carried out by the :py:meth:`AnalyseFile.threshold` method::
 
-   a.threshold(col, threshold, rising=True, falling=False,all_vals=False)
+   a.threshold(threshold, col="Y-data", rising=True, falling=False,all_vals=False,xcol="X-data")
+   a.threshold(threshold)
 
-:py:meth:`AnalyseFile.interpolate`::
+If the parameters **col** and **xcol** are not given, they are determined by the :py:attr:`Stoner.Core.DataFile.setas` attribute. The **rising** and **falling**
+parameters control whether the y values are rising or falling with row number as they pass the threshold and **all_vals** determines whether the method returns
+just the first threshold or all thresholds it can find. The values returned are mapped to the x-column data if it is specified. The thresholding uses just a simple
+two point linear fit to find the thresholds.
 
-   a.interpolate(newX,kind='linear' )
+Interpolating data finds values of y for points x that lie between data points. The :py:meth:`AnalyseFile.interpolate` provides a simple pass-through to the
+scipy routine :py:func:`scipy.optimize.interp1d`::
+
+   a.interpolate(newX,kind='linear', xcol="X-Data")
+
+The new values of X are set from the mandetory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the 
+:py:attr:`Stoner.Core.DataFile.setas` attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.
 
 Smoothing and Differentiating Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------------
 
 .. todo::
    Writeup these functions
 
 Peak Finding
-^^^^^^^^^^^^
+------------
 
 .. todo::
    Write up these functions

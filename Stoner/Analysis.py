@@ -358,6 +358,7 @@ class AnalyseFile(DataFile):
 
         ybin=_np_.zeros(len(bin_left))
         ebin=_np_.zeros(len(bin_left))
+        nbins=_np_.zeros(len(bin_left))
         xcol=self.find_col(xcol)
         ycol=self.find_col(ycol)
         if yerr is not None:
@@ -369,15 +370,17 @@ class AnalyseFile(DataFile):
             if yerr is not None:
                 w=1.0/data[:,yerr]**2
                 W=_np_.sum(w)
+                e=1.0/_np_.sqrt(W)
             else:
                 w=_np_.ones(data.shape[0])
                 W=data.shape[0]
-            y=_np_.sum(data[:,ycol]*(w/W))/data.shape[0]
-            e=1.0/_np_.sqrt(W)
+                e=_np_.std(data[:,ycol])/_np_.sqrt(W)
+            y=_np_.sum(data[:,ycol]*(w/W))
             ybin[i]=y
             ebin[i]=e
+            nbins[i]=data.shape[0]
             i+=1
-        return (bin_centres,ybin,ebin)
+        return (bin_centres,ybin,ebin,nbins)
 
     def chi2mapping(self, ini_file, func):
         """Non-linear fitting using the :py:mod:`Stoner.nlfit` module

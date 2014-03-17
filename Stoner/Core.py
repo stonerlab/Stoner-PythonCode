@@ -1762,11 +1762,11 @@ class DataFile(object):
         rows=[]
         for (r,x) in zip(range(len(self)),self.column(xcol)):
             if isinstance(value,tuple):
-                if value[0]<=x<=value[1]:
+                if value[0]<=x<value[1]:
                     rows.append(r)
             elif isinstance(value,list):
                 for v in value:
-                    if isinstance(v,tuple) and v[0]<=x<=v[1]:
+                    if isinstance(v,tuple) and v[0]<=x<v[1]:
                         rows.append(r)
                         break
                     elif isinstance(v,float) and x==v:

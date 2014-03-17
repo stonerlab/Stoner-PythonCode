@@ -10,6 +10,7 @@ Created on Fri Feb 07 19:57:30 2014
 from Stoner.compat import *
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter,Formatter
+from matplotlib.ticker import AutoLocator
 
 import numpy as _np_
 
@@ -99,6 +100,10 @@ class DefaultPlotStyle(object):
     show_zlabel=True
     show_title=True
     show_legend=True
+    xformatter=TexFormatter
+    yformatter=TexFormatter
+    xlocater=AutoLocator
+    ylocater=AutoLocator
     templat_axes_labelsize=12
     template_text_fontsize=12
     template_legend_fontsize=10
@@ -191,10 +196,13 @@ class DefaultPlotStyle(object):
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
         """
+        ax.xaxis.set_major_locator(self.xlocater())
+        ax.yaxis.set_major_locator(self.ylocater())
         ax.set_xticklabels(ax.get_xticks(),size=self.template_xtick_labelsize)
         ax.set_yticklabels(ax.get_yticks(),size=self.template_ytick_labelsize)
-        ax.xaxis.set_major_formatter(TexFormatter())
-        ax.yaxis.set_major_formatter(TexFormatter())
+        ax.xaxis.set_major_formatter(self.xformatter())
+        ax.yaxis.set_major_formatter(self.yformatter())
+        
         
         
     def annotate(self,plot,**kargs):

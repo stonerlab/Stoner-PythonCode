@@ -8,8 +8,8 @@ A common case is that you have measured lots of data curves and now have a large
 files sitting in a tree of folders on disc and now need to process all of them with some code. 
 The :py:class:`DataFolder` class is designed to make it easier to process lots of files.
 
-Getting a List of Files
-========================
+Building a (virtual) Folder of Data Files
+=========================================
 
 The first thing you probably want to do is to get a list of data files in a directory 
 (possibly including its subdirectories) and probably matching some sort of filename pattern.::
@@ -30,18 +30,20 @@ argument - otherwise the current duirectory will be used.::
 
    f=DataFolder('/home/phygbu/Data',pattern='*.tdi')
 
+If you pass False into the constructor as the first argument then the :py:class:`DataFolder` will
+display a dialog box to let you choose a directory. If you add a 'multifile=True' keyword argument
+then you can use the dialog box to select multiple individual files.
+
+Any other keyword arguments that are not attributes of :py:class:`DataFolder` are instead passed to the
+constructor for the individual :py:class:`Stoner.Core.DataFile` instances as they are loaded from disc. This,
+for example, can allow one to set the default :py:attr:`Stoner.Core.DataFile.setas` attribute for each file.
+
 By default the :py:class:`DataFolder` constructor will perform a recursive drectory listing of 
 the working folder. Each sub-directory is given a separate *group* within the structure. 
-This allows the :py:class:`DataFolder` to logically represent the on-disc layout of the files. 
-The resulting list of files can be accessed via the :py:attr:`DataFolder.files` attribute 
-and sub groups with the :py:attr:`DataFolder.group` attribute (see :ref:`groups`::
+This allows the :py:class:`DataFolder` to logically represent the on-disc layout of the files.
 
-   f.files
-
-.. warning::
-   In some circumstances entries in the :py:attr:`DataFolder.files` attribute can be 
-   :py:class:`Stoner.Core.DataFile` objects rather than strings. If you want to ensure 
-   that you get a list of strings representing the filenames, use :py:attr:`DataFolder.ls` instead.
+Manipulating the File List in a Folder
+======================================
 
 If you don't want the file listing to be recursive, this can be suppressed by using the *recursive*
  keyword argument and the file listing can be suppressed altogether with the *nolist* keyword::
@@ -56,6 +58,34 @@ no data files in them.::
 
 	f.prune()
 	f.flatten()
+
+If you need to combine multiple :py:class:`DataFolder` objects or add :py:class:`Stoner.Core.DataFile`
+objects to an existing :py:ckass:`DataFolder` then the arithmetic addition operator can be used::
+
+   f2=DataFolder('/data/test1')
+   f3=DataFolder('/data/test2')
+   f=f2+f3
+
+    f+=DataFile('/data/test3/special.txt')
+
+
+Getting a List of Files
+========================
+
+The resulting list of files can be accessed via the :py:attr:`DataFolder.files` attribute 
+and sub groups with the :py:attr:`DataFolder.group` attribute (see :ref:`groups`::
+
+   f.files
+   f.groups
+
+.. warning::
+   In some circumstances entries in the :py:attr:`DataFolder.files` attribute can be 
+   :py:class:`Stoner.Core.DataFile` objects rather than strings. If you want to ensure 
+   that you get a list of strings representing the filenames, use :py:attr:`DataFolder.ls` instead.
+
+
+Controlling the Gathering of the List of Files
+==============================================
 
 The current root directory and pattern are stored in the *directory* and *pattern* keywords and the
 :py:math:`DataFolder.getlist` method can be used to force a new listing of files.::
@@ -86,9 +116,8 @@ the metadata when the file was read.
    :py:class:`DataFlder`. 
 
 The loading process will also add the metadata key ''Loaded From'' to the file which will give you a 
-note of the filename used to read the data. Finally, akin to :py:class:`Stoner.Core.DataFile` you 
-can force a dialog box to select a directory by passing **False** into the constructor or 
-:py:meth:DataFolder.getlist` methods in place of a directory name.
+note of the filename used to read the data. If the attribute :py:attr:`DataFoilder.read_means` is set to **True**
+then additional metadata is set for each file that contains the mean value of each column of data.
 
 Doing Something With Each File
 ===============================
