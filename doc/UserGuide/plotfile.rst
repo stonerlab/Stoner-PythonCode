@@ -10,7 +10,7 @@ publication ready figures.::
    import Stoner.Plot as plot
    p=plot.PlotFile(d)
 
-The first line imports the :py:mod:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's namespace is 
+The first line imports the :py:mod:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's name-space is 
 imported when the Stoner package as a whole is imported. The second line creates an instance of the :py:class:`PlotFile` class. 
 PlotFile inherits the constructor method of :[y:class:`Stoner.Core.DataFile` and so all the variations detailed above work with 
 PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance 
@@ -20,7 +20,7 @@ Quick Plots
 ===========
 
 :py:class:`PlotFile` is intended to help you make plots that look reasonably good with as little hassle as possible.
-In common with many graph plottig programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
+In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
 for containing error bars. This is done with the :py:attr:`DataFile.setas` attribute. Once this is done, the plotting methods will use these to try to make a sensible plot.::
 
    p.setas="xye"
@@ -83,8 +83,8 @@ these on a surface plot or 3D plot. The :py:meth:`PlotFile.plot_xyz` method can 
     p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
     p.plot_xyz(col_x,col_y,col_z,xlim=(-10,10,100),ylim=(-10,10,100))
 
-By default the :py:meth:`PlotFile.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colourmap 
-(specifically, the matplotlib provided *matplotlib.cm.jet* colourmap. This can be overriden with the *cmap* keyword 
+By default the :py:meth:`PlotFile.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map 
+(specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overriden with the *cmap* keyword 
 parameter. If a simple 2D surface plot is required, then the *plotter* parameter should be set to a suitable function 
 such as **pyplot.pcolor**.
 
@@ -166,7 +166,7 @@ Setting Axes Labels, Plot Titles and Legends
 Plot Templates
 --------------
 
-Frrequently one wishes to create many plots that have a similar set of formatting options - for example 
+Frequently one wishes to create many plots that have a similar set of formatting options - for example 
 in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.PlotFormats` in conjunctions with
 the :py:attr:`PlotFile.template` attribute can help here.
 

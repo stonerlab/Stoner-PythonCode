@@ -57,9 +57,9 @@ In these examples we assume the :py:class:`AnalyseFile` has a data column 'Polar
 and a column 'Temperature' that contains numbers above and below 100.
 
 The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalyseFile`  which
-would each contain the rows from the orginal data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature abobe and below 100.
-The final example will result in a :py:class:`Stoners.Folder.DataFolder` object that has two groups each of which contains 
+would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
+produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature above and below 100.
+The final example will result in a :py:class:`Stoner.Folder.DataFolder` object that has two groups each of which contains 
 :py:class:`AnalyseFile` objects for each polarisation value.
 
 Curve Fitting
@@ -80,8 +80,8 @@ is a list or slice. The *polynomial_order* parameter should be a simple integer
 greater or equal to 1 to define the degree of polynomial to fit. The *bounds*
 function follows the same rules as the *bounds* function in
 :py:meth:`Stoner.Core.DataFile.search` to restrict the fitting to a limited range of rows. The
-method returns a list of co-efficients with the highest power first. If
-*column_y* was a list, then a 2D array of co-efficients is returned.
+method returns a list of coefficients with the highest power first. If
+*column_y* was a list, then a 2D array of coefficients is returned.
 
 If *result* is specified then a new column with the header given by the *result* parameter will be 
 created and the fitted polynomial evaluated at each point.
@@ -134,7 +134,7 @@ is a list of the fitting parameters and *func_args* provides a
 dictionary of fixed \ie non-fitting parameters. *xcol* and *ycol*
 are the column indices for the x and y data, *bounds* is a bounding
 function to select only those rows to use for fitting the function, and
-*sigma* are the weightings for each datapoint. The remaining arguments
+*sigma* are the weightings for each data-point. The remaining arguments
 are a dictionary of keywords to pass through to the :py:mod:`Stoner.mpfit` routine and
 *p_info* which is a list of dictionaries which is used to control the
 parameters in the fit. This described below.
@@ -322,7 +322,7 @@ Smoothing and Differentiating Data
 -----------------------------------
 
 .. todo::
-   Writeup these functions
+   Write up these functions
 
 Peak Finding
 ------------

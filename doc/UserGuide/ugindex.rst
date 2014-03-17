@@ -11,7 +11,7 @@
    Introduction and Installation <install>
    Loading and Examining Data <datafile>
    Plotting Data <plotfile>
-   Manipilating and Analysing Data <analysisfile>
+   Manipulating and Analysing Data <analysisfile>
    Working with Lots of Data Files <datafolder>
    Cookbook <cookbook>
    Developing and Extending <developer>

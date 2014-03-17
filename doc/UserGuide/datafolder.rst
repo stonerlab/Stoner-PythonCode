@@ -143,10 +143,10 @@ or even more compacts::
    f[0]
    f['filename']
 
-For the second case of indexing, the cose will search the list of filenames for a matching file 
+For the second case of indexing, the cose will search the list of file names for a matching file 
 and return that (roughly equivalent to doing ``f.files.index("filename")]``)
 
-If you want to know the filenames of all the files in the :py:class:`DataFolder` then there is a 
+If you want to know the filename of all the files in the :py:class:`DataFolder` then there is a 
 handy attributes::
 
     f.ls
@@ -159,7 +159,7 @@ of the filename whilst :py:attr:`DataFolder.ls` returns the complete path from t
 Sorting, Filtering and Grouping Data Files
 ==========================================
 
-The order of the files in a :py:class:`DataFolder` is arbitary. If it is important to process 
+The order of the files in a :py:class:`DataFolder` is arbitrary. If it is important to process 
 them in a given order then the :py:math:`DataFolder.sort` method can be used::
 
    f.sort()
@@ -204,13 +204,13 @@ data curves taken at a variety of temperatures and with three different magnetic
 
 The :py:meth:`DataFolder.group` method splits the files in the :py:class:`DataFolder` into several 
 groups each of which share a common value of the arguement supplied to the :py:meth:`DataFolder.group` 
-method. A group is itself another isntanceinstance of the :py:class:`DataFolder` class. Each 
+method. A group is itself another instance of the :py:class:`DataFolder` class. Each 
 :py:class:`DataFolder` object maintains a dictionary called :py:attr:`DataFolder.groups` whose keys 
 are the distinct values of the argument of the :py:meth:`DataFolder.group` methods and whose values are 
 :py:class:`DataFolder` objects. So, if our :py:class:`DataFolder` *f* contained files measured at 
 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and 
-300 each one of which would be a :py:class:`DataFolder` object containg the files measured at those 
-temperatures. The second varaint would produce 2 groups -- ''postive'' containing the files measured with 
+300 each one of which would be a :py:class:`DataFolder` object congaing the files measured at those 
+temperatures. The second variant would produce 2 groups -- ''positive'' containing the files measured with 
 magnetic field of 1T and ''negative'' containing the files measured at -1T. The third variant then goes 
 one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed 
 via the :py:attr:`DataFolder.group` attribute::
@@ -221,7 +221,7 @@ would return a list of the files measured at 4.2K and 1T.
 
 If you try indexing a :py:class:`DataFolder` with a string and there is no file with as its filename 
 and there is a group with a key of the same string then :py:clkass:`DataFolder` will return the 
-correspondign group. This allows a more compact navigation through an xtended group structure.::
+corresponding group. This allows a more compact navigation through an extended group structure.::
 
     f.group(['project','sample','device'])
     f['ASF']['ASF038']['A']
