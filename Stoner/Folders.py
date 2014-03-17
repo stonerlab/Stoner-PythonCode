@@ -61,6 +61,7 @@ class DataFolder(object):
     """
     def __init__(self, *args, **kargs):
         self.files=[]
+        self.read_means=False
         self.groups={}
         self._file_attrs=dict()
         if not "type" in kargs:
@@ -161,7 +162,18 @@ class DataFolder(object):
             else:
                 return [walker(f,breadcrumb,**walker_args) for f in self]
 
-
+    def __add__(self,other):
+        """Implement the addition operator for DataFolder and DataFiles."""
+        result=copy(self)        
+        if isinstance(other,DataFolder):
+            result.files.extend([self.type(f) for f in other.files])
+            result.groups.update(other.groups)
+        elif isinstance(other,DataFile):
+            result.files.append(self.type(other))
+        else:
+            result=NotImplemented
+        return result
+    
     def __delitem__(self,item):
         """Deelte and item or a group from the DataFolder
 
@@ -170,12 +182,16 @@ class DataFolder(object):
                 If item is an int, then assume that it is a file index
                 otherwise it is assumed to be a group key
         """
-        if isinstance(item, (str,unicode)) and item in self.groups:
+        if isinstance(item, string_types) and item in self.groups:
             del self.groups[item]
         elif isinstance(item, int):
             del self.files[item]
+        elif isinstance(item, slice):
+            indices = item.indices(len(self))
+            for i in reversed(range(*indices)):
+                del self.files[i]
         else:
-            raise NotImplemented
+            return NotImplemented
 
 
     def __get_file_attr__(self,item):
@@ -206,7 +222,7 @@ class DataFolder(object):
             for x in self.files:
                 if isinstance(x,DataFile):
                     ret.append(path.basename(x.filename))
-                elif isinstance(x,(str,unicode)):
+                elif isinstance(x,string_types):
                     ret.append(path.basename(x))
             return ret
         elif item=="lsgrp":
@@ -214,14 +230,15 @@ class DataFolder(object):
         elif item=="ls":
             ret=[]
             for f in self.files:
-                if isinstance(f,(str,unicode)):
+                if isinstance(f,string_types):
                     ret.append(f)
                 elif isinstance(f,DataFile):
                     ret.append(f.filename)
             return ret
         elif item in ("setas",):
             return __get_file_attr__(item)
-
+        else:
+            return super(DataFolder,self).__getattribute__(item)
 
     def __getitem__(self, i):
         """Load and returen DataFile type objects based on the filenames in self.files
@@ -242,7 +259,7 @@ class DataFolder(object):
             files=self.files[i]
             tmp=self.__read__(files)
             return tmp            
-        elif isinstance(i, (str,unicode)): # Ok we've done a DataFolder['filename']
+        elif isinstance(i, string_types): # Ok we've done a DataFolder['filename']
             try:
                 i=self.ls.index(i)
                 return self.__read__(self.files[i])
@@ -251,6 +268,9 @@ class DataFolder(object):
                     i=self.basenames.index(i)
                 except ValueError:
                     return self.groups[i]
+        elif isinstance(i, slice):
+            indices = i.indices(len(self))
+            return [self[i] for i in range(*indices)]     
         else:
             return self.groups[i]
 
@@ -323,6 +343,23 @@ class DataFolder(object):
             self._file_attrs[name]=value
         super(DataFolder,self).__setattr__(name,value)
 
+    def __sub__(self,other):
+        """Implements a subtraction operator."""
+        result=copy(self)        
+        to_del=list()
+        if isinstance(other,DataFolder):
+            for f in other.ls:
+                if f in result.ls:
+                    to_del.append(result.ls.index(f))
+            for i in to_del.sort(reverse=True):
+                del result[i]
+        elif isinstance(other,DataFile) and other.filename in result.ls:
+            del result[result.ls.index(other.filename)]
+        elif isinstance(other,string_types) and other in result.ls:
+            del result[result.ls.index(other)]
+        else:
+            result=NotImplemented
+        return result
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -335,7 +372,7 @@ class DataFolder(object):
             A directory to be used for the file operation."""
         from enthought.pyface.api import FileDialog, DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
-        if isinstance(self.directory, (str,unicode)):
+        if isinstance(self.directory, string_types):
             dirname = self.directory
         else:
             dirname = os.getcwd()
@@ -520,12 +557,12 @@ class DataFolder(object):
             xtitle=group[0].column_headers[xcol]
             results&=xbase
             results.column_headers[0]=xtitle
-            results.setas[-1]="x"
+            setas=["x"]
             if cols["has_xerr"]:
                 xerrdata=group[0].column(xerr)
                 results&=xerrdata
                 results.column_headers[-1]="Error in {}".format(xtitle)
-                results.setas[-1]="d"
+                setas.append("d")
             for f in group:
                 if lookup:
                     cols=f._get_cols()
@@ -538,35 +575,35 @@ class DataFolder(object):
                     results&=xdata
                     results.column_headers[-1]=f.column_headers[xcol]
                     xbase=xdata
-                    results.setas[-1]="x"
+                    setas.append("x")
                     if cols["has_xerr"]:
                         xerr=cols["xerr"]
                         if _np_.any(f.column(xerr)!=xerrdata):
                             xerrdata=f.column(xerr)
                             results&=xerrdata
                             results.column_headers[-1]="Error in {}".format(xtitle)
-                            results.setas[-1]="d"
+                            setas.append("d")
                 for i in range(len(ycol)):
                     results&=ydata[:,i]
-                    results.setas[-1]="y"
+                    setas.append("y")
                     results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[ycol[i]])
                     if cols["has_yerr"]:
                         yerr=cols["yerr"][i]
                         results&=f.column(yerr)
                         results.column_headers[-1]="Error in {}".format(results.column_headers[-2])
-                        results.setas[-1]="e"
+                        setas.append("e")
                 if len(zcol)>0:
                     zdata=f.column(zcol)
                     for i in range(len(zcol)):
                         results&=zdata[:,i]
-                        results.setas[-1]="z"
+                        setas.append("z")
                         results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zcol[i]])
                         if cols["has_zerr"]:
                             yerr=cols["zerr"][i]
                             results&=f.column(zerr)
                             results.column_headers[-1]="Error in {}".format(results.column_headers[-2])
-                            results.setas[-1]="f"
-
+                            setas.append("f")
+            results.setas=setas
             return results
             
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
@@ -651,7 +688,7 @@ class DataFolder(object):
             key=key[0]
         else:
             next_keys=[]
-        if isinstance(key, (str,unicode)):
+        if isinstance(key, string_types):
             k=key
             key=lambda x:x.get(k)
         for f in self.files:
@@ -744,7 +781,7 @@ class DataFolder(object):
 
         Returns:
             A copy of the current DataFolder object"""
-        if isinstance(key, (str,unicode)):
+        if isinstance(key, string_types):
             k=[(self[i].get(key),i) for i in range(len(self.files))]
             k=sorted(k,reverse=reverse)
             self.files=[self.files[y] for (x,y) in k]

@@ -11,7 +11,6 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
 import sys
-import re
 
 def cov2corr(M):
     """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc
@@ -50,13 +49,53 @@ class AnalyseFile(DataFile):
 
     """
 
-    def __dir__(self):
-        """Handles the local attributes as well as the inherited ones"""
-        attr=dir(type(self))
-        attr.extend(super(AnalyseFile,self).__dir__())
-        attr.extend(list(self.__dict__.keys()))
-        attr=list(set(attr))
-        return sorted(attr)
+    def SG_Filter(self, col=None, points=15, poly=1, order=0,result=None, replace=False, header=None):
+        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
+
+        Args:
+            col (index): Column of Data to be filtered
+            prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
+
+        Keyword Arguments:
+            poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
+            order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
+
+        Returns:
+            A numpy array representing the smoothed or differentiated data.
+
+        Notes:
+            If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
+            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
+            for differentiating data.
+        """
+        from Stoner.Util import ordinal
+        if col is None:
+            cols=self._get_cols()
+            col=(cols["xcol"],cols["ycols"][0])
+        p=points
+        if isinstance(col, tuple):
+            x=self.column(col[0])
+            x=_np_.append(_np_.array([x[0]]*p), x)
+            x=_np_.append(x, _np_.array([x[-1]]*p))
+            y=self.column(col[1])
+            y=_np_.append(_np_.array([y[0]]*p), y)
+            y=_np_.append(y, _np_.array([y[-1]]*p))
+            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
+            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
+            r=dy/dx
+        else:
+            d=self.column(col)
+            d=_np_.append(_np_.array([d[0]]*p),d)
+            d=_np_.append(d, _np_.array([d[-1]]*p))
+            r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
+        if result is not None:
+            if not isinstance(header, string_types):
+                header='{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],ordinal(order))
+            if isinstance(result, bool) and result:
+                result=self.shape[1]-1
+                self.add_column()
+
+        return r[p:-p]
 
 
     def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
@@ -97,6 +136,7 @@ class AnalyseFile(DataFile):
 
         return coeff
 
+
     def __SG_smooth(self, signal, coeff):
         """ applies coefficients calculated by calc_coeff() to signal
 
@@ -107,32 +147,6 @@ class AnalyseFile(DataFile):
         res = _np_.convolve(signal, coeff)
         return res[N:-N]
 
-    def __threshold(self, threshold, data, rising=True, falling=False):
-        """ Internal function that implements the threshold method - also used in peak-finder
-
-        Args:
-            threshold (float): Threshold valuye in data to look for
-            rising (bool): Find points where data is rising up past threshold
-            falling (bool): Find points where data is falling below the threshold
-
-        Returns:
-            A numpy array of fractional indices where the data has crossed the threshold assuming a
-            straight line interpolation between two points.
-        """
-        current=data
-        previous=_np_.roll(current, 1)
-        index=_np_.arange(len(current))
-        sdat=_np_.column_stack((index, current, previous))
-        if rising==True and falling==False:
-            expr=lambda x:(x[1]>=threshold) & (x[2]<threshold)
-        elif rising==True and falling==True:
-            expr=lambda x:((x[1]>=threshold) & (x[2]<threshold)) | ((x[1]<=threshold) & (x[2]>threshold))
-        elif rising==False and falling==True:
-            expr=lambda x:(x[1]<=threshold) & (x[2]>threshold)
-        else:
-            expr=lambda x:False
-        intr=lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2])
-        return _np_.array([intr(x) for x in sdat if expr(x) and intr(x)>0])
 
     def __get_math_val(self,col):
         """Utility routine to interpret col as either a column index or value or an array of values.
@@ -160,7 +174,8 @@ class AnalyseFile(DataFile):
         else:
             raise RuntimeError("Bad column index: {}".format(col))
         return data,name
-    
+
+
     def __mpf_fn(self, p, **fa):
         """Internal routine for general non-linear least squeares fitting.
 
@@ -193,62 +208,213 @@ class AnalyseFile(DataFile):
         status = 0
         return [status, (y-model)/err]
 
-    def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
-        """Function that is called on every iteration of the non-linerar fitting
+
+    def __threshold(self, threshold, data, rising=True, falling=False):
+        """ Internal function that implements the threshold method - also used in peak-finder
 
         Args:
-            myfunct (callable): Function being modelled
-            iteration (int): Iteration number
-            fnorm (list): ?
-            functkw (dictionary): Keywords being passed to the user function
-            parinfo (list of dicts): PArameter informatuion
-            quiet (int): 0 to suppress output
-            dof (float): Figure of merit ?
+            threshold (float): Threshold valuye in data to look for
+            rising (bool): Find points where data is rising up past threshold
+            falling (bool): Find points where data is falling below the threshold
 
-        Note:
-            This functionb just prints a full stop for every iteration.
-
+        Returns:
+            A numpy array of fractional indices where the data has crossed the threshold assuming a
+            straight line interpolation between two points.
         """
-        sys.stdout.write('.')
-        sys.stdout.flush()
+        current=data
+        previous=_np_.roll(current, 1)
+        index=_np_.arange(len(current))
+        sdat=_np_.column_stack((index, current, previous))
+        if rising==True and falling==False:
+            expr=lambda x:(x[1]>=threshold) & (x[2]<threshold)
+        elif rising==True and falling==True:
+            expr=lambda x:((x[1]>=threshold) & (x[2]<threshold)) | ((x[1]<=threshold) & (x[2]>threshold))
+        elif rising==False and falling==True:
+            expr=lambda x:(x[1]<=threshold) & (x[2]>threshold)
+        else:
+            expr=lambda x:False
+        intr=lambda x:x[0]-1+(x[1]-threshold)/(x[1]-x[2])
+        return _np_.array([intr(x) for x in sdat if expr(x) and intr(x)>0])
 
 
-    def polyfit(self,xcol=None,ycol=None,polynomial_order=2, bounds=lambda x, y:True, result=None,replace=False,header=None):
-        """ Pass through to numpy.polyfit
+    def __dir__(self):
+        """Handles the local attributes as well as the inherited ones"""
+        attr=dir(type(self))
+        attr.extend(super(AnalyseFile,self).__dir__())
+        attr.extend(list(self.__dict__.keys()))
+        attr=list(set(attr))
+        return sorted(attr)
 
-            Args:
-                xcol (index): Index to the column in the data with the X data in it
-                ycol (index): Index to the column int he data with the Y data in it
-                polynomial_order: Order of polynomial to fit (default 2)
-                bounds (callable): A function that evaluates True if the current row should be included in the fit
-                result (index or None): Add the fitted data to the current data object in a new column (default don't add)
-                replace (bool): Overwrite or insert new data if result is not None (default False)
-                header (string or None): Name of column_header of replacement data. Default is construct a string from the y column headser and polynomial order.
 
-            Returns:
-                The best fit polynomial as a numpy.poly object.
-                
-            Note:
-                If the x or y columns are not specified (or are None) the the setas attribute is used instead.
-                
-                This method is depricated and may be removed in a future version in favour of the more general curve_fit
-            """
-        from Stoner.Util import ordinal
+    def add(self, a, b, replace=False, header=None):
+        """Add one column, number or array (b) to another column (a)
 
+        Args:
+            a (index): First column to work with
+            b (index, float or 1D array):  Second column to work with.
+
+        Keyword Arguments:
+            header (string or None): new column header  (defaults to a-b
+            replace (bool): Replace the a column with the new data
+
+        Returns:
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+        a=self.find_col(a)
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
+        else:
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}+{}".format(aname,bname)
+        if err_calc is not None and err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata+bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
+        return self
+
+
+    def apply(self, func, col, replace=True, header=None):
+        """Applies the given function to each row in the data set and adds to the data set
+
+        Args:
+            func (callable): A function that takes a numpy 1D array representing each row of data
+            col (index): The column in which to place the result of the function
+
+        Keyword Arguments:
+            replace (bool): Isnert a new data column (False) or replace the data column (True, default)
+            header (string or None): The new column header (defaults to the name of the function func
+
+        Returns:
+            A copy of the current instance
+        """
+        col=self.find_col(col)
+        nc=_np_.zeros(len(self))
+        i=0
+        for r in self.rows():
+            nc[i]=func(r)
+            i+=1
+        if header==None:
+            header=func.__name__
+        if replace!=True:
+            self=self.add_column(nc, header, col)
+        else:
+            self.data[:, col]=_np_.reshape(nc, -1)
+            self.column_headers[col]=header
+        return self
+
+    def bin(self,xcol=None,ycol=None,bins=0.03,mode="log",**kargs):
+        """Bin x-y data into new values of x with an error bar
+        
+        Args:
+            xcol (index): Index of column of data with X values
+            ycol (index): Index of column of data with Y values
+            bins (int or float): Number of bins (if integer) or size of bins (if float)
+            mode (string): "log" or "lin" for logarithmic or linear binning
+            
+        Keyword Arguments:
+            yerr (index): Column with y-error data if present.
+            bin_start (float): Manually override the minimum bin value
+            bin_stop (float): Manually override the maximum bin value
+            
+        Returns:
+            n x 3 array of x-bin, y-bin, y-bin-error where n is the number of bins
+            
+        Note:
+            Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
+            Michael Lindholm Nielsen
+        """
+
+        if "yerr" in kargs:
+            yerr=kargs["yerr"]
+        else:
+            yerr=None
+        
         if None in (xcol,ycol):
             cols=self._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
                 ycol=cols["ycol"][0]
+            if "yerr" not in kargs and cols["has_yerr"]:
+                yerr=cols["yerr"][0]
+                
+        bin_left,bin_right,bin_centres=self.make_bins(xcol,bins,mode,**kargs)
+
+        ybin=_np_.zeros(len(bin_left))
+        ebin=_np_.zeros(len(bin_left))
+        xcol=self.find_col(xcol)
+        ycol=self.find_col(ycol)
+        if yerr is not None:
+            yerr=self.find_col(yerr)
+        i=0
         
-        working=self.search(xcol, bounds)
-        p= _np_.polyfit(working[:, self.find_col(xcol)],working[:, self.find_col(ycol)],polynomial_order)
-        if result is not None:
-            if header is None:
-                header="Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, self.column(xcol)), index=result, replace=replace, column_header=header)
-        return p
+        for limits in zip(bin_left,bin_right):
+            data=self.search(xcol,limits)
+            if yerr is not None:
+                w=1.0/data[:,yerr]**2
+                W=_np_.sum(w)
+            else:
+                w=_np_.ones(data.shape[0])
+                W=data.shape[0]
+            y=_np_.sum(data[:,ycol]*(w/W))/data.shape[0]
+            e=1.0/_np_.sqrt(W)
+            ybin[i]=y
+            ebin[i]=e
+            i+=1
+        return (bin_centres,ybin,ebin)
+
+    def chi2mapping(self, ini_file, func):
+        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
+
+        Args:
+            ini_file (string): Path to ini file with model
+            func_name (string or callable): Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
+                or the function itself.
+
+        ReturnsL
+            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled), DataFile instance of parameter steps"""
+        return Stoner.nlfit.nlfit(ini_file, func, data=self, chi2mapping=True)
+
+
+    def clip(self, clipper,column=None):
+        """Clips the data based on the column and the clipper value
+
+        Args:
+            column (index): Column to look for the maximum in
+            clipper (tuple or array): Either a tuple of (min,max) or a numpy.ndarray -
+                in which case the max and min values in that array will be
+                used as the clip limits
+        Returns:
+            This instance."
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+        """
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
+        clipper=(min(clipper), max(clipper))
+        self=self.del_rows(col, lambda x, y:x<clipper[0] or x>clipper[1])
+        return self
+
 
     def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
         """General curve fitting function passed through from scipy
@@ -322,141 +488,7 @@ class AnalyseFile(DataFile):
             for i in range(len(popt)):
                 rc=_np_.append(rc,[popt[i],_np_.sqrt(pcov[i,i])])
             return rc
-    def max(self, column=None, bounds=None):
-        """FInd maximum value and index in a column of data
 
-        Args:
-            column (index): Column to look for the maximum in
-
-        Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
-
-        Returns:
-            (maximum value,row index of max value)
-            
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-        """
-        if column is None:
-            col=self._get_cols("ycol")
-        else:
-            col=self.find_col(column)
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, col)
-        result=self.data[:, col].max(), self.data[:, col].argmax()
-        if bounds is not None:
-            self._pop_mask()
-        return result
-
-    def min(self, column=None, bounds=None):
-        """FInd minimum value and index in a column of data
-
-        Args:
-            column (index): Column to look for the maximum in
-
-        Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
-
-        Returns:
-            (minimum value,row index of min value)
-
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-
-                """
-        if column is None:
-            col=self._get_cols("ycol")
-        else:
-            col=self.find_col(column)
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, col)
-        result=self.data[:, col].min(), self.data[:, col].argmin()
-        if bounds is not None:
-            self._pop_mask()
-        return result
-
-    def span(self, column=None, bounds=None):
-        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
-
-        Args:
-            column (index): Column to look for the maximum in
-
-        Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
-
-        Returns:
-            A tuple of (min value, max value)
-            
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-
-        """
-        return (self.min(column, bounds)[0], self.max(column, bounds)[0])
-
-    def clip(self, clipper,column=None):
-        """Clips the data based on the column and the clipper value
-
-        Args:
-            column (index): Column to look for the maximum in
-            clipper (tuple or array): Either a tuple of (min,max) or a numpy.ndarray -
-                in which case the max and min values in that array will be
-                used as the clip limits
-        Returns:
-            This instance."
-
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-        """
-        if column is None:
-            col=self._get_cols("ycol")
-        else:
-            col=self.find_col(column)
-        clipper=(min(clipper), max(clipper))
-        self=self.del_rows(col, lambda x, y:x<clipper[0] or x>clipper[1])
-        return self
-
-
-
-    def mean(self, column=None, bounds=None):
-        """FInd mean value of a data column
-
-        Args:
-            column (index): Column to look for the maximum in
-
-        Keyword Arguments:
-            bounds (callable): A callable function that takes a single argument list of
-                numbers representing one row, and returns True for all rows to search in.
-
-        Returns:
-            The mean of the data.
-
-        Note:
-            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
-            assignments are used.
-
-        .. todo::
-            Fix the row index when the bounds function is used - see note of \b max
-        """
-        if column is None:
-            col=self._get_cols("ycol")
-        else:
-            col=self.find_col(column)
-        if bounds is not None:
-            self._push_mask()
-            self._set_mask(bounds, True, col)
-        result=self.data[:, col].mean()
-        if bounds is not None:
-            self._pop_mask()
-        return result
 
     def diffsum(self, a, b, replace=False, header=None):
         """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums
@@ -499,117 +531,6 @@ class AnalyseFile(DataFile):
             self.add_column(err_data,err_header,a+1,replace=False)
         return self
 
-    def normalise(self, target, base, replace=True, header=None):
-        """Normalise data columns by dividing through by a base column value.
-
-        Args:
-            target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
-            base (index): The column to normalise to, can be an integer or string
-
-        Keyword Arguments:
-            replace (bool): Set True(default) to overwrite  the target data columns
-            header (string or None): The new column header - default is target name(norm)
-
-        Returns:
-            A copy of the current object
-            
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data."""
-
-        if not isinstance(target, list):
-            target=[self.find_col(target)]
-        for t in target:
-            if header is None:
-                header=self.column_headers[self.find_col(t)]+"(norm)"
-            else:
-                header=str(header)
-            self.divide(t,base,header=header,replace=replace)                
-        return self
-
-    def subtract(self, a, b, replace=False, header=None):
-        """Subtract one column, number or array (b) from another column (a)
-
-        Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
-
-        Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
-
-        Returns:
-            A copy of the new data object
-            
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data."""
-            
-        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
-            (a,e1)=a
-            (b,e2)=b
-            e1data=self.__get_math_val(e1)[0]
-            e2data=self.__get_math_val(e2)[0]
-            err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
-        else:
-            err_calc=None                
-        adata,aname=self.__get_math_val(a)
-        bdata,bname=self.__get_math_val(b)
-        if isinstance(header,tuple) and len(header)==0:
-            header,err_header=header
-        if header is None:
-            header="{}-{}".format(aname,bname)
-        if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
-        if err_calc is not None:
-            err_data=err_calc(adata,bdata,e1data,e2data)
-        self.add_column((adata-bdata), header, a, replace=replace)
-        if err_calc is not None:
-            self.add_column(err_data,err_header,a+1,replace=False)
-        return self
-
-    def add(self, a, b, replace=False, header=None):
-        """Add one column, number or array (b) to another column (a)
-
-        Args:
-            a (index): First column to work with
-            b (index, float or 1D array):  Second column to work with.
-
-        Keyword Arguments:
-            header (string or None): new column header  (defaults to a-b
-            replace (bool): Replace the a column with the new data
-
-        Returns:
-            A copy of the new data object
-            
-        If a and b are tuples of length two, then the firstelement is assumed to be the value and
-        the second element an uncertainty in the value. The uncertainties will then be propagated and an
-        additional column with the uncertainites will be added to the data."""
-        a=self.find_col(a)
-        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
-            (a,e1)=a
-            (b,e2)=b
-            e1data=self.__get_math_val(e1)[0]
-            e2data=self.__get_math_val(e2)[0]
-            err_header=None
-            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
-        else:
-            err_calc=None                
-        adata,aname=self.__get_math_val(a)
-        bdata,bname=self.__get_math_val(b)
-        if isinstance(header,tuple) and len(header)==0:
-            header,err_header=header
-        if header is None:
-            header="{}+{}".format(aname,bname)
-        if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
-        if err_calc is not None:
-            err_data=err_calc(adata,bdata,e1data,e2data)
-        self.add_column((adata+bdata), header, a, replace=replace)
-        if err_calc is not None:
-            self.add_column(err_data,err_header,a+1,replace=False)
-        return self
 
     def divide(self, a, b, replace=False, header=None):
         """Divide one column (a) by  another column, number or array (b)
@@ -651,6 +572,302 @@ class AnalyseFile(DataFile):
         if err_calc is not None:
             self.add_column(err_data,err_header,a+1,replace=False)
         return self
+
+
+    def integrate(self,xcol=None,ycol=None,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
+        """Inegrate a column of data, optionally returning the cumulative integral
+
+        Args:
+            xcol (index): The X data column index (or header)
+            ycol (index) The Y data column index (or header)
+
+        Keyword Arguments:
+            result (index or None): Either a column index (or header) to overwrite with the cumulative data, 
+                or True to add a new column or None to not store the cumulative result.
+            result_name (string): The new column header for the results column (if specified)
+            bounds (callable): A function that evaluates for each row to determine if the data should be integrated over.
+            kargs: Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
+
+        Returns:
+            The final integration result
+
+        Note:
+            This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
+            to offer a variety of methods including simpson's rule and interpolation of data. If xcol or ycol are not specified then
+            the current values from the :py:attr:`Stoner.Core.DataFile.setas` attribute are used.
+            
+            
+            """        
+        if xcol is None or ycol is None:
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"]
+        working=self.search(xcol, bounds)
+        working=ma.mask_rowcols(working,axis=0)
+        xdat=working[:,self.find_col(xcol)]
+        ydat=working[:,self.find_col(ycol)]
+        final=[]
+        for i in range(ydat.shape[1]):
+            yd=ydat[:,i]
+            resultdata=cumtrapz(xdat,yd,**kargs)
+            resultdata=_np_.append(_np_.array([0]),resultdata)
+            if result is not None:
+                if isinstance(result,bool) and result:
+                    self.add_column(resultdata,result_name,replace=False)
+                else:
+                    result_name=self.column_headers[self.find_col(result)]
+                    self.add_column(resultdata,result_name,index=result,replace=(i==0))
+            final.append(resultdata[-1])
+        if len(final)==1:
+            final=final[0]
+        else:
+            final=_np_.array(final)
+        return final
+
+
+    def interpolate(self, newX,kind='linear', xcol=None ):
+        """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
+
+        Args:
+            ewX (1D array): Row indices or X column values to interpolate with
+
+        Keyword Arguments:
+            kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
+            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
+
+        Returns:
+            2D numpy array representing a section of the current object's data.
+
+        Note:
+            Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
+            Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
+        """
+        l=_np_.shape(self.data)[0]
+        index=_np_.arange(l)
+        if xcol is None:
+            xcol=self._get_cols("xcol")
+        if xcol is not None: # We need to convert newX to row indices
+            xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
+            newX=xfunc(newX)
+        inter=interp1d(index, self.data, kind, 0)
+        return inter(newX)
+
+    def make_bins(self,xcol,bins,mode,**kargs):
+        """Utility method to generate bin boundaries and centres along an axis.
+        
+        Args:
+            xcol (index): Column of data with X values
+            bins (int or float): Number of bins (int) or width of bins (if float)
+            mode (string): "lin" for linear binning, "log" for logarithmic binning.
+            
+        Keyword Arguments:
+            bin_start (float): Override minimum bin value
+            bin_stop (float): Override the maximum bin value
+            
+        Returns:
+            bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
+                boundaries and centres for each bin.
+        """
+        (xmin,xmax)=self.span(xcol)
+        if "bin_start" in kargs:
+            xmin=kargs["bin_start"]
+        if "bin_stop" in kargs:
+            xmax=kargs["bin_stop"]
+        if isinstance(bins,int): # Given a number of bins
+            if mode.lower()=="lin":
+                bin_width=float(xmax-xmin)/bins
+                bin_start=linspace(xmin,xmax-bin_width,bins)
+                bin_stop=linspace(xmin+bin_width,xmax,bins)
+                bin_centres=(bin_start+bin_stop)/2.0
+            elif mode.lowerlower()=="log":
+                xminl=_np_.log(xmin)
+                xmaxl=_np_.log(xmax)
+                bin_width=float(xmaxl-xminl)/bins
+                bin_start=linspace(xminl,xmaxl-bin_width,bins)
+                bin_stop=linspace(xminl+bin_width,xmaxl,bins)
+                bin_centres=(bin_start+bin_stop)/2.0
+                bin_start=_np_.exp(bin_start)
+                bin_stop=_np_.exp(bin_stop)
+                bin_centres=_np_.exp(bin_centres)
+        elif isinstance(bins,float): # Given a bin with as a flot
+            if mode.lower()=="lin":
+                bin_width=bins
+                bins=_np_.ceil(float(xmin-xmax)/bins)
+                bin_start=linspace(xmin,xmax-bin_width,bins)
+                bin_stop=linspace(xmin+bin_width,xmax,bins)
+                bin_centres=(bin_start+bin_stop)/2.0
+            elif mode.lower()=="log":
+                if not 0.0<bins<=1.0:
+                    raise ValueError("Bin width must be between 0 ans 1 for log binning")
+                xp=xmin
+                splits=[]
+                centers=[]
+                while xp<xmax:
+                    splits.append(xp)
+                    centers.append(xp*(1+bins/2))
+                    xp=xp*(1+bins)
+                splits.append(xmax)
+                bin_start=_np_.array(splits[:-1])
+                bin_stop=_np_.array(splits[1:])
+                bin_centres=_np_.array(centers)
+        if len(bin_start)>len(self):
+            raise ValueError("Attempting to bin into more bins than there is data.")
+        return bin_start,bin_stop,bin_centres
+
+
+
+    def max(self, column=None, bounds=None):
+        """FInd maximum value and index in a column of data
+
+        Args:
+            column (index): Column to look for the maximum in
+
+        Keyword Arguments:
+            bounds (callable): A callable function that takes a single argument list of
+                numbers representing one row, and returns True for all rows to search in.
+
+        Returns:
+            (maximum value,row index of max value)
+            
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+        """
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].max(), self.data[:, col].argmax()
+        if bounds is not None:
+            self._pop_mask()
+        return result
+
+
+    def mean(self, column=None, bounds=None):
+        """FInd mean value of a data column
+
+        Args:
+            column (index): Column to look for the maximum in
+
+        Keyword Arguments:
+            bounds (callable): A callable function that takes a single argument list of
+                numbers representing one row, and returns True for all rows to search in.
+
+        Returns:
+            The mean of the data.
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
+        .. todo::
+            Fix the row index when the bounds function is used - see note of \b max
+        """
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].mean()
+        if bounds is not None:
+            self._pop_mask()
+        return result
+
+
+    def min(self, column=None, bounds=None):
+        """FInd minimum value and index in a column of data
+
+        Args:
+            column (index): Column to look for the maximum in
+
+        Keyword Arguments:
+            bounds (callable): A callable function that takes a single argument list of
+                numbers representing one row, and returns True for all rows to search in.
+
+        Returns:
+            (minimum value,row index of min value)
+
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
+                """
+        if column is None:
+            col=self._get_cols("ycol")
+        else:
+            col=self.find_col(column)
+        if bounds is not None:
+            self._push_mask()
+            self._set_mask(bounds, True, col)
+        result=self.data[:, col].min(), self.data[:, col].argmin()
+        if bounds is not None:
+            self._pop_mask()
+        return result
+
+
+    def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
+        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
+
+                mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
+
+        Args:
+            func (callable): Fitting function def func(x,parameters, **func_args)
+            xcol, ycol (index): index the x and y data sets
+            p_info (list of dictionaries): Defines the fitting parameters
+
+        Keyword Arguments:
+            sigma (index): weights of the data poiints. If not specified, then equal weighting assumed
+            bounds (callable): function that takes x,y pairs and returns true if to be used in the fitting
+            **mpfit_kargs: other lkeywords passed straight to mpfit
+
+        Returns:
+            Best fit parameters
+        """
+        from .mpfit import mpfit
+        if sigma==None:
+            working=self.search(xcol, bounds, [xcol, ycol])
+            x=working[:, 0]
+            y=working[:, 1]
+            sigma=_np_.ones(_np_.shape(y), _np_.float64)
+        else:
+            working=self.search(xcol, bounds, [xcol, ycol, sigma])
+            x=working[:, 0]
+            y=working[:, 1]
+            sigma=working[:, 2]
+        func_args["x"]=x
+        func_args["y"]=y
+        func_args["err"]=sigma
+        func_args["func"]=func
+        m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
+        return m
+
+
+    def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
+        """Function that is called on every iteration of the non-linerar fitting
+
+        Args:
+            myfunct (callable): Function being modelled
+            iteration (int): Iteration number
+            fnorm (list): ?
+            functkw (dictionary): Keywords being passed to the user function
+            parinfo (list of dicts): PArameter informatuion
+            quiet (int): 0 to suppress output
+            dof (float): Figure of merit ?
+
+        Note:
+            This functionb just prints a full stop for every iteration.
+
+        """
+        sys.stdout.write('.')
+        sys.stdout.flush()
+
 
     def mulitply(self, a, b, replace=False, header=None):
         """Multiply one column (a) by  another column, number or array (b)
@@ -694,34 +911,158 @@ class AnalyseFile(DataFile):
             self.add_column(err_data,err_header,a+1,replace=False)
         return self
 
-    def apply(self, func, col, replace=True, header=None):
-        """Applies the given function to each row in the data set and adds to the data set
+
+    def nlfit(self, ini_file, func):
+        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
 
         Args:
-            func (callable): A function that takes a numpy 1D array representing each row of data
-            col (index): The column in which to place the result of the function
-
-        Keyword Arguments:
-            replace (bool): Isnert a new data column (False) or replace the data column (True, default)
-            header (string or None): The new column header (defaults to the name of the function func
+            ini_file (string): path to ini file with model
+            func (string or callable):Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
+                    or function instance to fit with
 
         Returns:
-            A copy of the current instance
+            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled in the inifile)
         """
-        col=self.find_col(col)
-        nc=_np_.zeros(len(self))
-        i=0
-        for r in self.rows():
-            nc[i]=func(r)
-            i+=1
-        if header==None:
-            header=func.__name__
-        if replace!=True:
-            self=self.add_column(nc, header, col)
-        else:
-            self.data[:, col]=_np_.reshape(nc, -1)
-            self.column_headers[col]=header
+        return Stoner.nlfit.nlfit(ini_file, func, data=self)
+
+
+    def normalise(self, target, base, replace=True, header=None):
+        """Normalise data columns by dividing through by a base column value.
+
+        Args:
+            target (index): One or more target columns to normalise can be a string, integer or list of strings or integers.
+            base (index): The column to normalise to, can be an integer or string
+
+        Keyword Arguments:
+            replace (bool): Set True(default) to overwrite  the target data columns
+            header (string or None): The new column header - default is target name(norm)
+
+        Returns:
+            A copy of the current object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+
+        if not isinstance(target, list):
+            target=[self.find_col(target)]
+        for t in target:
+            if header is None:
+                header=self.column_headers[self.find_col(t)]+"(norm)"
+            else:
+                header=str(header)
+            self.divide(t,base,header=header,replace=replace)                
         return self
+
+
+    def peaks(self, ycol=None, width=None, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
+        """Locates peaks and/or troughs in a column of data by using SG-differentiation.
+
+        Args:
+            ycol (index): is the column name or index of the data in which to search for peaks
+            width (float): is the expected minium halalf-width of a peak in terms of the number of data points.
+                This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
+                to experimental noise, smaller means better eable to see sharp peaks
+            poly (int): This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
+                will find sharper peaks more accurately but at the risk of finding more false positives.
+
+        Keyword Arguments:
+            significance (float): is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+                of the data. Bigger means less sensistive, smaller means more likely to detect noise.
+            xcol (index or None): name or index of data column that p[rovides the x-coordinate (default None)
+            peaks (bool): select whether to measure peaks in data (default True)
+            troughs (bool): select whether to measure troughs in data (default False)
+            sort (bool): Sor the results by significance of peak
+
+        Returns:
+            If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
+            """
+            
+        if ycol is None:
+            ycol=self._get_cols("ycol")
+            xcol=self._get_cols("xcol")
+        if width is None: # Set Width to be length of data/20
+            width=len(self)/20
+        assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+        if significance is None: # Guess the significance based on the range of y and width settings
+            dm=self.max(ycol)[0]
+            dp=self.min(ycol)[0]
+            dm=dm-dp
+            significance=0.2*dm/(4*width**2)
+        d1=self.SG_Filter(ycol, width, poly, 1)
+        i=_np_.arange(len(d1))
+        d2=interp1d(i, self.SG_Filter(ycol, width, poly, 2))
+        if xcol==None:
+            xcol=i
+        else:
+            xcol=self.column(xcol)
+        index=interp1d(i, xcol)
+        w=abs(xcol[0]-xcol[width]) # Approximate width of our search peak in xcol
+        z=_np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
+        z=[zv for zv in z if zv>w/2.0 and zv<max(xcol)-w/2.0] #Throw out peaks or troughts too near the ends
+        if sort:
+            z=_np_.take(z, _np_.argsort(d2(z)))
+        return index([x for x in z if _np_.abs(d2(x))>significance])
+
+
+    def polyfit(self,xcol=None,ycol=None,polynomial_order=2, bounds=lambda x, y:True, result=None,replace=False,header=None):
+        """ Pass through to numpy.polyfit
+
+            Args:
+                xcol (index): Index to the column in the data with the X data in it
+                ycol (index): Index to the column int he data with the Y data in it
+                polynomial_order: Order of polynomial to fit (default 2)
+                bounds (callable): A function that evaluates True if the current row should be included in the fit
+                result (index or None): Add the fitted data to the current data object in a new column (default don't add)
+                replace (bool): Overwrite or insert new data if result is not None (default False)
+                header (string or None): Name of column_header of replacement data. Default is construct a string from the y column headser and polynomial order.
+
+            Returns:
+                The best fit polynomial as a numpy.poly object.
+                
+            Note:
+                If the x or y columns are not specified (or are None) the the setas attribute is used instead.
+                
+                This method is depricated and may be removed in a future version in favour of the more general curve_fit
+            """
+        from Stoner.Util import ordinal
+
+        if None in (xcol,ycol):
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+        
+        working=self.search(xcol, bounds)
+        p= _np_.polyfit(working[:, self.find_col(xcol)],working[:, self.find_col(ycol)],polynomial_order)
+        if result is not None:
+            if header is None:
+                header="Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],ordinal(polynomial_order))
+            self.add_column(_np_.polyval(p, self.column(xcol)), index=result, replace=replace, column_header=header)
+        return p
+
+
+    def span(self, column=None, bounds=None):
+        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
+
+        Args:
+            column (index): Column to look for the maximum in
+
+        Keyword Arguments:
+            bounds (callable): A callable function that takes a single argument list of
+                numbers representing one row, and returns True for all rows to search in.
+
+        Returns:
+            A tuple of (min value, max value)
+            
+        Note:
+            If column is not defined (or is None) the :py:attr:`DataFile.setas` column
+            assignments are used.
+
+        """
+        return (self.min(column, bounds)[0], self.max(column, bounds)[0])
+
 
     def split(self,xcol=None,func=None):
         """Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows
@@ -785,53 +1126,48 @@ class AnalyseFile(DataFile):
             out.files=[files[k] for k in sorted(files.keys())]
         return out
 
-    def SG_Filter(self, col=None, points=15, poly=1, order=0,result=None, replace=False, header=None):
-        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
+
+    def subtract(self, a, b, replace=False, header=None):
+        """Subtract one column, number or array (b) from another column (a)
 
         Args:
-            col (index): Column of Data to be filtered
-            prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
+            a (index): First column to work with
+            b (index, float or 1D array):  Second column to work with.
 
         Keyword Arguments:
-            poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
-            order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
+            header (string or None): new column header  (defaults to a-b
+            replace (bool): Replace the a column with the new data
 
         Returns:
-            A numpy array representing the smoothed or differentiated data.
-
-        Notes:
-            If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
-            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
-            for differentiating data.
-        """
-        from Stoner.Util import ordinal
-        if col is None:
-            cols=self._get_cols()
-            col=(cols["xcol"],cols["ycols"][0])
-        p=points
-        if isinstance(col, tuple):
-            x=self.column(col[0])
-            x=_np_.append(_np_.array([x[0]]*p), x)
-            x=_np_.append(x, _np_.array([x[-1]]*p))
-            y=self.column(col[1])
-            y=_np_.append(_np_.array([y[0]]*p), y)
-            y=_np_.append(y, _np_.array([y[-1]]*p))
-            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
-            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
-            r=dy/dx
+            A copy of the new data object
+            
+        If a and b are tuples of length two, then the firstelement is assumed to be the value and
+        the second element an uncertainty in the value. The uncertainties will then be propagated and an
+        additional column with the uncertainites will be added to the data."""
+            
+        if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
+            (a,e1)=a
+            (b,e2)=b
+            e1data=self.__get_math_val(e1)[0]
+            e2data=self.__get_math_val(e2)[0]
+            err_header=None
+            err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
         else:
-            d=self.column(col)
-            d=_np_.append(_np_.array([d[0]]*p),d)
-            d=_np_.append(d, _np_.array([d[-1]]*p))
-            r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
-        if result is not None:
-            if not isinstance(header, string_types):
-                header='{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],ordinal(order))
-            if isinstance(result, bool) and result:
-                result=self.shape[1]-1
-                self.add_column()
-
-        return r[p:-p]
+            err_calc=None                
+        adata,aname=self.__get_math_val(a)
+        bdata,bname=self.__get_math_val(b)
+        if isinstance(header,tuple) and len(header)==0:
+            header,err_header=header
+        if header is None:
+            header="{}-{}".format(aname,bname)
+        if err_calc is not None and err_header is None:
+            err_header="Error in "+header            
+        if err_calc is not None:
+            err_data=err_calc(adata,bdata,e1data,e2data)
+        self.add_column((adata-bdata), header, a, replace=replace)
+        if err_calc is not None:
+            self.add_column(err_data,err_header,a+1,replace=False)
+        return self
 
 
     def threshold(self, threshold,col=None, rising=True, falling=False,xcol=None,all_vals=False,transpose=False):
@@ -883,195 +1219,3 @@ class AnalyseFile(DataFile):
             return ret
         else:
             return ret[0]
-
-    def interpolate(self, newX,kind='linear', xcol=None ):
-        """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
-
-        Args:
-            ewX (1D array): Row indices or X column values to interpolate with
-
-        Keyword Arguments:
-            kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
-            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
-
-        Returns:
-            2D numpy array representing a section of the current object's data.
-
-        Note:
-            Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
-            Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
-        """
-        from scipy.interpolate import interp1d
-        l=_np_.shape(self.data)[0]
-        index=_np_.arange(l)
-        if xcol is None:
-            xcol=self._get_cols("xcol")
-        if xcol is not None: # We need to convert newX to row indices
-            xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
-            newX=xfunc(newX)
-        inter=interp1d(index, self.data, kind, 0)
-        return inter(newX)
-
-    def peaks(self, ycol=None, width=None, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
-        """Locates peaks and/or troughs in a column of data by using SG-differentiation.
-
-        Args:
-            ycol (index): is the column name or index of the data in which to search for peaks
-            width (float): is the expected minium halalf-width of a peak in terms of the number of data points.
-                This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
-                to experimental noise, smaller means better eable to see sharp peaks
-            poly (int): This is the order of polynomial to use when differentiating the data to locate a peak. Must >=2, higher numbers
-                will find sharper peaks more accurately but at the risk of finding more false positives.
-
-        Keyword Arguments:
-            significance (float): is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
-                of the data. Bigger means less sensistive, smaller means more likely to detect noise.
-            xcol (index or None): name or index of data column that p[rovides the x-coordinate (default None)
-            peaks (bool): select whether to measure peaks in data (default True)
-            troughs (bool): select whether to measure troughs in data (default False)
-            sort (bool): Sor the results by significance of peak
-
-        Returns:
-            If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
-            """
-            
-        if ycol is None:
-            ycol=self._get_cols("ycol")
-            xcol=self._get_cols("xcol")
-        if width is None: # Set Width to be length of data/20
-            width=len(self)/20
-        assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
-        if significance is None: # Guess the significance based on the range of y and width settings
-            dm=self.max(ycol)[0]
-            dp=self.min(ycol)[0]
-            dm=dm-dp
-            significance=0.2*dm/(4*width**2)
-        d1=self.SG_Filter(ycol, width, poly, 1)
-        i=_np_.arange(len(d1))
-        d2=interp1d(i, self.SG_Filter(ycol, width, poly, 2))
-        if xcol==None:
-            xcol=i
-        else:
-            xcol=self.column(xcol)
-        index=interp1d(i, xcol)
-        w=abs(xcol[0]-xcol[width]) # Approximate width of our search peak in xcol
-        z=_np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
-        z=[zv for zv in z if zv>w/2.0 and zv<max(xcol)-w/2.0] #Throw out peaks or troughts too near the ends
-        if sort:
-            z=_np_.take(z, _np_.argsort(d2(z)))
-        return index([x for x in z if _np_.abs(d2(x))>significance])
-
-    def integrate(self,xcol=None,ycol=None,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
-        """Inegrate a column of data, optionally returning the cumulative integral
-
-        Args:
-            xcol (index): The X data column index (or header)
-            ycol (index) The Y data column index (or header)
-
-        Keyword Arguments:
-            result (index or None): Either a column index (or header) to overwrite with the cumulative data, 
-                or True to add a new column or None to not store the cumulative result.
-            result_name (string): The new column header for the results column (if specified)
-            bounds (callable): A function that evaluates for each row to determine if the data should be integrated over.
-            kargs: Other keyword arguements are fed direct to the scipy.integrate.cumtrapz method
-
-        Returns:
-            The final integration result
-
-        Note:
-            This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
-            to offer a variety of methods including simpson's rule and interpolation of data. If xcol or ycol are not specified then
-            the current values from the :py:attr:`Stoner.Core.DataFile.setas` attribute are used.
-            
-            
-            """        
-        if xcol is None or ycol is None:
-            cols=self._get_cols()
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"]
-        working=self.search(xcol, bounds)
-        working=ma.mask_rowcols(working,axis=0)
-        xdat=working[:,self.find_col(xcol)]
-        ydat=working[:,self.find_col(ycol)]
-        final=[]
-        for i in range(ydat.shape[1]):
-            yd=ydat[:,i]
-            resultdata=cumtrapz(xdat,yd,**kargs)
-            resultdata=_np_.append(_np_.array([0]),resultdata)
-            if result is not None:
-                if isinstance(result,bool) and result:
-                    self.add_column(resultdata,result_name,replace=False)
-                else:
-                    result_name=self.column_headers[self.find_col(result)]
-                    self.add_column(resultdata,result_name,index=result,replace=(i==0))
-            final.append(resultdata[-1])
-        if len(final)==1:
-            final=final[0]
-        else:
-            final=_np_.array(final)
-        return final
-
-    def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
-        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
-
-                mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
-
-        Args:
-            func (callable): Fitting function def func(x,parameters, **func_args)
-            xcol, ycol (index): index the x and y data sets
-            p_info (list of dictionaries): Defines the fitting parameters
-
-        Keyword Arguments:
-            sigma (index): weights of the data poiints. If not specified, then equal weighting assumed
-            bounds (callable): function that takes x,y pairs and returns true if to be used in the fitting
-            **mpfit_kargs: other lkeywords passed straight to mpfit
-
-        Returns:
-            Best fit parameters
-        """
-        from .mpfit import mpfit
-        if sigma==None:
-            working=self.search(xcol, bounds, [xcol, ycol])
-            x=working[:, 0]
-            y=working[:, 1]
-            sigma=_np_.ones(_np_.shape(y), _np_.float64)
-        else:
-            working=self.search(xcol, bounds, [xcol, ycol, sigma])
-            x=working[:, 0]
-            y=working[:, 1]
-            sigma=working[:, 2]
-        func_args["x"]=x
-        func_args["y"]=y
-        func_args["err"]=sigma
-        func_args["func"]=func
-        m = mpfit(self.__mpf_fn, parinfo=p_info,functkw=func_args, **mpfit_kargs)
-        return m
-
-    def nlfit(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
-
-        Args:
-            ini_file (string): path to ini file with model
-            func (string or callable):Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                    or function instance to fit with
-
-        Returns:
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled in the inifile)
-        """
-        return Stoner.nlfit.nlfit(ini_file, func, data=self)
-
-    def chi2mapping(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
-
-        Args:
-            ini_file (string): Path to ini file with model
-            func_name (string or callable): Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                or the function itself.
-
-        ReturnsL
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled), DataFile instance of parameter steps"""
-        return Stoner.nlfit.nlfit(ini_file, func, data=self, chi2mapping=True)
-
-

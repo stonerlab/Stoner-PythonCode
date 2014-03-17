@@ -550,7 +550,9 @@ class DataFile(object):
             ret=newdata
         else:
             ret=NotImplemented('Failed in DataFile')
-        ret.setas=self.setas        
+        for attr in self.__dict__:
+            if attr not in ("metadata","data","column_headers","mask") and not attr.startswith("_"):
+                ret.__dict__[attr]=self.__dict__[attr]      
         return ret
 
     def __and__(self, other):
@@ -573,49 +575,53 @@ class DataFile(object):
             length of the :py:meth:`column_headers` is
             increased to match the actual number of columns.
         """
+        #Prep the final DataFile
         newdata=self.__class__(self.clone)
         if len(newdata.data.shape)<2:
             newdata.data=_np_.atleast_2d(newdata.data)
-        if isinstance(other, _np_.ndarray):
-            if len(other.shape) != 2:  # 1D array, make it 2D column
-                other = _np_.atleast_2d(other)
-                other = other.T
-            if _np_.product(self.data.shape)==0: #Special case no data yet
-                newdata.data=other
-                newdata.column_headers=["Coumn "+str(i) for i in range(other.shape[1])]
-            elif self.data.shape[0]==other.shape[0]:
-                newdata.data=_np_.append(newdata.data,other,1)
-                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
-            elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
-                newdata.data=_np_.append(self.data,_np_.zeros((other.shape[0]-self.data.shape[0],self.data.shape[1])),0)
-                newdata.data=_np_.append(self.data,other,1)
-                newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
-            else:                    # DataFile + array with correct number of rows
-                if other.shape[0] < self.data.shape[0]:
-                    # too few rows we can extend with zeros
-                    other = _np_.append(other, _np_.zeros((self.data.shape[0]
-                                    - other.shape[0], other.shape[1])), 0)
-                newdata.column_headers.extend([""
-                                               for x in range(other.shape[1])])
-                newdata.data = _np_.append(self.data, other, 1)
-        elif isinstance(other, DataFile):  # Appending another datafile
-            if len(other.data.shape)<2:
-                other=other.clone
-                other.data=_np_.atleast_2d(other.data)
-            (myrows,mycols)=newdata.data.shape
-            (yourrows,yourcols)=other.data.shape
-            if myrows>yourrows:
-                other=other.clone
-                other.data=_np_.append(other.data,_np_.zeros((myrows-yourrows,yourcols)),0)
-            elif myrows<yourrows:
-                newdata.data=_np_.append(newdata.data,_np_.zeros((yourrows-myrows,mycols)),0)
 
-            newdata.column_headers.extend(other.column_headers)
+        #Get other to be a numpy masked array of data
+        if isinstance(other,DataFile):
             newdata.metadata.update(other.metadata)
-            newdata.data = _np_.append(newdata.data, other.data, 1)
+            newdata.column_headers.extend(other.column_headers)
+            other=copy.copy(other.data)
+        elif isinstance(other, _np_.ndarray):
+            other=_ma_.array(copy.copy(other))
         else:
             newdata=NotImplemented
-        newdata.setas=self.setas
+                        
+            
+        if len(other.shape) != 2:  # 1D array, make it 2D column
+            other = _np_.atleast_2d(other)
+            other = other.T
+        if _np_.product(self.data.shape)==0: #Special case no data yet
+            newdata.data=other
+        elif self.data.shape[0]==other.shape[0]:
+            newdata.data=_np_.append(newdata.data,other,1)
+        elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
+            extra_rows=other.shape[0]-self.data.shape[0]
+            newdata.data=_np_.append(self.data,_np_.zeros((extra_rows,self.data.shape[1])),0)
+            new_mask=newdata.mask
+            new_mask[-extra_rows:,:]=True
+            newdata.data=_np_.append(newdata.data,other,1)
+            other_mask=_ma_.getmaskarray(other)
+            new_mask=_np_.append(new_mask,other_mask,1)
+            newdata.mask=new_mask
+        elif other.shape[0] < self.data.shape[0]:
+                # too few rows we can extend with zeros
+            extra_rows=self.data.shape[0] - other.shape[0]
+            other = _np_.append(other, _np_.zeros((extra_rows, other.shape[1])), 0)
+            other_mask=_ma_.getmaskarray(other)
+            other_mask[-extra_rows:,:]=True
+            new_mask=newdata.mask
+            new_mask=_np_.append(new_mask,other_mask,1)
+            newdata.data=_np_.append(self.data,other,1)
+            newdata.mask=new_mask
+        if len(newdata.column_headers)<newdata.shape[1]:
+            newdata.column_headers.extend(["Column "+str(i+len(newdata.column_headers)) for i in range(other.shape[1])])
+        for attr in self.__dict__:
+            if attr not in ("metadata","data","column_headers","mask") and not attr.startswith("_"):
+                newdata.__dict__[attr]=self.__dict__[attr]
         return newdata
 
     def __contains__(self, item):
@@ -752,6 +758,9 @@ class DataFile(object):
         """
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
+        for attr in self.__dict__:
+            if attr not in ("metadata","data","column_headers") and not attr.startswith("_"):
+                c.__dict__[attr]=self.__dict__[attr]
         return c
 
     def _getattr_col(self,name):
@@ -1752,19 +1761,20 @@ class DataFile(object):
         """
         rows=[]
         for (r,x) in zip(range(len(self)),self.column(xcol)):
-            if isinstance(value,tuple) and value[0]<=x<=value[1]:
-                rows.append(r)
+            if isinstance(value,tuple):
+                if value[0]<=x<=value[1]:
+                    rows.append(r)
             elif isinstance(value,list):
                 for v in value:
                     if isinstance(v,tuple) and v[0]<=x<=v[1]:
                         rows.append(r)
                         break
-                    elif x==v:
+                    elif isinstance(v,float) and x==v:
                         rows.append(r)
                         break
             elif callable(value) and value(x,self[r]):
                 rows.append(r)
-            elif x==value:
+            elif isinstance(value,float) and x==value:
                 rows.append(r)
         if columns is None: #Get the whole slice
             return self.data[rows,:]
