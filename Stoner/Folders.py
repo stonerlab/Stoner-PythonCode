@@ -573,7 +573,7 @@ class DataFolder(object):
                 ydata=f.column(ycol)
                 if _np_.any(xdata!=xbase):
                     results&=xdata
-                    results.column_headers[-1]=f.column_headers[xcol]
+                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xcol])
                     xbase=xdata
                     setas.append("x")
                     if cols["has_xerr"]:
@@ -581,7 +581,7 @@ class DataFolder(object):
                         if _np_.any(f.column(xerr)!=xerrdata):
                             xerrdata=f.column(xerr)
                             results&=xerrdata
-                            results.column_headers[-1]="Error in {}".format(xtitle)
+                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xerr])
                             setas.append("d")
                 for i in range(len(ycol)):
                     results&=ydata[:,i]
@@ -590,7 +590,7 @@ class DataFolder(object):
                     if cols["has_yerr"]:
                         yerr=cols["yerr"][i]
                         results&=f.column(yerr)
-                        results.column_headers[-1]="Error in {}".format(results.column_headers[-2])
+                        results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[yerr])
                         setas.append("e")
                 if len(zcol)>0:
                     zdata=f.column(zcol)
@@ -601,7 +601,7 @@ class DataFolder(object):
                         if cols["has_zerr"]:
                             yerr=cols["zerr"][i]
                             results&=f.column(zerr)
-                            results.column_headers[-1]="Error in {}".format(results.column_headers[-2])
+                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zerr])
                             setas.append("f")
             results.setas=setas
             return results

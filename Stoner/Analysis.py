@@ -350,35 +350,36 @@ class AnalyseFile(DataFile):
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
-                ycol=cols["ycol"][0]
+                ycol=cols["ycol"]
             if "yerr" not in kargs and cols["has_yerr"]:
-                yerr=cols["yerr"][0]
+                yerr=cols["yerr"]
                 
         bin_left,bin_right,bin_centres=self.make_bins(xcol,bins,mode,**kargs)
 
-        ybin=_np_.zeros(len(bin_left))
-        ebin=_np_.zeros(len(bin_left))
-        nbins=_np_.zeros(len(bin_left))
-        xcol=self.find_col(xcol)
         ycol=self.find_col(ycol)
         if yerr is not None:
             yerr=self.find_col(yerr)
+
+        ybin=_np_.zeros((len(bin_left),len(ycol)))
+        ebin=_np_.zeros((len(bin_left),len(ycol)))
+        nbins=_np_.zeros((len(bin_left),len(ycol)))
+        xcol=self.find_col(xcol)
         i=0
         
         for limits in zip(bin_left,bin_right):
             data=self.search(xcol,limits)
             if yerr is not None:
                 w=1.0/data[:,yerr]**2
-                W=_np_.sum(w)
+                W=_np_.sum(w,axis=0)
                 e=1.0/_np_.sqrt(W)
             else:
-                w=_np_.ones(data.shape[0])
+                w=_np_.ones((data.shape[0],len(ycol)))
                 W=data.shape[0]
-                e=_np_.std(data[:,ycol])/_np_.sqrt(W)
-            y=_np_.sum(data[:,ycol]*(w/W))
-            ybin[i]=y
-            ebin[i]=e
-            nbins[i]=data.shape[0]
+                e=_np_.std(data[:,ycol],axis=0)/_np_.sqrt(W)
+            y=_np_.sum(data[:,ycol]*(w/W),axis=0)
+            ybin[i,:]=y
+            ebin[i,:]=e
+            nbins[i,:]=data.shape[0]
             i+=1
         return (bin_centres,ybin,ebin,nbins)
 
@@ -1169,7 +1170,8 @@ class AnalyseFile(DataFile):
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata-bdata), header, a, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data,err_header,a+1,replace=False)
+            a=self.find_col(a)
+            self.add_column(err_data,err_header,a,replace=False)
         return self
 
 
