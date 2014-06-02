@@ -102,7 +102,7 @@ class typeHintedDict(dict):
         else:
             raise AttributeError
 
-    def __findtype(self,  value):
+    def findtype(self,  value):
         """Determines the correct string type to return for common python
         classes. Understands booleans, strings, integers, floats and _np_
         arrays(as arrays), and dictionaries (as clusters).
@@ -119,14 +119,14 @@ class typeHintedDict(dict):
                 if t == "Cluster":
                     elements = []
                     for k in  value:
-                        elements.append(self.__findtype(value[k]))
+                        elements.append(self.findtype(value[k]))
                     tt = ','
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
                 elif t == 'Array':
                     z = _np_.zeros(1, dtype=value.dtype)
                     typ = (str(len(_np_.shape(value))) + "D Array (" +
-                                                self.__findtype(z[0]) + ")")
+                                                self.findtype(z[0]) + ")")
                 else:
                     typ = t
                 break
@@ -259,7 +259,7 @@ class typeHintedDict(dict):
                 super(typeHintedDict, self).__setitem__(name,
                                                 self.__mungevalue(typehint, value))
         else:
-            self._typehints[name] = self.__findtype(value)
+            self._typehints[name] = self.findtype(value)
             super(typeHintedDict, self).__setitem__(name,
                 self.__mungevalue(self._typehints[name], value))
 
@@ -996,8 +996,39 @@ class DataFile(object):
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
-        with open(self.filename,"r") as in_file:
-            self.__read_iterable(in_file)
+        with open(self.filename,"r") as reader:
+            if "next" in dir(reader):
+                readline=reader.next
+            elif "readline" in dir(reader):
+                readline=reader.readline
+            else:
+                raise AttributeError("No method to read a line in {}".format(reader))
+            row=readline().split('\t')
+            if row[0].strip()=="TDI Format 1.5":
+                format=1.5
+            elif row[0].strip()=="TDI Format=Text 1.0":
+                format=1.0
+            else:
+                raise RuntimeError("Not a TDI File")
+            col_headers_tmp=[x.strip() for x in row[1:]]
+        if len(col_headers_tmp)>0:
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t")[:,1:]
+        meta=_np_.genfromtxt(self.filename,skip_header=1,usecols=0,dtype=str,delimiter="\t")
+        for row in meta:
+            if row.strip()!='':
+                md=row.split('=')
+                if len(md)==2:
+                    md[1]="=".join(md[1:])
+                elif len(md)<=1:
+                    md.extend(['',''])
+                if format==1.5:
+                    self.metadata[md[0].strip()]=md[1].strip()
+                elif format==1.0:
+                    self.metadata[md[0].strip()]=self.metadata.string_to_type(md[1].strip())
+        if len(self.data.shape)>=2 and self.data.shape[1]>0:
+            self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
+            for i in range(len(col_headers_tmp)):
+                self.column_headers[i]=col_headers_tmp[i]
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate
@@ -1029,7 +1060,11 @@ class DataFile(object):
         else:
             raise AttributeError("No method to read a line in {}".format(reader))
         row=readline().split('\t')
-        if row[0].strip()!="TDI Format 1.5":
+        if row[0].strip()=="TDI Format 1.5":
+            format=1.5
+        elif row[0].strip()=="TDI Format=Text 1.0":
+            format=1.0
+        else:
             raise RuntimeError("Not a TDI File")
         col_headers_tmp=[x.strip() for x in row[1:]]
         cols=len(col_headers_tmp)
@@ -1046,7 +1081,10 @@ class DataFile(object):
                 elif len(md)<=1:
                     md.extend(['',''])
 
-                self.metadata[md[0].strip()]=md[1].strip()
+                if format==1.5:
+                    self.metadata[md[0].strip()]=md[1].strip()
+                elif format==1.0:
+                    self.metadata[md[0].strip()]=self.metadata.string_to_type(md[1].strip())
             if len(row)<2:
                 continue
             self.data=_np_.append(self.data, self._conv_float(row[1:]))

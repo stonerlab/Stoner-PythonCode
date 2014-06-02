@@ -496,6 +496,13 @@ class RigakuFile(DataFile):
             if isinstance(self[key], list):
                 self[key]=_np_.array(self[key])
         return self
+        
+    def to_Q(self,l=1.540593):
+        """Adds an additional function to covert an angualr scale to momentum transfer
+        
+        returns a copy of itself."""
+        
+        self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
 
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
@@ -553,7 +560,13 @@ class XRDFile(DataFile):
         f.close()# Cleanup
         self.data=_np_.reshape(self.data, (-1, 2))
         return self
-
+        
+    def to_Q(self,l=1.540593):
+        """Adds an additional function to covert an angualr scale to momentum transfer
+        
+        returns a copy of itself."""
+        
+        self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
 
 class BNLFile(DataFile):
     """

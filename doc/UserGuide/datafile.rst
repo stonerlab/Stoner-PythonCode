@@ -21,7 +21,11 @@ current directory -- here we are assuming that ``my_data.txt`` contains data in 
 *TDI Format 1.5* which is produced by the LabVIEW rigs. Assuming that the
 file successfully loads, ``d``, is an instance of the :py:class:`DataFile` object. Here
 the :py:class:`DataFile` constructor has been used to both create the instance and load the
-data in one go.
+data in one go. 
+
+.. note:: 
+    :py:class:`DataFile` will also read a related text format where the first column of the first line contains the string *TDI Fromat=Text 1.0*
+    which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.
 
 The second example shows the use of one of the sub-classes of the :py:class:`DataFile` object to load data 
 from a specific instrument (in this case the VSM).
