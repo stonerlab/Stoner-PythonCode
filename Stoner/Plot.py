@@ -9,6 +9,7 @@ Classes:
 from Stoner.compat import *
 from Stoner.Core import DataFile
 from Stoner.PlotFormats import DefaultPlotStyle
+from Stoner.plotutils import errorfill
 import numpy as _np_
 import matplotlib
 import os
@@ -45,12 +46,8 @@ class PlotFile(DataFile):
     
     """
 
-    __figure=None
-    _subplots=[]
-    _labels=None
-    
-    _template=None
-    _labels=[]
+    positional_fmt=[pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog]
+    no_fmt=[errorfill]
 
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
         """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
@@ -62,6 +59,7 @@ class PlotFile(DataFile):
         else:
             self.template=DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
+        self.__figure=None   
         self._labels=self.column_headers
         self.legend=True
         self._subplots=[]
@@ -184,11 +182,13 @@ class PlotFile(DataFile):
             kwords["label"]=self._col_label(iy)
         x=self.column(ix)
         y=self.column(iy)
-        if plotter in (pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog): #plots with positional fmt
+        if plotter in self.positional_fmt: #plots with positional fmt
             if fmt is None:
                 plotter(x,y, figure=figure, **kwords)
             else:
                 plotter(x,y, fmt, figure=figure, **kwords)
+        elif plotter in self.no_fmt:
+            plotter(x,y,figure=figure, **kwords)
         else:
             if fmt is None:
                 fmt="-"

@@ -309,6 +309,8 @@ class DataFolder(object):
         if isinstance(f,DataFile):
             return f
         tmp= self.type(f,**self.extra_args)
+        if not isinstance(tmp.filename,string_types):
+            tmp.filename=path.basename(f)
         for p in self.pattern:
             if isinstance(p,re._pattern_type) and (p.search(f) is not None):
                 m=p.search(f)
