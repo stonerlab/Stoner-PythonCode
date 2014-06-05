@@ -32,6 +32,13 @@ Once the columns are identified, the :py:meth:`PlotFile.plot` method can be used
 available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`Plotfile.plot_xyz` as appropriate. All keyword arguments to :
 py:meth:`PlotFile.plot` are passed on to the actual plotting method.
 
+Types of Plot
+-------------
+
+:py:meth:`PlotFile.plot` will try to make the msot sensible choice of plot depending on which columns you have specified. x-y-z data will be converted 
+to a grid and plotted as a 3D surface plot. x-y data will be plotted as a line plot and if errors (e or d columns) are given then the :py:func:`matplotlib.pyplot.errorbar`
+will be used to make the plots. An alternative plot type for data with errorbars in :py:func:`plotutils.errorfill`. This uses a shaded line as an alternative to the
+error bars, where the shading of the line varies from intense to transparent the further one gets from the mean value.
 
 Plotting 2D data
 ================

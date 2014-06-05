@@ -660,7 +660,8 @@ class DataFolder(object):
                     if p.search(f):
                         self.files.append(path.join(root,f))
                         matched.append(files.index(f))
-                for i in matched.sort(reverse=True): # reverse sort the matching indices to safely delete
+                matched.sort(reverse=True)
+                for i in matched: # reverse sort the matching indices to safely delete
                     del(files[i])
         if recursive:           
             for d in dirs:

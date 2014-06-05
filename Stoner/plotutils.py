@@ -127,7 +127,18 @@ def fill_between(x, y1, y2=0, ax=None, **kwargs):
 
 def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     ax = ax if ax is not None else plt.gca()
-    ax.fill_betweenx(x, y1, y2, **kwargs)
+    ym=(y1+y2)/2.0
+    yd=(y1-y2)/3.0
+    alpha=kwargs["alpha"]
+    a=np.linspace(0.1,0.9,15)
+    a=np.linspace(0.1,0.9,15)
+    for h in a:
+        y=h/(np.sqrt(2*np.pi)*yd)
+        z=lambda x,s:s*np.sqrt(-2*np.log(np.sqrt(2*np.pi)*s*y))     
+        y1=ym-(z(y,yd))
+        y2=ym+(z(y,yd))
+        kwargs["alpha"]=alpha*h
+        ax.fill_betweenx(x, y1, y2, **kwargs)
     ax.add_patch(plt.Rectangle((0, 0), 0, 0, **kwargs))
 
 

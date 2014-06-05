@@ -38,6 +38,16 @@ Stoner Package
 
     PlotFile
 
+:mod:`plotutils` Module
+==================
+
+.. module:: Stoner.plotutils
+
+
+.. autosummary::
+    :toctree: functions
+    :template: autosummary/module.rst
+
 
 :mod:`Folders` Module
 ======================
