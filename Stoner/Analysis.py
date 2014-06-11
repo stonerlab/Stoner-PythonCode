@@ -493,6 +493,50 @@ class AnalyseFile(DataFile):
                 rc=_np_.append(rc,[popt[i],_np_.sqrt(pcov[i,i])])
             return rc
 
+    def decompose(self,xcol=None,ycol=None,sym=None, asym=None,replace=True, **kwords):
+        """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
+        
+        Keyword Arguments:
+            xcol (index): Index of column with x data - defaults to first x column in self.setas
+            ycol (index or list of indices): indices of y column(s) data
+            sym (index): Index of column to place symmetric data in default, append to end of data
+            asym (index): Index of column for asymmetric part of ata. Defaults to appending to end of data
+            replace (bool): Overwrite data with output (true)
+            
+        Returns:
+            A copy of the newly modified AnalyseFile.
+        """
+        if xcol is None and ycol is None:
+            if "_startx" in kwords:
+                startx=kwords["_startx"]
+                del kwords["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            xcol=cols["xcol"]
+            ycol=cols["ycol"]
+        xcol=self.find_col(xcol)
+        ycol=self.find_col(ycol)
+        if isinstance(ycol,list):
+            ycol=ycol[0] # FIXME should work with multiple output columns
+        pxdata=self.search(xcol,lambda x,r:x>0,xcol)
+        xdata=_np_.sort(_np_.append(-pxdata,pxdata))
+        self.data=self.interpolate(xdata,xcol=xcol)
+        ydata=self.data[:,ycol]
+        symd=(ydata+ydata[::-1])/2
+        asymd=(ydata-ydata[::-1])/2
+        if sym is None:
+            self=self&symd
+            self.column_headers[-1]="Symmetric Data"
+        else:
+            self.add_column(symd,"Symmetric Data",index=sym,replace=replace)
+        if asym is None:
+            self=self&asymd
+            self.column_headers[-1]="Asymmetric Data"
+        else:
+            self.add_column(asymd,"Symmetric Data",index=asym,replace=replace)
+        
+        return self
 
     def diffsum(self, a, b, replace=False, header=None):
         """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums
