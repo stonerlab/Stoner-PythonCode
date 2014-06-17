@@ -526,12 +526,12 @@ class AnalyseFile(DataFile):
         symd=(ydata+ydata[::-1])/2
         asymd=(ydata-ydata[::-1])/2
         if sym is None:
-            self=self&symd
+            self&=symd
             self.column_headers[-1]="Symmetric Data"
         else:
             self.add_column(symd,"Symmetric Data",index=sym,replace=replace)
         if asym is None:
-            self=self&asymd
+            self&=asymd
             self.column_headers[-1]="Asymmetric Data"
         else:
             self.add_column(asymd,"Symmetric Data",index=asym,replace=replace)

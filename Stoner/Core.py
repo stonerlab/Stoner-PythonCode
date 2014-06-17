@@ -967,6 +967,71 @@ class DataFile(object):
         return {"data": self.data,  "column_headers":
             self.column_headers,  "metadata": self.metadata}
 
+    def __iand__(self, other):
+        """Implements the &= operator to concatenate columns of data in a
+        :py:class:`DataFile` object.
+
+        Args:
+            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
+
+        Returns:
+            A :py:class:`DataFile` object with the columns of other con
+        catenated as new columns at the end of the self object.
+
+        Note:
+            Whether other is a numopy array of :py:class:`DataFile`, it must
+            have the same or fewer rows than the self object.
+            The size of @a other is increased with zeros for the extra rows.
+            If other is a 1D numpy array it is treated as a column vector.
+            The new columns are given blank column headers, but the
+            length of the :py:meth:`column_headers` is
+            increased to match the actual number of columns.
+        """
+        #Prep the final DataFile
+        if len(self.data.shape)<2:
+            self.data=_np_.atleast_2d(self.data)
+
+        #Get other to be a numpy masked array of data
+        if isinstance(other,DataFile):
+            self.metadata.update(other.metadata)
+            self.column_headers.extend(other.column_headers)
+            other=copy.copy(other.data)
+        elif isinstance(other, _np_.ndarray):
+            other=_ma_.array(copy.copy(other))
+        else:
+            return NotImplemented
+                        
+            
+        if len(other.shape) != 2:  # 1D array, make it 2D column
+            other = _np_.atleast_2d(other)
+            other = other.T
+        if _np_.product(self.data.shape)==0: #Special case no data yet
+            self.data=other
+        elif self.data.shape[0]==other.shape[0]:
+            self.data=_np_.append(self.data,other,1)
+        elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
+            extra_rows=other.shape[0]-self.data.shape[0]
+            self.data=_np_.append(self.data,_np_.zeros((extra_rows,self.data.shape[1])),0)
+            new_mask=self.mask
+            new_mask[-extra_rows:,:]=True
+            self.data=_np_.append(self.data,other,1)
+            other_mask=_ma_.getmaskarray(other)
+            new_mask=_np_.append(new_mask,other_mask,1)
+            self.mask=new_mask
+        elif other.shape[0] < self.data.shape[0]:
+                # too few rows we can extend with zeros
+            extra_rows=self.data.shape[0] - other.shape[0]
+            other = _np_.append(other, _np_.zeros((extra_rows, other.shape[1])), 0)
+            other_mask=_ma_.getmaskarray(other)
+            other_mask[-extra_rows:,:]=True
+            new_mask=self.mask
+            new_mask=_np_.append(new_mask,other_mask,1)
+            self.data=_np_.append(self.data,other,1)
+            self.mask=new_mask
+        if len(self.column_headers)<self.shape[1]:
+            self.column_headers.extend(["Column "+str(i+len(self.column_headers)) for i in range(other.shape[1])])
+        return self
+
     def __len__(self):
         """Return the length of the data.shape
                 Returns: Returns the number of rows of data
