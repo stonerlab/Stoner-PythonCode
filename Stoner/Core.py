@@ -26,7 +26,7 @@ class _evaluatable(object):
 
 class typeHintedDict(dict):
     """Extends a regular dict to include type hints of what each key contains.
-    
+
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
     the :py:class:`DataFile` data structure. However, it is convenient for this file format
     to be ASCII text for ease of use with other programs. In order to represent metadata which
@@ -35,7 +35,7 @@ class typeHintedDict(dict):
     choose the correct representation for the metadata. The type hinting information is retained
     so that files output from Python will retain type hints to permit them to be loaded into
     strongly typed languages (sch as LabVIEW).
-    
+
     Attributes:
         _typehints (dict): The backing store for the type hint information
         __regexGetType (re): Used to extract the type hint from a string
@@ -170,7 +170,7 @@ class typeHintedDict(dict):
 
     def string_to_type(self, value):
         """Given a string value try to work out if there is a better python type dor the value.
-        
+
         First of all the first character is checked to see if it is a [ or { which would
         suggest this is a list of dictionary. If the value looks like a common boolean
         value (i.e. Yes, No, True, Fale, On, Off) then it is assumed to be a boolean value.
@@ -274,7 +274,7 @@ class typeHintedDict(dict):
 
     def copy(self):
         """Provides a copy method that is aware of the type hinting strings.
-        
+
         This produces a flat dictionary with the type hint embedded in the key name.
 
         Returns:
@@ -289,7 +289,7 @@ class typeHintedDict(dict):
 
     def type(self, key):
         """Returns the typehint for the given k(s)
-        
+
         This simply looks up the type hinting dictionary for each key it is given.
 
         Args:
@@ -308,7 +308,7 @@ class typeHintedDict(dict):
     def export(self, key):
         """Exports a single metadata value to a string representation with type
         hint
-        
+
         In the ASCII based file format, the type hinted metadata is represented
         in the first column of a tab delimited text file as a series of lines
         with format keyname{typhint}=string_value.
@@ -384,7 +384,7 @@ class DataFile(object):
                 definitions above
             **kargs (keyword Arguments) All keyword arguments that match public attributes are
                 used to set those public attributes.
-                
+
         Returns:
             A new instance of the DataFile class.
         """
@@ -403,7 +403,7 @@ class DataFile(object):
         if handler is not None:
             handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
-        if len(kargs)>0: # set public attributes from keywords 
+        if len(kargs)>0: # set public attributes from keywords
             myattrs=[]
             for x in dir(self):
                 try:
@@ -429,7 +429,7 @@ class DataFile(object):
         elif isinstance(arg, _np_.ndarray):
                                                 # numpy.array - set data
             self.data = _ma_.masked_array(arg)
-            self.column_headers = ['Column' + str(x)
+            self.column_headers = ['Column_{}'.format(x)
                                 for x in range(_np_.shape(args[0])[1])]
         elif isinstance(arg, dict):  # Dictionary - use as metadata
             self.metadata = arg.copy()
@@ -481,19 +481,30 @@ class DataFile(object):
             array is treated as a new row of data If @a ither is a 2D numpy
             array then it is appended if it has the same number of
             columns and @a self.data."""
+        newdata=self.clone
+        return self.__add_core__(other,newdata)
+
+    def __add_core__(self,other,newdata):
+        """Implements the core work of adding other to self and modifying newdata
+
+        Args:
+            other (DataFile,array,list): The data to be added
+            newdata(DataFile): The instance to be modified
+
+        Returns:
+            A modified newdata
+            """
         if isinstance(other, _np_.ndarray):
             if len(self.data) == 0:
                 t = _np_.atleast_2d(other)
-                c = _np_.shape(t)[1]
+                c = t.shape[1]
                 if len(self.column_headers) < c:
-                    self.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
-                newdata = self.__class__(self)
+                    newdata.column_headers.extend(["Column_{}".format(x) for x in range(c - len(self.column_headers))])
                 newdata.data = t
                 ret=newdata
             elif len(_np_.shape(other)) == 1:
                                     # 1D array, so assume a single row of data
                 if _np_.shape(other)[0] == _np_.shape(self.data)[1]:
-                    newdata = self.__class__(self)
                     newdata.data = _np_.append(self.data,
                                                 _np_.atleast_2d(other), 0)
                     ret=newdata
@@ -502,26 +513,23 @@ class DataFile(object):
             elif len(_np_.shape(other)) == 2 and _np_.shape(
                     other)[1] == _np_.shape(self.data)[1]:
                             # DataFile + array with correct number of columns
-                newdata = self.__class__(self)
                 newdata.data = _np_.append(self.data, other, 0)
                 ret=newdata
             else:
                 ret=NotImplemented
         elif isinstance(other, DataFile):  # Appending another DataFile
-            new_data=_np_.zeros((len(other), len(self.column_headers)))*_np_.nan
-            for i in range(len(self.column_headers)):
+            new_data=_np_.ones((other.shape[0], self.shape[1]))*_np_.nan
+            for i in range(self.shape[1]):
                 column=self.column_headers[i]
                 try:
                     new_data[:, i]=other.column(column)
                 except KeyError:
                     pass
-            newdata = self.__class__(other)
-            for x in self.metadata:
-                newdata[x] = self[x]
-            newdata.data = _np_.append(self.data, new_data, 0)
+            newdata.metadata=copy.copy(self.metadata)
+            newdata.data = _np_.append(self.data, new_data, axis=0)
             ret=newdata
-        elif isinstance(other,dict):
-            newdata=self
+        elif isinstance(other,dict): # This is a horrible mess that I'm not sure we ever use
+            """
             added_row=False
             for k in other:
                 try:
@@ -542,9 +550,9 @@ class DataFile(object):
             newdata.data=_np_.append(newdata.data,new_data,0)
             if added_row:
                 newdata.data=newdata.data[1:,:]
-            ret=newdata
+            ret=newdata"""
+            ret=NotImplemented
         elif isinstance(other,list):
-            newdata=self
             for o in other:
                 newdata=newdata+o
             ret=newdata
@@ -552,7 +560,7 @@ class DataFile(object):
             ret=NotImplemented('Failed in DataFile')
         for attr in self.__dict__:
             if attr not in ("metadata","data","column_headers","mask") and not attr.startswith("_"):
-                ret.__dict__[attr]=self.__dict__[attr]      
+                ret.__dict__[attr]=self.__dict__[attr]
         return ret
 
     def __and__(self, other):
@@ -576,7 +584,21 @@ class DataFile(object):
             increased to match the actual number of columns.
         """
         #Prep the final DataFile
-        newdata=self.__class__(self.clone)
+        newdata=self.clone
+        return self.__and_core__(other,newdata)
+
+    def __and_core__(self,other,newdata):
+        """Implements the core of the & operator, returning data in newdata
+
+        Args:
+            other (array,DataFile): Data whose columns are to be added
+            newdata (DataFile): instance of DataFile to be modified
+
+        Returns:
+            newdata: The modified DataFile (may be self or a clone of self depending
+            on the operator's inplaceness)
+        """
+
         if len(newdata.data.shape)<2:
             newdata.data=_np_.atleast_2d(newdata.data)
 
@@ -589,8 +611,8 @@ class DataFile(object):
             other=_ma_.array(copy.copy(other))
         else:
             newdata=NotImplemented
-                        
-            
+
+
         if len(other.shape) != 2:  # 1D array, make it 2D column
             other = _np_.atleast_2d(other)
             other = other.T
@@ -815,7 +837,7 @@ class DataFile(object):
         """Pass through the numpy shape attribute of the data
         """
         return self.data.shape
-        
+
     def _getattr_setas(self):
         """Get the list of column assignments."""
         if len(self._setas)> len(self.column_headers):
@@ -831,15 +853,15 @@ class DataFile(object):
 
     def _get_cols(self,what=None,startx=0):
         """Uses the setas attribute to work out which columns to use for x,y,z etc.
-        
+
         Keyword Arguments:
             what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary
             starts (int): Start looking for x columns at this column.
-            
+
         Returns:
             A single integer, a list of integers or a dictionary of all columns.
         """
-        
+
         if len(self._setas)<len(self.column_headers):
             self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
         try:
@@ -869,7 +891,7 @@ class DataFile(object):
                 has_yerr=True
             except ValueError:
                 yerr.append(None)
-            starty=ycol[-1]+1            
+            starty=ycol[-1]+1
         zcol=list()
         zerr=list()
         startz=xcol
@@ -967,6 +989,30 @@ class DataFile(object):
         return {"data": self.data,  "column_headers":
             self.column_headers,  "metadata": self.metadata}
 
+    def __iadd__(self, other):
+        """ Implements a += operator to concatenate rows of data inplace
+
+        Args:
+            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+
+        Note:
+            * If other is a dictionary then the keys of the dictionary are passed to
+            :py:meth:`find_col` to see if they match a column, in which case the
+            corresponding value will be used for theat column in the new row.
+            Columns which do not have a matching key will be set to NaN. If other has keys
+            that are not found as columns in self, additional columns are added.
+            * If other is a list, then the add method is called recursively for each element
+            of the list.
+            * Returns: A Datafile object with the rows of @a other appended
+            to the rows of the current object.
+            * If other is a 1D numopy array with the same number of
+            elements as their are columns in @a self.data then the numpy
+            array is treated as a new row of data If @a ither is a 2D numpy
+            array then it is appended if it has the same number of
+            columns and @a self.data."""
+        newdata=self
+        return self.__add_core__(other,newdata)
+
     def __iand__(self, other):
         """Implements the &= operator to concatenate columns of data in a
         :py:class:`DataFile` object.
@@ -987,50 +1033,8 @@ class DataFile(object):
             length of the :py:meth:`column_headers` is
             increased to match the actual number of columns.
         """
-        #Prep the final DataFile
-        if len(self.data.shape)<2:
-            self.data=_np_.atleast_2d(self.data)
-
-        #Get other to be a numpy masked array of data
-        if isinstance(other,DataFile):
-            self.metadata.update(other.metadata)
-            self.column_headers.extend(other.column_headers)
-            other=copy.copy(other.data)
-        elif isinstance(other, _np_.ndarray):
-            other=_ma_.array(copy.copy(other))
-        else:
-            return NotImplemented
-                        
-            
-        if len(other.shape) != 2:  # 1D array, make it 2D column
-            other = _np_.atleast_2d(other)
-            other = other.T
-        if _np_.product(self.data.shape)==0: #Special case no data yet
-            self.data=other
-        elif self.data.shape[0]==other.shape[0]:
-            self.data=_np_.append(self.data,other,1)
-        elif self.data.shape[0]<other.shape[0]: #Need to extend self.data
-            extra_rows=other.shape[0]-self.data.shape[0]
-            self.data=_np_.append(self.data,_np_.zeros((extra_rows,self.data.shape[1])),0)
-            new_mask=self.mask
-            new_mask[-extra_rows:,:]=True
-            self.data=_np_.append(self.data,other,1)
-            other_mask=_ma_.getmaskarray(other)
-            new_mask=_np_.append(new_mask,other_mask,1)
-            self.mask=new_mask
-        elif other.shape[0] < self.data.shape[0]:
-                # too few rows we can extend with zeros
-            extra_rows=self.data.shape[0] - other.shape[0]
-            other = _np_.append(other, _np_.zeros((extra_rows, other.shape[1])), 0)
-            other_mask=_ma_.getmaskarray(other)
-            other_mask[-extra_rows:,:]=True
-            new_mask=self.mask
-            new_mask=_np_.append(new_mask,other_mask,1)
-            self.data=_np_.append(self.data,other,1)
-            self.mask=new_mask
-        if len(self.column_headers)<self.shape[1]:
-            self.column_headers.extend(["Column "+str(i+len(self.column_headers)) for i in range(other.shape[1])])
-        return self
+        newdata=self
+        return self.__and_core__(other,newdata)
 
     def __len__(self):
         """Return the length of the data.shape
@@ -1117,7 +1121,7 @@ class DataFile(object):
 
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
-        
+
         if "next" in dir(reader):
             readline=reader.next
         elif "readline" in dir(reader):
@@ -1208,7 +1212,7 @@ class DataFile(object):
             self._set_setas(value)
         else:
             self.__dict__[name] = value
-            
+
     def _set_setas(self,value):
         """Handle the interpretation of the setas attribute. This includes parsing a string or a list
         that describes if the columns are to be used for x-y plotting."""
@@ -1328,10 +1332,10 @@ class DataFile(object):
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
 
         Keyword Arguments:
-            column_header (string): The text to set the column header to, 
+            column_header (string): The text to set the column header to,
                 if not supplied then defaults to 'col#'
             index (int or string): The  index (numeric or string) to insert (or replace) the data
-            func_args (dict): If column_data is a callable object, then this argument 
+            func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
 
@@ -1488,7 +1492,7 @@ class DataFile(object):
 
         Note:
             If col is None, then all rows with masked data are deleted
-            
+
             If val is a function it should take two arguments - a float and a
             list. The float is the value of the current row that corresponds to column col abd the second
             argument is the current row.
@@ -1634,16 +1638,16 @@ class DataFile(object):
 
     def get_filename(self, mode):
         """Forces the user to choose a new filename using a system dialog box.
-        
+
         Args:
             mode (string): The mode of file operation to be used when calling the dialog box
-            
+
         Returns:
             The new filename
-        
+
         Note:
             The filename attribute of the current instance is updated by this method as well.
-        
+
         """
         self.filename = self.__file_dialog(mode)
         return self.filename
@@ -1734,7 +1738,7 @@ class DataFile(object):
 
     def meta(self, ky):
         """Returns specific items of  metadata.
-        
+
         This is equivalent to doing DataFile.metadata[key]
 
         Args:
@@ -1853,7 +1857,7 @@ class DataFile(object):
 
         Note:
             The value is interpreted as follows:
-            
+
             - a float looks for an exact match
             - a list is a list of exact matches
             - a tuple should contain a (min,max) value.
@@ -1909,7 +1913,7 @@ class DataFile(object):
             order=list(range(len(self.column_headers)))
         recs=self.records
         if callable(order):
-            d=sorted(recs,cmp=order)           
+            d=sorted(recs,cmp=order)
         elif isinstance(order, list) or isinstance(order, tuple):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = _np_.sort(recs, order=order)
