@@ -792,8 +792,8 @@ class SNSFile(DataFile):
 class OVFFile(DataFile):
     """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
 
-    Only files with a meshtype rectangular are supported"""
-
+    OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported"""
+   
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
@@ -801,12 +801,20 @@ class OVFFile(DataFile):
         else:
             self.filename = filename
 
+        ptr=0
         with open(self.filename,"r") as data: # Slightly ugly text handling
-            line=data.readline()
-            if line.strip()!="# OOMMF: rectangular mesh v1.0": # bug out oif we don't like the header
-                raise RuntimeError("Not a file from the SNS BL4A line")
+            line=data.next()
+            ptr+=len(line)
+            line=line.strip()
+            if line=="# OOMMF: rectangular mesh v1.0":
+                self["version"]=1
+            elif line!="# OOMMF: rectangular mesh v2.0": 
+                self["version"]=2
+            else: # bug out oif we don't like the header
+                raise RuntimeError("Not n OOMMF OVF File: opening line eas {}".format(line))
             pattern=re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
             for line in data:
+                ptr+=len(line)
                 line.strip()
                 if line.startswith("# Begin: Data"): # marks the start of the trext
                     break
@@ -822,26 +830,37 @@ class OVFFile(DataFile):
                         raise RuntimeError("Failed to understand metadata")
             fmt=re.match(r".*Data\s+(.*)",line).group(1)
             assert self["meshtype"]=="rectangular","Sorry only OVF files with rectnagular meshes are currently supported."
+            if self["version"]==1:
+                if self["meshtype"]=="rectangular":
+                    self["valuedim"]=3
+                else:
+                    self["valuedim"]=6
             if fmt=="Text":
                 uvwdata=_np_.genfromtxt(data)
             elif fmt=="Binary 4":
-                dt=_np_.dtype('f4')
-                dt.byteorder('>')
-                chk=_np_.frombuffer(data,dtype=dt,count=1)
-                assertchk[0]==1234567.0,"Binary 4 format chekc value incorrect ! Actual Value was {}".format(chk)
-                uvwdata=_np_.frombuffer(data,dtype=dt,count=self["snodes"]*self["ynodes"]*self["znodes"]*3)
-                uvwdata=_np_.reshape(uvwdata,(-1,3))
+                if self["version"]==1:
+                    dt=_np_.dtype('>f4')
+                else:
+                    dt=_np_.dtype('<f4')
+                with open(filename,"rb") as bindata:
+                    bindata.seek(ptr)
+                    uvwdata=_np_.fromfile(bindata,dtype=dt,count=1+self["xnodes"]*self["ynodes"]*self["znodes"]*self["valuedim"])
+                    assert uvwdata[0]==1234567.0,"Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
+                uvwdata=uvwdata[1:]
+                uvwdata=_np_.reshape(uvwdata,(-1,self["valuedim"]))
             elif fmt=="Binary 8":
-                dt=_np_.dtype('f8')
-                dt.byteorder('>')
-                chk=_np_.frombuffer(data,dtype=dt,count=1)
-                assertchk[0]==123456789012345.0,"Binary 8 format chekc value incorrect ! Actual calue was {}".format(chk)
-                uvwdata=_np_.frombuffer(data,dtype=dt,count=self["snodes"]*self["ynodes"]*self["znodes"]*3)
-                uvwdata=_np_.reshape(uvwdata,(-1,3))
+                if self["version"]==1:
+                    dt=_np_.dtype('>f8')
+                else:
+                    dt=_np_.dtype('<f8')
+                with open(filename,"rb") as bindata:
+                    bindata.seek(ptr)
+                    uvwdata=_np_.fromfile(bindata,dtype=dt,count=1+self["xnodes"]*self["ynodes"]*self["znodes"]*self["valuedim"])
+                    assert uvwdata[0]==123456789012345.0,"Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
+                uvwdata=_np_.reshape(uvwdata,(-1,self["valuedim"]))
             else:
                 raise RuntimeError("Unknow OVF Format {}".format(fmt))
 
-            print uvwdata.shape
             x=(_np_.linspace(self["xmin"],self["xmax"],self["xnode"]+1)[:-1]+self["xbase"])*1E9
             y=(_np_.linspace(self["ymin"],self["ymax"],self["ynode"]+1)[:-1]+self["ybase"])*1E9
             z=(_np_.linspace(self["zmin"],self["zmax"],self["znode"]+1)[:-1]+self["zbase"])*1E9
@@ -857,5 +876,93 @@ class OVFFile(DataFile):
             self.setas="xyzuvw"
         return self
 
+class MDAASCIIFile(DataFile):
+    """Reads files generated from the APS."""
+    priority=16
 
+    def load(self,filename=None,*args, **kargs):
+        """Load function. File format has space delimited columns from row 3 onwards."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+
+        with open(self.filename,"r") as data: # Slightly ugly text handling
+            line=data.next()
+            if line.strip()!="## mda2ascii 1.2 generated output": # bug out oif we don't like the header
+                raise RuntimeError("Not a file mda2ascii")
+            for line in data:
+                line.strip()
+                if "=" in line:
+                    parts=line[2:].split("=")
+                    self[parts[0].strip()]=self.metadata.string_to_type("".join(parts[1:]).strip())
+                elif line.startswith("#  Extra PV:"):
+                    # Onto the next metadata bit
+                    break
+            else:
+                raise RuntimeError("Overran end of headre before Extra PV block")
+            pvpat=re.compile(r'^#\s+Extra\s+PV\s\d+\:(.*)')
+            for line in data:
+                if line.strip()=="":
+                    continue
+                elif line.startswith("# Extra PV"):
+                    res=pvpat.match(line)
+                    bits=[b.strip().strip(r'"') for b in res.group(1).split(',')]
+                    if bits[1]=="":
+                        key=bits[0]
+                    else:
+                        key=bits[1]
+                    if len(bits)>3:
+                        key=key+" ({})".format(bits[3])
+                    self[key]=self.metadata.string_to_type(bits[2])
+                else:
+                    break # End of Extra PV stuff
+            else:
+                raise RuntimeError("Overran Extra PV Block")
+            for line in data:
+                line.strip()
+                if line.strip()=="":
+                    continue
+                elif line.startswith("# Column Descriptions:"):
+                    break # Start of column headers now
+                elif "=" in line:
+                    parts=line[2:].split("=")
+                    self[parts[0].strip()]=self.metadata.string_to_type("".join(parts[1:]).strip())
+            else:
+                raise RuntimeError("Overran end of scan header before column descriptions")
+            colpat=re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
+            self.column_headers=[]
+            for line in data:
+                res=colpat.match(line)
+                line.strip()
+                if line.strip()=="":
+                    continue
+                elif line.startswith("# 1-D Scan Values"):
+                    break # Start of data
+                elif res is not None:
+                    if "," in res.group(2):
+                        bits=[b.strip() for b in res.group(2).split(",")]
+                        if bits[-2]=="":
+                            colname=bits[0]
+                        else:
+                            colname=bits[-2]
+                        if bits[-1]!="":
+                            colname+=" ({})".format(bits[-1])
+                        if colname in self.column_headers:
+                            colname="{}:{}".format(bits[0],colname)
+                    else:
+                        colname=res.group(1).strip()
+                    self.column_headers.append(colname)
+            else:
+                raise RuntimeError("Overand the end of file without reading data")
+            self.data=_np_.genfromtxt(data) # so that's ok then !
+            return self
+                    
+                    
+                
+            
+                    
+                
+    
+    
 
