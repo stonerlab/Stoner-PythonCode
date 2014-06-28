@@ -496,12 +496,12 @@ class RigakuFile(DataFile):
             if isinstance(self[key], list):
                 self[key]=_np_.array(self[key])
         return self
-        
+
     def to_Q(self,l=1.540593):
         """Adds an additional function to covert an angualr scale to momentum transfer
-        
+
         returns a copy of itself."""
-        
+
         self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
 
 class XRDFile(DataFile):
@@ -560,12 +560,12 @@ class XRDFile(DataFile):
         f.close()# Cleanup
         self.data=_np_.reshape(self.data, (-1, 2))
         return self
-        
+
     def to_Q(self,l=1.540593):
         """Adds an additional function to covert an angualr scale to momentum transfer
-        
+
         returns a copy of itself."""
-        
+
         self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
 
 class BNLFile(DataFile):
@@ -694,7 +694,7 @@ class FmokeFile(DataFile):
 class GenXFile(DataFile):
     """Extends DataFile for GenX Exported data."""
     priority=16
-    
+
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
@@ -727,18 +727,18 @@ class GenXFile(DataFile):
             self.data=_np_.genfromtxt(datafile)
             self["dataset"]=dataset
         return self
-        
+
 class SNSFile(DataFile):
     """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from
     BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
-    
+
     File has a large header marked up with # prefixes which include several section is []
     Each section seems to have a slightly different format
-    
+
     """
-    
+
     priority=16
-    
+
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
@@ -753,7 +753,7 @@ class SNSFile(DataFile):
             for line in data:
                 if line.startswith("# "): # We're in the header
                     line=line[2:].strip() # strip the header and whitespace
-                
+
                 if line.startswith("["): # Look for a section header
                     section=line.strip().strip("[]")
                     if section=="Data": # The Data section has one line of colum headers and then data
@@ -787,4 +787,75 @@ class SNSFile(DataFile):
                         value=line[i+1:].strip()
                         self[key.strip()]=value.strip()
         return self
-                
+
+
+class OVFFile(DataFile):
+    """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
+
+    Only files with a meshtype rectangular are supported"""
+
+    def load(self,filename=None,*args, **kargs):
+        """Load function. File format has space delimited columns from row 3 onwards."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+
+        with open(self.filename,"r") as data: # Slightly ugly text handling
+            line=data.readline()
+            if line.strip()!="# OOMMF: rectangular mesh v1.0": # bug out oif we don't like the header
+                raise RuntimeError("Not a file from the SNS BL4A line")
+            pattern=re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
+            for line in data:
+                line.strip()
+                if line.startswith("# Begin: Data"): # marks the start of the trext
+                    break
+                elif line.startswith("# Begin:") or line.startswith("# End:"):
+                    continue
+                else:
+                    res=pattern.match(line)
+                    if res is not None:
+                        key=res.group(1)
+                        val=res.group(2)
+                        self[key]=self.metadata.string_to_type(val)
+                    else:
+                        raise RuntimeError("Failed to understand metadata")
+            fmt=re.match(r".*Data\s+(.*)",line).group(1)
+            assert self["meshtype"]=="rectangular","Sorry only OVF files with rectnagular meshes are currently supported."
+            if fmt=="Text":
+                uvwdata=_np_.genfromtxt(data)
+            elif fmt=="Binary 4":
+                dt=_np_.dtype('f4')
+                dt.byteorder('>')
+                chk=_np_.frombuffer(data,dtype=dt,count=1)
+                assertchk[0]==1234567.0,"Binary 4 format chekc value incorrect ! Actual Value was {}".format(chk)
+                uvwdata=_np_.frombuffer(data,dtype=dt,count=self["snodes"]*self["ynodes"]*self["znodes"]*3)
+                uvwdata=_np_.reshape(uvwdata,(-1,3))
+            elif fmt=="Binary 8":
+                dt=_np_.dtype('f8')
+                dt.byteorder('>')
+                chk=_np_.frombuffer(data,dtype=dt,count=1)
+                assertchk[0]==123456789012345.0,"Binary 8 format chekc value incorrect ! Actual calue was {}".format(chk)
+                uvwdata=_np_.frombuffer(data,dtype=dt,count=self["snodes"]*self["ynodes"]*self["znodes"]*3)
+                uvwdata=_np_.reshape(uvwdata,(-1,3))
+            else:
+                raise RuntimeError("Unknow OVF Format {}".format(fmt))
+
+            print uvwdata.shape
+            x=(_np_.linspace(self["xmin"],self["xmax"],self["xnode"]+1)[:-1]+self["xbase"])*1E9
+            y=(_np_.linspace(self["ymin"],self["ymax"],self["ynode"]+1)[:-1]+self["ybase"])*1E9
+            z=(_np_.linspace(self["zmin"],self["zmax"],self["znode"]+1)[:-1]+self["zbase"])*1E9
+            [y,x,z]=_np_.meshgrid(x,y,z)
+            x=_np_.reshape(x,-1,order="F")
+            y=_np_.reshape(y,-1,order="F")
+            z=_np_.reshape(z,-1,order="F")
+            self&=x
+            self&=y
+            self&=z
+            self&=uvwdata
+            self.column_geaders=["X (nm)","Y (nm)","Z (nm)","U","V","W"]
+            self.setas="xyzuvw"
+        return self
+
+
+

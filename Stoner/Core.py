@@ -361,19 +361,19 @@ class DataFile(object):
         """Constructor method for :py:class:`DataFile`
 
         various forms are recognised:
-        py:function:: DataFile('filename',<optional filetype>,<args>)
+        :py:function:: DataFile('filename',<optional filetype>,<args>)
             Creates the new DataFile object and then executes the :py:class:`DataFile`.load
             method to load data from the given @a filename
-        py:function:: DataFile(array)
+        :py:function:: DataFile(array)
             Creates a new DataFile object and assigns the @a array to the
             `DataFile.data`  attribute.
-        py:function:: DataFile(dictionary)
+        :py:function:: DataFile(dictionary)
             Creates the new DataFile object, but initialises the metadata with
             :parameter dictionary
-        py:function:: DataFile(array,dictionary),
+        :py:function:: DataFile(array,dictionary),
             Creates the new DataFile object and does the combination of the
             previous two forms.
-        py:function:: DataFile(DataFile)
+        :py:function:: DataFile(DataFile)
             Creates the new DataFile object and initialises all data from the
             existing :py:class:`DataFile` instance. This on the face of it does the same as
             the assignment operator, but is more useful when one or other of the
@@ -564,8 +564,7 @@ class DataFile(object):
         return ret
 
     def __and__(self, other):
-        """Implements the & operator to concatenate columns of data in a
-        :py:class:`DataFile` object.
+        """Implements the & operator to concatenate columns of data in a :py:class:`DataFile` object.
 
         Args:
             other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
@@ -667,8 +666,7 @@ class DataFile(object):
             self.del_rows(item)
 
     def __dir__(self):
-        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with
-        the attributes that __getattr__ will handle.
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
         """
         attr=dir(type(self))
         attr.extend(list(self.__dict__.keys()))
@@ -721,8 +719,7 @@ class DataFile(object):
 
     def __getattr__(self, name):
         """
-        Called for :py:class:`DataFile`.x to handle some special pseudo attributes
-        and otherwise to act as a shortcut for :py:meth:`column`
+        Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`
 
         Args:
             name (string): The name of the attribute to be returned.
@@ -753,7 +750,7 @@ class DataFile(object):
               }
         if name in easy:
             return easy[name]()
-        elif name in ("x","y","z","d","e","f"):
+        elif name in ("x","y","z","d","e","f","u","v","w"):
             ret=self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile,self).__getattribute__(name)
@@ -787,7 +784,7 @@ class DataFile(object):
 
     def _getattr_col(self,name):
         """Get a column using the setas attribute."""
-        col_check={"x":"xcol","d":"xerr","y":"ycol","e":"yerr","z":"zcol","f":"zerr"}
+        col_check={"x":"xcol","d":"xerr","y":"ycol","e":"yerr","z":"zcol","f":"zerr","u":"ucol","v":"vcol","w":"wcol"}
         col=col_check[name]
         if col.startswith("x"):
             if self._cols[col] is not None:
@@ -881,7 +878,7 @@ class DataFile(object):
         yerr=list()
         starty=xcol
         has_yerr=False
-        while True:
+        while "y" in self._setas:
             try:
                 ycol.append(self._setas[starty:maxcol].index("y")+starty)
             except ValueError:
@@ -896,7 +893,7 @@ class DataFile(object):
         zerr=list()
         startz=xcol
         has_zerr=False
-        while True:
+        while "z" in self._setas:
             try:
                 zcol.append(self._setas[startz:maxcol].index("z")+startz)
             except ValueError:
@@ -907,29 +904,66 @@ class DataFile(object):
                 has_zerr=True
             except ValueError:
                 zerr.append(None)
+
+        ucol=list()
+        startu=xcol
+        while "u" in self._setas:
+            try:
+                ucol.append(self._setas[startu:maxcol].index("u")+startu)
+            except ValueError:
+                break
+            startu=ucol[-1]+1
+        vcol=list()
+        startv=xcol
+        while "v" in self._setas:
+            try:
+                vcol.append(self._setas[startv:maxcol].index("v")+startv)
+            except ValueError:
+                break
+            startv=vcol[-1]+1
+        wcol=list()
+        startw=xcol
+        while "w" in self._setas:
+            try:
+                wcol.append(self._setas[startw:maxcol].index("w")+startw)
+            except ValueError:
+                break
+            startw=wcol[-1]+1
+
         if xcol is None:
             axes=0
-        elif len(ycol)==0 and len(zcol)==0:
+        elif len(ycol)==0:
             axes=1
-        if len(zcol)==0 or len(ycol)==0:
+        elif len(zcol)==0:
             axes=2
         else:
             axes=3
-        ret={"xcol":xcol,"xerr":xerr,"ycol":ycol,"yerr":yerr,"zcol":zcol,"zerr":zerr,"axes":axes}
+        if axes==2 and len(ucol)*len(vcol)>0:
+            axes=4
+        elif axes==3:
+            if len(ucol)*len(vcol)*len(wcol)>0:
+                axes=6
+            elif len(ucol)*len(vcol)>0:
+                axes=5
+        ret={"xcol":xcol,"xerr":xerr,
+             "ycol":ycol,"yerr":yerr,
+                 "zcol":zcol,"zerr":zerr,
+                 "ucol":ucol,"vcol":vcol,"wcol":wcol,
+                 "axes":axes}
         ret["has_xerr"]=xerr is not None
         ret["has_yerr"]=has_yerr
         ret["has_zerr"]=has_zerr
+        ret["has_uvw"]=len(ucol)!=0
         if what=="xcol":
             ret=ret["xcol"]
-        elif what in ("ycol","zcol"):
+        elif what in ("ycol","zcol","ucol","vcol","wcol","yerr","zerr"):
             ret=ret[what][0]
-        elif what in ("ycols","zcols"):
+        elif what in ("ycols","zcols","ucols","vcols","wcols","yerrs","zerrs"):
             ret=ret[what[0:-1]]
         return ret
 
     def __getitem__(self, name):
-        """Called for DataFile[x] to return either a row or iterm of
-        metadata
+        """Called for DataFile[x] to return either a row or iterm of metadata
 
         Args:
             name (string or slice or int): The name, slice or number of the part of the
@@ -1014,8 +1048,7 @@ class DataFile(object):
         return self.__add_core__(other,newdata)
 
     def __iand__(self, other):
-        """Implements the &= operator to concatenate columns of data in a
-        :py:class:`DataFile` object.
+        """Implements the &= operator to concatenate columns of data in a :py:class:`DataFile` object.
 
         Args:
             other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
@@ -1038,7 +1071,8 @@ class DataFile(object):
 
     def __len__(self):
         """Return the length of the data.shape
-                Returns: Returns the number of rows of data
+
+        Returns: Returns the number of rows of data
                 """
         return _np_.shape(self.data)[0]
 
@@ -1100,8 +1134,7 @@ class DataFile(object):
                 self.column_headers[i]=col_headers_tmp[i]
 
     def __parse_metadata(self, key, value):
-        """Parse the metadata string, removing the type hints into a separate
-        dictionary from the metadata
+        """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
 
         Args:
             key (string): The name of the metadata parameter to be written,
@@ -1168,9 +1201,9 @@ class DataFile(object):
 
     def __repr__(self):
         """Outputs the :py:class:`DataFile` object in TDI format.
+
         This allows one to print any :py:class:`DataFile` to a stream based
-                object andgenerate a reasonable textual representation of
-                the data.shape
+        object andgenerate a reasonable textual representation of the data.shape
 
                 Returns:
                     self in a textual format. """
@@ -1188,6 +1221,23 @@ class DataFile(object):
             for x in range(m, r):
                 outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
         return outp
+
+
+    def __search_index(self,xcol,value):
+        """Helper for the search method that returns an array of booleans for indexing matching rows."""
+        x=self.column(xcol)
+        if isinstance(value,float):
+            ix=_np_.equal(x,value)
+        elif isinstance(value,tuple) and len(value)==2:
+            ix=_np_.logical_and(_np_.greater_equal(x,min(value)),_np_.less(x,max(value)))
+        elif isinstance(value,(list,_np_.ndarray)):
+            for v in value:
+                ix|=self.__search_index(xcol,v)
+        elif callable(value):
+            ix=aray([value(x[i],self.data[i]) for i in range(len(self))])
+        else:
+            raise RuntimeError("Unknown search value type {}".format(value))
+        return ix
 
 
     def __setattr__(self, name, value):
@@ -1222,12 +1272,12 @@ class DataFile(object):
             if len(value)> len(self.column_headers):
                 value=value[:len(self.column_headers)]
             for v in value:
-                if v.lower() not in "xyzedf.":
+                if v.lower() not in "xyzedfuvw.":
                     raise ValueError("Set as column element is invalid: {}".format(v))
             self._setas[:len(value)]=[v.lower() for v in value]
         elif isinstance(value,string_types):
             value=value.lower()
-            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|\.)")
+            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|u|v|w|\.)")
             i=0
             while pattern.match(value):
                 res=pattern.match(value)
@@ -1250,8 +1300,7 @@ class DataFile(object):
 
 
     def __setitem__(self, name, value):
-        """Called for :py:class:`DataFile`[name ] = value to write mewtadata
-        entries.
+        """Called for :py:class:`DataFile`[name ] = value to write mewtadata entries.
 
         Args:
             name (string): The string key used to access the metadata
@@ -1324,8 +1373,7 @@ class DataFile(object):
 
     #   PUBLIC METHODS
 
-    def add_column(self, column_data, column_header=None, index=None,
-                   func_args=None, replace=False):
+    def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile
 
         Args:
@@ -1477,8 +1525,7 @@ class DataFile(object):
             return self
 
     def del_rows(self, col=None, val=None):
-        """Searchs in the numerica data for the lines that match and deletes
-        the corresponding rows
+        """Searchs in the numerica data for the lines that match and deletes the corresponding rows
 
         Args:
             col (list,slice,int,string, re or None): Column containg values to search for.
@@ -1524,8 +1571,7 @@ class DataFile(object):
         return self
 
     def dir(self, pattern=None):
-        """ Return a list of keys in the metadata, filtering wiht a regular
-        expression if necessary
+        """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary
 
         Keyword Arguments:
             pattern (string or re): is a regular expression or None to list all keys
@@ -1787,8 +1833,7 @@ class DataFile(object):
         return self
 
     def reorder_columns(self, cols, headers_too=True):
-        """Construct a new data array from the original data by assembling
-        the columns in the order given
+        """Construct a new data array from the original data by assembling the columns in the order given
 
         Args:
             cols (list of column indices): (referred to the oriignal
@@ -1820,8 +1865,7 @@ class DataFile(object):
 
 
     def save(self, filename=None):
-        """Saves a string representation of the current DataFile object into
-        the file 'filename'
+        """Saves a string representation of the current DataFile object into the file 'filename'
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
@@ -1844,11 +1888,10 @@ class DataFile(object):
         return self
 
     def search(self, xcol,value,columns=None):
-        """Searches in the numerica data part of the file for lines
-        that match and returns  the corresponding rows
+        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
 
         Args:
-            col (int,string.re) is a Search Column Index
+            xcol (int,string.re) is a Search Column Index
             value (float, tuple, list or callable): Value to look for
             columns (index or array of indices or None (default)): columns of data to return - none represents all columns.
 
@@ -1866,38 +1909,54 @@ class DataFile(object):
 
 
         """
-        rows=[]
-        for (r,x) in zip(range(len(self)),self.column(xcol)):
-            if isinstance(value,tuple):
-                if value[0]<=x<value[1]:
-                    rows.append(r)
-            elif isinstance(value,list):
-                for v in value:
-                    if isinstance(v,tuple) and v[0]<=x<v[1]:
-                        rows.append(r)
-                        break
-                    elif isinstance(v,float) and x==v:
-                        rows.append(r)
-                        break
-            elif callable(value) and value(x,self[r]):
-                rows.append(r)
-            elif isinstance(value,float) and x==value:
-                rows.append(r)
+        ix=self.__search_index(xcol,value)
         if columns is None: #Get the whole slice
-            return self.data[rows,:]
-        elif isinstance(columns,str) or isinstance(columns,int):
-            columns=self.find_col(columns)
-            if len(rows)==1:
-                return self.data[rows,columns]
-            else:
-                return self.data[rows][:, columns]
+            data=self.data[ix,:]
         else:
-            targets=[self.find_col(t) for t in columns]
-            return self.data[rows][:, targets]
+            data=self.data[ix,self.find_col(columms)]
+        return data
+
+    def section(self,**kargs):
+        """Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space
+
+        Keyword Arguments:
+            x (float, tuple, list or callable): x values ,atch this condition are included inth e section
+            y (float, tuple, list  or callable): y values ,atch this condition are included inth e section
+            z (float, tuple,list  or callable): z values ,atch this condition are included inth e section
+            r (callable): a function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section
+
+        Returns:
+            A DataFile like object that includes only those lines from the original that match the section specification
+
+        Internally this function is calling :py:math:`DataFile.search` to pull out matching sections of the data array.
+        To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
+        conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
+        data points that lie in an arbitary plane or line. eg::
+
+            d.section(r=lambda x,y,z:abs(2+3*x-2*y)<0.1 and z==2)
+
+        would extract points along the line 2y=3x+2 (note the use of an < operator to avoid floating point rounding errors) where
+        the z-co-ordinate is 2.
+        """
+        cols=self._get_cols()
+        tmp=self.clone
+        xcol=cols["xcol"]
+        ycol=cols["ycol"][0]
+        zcol=cols["zcol"][0]
+
+        if "x" in kargs:
+            tmp.data=tmp.search(xcol,kargs["x"])
+        if "y" in kargs:
+            tmp.data=tmp.search(ycol,kargs["y"])
+        if "z" in kargs:
+            tmp.data=tmp.search(zcol,kargs["z"])
+        if "r" in kargs:
+            func=lambda x,r:kargs["r"](r[xcol],r[ycol],r[zcol])
+            tmp.data=tmp.search(0,func)
+        return tmp
 
     def sort(self, order=None,reverse=False):
-        """Sorts the data by column name. Sorts in place and returns a
-        copy of the sorted data object for chaining methods
+        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods
 
         Keyword Arguments:
             order (column index or list of indices or callable function): Represent the sort order
@@ -1927,8 +1986,7 @@ class DataFile(object):
         return self
 
     def swap_column(self, swp, headers_too=True):
-        """Swaps pairs of columns in the data. Useful for reordering
-        data for idiot programs that expect columns in a fixed order.
+        """Swaps pairs of columns in the data. Useful for reordering data for idiot programs that expect columns in a fixed order.
 
         Args:
             swp  (tuple of list of tuples of two elements): Each
@@ -1962,8 +2020,7 @@ class DataFile(object):
         return self
 
     def unique(self, col, return_index=False, return_inverse=False):
-        """Return the unique values from the specified column - pass through
-        for numpy.unique
+        """Return the unique values from the specified column - pass through for numpy.unique
 
         Args:
             col (index): Column to look for unique values in

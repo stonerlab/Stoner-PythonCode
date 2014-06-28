@@ -39,7 +39,7 @@ Stoner Package
     PlotFile
 
 :mod:`plotutils` Module
-==================
+=======================
 
 .. module:: Stoner.plotutils
 
@@ -84,7 +84,7 @@ Stoner Package
     XRDFile
 
 :mod:`PlotFormats` Module
-==================
+=========================
 
 .. module:: Stoner.PlotFormats
 

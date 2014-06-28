@@ -37,7 +37,7 @@ least-squares problem.  In its typical use, MPFIT will be used to
 fit a user-supplied function (the "model") to user-supplied data
 points (the "data") by adjusting a set of parameters.  MPFIT is
 based upon MINPACK-1 (LMDIF.F) by More' and collaborators.
- 
+
 For example, a researcher may think that a set of observed data
 points is best modelled with a Gaussian curve.  A Gaussian curve is
 parameterized by its mean, standard deviation and normalization.
@@ -45,7 +45,7 @@ MPFIT will, within certain constraints, find the set of parameters
 which best fits the data.  The fit is "best" in the least-squares
 sense; that is, the sum of the weighted squared differences between
 the model and data is minimized.
- 
+
 The Levenberg-Marquardt technique is a particular strategy for
 iteratively searching for the best fit.  This particular
 implementation is drawn from MINPACK-1 (see NETLIB), and is much faster
@@ -53,7 +53,7 @@ and more accurate than the version provided in the Scientific Python package
 in Scientific.Functions.LeastSquares.
 This version allows upper and lower bounding constraints to be placed on each
 parameter, or the parameter can be held fixed.
- 
+
 The user-supplied Python function should return an array of weighted
 deviations between model and data.  In a typical scientific problem
 the residuals should be weighted so that each deviate has a
@@ -70,12 +70,12 @@ MPFITEXPR, which are driver functions that calculate the deviates
 for you.  If ERR are the 1-sigma uncertainties in Y, then
 
    TOTAL( DEVIATES^2 )
- 
+
 will be the total chi-squared value.  MPFIT will minimize the
 chi-square value.  The values of X, Y and ERR are passed through
 MPFIT to the user-supplied function via the FUNCTKW keyword.
- Simple constraints can be placed on parameter values by using the
- PARINFO keyword to MPFIT.  See below for a description of this
+Simple constraints can be placed on parameter values by using the
+PARINFO keyword to MPFIT.  See below for a description of this
 keyword.
 
 MPFIT does not perform more general optimization tasks.  See TNMIN
@@ -131,24 +131,23 @@ least-squares minimization problem.
 
  If AUTODERIVATIVE=0 is used then the user function must check the parameter
  FJAC, and if FJAC!=None then return the partial derivative array in the
- return list.
-::
-   def myfunct(p, fjac=None, x=None, y=None, err=None)
-    # Parameter values are passed in "p"
-    # If FJAC!=None then partial derivatives must be comptuer.
-    # FJAC contains an array of len(p), where each entry
-    # is 1 if that parameter is free and 0 if it is fixed.
-    model = F(x, p)
-    Non-negative status value means MPFIT should continue, negative means
-    # stop the calculation.
-    status = 0
-    if (dojac):
-       pderiv = zeros([len(x), len(p)], Float)
-       for j in range(len(p)):
-         pderiv[:,j] = FGRAD(x, p, j)
-    else:
-       pderiv = None
-    return([status, (y-model)/err, pderiv]
+ return list.::
+     def myfunct(p, fjac=None, x=None, y=None, err=None)
+        # Parameter values are passed in "p"
+        # If FJAC!=None then partial derivatives must be comptuer.
+        # FJAC contains an array of len(p), where each entry
+        # is 1 if that parameter is free and 0 if it is fixed.
+        model = F(x, p)
+        Non-negative status value means MPFIT should continue, negative means
+        # stop the calculation.
+        status = 0
+        if (dojac):
+           pderiv = zeros([len(x), len(p)], Float)
+           for j in range(len(p)):
+             pderiv[:,j] = FGRAD(x, p, j)
+        else:
+           pderiv = None
+        return([status, (y-model)/err, pderiv]
 
  where FGRAD(x, p, i) is a user function which must compute the
  derivative of the model with respect to parameter P[i] at X.  When
@@ -172,8 +171,8 @@ least-squares minimization problem.
  dimension should be the parameter dimension.  Example: fitting a
  50x50 image, "dp" should be 50x50xNPAR.
 
-
-           Constraining Paremeters with the parinfo keyword
+Constraining Paremeters with the parinfo keyword
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The behavior of MPFIT can be modified with respect to each
  parameter to be fitted.  A parameter value can be fixed; simple
@@ -219,12 +218,11 @@ least-squares minimization problem.
 
     - 'mpside' : the sidedness of the finite difference when computing
               numerical derivatives.  This field can take four
-              values:
-
-                 0 - one-sided derivative computed automatically
-                 1 - one-sided derivative (f(x+h) - f(x)  )/h
-                -1 - one-sided derivative (f(x)   - f(x-h))/h
-                 2 - two-sided derivative (f(x+h) - f(x-h))/(2*h)
+              values::
+             0 - one-sided derivative computed automatically
+             1 - one-sided derivative (f(x+h) - f(x)  )/h
+            -1 - one-sided derivative (f(x)   - f(x-h))/h
+             2 - two-sided derivative (f(x+h) - f(x-h))/(2*h)
 
              Where H is the STEP parameter described above.  The
              "automatic" one-sided derivative method will chose a
@@ -263,14 +261,14 @@ least-squares minimization problem.
  the same letters; otherwise they are free to include their own
  fields within the PARINFO structure, and they will be ignored.
 
- PARINFO Example:
- parinfo = [{'value':0., 'fixed':0, 'limited':[0,0], 'limits':[0.,0.]}
-                                                 for i in range(5)]
- parinfo[0]['fixed'] = 1
- parinfo[4]['limited'][0] = 1
- parinfo[4]['limits'][0]  = 50.
- values = [5.7, 2.2, 500., 1.5, 2000.]
- for i in range(5): parinfo[i]['value']=values[i]
+ PARINFO Example::
+     parinfo = [{'value':0., 'fixed':0, 'limited':[0,0], 'limits':[0.,0.]}
+                                                     for i in range(5)]
+     parinfo[0]['fixed'] = 1
+     parinfo[4]['limited'][0] = 1
+     parinfo[4]['limits'][0]  = 50.
+     values = [5.7, 2.2, 500., 1.5, 2000.]
+     for i in range(5): parinfo[i]['value']=values[i]
 
  A total of 5 parameters, with starting values of 5.7,
  2.2, 500, 1.5, and 2000 are given.  The first parameter
@@ -278,23 +276,24 @@ least-squares minimization problem.
  constrained to be above 50.
 
     Example::
-   import mpfit
-   import numpy.oldnumeric as Numeric
-   x = arange(100, float)
-   p0 = [5.7, 2.2, 500., 1.5, 2000.]
-   y = ( p[0] + p[1]*[x] + p[2]*[x**2] + p[3]*sqrt(x) +
-         p[4]*log(x))
-   fa = {'x':x, 'y':y, 'err':err}
-   m = mpfit('myfunct', p0, functkw=fa)
-   print 'status = ', m.status
-   if (m.status <= 0): print 'error message = ', m.errmsg
-   print 'parameters = ', m.params
+       import mpfit
+       import numpy.oldnumeric as Numeric
+       x = arange(100, float)
+       p0 = [5.7, 2.2, 500., 1.5, 2000.]
+       y = ( p[0] + p[1]*[x] + p[2]*[x**2] + p[3]*sqrt(x) +
+             p[4]*log(x))
+       fa = {'x':x, 'y':y, 'err':err}
+       m = mpfit('myfunct', p0, functkw=fa)
+       print 'status = ', m.status
+       if (m.status <= 0): print 'error message = ', m.errmsg
+       print 'parameters = ', m.params
 
    Minimizes sum of squares of MYFUNCT.  MYFUNCT is called with the X,
    Y, and ERR keyword parameters that are given by FUNCTKW.  The
    results can be obtained from the returned object m.
 
-                            Theory of Opertation
+Theory of Opertation
+~~~~~~~~~~~~~~~~~~~~
 
    There are many specific strategies for function minimization.  One
    very popular technique is to use function gradient information to
