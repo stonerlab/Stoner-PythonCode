@@ -1225,14 +1225,15 @@ class DataFile(object):
 
     def __search_index(self,xcol,value):
         """Helper for the search method that returns an array of booleans for indexing matching rows."""
-        x=self.column(xcol)
-        if isinstance(value,float):
-            ix=_np_.equal(x,value)
+        x=self.find_col(xcol)
+        if isinstance(value,(int,float)):
+            ix=_np_.equal(self.data[:,x],value)
         elif isinstance(value,tuple) and len(value)==2:
-            ix=_np_.logical_and(_np_.greater_equal(x,min(value)),_np_.less(x,max(value)))
+            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x],min(value)),_np_.less(self.data[:,x],max(value)))
         elif isinstance(value,(list,_np_.ndarray)):
+            ix=_np_.zeros(len(self),dtype=bool)
             for v in value:
-                ix|=self.__search_index(xcol,v)
+                ix=_np_.logical_or(ix,self.__search_index(xcol,v))
         elif callable(value):
             ix=aray([value(x[i],self.data[i]) for i in range(len(self))])
         else:
