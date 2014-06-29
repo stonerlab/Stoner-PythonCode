@@ -230,10 +230,12 @@ Other ways to Identify Columns of Data
 Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
 or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
 so that 'e' data is the error in the y data). DataFile has a concept of marking a column as containing such data and
-will then use these by default in many methods when appropriate to have 'x' and 'y' data.
+will then use these by default in many methods when appropriate to have 'x' and 'y' data. For data that describes a vector field,
+you can mark the columns as containing 'u', 'v', 'w' data where (u,v,w) is the vector value at the point (x,y,z). There's no
+support at present for uncertainities in (u,v,w) being marked. 
 
 To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
-either a list of single character strings from the set 'x','y','z','d','e', 'f' or '.' where each element of the list refers to
+a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
 the columns of data in order. To specify that a column has unmarked data use the '.' string.
 
 Alternately, you can pass :py:attr:`DataFile.setas` a string. In the simplest case, the string is just read in the same way that
@@ -372,10 +374,13 @@ The first example could also have been written more compactly as::
   	print row
   ......
 
+Searching, sectioning and filtering the data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.::
 
-  d.search('Temperature',4.2)
+  d.search('Temperature',4.2,accuracy=0.01)
   d.search('Temperature',4.2,['Temperature','Resistance'])
   d.search('Temperature',lambda x,y: x>10 and x<100)
   d.search('Temperature',lambda x,y: x>10 and
@@ -402,6 +407,10 @@ returned, otherwise it isn't. In thr last example, the final parameter can
 either be a list of columns or a single column. The rules for indexing columns
 are the same as used for the :py:meth:`DataFile.find_col` method.
 
+The 'accuracy' keyword parameter sets the level of accuracy to accept when testing
+equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
+the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.
+
 Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see ':ref:`maskeddata`) comes into its own.
@@ -410,11 +419,26 @@ To select which rows of data have been masked off, use the :py:meth:`DataFile.fi
  d.filter(lambda r:r[0]>5)
  d.filter(lambda r:r[0]>5,['Temp'])
 
-With jsut a single argument, the filter method takes a complete row at a time and passes it
+With just a single argument, the filter method takes a complete row at a time and passes it
 to the first argument, expecting to get a boolean response (or list olf booleans equal in length
 to the number of columns). With a second argument as in the second example, you can sepcify which
 columns are passed to the filtering function in what order. The second argument must be a list
 of things which can be used to index a column (ie strings, integers, regular expressions).
+
+
+Another option is to construct a new `DataFile` object from a section of the data - this is
+particularly useful where the `DataFile` represents data correspondi ng to a set of (x,y,z)
+points. For this case the :py:,eth:`DataFile.section` method can be used::
+
+d.setas="x..y.z."
+slab=d.section(x=5.2)
+line=d.section(x=4.7,z=2)
+thick_slab=d.section(z=(5.0,6.0))
+arbitary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
+
+After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
+'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
+these keyword arguments follow the same rules as the :py:math:`DataFile.search` method). The 
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

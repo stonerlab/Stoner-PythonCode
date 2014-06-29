@@ -1223,13 +1223,13 @@ class DataFile(object):
         return outp
 
 
-    def __search_index(self,xcol,value):
+    def __search_index(self,xcol,value,accuracy):
         """Helper for the search method that returns an array of booleans for indexing matching rows."""
         x=self.find_col(xcol)
         if isinstance(value,(int,float)):
-            ix=_np_.equal(self.data[:,x],value)
+            ix=_np_.less_equal(self.data[:,x]-value,accuracy)
         elif isinstance(value,tuple) and len(value)==2:
-            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x],min(value)),_np_.less(self.data[:,x],max(value)))
+            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x]-min(value),accruarcy),_np_.less(self.data[:,x]-max(value),accuracy))
         elif isinstance(value,(list,_np_.ndarray)):
             ix=_np_.zeros(len(self),dtype=bool)
             for v in value:
@@ -1888,13 +1888,16 @@ class DataFile(object):
         self.filename = filename
         return self
 
-    def search(self, xcol,value,columns=None):
+    def search(self, xcol,value,columns=None,accuracy=0.0):
         """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
 
         Args:
             xcol (int,string.re) is a Search Column Index
             value (float, tuple, list or callable): Value to look for
+
+        Keyword Arguments:
             columns (index or array of indices or None (default)): columns of data to return - none represents all columns.
+            accuracy (float): Uncertainty to accept when testing equalities
 
         Returns:
             numpy array of matching rows or column values depending on the arguements.
@@ -1910,7 +1913,7 @@ class DataFile(object):
 
 
         """
-        ix=self.__search_index(xcol,value)
+        ix=self.__search_index(xcol,value,accuracy)
         if columns is None: #Get the whole slice
             data=self.data[ix,:]
         else:
