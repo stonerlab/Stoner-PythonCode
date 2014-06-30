@@ -35,8 +35,7 @@ from a specific instrument (in this case the VSM).
 
 The possible sub-classes are:
     :py:class:`DataFile`
-         Tagged Data Interchange Format 1.5 -- the default format produced by
-        the LabVIEW measurement rigs
+        Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds
     :py:class:`Stoner.FileFormats.VSMFile` 
         The text files produced by the group's Oxford Instruments VSM
     :py:class:`Stoner.FileFormats.BigBlueFile` 
@@ -73,6 +72,10 @@ The possible sub-classes are:
     :py:class:`Stoner.FileFormats.SNSFile` 
         Reads the ascii export file format from `QuickNXS <http://sourceforge.net/projects/quicknxs/>`_
         the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.
+    :py:class:`Stoner.FileFormats.OVFFile`
+        OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0
+    :py:class:`Stoner.FileFormats.MDAASCIIFile`
+        This class will read some variants of the output of mda2ascii as used at the APS in Argonne.
 
         
 These classes can be used directly to load data from the appropriate format.::
@@ -206,16 +209,16 @@ as the names of any of the attributes of the :py:class:`DataFile` object::
 
 both return the same data.
 
-Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:
+Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
 
-   # As an integer where the first column on the left is index 0
-   # As a string. if the string matches a column header exactly then the index of that column is returned. 
+ # As an integer where the first column on the left is index 0
+ # As a string. if the string matches a column header exactly then the index of that column is returned. 
       If the string fails to match any column header it is compiled as a regular expression and then that 
       is tried as a match. If multiple columns match then only the first is returned.
-   # As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
+ # As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
       expression in directly with any extra options (like case insensitivity flags) set.
    # As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
-   # As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
+ # As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
       the final result would be to use a list of column indices.
 
 For example::
@@ -430,11 +433,11 @@ Another option is to construct a new `DataFile` object from a section of the dat
 particularly useful where the `DataFile` represents data correspondi ng to a set of (x,y,z)
 points. For this case the :py:,eth:`DataFile.section` method can be used::
 
-d.setas="x..y.z."
-slab=d.section(x=5.2)
-line=d.section(x=4.7,z=2)
-thick_slab=d.section(z=(5.0,6.0))
-arbitary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
+    d.setas="x..y.z."
+    slab=d.section(x=5.2)
+    line=d.section(x=4.7,z=2)
+    thick_slab=d.section(z=(5.0,6.0))
+    arbitary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to

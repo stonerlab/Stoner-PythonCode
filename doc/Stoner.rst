@@ -66,22 +66,44 @@ Stoner Package
 
 .. module:: Stoner.FileFormats
 
+Generic Fomats
+--------------
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    CSVFile
+    SPCFile
+    TDMSFile
+    OVFFile
+
+Instrument Formats
+------------------
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    BigBlueFile
+    FmokeFile
+    QDSquidVSMFile
+    RigakuFile
+    VSMFile
+    XRDFile
+
+Facility Outputs
+----------------
+
 .. autosummary::
    :toctree: classes
    :template: classdocs.rst
 
     BNLFile
-    BigBlueFile
-    CSVFile
-    FmokeFile
+    MDAASCIIFile
     OpenGDAFile
-    QDSquidVSMFile
     RasorFile
-    RigakuFile
-    SPCFile
-    TDMSFile
-    VSMFile
-    XRDFile
+    SNSFile
 
 :mod:`PlotFormats` Module
 =========================
