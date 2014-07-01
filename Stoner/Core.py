@@ -750,7 +750,7 @@ class DataFile(object):
               }
         if name in easy:
             return easy[name]()
-        elif name in ("x","y","z","d","e","f","u","v","w"):
+        elif name in ("x","y","z","d","e","f","u","v","w","r","q","p"):
             ret=self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile,self).__getattribute__(name)
@@ -778,15 +778,46 @@ class DataFile(object):
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
         for attr in self.__dict__:
-            if attr not in ("metadata","data","column_headers") and not attr.startswith("_"):
+            if attr not in ("metadata","data","column_headers") and not callable(self.__dict__[attr]):
                 c.__dict__[attr]=self.__dict__[attr]
         return c
 
     def _getattr_col(self,name):
         """Get a column using the setas attribute."""
-        col_check={"x":"xcol","d":"xerr","y":"ycol","e":"yerr","z":"zcol","f":"zerr","u":"ucol","v":"vcol","w":"wcol"}
+        col_check={"x":"xcol","d":"xerr","y":"ycol","e":"yerr","z":"zcol","f":"zerr","u":"ucol","v":"vcol","w":"wcol","q":"","p":"","r":""}
         col=col_check[name]
-        if col.startswith("x"):
+        if col=="" and self._cols and "axes" in self._cols: # inferred quick access columns for cartesian to polar transforms
+            axes=int(self._cols["axes"])
+            if name=="r": # r in spherical or cylinderical co-ordinate systems
+                m=[lambda d:None,
+                   lambda d:None,
+                   lambda d:_np_.sqrt(d.x**2+d.y**2),
+                   lambda d:_np_.sqrt(d.x**2+d.y**2+d.z**2),
+                   lambda d:_np_.sqrt(d.x**2+d.y**2+d.z**2),
+                   lambda d:_np_.sqrt(d.u**2+d.v**2),
+                   lambda d:_np_.sqrt(d.u**2+d.v**2+d.w**2)]
+                ret=m[axes](self)
+            elif name=="q": # theta in clyinderical or spherical co-ordiante systems
+                m=[lambda d:None,
+                   lambda d:None,
+                   lambda d:_np_.arctan2(d.x,d.y),
+                   lambda d:_np_.arctan2(d.x,d.y),
+                   lambda d:_np_.arctan2(d.x,d.y),
+                   lambda d:_np_.arctan2(d.u,d.v),
+                   lambda d:_np_.arctan2(d.u,d.v)]
+                ret=m[axes](self)
+            elif name=="p": # phi is spherical co-ordinate systems
+                m=[lambda d:None,
+                   lambda d:None,
+                   lambda d:None,
+                   lambda d:_np_.arctan(d.z),
+                   lambda d:_np_.arctan(d.z),
+                   lambda d:_np_.arctan(d.w),
+                   lambda d:_np_.arctan(d.w)]
+                ret=m[axes](self)
+
+
+        elif col.startswith("x"):
             if self._cols[col] is not None:
                 ret= self.column(self._cols[col])
             else:
@@ -1229,7 +1260,7 @@ class DataFile(object):
         if isinstance(value,(int,float)):
             ix=_np_.less_equal(self.data[:,x]-value,accuracy)
         elif isinstance(value,tuple) and len(value)==2:
-            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x]-min(value),accruarcy),_np_.less(self.data[:,x]-max(value),accuracy))
+            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x]-min(value),accuracy),_np_.less(self.data[:,x]-max(value),accuracy))
         elif isinstance(value,(list,_np_.ndarray)):
             ix=_np_.zeros(len(self),dtype=bool)
             for v in value:
@@ -1948,15 +1979,20 @@ class DataFile(object):
         ycol=cols["ycol"][0]
         zcol=cols["zcol"][0]
 
+        if "accuracy" in kargs:
+            accuracy=kargs["accuracy"]
+        else:
+            accuracy=0.0
+
         if "x" in kargs:
-            tmp.data=tmp.search(xcol,kargs["x"])
+            tmp.data=tmp.search(xcol,kargs["x"],accuracy=accuracy)
         if "y" in kargs:
-            tmp.data=tmp.search(ycol,kargs["y"])
+            tmp.data=tmp.search(ycol,kargs["y"],accuracy=accuracy)
         if "z" in kargs:
-            tmp.data=tmp.search(zcol,kargs["z"])
+            tmp.data=tmp.search(zcol,kargs["z"],accuracy=accuracy)
         if "r" in kargs:
             func=lambda x,r:kargs["r"](r[xcol],r[ycol],r[zcol])
-            tmp.data=tmp.search(0,func)
+            tmp.data=tmp.search(0,func,accuracy=accuracy)
         return tmp
 
     def sort(self, order=None,reverse=False):

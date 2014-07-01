@@ -1,4 +1,4 @@
-"""         Stoner.Plot 
+"""         Stoner.Plot
             ============
 
 Provides the a class to facilitate easier plotting of Stoner Data:
@@ -39,11 +39,11 @@ class PlotFile(DataFile):
         draw: Pass throuygh to matplotlib draw
         show: Pass through to matploitlib show
         figure: Pass through to maplotlib figure.
-        
+
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
         labels (list of string): List of axis labels as aternates to the column_headers
-    
+
     """
 
     positional_fmt=[pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog]
@@ -59,7 +59,7 @@ class PlotFile(DataFile):
         else:
             self.template=DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
-        self.__figure=None   
+        self.__figure=None
         self._labels=self.column_headers
         self.legend=True
         self._subplots=[]
@@ -120,7 +120,7 @@ class PlotFile(DataFile):
                 * subtitle - set the plot subtitle
                 * xlim - set the x-axis limits
                 * ylim - set the y-axis limits
-            
+
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
     """
@@ -146,13 +146,13 @@ class PlotFile(DataFile):
                 pyplot.__dict__[name](value)
         else:
             super(PlotFile, self).__setattr__(name, value)
-        
+
     def _col_label(self,index):
         """Look up a column and see if it exists in self._lables, otherwise get from self.column_headers.
-        
+
         Args:
             index (column index type): Column to return label for
-            
+
         Returns:
             String type representing the column label.
         """
@@ -167,7 +167,7 @@ class PlotFile(DataFile):
 
     def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
-        
+
         Args:
             ix (int): COlumn index of x data
             iy (int): Column index of y data
@@ -199,7 +199,7 @@ class PlotFile(DataFile):
 
     def plot(self,**kargs):
         """Try to make an appropriate plot based on the defined column assignments.
-        
+
         The column assignments are examined to determine whether to plot and x,y plot or an x,y,z plot
         and whether to plot error bars (for an x,y plot). All keyword argume nts are passed through to
         the selected plotting routine.
@@ -211,6 +211,9 @@ class PlotFile(DataFile):
                 ret=self.plot_xy(**kargs)
             elif cols["axes"]==3:
                 ret=self.plot_xyz(**kargs)
+            elif cols["axes"]==6:
+                ret=self.plot_xyzuvw(**kargs)
+
             else:
                 raise RuntimeError("Unable to work out plot type !")
         return ret
@@ -221,8 +224,8 @@ class PlotFile(DataFile):
             Args:
                 column_x (index): Which column has the X-Data
                 column_y (index): Which column(s) has(have) the y-data to plot
-            
-            Keyword Arguments:            
+
+            Keyword Arguments:
                 fmt (strong or sequence of strings): Specifies the format for the plot - see matplotlib documentation for details
                 show_plot (bool): True Turns on interactive plot control
                 title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
@@ -230,7 +233,7 @@ class PlotFile(DataFile):
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
-    
+
             Returns:
                 A matplotlib.figure isntance
 
@@ -269,8 +272,8 @@ class PlotFile(DataFile):
                             kwords[err][i]=_np_.zeros(len(self))
                 else:
                     kwords[err]=_np_.zeros(len(self))
-                            
-        
+
+
         # Now try to process the figure parameter
         if isinstance(figure, int):
             figure=self.template.new_figure(figure)
@@ -282,12 +285,12 @@ class PlotFile(DataFile):
             figure=self.__figure
         else:
             figure=self.template.new_figure(None)
-      
-        self.__figure=figure        
+
+        self.__figure=figure
         if show_plot == True:
             pyplot.ion()
         if plotter is None: #Nothing has defined the plotter to use yet
-            plotter=pyplot.plot  
+            plotter=pyplot.plot
         if not isinstance(column_y, list):
             ylabel=self.labels[column_y]
             column_y=[column_y]
@@ -318,13 +321,13 @@ class PlotFile(DataFile):
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
-        
+
             Args:
                 xcol (index): Xcolumn index or label
                 ycol (index): Y column index or label
                 zcol (index): Z column index or label
-            
-            Keyword Arguments:            
+
+            Keyword Arguments:
                 shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
                 xlim (tuple): Defines the x-axis limits and grid of the data to be plotted
                 ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted
@@ -352,7 +355,7 @@ class PlotFile(DataFile):
                 ycol=cols["ycol"][0]
             if zcol is None:
                 zcol=cols["zcol"][0]
-        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)     
+        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
         if isinstance(figure, int):
             figure=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -386,6 +389,80 @@ class PlotFile(DataFile):
 
         return self.__figure
 
+    def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None,vcol=None,wcol=None, figure=None, plotter=None,  **kwords):
+        """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi
+
+            Args:
+                xcol (index): Xcolumn index or label
+                ycol (index): Y column index or label
+                zcol (index): Z column index or label
+                ucol (index): U column index or label
+                vcol (index): V column index or label
+                wcol (index): W column index or label
+
+            Keyword Arguments:
+                colormap (string): Vector field colour map - defaults to the jet colour map
+                colors (column index or numpy array): Values used to map the colors of the resultant file.
+                figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+
+            Returns:
+                A mayavi scene instance
+        """
+        try:
+            from mayavi import mlab,core
+        except ImportError:
+            return None
+        if None in (xcol,ycol,zcol):
+            if "_startx" in kwords:
+                startx=kwords["_startx"]
+                del kwords["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if zcol is None:
+                zcol=cols["zcol"][0]
+            if ucol is None:
+                ucol=cols["ucol"][0]
+            if vcol is None:
+                vcol=cols["vcol"][0]
+            if wcol is None:
+                wcol=cols["wcol"][0]
+            if "colors" in kwords:
+                colors=kwords["colors"]
+                del kwords["colors"]
+                if isinstance(colors,index_types):
+                    colors=self.column(colors)
+                elif isinstance(colors,_np_.ndarray):
+                    colors=colors
+                elif callable(colors):
+                    colors=_np_.array([colors(x) for x in self.rows()])
+                else:
+                    raise RuntimeError("Do not recognise what to do with the colors keyword.")
+                kwords["scalars"]=colors
+        if isinstance(figure, int):
+            figure=mlab.figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=mlab.figure(bgcolor=(1,1,1))
+        elif isinstance(figure, core.scene.Scene):
+            pass
+        elif isinstance(self.__figure,  core.scene.Scene):
+            figure=self.__figure
+        else:
+            figure=mlab.figure(bgcolor=(1,1,1))
+        self.__figure=figure
+        if plotter is None:
+            plotter=self._VectorFieldPlot
+        plotter(self.column(xcol), self.column(ycol), self.column(zcol),self.column(ucol),self.column(vcol),self.column(wcol), **kwords)
+        mlab.show()
+        return self.__figure
+
+
     def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="linear"):
         """Function to convert xyz data onto a regular grid
 
@@ -393,13 +470,13 @@ class PlotFile(DataFile):
                 xc (index): Column to be used for the X-Data
                 yc (index): column to be used for Y-Data - default value is column to the right of the x-data column
                 zc (index): column to be used for the Z-data - default value is the column to the right of the y-data column
-            
-            Keyword Arguments:        
+
+            Keyword Arguments:
                 shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
                 xlim (tuple): The xlimits
                 ylim (tuple) The ylimits
                 method (string): Type of interploation to use, default is linear
-            
+
             ReturnsL
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
@@ -445,8 +522,8 @@ class PlotFile(DataFile):
             xc (index): Column to be used for the X-Data
             yc (index): column to be used for Y-Data - default value is column to the right of the x-data column
             zc (index): column to be used for the Z-data - default value is the column to the right of the y-data column
-        
-        Keyword Arguments:        
+
+        Keyword Arguments:
             shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
             xlim (tuple): The xlimits
             ylim (tuple) The ylimits
@@ -476,7 +553,7 @@ class PlotFile(DataFile):
                 xvals (index, list or numpy.array): Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
                 yvals (int or list): Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
                 rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
-            
+
             Keyword Arguments:
                 cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
                 show_plot (bool): True Turns on interactive plot control
@@ -487,7 +564,7 @@ class PlotFile(DataFile):
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
-            
+
             Returns:
                 The matplotib figure with the data plotted"""
         # Sortout yvals values
@@ -588,7 +665,7 @@ class PlotFile(DataFile):
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface
-        
+
         Args:
             X data
             Y Y data
@@ -606,6 +683,33 @@ class PlotFile(DataFile):
 
         return surf
 
+
+    def _VectorFieldPlot(self,X,Y,Z,U,V,W,**kargs):
+        """Helper function to plot vector fields using mayavi.mlab
+
+        Args:
+            X (array): X data co-ordinates
+            Y (array): Y data co-ordinates
+            Z (array): Z data co-ordinates
+            U (array): U data vector field component
+            V (array): V data vector field component
+            W (array): W data vector field component
+
+        Returns:
+            An mlab figure reference.
+            """
+        try:
+            from mayavi import mlab # might not work !
+        except ImportError:
+            return None
+        if "scalars" in kargs:
+            col_mode="color_by_scalar"
+        else:
+            col_mode="color_by_vector"
+        quiv=mlab.quiver3d(X,Y,Z,U,V,W,**kargs)
+        quiv.glyph.color_mode=col_mode
+        return quiv
+
     def draw(self):
         """Pass through to pyplot to force figure redraw"""
         self.template.new_figure(self.__figure.number)
@@ -617,10 +721,10 @@ class PlotFile(DataFile):
 
     def figure(self, figure=None):
         """Set the figure used by :py:class:`Stoner.Plot.PlotFile`
-        
+
         Args:
             figure A matplotlib figure or figure number
-            
+
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
@@ -628,26 +732,26 @@ class PlotFile(DataFile):
         elif isinstance(figure, int):
             figure=self.template.new_figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)        
+            figure=self.template.new_figure(figure.number)
         self.__figure=figure
         return self
-        
+
     def subplot(self,*args,**kargs):
         """Pass throuygh for pyplot.subplot()
-        
+
         Args:
             rows (int): If this is the only argument, then a three digit number representing
                 the rows,columns,index arguments. If seperate rows, column and index are provided,
                 then this is the number of rows of sub-plots in one figure.
             columns (int): The number of columns of sub-plots in one figure.
             index (int): Index (1 based) of the current sub-plot.
-            
+
         Returns:
             A matplotlib.Axes instance representing the current sub-plot
-            
-        As well as passing through to the plyplot routine of the same name, this 
+
+        As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
-        """        
+        """
         self.template.new_figure(self.__figure.number)
         sp=pyplot.subplot(*args,**kargs)
         if len(args)==1:
@@ -662,6 +766,6 @@ class PlotFile(DataFile):
             self.subplots.extend([None for i in range(rows*cols-len(self._subplots))])
         self._subplots[index-1]=sp
         return sp
-        
+
 
 
