@@ -22,6 +22,7 @@ from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 import matplotlib.colors as colors
+from colorsys import hls_to_rgb
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -713,7 +714,7 @@ class PlotFile(DataFile):
         if isinstance(kargs["scalars"],bool) and kargs["scalars"]: # fancy mode on
             del kargs["scalars"]
             pi=_np_.pi
-            colors=hsl2rgb((self.q+pi)/(2*pi),self.r*_np_.max(self.r),1+_np_.sign(self.p)*(_np_.abs(self.p/pi)**0.25))
+            colors=hsl2rgb((1+self.q/pi)/2,self.r/_np_.max(self.r),(1+self.w)/2)
             quiv=mlab.quiver3d(X,Y,Z,U,V,W,scalars=_np_.ones(len(self)),**kargs)
             quiv.glyph.color_mode=col_mode
             sc=tvtk.UnsignedCharArray()
@@ -803,15 +804,11 @@ def hsl2rgb(h,s,l):
 
     if h.shape!=l.shape or h.shape!=s.shape:
         raise RuntimeError("Must have equal shaped arrays for h, s and l")
-    t1=w(l<0.5,l*(1.0+s),l+s-l*s)
-    t2=2*l-t1
-    tr=h+0.3333333-_np_.floor(h+0.333333)
-    tg=h
-    tb=h+0.6666667-_np_.floor(h+0.6666667)
-    r=_np_.array(255*w(6*tr<1,t2+(t1-t2)*6*tr,w(tr*2<1,t1,w(3*tr<2,(t1-t2)*(0.6666-tr)*6,t2)))).astype('u1')
-    g=_np_.array(255*w(6*tg<1,t2+(t1-t2)*6*tg,w(tg*2<1,t1,w(3*tg<2,(t1-t2)*(0.6666-tg)*6,t2)))).astype('u1')
-    b=_np_.array(255*w(6*tb<1,t2+(t1-t2)*6*tb,w(tb*2<1,t1,w(3*tb<2,(t1-t2)*(0.6666-tb)*6,t2)))).astype('u1')
-    return _np_.column_stack([r,g,b])
 
 
+    rgb=_np_.zeros((len(h),3))
+    hls=_np_.column_stack([h,l,s])
+    for i in range(len(h)):
+        rgb[i,:]=_np_.array(hls_to_rgb(*hls[i]))
+    return (255*rgb).astype('u1')
 

@@ -810,10 +810,10 @@ class DataFile(object):
                 m=[lambda d:None,
                    lambda d:None,
                    lambda d:None,
-                   lambda d:_np_.arctan(d.z),
-                   lambda d:_np_.arctan(d.z),
-                   lambda d:_np_.arctan(d.w),
-                   lambda d:_np_.arctan(d.w)]
+                   lambda d:_np_.arcsin(d.z),
+                   lambda d:_np_.arsin(d.z),
+                   lambda d:_np_.arcsin(d.w),
+                   lambda d:_np_.arcsin(d.w)]
                 ret=m[axes](self)
 
 
