@@ -860,6 +860,9 @@ class DataFile(object):
         """Returns the data as a _np_ structured data array. If columns names are duplicated then they
         are made unique
         """
+        f=self.data.flags
+        if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]: # We need our data to be contiguous before we try a records view
+            self.data=self.data.copy()
         ch=copy.copy(self.column_headers) # renoved duplicated column headers for structured record
         for i in range(len(ch)):
             header=ch[i]
@@ -1247,6 +1250,12 @@ class DataFile(object):
 
                 Returns:
                     self in a textual format. """
+        return self.__repr_core__(1000)                    
+                    
+    def __repr_core__(self,shorten=1000):
+        """Actuall do the repr work, but allow for a shorten parameter to
+        save printing big files out to disc."""
+
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers)+"\n"
         m = len(self.metadata)
         self.data=_ma_.masked_array(_np_.atleast_2d(self.data))
@@ -1258,10 +1267,10 @@ class DataFile(object):
             for x in range(r, m):
                 outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
-            if r-m>1000:
-                for x in range(m,m+900):
+            if shorten is not None and shorten and r-m>shorten:
+                for x in range(m,m+shorten-100):
                     outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
-                outp+="... {} lines skipped...\n".format(r-m-900)
+                outp+="... {} lines skipped...\n".format(r-m-shorten+100)
                 for x in range(-100,-1):
                     outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
             else:
@@ -1930,7 +1939,7 @@ class DataFile(object):
             # now go and ask for one
             filename = self.__file_dialog('w')
         f = open(filename, 'w')
-        f.write(repr(self))
+        f.write(self.__repr_core__(None))
         f.close()
         self.filename = filename
         return self
