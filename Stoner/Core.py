@@ -350,10 +350,11 @@ class DataFile(object):
     #Class attributes
     #Priority is the load order for the class
     priority=32
+    patterns=["*.txt","*.tdi"] # Recognised filename patterns
+
 
     _conv_string=_np_.vectorize(lambda x:str(x))
     _conv_float=_np_.vectorize(lambda x:float(x))
-    file_pattern="Data Files (*.csv;*.dat;*.txt;*.dql;*.fld;*.*.tdi;*.spc)|*.csv *.dat *.txt *.dql *.fld *.tdi *.spc| All Files (*.*)|*.*|"
 
     #   INITIALISATION
 
@@ -694,7 +695,15 @@ class DataFile(object):
         except ImportError:
             from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
-        file_wildcard = self.file_pattern
+        
+        patterns=self.patterns
+        for c in self.subclasses:
+            patterns.extend(self.subclasses[c].patterns)
+        patterns=list(set(patterns))
+        p1=";".join(patterns)
+        p2=" ".join(patterns)
+ 
+        file_wildcard = "Data Files ({})|{}| All Files (*.*)|*.*|".format(p1,p2)
 
         if mode == "r":
             mode = "open"
@@ -1249,8 +1258,15 @@ class DataFile(object):
             for x in range(r, m):
                 outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
-            for x in range(m, r):
-                outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+            if r-m>1000:
+                for x in range(m,m+900):
+                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+                outp+="... {} lines skipped...\n".format(r-m-900)
+                for x in range(-100,-1):
+                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
+            else:
+                for x in range(m, r):
+                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()])+ "\n"
         return outp
 
 

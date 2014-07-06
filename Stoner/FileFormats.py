@@ -28,6 +28,8 @@ class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
     priority=128 # Rather generic file format so make it a low priority
+    
+    patterns=["*.csv","*.txt"] # Recognised filename patterns
 
     def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
@@ -98,6 +100,9 @@ class VSMFile(DataFile):
 
     priority=16 # Now makes a positive ID of its contents
 
+    patterns=["*.fld"] # Recognised filename patterns
+
+
     def __parse_VSM(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
 
@@ -162,6 +167,9 @@ class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
 
     priority=64 # Also rather generic file format so make a lower priority
+    patterns=["*.dat","*.iv","*.rvt"] # Recognised filename patterns
+
+
 
     def load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set
@@ -186,6 +194,9 @@ class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
 
     priority=16 # Is able to make a positive ID of its file content, so get priority to check
+    patterns=["*.dat"] # Recognised filename patterns
+
+
 
     def load(self,filename=None,*args, **kargs):
         """QDSquidVSM file loader routine.
@@ -233,6 +244,7 @@ class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
 
     priority=16 # Makes a positive ID of it's file type so give priority
+    patterns=["*.dat"] # Recognised filename patterns
 
     def load(self,filename=None,*args, **kargs):
         """OpenGDA file loader routine.
@@ -279,6 +291,7 @@ class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
 
     priority=64 # Can't make a positive ID of itself
+    patterns=["*.spc"] # Recognised filename patterns
 
     def load(self,filename=None,*args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
@@ -391,6 +404,9 @@ class TDMSFile(DataFile):
 
     Objects=dict()
     priority=16 # Makes a positive ID of its file contents
+    patterns=["*.tdms"] # Recognised filename patterns
+
+
 
     def load(self, filename=None, *args, **kargs):
         """TDMS file loader routine.
@@ -427,6 +443,8 @@ class RigakuFile(DataFile):
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
 
     priority=16 #Can make a positive id of file from first line
+    patterns=["*.ras"] # Recognised filename patterns
+
 
     def load(self, filename=None, *args, **kargs):
         """Reads an Rigaku ras file including handling the metadata nicely
@@ -508,6 +526,7 @@ class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
     priority=16 # Makes a positive id of its file contents
+    patterns=["*.dql"] # Recognised filename patterns
 
     def load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
@@ -579,6 +598,9 @@ class BNLFile(DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
+    priority=16
+    patterns=["*.txt"] # Recognised filename patterns
+    
     def __init__(self, *params):
         """Constructor modification
         BNLFile('filename')
@@ -664,6 +686,7 @@ class FmokeFile(DataFile):
     """Extends DataFile to open Fmoke Files"""
 
     priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
+    patterns=["*.dat"] # Recognised filename patterns
 
     def load(self,filename=None,*args, **kargs):
         """Sheffield Fovussed MOKE file loader routine.
@@ -694,6 +717,8 @@ class FmokeFile(DataFile):
 class GenXFile(DataFile):
     """Extends DataFile for GenX Exported data."""
     priority=16
+    patterns=["*.dat"] # Recognised filename patterns
+    
 
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -738,6 +763,7 @@ class SNSFile(DataFile):
     """
 
     priority=16
+    patterns=["*.dat"] # Recognised filename patterns
 
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -793,6 +819,10 @@ class OVFFile(DataFile):
     """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
 
     OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported"""
+
+    priority=16
+    patterns=["*.ovf"] # Recognised filename patterns
+
    
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -876,6 +906,8 @@ class OVFFile(DataFile):
 class MDAASCIIFile(DataFile):
     """Reads files generated from the APS."""
     priority=16
+    patterns=["*.txt"] # Recognised filename patterns
+    
 
     def load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""

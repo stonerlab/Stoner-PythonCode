@@ -42,6 +42,7 @@ class HDF5File(DataFile):
     priority=32
     compression='gzip'
     compression_opts=6
+    patterns=["*.hdf","*.hf5"]
 
     def __init__(self,*args,**kargs):
         """Constructor to catch initialising with an h5py.File or h5py.Group
@@ -54,7 +55,7 @@ class HDF5File(DataFile):
             else:
                 super(HDF5File,self).__init__(*args,**kargs)
 
-    def load(self,h5file,**kargs):
+    def load(self,filename=None,**kargs):
         """Loads data from a hdf5 file
         
         Args:
@@ -63,15 +64,20 @@ class HDF5File(DataFile):
         Returns:
             itself after having loaded the data
         """
-        if isinstance(h5file,str) or isinstance(h5file,unicode): #We got a string, so we'll treat it like a file...
-            try:
-                f=h5py.File(h5file,'r')
-            except IOError:
-                raise IOError("Failed to open {} as a n hdf5 file".format(h5file))
-        elif isinstance(h5file,h5py.File) or isinstance(h5file,h5py.Group):
-            f=h5file
+        if filename is None or not filename:
+            self.get_filename('r')
+            filename=self.filename
         else:
-            raise IOError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(h5file))
+            self.filename = filename        
+        if isinstance(filename,string_types): #We got a string, so we'll treat it like a file...
+            try:
+                f=h5py.File(filename,'r')
+            except IOError:
+                raise IOError("Failed to open {} as a n hdf5 file".format(filename))
+        elif isinstance(filename,h5py.File) or isinstance(filename,h5py.Group):
+            f=filename
+        else:
+            raise IOError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" in f.attrs: #Ensure that if we have a type attribute it tells us we're the right type !
             assert f.attrs["type"]=="HDF5File","HDF5 group doesn't hold an HD5File"
         data=f["data"]
@@ -90,11 +96,11 @@ class HDF5File(DataFile):
         else:
             self.filename=f.file.filename
 
-        if isinstance(h5file,str):
+        if isinstance(filename,string_types):
             f.file.close()
         return self
 
-    def save(self,h5file):
+    def save(self,h5file=None):
         """Writes the current object into  an hdf5 file or group within a file in a
         fashion that is compatible with being loaded in again with the same class.
         
@@ -106,7 +112,12 @@ class HDF5File(DataFile):
         Returns
             A copy of the object
         """
-        if isinstance(h5file,str):
+        if h5file is None:
+            h5file=self.filename
+        if h5file is None or (isinstance(h5file, bool) and not h5file): # now go and ask for one
+            h5file=self.__file_dialog('w')
+            self.filename=h5file
+        if isinstance(h5file,string_types):
             f=h5py.File(h5file,'w')
         elif isinstance(h5file,h5py.File) or isinstance(h5file,h5py.Group):
             f=h5file
@@ -127,7 +138,7 @@ class HDF5File(DataFile):
             if isinstance(h5file,str):
                 f.file.close()
             raise e
-        if isinstance(h5file,str):
+        if isinstance(h5file,string_types):
             f.file.close()
 
         return self

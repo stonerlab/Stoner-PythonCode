@@ -11,12 +11,12 @@ from Stoner.compat import *
 
 
 from .Core import *
-from .Analysis import *
+"""from .Analysis import *
 from .Plot import *
 from .FileFormats import *
 from PlotFormats import *
 from .Folders import *
-
+"""
 __version_info__ = ('0', '1', '12')
 __version__ = '.'.join(__version_info__)
 
