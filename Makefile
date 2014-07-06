@@ -8,8 +8,10 @@ PYTHON_SETUP	=	python setup.py
 egg:
 	$(PYTHON_SETUP) egg_info -d bdist_egg upload
 
-doc: FORCE
-	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html
+doc: docbuild
 	$(PYTHON_SETUP) upload_sphinx
 
+docbuild: FORCE
+	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html
+	
 FORCE:	
