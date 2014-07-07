@@ -11,12 +11,22 @@ from Stoner.compat import *
 import re
 #import pdb # for debugging
 import os
+import csv
 import numpy as _np_
 import numpy.ma as _ma_
 import copy
 import inspect as _inspect_
 import itertools
 import collections
+
+
+class _tab_delimited(csv.Dialect):
+    """A customised csv dialect class for reading tab delimited text files."""
+    delimiter="\t"
+    quoting=csv.QUOTE_NONE
+    doublequote=False
+    lineterminator="\r\n"
+
 
 
 class _evaluatable(object):
@@ -695,14 +705,14 @@ class DataFile(object):
         except ImportError:
             from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
-        
+
         patterns=self.patterns
         for c in self.subclasses:
             patterns.extend(self.subclasses[c].patterns)
         patterns=list(set(patterns))
         p1=";".join(patterns)
         p2=" ".join(patterns)
- 
+
         file_wildcard = "Data Files ({})|{}| All Files (*.*)|*.*|".format(p1,p2)
 
         if mode == "r":
@@ -1142,14 +1152,9 @@ class DataFile(object):
     def __parse_data(self):
         """Internal function to parse the tab deliminated text file
         """
-        with open(self.filename,"r") as reader:
-            if "next" in dir(reader):
-                readline=reader.next
-            elif "readline" in dir(reader):
-                readline=reader.readline
-            else:
-                raise AttributeError("No method to read a line in {}".format(reader))
-            row=readline().split('\t')
+        with open(self.filename,"r") as datafile:
+            reader=csv.reader(datafile,dialect=_tab_delimited())
+            row=reader.next()
             if row[0].strip()=="TDI Format 1.5":
                 format=1.5
             elif row[0].strip()=="TDI Format=Text 1.0":
@@ -1157,20 +1162,31 @@ class DataFile(object):
             else:
                 raise RuntimeError("Not a TDI File")
             col_headers_tmp=[x.strip() for x in row[1:]]
-        if len(col_headers_tmp)>0:
-            self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t")[:,1:]
-        meta=_np_.genfromtxt(self.filename,skip_header=1,usecols=0,dtype=str,delimiter="\t")
-        for row in meta:
-            if row.strip()!='':
-                md=row.split('=')
-                if len(md)==2:
-                    md[1]="=".join(md[1:])
-                elif len(md)<=1:
-                    md.extend(['',''])
-                if format==1.5:
-                    self.metadata[md[0].strip()]=md[1].strip()
-                elif format==1.0:
-                    self.metadata[md[0].strip()]=self.metadata.string_to_type(md[1].strip())
+            datarow=0
+            metadatarow=0
+            cols=0
+            for row in reader: # Now read through the metadata columns
+                if len(row)>0 and row[1].strip()!="":
+                    datarow+=1
+                    still_data=True
+                else:
+                    still_data=False
+                if row[0].strip()=="": #end of metadata:
+                    break
+                else:
+                    cols=max(cols,len(row))
+                    metadatarow+=1
+                    md=row[0].split('=')
+                    val="=".join(md[1:])
+                    self.metadata[md[0].strip()]=val.strip()
+        #End of metadata reading, close filke and reopen to read data
+        if still_data: # data extends beyond metada - read with genfromtxt
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t",usecols=range(1,cols))
+        elif datarow>0: # some data less than metadata
+            footer=metadatarow-datarow
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols+1))
+        else:
+            self.data=_np_.atleast_2d(_np_.array())
         if len(self.data.shape)>=2 and self.data.shape[1]>0:
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
             for i in range(len(col_headers_tmp)):
@@ -1250,8 +1266,8 @@ class DataFile(object):
 
                 Returns:
                     self in a textual format. """
-        return self.__repr_core__(1000)                    
-                    
+        return self.__repr_core__(1000)
+
     def __repr_core__(self,shorten=1000):
         """Actuall do the repr work, but allow for a shorten parameter to
         save printing big files out to disc."""
