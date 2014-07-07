@@ -1166,7 +1166,7 @@ class DataFile(object):
             metadatarow=0
             cols=0
             for row in reader: # Now read through the metadata columns
-                if len(row)>0 and row[1].strip()!="":
+                if len(row)>1 and row[1].strip()!="":
                     datarow+=1
                     still_data=True
                 else:
@@ -1184,7 +1184,7 @@ class DataFile(object):
             self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t",usecols=range(1,cols))
         elif datarow>0: # some data less than metadata
             footer=metadatarow-datarow
-            self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols+1))
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols))
         else:
             self.data=_np_.atleast_2d(_np_.array())
         if len(self.data.shape)>=2 and self.data.shape[1]>0:
