@@ -372,7 +372,10 @@ class DataFolder(object):
 
         Returns:
             A directory to be used for the file operation."""
-        from enthought.pyface.api import FileDialog, DirectoryDialog, OK
+        try:
+            from enthought.pyface.api import FileDialog, DirectoryDialog, OK
+        except ImportError:
+            from pyface.api import FileDialog, DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
         if isinstance(self.directory, string_types):
             dirname = self.directory
