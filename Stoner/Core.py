@@ -1307,7 +1307,7 @@ class DataFile(object):
             for v in value:
                 ix=_np_.logical_or(ix,self.__search_index(xcol,v))
         elif callable(value):
-            ix=aray([value(x[i],self.data[i]) for i in range(len(self))])
+            ix=_np_.aray([value(x[i],self.data[i]) for i in range(len(self))])
         else:
             raise RuntimeError("Unknown search value type {}".format(value))
         return ix
