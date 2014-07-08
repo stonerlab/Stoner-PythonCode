@@ -1307,7 +1307,7 @@ class DataFile(object):
             for v in value:
                 ix=_np_.logical_or(ix,self.__search_index(xcol,v))
         elif callable(value):
-            ix=_np_.aray([value(x[i],self.data[i]) for i in range(len(self))])
+            ix=_np_.array([value(self.column(x)[i],self.data[i]) for i in range(len(self))])
         else:
             raise RuntimeError("Unknown search value type {}".format(value))
         return ix
@@ -1989,7 +1989,8 @@ class DataFile(object):
         if columns is None: #Get the whole slice
             data=self.data[ix,:]
         else:
-            data=self.data[ix,self.find_col(columms)]
+            print columns
+            data=self.data[ix,self.find_col(columns)]
         return data
 
     def section(self,**kargs):
