@@ -1954,9 +1954,25 @@ class DataFile(object):
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
-        f = open(filename, 'w')
-        f.write(self.__repr_core__(None))
-        f.close()
+        header=["TDI Format 1.5"]
+        header.extend(self.column_headers)
+        header="\t".join(header)
+        mdkeys=sorted(self.metadata)
+        if len(mdkeys)>len(self):
+            mdremains=mdkeys[len(self):]
+            mdkeys=mdkeys[0:len(self)]
+        else:
+            mdremains=[]
+        mdtext=_np_.array([self.metadata.export(k) for k in mdkeys])
+        if len(mdtext)<len(self):
+            mdtext=_np_.append(mdtext,_np_.zeros(len(self)-len(mdtext),dtype=str))
+        data_out=_np_.column_stack([mdtext,self.data])
+        fmt=["%s"]*data_out.shape[1]
+        with open(filename, 'w') as f:
+            _np_.savetxt(f,data_out,fmt=fmt,header=header,delimiter="\t",comments="")
+            for k in mdremains:
+                f.write(self.metadata.export(k)+"\n")
+
         self.filename = filename
         return self
 
