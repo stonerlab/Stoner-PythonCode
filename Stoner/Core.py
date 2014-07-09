@@ -1341,32 +1341,35 @@ class DataFile(object):
         that describes if the columns are to be used for x-y plotting."""
         if len(self._setas)<len(self.column_headers):
             self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
-        if isinstance(value,list):
+
+        if isinstance(value,string_types): # expand the number-code combos in value
+            pattern=re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.))")
+            while True:
+                res=pattern.match(value)
+                if res is None:
+                    break
+                (total,count,code)=res.groups()
+                if count=="":
+                    count=1
+                else:
+                    count=int(count)
+                value=value.replace(total,code*count,1)
+        if isinstance(value,dict):
+            for typ in "xyzdefuvw":
+                try:
+                    for c in self.find_col(value[typ]):
+                        self._setas[c]=typ
+                except TypeError:
+                    self._setas[self.find_col(value[typ])]=typ
+                except KeyError:
+                    pass
+        elif isinstance(value,collections.Iterable):
             if len(value)> len(self.column_headers):
                 value=value[:len(self.column_headers)]
             for v in value:
                 if v.lower() not in "xyzedfuvw.":
                     raise ValueError("Set as column element is invalid: {}".format(v))
             self._setas[:len(value)]=[v.lower() for v in value]
-        elif isinstance(value,string_types):
-            value=value.lower()
-            pattern=re.compile("^([0-9]*?)(x|y|z|d|e|f|u|v|w|\.)")
-            i=0
-            while pattern.match(value):
-                res=pattern.match(value)
-                (count,code)=res.groups()
-                value=value[res.end():]
-                if count=="":
-                    count=1
-                else:
-                    count=int(count)
-                for j in range(count):
-                    self._setas[i]=code
-                    i+=1
-                    if i>=len(self.column_headers):
-                        break
-                if i>=len(self.column_headers):
-                    break
         else:
             raise ValueError("Set as column string ended with a number")
         self._cols=self._get_cols()
