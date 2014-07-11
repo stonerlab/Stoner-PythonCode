@@ -15,6 +15,7 @@ import matplotlib
 import os
 import platform
 import re
+import copy
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
@@ -199,25 +200,28 @@ class PlotFile(DataFile):
             self._template.customise_axes(ax)
 
 
-    def plot(self,**kargs):
+    def plot(self,*args,**kargs):
         """Try to make an appropriate plot based on the defined column assignments.
 
         The column assignments are examined to determine whether to plot and x,y plot or an x,y,z plot
         and whether to plot error bars (for an x,y plot). All keyword argume nts are passed through to
         the selected plotting routine.
         """
-        for x in [i for i in range(len(self.setas)) if self.setas[i]=="x"]:
-            cols=self._get_cols(startx=x)
-            kargs["_startx"]=x
-            if cols["axes"]==2:
-                ret=self.plot_xy(**kargs)
-            elif cols["axes"]==3:
-                ret=self.plot_xyz(**kargs)
-            elif cols["axes"]==6:
-                ret=self.plot_xyzuvw(**kargs)
+        if len(args)!=0:
+            axes=len(args)
+        else:
+            for x in [i for i in range(len(self.setas)) if self.setas[i]=="x"]:
+                cols=self._get_cols(startx=x)
+                kargs["_startx"]=x
+                axes=cols["axes"]
 
-            else:
-                raise RuntimeError("Unable to work out plot type !")
+        plotters=[None,None,self.plot_xy,self.plot_xyz,self.plot_xyuv,self.plot_xyuv,self.plot_xyzuvw]
+        if 2<=axes<=6:
+            plotter=plotters[axes]
+            ret=plotter(*args,**kargs)
+            pyplot.show()
+        else:
+            raise RuntimeError("Unable to work out plot type !")
         return ret
 
     def plot_xy(self,column_x=None, column_y=None, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
@@ -467,7 +471,7 @@ class PlotFile(DataFile):
         return self.__figure
 
 
-    def griddata(self,xc,yc=None,zc=None,shape=None,xlim=None,ylim=None,method="linear"):
+    def griddata(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None,ylim=None,method="linear",**kargs):
         """Function to convert xyz data onto a regular grid
 
             Args:
@@ -485,19 +489,24 @@ class PlotFile(DataFile):
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
 
-        xc=self.find_col(xc)
-        if yc is None:
-            yc=xc+1
-        else:
-            yc=self.find_col(yc)
-        if zc is None:
-            zc=yc+1
-        else:
-            zc=self.find_col(zc)
+        if None in (xcol,ycol,zcol):
+            if "_startx" in kargs:
+                startx=kargs["_startx"]
+                del kargs["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if zcol is None:
+                if len(cols["zcol"])>0:
+                    zcol=cols["zcol"][0]
         if shape is None or not(isinstance(shape,tuple) and len(shape)==2):
             shape=(_np_.floor(_np_.sqrt(len(self))),_np_.floor(_np_.sqrt(len(self))))
         if xlim is None:
-            xlim=(_np_.min(self.column(xc))*(shape[0]-1)/shape[0],_np_.max(self.column(xc))*(shape[0]-1)/shape[0])
+            xlim=(_np_.min(self.column(xcol))*(shape[0]-1)/shape[0],_np_.max(self.column(xcol))*(shape[0]-1)/shape[0])
         if isinstance(xlim,tuple) and len(xlim)==2:
             xlim=(xlim[0],xlim[1],(xlim[1]-xlim[0])/shape[0])
         elif isinstance(xlim,tuple) and len(xlim)==3:
@@ -505,7 +514,7 @@ class PlotFile(DataFile):
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim=(_np_.min(self.column(yc))*(shape[1]-1)/shape[1],_np_.max(self.column(yc))*(shape[0]-1)/shape[0])
+            ylim=(_np_.min(self.column(ycol))*(shape[1]-1)/shape[1],_np_.max(self.column(ycol))*(shape[0]-1)/shape[0])
         if isinstance(ylim,tuple) and len(ylim)==2:
             ylim=(ylim[0],ylim[1],(ylim[1]-ylim[0])/shape[1])
         elif isinstance(ylim,tuple) and len(ylim)==3:
@@ -515,11 +524,22 @@ class PlotFile(DataFile):
 
         np=_np_.mgrid[slice(*xlim),slice(*ylim)].T
 
-        points=_np_.array([self.column(xc),self.column(yc)]).T
-        Z=griddata(points,self.column(zc),np,method=method)
+        points=_np_.array([self.column(xcol),self.column(ycol)]).T
+        if zcol is None:
+            zdata=_np_.zeros(len(self))
+        elif isinstance(zcol,_np_.ndarray) and zcol.shape[0]==len(self): # zcol is some data
+            zdata=zcol
+        else:
+            zdata=self.column(zcol)
+        if len(zdata.shape)==1:
+            Z=griddata(points,zdata,np,method=method)
+        elif len(zdata.shape)==2:
+            Z=_np_.zeros((np.shape[0],np.shape[1],zdata.shape[1]))
+            for i in range(zdata.shape[1]):
+                Z[:,:,i]=griddata(points,zdata[:,i],np,method=method)
         return np[:,:,0],np[:,:,1],Z
 
-    def contour_xyz(self,xc,yc,zc,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
+    def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
         """Grid up the three columns of data and plot
 
         Args:
@@ -535,20 +555,253 @@ class PlotFile(DataFile):
         Returns:
             A matplotlib figure
          """
+        if None in (xcol,ycol,zcol):
+            if "_startx" in kargs:
+                startx=kargs["_startx"]
+                del kargs["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if zcol is None:
+                zcol=cols["zcol"][0]
 
-        X,Y,Z=self.griddata(xc,yc,zc,shape,xlim,ylim)
+
+        X,Y,Z=self.griddata(xcol,ycol,zcol,shape,xlim,ylim)
         if plotter is None:
             plotter=pyplot.contour
 
         fig=plotter(X,Y,Z,**kargs)
-        pyplot.xlabel(self._col_label(xc))
-        pyplot.ylabel(self._col_label(yc))
-        pyplot.title(self.filename + " "+ self._col_label(zc))
+        pyplot.xlabel(self._col_label(xcol))
+        pyplot.ylabel(self._col_label(ycol))
+        pyplot.title(self.filename + " "+ self._col_label(zcol))
 
         return fig
 
+    def plot_xyuv(self,xcol=None,ycol=None,ucol=None,vcol=None,wcol=None,figure=None,show_plot=True,**kargs):
+        """Makes an overlaid image and quiver plot.
+        Args:
+                xcol (index): Xcolumn index or label
+                ycol (index): Y column index or label
+                zcol (index): Z column index or label
+                ucol (index): U column index or label
+                vcol (index): V column index or label
+                wcol (index): W column index or label
 
+            Keyword Arguments:
+                show_plot (bool): True Turns on interactive plot control
+                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+                xlim (tuple): The xlimits
+                ylim (tuple) The ylimits
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.          
+                """
+        if None in (xcol,ycol,ucol,vcol,wcol):
+            if "_startx" in kargs:
+                startx=kargs["_startx"]
+                del kargs["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if ucol is None:
+                ucol=cols["ucol"][0]
+            if vcol is None:
+                vcol=cols["vcol"][0]
+            if wcol is None:
+                if len(cols["wcol"])>0:
+                    wdata=self.w
+                    phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))        
+                else:
+                    phidata=_np_.ones(len(self))*0.5
+                    wdata=phidata-0.5
+            else:
+                wdata=self.column(wcol)
+                phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))
 
+            qdata=0.5+(_np_.arctan2(self.column(ucol),self.column(vcol))/(2*_np_.pi))
+            rdata=_np_.sqrt(self.column(ucol)**2+self.column(vcol)**2+wdata**2)
+            rdata=rdata/max(rdata)
+            Z=hsl2rgb(qdata,rdata,phidata).astype('f')/255.0
+            ikargs=copy.copy(kargs)
+            qkargs=copy.copy(kargs)
+            for k in ["shape","xlim","ylim","origing","ubterpolation"]:
+                if k in qkargs:
+                    del qkargs[k]
+            for k in ["headwidth","headlength","headaxislength","width","scale"]:
+                if k in ikargs:
+                    del ikargs[k]
+            qkargs["figure"]=self.image_plot(xcol,ycol,Z,**ikargs)
+            fig=self.quiver_plot(xcol,ycol,ucol,vcol,**qkargs)
+            
+            return fig
+                
+
+    def quiver_plot(self,xcol=None,ycol=None,ucol=None,vcol=None,figure=None,show_plot=True,**kargs):
+        """Make a 2D Quiver plot from the data
+        
+        Args:
+                xcol (index): Xcolumn index or label
+                ycol (index): Y column index or label
+                zcol (index): Z column index or label
+                ucol (index): U column index or label
+                vcol (index): V column index or label
+                wcol (index): W column index or label
+
+            Keyword Arguments:
+                show_plot (bool): True Turns on interactive plot control
+                title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.          
+        
+
+        Returns:
+            A matplotlib figure instance.
+
+        Keyword arguments are all passed through to :py:func:`matplotlib.pyplot.quiver`.
+        """        
+        if None in (xcol,ycol,ucol,vcol):
+            if "_startx" in kargs:
+                startx=kargs["_startx"]
+                del kargs["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if ucol is None:
+                ucol=cols["ucol"][0]
+            if vcol is None:
+                vcol=cols["vcol"][0]
+        defaults={"pivot":"center",
+                  "color":(0,0,0,0.5),
+                  "headlength":5,
+                  "headaxislength":5,
+                  "headwidth":4,
+                  "units":"xy",
+                  "plotter":pyplot.quiver,
+                  "title":self.filename,
+                  "xlabel":self._col_label(self.find_col(xcol)),
+                  "ylabel":self._col_label(self.find_col(ycol))}
+        [title,xlabel,ylabel]=[defaults[k] for k in ["title","xlabel","ylabel"]]
+        for k in ["title","xlabel","ylabel"]:
+            del defaults[k]
+        for k in defaults:
+            if k not in kargs:
+                kargs[k]=defaults[k]
+        plotter=kargs["plotter"]
+        del kargs["plotter"]
+        if isinstance(figure, int):
+            figure=self.template.new_figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=self.template.new_figure(None)
+        elif isinstance(figure, matplotlib.figure.Figure):
+            figure=self.template.new_figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=self.template.new_figure(None)
+        self.__figure=figure
+        if show_plot == True:
+            pyplot.ion()
+        fig=plotter(self.column(self.find_col(xcol)),self.column(self.find_col(ycol)),self.column(self.find_col(ucol)),self.column(self.find_col(vcol)),**kargs)
+        pyplot.xlabel(xlabel)
+        pyplot.ylabel(ylabel)
+        pyplot.title(title)
+        return fig        
+
+    def image_plot(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, figure=None,show_plot=True,**kargs):
+        """Grid up the three columns of data and plot
+
+        Args:
+            xcol (index): Column to be used for the X-Data
+            ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
+            zcol (index): column to be used for the Z-data - default value is the column to the right of the y-data column
+
+        Keyword Arguments:
+            shaoe (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+            xlim (tuple): The xlimits
+            ylim (tuple) The ylimits
+            title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+            xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
+            ylabel (string): Y axes label, Default is None - guess from metadata
+            zlabel (string): Z axis label, Default is None - guess from metadata
+            figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+            plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+            kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+
+        Returns:
+            A matplotlib figure
+         """
+        if None in (xcol,ycol,zcol):
+            if "_startx" in kargs:
+                startx=kargs["_startx"]
+                del kargs["_startx"]
+            else:
+                startx=0
+            cols=self._get_cols(startx=startx)
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"][0]
+            if zcol is None:
+                zcol=cols["zcol"][0]
+
+        X,Y,Z=self.griddata(xcol,ycol,zcol,shape,xlim,ylim)
+        defaults={"origin":"lower",
+                  "interpolation":"bilinear",
+                  "plotter":pyplot.imshow,
+                  "title":self.filename,
+                  "cmap":cm.jet,
+                  "xlabel":self._col_label(self.find_col(xcol)),
+                  "ylabel":self._col_label(self.find_col(ycol))}
+        [title,xlabel,ylabel,plotter]=[defaults[k] for k in ["title","xlabel","ylabel","plotter"]]
+        for k in ["title","xlabel","ylabel","plotter"]:
+            del defaults[k]
+        for k in defaults:
+            if k not in kargs:
+                kargs[k]=defaults[k]
+        if isinstance(figure, int):
+            figure=self.template.new_figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=self.template.new_figure(None)
+        elif isinstance(figure, matplotlib.figure.Figure):
+            figure=self.template.new_figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=self.template.new_figure(None)
+        self.__figure=figure
+        if show_plot == True:
+            pyplot.ion()
+        cmap=cm.get_cmap(kargs["cmap"])
+        if len(Z.shape)==2:
+            Z=cmap(Z)
+        elif len(Z.shape)!=3:
+            raise RunetimeError("Z Data has a bad shape: {}".format(Z.shape))
+        xmin=_np_.min(X.ravel())
+        xmax=_np_.max(X.ravel())
+        ymin=_np_.min(Y.ravel())
+        ymax=_np_.max(Y.ravel())
+        aspect=(xmax-xmin)/(ymax-ymin)
+        extent=[xmin,xmax,ymin,ymax]
+        fig=plotter(Z,extent=extent,aspect=aspect,**kargs)
+        pyplot.xlabel(xlabel)
+        pyplot.ylabel(ylabel)
+        pyplot.title(title)            
+
+        return fig
 
     def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
@@ -711,7 +964,7 @@ class PlotFile(DataFile):
             col_mode="color_by_scalar"
         else:
             col_mode="color_by_vector"
-        if isinstance(kargs["scalars"],bool) and kargs["scalars"]: # fancy mode on
+        if "scalars" in kargs and isinstance(kargs["scalars"],bool) and kargs["scalars"]: # fancy mode on
             del kargs["scalars"]
             pi=_np_.pi
             colors=hsl2rgb((1+self.q/pi)/2,self.r/_np_.max(self.r),(1+self.w)/2)
