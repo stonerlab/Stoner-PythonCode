@@ -7,20 +7,20 @@ Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
-from Stoner.Core import DataFile
+from Stoner.Core import DataFile,_attribute_store
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_
 import matplotlib
 import os
 import platform
-import re
-import copy
+from inspect import getargspec
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as pyplot
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.axes_grid import inset_locator
 from matplotlib import cm
 import matplotlib.colors as colors
 from colorsys import hls_to_rgb
@@ -149,7 +149,7 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
-    def _col_label(self,index):
+    def _col_label(self,index,join=False):
         """Look up a column and see if it exists in self._lables, otherwise get from self.column_headers.
 
         Args:
@@ -160,13 +160,86 @@ class PlotFile(DataFile):
         """
         ix=self.find_col(index)
         if isinstance(ix,list):
-            return [self._col_label(i) for i in ix]
+            if join:
+                return ",".join([self._col_label(i) for i in ix])
+            else:
+                return [self._col_label(i) for i in ix]
         else:
             if isinstance(self._labels,list) and len(self._labels)>ix:
                 return self._labels[ix]
             else:
                 return self.column_headers[ix]
 
+    def _fix_cols(self,**kargs):
+        """Sorts out axis specs, replacing with contents from setas as necessary."""
+        if "startx" in kargs:
+            startx=kargs["startx"]
+            del kargs["startx"]
+        else:
+            startx=0
+        if "multiy" not in kargs:
+            kargs["multiy"]=False
+        cols=self._get_cols(startx=startx)
+        for k in ["xcol","ycol","zcol","ucol","vcol","wcol","xerr","yerr","zerr"]:
+            if k in kargs and k=="xcol" and kargs["xcol"] is None:
+                kargs["xcol"]=cols["xcol"]
+            elif k in kargs and k=="xerr" and kargs["xerr"] is None:
+                kargs["xerr"]=cols["xerr"]
+            elif k in kargs and k!="xcol" and kargs[k] is None and len(cols[k])>0:
+                if kargs["multiy"]:
+                    kargs[k]=cols[k]
+                else:
+                    kargs[k]=cols[k][0]
+        for k in kargs.keys():
+            if k not in ["xcol","ycol","zcol","ucol","vcol","wcol","xerr","yerr","zerr"]:
+                del kargs[k]
+        return _attribute_store(kargs)
+
+    def _fix_kargs(self,function=None, defaults=None,otherkargs=None,**kargs):
+        """Update kargs with default values"""
+        if defaults is None:
+            defaults=dict()
+        defaults.update(kargs)
+        if function is None:
+            function=defaults["plotter"]
+        (args,vargs,kwargs,defs)=getargspec(function)
+        if isinstance(otherkargs,(list,tuple)):
+            args.extend(otherkargs)
+        nonkargs=dict()        
+        for k in defaults.keys():
+            nonkargs[k]=defaults[k]
+            if k not in args:
+                del defaults[k]
+        return defaults,nonkargs
+        
+    def _fix_titles(self,**kargs):
+        """Does the titling and labelling for a matplotlib plot."""
+        p=dict()
+        for k in ["xlabel","ylabel","zlabel","title"]:
+            if k in kargs and kargs[k] is not None:
+                p[k]=kargs[k]
+        self._template.annotate(self,**p)
+        if "show_plot" in kargs and kargs["show_plot"]:
+            pyplot.ion()
+            pyplot.draw()
+            pyplot.show()
+        if "save_filename" in kargs and kargs["save_filename"] is not None:
+            pyplot.savefig(str(nonkargs["save_filename"]))
+
+            
+    def _fix_fig(self,figure):
+        """Sorts out the matplotlib figure handling"""
+        if isinstance(figure, int):
+            figure=self.template.new_figure(figure)
+        elif isinstance(figure, bool) and not figure:
+            figure=self.template.new_figure(None)
+        elif isinstance(figure, matplotlib.figure.Figure):
+            figure=self.template.new_figure(figure.number)
+        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure=self.__figure
+        else:
+            figure=self.template.new_figure(None)
+        return figure
 
     def _plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
@@ -224,7 +297,7 @@ class PlotFile(DataFile):
             raise RuntimeError("Unable to work out plot type !")
         return ret
 
-    def plot_xy(self,column_x=None, column_y=None, fmt=None,show_plot=True,  title='', save_filename='', figure=None, plotter=None,  **kwords):
+    def plot_xy(self,xcol=None, ycol=None, fmt=None,xerr=None, yerr=None,  **kargs):
         """Makes a simple X-Y plot of the specified data.
 
             Args:
@@ -248,84 +321,54 @@ class PlotFile(DataFile):
         # We return the first column marked as an 'X' column and then all the 'Y' columns between there
         # and the next 'X' column or the end of the file. If the yerr keyword is specified and is Ture
         # then  we look for an equal number of matching 'e' columns for the error bars.
-        if column_x is None and column_y is None:
-            if "_startx" in kwords:
-                startx=kwords["_startx"]
-                del kwords["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            column_x=cols["xcol"]
-            column_y=cols["ycol"]
-            if "xerr" not in kwords and cols["has_xerr"]:
-                kwords["xerr"]=cols["xerr"]
-            if "yerr" not in kwords and cols["has_yerr"]:
-                kwords["yerr"]=cols["yerr"]
-        column_x=self.find_col(column_x)
-        column_y=self.find_col(column_y)
-        if "xerr" in kwords or "yerr" in kwords and plotter is None: # USe and errorbar blotter by default for errors
-            plotter=pyplot.errorbar
+        c=self._fix_cols(xcol=xcol,ycol=ycol,xerr=xerr,yerr=yerr,multi_y=True,**kargs)
+        (kargs["xerr"],kargs["yerr"])=(c.xerr,c.yerr)
+        defaults={"plotter":pyplot.plot,
+                  "show_plot":True,
+                  "figure":self.__figure,
+                  "title":self.filename,
+                  "save_filename":None,
+                  "xlabel":self._col_label(self.find_col(c.xcol)),
+                  "ylabel":self._col_label(self.find_col(c.ycol),True)}
+        if "plotter" not in kargs and (c.xerr is not None or c.yerr is not None): # USe and errorbar blotter by default for errors
+            kargs["plotter"]=pyplot.errorbar
+        kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
+        self.__figure=self._fix_fig(nonkargs["figure"])
+            
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if err in kwords:
-                if isinstance(kwords[err],index_types):
-                    kwords[err]=self.column(kwords[err])
-                elif isinstance(kwords[err], list) and isinstance(column_y,list) and len(kwords[err])==len(column_y):
+            if err in kargs:
+                if isinstance(kargs[err],index_types):
+                    kargs[err]=self.column(kargs[err])
+                elif isinstance(kargs[err], list) and isinstance(c.ycol,list) and len(kargs[err])==len(c.ycol):
                 # Ok, so it's a list, so redo the check for each  item.
-                    for i in range(len(kwords[err])):
-                        if isinstance(kwords[err][i],index_types):
-                            kwords[err][i]=self.column(kwords[err][i])
+                    for i in range(len(kargs[err])):
+                        if isinstance(kargs[err][i],index_types):
+                            kargs[err][i]=self.column(kargs[err][i])
                         else:
-                            kwords[err][i]=_np_.zeros(len(self))
+                            kargs[err][i]=_np_.zeros(len(self))
                 else:
-                    kwords[err]=_np_.zeros(len(self))
+                    kargs[err]=_np_.zeros(len(self))
 
 
-        # Now try to process the figure parameter
-        if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
-            figure=self.__figure
-        else:
-            figure=self.template.new_figure(None)
-
-        self.__figure=figure
-        if show_plot == True:
-            pyplot.ion()
-        if plotter is None: #Nothing has defined the plotter to use yet
-            plotter=pyplot.plot
-        if not isinstance(column_y, list):
-            ylabel=self.labels[column_y]
-            column_y=[column_y]
-        else:
-            ylabel=",".join([self.labels[ix] for ix in column_y])
-        temp_kwords=kwords
-        for ix in range(len(column_y)):
+        temp_kwords=kargs
+        if isinstance(c.ycol,int):
+            c.ycol=[c.ycol]
+        for ix in range(len(c.ycol)):
             if isinstance(fmt,list): # Fix up the format
                 fmt_t=fmt[ix]
             else:
                 fmt_t=fmt
-            if "label" in kwords and isinstance(kwords["label"],list): # Fix label keywords
-                temp_kwords["label"]=kwords["label"][ix]
-            if "yerr" in kwords and isinstance(kwords["yerr"],list): # Fix yerr keywords
-                temp_kwords["yerr"]=kwords["yerr"][ix]
+            if "label" in kargs and isinstance(kargs["label"],list): # Fix label keywords
+                temp_kwords["label"]=kargs["label"][ix]
+            if "yerr" in kargs and isinstance(kargs["yerr"],list): # Fix yerr keywords
+                temp_kwords["yerr"]=kargs["yerr"][ix]
             # Call plot
-            self._plot(column_x,column_y[ix],fmt_t,plotter,figure,**temp_kwords)
+            self._plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
 
-        xlabel=str(self._col_label(column_x))
-        if title=='':
-            title=self.filename
-        self._template.annotate(self,xlabel=xlabel,ylabel=ylabel,title=title)
-        if save_filename != '':
-            pyplot.savefig(str(save_filename))
-        pyplot.draw()
-        pyplot.show()
+        self._fix_titles(**nonkargs)  
         return self.__figure
 
-    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,show_plot=True,  title='', figure=None, plotter=None,  **kwords):
+    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,  **kargs):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
 
             Args:
@@ -348,54 +391,31 @@ class PlotFile(DataFile):
             Returns:
                 A matplotlib.figure isntance
         """
-        if None in (xcol,ycol,zcol):
-            if "_startx" in kwords:
-                startx=kwords["_startx"]
-                del kwords["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if zcol is None:
-                zcol=cols["zcol"][0]
-        xdata,ydata,zdata=self.griddata(xcol,ycol,zcol,shape=shape,xlim=xlim,ylim=ylim)
-        if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
-            figure=self.__figure
-        else:
-            figure=self.template.new_figure(None)
-        self.__figure=figure
-        if show_plot == True:
-            pyplot.ion()
-        if plotter is None:
-            plotter=self.__SurfPlotter
-        if "cmap" not in kwords:
-            kwords["cmap"]=cm.jet
-        plotter(xdata, ydata, zdata, **kwords)
-        params={}
-        params["xlabel"]=str(self._col_label(xcol))
-        params["ylabel"]=str(self._col_label(ycol))
-        params["zlabel"]=str(self._col_label(zcol))
-        if title=='':
-            title=self.filename
-        params["title"]=title
-        if plotter is not self.__SurfPlotter:
-            del(params["zlabel"])
-        self._template.annotate(self,**params)
-        pyplot.draw()
-        pyplot.show()
+        c=self._fix_cols(xcol=xcol,ycol=ycol,zcol=zcol,multi_y=False,**kargs)
+        xdata,ydata,zdata=self.griddata(c.xcol,c.ycol,c.zcol,shape=shape,xlim=xlim,ylim=ylim)
+        defaults={"plotter":self.__SurfPlotter,
+                  "show_plot":True,
+                  "figure":self.__figure,
+                  "title":self.filename,
+                  "save_filename":None,
+                  "cmap":cm.jet,
+                  "rstride":zdata.shape[0]/50,
+                  "colstride":zdata.shape[1]/50,
+                  "xlabel":self._col_label(self.find_col(c.xcol)),
+                  "ylabel":self._col_label(self.find_col(c.ycol),True),
+                  "zlabel":self._col_label(self.find_col(c.zcol),True)}
+        otherkargs=["rstride","cstride","color","cmap","facecolors","norm","vmin","vmax","shade"]
 
+        kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
+        plotter=nonkargs["plotter"]
+        self.__figure=self._fix_fig(nonkargs["figure"])
+        plotter(xdata, ydata, zdata, **kargs)
+        if plotter is not self.__SurfPlotter:
+            del(nonkargs["zlabel"])
+        self._fix_titles(**nonkargs)  
         return self.__figure
 
-    def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None,vcol=None,wcol=None, figure=None, plotter=None,  **kwords):
+    def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None,vcol=None,wcol=None,  **kargs):
         """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi
 
             Args:
@@ -411,7 +431,7 @@ class PlotFile(DataFile):
                 colors (column index or numpy array): Values used to map the colors of the resultant file.
                 figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
-                kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
+                kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
                 A mayavi scene instance
@@ -420,39 +440,31 @@ class PlotFile(DataFile):
             from mayavi import mlab,core
         except ImportError:
             return None
-        if None in (xcol,ycol,zcol):
-            if "_startx" in kwords:
-                startx=kwords["_startx"]
-                del kwords["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if zcol is None:
-                zcol=cols["zcol"][0]
-            if ucol is None:
-                ucol=cols["ucol"][0]
-            if vcol is None:
-                vcol=cols["vcol"][0]
-            if wcol is None:
-                wcol=cols["wcol"][0]
-            if "colors" in kwords:
-                colors=kwords["colors"]
-                del kwords["colors"]
-                if isinstance(colors,bool) and colors:
-                    colors=colors
-                elif isinstance(colors,index_types):
-                    colors=self.column(colors)
-                elif isinstance(colors,_np_.ndarray):
-                    colors=colors
-                elif callable(colors):
-                    colors=_np_.array([colors(x) for x in self.rows()])
-                else:
-                    raise RuntimeError("Do not recognise what to do with the colors keyword.")
-                kwords["scalars"]=colors
+        c=self._fix_cols(xcol=xcol,ycol=ycol,zcol=zcol,ucol=ucol,vcol=vcol,wcol=wcol,multi_y=False,**kargs)
+        defaults={"figure":self.__figure,
+                  "plotter":self._VectorFieldPlot,
+                  "show_plot":True,
+                  "mode":"cone",
+                  "colors":True}
+        otherkargs=["color","colormap","extent","figure","line_width",
+                    "mask_points","mode","name","opacity","reset_zoom",
+                    "resolution","scalars","scale_factor","scale_mode","transparent",
+                    "vmax","vmin"]
+        kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
+        colors=nonkargs["colors"]
+        if isinstance(colors,bool) and colors:
+            pass
+        elif isinstance(colors,index_types):
+            colors=self.column(colors)
+        elif isinstance(colors,_np_.ndarray):
+            pass
+        elif callable(colors):
+            colors=_np_.array([colors(x) for x in self.rows()])
+        else:
+            raise RuntimeError("Do not recognise what to do with the colors keyword.")
+        kargs["scalars"]=colors
+        figure=nonkargs["figure"]
+        plotter=nonkargs["plotter"]           
         if isinstance(figure, int):
             figure=mlab.figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -464,12 +476,11 @@ class PlotFile(DataFile):
         else:
             figure=mlab.figure(bgcolor=(1,1,1))
         self.__figure=figure
-        if plotter is None:
-            plotter=self._VectorFieldPlot
-        plotter(self.column(xcol), self.column(ycol), self.column(zcol),self.column(ucol),self.column(vcol),self.column(wcol), **kwords)
-        mlab.show()
+        kargs["figure"]=figure
+        plotter(self.column(c.xcol), self.column(c.ycol), self.column(c.zcol),self.column(c.ucol),self.column(c.vcol),self.column(c.wcol), **kargs)
+        if nonkargs["show_plot"]:
+            mlab.show()
         return self.__figure
-
 
     def griddata(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None,ylim=None,method="linear",**kargs):
         """Function to convert xyz data onto a regular grid
@@ -540,7 +551,7 @@ class PlotFile(DataFile):
         return np[:,:,0],np[:,:,1],Z
 
     def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
-        """Grid up the three columns of data and plot
+        """An xyz plot that forces the use of pyplot.contour
 
         Args:
             xc (index): Column to be used for the X-Data
@@ -555,33 +566,12 @@ class PlotFile(DataFile):
         Returns:
             A matplotlib figure
          """
-        if None in (xcol,ycol,zcol):
-            if "_startx" in kargs:
-                startx=kargs["_startx"]
-                del kargs["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if zcol is None:
-                zcol=cols["zcol"][0]
-
-
-        X,Y,Z=self.griddata(xcol,ycol,zcol,shape,xlim,ylim)
         if plotter is None:
             plotter=pyplot.contour
+        kargs["plotter"]=plotter
+        return self.plot_xyz(xcol,ycol,zcol,shape,xlim,ylim,**kargs)
 
-        fig=plotter(X,Y,Z,**kargs)
-        pyplot.xlabel(self._col_label(xcol))
-        pyplot.ylabel(self._col_label(ycol))
-        pyplot.title(self.filename + " "+ self._col_label(zcol))
-
-        return fig
-
-    def plot_xyuv(self,xcol=None,ycol=None,ucol=None,vcol=None,wcol=None,figure=None,show_plot=True,**kargs):
+    def plot_xyuv(self,xcol=None,ycol=None,ucol=None,vcol=None,wcol=None,**kargs):
         """Makes an overlaid image and quiver plot.
         Args:
                 xcol (index): Xcolumn index or label
@@ -601,51 +591,30 @@ class PlotFile(DataFile):
                 ylim (tuple) The ylimits
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.          
                 """
-        if None in (xcol,ycol,ucol,vcol,wcol):
-            if "_startx" in kargs:
-                startx=kargs["_startx"]
-                del kargs["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if ucol is None:
-                ucol=cols["ucol"][0]
-            if vcol is None:
-                vcol=cols["vcol"][0]
-            if wcol is None:
-                if len(cols["wcol"])>0:
-                    wdata=self.w
-                    phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))        
-                else:
-                    phidata=_np_.ones(len(self))*0.5
-                    wdata=phidata-0.5
-            else:
-                wdata=self.column(wcol)
-                phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))
-
-            qdata=0.5+(_np_.arctan2(self.column(ucol),self.column(vcol))/(2*_np_.pi))
-            rdata=_np_.sqrt(self.column(ucol)**2+self.column(vcol)**2+wdata**2)
-            rdata=rdata/max(rdata)
-            Z=hsl2rgb(qdata,rdata,phidata).astype('f')/255.0
-            ikargs=copy.copy(kargs)
-            qkargs=copy.copy(kargs)
-            for k in ["shape","xlim","ylim","origing","ubterpolation"]:
-                if k in qkargs:
-                    del qkargs[k]
-            for k in ["headwidth","headlength","headaxislength","width","scale"]:
-                if k in ikargs:
-                    del ikargs[k]
-            qkargs["figure"]=self.image_plot(xcol,ycol,Z,**ikargs)
-            fig=self.quiver_plot(xcol,ycol,ucol,vcol,**qkargs)
-            
-            return fig
-                
-
-    def quiver_plot(self,xcol=None,ycol=None,ucol=None,vcol=None,figure=None,show_plot=True,**kargs):
+        c=self._fix_cols(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,wcol=wcol,**kargs)
+        if isinstance(c.wcol,index_types):
+            wdata=self.column(c.wcol)
+            phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))        
+        else:
+            phidata=_np_.ones(len(self))*0.5
+            wdata=phidata-0.5
+        qdata=0.5+(_np_.arctan2(self.column(c.ucol),self.column(c.vcol))/(2*_np_.pi))
+        rdata=_np_.sqrt(self.column(c.ucol)**2+self.column(c.vcol)**2+wdata**2)
+        rdata=rdata/max(rdata)
+        Z=hsl2rgb(qdata,rdata,phidata).astype('f')/255.0
+        if "save_filename" in kargs:
+            save=kargs["save_filename"]
+            del kargs["save_filename"]
+        else:
+            save=None
+        fig=self.image_plot(c.xcol,c.ycol,Z,**kargs)
+        if save is not None: # stop saving file twice
+            kargs["save_filename"]=save
+        fig=self.quiver_plot(c.xcol,c.ycol,c.ucol,c.vcol,**kargs)
+        
+        return fig
+         
+    def quiver_plot(self,xcol=None,ycol=None,ucol=None,vcol=None,**kargs):
         """Make a 2D Quiver plot from the data
         
         Args:
@@ -668,22 +637,9 @@ class PlotFile(DataFile):
             A matplotlib figure instance.
 
         Keyword arguments are all passed through to :py:func:`matplotlib.pyplot.quiver`.
+
         """        
-        if None in (xcol,ycol,ucol,vcol):
-            if "_startx" in kargs:
-                startx=kargs["_startx"]
-                del kargs["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if ucol is None:
-                ucol=cols["ucol"][0]
-            if vcol is None:
-                vcol=cols["vcol"][0]
+        locals().update(self._fix_cols(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,**kargs))
         defaults={"pivot":"center",
                   "color":(0,0,0,0.5),
                   "headlength":5,
@@ -691,37 +647,22 @@ class PlotFile(DataFile):
                   "headwidth":4,
                   "units":"xy",
                   "plotter":pyplot.quiver,
+                  "show_plot":True,
+                  "figure":self.__figure,
                   "title":self.filename,
                   "xlabel":self._col_label(self.find_col(xcol)),
                   "ylabel":self._col_label(self.find_col(ycol))}
-        [title,xlabel,ylabel]=[defaults[k] for k in ["title","xlabel","ylabel"]]
-        for k in ["title","xlabel","ylabel"]:
-            del defaults[k]
-        for k in defaults:
-            if k not in kargs:
-                kargs[k]=defaults[k]
-        plotter=kargs["plotter"]
-        del kargs["plotter"]
-        if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
-            figure=self.__figure
-        else:
-            figure=self.template.new_figure(None)
-        self.__figure=figure
-        if show_plot == True:
-            pyplot.ion()
+        otherkargs=["units","angles","scale","scale_units","width",
+                    "headwidth","headlength","headaxislength",
+                    "minshaft","minlength","pivot","color"]
+        kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
+        plotter=nonkargs["plotter"]
+        self.__figure=self._fix_fig(nonkargs["figure"])
         fig=plotter(self.column(self.find_col(xcol)),self.column(self.find_col(ycol)),self.column(self.find_col(ucol)),self.column(self.find_col(vcol)),**kargs)
-        pyplot.xlabel(xlabel)
-        pyplot.ylabel(ylabel)
-        pyplot.title(title)
+        self._fix_titles(**nonkargs)        
         return fig        
 
-    def image_plot(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, figure=None,show_plot=True,**kargs):
+    def image_plot(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None,**kargs):
         """Grid up the three columns of data and plot
 
         Args:
@@ -744,19 +685,7 @@ class PlotFile(DataFile):
         Returns:
             A matplotlib figure
          """
-        if None in (xcol,ycol,zcol):
-            if "_startx" in kargs:
-                startx=kargs["_startx"]
-                del kargs["_startx"]
-            else:
-                startx=0
-            cols=self._get_cols(startx=startx)
-            if xcol is None:
-                xcol=cols["xcol"]
-            if ycol is None:
-                ycol=cols["ycol"][0]
-            if zcol is None:
-                zcol=cols["zcol"][0]
+        locals().update(self._fix_cols(xcol=xcol,ycol=ycol,**kargs))
 
         X,Y,Z=self.griddata(xcol,ycol,zcol,shape,xlim,ylim)
         defaults={"origin":"lower",
@@ -764,28 +693,16 @@ class PlotFile(DataFile):
                   "plotter":pyplot.imshow,
                   "title":self.filename,
                   "cmap":cm.jet,
+                  "figure":self.__figure,
                   "xlabel":self._col_label(self.find_col(xcol)),
                   "ylabel":self._col_label(self.find_col(ycol))}
-        [title,xlabel,ylabel,plotter]=[defaults[k] for k in ["title","xlabel","ylabel","plotter"]]
-        for k in ["title","xlabel","ylabel","plotter"]:
-            del defaults[k]
-        for k in defaults:
-            if k not in kargs:
-                kargs[k]=defaults[k]
-        if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
-            figure=self.__figure
-        else:
-            figure=self.template.new_figure(None)
-        self.__figure=figure
-        if show_plot == True:
-            pyplot.ion()
-        cmap=cm.get_cmap(kargs["cmap"])
+        kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
+        plotter=nonkargs["plotter"]
+        self.__figure=self._fix_fig(nonkargs["figure"])
+        if "cmap" in kargs:        
+            cmap=cm.get_cmap(kargs["cmap"])
+        elif "cmap" in nonkargs:
+            cmap=cm.get_cmap(nonkargs["cmap"])            
         if len(Z.shape)==2:
             Z=cmap(Z)
         elif len(Z.shape)!=3:
@@ -797,10 +714,7 @@ class PlotFile(DataFile):
         aspect=(xmax-xmin)/(ymax-ymin)
         extent=[xmin,xmax,ymin,ymax]
         fig=plotter(Z,extent=extent,aspect=aspect,**kargs)
-        pyplot.xlabel(xlabel)
-        pyplot.ylabel(ylabel)
-        pyplot.title(title)            
-
+        self._fix_titles(**nonkargs)        
         return fig
 
     def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
@@ -1004,6 +918,48 @@ class PlotFile(DataFile):
             figure=self.template.new_figure(figure.number)
         self.__figure=figure
         return self
+
+    def inset(self,parent=None,loc=None,width=0.35, height=0.30,**kargs):
+        """Add a new set of axes as an inset to the current plot
+        
+        Jeyword Arguments:
+            parent (matplotlib axes): Which set of axes to add inset to, defaults to the current set
+            loc (int or string): Inset location - can be a string like *top right* or *upper right* or a number.
+            width,height (int,float or string) the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes, or as a string measurement.
+            kargs (dictionary): all other keywords are passed through to inset_locator.inset_axes
+            
+        Returns:
+            A new set of axes"""
+        
+        locations=['best','upper right','upper left','lower left','lower right',
+                   'right','center left','center right','lower center',
+                   'upper center','center']
+        locations2=['best','top right','top left','bottom left','bottom right',
+                   'outside','leftside','rightside','bottom',
+                   'top','middle']
+        if isinstance(loc,string_types):
+            if loc in locations:
+                loc=locations.index(loc)
+            elif loc in locations2:
+                loc=locations2.index(loc)
+            else:
+                raise RuntimeError ("Couldn't work out where {} was supposed to be".format(loc))
+        if isinstance(width,int):
+            width="{}%".format(width)
+        elif isinstance(width,float) and 0<width<=1:
+            width="{}%".format(width*100)
+        elif not isinsance(width,string_types):
+            raise RuntimeErroror("didn't Recognize width specification {}".format(width))
+        if isinstance(height,int):
+            height="{}%".format(height)
+        elif isinstance(height,float) and 0<height<=1:
+            height="{}%".format(height*100)
+        elif not isinsance(height,string_types):
+            raise RuntimeErroror("didn't Recognize width specification {}".format(width))
+        if parent is None:
+            parent=pyplot.gca()
+        return inset_locator.inset_axes(parent,width,height,loc,**kargs)
+
 
     def subplot(self,*args,**kargs):
         """Pass throuygh for pyplot.subplot()

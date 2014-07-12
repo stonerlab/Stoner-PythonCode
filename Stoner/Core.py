@@ -19,6 +19,23 @@ import inspect as _inspect_
 import itertools
 import collections
 
+class _attribute_store(dict):
+    """A class that provides attributes that refer to columns in a DataFile instance."""
+    
+    def __init__(self,*args,**kargs):
+        if len(args)==1 and isinstance(args[0],dict):
+            self.update(args[0])
+        else:
+            super(_attribute_store,self).__init__(*args,**kargs)
+            
+    def __setattr__(self,name,value):
+        self[name]=value
+        
+    def __getattr__(self,name):
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError
 
 class _tab_delimited(csv.Dialect):
     """A customised csv dialect class for reading tab delimited text files."""
@@ -402,6 +419,7 @@ class DataFile(object):
         # init instance attributes
         self.debug=False
         self._masks=[False]
+        self._cols=_attribute_store()
         self.metadata=typeHintedDict()
         self.data = _ma_.masked_array([])
         self.filename = None
@@ -410,7 +428,7 @@ class DataFile(object):
         handler=[None,self._init_single,self._init_double,self._init_many][i]
         self.mask=False
         self._setas=[]
-        self._cols=self._get_cols()
+        self._get_cols()
         if handler is not None:
             handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
@@ -771,7 +789,7 @@ class DataFile(object):
             return easy[name]()
         elif name in ("x","y","z","d","e","f","u","v","w","r","q","p"):
             ret=self._getattr_col(name)
-        elif name in dir(self):
+        elif name=="_cols" or name in dir(self):
             return super(DataFile,self).__getattribute__(name)
         else:
             ret=None
@@ -998,11 +1016,12 @@ class DataFile(object):
                 axes=6
             elif len(ucol)*len(vcol)>0:
                 axes=5
-        ret={"xcol":xcol,"xerr":xerr,
+        ret=_attribute_store()
+        ret.update({"xcol":xcol,"xerr":xerr,
              "ycol":ycol,"yerr":yerr,
                  "zcol":zcol,"zerr":zerr,
                  "ucol":ucol,"vcol":vcol,"wcol":wcol,
-                 "axes":axes}
+                 "axes":axes})
         ret["has_xerr"]=xerr is not None
         ret["has_yerr"]=has_yerr
         ret["has_zerr"]=has_zerr
@@ -1333,6 +1352,8 @@ class DataFile(object):
             self.data.T=value
         elif name=="setas":
             self._set_setas(value)
+        elif len(name)==1 and name in "xyzuvwdef":
+            self._set_setas({name:value})
         else:
             self.__dict__[name] = value
 
@@ -1372,7 +1393,7 @@ class DataFile(object):
             self._setas[:len(value)]=[v.lower() for v in value]
         else:
             raise ValueError("Set as column string ended with a number")
-        self._cols=self._get_cols()
+        self._cols.update(self._get_cols())
 
 
     def __setitem__(self, name, value):
