@@ -11,6 +11,7 @@ from Stoner.compat import *
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter,Formatter
 from matplotlib.ticker import AutoLocator
+import numpy as _np_
 
 import numpy as _np_
 
@@ -102,20 +103,26 @@ class DefaultPlotStyle(object):
     show_legend=True
     xformatter=TexFormatter
     yformatter=TexFormatter
+    zformatter=TexFormatter    
     xlocater=AutoLocator
     ylocater=AutoLocator
+    zlocater=AutoLocator
     templat_axes_labelsize=12
     template_text_fontsize=12
     template_legend_fontsize=10
     template_legend_frameon=False
     template_xtick_labelsize=11
     template_ytick_labelsize=11
+    template_ztick_labelsize=11
     template_xtick_direction='in'
     template_ytick_direction='in'
+    template_ztick_direction='in'
     template_xtick_major_size=5
     template_ytick_major_size=5
+    template_ztick_major_size=5
     template_xtick_major_pad=4
     template_ytick_major_pad=4
+    template_ztick_major_pad=4
     template_font_size=14
     template_lines_linewidth=1
     template_axes_formatter_limits=(-1, 1)
@@ -202,8 +209,10 @@ class DefaultPlotStyle(object):
         ax.set_yticklabels(ax.get_yticks(),size=self.template_ytick_labelsize)
         ax.xaxis.set_major_formatter(self.xformatter())
         ax.yaxis.set_major_formatter(self.yformatter())
-        
-        
+        if "zaxis" in dir(ax):
+            ax.zaxis.set_major_locator(self.zlocater())
+            ax.set_zticklabels(ax.get_zticks(),size=self.template_ztick_labelsize)
+            ax.zaxis.set_major_formatter(self.zformatter())        
         
     def annotate(self,plot,**kargs):
         """Call all the routines necessary to annotate the axes etc.

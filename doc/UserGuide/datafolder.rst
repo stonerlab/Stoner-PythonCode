@@ -155,9 +155,8 @@ handy attributes::
 The difference between these two is that :py:attr:`DataFolder.basenames` will return only the file part 
 of the filename whilst :py:attr:`DataFolder.ls` returns the complete path from the root directory.
 
-.. _groups:
-Sorting, Filtering and Grouping Data Files
-==========================================
+.. _groups: Sorting, Filtering and Grouping Data Files
+======================================================
 
 The order of the files in a :py:class:`DataFolder` is arbitrary. If it is important to process 
 them in a given order then the :py:math:`DataFolder.sort` method can be used::

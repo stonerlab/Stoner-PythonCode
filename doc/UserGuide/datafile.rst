@@ -293,6 +293,12 @@ become available.::
 Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
 reduced number dimensions.
 
+There are some more convenience ways to set which columns to use as x,y,z etc.::
+
+    d.setas={"x":0,"y":"Y Column title"}
+    d.x=0
+    d.y="Y Column title"
+
 Working with complete rows of data
 ----------------------------------
 

@@ -135,3 +135,20 @@ the verticla offset. These can then be used to subtract the fit to find the resi
     d.plot()
     #Legend will be badly placed for a loop
     leged(loc=4) #Assuming you have pylab imported into the current namespace
+
+Quickly Sectioning a 3D dataset
+-------------------------------
+
+We often model the magnetic state in our experiments using a variety of micromagnetic 
+modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often useful to
+be able to examine a cross-section of the simulation. The Stoner package provides tools
+to quickly examine the output data::
+
+    from Stoner.FileFormats import OVFFile # reads OOMMF vector field files
+    import Stoner.Plot
+    p=SP.PlotFile('my_simulation.ovf')
+    p.setas="xyzuvw"
+    p=p.section(z=10.5) # Take a slice inthe xy plane where z is 10.5 nm
+    p.plot() # A 3D plot with cones
+    p.setas="xy.uvw"
+    p.plot() # a 2D colour wheel plot with triangular glyphs showing vector direction.

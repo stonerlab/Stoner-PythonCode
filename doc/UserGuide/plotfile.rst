@@ -36,15 +36,21 @@ py:meth:`PlotFile.plot` are passed on to the actual plotting method.
 Types of Plot
 =============
 
-:py:meth:`PlotFile.plot` will try to make the msot sensible choice of plot depending on which columns you have specified.
-x-y-z data will be converted to a grid and plotted as a 3D surface plot. x-y data will be plotted as a line plot and
-if errors (e or d columns) are given then the :py:func:`matplotlib.pyplot.errorbar` will be used to make the plots. When
-vector data is supplied via the *u*, *v* and *w* columns, a 3D Quiver plot will be generated if the mayavi library is
-available.
+:py:meth:`PlotFile.plot` will try to make the msot sensible choice of plot depending on which columns you have specified and
+the number of axes represetned.
+
+    * x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars
+    * x-y-z data will be converted to a grid and plotted as a 3D surface plot.
+    * x-y-u-v (i.e. 2D vectro fields) and x-y-u-v-w (3D vectros on a 2D plane) will be plotted as a colour image
+        where the colour is mapped to hue-saturation-luminescence scale. The hue gives the in plane ange while the luminescene gives
+        the out of plane component of the vector field.
+    * x-y-z-u-v-w data (i.e. 3D vector field on a 3D grid) is represented as a 3D quiver plot with coloured quivers (using the same H-S-L
+        colour space mapping as above) assuming mayavi is importable. 
 
 An alternative plot type for data with errorbars in :py:func:`plotutils.errorfill`. This uses a shaded line as an
 alternative to the error bars, where the shading of the line varies from intense to transparent the further one
-gets from the mean value.
+gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`PlotFile.contour_xyz` and a :py:meth:`PlotFile.image_plot` 
+methods available. These give contonour plots and 2D colour map plots respectively.
 
 Plotting 2D data
 ----------------
