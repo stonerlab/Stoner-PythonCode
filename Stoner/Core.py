@@ -2045,7 +2045,7 @@ class DataFile(object):
         Returns:
             A DataFile like object that includes only those lines from the original that match the section specification
 
-        Internally this function is calling :py:math:`DataFile.search` to pull out matching sections of the data array.
+        Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.
         To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
         conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
         data points that lie in an arbitary plane or line. eg::
