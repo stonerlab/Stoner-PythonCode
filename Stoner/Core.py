@@ -703,10 +703,10 @@ class DataFile(object):
         col_check={"xcol":"x","xerr":"d","ycol":"y","yerr":"e","zcol":"z","zerr":"f"}
         for k in col_check:
             if k.startswith("x"):
-                if self._cols[k] is not None:
+                if k in self._cols and self._cols[k] is not None:
                     attr.append(col_check[k])
             else:
-                if len(self._cols[k])>0:
+                if k in self._cols and len(self._cols[k])>0:
                     attr.append(col_check[k])
         return sorted(attr)
 
