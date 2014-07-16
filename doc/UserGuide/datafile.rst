@@ -78,6 +78,8 @@ Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Le
         XRD Machine.
     :py:class:`Stoner.FileFormats.FmokeFile`
         Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
+    :py:class:`Stoner.FileFormats.LSTemperatureFile`
+        Loads and saves data from Lakeshore inc's .340 Temperature Calibration file format.
 
 Classes for Instruments at Major Facilities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

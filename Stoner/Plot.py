@@ -503,7 +503,7 @@ class PlotFile(DataFile):
     def inset(self,parent=None,loc=None,width=0.35, height=0.30,**kargs):
         """Add a new set of axes as an inset to the current plot
         
-        Jeyword Arguments:
+        Keyword Arguments:
             parent (matplotlib axes): Which set of axes to add inset to, defaults to the current set
             loc (int or string): Inset location - can be a string like *top right* or *upper right* or a number.
             width,height (int,float or string) the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes, or as a string measurement.

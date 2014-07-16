@@ -1471,7 +1471,7 @@ class DataFile(object):
     #   PUBLIC METHODS
 
     def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
-        """Appends a column of data or inserts a column to a datafile
+        """Appends a column of data or inserts a column to a datafile instance.        
 
         Args:
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
@@ -1485,10 +1485,11 @@ class DataFile(object):
             replace (bool): Replace the data or insert the data (default)
 
         Returns:
-            The :py:class:`DataFile` instance with the additonal column inserted.
+            A :py:class:`DataFile` instance with the additonal column inserted.
 
         Note:
-            Also modifies the original DataFile Instance."""
+            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies 
+            the original DataFile Instance as well as returning it."""
         if index is None:
             index = len(self.column_headers)
             replace = False
@@ -1548,17 +1549,17 @@ class DataFile(object):
         return self
 
     def column(self, col):
-        """Extracts a column of data by index or name
+        """Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.
 
         Args:
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`
 
         Returns:
-            one or more columns of data"""
+            one or more columns of data as a :py:class:`numpy.ndarray`."""
         return self.data[:, self.find_col(col)]
 
     def columns(self):
-        """Generator method that will iterate over columns of data
+        """Generator method that will iterate over the columns of data int he datafile.
 
         Yields:
             Returns the next column of data."""
@@ -1580,7 +1581,7 @@ class DataFile(object):
         Note:
             - If duplicates is True and col is None then all duplicate columns are removed,
             - if col is not None and duplicates is True then all duplicates of the specified column are removed.
-            - If duplicates is false then @a col must not be None otherwise a RuntimeError is raised.
+            - If duplicates is False then *col* must not be None otherwise a RuntimeError is raised.
             - If col is a list (duplicates should not be None) then the all the matching columns are found.
             - If col is None and duplicates is None, then all columns with at least one elelemtn masked
                     will be deleted

@@ -987,11 +987,90 @@ class MDAASCIIFile(DataFile):
             self.data=_np_.genfromtxt(data) # so that's ok then !
             return self
                     
-                    
-                
-            
-                    
-                
-    
-    
+class LSTemperatureFile(DataFile):
+    """A class that reads and writes Lakeshore Temperature Calibration Curves."""
 
+    priority=16
+    patterns=["*.340"]
+
+    def load(self,filename=None,*args, **kargs):
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+
+        with open(self.filename,"r") as data:
+            keys=[]
+            vals=[]
+            for line in data:
+                if line.strip()=="":
+                    break
+                parts=[p.strip() for p in line.split(":")]
+                if len(parts)!=2:
+                    raise RuntimeError("Header doesn't contain two parts at {}".format(line.strip()))
+                else:
+                    keys.append(parts[0])
+                    vals.append(parts[1])
+            else:
+                raise RuntimeError("Overan the end of the file")
+            if keys!=["Sensor Model","Serial Number","Data Format","SetPoint Limit","Temperature coefficient","Number of Breakpoints"]:
+                raise RuntimeError("Header did not contain recognised keys.")
+            for (k,v) in zip(keys,vals):
+                v=v.split()[0]
+                self.metadata[k]=self.metadata.string_to_type(v)
+            headers=data.next().strip().split()
+            self.column_headers=headers[1:]
+            dat=_np_.genfromtxt(data)
+            self.data=dat[:,1:]
+        return self
+
+    def save(self,filename=None):        
+        """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
+
+        Args:
+            filename (string): Fielname to save as (using the same rules as for the load routines)
+
+        Keyword Arguments:
+            deliminator (string): Record deliniminator (defaults to a comma)
+
+        Returns:
+            A copy of itself."""
+        if filename is None:
+            filename=self.filename
+        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
+            filename=self.__file_dialog('w')
+        with open(filename,"w") as f:
+            for k in ["Sensor Model","Serial Number","Data Format","SetPoint Limit","Temperature coefficient","Number of Breakpoints"]:
+                if k in ["Sensor Model","Serial Number","Data Format","SetPoint Limit"]:
+                    kstr="{:16s}".format(k+":")
+                else:
+                    kstr="{}:   ".format(k)
+                v=self[k]
+                if k=="Data Format":
+                    units=["()","()","()","()","(Log Ohms/Kelvin)","(Log Ohms/Log Kelvin)"]
+                    vstr="{}      {}".format(v,units[int(v)])
+                elif k=="SetPointLimit":
+                    vstr="{}      (Kelvin)".format(v)
+                elif k=="Temperature coefficient":
+                    vstr="{} {}".format(v,["(positive)","(negative)"][v])
+                elif k=="Number of Breakpoints":
+                    vstr=str(len(self))
+                else:
+                    vstr=str(v)
+                f.write("{}{}\n".format(kstr,vstr))
+            f.write("\n")
+            f.write("No.   ")
+            for h in self.column_headers:
+                f.write("{:11s}".format(h))
+            f.write("\n\n")
+            for i in range(len(self.data)): # This is a slow way to write the data, but there should only ever be 200 lines
+                line="\t".join(["{:<10.8f}".format(n) for n in self.data[i]])                
+                f.write("{}\t".format(i))
+                f.write("{}\n".format(line))
+        return self
+
+                
+                
+                
+
+            

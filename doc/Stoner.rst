@@ -91,6 +91,7 @@ Instrument Formats
     RigakuFile
     VSMFile
     XRDFile
+    LSTemperatureFile
 
 Facility Outputs
 ----------------
