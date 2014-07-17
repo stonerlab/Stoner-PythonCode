@@ -10,6 +10,10 @@ import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
+from scipy.optimize import curve_fit
+from inspect import getargspec
+from collections import Iterable
+
 import sys
 
 def cov2corr(M):
@@ -150,12 +154,12 @@ class AnalyseFile(DataFile):
 
     def __get_math_val(self,col):
         """Utility routine to interpret col as either a column index or value or an array of values.
-        
+
         Args:
             col (various): If col can be interpreted as a column index then return the first matching column.
                 If col is a 1D array of the same length as the data then just return the data. If col is a
                 float then just return it as a float.
-        
+
         Returns:
             The matching data.
         """
@@ -259,7 +263,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the new data object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
@@ -272,7 +276,7 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
         else:
-            err_calc=None                
+            err_calc=None
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
@@ -280,7 +284,7 @@ class AnalyseFile(DataFile):
         if header is None:
             header="{}+{}".format(aname,bname)
         if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
+            err_header="Error in "+header
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata+bdata), header, a, replace=replace)
@@ -320,21 +324,21 @@ class AnalyseFile(DataFile):
 
     def bin(self,xcol=None,ycol=None,bins=0.03,mode="log",**kargs):
         """Bin x-y data into new values of x with an error bar
-        
+
         Args:
             xcol (index): Index of column of data with X values
             ycol (index): Index of column of data with Y values
             bins (int or float): Number of bins (if integer) or size of bins (if float)
             mode (string): "log" or "lin" for logarithmic or linear binning
-            
+
         Keyword Arguments:
             yerr (index): Column with y-error data if present.
             bin_start (float): Manually override the minimum bin value
             bin_stop (float): Manually override the maximum bin value
-            
+
         Returns:
             n x 3 array of x-bin, y-bin, y-bin-error where n is the number of bins
-            
+
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
             Michael Lindholm Nielsen
@@ -344,7 +348,7 @@ class AnalyseFile(DataFile):
             yerr=kargs["yerr"]
         else:
             yerr=None
-        
+
         if None in (xcol,ycol):
             cols=self._get_cols()
             if xcol is None:
@@ -353,7 +357,7 @@ class AnalyseFile(DataFile):
                 ycol=cols["ycol"]
             if "yerr" not in kargs and cols["has_yerr"]:
                 yerr=cols["yerr"]
-                
+
         bin_left,bin_right,bin_centres=self.make_bins(xcol,bins,mode,**kargs)
 
         ycol=self.find_col(ycol)
@@ -365,7 +369,7 @@ class AnalyseFile(DataFile):
         nbins=_np_.zeros((len(bin_left),len(ycol)))
         xcol=self.find_col(xcol)
         i=0
-        
+
         for limits in zip(bin_left,bin_right):
             data=self.search(xcol,limits)
             if yerr is not None:
@@ -445,9 +449,9 @@ class AnalyseFile(DataFile):
             If asrow is True, then return [popt[0],sqrt(pcov[0,0]),popt[1],sqrt(pcov[1,1])...popt[n],sqrt(pcov[n,n])]
 
         Note:
-            If the columns are not specified (or set to None) then the X and Y data are taken using the 
+            If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
-        
+
             The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
             The x-column and y-column can be anything that :py:meth:`Stoner.Core.DataFile.find_col` can use as an index
             but typucally either strings to be matched against column headings or integers.
@@ -455,9 +459,7 @@ class AnalyseFile(DataFile):
             at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
             point is to be used in the fit and false if not.
         """
-        from scipy.optimize import curve_fit
-        from inspect import getargspec
-        
+
         if None in (xcol,ycol,sigma):
             cols=self._get_cols()
             if xcol is None:
@@ -495,14 +497,14 @@ class AnalyseFile(DataFile):
 
     def decompose(self,xcol=None,ycol=None,sym=None, asym=None,replace=True, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
-        
+
         Keyword Arguments:
             xcol (index): Index of column with x data - defaults to first x column in self.setas
             ycol (index or list of indices): indices of y column(s) data
             sym (index): Index of column to place symmetric data in default, append to end of data
             asym (index): Index of column for asymmetric part of ata. Defaults to appending to end of data
             replace (bool): Overwrite data with output (true)
-            
+
         Returns:
             A copy of the newly modified AnalyseFile.
         """
@@ -535,7 +537,7 @@ class AnalyseFile(DataFile):
             self.column_headers[-1]="Asymmetric Data"
         else:
             self.add_column(asymd,"Symmetric Data",index=asym,replace=replace)
-        
+
         return self
 
     def diffsum(self, a, b, replace=False, header=None):
@@ -551,7 +553,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the new data object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
@@ -563,7 +565,7 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((1.0/(adata+bdata)-(adata-bdata)/(adata+bdata)**2)**2*e1data**2+(-1.0/(adata+bdata)-(adata-bdata) / (adata+bdata)**2)**2*e2data**2)
         else:
-            err_calc=None              
+            err_calc=None
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
@@ -571,7 +573,7 @@ class AnalyseFile(DataFile):
         if header is None:
             header="({}-{})/({}+{})".format(aname,bname,aname,bname)
         if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
+            err_header="Error in "+header
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata-bdata)/(adata+bdata), header, a, replace=replace)
@@ -593,7 +595,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the new data object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
@@ -605,7 +607,7 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
-            err_calc=None                
+            err_calc=None
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
@@ -613,7 +615,7 @@ class AnalyseFile(DataFile):
         if header is None:
             header="{}/{}".format(aname,bname)
         if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
+            err_header="Error in "+header
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata/bdata), header, a, replace=replace)
@@ -630,7 +632,7 @@ class AnalyseFile(DataFile):
             ycol (index) The Y data column index (or header)
 
         Keyword Arguments:
-            result (index or None): Either a column index (or header) to overwrite with the cumulative data, 
+            result (index or None): Either a column index (or header) to overwrite with the cumulative data,
                 or True to add a new column or None to not store the cumulative result.
             result_name (string): The new column header for the results column (if specified)
             bounds (callable): A function that evaluates for each row to determine if the data should be integrated over.
@@ -643,9 +645,9 @@ class AnalyseFile(DataFile):
             This is a pass through to the scipy.integrate.cumtrapz routine which just uses trapezoidal integration. A better alternative would be
             to offer a variety of methods including simpson's rule and interpolation of data. If xcol or ycol are not specified then
             the current values from the :py:attr:`Stoner.Core.DataFile.setas` attribute are used.
-            
-            
-            """        
+
+
+            """
         if xcol is None or ycol is None:
             cols=self._get_cols()
             if xcol is None:
@@ -704,16 +706,16 @@ class AnalyseFile(DataFile):
 
     def make_bins(self,xcol,bins,mode,**kargs):
         """Utility method to generate bin boundaries and centres along an axis.
-        
+
         Args:
             xcol (index): Column of data with X values
             bins (int or float): Number of bins (int) or width of bins (if float)
             mode (string): "lin" for linear binning, "log" for logarithmic binning.
-            
+
         Keyword Arguments:
             bin_start (float): Override minimum bin value
             bin_stop (float): Override the maximum bin value
-            
+
         Returns:
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
                 boundaries and centres for each bin.
@@ -778,7 +780,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             (maximum value,row index of max value)
-            
+
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
             assignments are used.
@@ -930,7 +932,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the new data object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
@@ -943,7 +945,7 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt((e1data/adata)**2+(e2data/bdata)**2)*adata*bdata
         else:
-            err_calc=None                
+            err_calc=None
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
@@ -951,7 +953,7 @@ class AnalyseFile(DataFile):
         if header is None:
             header="{}*{}".format(aname,bname)
         if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
+            err_header="Error in "+header
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata*bdata), header, a, replace=replace)
@@ -987,7 +989,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the current object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
@@ -999,7 +1001,7 @@ class AnalyseFile(DataFile):
                 header=self.column_headers[self.find_col(t)]+"(norm)"
             else:
                 header=str(header)
-            self.divide(t,base,header=header,replace=replace)                
+            self.divide(t,base,header=header,replace=replace)
         return self
 
 
@@ -1025,7 +1027,7 @@ class AnalyseFile(DataFile):
         Returns:
             If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
             """
-            
+
         if ycol is None:
             ycol=self._get_cols("ycol")
             xcol=self._get_cols("xcol")
@@ -1067,10 +1069,10 @@ class AnalyseFile(DataFile):
 
             Returns:
                 The best fit polynomial as a numpy.poly object.
-                
+
             Note:
                 If the x or y columns are not specified (or are None) the the setas attribute is used instead.
-                
+
                 This method is depricated and may be removed in a future version in favour of the more general curve_fit
             """
         from Stoner.Util import ordinal
@@ -1081,7 +1083,7 @@ class AnalyseFile(DataFile):
                 xcol=cols["xcol"]
             if ycol is None:
                 ycol=cols["ycol"][0]
-        
+
         working=self.search(xcol, bounds)
         p= _np_.polyfit(working[:, self.find_col(xcol)],working[:, self.find_col(ycol)],polynomial_order)
         if result is not None:
@@ -1103,7 +1105,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             A tuple of (min value, max value)
-            
+
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
             assignments are used.
@@ -1175,6 +1177,89 @@ class AnalyseFile(DataFile):
         return out
 
 
+    def stitch(self,other,xcol=None,ycol=None,overlap=None,min_overlap=0.0,mode=None):
+        """Apply a scaling to this data set to make it stich to another dataset.
+
+        Args:
+            other (DataFile): Another data set that is used as the base to stitch this one on to
+            xcol,ycol (index or None): The x and y data columns. If left as None then the current setas attribute is used.
+
+        Keyword Arguments:
+            overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
+            min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
+            mode (tuple of three booleans): Controls which parameters are actually variable, defaults to all of them
+
+        Returns:
+            A copy of the current AnalyseFile with the x and y data columns adjusted to stitch
+
+        To stitch the data together, the x and y data in the current data file is transforms so that
+        $x'=x+A$ and $y'=By+C$ where $A,B,C$ are constants and $x'$ and $y'$ are close matches to the
+        $x$ and $y$ data in *other*. The algorithm assumes that the overlap region contains equal
+        numbers of $(x,y)$ points.
+        """
+        if xcol is None: #Sort out the xcolumn and y column indexes
+            xcol=self._get_cols("xcol")
+        else:
+            xcol=self.find_col(xcol)
+        if ycol is None:
+            ycol=self._get_cols("ycol")
+        else:
+            ycol=self.find_col(ycol)
+        x=self.column(xcol)+min_overlap # Get the (x,y) data from each data set to be stitched
+        y=self.column(ycol)
+        xp=other.column(xcol)
+        yp=other.column(ycol)
+        if overlap is None: # Now sort out the overlap region
+            lower=max(_np_.min(x),_np_.min(xp))
+            upper=min(_np_.max(x),_np_.max(xp))
+        else:
+            lower=min(overlap)
+            upper=max(overlap)
+        if mode is None:
+            mode=[True,True,True]
+        elif isinstance(mode,string_types):
+            opts={"shift x":[True,False,False], "scale y":[False,True,False],"shift y":[False,False,True],"shift and scale y":[False,True,True]}
+            assert mode in opts,"Mode passed as string, but not recognised."
+            mode=opts[mode]
+        elif not isinstance(mod,Iterable) or len(mode)<3:
+            raise RuntimeError("Mode not recognised")
+        # Next get boolean arrays that mark which rows in each data set are in the overlap
+        inrange=_np_.logical_and(x>=lower,x<=upper)
+        inrange_other=_np_.logical_and(xp>=lower,xp<=upper)
+        x=x[inrange] # And throw away data that isn't in the overlap
+        y=y[inrange]
+        xp=xp[inrange_other]
+        yp=yp[inrange_other]
+        # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
+        set1=_np_.append(x,y)
+        set2=_np_.append(xp,yp)
+        assert len(set1)==len(set2),"The number of points in the overlap are different in the two data sets"
+
+        def transform(x,A,B,C):
+            """This expects data to be x points followed by y points, so calcualtes the transformation from $x,y$ to $x',y'$."""
+            out=_np_.zeros(len(x))
+            m=len(x)/2
+            if not mode[0]:
+                A=0.0
+            if not mode[1]:
+                B=1.0
+            if not mode[2]:
+                C=0.0
+            out[:m]=x[:m]+A
+            out[m:]=B*x[m:]+C
+            return out
+        [A,B,C],pcov=curve_fit(transform,set1,set2,p0=[0,1.0,0]) # Curve fit for optimal A,B,C
+        A=A+min_overlap
+        Aerr=pcov[0,0]
+        Berr=pcov[1,1]
+        Cerr=pcov[2,2]
+        self.data[:,xcol]=self.data[:,xcol]+A # Transform our X data
+        self.data[:,ycol]=C+B*self.data[:,ycol] # Transform our Y-Data
+        #Stuff the coefficients and errors into the meta data
+        self["Stiching Coefficients"]=[A,B,C]
+        self["Stitching Coeffient Errors"]=list(_np_.sqrt(_np_.array([Aerr,Berr,Cerr])))
+        return self
+
     def subtract(self, a, b, replace=False, header=None):
         """Subtract one column, number or array (b) from another column (a)
 
@@ -1188,11 +1273,11 @@ class AnalyseFile(DataFile):
 
         Returns:
             A copy of the new data object
-            
+
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
         additional column with the uncertainites will be added to the data."""
-            
+
         if isinstance(a,tuple) and isinstance(b,tuple) and len(a)==2 and len(b)==2: #Error columns on
             (a,e1)=a
             (b,e2)=b
@@ -1201,7 +1286,7 @@ class AnalyseFile(DataFile):
             err_header=None
             err_calc=lambda adata,bdata,e1data,e2data: _np_.sqrt(e1data**2+e2data**2)
         else:
-            err_calc=None                
+            err_calc=None
         adata,aname=self.__get_math_val(a)
         bdata,bname=self.__get_math_val(b)
         if isinstance(header,tuple) and len(header)==0:
@@ -1209,7 +1294,7 @@ class AnalyseFile(DataFile):
         if header is None:
             header="{}-{}".format(aname,bname)
         if err_calc is not None and err_header is None:
-            err_header="Error in "+header            
+            err_header="Error in "+header
         if err_calc is not None:
             err_data=err_calc(adata,bdata,e1data,e2data)
         self.add_column((adata-bdata), header, a, replace=replace)
@@ -1238,14 +1323,14 @@ class AnalyseFile(DataFile):
 
         Returns:
             Either a sing;le fractional row index, or an in terpolated x value
-            
+
         Note:
             If you don't sepcify a col value or set it to None, then the assigned columns via the
             :py:attr:`DataFile.setas` attribute will be used.
-            
+
         Warning:
             There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
-            argument list. In order to support the use of assigned columns, this has been swapped to the present order.            
+            argument list. In order to support the use of assigned columns, this has been swapped to the present order.
             """
         if col is None:
             col=self._get_cols("ycol")
