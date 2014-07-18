@@ -165,7 +165,7 @@ Each element is a dictionary with the following keys:
 
        *    [0]one-sided derivative computed automatically
        *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
-       *    [-1] one-sided derivative $(f(x)   - f(x-h))/h``
+       *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
        *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
             	Where H is the STEP parameter described above.  The "automatic"
                one-sided derivative method will chose a direction for the finite difference
@@ -305,14 +305,14 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalyseFile` provides
-a :py:meth:`AnalyseFile.stich` method to facilitate this.::
+a :py:meth:`AnalyseFile.stitch` method to facilitate this.::
 
     scan1=AnalyseFile('file 1.txt')
     scan2=AnalyseFile('file 2.txt')
-    scan2.stich(scan1,xcol="Angle",ycol="Counts")
+    scan2.stitch(scan1,xcol="Angle",ycol="Counts")
     scan1.setas="xy"
     scan2.setas="xy"
-    scan2.stich(scan1)
+    scan2.stitch(scan1)
     scan2.stitch(scan1,mode="shift x")
     scan2.stitch(scan1,mode="scale 7, shift x",overlap=(3.0,5.0))
     scan2.stitch(scan1,func=my_stitcher,p0=[3.14,2.54,2.0])
@@ -333,7 +333,7 @@ function should be::
         return (mapped_x,mapped_y)
 
 In addition to changing the X and Y data in the current :py:class:`AnalyseFile`
-instance, two new metadata keys, *Stiching Coefficient* and *Stitching Coeffient Errors*,
+instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
 with the co-efficients used to modify the scan data.
 
 Thresholding and Interpolating Data

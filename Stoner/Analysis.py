@@ -1188,16 +1188,16 @@ class AnalyseFile(DataFile):
             overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
             min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
             mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
-            func (callable): a stitching function that transforms $(x,y)\rightarrow(x',y')$. Default is to use functions defined by *mode*()
+            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*()
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
             A copy of the current AnalyseFile with the x and y data columns adjusted to stitch
 
         To stitch the data together, the x and y data in the current data file is transforms so that
-        $x'=x+A$ and $y'=By+C$ where $A,B,C$ are constants and $x'$ and $y'$ are close matches to the
-        $x$ and $y$ data in *other*. The algorithm assumes that the overlap region contains equal
-        numbers of $(x,y)$ points *mode controls whether A,B, and C are fixed or adjustable
+        :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
+        :math:`(x,y)` data in *other*. The algorithm assumes that the overlap region contains equal
+        numbers of :math:`(x,y)` points *mode controls whether A,B, and C are fixed or adjustable
 
         * "All" - all three parameters adjustable
         * "Scale y, shift x" - C is fixed at 0.0
@@ -1277,7 +1277,7 @@ class AnalyseFile(DataFile):
         perr=_np_.sqrt(_np_.diagonal(pcov))
 
         (self.data[:,xcol],self.data[:,ycol])=func(self.data[:,xcol]+min_overlap,self.data[:,ycol],*popt)
-        self["Stiching Coefficients"]=list(popt)
+        self["Stitching Coefficients"]=list(popt)
         self["Stitching Coeffient Errors"]=list(perr)
         return self
 
