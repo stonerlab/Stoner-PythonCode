@@ -1177,7 +1177,7 @@ class AnalyseFile(DataFile):
         return out
 
 
-    def stitch(self,other,xcol=None,ycol=None,overlap=None,min_overlap=0.0,mode=None):
+    def stitch(self,other,xcol=None,ycol=None,overlap=None,min_overlap=0.0,mode="All",func=None,p0=None):
         """Apply a scaling to this data set to make it stich to another dataset.
 
         Args:
@@ -1187,7 +1187,9 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
             min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
-            mode (tuple of three booleans): Controls which parameters are actually variable, defaults to all of them
+            mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
+            func (callable): a stitching function that transforms $(x,y)\rightarrow(x',y')$. Default is to use functions defined by *mode*()
+            p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
             A copy of the current AnalyseFile with the x and y data columns adjusted to stitch
@@ -1195,7 +1197,16 @@ class AnalyseFile(DataFile):
         To stitch the data together, the x and y data in the current data file is transforms so that
         $x'=x+A$ and $y'=By+C$ where $A,B,C$ are constants and $x'$ and $y'$ are close matches to the
         $x$ and $y$ data in *other*. The algorithm assumes that the overlap region contains equal
-        numbers of $(x,y)$ points.
+        numbers of $(x,y)$ points *mode controls whether A,B, and C are fixed or adjustable
+
+        * "All" - all three parameters adjustable
+        * "Scale y, shift x" - C is fixed at 0.0
+        * "Scale and shift y" A is fixed at 0.0
+        * "Scale y" - only B is adjustable
+        * "Shift y" - Only c is adjsutable
+        * "Shift x" - Only A is adjustable
+        * "Shift both" - B is fixed at 1.0
+        .
         """
         if xcol is None: #Sort out the xcolumn and y column indexes
             xcol=self._get_cols("xcol")
@@ -1215,49 +1226,59 @@ class AnalyseFile(DataFile):
         else:
             lower=min(overlap)
             upper=max(overlap)
-        if mode is None:
-            mode=[True,True,True]
-        elif isinstance(mode,string_types):
-            opts={"shift x":[True,False,False], "scale y":[False,True,False],"shift y":[False,False,True],"shift and scale y":[False,True,True]}
-            assert mode in opts,"Mode passed as string, but not recognised."
-            mode=opts[mode]
-        elif not isinstance(mod,Iterable) or len(mode)<3:
-            raise RuntimeError("Mode not recognised")
-        # Next get boolean arrays that mark which rows in each data set are in the overlap
+        # Now func is a function (x,y,p1,p2,p3)
+        #and p0 is vector of the correct length
         inrange=_np_.logical_and(x>=lower,x<=upper)
         inrange_other=_np_.logical_and(xp>=lower,xp<=upper)
         x=x[inrange] # And throw away data that isn't in the overlap
         y=y[inrange]
         xp=xp[inrange_other]
         yp=yp[inrange_other]
+        if func is None:
+            opts={"all":(lambda x,y,A,B,C:(x+A,y*B+C)),
+                  "scale y and shift x":(lambda x,y,A,B:(x+A,B*y)),
+                  "scale and shift y":(lambda x,y,B,C:(x,y*B+C)),
+                  "scale y":(lambda x,y,B:(x,y*B)),
+                  "shift y":(lambda x,y,C:(x,y+C)),
+                  "shift both":(lambda x,y,A,C:(x+A,y+C))}
+            defaults={"all":[1,2,3],
+                  "scale y,shift x":[1,2],
+                  "scale and shift y":[2,3],
+                  "scale y":[2],
+                  "shift y": [3],
+                  "shift both": [1,3]}
+            A0=_np_.mean(xp)-_np_.mean(x)
+            C0=_np_.mean(yp)-_np_.mean(y)
+            B0=(_np_.max(yp)-_np_.min(yp))/(_np_.max(y)-_np_.min(y))
+            p=_np_.array([0,A0,B0,C0])
+            assert isinstance(mode,string_types),"mode keyword should be a string if func is not defined"
+            mode=mode.lower()
+            assert mode in opts,"mode keyword should be one of {}".format(opts.keys)
+            func=opts[mode]
+            p0=p[defaults[mode]]
+        else:
+            assert callable(func),"Keyword func should be callable if given"
+            (args,varargs,keywords,defaults)=getargspec(func)
+            assert isinstance(p0,Iterable),"Keyword parameter p0 shoiuld be iterable if keyword func is given"
+            assert len(p0)==len(args)-2,"Keyword p0 should be the same length as the optional arguments to func"
         # This is a bit of a hack, we turn (x,y) points into a 1D array of x and then y data
         set1=_np_.append(x,y)
         set2=_np_.append(xp,yp)
         assert len(set1)==len(set2),"The number of points in the overlap are different in the two data sets"
 
-        def transform(x,A,B,C):
-            """This expects data to be x points followed by y points, so calcualtes the transformation from $x,y$ to $x',y'$."""
-            out=_np_.zeros(len(x))
-            m=len(x)/2
-            if not mode[0]:
-                A=0.0
-            if not mode[1]:
-                B=1.0
-            if not mode[2]:
-                C=0.0
-            out[:m]=x[:m]+A
-            out[m:]=B*x[m:]+C
+        def transform(set1,*p):
+            m=len(set1)/2
+            x=set1[:m]
+            y=set1[m:]
+            tmp=func(x,y,*p)
+            out=_np_.append(tmp[0],tmp[1])
             return out
-        [A,B,C],pcov=curve_fit(transform,set1,set2,p0=[0,1.0,0]) # Curve fit for optimal A,B,C
-        A=A+min_overlap
-        Aerr=pcov[0,0]
-        Berr=pcov[1,1]
-        Cerr=pcov[2,2]
-        self.data[:,xcol]=self.data[:,xcol]+A # Transform our X data
-        self.data[:,ycol]=C+B*self.data[:,ycol] # Transform our Y-Data
-        #Stuff the coefficients and errors into the meta data
-        self["Stiching Coefficients"]=[A,B,C]
-        self["Stitching Coeffient Errors"]=list(_np_.sqrt(_np_.array([Aerr,Berr,Cerr])))
+        popt,pcov=curve_fit(transform,set1,set2,p0=p0) # Curve fit for optimal A,B,C
+        perr=_np_.sqrt(_np_.diagonal(pcov))
+
+        (self.data[:,xcol],self.data[:,ycol])=func(self.data[:,xcol]+min_overlap,self.data[:,ycol],*popt)
+        self["Stiching Coefficients"]=list(popt)
+        self["Stitching Coeffient Errors"]=list(perr)
         return self
 
     def subtract(self, a, b, replace=False, header=None):
