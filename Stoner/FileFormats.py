@@ -988,7 +988,13 @@ class MDAASCIIFile(DataFile):
             return self
                     
 class LSTemperatureFile(DataFile):
-    """A class that reads and writes Lakeshore Temperature Calibration Curves."""
+    """A class that reads and writes Lakeshore Temperature Calibration Curves.
+    
+.. warning::
+    THis class works for cernox curves in Log Ohms/Kelvin and Log Ohms/Log Kelvin. It may or may not work with any
+    other temperature calibration data !
+    
+    """
 
     priority=16
     patterns=["*.340"]
