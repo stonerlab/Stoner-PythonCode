@@ -17,7 +17,8 @@ Getting this Code
 The *Stoner* package requires numpy >=1.4, scipy >=0.12, matplotlib >=1.1 and h5py. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
-The easiest way to install this code is via seuptools' easy_install:
+The easiest way to install this code is via seuptools' easy_install
+
 .. code-block:: sh
 
    easy_install Stoner
