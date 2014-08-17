@@ -1,0 +1,30 @@
+Stoner.FileFormats.BigBlueFile
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: BigBlueFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~BigBlueFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BigBlueFile.patterns
+      ~BigBlueFile.priority
+   
+   

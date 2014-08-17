@@ -1,0 +1,8 @@
+
+
+SPCFile.load
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.load

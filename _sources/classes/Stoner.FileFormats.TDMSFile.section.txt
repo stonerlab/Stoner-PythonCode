@@ -1,0 +1,8 @@
+
+
+TDMSFile.section
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.section

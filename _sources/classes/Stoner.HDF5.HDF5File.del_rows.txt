@@ -1,0 +1,8 @@
+
+
+HDF5File.del_rows
+=============================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: HDF5File.del_rows

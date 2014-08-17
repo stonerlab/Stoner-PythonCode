@@ -1,0 +1,8 @@
+
+
+typeHintedDict.update
+=================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.update

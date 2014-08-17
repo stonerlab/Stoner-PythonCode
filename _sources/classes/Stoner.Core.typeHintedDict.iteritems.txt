@@ -1,0 +1,8 @@
+
+
+typeHintedDict.iteritems
+====================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.iteritems

@@ -1,0 +1,8 @@
+
+
+AnalyseFile.find_col
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.find_col

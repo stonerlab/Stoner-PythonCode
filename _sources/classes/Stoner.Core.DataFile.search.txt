@@ -1,0 +1,8 @@
+
+
+DataFile.search
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.search

@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.column
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.column

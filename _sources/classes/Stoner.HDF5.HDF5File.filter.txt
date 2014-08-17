@@ -1,0 +1,8 @@
+
+
+HDF5File.filter
+===========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: HDF5File.filter

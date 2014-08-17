@@ -1,0 +1,8 @@
+
+
+VSMFile.meta
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.meta

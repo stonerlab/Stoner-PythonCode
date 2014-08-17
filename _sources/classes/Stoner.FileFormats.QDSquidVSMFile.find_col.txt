@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.find_col
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.find_col

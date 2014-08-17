@@ -1,0 +1,8 @@
+
+
+SPCFile.reorder_columns
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.reorder_columns

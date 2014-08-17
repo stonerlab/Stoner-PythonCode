@@ -1,0 +1,8 @@
+
+
+DataFolder.gather
+================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.gather

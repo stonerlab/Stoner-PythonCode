@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.dir
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.dir

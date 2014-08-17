@@ -1,0 +1,8 @@
+
+
+PlotFile.section
+============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.section

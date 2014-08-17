@@ -1,0 +1,8 @@
+
+
+TDMSFile.filter
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.filter

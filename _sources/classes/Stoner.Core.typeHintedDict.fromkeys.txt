@@ -1,0 +1,8 @@
+
+
+typeHintedDict.fromkeys
+===================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.fromkeys

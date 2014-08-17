@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HDF5Folder.gather &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.HDF5.HDF5Folder" href="Stoner.HDF5.HDF5Folder.html" />
+    <link rel="next" title="HDF5Folder.getlist" href="Stoner.HDF5.HDF5Folder.getlist.html" />
+    <link rel="prev" title="HDF5Folder.flatten" href="Stoner.HDF5.HDF5Folder.flatten.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.getlist.html" title="HDF5Folder.getlist"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.flatten.html" title="HDF5Folder.flatten"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.HDF5.HDF5Folder.html" accesskey="U">Stoner.HDF5.HDF5Folder</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="hdf5folder-gather">
+<h1>HDF5Folder.gather<a class="headerlink" href="#hdf5folder-gather" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.HDF5.HDF5Folder.gather">
+<tt class="descclassname">HDF5Folder.</tt><tt class="descname">gather</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em><big>)</big><a class="headerlink" href="#Stoner.HDF5.HDF5Folder.gather" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
+<li><strong>xcol</strong> (<em>index or None</em>) &#8211;
+Column in each file that has x data. if None, then the setas settings are used</li>
+<li><strong>ycol</strong> (<em>index or None</em>) &#8211;
+Column(s) in each filwe that contain the y data. If none, then the setas settings are used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.HDF5.HDF5Folder.flatten.html"
+                        title="previous chapter">HDF5Folder.flatten</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.HDF5.HDF5Folder.getlist.html"
+                        title="next chapter">HDF5Folder.getlist</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.HDF5.HDF5Folder.gather.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.getlist.html" title="HDF5Folder.getlist"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.flatten.html" title="HDF5Folder.flatten"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.HDF5.HDF5Folder.html" >Stoner.HDF5.HDF5Folder</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Jun 30, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

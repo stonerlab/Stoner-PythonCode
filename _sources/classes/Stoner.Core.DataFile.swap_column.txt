@@ -1,0 +1,8 @@
+
+
+DataFile.swap_column
+================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.swap_column

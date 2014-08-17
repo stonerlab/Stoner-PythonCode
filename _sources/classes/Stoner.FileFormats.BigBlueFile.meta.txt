@@ -1,0 +1,8 @@
+
+
+BigBlueFile.meta
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.meta

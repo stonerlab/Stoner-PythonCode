@@ -1,0 +1,56 @@
+Stoner.Analysis.AnalyseFile
+===========================
+
+.. currentmodule:: Stoner.Analysis
+
+.. autoclass:: AnalyseFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~AnalyseFile.SG_Filter
+      ~AnalyseFile.add
+      ~AnalyseFile.apply
+      ~AnalyseFile.bin
+      ~AnalyseFile.chi2mapping
+      ~AnalyseFile.clip
+      ~AnalyseFile.curve_fit
+      ~AnalyseFile.decompose
+      ~AnalyseFile.diffsum
+      ~AnalyseFile.divide
+      ~AnalyseFile.integrate
+      ~AnalyseFile.interpolate
+      ~AnalyseFile.make_bins
+      ~AnalyseFile.max
+      ~AnalyseFile.mean
+      ~AnalyseFile.min
+      ~AnalyseFile.mpfit
+      ~AnalyseFile.mpfit_iterfunct
+      ~AnalyseFile.mulitply
+      ~AnalyseFile.nlfit
+      ~AnalyseFile.normalise
+      ~AnalyseFile.peaks
+      ~AnalyseFile.polyfit
+      ~AnalyseFile.span
+      ~AnalyseFile.split
+      ~AnalyseFile.subtract
+      ~AnalyseFile.threshold
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AnalyseFile.patterns
+      ~AnalyseFile.priority
+   
+   

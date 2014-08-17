@@ -1,0 +1,8 @@
+
+
+RasorFile.meta
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.meta

@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CSVFile.add_column &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.FileFormats.CSVFile" href="Stoner.FileFormats.CSVFile.html" />
+    <link rel="next" title="CSVFile.column" href="Stoner.FileFormats.CSVFile.column.html" />
+    <link rel="prev" title="CSVFile.__init__" href="Stoner.FileFormats.CSVFile.__init__.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.CSVFile.column.html" title="CSVFile.column"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.CSVFile.__init__.html" title="CSVFile.__init__"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.FileFormats.CSVFile.html" accesskey="U">Stoner.FileFormats.CSVFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="csvfile-add-column">
+<h1>CSVFile.add_column<a class="headerlink" href="#csvfile-add-column" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.FileFormats.CSVFile.add_column">
+<tt class="descclassname">CSVFile.</tt><tt class="descname">add_column</tt><big>(</big><em>column_data</em>, <em>column_header=None</em>, <em>index=None</em>, <em>func_args=None</em>, <em>replace=False</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.CSVFile.add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a column of data or inserts a column to a datafile</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.array</span></tt> or list or callable) &#8211; Data to append or insert or a callable function that will generate new data</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>column_header</strong> (<em>string</em>) &#8211;
+The text to set the column header to,
+if not supplied then defaults to &#8216;col#&#8217;</li>
+<li><strong>index</strong> (<em>int or string</em>) &#8211;
+The  index (numeric or string) to insert (or replace) the data</li>
+<li><strong>func_args</strong> (<em>dict</em>) &#8211;
+If column_data is a callable object, then this argument
+can be used to supply a dictionary of function arguments to the callable object.</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211;
+Replace the data or insert the data (default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">py:class:<cite>DataFile</cite> instance with the additonal column inserted.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">The</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Also modifies the original DataFile Instance.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.CSVFile.__init__.html"
+                        title="previous chapter">CSVFile.__init__</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.CSVFile.column.html"
+                        title="next chapter">CSVFile.column</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.FileFormats.CSVFile.add_column.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.CSVFile.column.html" title="CSVFile.column"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.CSVFile.__init__.html" title="CSVFile.__init__"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.FileFormats.CSVFile.html" >Stoner.FileFormats.CSVFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Jun 30, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

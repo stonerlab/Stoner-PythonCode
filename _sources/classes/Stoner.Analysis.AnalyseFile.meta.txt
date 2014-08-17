@@ -1,0 +1,8 @@
+
+
+AnalyseFile.meta
+================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.meta

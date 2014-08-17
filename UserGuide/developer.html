@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Developer’s Guide &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="next" title="Stoner Package" href="../Stoner.html" />
+    <link rel="prev" title="Cookbook" href="cookbook.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Stoner.html" title="Stoner Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="developer-s-guide">
+<h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<p>This section provides some notes and guidance on extending the Stoner Package.</p>
+<div class="section" id="adding-new-data-file-types">
+<h2>Adding New Data File Types<a class="headerlink" href="#adding-new-data-file-types" title="Permalink to this headline">¶</a></h2>
+<p>The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using. If so, then the best thing would be to include it in the textbf{fileFormats} module in the package, otherwise you should just write the class in your own script files. In either case, develop the class in your own script files first.</p>
+<dl class="docutils">
+<dt>The best way to implement handling a new data format is to write a new subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a>::</dt>
+<dd><dl class="first last docutils">
+<dt>class NewInstrumentFile(DataFile):</dt>
+<dd><blockquote class="first">
+<div><p>&#8220;&#8221;&#8220;Extends DataFile to load files from somewhere else</p>
+<p>Written by Gavin Burnell 11/3/2012&#8221;&#8220;&#8221;</p>
+</div></blockquote>
+<p class="last">end{lstlisting}
+A document string should be provided that will help the user identify the function of the new class (and avoid using names that might be commonly replicated !). Only one method needs to be implemented: a new textit{load}method. The textit{load} method should have the following structure:</p>
+</dd>
+<dt>begin{lstlisting}</dt>
+<dd><dl class="first last docutils">
+<dt>def load(self,filename=None,*args):</dt>
+<dd><p class="first">&#8220;&#8221;&#8220;Just call the parent class but with the right parameters set&#8221;&#8220;&#8221;
+if filename is None or not filename:</p>
+<blockquote>
+<div>self.get_filename(&#8216;r&#8217;)</div></blockquote>
+<dl class="last docutils">
+<dt>else:</dt>
+<dd>self.filename = filename</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>then follows the code to actually read the file. It <strong>must</strong> at the very least provide a column header for
+every column of data and read in as much numeric data as possible and it <strong>should</strong> read as
+much of the meta data as possible. The function terminates by returning a copy of the current object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">return</span> <span class="bp">self</span>
+</pre></div>
+</div>
+<p>One useful function for reading metadata from files is textit{self.metadata.string_to_type()} which will try to convert a string representation of data into a sensible Python type.</p>
+<p>There is one class attribute, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.priority</span></tt></a> that can be used to tweak the automatic file
+importing code.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">priority</span><span class="o">=</span><span class="mi">32</span>
+</pre></div>
+</div>
+<p>When the subclasses are tried to see if they can load an undetermined file, they are tried in order of
+priority. If your load code can make a positive determination that it has the correct file
+(eg by looking for some magic combination of characters at the start of the file) and can throw an
+exception if it tries loading an incorrect file, then you can give it a lower priority number to
+force it to run earlier. Conversely if your only way of identifying your own files is seeing they make
+sense when you try to load them and that you might partially succeed with a file from another system (as
+can happen if you have a tab or comma separated text file), then you should raise the priority number.
+Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></tt></a> and
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></tt></a> have values of 128 and 64 respectively.</p>
+<p>If you need to write any additional methods please make sure that they have Google code-style document
+strings so that the API documentation is picked up correctly.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#adding-new-data-file-types">Adding New Data File Types</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cookbook.html"
+                        title="previous chapter">Cookbook</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Stoner.html"
+                        title="next chapter">Stoner Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/UserGuide/developer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../Stoner.html" title="Stoner Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

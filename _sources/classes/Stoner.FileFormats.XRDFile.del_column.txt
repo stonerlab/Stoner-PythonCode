@@ -1,0 +1,8 @@
+
+
+XRDFile.del_column
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.del_column

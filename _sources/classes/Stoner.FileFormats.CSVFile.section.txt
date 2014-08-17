@@ -1,0 +1,8 @@
+
+
+CSVFile.section
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.section

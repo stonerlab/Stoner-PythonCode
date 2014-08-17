@@ -1,0 +1,8 @@
+
+
+AnalyseFile.mpfit_iterfunct
+===========================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.mpfit_iterfunct

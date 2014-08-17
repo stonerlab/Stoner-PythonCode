@@ -1,0 +1,8 @@
+
+
+TDMSFile.search
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.search

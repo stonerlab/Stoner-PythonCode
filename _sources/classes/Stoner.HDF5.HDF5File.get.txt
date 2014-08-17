@@ -1,0 +1,8 @@
+
+
+HDF5File.get
+========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: HDF5File.get

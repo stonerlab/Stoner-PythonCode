@@ -1,0 +1,45 @@
+Stoner.Plot.PlotFile
+====================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: PlotFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~PlotFile.__init__
+      ~PlotFile.contour_xyz
+      ~PlotFile.figure
+      ~PlotFile.griddata
+      ~PlotFile.image_plot
+      ~PlotFile.inset
+      ~PlotFile.plot
+      ~PlotFile.plot_matrix
+      ~PlotFile.plot_xy
+      ~PlotFile.plot_xyuv
+      ~PlotFile.plot_xyz
+      ~PlotFile.plot_xyzuvw
+      ~PlotFile.quiver_plot
+      ~PlotFile.subplot
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PlotFile.no_fmt
+      ~PlotFile.patterns
+      ~PlotFile.positional_fmt
+      ~PlotFile.priority
+   
+   

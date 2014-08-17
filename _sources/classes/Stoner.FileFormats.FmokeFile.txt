@@ -1,0 +1,30 @@
+Stoner.FileFormats.FmokeFile
+============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: FmokeFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~FmokeFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FmokeFile.patterns
+      ~FmokeFile.priority
+   
+   

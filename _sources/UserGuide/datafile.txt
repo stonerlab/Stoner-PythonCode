@@ -1,0 +1,702 @@
+**************************
+Loading and Examining Data
+**************************
+
+
+Loading a data file
+====================
+
+.. currentmodule:: Stoner.Core
+
+The first step in using the Stoner module is to load some data from a
+measurement.::
+
+  import Stoner
+  d=Stoner.DataFile('my_data.txt')
+  d=Stoner.VSMFile('my_VSM_data.fld')
+
+
+In this example we have loaded data from ``my_data.txt`` which should be in the
+current directory -- here we are assuming that ``my_data.txt`` contains data in the
+*TDI Format 1.5* which is produced by the LabVIEW rigs. Assuming that the
+file successfully loads, ``d``, is an instance of the :py:class:`DataFile` object. Here
+the :py:class:`DataFile` constructor has been used to both create the instance and load the
+data in one go.
+
+.. note::
+    :py:class:`DataFile` will also read a related text format where the first column of the first line contains the string *TDI Fromat=Text 1.0*
+    which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.
+
+The second example shows the use of one of the sub-classes of the :py:class:`DataFile` object to load data
+from a specific instrument (in this case the VSM).
+
+.. warning::
+    This is an API change from earlier versions of the Stoner package where a second parameter on the constructor of the DataFile object was used to identify the type of data file. This syntax is now depreciated !).
+
+
+The Various Flavours of the :py:class:`DataFile` Class
+------------------------------------------------------
+
+To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
+:py:class:`DataFile` class. Each subclass typically provides its own version of the :py:meth:`DataFile.load` method that
+understands how to reqad the relevant file.
+
+Base Classes and Generic Formats
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    :py:class:`DataFile`
+        Tagged Data Interchange Format 1.5 -- the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds
+    :py:class:`Stoner.FileFormats.CSVFile`
+        Reads a generic comma separated value file. The :py:meth:`Stoner.FileFormats.CSVFile.load`
+        routine takes four additional parameters to the constructor and load methods. In
+        addition to the two extra arguments used for the *BigBlue& variant, a
+        further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
+        also offers a **save** method to allow data to be saved in a simple deliminated text way (see Section :ref:`save` for details).
+    :py:class:`Stoner.FileFormats.SPCFile`
+        Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
+        Raman spectrometers. This may also work for other instruments that produce spc files,
+        but has not been extensively tested.
+    :py:class:`Stoner.FileFormats.TDMSFile`
+        Loads a file saved in the National Instruments TDMS format
+    :py:class:`Stoner.FileFormats.QDSquidVSMFile`
+        Loads data from a Quantum Design SQUID VSM as used on the I10 Beamline in Diamond and in our labs.
+    :py:class:`Stoner.FileFormats.OVFFile`
+        OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0
+
+Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    :py:class:`Stoner.FileFormats.VSMFile`
+        The text files produced by the group's Oxford Instruments VSM
+    :py:class:`Stoner.FileFormats.BigBlueFile`
+        Datafiles produced by VB Code running on the Big Blue cryostat. The
+        :py:class:`Stoner.FileFormats.BigBlue` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
+        two additional parameters that specify the row on which the column headers will
+        be found and the row on which the data starts.
+    :py:class:`Stoner.FileFormats.XRDFile`
+        Loads a scan file produced by Arkengarthdale - the group's Brucker D8
+        XRD Machine.
+    :py:class:`Stoner.FileFormats.FmokeFile`
+        Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
+    :py:class:`Stoner.FileFormats.LSTemperatureFile`
+        Loads and saves data from Lakeshore inc's .340 Temperature Calibration file format.
+
+Classes for Instruments at Major Facilities
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    :py:class:`Stoner.FileFormats.BNLFile`
+        Loads a SPEC file from Brookhaven (so far only tested on u4b files but may well work with
+        other synchrotron data). Produces metadata Snumber: Scan number, Stype: Type of scan, Sdatetime: date time stamp for the measurement, Smotor: z motor position.
+    :py:class:`Stoner.FileFormats.OpenGDAFile` Reads an ascii  scan file generated by OpenGDA -- a software
+        suite used for synchrotron such as Diamond.
+    :py:class:`Stoner.FileFormats.RasorFile`
+        Simply an alias for OpenGDAFile used for the RASOR instrument on I10 at Diamond.
+    :py:class:`Stoner.FileFormats.SNSFile`
+        Reads the ascii export file format from `QuickNXS <http://sourceforge.net/projects/quicknxs/>`_
+        the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.
+    :py:class:`Stoner.FileFormats.MDAASCIIFile`
+        This class will read some variants of the output of mda2ascii as used at the APS in Argonne.
+
+
+These classes can be used directly to load data from the appropriate format.::
+
+   import Stoner
+   d=Stoner.DataFile()
+   d.load('my_data.txt')
+   v=Stoner.VSMFIle()
+   v.load('my_VSM_data.fld')
+   c=Stoner.CSVFile('data.csv',1,0,',',',')
+
+.. note::
+   The load method, like many of the DataFile methods returns a copy of
+   the Datafile object **as well as** modifying the object itself. The
+   advantage of this is that it is then possible to chain several methods into one
+   command
+
+Sometimes you won't know exactly which subclass of :py:class:`DataFile` is the one
+to use. Unfortunately, there is no sure fire way of telling, but :py:meth:`DataFile.load` will try to do
+the best it can and will try all of the subclasses in memory in turn to see if one will
+load the file without throwing an error. If this succeeds then the actual type of file that
+worked is stored in the metadata of the loaded file.
+
+.. warning::
+   The automatic loading assumes that each load routine does sufficient sanity checking that it will
+   throw and error if it gets bad data. Whilst one might wish this was always true it relies on
+   whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
+   from happening use the ``auto_load=False`` keyword in the *load()* method.
+
+Loading Data from a string or iterable object
+---------------------------------------------
+
+In some circumstances you may have a string representation of a :py:class:`DataFile` object and want to
+transform this into a proper :py:class:`DataFile` object. This might be, for example, from transmitting
+the data over a network connection or receiving it from another program. In these situations the
+*left shift operator*,``<<``, can be used.::
+
+   data=Stoner.Core.DataFile() << string_of_data
+   data=Stoner.Core.DataFile() << iterable_object
+
+The second example would allow any object that can be iterated (i.e. has a *next()* method that returns lines
+of the data file, to be used as the source of the data. The :py:meth:`DataFile()` creates an empty object so
+that the left shift operator calls the method in :py:class:`DataFile` to read the data in. It also
+determines the type of the object ``data``. This also provides an alternative syntax for reading a file
+from disk::
+
+   data=Stoner.Core.DataFile()<<open("File on Disk.txt")
+
+Examining and Basic Manipulations of Data
+=========================================
+
+Data Structure
+--------------
+
+Data, Column headers and metadata
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Having loaded some data, the next stage might be to take a look at it.
+Internally, data is represented as a 2D numpy masked array of floating point numbers,
+along with a list of column headers and a dictionary that keeps the metadata and
+also keeps track of the expected type of the metadata (ie the meta-metadata).
+These can be accessed like so::
+
+  d.data
+  d.column_headers
+  d.metadata
+
+
+.. _maskeddata:
+Masked Data and Why You Care
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements.
+This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean
+value or plotting some data. One could, of course, simply ignore the masking option and use the data as is,
+however, masking does have a number of practical uses.
+
+The data mask can be accessed via the :py:attr:`DataFile.mask` attribute of :py:class:`DataFile`::
+
+   import numpy.ma as ma
+   print d.mask
+   d.mask=False
+   d.mask=ma.nomask
+   d.mask=numpy.array([[True, True, Fale,...False],...,[False,True,...True]])
+   d.mask=lambda x: x[0]<50
+   d.mask=lambda x:[y<50 for y in x]
+
+The first line is simply the import statement for the numpy masked arrays in order to get the *nomask*
+symbol. The second line will simply print the current mask. The next two examples will unmask all the data
+i.e. make the values visible and usable. The next example illustrates using a numpy array of booleans to
+set the mask - every element in the mask array that evaluates as a boolean True will be masked and every
+False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on
+the data via ``d.data.mask`` but the final two examples illustrate an extension that setting the
+:py:class:`DataFile` mask attribute allows. If you pass a callable object to the mask attribute it will
+be executed, passing each row of the data array to the user supplied function as a numpy array. The user
+supplied function can then either return a single boolean value -- in which case it will be used to mask
+the entire row -- or a list of boolean values to mask individual cells in the current row.
+
+By default when the :py:class:`DataFile` object is printed or saved, data values that have been masked are replaced
+with a ``fill'' value of 10^20.
+
+.. warning::
+   This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
+   chance that you will need the masked data values again later !
+
+Working with columns of data
+-----------------------------
+
+This is all very well, but often you want to examine a particular column of data
+or a particular row::
+
+  d.column(0)
+  d.column('Temperature')
+  d.column(['Temperature',0])
+
+In the first example, the first column of numeric data will be returned. In the
+second example, the column headers will first be checked for one labeled exactly
+*Temperature* and then if no column is found, the column headers will be
+searched using *Temperature* as a regular expression. This would then
+match *Temperature (K)* or *Sample Temperature*.  The third
+example results in a 2 dimensional numpy array containing two columns in the
+order that they appear in the list (ie not the order that they are in the data
+file). For completeness, the :py:meth:`DataFile.column` method also allows one to
+pass slices to select columns and should do the expected thing.
+
+There is a convenient short cut for working with cases where the column headers are not the same
+as the names of any of the attributes of the :py:class:`DataFile` object::
+
+  d.Temperature
+  d.column('Temperature')
+
+both return the same data.
+
+Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
+
+ 1) As an integer where the first column on the left is index 0
+ 2) As a string. if the string matches a column header exactly then the index of that column is returned.
+      If the string fails to match any column header it is compiled as a regular expression and then that
+      is tried as a match. If multiple columns match then only the first is returned.
+ 3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
+      expression in directly with any extra options (like case insensitivity flags) set.
+ 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
+ 5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
+      the final result would be to use a list of column indices.
+
+For example::
+    import re
+    col=re.compile('^temp',re.IGNORECASE)
+    d.column(col)
+
+.. _setas:
+Other ways to Identify Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
+or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
+so that 'e' data is the error in the y data). DataFile has a concept of marking a column as containing such data and
+will then use these by default in many methods when appropriate to have 'x' and 'y' data.
+
+For data that describes a vector field, you can mark the columns as containing 'u', 'v', 'w' data where (u,v,w) is the vector value at the point (x,y,z). There's no
+support at present for uncertainities in (u,v,w) being marked.
+
+To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
+a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
+the columns of data in order. To specify that a column has unmarked data use the '.' string.
+
+Alternately, you can pass :py:attr:`DataFile.setas` a string. In the simplest case, the string is just read in the same way that
+the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
+non-numeric character will be interpreted that many times, so::
+
+    d.setas="3.xy"
+    d.setas="...xy"
+    d.setas=['.','.','.','x','y']
+
+all achieve the same effect.
+
+Once you have identified columns for the various types, you also have access to utility attributes to access those columns:
+
+    d.setas="3.xye'
+    d.x == d.column(3)
+    d.y == d.column(4)
+    d.e == d.column(5)
+
+Note that if :py:attr:`DataFile.setas` is not set then attempting to use the quick access column attributes will
+result in an exception. Once the :py:attr:`DataFile.setas` attribute is set, a further set of *virtual* or *derived* column attributes
+become available.::
+
+    d.setas="xyz"
+    d.r # The magnitude of the point x,y,z
+    d.q # The angle in the x-y plane relative to the x axis
+    d.p # The angle relative to the z axis
+    d.setas="xyz..uvw"
+    d.r # the magnitude of (u,v,w)
+    d.q # The angle in the x-y plane of (u,v) relative to +x
+    d.p # The angle of (u,v,w) relatiuve to +z
+
+Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
+reduced number dimensions.
+
+There are some more convenience ways to set which columns to use as x,y,z etc.::
+
+    d.setas={"x":0,"y":"Y Column title"}
+    d.x=0
+    d.y="Y Column title"
+
+Working with complete rows of data
+----------------------------------
+
+Rows don't have labels, so are accessed directly by number::
+
+  d[1]
+  d[1:4]
+
+The second example uses a slice to pull out more than one row. This syntax also
+supports the full slice syntax which allows one to, for example, decimate the
+rows, or directly pull out the last fews rows in the file.
+
+Manipulating the metadata
+-------------------------
+
+What happens if you use a string and not a number in the above examples ?::
+
+  d['User']
+
+in this case, it is assumed that you meant the metadata with key *User*.
+To get a list of possible keys in the metadata, you can do::
+  d.dir()
+  d.dir('Option\:.*')
+
+In the first case, all of the keys will be returned in a list. In the second,
+only keys matching the pattern will be returned -- all keys containing
+*Option:*. For compatibility with normal opython semantics: :py:meth:`DataFile.keys` is
+synonymous with :py:meth:`DataFile.dir`.
+
+We mentioned above that the metadata also keeps a note of the expected type of
+the data. You can get at the metadata type for a particular key like this::
+
+  d.metadata.type('User')
+
+to get a dictionary of all of the types associated with each key you could do::
+
+  dict(zip(d.dir(),d.metadata.type(d.dir())))
+
+but an easier way would be to use the :py:attr:`typeHintedDict.types` attribute::
+
+   d.metadata.types
+
+More on Indexing the data
+-------------------------
+
+There are a number o other forms of indexing supported for :py:class:`DataFile`
+objects.::
+
+  d[10,0]
+  d[0:10,0]
+  d[10,'Temp']
+  d[0:10,['Voltage','Temp']
+
+The first variant just returns the data in the 11th row, first column (remember
+indexing starts at 0). The second variant returns the first 10 values in the
+first column. The third variant demonstrates that columns can be indexed by
+string as well as number, and the last variant demonstrates indexing
+multiplerows and columns -- in this case the first 10 values of the Voltage and
+Temp columns.
+
+You might think of the data as being a list of records, where each column is a
+field in the record. Numpy supports this type of structured record view of data
+and the :py:class:`DataFile` object provides the :py:attr:`DataFile.records`
+attribute to d this. This read-only attribute is just providing an alternative
+view of the same data.::
+
+   d.records
+
+Selecting Individual rows and columns of data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Many of the function in the Stoner module index columns by searching the column
+headings. If one wishes to find the numeric index of a column then the
+:py:meth:`DataFile.find_col` method can be used::
+
+   index=d.find_col(1)
+   index=d.find_col('Temperature')
+   index=d.find_col('Temp.*')
+   index=d.find_col('1')
+   index=d.find_col(1:10:2)
+   index=d.find_col(['Temperature',2,'Resistance'])
+
+:py:meth:`DataFile.find_col` takes a number of different forms. If the argument
+is an integer then it returns (trivially) the same integer, a string argument is
+first checked to see if it exactly matches one of the column headers in which
+case the number of the matching column heading is returned. If no exact match is
+found then a regular expression search is carried out on the column headings. In
+both cases, only the first match is returned. If the string still doesn't match, then
+the string is checked to see if it can be cast to an integer, in which case the integer value is used.
+
+The final two examples given above
+both return a list of indices, firstly using a slice construct - in this case
+the result is trivially the same as the slice itself, and in the last example by
+passing a list of column headers to look for.
+
+This is the function that is used internally by :py:meth:`DataFile.column`,
+:py:meth:`DataFile.search` etc and for this reason the trivial integer and slice
+forms are implemented to allow these other functions to work with multiple
+columns.
+
+Sometimes you may want to iterate over all of the rows or columns in a data set.
+This can be done quite easily::
+
+  for row in d.rows():
+  	print row
+
+  for column in d.columns():
+  	print column
+  ......
+
+The first example could also have been written more compactly as::
+
+  for row in d:
+  	print row
+  ......
+
+Searching, sectioning and filtering the data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In many cases you do not know which rows in the data file are of interest - in
+this case you want to search the data.::
+
+  d.search('Temperature',4.2,accuracy=0.01)
+  d.search('Temperature',4.2,['Temperature','Resistance'])
+  d.search('Temperature',lambda x,y: x>10 and x<100)
+  d.search('Temperature',lambda x,y: x>10 and
+                x<1000 and y[1]<1000,['Temperature','Resistance'])
+
+The general form is ``DataFile.search(<search column>,<search term>[,<listof return columns>])``
+
+The first example will return all the rows where the value of the
+*Tenperature* column is 4.2. The second example is the same, but only
+returns the values from the *Temperature*, and *Resistance*
+columns. The rules for selecting the columns are the same as for the
+DataFile.column method above -- strings are matched against column headers and
+integers select column by number.
+
+The third and fourth examples above demonstrate the use of a function as the
+search value. This allows quite complex search criteria to be used. The function
+passed to the search routine should take two parameters -- a floating point
+number and a numpy array of floating point numbers and should return either
+**True** or **False**. The function is evaluated for each row in the
+data file and is passed the value corresponding to the search column as the
+first parameter while the second parameter contains a list of all of the values
+in the row to be returned. If the search function returns True, then the row is
+returned, otherwise it isn't. In thr last example, the final parameter can
+either be a list of columns or a single column. The rules for indexing columns
+are the same as used for the :py:meth:`DataFile.find_col` method.
+
+The 'accuracy' keyword parameter sets the level of accuracy to accept when testing
+equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
+the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.
+
+Sometimes you may want not to get the rows of data that you are looking for as a
+separate array, but merely mark them for inclusion (or exclusion) from subsequent
+operations. This is where the masked array (see ':ref:`maskeddata`) comes into its own.
+To select which rows of data have been masked off, use the :py:meth:`DataFile.filter` method.::
+
+ d.filter(lambda r:r[0]>5)
+ d.filter(lambda r:r[0]>5,['Temp'])
+
+With just a single argument, the filter method takes a complete row at a time and passes it
+to the first argument, expecting to get a boolean response (or list olf booleans equal in length
+to the number of columns). With a second argument as in the second example, you can sepcify which
+columns are passed to the filtering function in what order. The second argument must be a list
+of things which can be used to index a column (ie strings, integers, regular expressions).
+
+
+Another option is to construct a new `DataFile` object from a section of the data - this is
+particularly useful where the `DataFile` represents data correspondi ng to a set of (x,y,z)
+points. For this case the :py:,eth:`DataFile.section` method can be used::
+
+    d.setas="x..y.z."
+    slab=d.section(x=5.2)
+    line=d.section(x=4.7,z=2)
+    thick_slab=d.section(z=(5.0,6.0))
+    arbitary=d.section(r=lambda x,y,z:3*x-2*y+z-4==0)
+
+After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
+'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
+these keyword arguments follow the same rules as the :py:math:`DataFile.search` method). The
+
+Find out more about the data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Another question you might want to ask is, what are all the unique
+values of data in a given column (or set of columns). The Python numpy
+package has a function to do this and we have a direct pass through
+from the DataFile object for this::
+
+   d.unique('Temp')
+   d.unique(column,return_index=False, return_inverse=False)
+
+The two optional keywords cause the numpy routine to return the
+indices of the unique and all non-unique values in the array. The
+column is specified in the same way as the :py:meth:`DataFile.column`
+method does.
+
+Copying Data
+^^^^^^^^^^^^
+
+One of the characteristics of Python that can confuse those used to other
+programming languages is that assignments and argument passing is by reference
+and not by value. This can lead to unexpected results as you can end up modifying variables
+you were not expecting ! To help with creating genuine copies of data Python provides the copy module.
+Whilst this works with DataFile objects, for convenience, the :py:attr:`DataFile.clone` atribute is
+provided to make a deep copy of a DataFile object.
+
+.. note::
+   This is an attribute not a method, so there are no brackets here !
+
+::
+
+    t=d.clone
+
+
+Modifying Data
+==============
+
+Appending data
+--------------
+
+The simplest way to modify some data might be to append some columns or rows.
+The Stoner module redefines two standard operators, ``+`` and ``&`` to
+have special meanings::
+
+  a=Stoner.DataFile('some_new_data.txt')
+  add_rows=d+a
+  add_columns=d&a
+
+In these example, *a* is a second DataFile object that contains some
+data. In the first example, a new DataFile object is created where the contents
+of *a* are added as new rows after the data in *d*. Any metadata
+that is in *a* and not in *d* are added to the metadata as well.
+There is a requirement, however, that the column headers of *d* and
+*a* are the same -- ie that the two DataFile objects appear to represent
+similar data.
+
+In the second example, the data in *a* is added as new columns after the
+data from *d*. In this case, there is a requirement that the two DataFile
+objects have the same number of rows.
+
+These operators are not limited just to DataFile objects, you can also add numpy
+arrays to the DataFile object to append additional data.::
+
+  import numpy as np
+  x=np.array([1,2,3])
+  new_data=d+x
+  y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
+  new_data=d+y
+  z={"X":1.0,"Y":2.1,"Z":7.5}
+  new_data=d+z
+  new_data=d+[x,y,z]
+  column=d.column[0]
+  new_data=d&column
+
+In the first example above, we add a single row of data to *d*. This
+assumes that the number of elements in the array matches the number of columns
+in the data file. The second example is similar but this time appends a 2
+dimensional numpy array to the data. The third example demonstrates adding data from a dictioary.
+In this case the keys of the dictionary are used to determine which column the values are added
+to. If their columns that don't match one of the dictionary keys, then a ``NaN`` is inserted. If there
+are keys that don't match columns labels, then new columns are added to the data set, filled with ``NaN``.
+In the fourth example, each element in the list is added in turn to *d*. A similar effect would be achieved by doing
+``new_data=d+x+y+z``.
+
+The last example appends a numpy array as
+a column to *d*. In this case the requirement is that the numpy array has
+the same or fewer rows of data as *d*.
+
+
+Working with Columns of Data
+-----------------------------
+
+Rearranging Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sometimes it is useful to rearrange columns of data. :py:class:`DataFile` offers a couple of methods to help with this.::
+
+   d.swap_column(('Resistance','Temperature'))
+   d.swap_column(('Resistance','Temperature'),headers_too=False)
+   d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
+   d.reorder([1,3,'Volt','Temp'])
+   d.reorder([1,3,'Volt','Temp'],header_too=False)
+
+The :py:meth:`DataFile.swap` method takes either a tuple of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder` method takes a
+list of column labels or indices and constructs a new data matrix out of those columns in the new order.
+The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
+
+Renaming Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+As a convenience, :py:class:`DataFile` also offers a useful method to rename data columns::
+
+   d.rename('old_name','new_name')
+   d.rename(0,'new_name')
+
+Alternatively,of course, one could just edit the column_headers attribute.
+
+Inserting Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The append columns operator **&** will only add columns to the end of a
+dataset. If you want to add a column of data in the middle of the data set then
+you should use the :py:meth:`DataFile.add_column` method.::
+
+  d.add_column(numpy.array(range(100)),'Column Header')
+  d.add_column(numpy.array(range(100)),'Column Header',Index)
+  d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
+
+The first example simply adds a column of data to the end of the dataset and
+sets the new column headers. The second variant  inserts the new column before
+column *Index*. *Index* follows the same rules as for the
+:py:meth:`DataFile.column` method. In the third example, the new column data is
+generated by applying the specified function. The function is passed s dingle
+row as a 1D numpy array and any of the keyword, argument pairs passed in a
+dictionary to the optional *func_args* argument.
+
+The :py:meth:`DataFile.add_column` method returns a copy of the DataFile object
+itself as well as modifying the object. This is to allow the metod to be chained
+up with other methods for more compact code writing.
+
+Deleting Rows of Data
+---------------------
+
+Removing complete rows of data is achieved using the :py:meth:`DataFile.del_rows`
+method.::
+
+  d.del_rows(10)
+  d.del_rows('X Col',value)
+  d.del_rows('X Col',lambda x,y:x>300)
+
+
+The first variant will delete row 10 from the data set (where the first row will
+be row 0). You can also supply a list or slice to :py:meth:`DataFile.del_rows` to
+delete multiple rows.
+
+If you do not know in advance which row to delete, then the second and third
+variants provide more advanced options. The second variant searches for and
+deletes all rows in which the specified column contains *value*. The
+third variant selects which ros to delete by calling a user supplied function
+for each row. The user supplied function is the same in form and definitition as
+that used for the :py:meth:`DataFile.search` method.
+
+Deleting Columns of Data
+------------------------
+
+Deleting whole columns of data can be done by referring to a column by index or
+column header - the indexing rules are the same as used for the
+:py:meth:`DataFile.column` method.::
+
+  d.del_column('Temperature')
+  d.del_column(1)
+
+Sorting Data
+------------
+
+Data can be sorted by one or more columns, specifying the columns as a number or
+string for single columns or a list or tuple of strings or numbers for multiple
+columns. Currently only ascending sorts are supported.::
+
+  d.sort('Temp')
+  d.sort(['Temp','Gate'])
+
+
+.. _save:
+Saving Data
+-----------
+
+Only saving data in the *TDI format* and as comma or tab deliminated formats is supported.
+
+.. warning:
+   The :py:class:`Stoner.FileFormats.CSVFile` comma or tab eliminated files discard all metadata
+   about the measurement. You absolutely must not use this as your primary data format -- always
+   keep the *TDI format* files as well.
+
+For example::
+
+  d.save()
+  d.save(filename)
+  d=Stoner.CSVFile(d)
+  d.save()
+  d.save(filename,'\t')
+
+In the first case, the filename used tosave the data is determined from the
+filename attribute of the DataFile object. This will have been set when the
+filewas loaded from disc.
+
+If the filename attribute has not been set eg if the DataFile object was
+created from scratch, then the :py:meth:`DataFile.save` method will cause a dialogue
+box to be raised so that the user can supply a filename.
+
+In the second variant, the supplied filename is used and the filename attribute
+is changed to match this ie ``d.filename`` will always return the last
+filename used for a load or save operation.
+
+The third is similar but convert the file to ``cvs`` format while the fourth also
+specifies that the eliminator is a tab character.

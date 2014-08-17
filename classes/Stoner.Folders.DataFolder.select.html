@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DataFolder.select &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Folders.DataFolder" href="Stoner.Folders.DataFolder.html" />
+    <link rel="next" title="DataFolder.sort" href="Stoner.Folders.DataFolder.sort.html" />
+    <link rel="prev" title="DataFolder.save" href="Stoner.Folders.DataFolder.save.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.DataFolder.sort.html" title="DataFolder.sort"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.DataFolder.save.html" title="DataFolder.save"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Folders.DataFolder.html" accesskey="U">Stoner.Folders.DataFolder</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="datafolder-select">
+<h1>DataFolder.select<a class="headerlink" href="#datafolder-select" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Folders.DataFolder.select">
+<tt class="descclassname">DataFolder.</tt><tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator that can be used to select particular data files from the DataFolder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>various</em>) &#8211; <p>A single positional argument if present is interpreted as follows:
+* If a callable function is given, the entire DataFile is presented to it.</p>
+<blockquote>
+<div>If it evaluates True then that DataFile is selected. This allows arbitary select operations</div></blockquote>
+<ul class="simple">
+<li>If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>kargs</strong> (<em>varuous</em>) &#8211;
+Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+metadata values. The value of the argument is used as follows:
+* if is a scalar, then an equality test is carried out
+* If is a list then a membership test is carried out
+* if it is a tuple of numbers then it is interpreted as a bounds test (t1&lt;=x&lt;t2)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>A DataFile that matches the select requirements</em></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Folders.DataFolder.save.html"
+                        title="previous chapter">DataFolder.save</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Folders.DataFolder.sort.html"
+                        title="next chapter">DataFolder.sort</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Folders.DataFolder.select.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.DataFolder.sort.html" title="DataFolder.sort"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.DataFolder.save.html" title="DataFolder.save"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Folders.DataFolder.html" >Stoner.Folders.DataFolder</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

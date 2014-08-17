@@ -1,0 +1,8 @@
+
+
+PlotFile.plot_xy
+============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.plot_xy

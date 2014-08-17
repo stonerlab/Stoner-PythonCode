@@ -1,0 +1,8 @@
+
+
+XRDFile.columns
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.columns

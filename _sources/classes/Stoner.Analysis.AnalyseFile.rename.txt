@@ -1,0 +1,8 @@
+
+
+AnalyseFile.rename
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.rename

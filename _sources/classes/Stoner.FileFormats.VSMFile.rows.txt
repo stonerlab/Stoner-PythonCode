@@ -1,0 +1,8 @@
+
+
+VSMFile.rows
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.rows

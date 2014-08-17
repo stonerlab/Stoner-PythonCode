@@ -1,0 +1,8 @@
+
+
+SPCFile.get
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.get

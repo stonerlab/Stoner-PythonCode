@@ -1,0 +1,8 @@
+
+
+AnalyseFile.section
+===================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.section

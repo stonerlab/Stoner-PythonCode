@@ -1,0 +1,31 @@
+Stoner.FileFormats.TDMSFile
+===========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: TDMSFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~TDMSFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TDMSFile.Objects
+      ~TDMSFile.patterns
+      ~TDMSFile.priority
+   
+   

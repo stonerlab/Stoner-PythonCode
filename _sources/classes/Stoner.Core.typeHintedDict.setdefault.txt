@@ -1,0 +1,8 @@
+
+
+typeHintedDict.setdefault
+=====================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.setdefault

@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.get
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.get

@@ -1,0 +1,8 @@
+
+
+AnalyseFile.filter
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.filter

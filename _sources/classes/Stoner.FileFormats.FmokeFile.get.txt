@@ -1,0 +1,8 @@
+
+
+FmokeFile.get
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.get

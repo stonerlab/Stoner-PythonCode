@@ -1,0 +1,8 @@
+
+
+PlotFile.__init__
+=============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.__init__

@@ -1,0 +1,8 @@
+
+
+DataFile.find_col
+=============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.find_col

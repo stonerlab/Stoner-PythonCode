@@ -1,0 +1,30 @@
+Stoner.FileFormats.VSMFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: VSMFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~VSMFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~VSMFile.patterns
+      ~VSMFile.priority
+   
+   

@@ -1,0 +1,35 @@
+Stoner.Folders.DataFolder
+=========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: DataFolder
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~DataFolder.__init__
+      ~DataFolder.add_group
+      ~DataFolder.filter
+      ~DataFolder.filterout
+      ~DataFolder.flatten
+      ~DataFolder.gather
+      ~DataFolder.getlist
+      ~DataFolder.group
+      ~DataFolder.save
+      ~DataFolder.select
+      ~DataFolder.sort
+      ~DataFolder.walk_groups
+      ~DataFolder.zip_groups
+   
+   
+
+   
+   
+   

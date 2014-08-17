@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.FileFormats.BNLFile &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="BNLFile.__init__" href="Stoner.FileFormats.BNLFile.__init__.html" />
+    <link rel="prev" title="LSTemperatureFile.save" href="Stoner.FileFormats.LSTemperatureFile.save.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stoner-fileformats-bnlfile">
+<h1>Stoner.FileFormats.BNLFile<a class="headerlink" href="#stoner-fileformats-bnlfile" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.FileFormats.BNLFile">
+<em class="property">class </em><tt class="descclassname">Stoner.FileFormats.</tt><tt class="descname">BNLFile</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#BNLFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.BNLFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates BNLFile a subclass of DataFile that caters for files in the SPEC format given
+by BNL (specifically u4b beamline but hopefully generalisable).</p>
+<p>Author Rowan 12/2011</p>
+<p>The file from BNL must be split into seperate scan files before Stoner can use
+them, a separate python script has been written for this and should be found
+in data/Python/PythonCode/scripts.</p>
+<dl class="method">
+<dt id="Stoner.FileFormats.BNLFile.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#BNLFile.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.BNLFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor modification
+BNLFile(&#8216;filename&#8217;)
+Do a normal initiation using the parent class &#8216;self&#8217; followed by adding an extra attribute line_numbers,
+line_numbers is a list of important line numbers in the file.
+I&#8217;ve left it open for someone to add options for more args if they wish.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.__init__.html#Stoner.FileFormats.BNLFile.__init__" title="Stoner.FileFormats.BNLFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*params)</td>
+<td>Constructor modification BNLFile(&#8216;filename&#8217;) Do a normal initiation using the parent class &#8216;self&#8217; followed by adding an extra attribute line_numbers, line_numbers is a list of important line numbers in the file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.load.html#Stoner.FileFormats.BNLFile.load" title="Stoner.FileFormats.BNLFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>(filename)</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param filename:</th><td class="field-body">File to load. If None then the existing filename is used,</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.save.html"
+                        title="previous chapter">LSTemperatureFile.save</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.BNLFile.__init__.html"
+                        title="next chapter">BNLFile.__init__</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.FileFormats.BNLFile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
