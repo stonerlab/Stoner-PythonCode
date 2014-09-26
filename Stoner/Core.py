@@ -2031,9 +2031,12 @@ class DataFile(object):
             data=self.data[ix,:]
         else:
             columns=self.find_col(columns)
-            data=self.data[ix,columns[0]]
-            for c in columns[1:]:
-                data=_np_.column_stack((data,self.data[ix,c]))
+            if not isinstance(columns,list):
+                data=self.data[ix,clumns]
+            else:
+                data=self.data[ix,columns[0]]
+                for c in columns[1:]:
+                    data=_np_.column_stack((data,self.data[ix,c]))
         return data
 
     def section(self,**kargs):
