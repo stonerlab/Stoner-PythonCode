@@ -21,16 +21,16 @@ import collections
 
 class _attribute_store(dict):
     """A class that provides attributes that refer to columns in a DataFile instance."""
-    
+
     def __init__(self,*args,**kargs):
         if len(args)==1 and isinstance(args[0],dict):
             self.update(args[0])
         else:
             super(_attribute_store,self).__init__(*args,**kargs)
-            
+
     def __setattr__(self,name,value):
         self[name]=value
-        
+
     def __getattr__(self,name):
         try:
             return self[name]
@@ -1471,7 +1471,7 @@ class DataFile(object):
     #   PUBLIC METHODS
 
     def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
-        """Appends a column of data or inserts a column to a datafile instance.        
+        """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
@@ -1488,7 +1488,7 @@ class DataFile(object):
             A :py:class:`DataFile` instance with the additonal column inserted.
 
         Note:
-            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies 
+            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it."""
         if index is None:
             index = len(self.column_headers)
@@ -2030,8 +2030,10 @@ class DataFile(object):
         if columns is None: #Get the whole slice
             data=self.data[ix,:]
         else:
-            print columns
-            data=self.data[ix,self.find_col(columns)]
+            columns=self.find_col(columns)
+            data=self.data[ix,columns[0]]
+            for c in columns[1:]:
+                data=_np_.column_stack((data,self.data[ix,c]))
         return data
 
     def section(self,**kargs):

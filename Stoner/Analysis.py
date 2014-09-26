@@ -919,7 +919,7 @@ class AnalyseFile(DataFile):
         sys.stdout.flush()
 
 
-    def mulitply(self, a, b, replace=False, header=None):
+    def multiply(self, a, b, replace=False, header=None):
         """Multiply one column (a) by  another column, number or array (b)
 
         Args:
