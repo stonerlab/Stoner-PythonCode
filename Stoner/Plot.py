@@ -237,13 +237,13 @@ class PlotFile(DataFile):
         (args,vargs,kwargs,defs)=getargspec(function)
         if isinstance(otherkargs,(list,tuple)):
             args.extend(otherkargs)
-        nonkargs=dict()        
+        nonkargs=dict()
         for k in defaults.keys():
             nonkargs[k]=defaults[k]
             if k not in args:
                 del defaults[k]
         return defaults,nonkargs
-        
+
     def _fix_titles(self,**kargs):
         """Does the titling and labelling for a matplotlib plot."""
         self._template.annotate(self,**kargs)
@@ -482,10 +482,10 @@ class PlotFile(DataFile):
         kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
         plotter=nonkargs["plotter"]
         self.__figure=self._fix_fig(nonkargs["figure"])
-        if "cmap" in kargs:        
+        if "cmap" in kargs:
             cmap=cm.get_cmap(kargs["cmap"])
         elif "cmap" in nonkargs:
-            cmap=cm.get_cmap(nonkargs["cmap"])            
+            cmap=cm.get_cmap(nonkargs["cmap"])
         if len(Z.shape)==2:
             Z=cmap(Z)
         elif len(Z.shape)!=3:
@@ -497,21 +497,21 @@ class PlotFile(DataFile):
         aspect=(xmax-xmin)/(ymax-ymin)
         extent=[xmin,xmax,ymin,ymax]
         fig=plotter(Z,extent=extent,aspect=aspect,**kargs)
-        self._fix_titles(**nonkargs)        
+        self._fix_titles(**nonkargs)
         return fig
 
     def inset(self,parent=None,loc=None,width=0.35, height=0.30,**kargs):
         """Add a new set of axes as an inset to the current plot
-        
+
         Keyword Arguments:
             parent (matplotlib axes): Which set of axes to add inset to, defaults to the current set
             loc (int or string): Inset location - can be a string like *top right* or *upper right* or a number.
             width,height (int,float or string) the dimensions of the inset specified as a integer %, or floating point fraction of the parent axes, or as a string measurement.
             kargs (dictionary): all other keywords are passed through to inset_locator.inset_axes
-            
+
         Returns:
             A new set of axes"""
-        
+
         locations=['best','upper right','upper left','lower left','lower right',
                    'right','center left','center right','lower center',
                    'upper center','center']
@@ -687,7 +687,7 @@ class PlotFile(DataFile):
         Args:
             xcol (index): Column to be used for the X-Data
             ycol (index): column to be used for Y-Data - default value is column to the right of the x-data column
- 
+
         Keyword Arguments:
             fmt (strong or sequence of strings): Specifies the format for the plot - see matplotlib documentation for details
             xerr,yerr (index): Columns of data to get x and y errorbars from. Setting these turns the default plotter to pyplot.errorbar
@@ -700,7 +700,7 @@ class PlotFile(DataFile):
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
             **kargs (dict): Other arguments are passed on to the plotter.
-            
+
         Returns:
             A matplotlib.figure isntance
 
@@ -718,7 +718,7 @@ class PlotFile(DataFile):
             kargs["plotter"]=pyplot.errorbar
         kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
         self.__figure=self._fix_fig(nonkargs["figure"])
-            
+
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
             if err in kargs:
                 if isinstance(kargs[err],index_types):
@@ -734,22 +734,30 @@ class PlotFile(DataFile):
                     kargs[err]=_np_.zeros(len(self))
 
 
-        temp_kwords=kargs
+        temp_kwords=copy.copy(kargs)
         if isinstance(c.ycol,int):
             c.ycol=[c.ycol]
         for ix in range(len(c.ycol)):
-            if isinstance(fmt,list): # Fix up the format
-                fmt_t=fmt[ix]
+            for param in ["linestyle","ls","marker","color","c"]: #Check for format keywords
+                if param in temp_kwords:
+                    fmt_t=None
+                    break
             else:
-                fmt_t=fmt
+                if isinstance(fmt,list): # Fix up the format
+                    fmt_t=fmt[ix]
+                else:
+                    fmt_t=fmt
             if "label" in kargs and isinstance(kargs["label"],list): # Fix label keywords
                 temp_kwords["label"]=kargs["label"][ix]
             if "yerr" in kargs and isinstance(kargs["yerr"],list): # Fix yerr keywords
                 temp_kwords["yerr"]=kargs["yerr"][ix]
             # Call plot
-            self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
+            if fmt_t is None:
+                self._Plot(c.xcol,c.ycol[ix],nonkargs["plotter"],self.__figure,**temp_kwords)
+            else:
+                self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
 
-        self._fix_titles(**nonkargs)  
+        self._fix_titles(**nonkargs)
         return self.__figure
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,  **kargs):
@@ -791,7 +799,7 @@ class PlotFile(DataFile):
                 label=self._col_label(coltypes[k])
                 if isinstance(label,list):
                     label=",".join(label)
-                defaults[k]=label       
+                defaults[k]=label
         if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"]==self.__SurfPlotter):
             otherkargs=["rstride","cstride","color","cmap","facecolors","norm","vmin","vmax","shade"]
         else:
@@ -802,7 +810,7 @@ class PlotFile(DataFile):
         plotter(xdata, ydata, zdata, **kargs)
         if plotter!=self.__SurfPlotter:
             del(nonkargs["zlabel"])
-        self._fix_titles(**nonkargs)  
+        self._fix_titles(**nonkargs)
         return self.__figure
 
     def plot_xyuv(self,xcol=None,ycol=None,ucol=None,vcol=None,wcol=None,**kargs):
@@ -826,7 +834,7 @@ class PlotFile(DataFile):
         c=self._fix_cols(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,wcol=wcol,**kargs)
         if isinstance(c.wcol,index_types):
             wdata=self.column(c.wcol)
-            phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))        
+            phidata=(wdata-_np_.min(wdata))/(_np_.max(wdata)-_np_.min(wdata))
         else:
             phidata=_np_.ones(len(self))*0.5
             wdata=phidata-0.5
@@ -843,9 +851,9 @@ class PlotFile(DataFile):
         if save is not None: # stop saving file twice
             kargs["save_filename"]=save
         fig=self.quiver_plot(c.xcol,c.ycol,c.ucol,c.vcol,**kargs)
-        
+
         return fig
-         
+
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None,vcol=None,wcol=None,  **kargs):
         """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi
 
@@ -861,7 +869,7 @@ class PlotFile(DataFile):
                 colormap (string): Vector field colour map - defaults to the jet colour map
                 colors (column index or numpy array): Values used to map the colors of the resultant file.
                 mode (string): glyph type, default is "cone"
-                scale_factor(float): Scale-size of glyphs.                
+                scale_factor(float): Scale-size of glyphs.
                 figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
                 kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
@@ -898,7 +906,7 @@ class PlotFile(DataFile):
             raise RuntimeError("Do not recognise what to do with the colors keyword.")
         kargs["scalars"]=colors
         figure=nonkargs["figure"]
-        plotter=nonkargs["plotter"]           
+        plotter=nonkargs["plotter"]
         if isinstance(figure, int):
             figure=mlab.figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -918,7 +926,7 @@ class PlotFile(DataFile):
 
     def quiver_plot(self,xcol=None,ycol=None,ucol=None,vcol=None,**kargs):
         """Make a 2D Quiver plot from the data
-        
+
         Args:
             xcol (index): Xcolumn index or label
             ycol (index): Y column index or label
@@ -937,14 +945,14 @@ class PlotFile(DataFile):
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
             **kargs (dict): Other arguments are passed on to the plotter.
-        
+
 
         Returns:
             A matplotlib figure instance.
 
         Keyword arguments are all passed through to :py:func:`matplotlib.pyplot.quiver`.
 
-        """        
+        """
         locals().update(self._fix_cols(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,**kargs))
         defaults={"pivot":"center",
                   "color":(0,0,0,0.5),
@@ -965,8 +973,8 @@ class PlotFile(DataFile):
         plotter=nonkargs["plotter"]
         self.__figure=self._fix_fig(nonkargs["figure"])
         fig=plotter(self.column(self.find_col(xcol)),self.column(self.find_col(ycol)),self.column(self.find_col(ucol)),self.column(self.find_col(vcol)),**kargs)
-        self._fix_titles(**nonkargs)        
-        return fig        
+        self._fix_titles(**nonkargs)
+        return fig
 
 
     def subplot(self,*args,**kargs):
