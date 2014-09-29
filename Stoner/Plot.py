@@ -24,6 +24,7 @@ from mpl_toolkits.axes_grid import inset_locator
 from matplotlib import cm
 import matplotlib.colors as colors
 from colorsys import hls_to_rgb
+import copy
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -735,13 +736,14 @@ class PlotFile(DataFile):
 
 
         temp_kwords=copy.copy(kargs)
-        if isinstance(c.ycol,int):
+        if isinstance(c.ycol,(int,str)):
             c.ycol=[c.ycol]
         for ix in range(len(c.ycol)):
             for param in ["linestyle","ls","marker","color","c"]: #Check for format keywords
                 if param in temp_kwords:
                     fmt_t=None
-                    break
+                    temp_kwords[params] = nonkargs[params]
+                    #break
             else:
                 if isinstance(fmt,list): # Fix up the format
                     fmt_t=fmt[ix]
@@ -753,7 +755,7 @@ class PlotFile(DataFile):
                 temp_kwords["yerr"]=kargs["yerr"][ix]
             # Call plot
             if fmt_t is None:
-                self._Plot(c.xcol,c.ycol[ix],nonkargs["plotter"],self.__figure,**temp_kwords)
+                self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
             else:
                 self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
 
