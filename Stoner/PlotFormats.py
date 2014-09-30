@@ -221,11 +221,11 @@ class DefaultPlotStyle(object):
             plot (Stoner.PlotFile): The PlotFile boject we're working with
         """
         if "xlabel" in kargs and self.show_xlabel:        
-            plt.xlabel(str(kargs["xlabel"]),size=self.templat_axes_labelsize)
+            plt.xlabel(str(kargs["xlabel"]),size=self.template_axes_labelsize)
         if "ylabel" in kargs and self.show_ylabel:
-            plt.ylabel(str(kargs["ylabel"]),size=self.templat_axes_labelsize)
+            plt.ylabel(str(kargs["ylabel"]),size=self.template_axes_labelsize)
         if "zlabel" in kargs and self.show_zlabel:
-            plot.fig.axes[0].set_zlabel(kargs["zlabel"],size=self.templat_axes_labelsize)
+            plot.fig.axes[0].set_zlabel(kargs["zlabel"],size=self.template_axes_labelsize)
         if "title" in kargs and self.show_title:
             plt.title(kargs["title"])
         if self.show_legend and len(plt.gca().get_legend_handles_labels()[1])>1:
@@ -259,7 +259,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     template_lines_markersize=5
     
     
-    template_axes_labelsize=16
+    template_axes_labelsize=18
     template_axes_fontsize=18
     template_axes_labelpad=1
     template_axes_formatter_limits=(-4, 4)
