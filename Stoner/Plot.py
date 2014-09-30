@@ -229,14 +229,19 @@ class PlotFile(DataFile):
 
 
     def _fix_kargs(self,function=None, defaults=None,otherkargs=None,**kargs):
-        """Update kargs with default values"""
+        """Fix parameters to the plotting function to provide defaults and no extransous arguments
+
+        Returns dictionary of correct arguments, dictionary of all arguments"""
         if defaults is None:
             defaults=dict()
         defaults.update(kargs)
+        # Defaults now a dictionary of default arugments overlaid with keyword argument values
+        # Now inspect the plotting function to see what it takes.
         if function is None:
             function=defaults["plotter"]
         (args,vargs,kwargs,defs)=getargspec(function)
-        if isinstance(otherkargs,(list,tuple)):
+        # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
+        if isinstance(otherkargs,(list,tuple)) and kwargs is not None:
             args.extend(otherkargs)
         nonkargs=dict()
         for k in defaults.keys():
@@ -715,9 +720,24 @@ class PlotFile(DataFile):
                   "save_filename":None,
                   "xlabel":self._col_label(self.find_col(c.xcol)),
                   "ylabel":self._col_label(self.find_col(c.ycol),True)}
+        otherargs=[]
         if "plotter" not in kargs and (c.xerr is not None or c.yerr is not None): # USe and errorbar blotter by default for errors
             kargs["plotter"]=pyplot.errorbar
-        kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
+            otherargs=["agg_filter","alpha","animated","antialiased","aa","axes","clip_box","clip_on","clip_path","color","c",
+                       "contains","dash_capstyle","dash_joinstyle","dashes","drawstyle","fillstyle","gid","label","linestyle","ls",
+                       "linewidth","lw","lod","marker","markeredgecolor","mec","markeredgewidth","mew","markerfacecolor","mfc",
+                       "markerfacecoloralt","mfcalt","markersize","ms","markevery","path_effects","picker","pickradius","rasterized",
+                       "sketch_params","snap","solid_capstyle","solid_joinstyle","transform","url","visible","xdata","ydata","zorder"]
+        elif "plotter" not in kargs:
+            kargs["plotter"]=pyplot.plot
+            otherargs=["agg_filter","alpha","animated","antialiased","aa","axes","clip_box","clip_on","clip_path","color","c",
+                       "contains","dash_capstyle","dash_joinstyle","dashes","drawstyle","fillstyle","gid","label","linestyle","ls",
+                       "linewidth","lw","lod","marker","markeredgecolor","mec","markeredgewidth","mew","markerfacecolor","mfc",
+                       "markerfacecoloralt","mfcalt","markersize","ms","markevery","path_effects","picker","pickradius","rasterized",
+                       "sketch_params","snap","solid_capstyle","solid_joinstyle","transform","url","visible","xdata","ydata","zorder"]
+
+
+        kargs,nonkargs=self._fix_kargs(None,defaults,otherargs,**kargs)
         self.__figure=self._fix_fig(nonkargs["figure"])
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
@@ -736,19 +756,13 @@ class PlotFile(DataFile):
 
 
         temp_kwords=copy.copy(kargs)
-        if isinstance(c.ycol,(int,str)):
+        if isinstance(c.ycol,(index_types)):
             c.ycol=[c.ycol]
         for ix in range(len(c.ycol)):
-            for param in ["linestyle","ls","marker","color","c"]: #Check for format keywords
-                if param in temp_kwords:
-                    fmt_t=None
-                    temp_kwords[params] = nonkargs[params]
-                    #break
+            if isinstance(fmt,list): # Fix up the format
+                fmt_t=fmt[ix]
             else:
-                if isinstance(fmt,list): # Fix up the format
-                    fmt_t=fmt[ix]
-                else:
-                    fmt_t=fmt
+                fmt_t=fmt
             if "label" in kargs and isinstance(kargs["label"],list): # Fix label keywords
                 temp_kwords["label"]=kargs["label"][ix]
             if "yerr" in kargs and isinstance(kargs["yerr"],list): # Fix yerr keywords
