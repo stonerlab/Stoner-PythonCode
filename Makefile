@@ -10,6 +10,7 @@ egg:
 
 doc: docbuild
 	$(PYTHON_SETUP) upload_sphinx
+	cp -ar doc/_build/html/* ../gh-pages/
 
 docbuild: FORCE
 	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html

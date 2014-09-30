@@ -14,10 +14,11 @@ generated with Sphinx from the embedded docstrings in the source code.
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.4, scipy >=0.12, matplotlib >=1.1 and h5py. Experimental code also makes use of
+The *Stoner* package requires numpy >=1.4, scipy >=0.12, matplotlib >=1.1, h5py and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
-The easiest way to install this code is via seuptools' easy_install:
+The easiest way to install this code is via seuptools' easy_install
+
 .. code-block:: sh
 
    easy_install Stoner
@@ -79,3 +80,10 @@ The User Guide gives the current list of other contributors to the project.
 This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indficated in the source file. 
 The contents of this package are licensed under the terms of the GNU Public License v3
 
+Recent Changes
+==============
+
+Version 0.2.0
+-------------
+
+Added the dependency on lmfit and depricated mpfit for doing bounded least-squares fitting of complex data functions.
