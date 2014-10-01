@@ -703,6 +703,30 @@ class AnalyseFile(DataFile):
             newX=xfunc(newX)
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
+        
+    def lmfit(self,model=None,xcol=None,ycol=None):
+        """Wrapper around lmfit module fitting.
+        
+        Keyword Arguments:
+            model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
+            xcol, ycol (index or None): Columns to be used for the x and y data for the fitting
+            
+        Returns:
+            An lmfit.ModeFit object
+        """
+        from lmfit.model import Model,ModelFit
+        
+        if not isinstance(mode,Model):
+            raise TypeError("model parameter must be an instance of lmfit.model/Model!")
+        if xcol is None or ycol is None:
+            cols=self._get_cols()
+            if xcol is None:
+                xcol=cols["xcol"]
+            if ycol is None:
+                ycol=cols["ycol"]
+        xdata=self.column(xcol)
+        ydata=self.column(ycol)
+        
 
     def make_bins(self,xcol,bins,mode,**kargs):
         """Utility method to generate bin boundaries and centres along an axis.
