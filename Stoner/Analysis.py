@@ -13,6 +13,7 @@ from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 from inspect import getargspec
 from collections import Iterable
+from lmfit.model import Model,ModelFit
 
 import sys
 
@@ -703,30 +704,69 @@ class AnalyseFile(DataFile):
             newX=xfunc(newX)
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
-        
-    def lmfit(self,model=None,xcol=None,ycol=None):
+
+    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
         """Wrapper around lmfit module fitting.
-        
+
         Keyword Arguments:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
             xcol, ycol (index or None): Columns to be used for the x and y data for the fitting
-            
+            p0 (tuple,list,array,dict) or None: replace starting values of arguments with this vector
+            sigma (index): The index of the column with the y-error bars
+            bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
+                the last column will be used. If result is a string or an integer then it is used as a column index.
+                Default to None for not adding fitted data
+            replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
+            header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            asrow (bool): Instead of returning popt,pcov, return a single array of popt, interleaved with the standard error in popt
+
         Returns:
-            An lmfit.ModeFit object
+            An lmfit.ModeFit object and changes this instance of the AnalyseFile
         """
-        from lmfit.model import Model,ModelFit
-        
-        if not isinstance(mode,Model):
+
+        if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
             cols=self._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
-                ycol=cols["ycol"]
+                ycol=cols["ycol"][0]
         xdata=self.column(xcol)
         ydata=self.column(ycol)
-        
+        if p0 is not None:
+            if isistnace(p0,(list,tuple,_np_.ndarray)):
+                p0={p:pv for p,pv in zip(model.param_names,p0)}
+            if not isinstance(p0,dict):
+                raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
+        else:
+            p0=dict()
+        if sigma is not None:
+            if isinstance(sigma,index_type):
+                sigma=self.column(sigma)
+            elif isinstance(sigma,(list,tuple,_np_.ndarray)):
+                sigma=_np_.ndarray(sigma)
+            else:
+                raise RuntimeError("Sigma should have been a column index or list of values")
+        xvar=model.independent_vars[0]
+        p0[xvar]=xdata
+
+        fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
+        if fit.success:
+            if isinstance(result,index_types) or (isinstance(result,bool) and result):
+                iv={xvar:xdata}
+                self.add_column(fit.best_fit,column_header=header,index=result,replace=replace)
+                self.metadata.update(fit.best_values)
+                if fit.covar is not None:
+                    errs=_np_.sqrt(_np_.diagonal(fit.covar))
+                else:
+                    errs=_np_.zeros(len(fit.best_values))
+                for err,k in zip(errs,model.param_names):
+                    self.metadata["{}_err".format(k)]=err
+            elif result is not None:
+                raise RuntimeError("Didn't recognize result as an index type or True")
+        return fit
 
     def make_bins(self,xcol,bins,mode,**kargs):
         """Utility method to generate bin boundaries and centres along an axis.

@@ -24,7 +24,7 @@ class TexFormatter(Formatter):
         """Return the value ina  suitable texable format"""
         if value is None or _np_.isnan(value):
             ret=""
-        elif value!=0.0:        
+        elif value!=0.0:
             power=_np_.floor(_np_.log10(_np_.abs(value)))
             if _np_.abs(power)<4:
                 ret="${}$".format(value)
@@ -34,22 +34,22 @@ class TexFormatter(Formatter):
         else:
             ret="$0.0$"
         return ret
-    
+
     def format_data(self,value):
         return self.__call__(value)
-        
+
     def format_data_short(self,value):
         return "{:g}".format(value)
-        
+
 
 class DefaultPlotStyle(object):
     """Produces a default plot style.
-    
+
     To produce alternative plot styles, create subclasses of this plot. Either override or
     create additional attributes to define rc Parameters (see Matplotlib documentation for
     available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`
     method to carry out additional plot formatting.
-    
+
     Attributes:
         fig_width_pt (float): Preferred width of plot in points
         show_xlabel (bool): Show the title in the plot
@@ -80,9 +80,9 @@ class DefaultPlotStyle(object):
         template_figure_subplot_bottom (float): Set the bottom margin
         template_figure_subplot_top (float): Set the top margin
 
-   
+
     """
-    
+
     """Internal class attributes."""
     _inches_per_pt = 1.0/72.27               # Convert pt to inch
     _mm_per_inch = 25.4
@@ -103,11 +103,11 @@ class DefaultPlotStyle(object):
     show_legend=True
     xformatter=TexFormatter
     yformatter=TexFormatter
-    zformatter=TexFormatter    
+    zformatter=TexFormatter
     xlocater=AutoLocator
     ylocater=AutoLocator
     zlocater=AutoLocator
-    templat_axes_labelsize=12
+    template_axes_labelsize=12
     template_text_fontsize=12
     template_legend_fontsize=10
     template_legend_frameon=False
@@ -132,11 +132,11 @@ class DefaultPlotStyle(object):
     template_figure_subplot_left=0.15
     template_figure_subplot_right=0.9
     template_figure_subplot_bottom=0.15
-    template_figure_subplot_top=0.9 
+    template_figure_subplot_top=0.9
 
     def __init__(self,**kargs):
         """Create a template instance of this template.
-        
+
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
@@ -147,7 +147,7 @@ class DefaultPlotStyle(object):
         """Update the template with new attributes from keyword arguments.
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
-        """        
+        """
         for k in kargs:
             if not k.startswith("_"):
                 self.__setattr__("template_"+k,kargs[k])
@@ -160,10 +160,10 @@ class DefaultPlotStyle(object):
         """This is called by PlotFile to setup a new figure before we do anything."""
         params=dict()
         if self.fig_width is None:
-            self.fig_width=self.fig_width_pt*self._inches_per_pt            
+            self.fig_width=self.fig_width_pt*self._inches_per_pt
         if self.fig_height is None:
-            self.fig_height=self.fig_width*self._golden_mean      # height in inches            
-        self.template_figure_figsize =  (self.fig_width,self.fig_height)        
+            self.fig_height=self.fig_width*self._golden_mean      # height in inches
+        self.template_figure_figsize =  (self.fig_width,self.fig_height)
         for attr in dir(self):
             if attr.startswith("template_"):
                 attrname=attr[9:].replace("_",".").replace("..","_")
@@ -187,18 +187,18 @@ class DefaultPlotStyle(object):
         self.new_figure(False)
 
         self.customise()
-        
+
     def customise(self):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
-        
+
     def customise_axes(self,ax):
         """This method is run when we have an axis to manipulate.
 
         Args:
             ax (matplotlib axes): The axes to be modified by this function.
-            
+
         Note:
             In the DefaultPlotStyle class this method is used to set SI units
             plotting mode for all axes.
@@ -212,15 +212,15 @@ class DefaultPlotStyle(object):
         if "zaxis" in dir(ax):
             ax.zaxis.set_major_locator(self.zlocater())
             ax.set_zticklabels(ax.get_zticks(),size=self.template_ztick_labelsize)
-            ax.zaxis.set_major_formatter(self.zformatter())        
-        
+            ax.zaxis.set_major_formatter(self.zformatter())
+
     def annotate(self,plot,**kargs):
         """Call all the routines necessary to annotate the axes etc.
-        
+
         Args:
             plot (Stoner.PlotFile): The PlotFile boject we're working with
         """
-        if "xlabel" in kargs and self.show_xlabel:        
+        if "xlabel" in kargs and self.show_xlabel:
             plt.xlabel(str(kargs["xlabel"]),size=self.template_axes_labelsize)
         if "ylabel" in kargs and self.show_ylabel:
             plt.ylabel(str(kargs["ylabel"]),size=self.template_axes_labelsize)
@@ -230,7 +230,7 @@ class DefaultPlotStyle(object):
             plt.title(kargs["title"])
         if self.show_legend and len(plt.gca().get_legend_handles_labels()[1])>1:
             plt.legend()
-        
+
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
@@ -238,7 +238,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     fig_width_pt=244
     fig_height_pt=244
     show_title=False
-    
+
     template_text_fontsize=18
     template_legend_fontsize=18
     template_xtick_labelsize=18
@@ -257,15 +257,15 @@ class JTBPlotStyle(DefaultPlotStyle):
     #template_lines_marker=itertools.cycle(('o','s','^','v','x'))
     template_lines_marker=''
     template_lines_markersize=5
-    
-    
+
+
     template_axes_labelsize=18
     template_axes_fontsize=18
     template_axes_labelpad=1
     template_axes_formatter_limits=(-4, 4)
     template_axes_grid=False
     template_axes_color__cycle=['k','r','b','g','c','m','y']
-    
+
     template_figure_facecolor=(1,1,1)
     template_figure_autolayout=True
     template_figure_subplot_left    = 0.175  # the left side of the subplots of the figure
@@ -275,7 +275,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     template_figure_subplot_wspace  = -20
     template_figure_subplot_hspace  = -10
     template_lines_markersize=5
-    
+
     template_legend_loc          ='upper center'
     template_legend_isaxes       =False
     template_legend_numpoints    =1      # the number of points in the legend line
@@ -291,7 +291,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     template_legend_shadow       =False
     template_legend_frameon      =False   # whether or not to draw a frame around legend
     template_legend_scatterpoints=3 # number of scatter points
- 
+
 
     def customise_axes(self,ax):
         pass
@@ -320,8 +320,8 @@ class ThesisPlotStyle(DefaultPlotStyle):
     template_figure_subplot_left=0.15
     template_figure_subplot_right=0.95
     template_figure_subplot_bottom=0.2
-    template_figure_subplot_top=0.875 
-    template_figure_autolayout=False  
+    template_figure_subplot_top=0.875
+    template_figure_autolayout=False
 
 
 class PRBPlotStyle(DefaultPlotStyle):
