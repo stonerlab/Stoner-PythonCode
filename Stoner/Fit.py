@@ -1,7 +1,7 @@
-"""Stoner.Fit: Functions and lmfit.Models for fitting data 
+"""Stoner.Fit: Functions and lmfit.Models for fitting data
 ==================================================================
 
-Functions should accept an array of x values and a number of parmeters, 
+Functions should accept an array of x values and a number of parmeters,
 they should then return an array of y values the same size as the x array.
 
 Models are subclasses of lmfit.Model that represent the corresponding function
@@ -27,11 +27,16 @@ from lmfit.models import update_param_vals
 from scipy.integrate import quad
 import scipy.constants.codata as consts
 
+try:
+    from numba import jit
+except ImportError:
+    pass
+
 
 def linear(x, intercept, slope):
     """Simple linear function"""
     return slope*x+intercept
-    
+
 #Linear already builtin to lmfit.models
 
 def arrhenius(x, A, DE):
@@ -41,7 +46,7 @@ def arrhenius(x, A, DE):
 
 class Arrhenius(Model):
     """Arrhenius Equation without T dependendent prefactor"""
- 
+
     def __init__(self, *args, **kwargs):
         super(Arrhenius, self).__init__(arrhenius, *args, **kwargs)
 
@@ -60,7 +65,7 @@ def nDimArrhenius(x, A, DE, n):
 
 class NDimArrhenius(Model):
     """Arrhenius Equation without T dependendent prefactor"""
- 
+
     def __init__(self, *args, **kwargs):
         super(NDimArrhenius, self).__init__(nDimArrhenius, *args, **kwargs)
 
@@ -79,7 +84,7 @@ def  modArrhenius(x, A, DE, n):
 
 class ModArrhenius(Model):
     """Arrhenius Equation with a variable T power dependent prefactor"""
- 
+
     def __init__(self, *args, **kwargs):
         super(ModArrhenius, self).__init__(modArrhenius, *args, **kwargs)
 
@@ -115,7 +120,7 @@ class Simmons(Model):
     """    Simmons model as in
     Simmons J. App. Phys. 34 6 1963
     """
- 
+
     def __init__(self, *args, **kwargs):
         super(Simmons, self).__init__(simmons, *args, **kwargs)
 
@@ -143,7 +148,7 @@ class BDR(Model):
 
     See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
     or Tuan Comm. in Phys. 16, 1, (2006)"""
- 
+
     def __init__(self, *args, **kwargs):
         super(BDR, self).__init__(bdr, *args, **kwargs)
 
@@ -174,7 +179,7 @@ class FowlerNordheim(Model):
     Simmons model as in
     Simmons J. App. Phys. 34 6 1963
     """
- 
+
     def __init__(self, *args, **kwargs):
         super(FowlerNordheim, self).__init__(fowlerNordheim, *args, **kwargs)
 
@@ -194,7 +199,7 @@ class TersoffHammann(Model):
     """TersoffHamman model for tunnelling through STM tip
     V=bias voltage, params=[A]
     """
- 
+
     def __init__(self, *args, **kwargs):
         super(TersoffHammann, self).__init__(tersoffHammann, *args, **kwargs)
 
@@ -206,7 +211,7 @@ class TersoffHammann(Model):
 def wlfit(B, s0,DS,B1,B2):
     """
     Weak localisation
-    
+
     Args:
         B = mag. field, params=list of parameter values, s0, B1, B2
         s0 (float): zero field conductance
@@ -247,7 +252,7 @@ class WLfit(Model):
     """
     Weak localisation
 
-    def wlfit(B, s0,DS,B1,B2):    
+    def wlfit(B, s0,DS,B1,B2):
     Args:
         B = mag. field, params=list of parameter values, s0, B1, B2
         s0 (float): zero field conductance
@@ -259,12 +264,12 @@ class WLfit(Model):
     Wu PRL 98, 136801 (2007)
     Porter PRB 86, 064423 (2012)
     """
- 
+
     def __init__(self, *args, **kwargs):
         super(WLfit, self).__init__(wlfit, *args, **kwargs)
 
     def guess(self, data, B=None, **kwargs):
-        s0,DS,B1,B2=1.0,1.0,1.0,1.0        
+        s0,DS,B1,B2=1.0,1.0,1.0,1.0
         if B is not None:
             zpos=_np_.argmin(_np_.abs(B))
             s0=data[zpos]
@@ -274,7 +279,8 @@ class WLfit(Model):
         pars = self.make_params(s0=s0,DS=DS,B1=B1,B2=B2)
         return update_param_vals(pars, self.prefix, **kwargs)
 
-def strijkers(V, omega,delta,P,Z):
+@jit
+def _strijkers_core(V, omega,delta,P,Z):
     """
     strijkers(V, params):
     Args:
@@ -292,7 +298,7 @@ def strijkers(V, omega,delta,P,Z):
     """
     #   Parameters
 
-    E = _np_.arange(-50, 50, 0.05) # Energy range in meV
+    E = _np_.arange(2*_np_.min(V), 2*_np_.max(V), 0.025) # Energy range in meV
 
     #Reflection prob arrays
     Au=_np_.zeros(len(E))
@@ -310,15 +316,16 @@ def strijkers(V, omega,delta,P,Z):
     %event
     """
 
-    for ss in range(len(E)):
-        if _np_.abs(E[ss])<=delta:
-            Au[ss]=(delta**2)/((E[ss]**2)+(((delta**2)-(E[ss]**2))*(1+2*(Z**2))**2));
-            Bu[ss] = 1-Au[ss];
-            Bp[ss] = 1;
-        else:
-            Au[ss] = (((_np_.abs(E[ss])/(_np_.sqrt((E[ss]**2)-(delta**2))))**2)-1)/(((_np_.abs(E[ss])/(_np_.sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
-            Bu[ss] = (4*(Z**2)*(1+(Z**2)))/(((_np_.abs(E[ss])/(_np_.sqrt((E[ss]**2)-(delta**2)))) + (1+2*(Z**2)))**2);
-            Bp[ss] = Bu[ss]/(1-Au[ss]);
+    Au1=(delta**2)/((E**2)+(((delta**2)-(E**2))*(1+2*(Z**2))**2))
+    Au2=(((_np_.abs(E)/(_np_.sqrt((E**2)-(delta**2))))**2)-1)/(((_np_.abs(E)/(_np_.sqrt((E**2)-(delta**2)))) + (1+2*(Z**2)))**2)
+    Bu1 = 1-Au1
+    Bu2 = (4*(Z**2)*(1+(Z**2)))/(((_np_.abs(E)/(_np_.sqrt((E**2)-(delta**2)))) + (1+2*(Z**2)))**2)
+    Bp1 = _np_.ones(len(E))
+    Bp2 = Bu2/(1-Au2);
+
+    Au=_np_.where(_np_.abs(E)<=delta,Au1,Au2)
+    Bu=_np_.where(_np_.abs(E)<=delta,Bu1,Bu2)
+    Bp=_np_.where(_np_.abs(E)<=delta,Bp1,Bp2)
 
     #  Calculates reflection 'probs' for pol and unpol currents
     Guprob = 1+Au-Bu;
@@ -341,6 +348,9 @@ def strijkers(V, omega,delta,P,Z):
         gaus=(1/(2*omega*_np_.sqrt(_np_.pi)))*_np_.exp(-(((E-V[tt])/(2*omega))**2))
         cond[tt]=_np_.trapz(gaus*G,E);
     return cond
+
+def strijkers(V, omega,delta,P,Z):
+    return _strijkers_core(V, omega,delta,P,Z)
 
 class Strijkers(Model):
     """
@@ -391,7 +401,7 @@ def fluchsSondheimer(t,l,p,sigma_0):
         v=k[i]
         result[i]=1-(3*(1-p)/(8*v))+(3*(1-p)/(2*v))*quad(kernel,0,1,v)
     return result/sigma_0
-    
+
 class FluchsSondheimer(Model):
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
 
