@@ -119,12 +119,43 @@ will be called 'Fitted with ' and the name of the function *func*.
 Fitting with limits
 -------------------
 
-Non-linear curve fitting with initialisation file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The Stoner package has a number of alternative fitting mechanisms that supplement the standard
+:py:func:`scipy.optimize.curve_fit` function. New in version 0.2 onwards of the Package is an interface to the
+*lmfit* module.
 
-For cases where one requires more flexibility in fitting data, in particular
-where the fitting parameters are constrained, the :py:meth:`AnalyseFile.mpfit`
-method is provided. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
+Non-linear curve fitting with lmfit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
+A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`. The
+:py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
+
+In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
+and its independent and fittable parameters, whether they have limits and what the limits are. The :py:module:`Stoner.Fit` module contains
+a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
+
+The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
+
+    from Stoner.Fit import Arrehenius
+    model=Arrehenius(A=1E7,DE=0.01)
+    fit=a.lmfit(model,xcol="Temp",ycol="Cond",result=True,header="Fit")
+    print fit.fit_report()
+    print a["A"],a["A_err"],a["chi^2"],a["nfev"]
+
+In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+
+The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
+instance. This contains all the information about the fit and fitting process.
+
+Non-linear curve fitting with mpfit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current versions of the Stoner Package contain a second constrained non-linear fitting package, *mpfit*.
+
+This is also suitable for cases where one requires more flexibility in fitting data, in particular
+where the fitting parameters are constrained, the module is accessed thrpugh the :py:meth:`AnalyseFile.mpfit`
+method. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
 
    a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,bounds=lambda x, y: True, **mpfit_kargs )
 

@@ -425,7 +425,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,**largs):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -442,13 +442,15 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            asrow (bool): Instead of returning popt,pcov, return a single array of popt, interleaved with the standard error in popt
+            output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
             pcov (2d array): The variance-co-variance matrix for the fitting parameters.
-            If asrow is True, then return [popt[0],sqrt(pcov[0,0]),popt[1],sqrt(pcov[1,1])...popt[n],sqrt(pcov[n,n])]
-
+            The return value is determined by the *output* parameter. Options are:
+                * "ffit"    (tuple of popt,pcov)
+                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                * "full"    a tuple of (popt,pcov,row).
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
@@ -459,6 +461,9 @@ class AnalyseFile(DataFile):
             The initial parameter values and weightings default to None which corresponds to all parameters starting
             at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
             point is to be used in the fit and false if not.
+
+        See Also:
+            :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
         """
 
         if None in (xcol,ycol,sigma):
@@ -488,13 +493,18 @@ class AnalyseFile(DataFile):
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
             self.apply(lambda x:func(x[xc], *popt), result, replace=replace, header=header)
-        if not asrow:
-            return popt, pcov
-        else:
-            rc=_np_.array([])
-            for i in range(len(popt)):
-                rc=_np_.append(rc,[popt[i],_np_.sqrt(pcov[i,i])])
-            return rc
+        row=_np_.array([])
+        for i in range(len(popt)):
+            row=_np_.append(row,[popt[i],_np_.sqrt(pcov[i,i])])
+        if "output" not in kargs:
+            if "asrow" in kargs:
+                kargs["output"]="row" if kargs["asrow"] else "fit"
+            else:
+                kargs["output"]="fit"
+        retval={"fit":(popt,pcov),"row":row,"full":(popt,pcov,row)}
+        if kargs["output"] not in retval:
+            raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
+        return retval[kargs["output"]]
 
     def decompose(self,xcol=None,ycol=None,sym=None, asym=None,replace=True, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
@@ -705,13 +715,13 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,asrow=False):
+    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,output="fit"):
         """Wrapper around lmfit module fitting.
 
         Keyword Arguments:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
             xcol, ycol (index or None): Columns to be used for the x and y data for the fitting
-            p0 (tuple,list,array,dict) or None: replace starting values of arguments with this vector
+            p0 (list, tuple or array): A vector of initial parameter values to try
             sigma (index): The index of the column with the y-error bars
             bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -719,10 +729,13 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            asrow (bool): Instead of returning popt,pcov, return a single array of popt, interleaved with the standard error in popt
+            output (str, default "fit"): Specifiy what to return.
 
         Returns:
-            An lmfit.ModeFit object and changes this instance of the AnalyseFile
+            The return value is determined by the *output* parameter. Options are:
+                * "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
+                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+                * "full"    a tuple of the fit instance and the row.
         """
 
         if not isinstance(model,Model):
@@ -733,8 +746,12 @@ class AnalyseFile(DataFile):
                 xcol=cols["xcol"]
             if ycol is None:
                 ycol=cols["ycol"][0]
-        xdata=self.column(xcol)
-        ydata=self.column(ycol)
+        working=self.search(xcol, bounds)
+        working=ma.mask_rowcols(working,axis=0)
+        if sigma is not None:
+            sigma=working[:,self.find_col(sigma)]
+        xdat=working[:,self.find_col(xcol)]
+        ydat=working[:,self.find_col(ycol)]
         if p0 is not None:
             if isinstance(p0,(list,tuple,_np_.ndarray)):
                 p0={p:pv for p,pv in zip(model.param_names,p0)}
@@ -754,6 +771,7 @@ class AnalyseFile(DataFile):
 
         fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
         if fit.success:
+            row=[]
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
                 self.add_column(fit.best_fit,column_header=header,index=result,replace=replace)
             elif result is not None:
@@ -761,11 +779,16 @@ class AnalyseFile(DataFile):
             for p in fit.params:
                 self[p]=fit.params[p].value
                 self[p+"_err"]=fit.params[p].stderr
+                row.append([fit.params[p].value,fit.params[p].stderr])
             self["chi^2"]=fit.chisqr
             self["nfev"]=fit.nfev
+            retval={"fit":fit,"row":row,"full":(fit,row)}
+            if output not in retval:
+                raise RuntimeError("Failed to recognise output format:{}".format(output))
+            else:
+                return retval[output]
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message,fit.message))
-        return fit
 
     def make_bins(self,xcol,bins,mode,**kargs):
         """Utility method to generate bin boundaries and centres along an axis.
