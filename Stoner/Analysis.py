@@ -736,7 +736,7 @@ class AnalyseFile(DataFile):
         xdata=self.column(xcol)
         ydata=self.column(ycol)
         if p0 is not None:
-            if isistnace(p0,(list,tuple,_np_.ndarray)):
+            if isinstance(p0,(list,tuple,_np_.ndarray)):
                 p0={p:pv for p,pv in zip(model.param_names,p0)}
             if not isinstance(p0,dict):
                 raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
@@ -755,17 +755,16 @@ class AnalyseFile(DataFile):
         fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
         if fit.success:
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
-                iv={xvar:xdata}
                 self.add_column(fit.best_fit,column_header=header,index=result,replace=replace)
-                self.metadata.update(fit.best_values)
-                if fit.covar is not None:
-                    errs=_np_.sqrt(_np_.diagonal(fit.covar))
-                else:
-                    errs=_np_.zeros(len(fit.best_values))
-                for err,k in zip(errs,model.param_names):
-                    self.metadata["{}_err".format(k)]=err
             elif result is not None:
                 raise RuntimeError("Didn't recognize result as an index type or True")
+            for p in fit.params:
+                self[p]=fit.params[p].value
+                self[p+"_err"]=fit.params[p].stderr
+            self["chi^2"]=fit.chisqr
+            self["nfev"]=fit.nfev
+        else:
+            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message,fit.message))
         return fit
 
     def make_bins(self,xcol,bins,mode,**kargs):
