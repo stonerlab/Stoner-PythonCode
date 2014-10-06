@@ -425,7 +425,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,**largs):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None , absolute_sigma=False,**kargs):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -442,7 +442,14 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            output (str, default "fit"): Specifiy what to return.
+            absolute_sigma (bool) If False, `sigma` denotes relative weights of the data points. 
+                The returned covariance matrix `pcov` is based on *estimated*
+                errors in the data, and is not affected by the overall
+                magnitude of the values in `sigma`. Only the relative
+                magnitudes of the `sigma` values matter.
+                If True, `sigma` describes one standard deviation errors of
+                the input data points. The estimated covariance in `pcov` is
+                based on these values.output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
@@ -482,7 +489,7 @@ class AnalyseFile(DataFile):
             sigma=working[:,self.find_col(sigma)]
         xdat=working[:,self.find_col(xcol)]
         ydat=working[:,self.find_col(ycol)]
-        popt, pcov=curve_fit(func,  xdat,ydat, p0, sigma)
+        popt, pcov=curve_fit(func,  xdat,ydat, p0, sigma, absolute_sigma)
         if result is not None:
             args=getargspec(func)[0]
             for i in range(len(popt)):
