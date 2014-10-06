@@ -750,8 +750,8 @@ class AnalyseFile(DataFile):
         working=ma.mask_rowcols(working,axis=0)
         if sigma is not None:
             sigma=working[:,self.find_col(sigma)]
-        xdat=working[:,self.find_col(xcol)]
-        ydat=working[:,self.find_col(ycol)]
+        xdata=working[:,self.find_col(xcol)]
+        ydata=working[:,self.find_col(ycol)]
         if p0 is not None:
             if isinstance(p0,(list,tuple,_np_.ndarray)):
                 p0={p:pv for p,pv in zip(model.param_names,p0)}
