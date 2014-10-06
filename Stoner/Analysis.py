@@ -743,7 +743,7 @@ class AnalyseFile(DataFile):
         else:
             p0=dict()
         if sigma is not None:
-            if isinstance(sigma,index_type):
+            if isinstance(sigma,index_types):
                 sigma=self.column(sigma)
             elif isinstance(sigma,(list,tuple,_np_.ndarray)):
                 sigma=_np_.ndarray(sigma)
@@ -751,7 +751,7 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("Sigma should have been a column index or list of values")
         xvar=model.independent_vars[0]
         p0[xvar]=xdata
-
+        
         fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
         if fit.success:
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
