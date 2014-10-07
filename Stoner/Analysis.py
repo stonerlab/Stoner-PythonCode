@@ -425,7 +425,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,**largs):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,**kargs):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -475,6 +475,7 @@ class AnalyseFile(DataFile):
             if sigma is None:
                 if len(cols["yerr"])>0:
                     sigma=cols["yerr"][0]
+
 
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
@@ -768,8 +769,8 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("Sigma should have been a column index or list of values")
         xvar=model.independent_vars[0]
         p0[xvar]=xdata
-        
-        fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
+
+        fit=model.fit(ydata,None,scale_covar=True,weights=1.0/sigma,**p0)
         if fit.success:
             row=[]
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
