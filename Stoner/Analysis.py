@@ -722,7 +722,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,output="fit"):
+    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,scale_covar=True,output="fit"):
         """Wrapper around lmfit module fitting.
 
         Keyword Arguments:
@@ -736,6 +736,7 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            scale_covar (bool) : whether to automatically scale covariance matrix (leastsq only)
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
@@ -755,8 +756,7 @@ class AnalyseFile(DataFile):
                 ycol=cols["ycol"][0]
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
-        if sigma is not None:
-            sigma=working[:,self.find_col(sigma)]
+        
         xdata=working[:,self.find_col(xcol)]
         ydata=working[:,self.find_col(ycol)]
         if p0 is not None:
@@ -766,9 +766,10 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
         else:
             p0=dict()
+            
         if sigma is not None:
             if isinstance(sigma,index_types):
-                sigma=self.column(sigma)
+                sigma=working[:,self.find_col(sigma)]
             elif isinstance(sigma,(list,tuple,_np_.ndarray)):
                 sigma=_np_.ndarray(sigma)
             else:
@@ -776,7 +777,7 @@ class AnalyseFile(DataFile):
         xvar=model.independent_vars[0]
         p0[xvar]=xdata
         
-        fit=model.fit(ydata,None,scale_covar=True,weights=sigma,**p0)
+        fit=model.fit(ydata,None,scale_covar,weights=sigma,**p0)
         if fit.success:
             row=[]
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
