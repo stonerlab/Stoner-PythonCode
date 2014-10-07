@@ -425,7 +425,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None ,**kargs):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None , absolute_sigma=False,**kargs):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -442,7 +442,14 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            output (str, default "fit"): Specifiy what to return.
+            absolute_sigma (bool) If False, `sigma` denotes relative weights of the data points.
+                The returned covariance matrix `pcov` is based on *estimated*
+                errors in the data, and is not affected by the overall
+                magnitude of the values in `sigma`. Only the relative
+                magnitudes of the `sigma` values matter.
+                If True, `sigma` describes one standard deviation errors of
+                the input data points. The estimated covariance in `pcov` is
+                based on these values.output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
@@ -483,7 +490,7 @@ class AnalyseFile(DataFile):
             sigma=working[:,self.find_col(sigma)]
         xdat=working[:,self.find_col(xcol)]
         ydat=working[:,self.find_col(ycol)]
-        popt, pcov=curve_fit(func,  xdat,ydat, p0, sigma)
+        popt, pcov=curve_fit(func,  xdat,ydat, p0, sigma, absolute_sigma)
         if result is not None:
             args=getargspec(func)[0]
             for i in range(len(popt)):
@@ -716,7 +723,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,output="fit"):
+    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,scale_covar=True,output="fit"):
         """Wrapper around lmfit module fitting.
 
         Keyword Arguments:
@@ -730,6 +737,7 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
+            scale_covar (bool) : whether to automatically scale covariance matrix (leastsq only)
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
@@ -749,8 +757,7 @@ class AnalyseFile(DataFile):
                 ycol=cols["ycol"][0]
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
-        if sigma is not None:
-            sigma=working[:,self.find_col(sigma)]
+
         xdata=working[:,self.find_col(xcol)]
         ydata=working[:,self.find_col(ycol)]
         if p0 is not None:
@@ -760,13 +767,16 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
         else:
             p0=dict()
+
         if sigma is not None:
             if isinstance(sigma,index_types):
-                sigma=self.column(sigma)
+                sigma=working[:,self.find_col(sigma)]
             elif isinstance(sigma,(list,tuple,_np_.ndarray)):
                 sigma=_np_.ndarray(sigma)
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
+        else:
+            sigma=_np_.ones(len(xdata))
         xvar=model.independent_vars[0]
         p0[xvar]=xdata
 
