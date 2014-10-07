@@ -425,7 +425,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None , absolute_sigma=False,**kargs):
+    def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None,**kargs):
         """General curve fitting function passed through from scipy
 
         Args:
@@ -442,14 +442,15 @@ class AnalyseFile(DataFile):
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            absolute_sigma (bool) If False, `sigma` denotes relative weights of the data points.
+            absolute_sigma (bool, defaults to True) If False, `sigma` denotes relative weights of the data points.
                 The returned covariance matrix `pcov` is based on *estimated*
                 errors in the data, and is not affected by the overall
                 magnitude of the values in `sigma`. Only the relative
                 magnitudes of the `sigma` values matter.
                 If True, `sigma` describes one standard deviation errors of
                 the input data points. The estimated covariance in `pcov` is
-                based on these values.output (str, default "fit"): Specifiy what to return.
+                based on these values.
+            output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
@@ -457,7 +458,7 @@ class AnalyseFile(DataFile):
             The return value is determined by the *output* parameter. Options are:
                 * "ffit"    (tuple of popt,pcov)
                 * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                * "full"    a tuple of (popt,pcov,row).
+                * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
@@ -472,6 +473,19 @@ class AnalyseFile(DataFile):
         See Also:
             :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
         """
+
+        bounds=kargs.pop("bounds",lambda x, y: True)
+        result=kargs.pop("results",None)
+        replace=kargs.pop("replace",False)
+        header=kargs.pop("header",None)
+        #Support either scale_covar or absolute_sigma, the latter wins if both supplied
+        scale_covar=kargs.pop("scale_covar",False)
+        absolute_sigma=kargs("absolute_sigma",not scale_covar)
+        #Support both asrow and output, the latter wins if both supplied
+        asrow=kargs.pop("asrow",False)
+        output=kargs.pop("output","row" if asrow else "fit")
+        if output=="full":
+            kargs["full_output"]=True
 
         if None in (xcol,ycol,sigma):
             cols=self._get_cols()
@@ -490,7 +504,9 @@ class AnalyseFile(DataFile):
             sigma=working[:,self.find_col(sigma)]
         xdat=working[:,self.find_col(xcol)]
         ydat=working[:,self.find_col(ycol)]
-        popt, pcov=curve_fit(func,  xdat,ydat, p0, sigma, absolute_sigma)
+        ret=curve_fit(func,  xdat,ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma,**kargs)
+        popt=ret[0]
+        pcov=ret[1]
         if result is not None:
             args=getargspec(func)[0]
             for i in range(len(popt)):
@@ -504,15 +520,11 @@ class AnalyseFile(DataFile):
         row=_np_.array([])
         for i in range(len(popt)):
             row=_np_.append(row,[popt[i],_np_.sqrt(pcov[i,i])])
-        if "output" not in kargs:
-            if "asrow" in kargs:
-                kargs["output"]="row" if kargs["asrow"] else "fit"
-            else:
-                kargs["output"]="fit"
-        retval={"fit":(popt,pcov),"row":row,"full":(popt,pcov,row)}
-        if kargs["output"] not in retval:
+        ret=ret+(row,)
+        retval={"fit":(popt,pcov),"row":row,"full":ret}
+        if output not in retval:
             raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
-        return retval[kargs["output"]]
+        return retval[output]
 
     def decompose(self,xcol=None,ycol=None,sym=None, asym=None,replace=True, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
@@ -723,7 +735,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, bounds=lambda x, y: True, result=None, replace=False, header=None,scale_covar=True,output="fit"):
+    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
         """Wrapper around lmfit module fitting.
 
         Keyword Arguments:
@@ -747,6 +759,17 @@ class AnalyseFile(DataFile):
                 * "full"    a tuple of the fit instance and the row.
         """
 
+        bounds=kargs.pop("bounds",lambda x, y: True)
+        result=kargs.pop("results",None)
+        replace=kargs.pop("replace",False)
+        header=kargs.pop("header",None)
+        # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
+        absolute_sigma=kargs("absolute_sigma",True)
+        scale_covar=kargs.pop("scale_covar",not absolute_sigma)
+        #Support both asrow and output, the latter wins if both supplied
+        asrow=kargs.pop("asrow",False)
+        output=kargs.pop("output","row" if asrow else "fit")
+
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
@@ -765,8 +788,9 @@ class AnalyseFile(DataFile):
                 p0={p:pv for p,pv in zip(model.param_names,p0)}
             if not isinstance(p0,dict):
                 raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
+                p0.update(kargs)
         else:
-            p0=dict()
+            p0=kargs
 
         if sigma is not None:
             if isinstance(sigma,index_types):
@@ -777,10 +801,11 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("Sigma should have been a column index or list of values")
         else:
             sigma=_np_.ones(len(xdata))
+            scale_covar=True
         xvar=model.independent_vars[0]
         p0[xvar]=xdata
 
-        fit=model.fit(ydata,None,scale_covar=True,weights=1.0/sigma,**p0)
+        fit=model.fit(ydata,None,scale_covar=scale_covar,weights=1.0/sigma,**p0)
         if fit.success:
             row=[]
             if isinstance(result,index_types) or (isinstance(result,bool) and result):
