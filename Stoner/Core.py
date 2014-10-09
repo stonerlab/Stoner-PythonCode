@@ -19,6 +19,8 @@ import inspect as _inspect_
 import itertools
 import collections
 
+import sys
+
 class _attribute_store(dict):
     """A class that provides attributes that refer to columns in a DataFile instance."""
 
@@ -1200,7 +1202,7 @@ class DataFile(object):
                     self.metadata[md[0].strip()]=val.strip()
         #End of metadata reading, close filke and reopen to read data
         if still_data: # data extends beyond metada - read with genfromtxt
-            self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t",usecols=range(1,cols))
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t",usecols=range(1,cols),invalid_raise=False,comments="\0")
         elif datarow>0: # some data less than metadata
             footer=metadatarow-datarow
             self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols))
@@ -1210,6 +1212,7 @@ class DataFile(object):
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
             for i in range(len(col_headers_tmp)):
                 self.column_headers[i]=col_headers_tmp[i]
+
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
