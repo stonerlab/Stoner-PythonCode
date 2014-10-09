@@ -28,7 +28,7 @@ import sys, os
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
 'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary',
 'sphinxcontrib.napoleon','sphinx.ext.graphviz','sphinx.ext.inheritance_diagram',
-'sphinx.ext.todo',#'astropy.sphinx.ext.automodapi','astropy.sphinx.ext.automodsumm',
+'sphinx.ext.todo','astropy.sphinx.ext.automodapi','astropy.sphinx.ext.automodsumm',
 'sphinx.ext.mathjax']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -248,6 +248,17 @@ texinfo_documents = [
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 #texinfo_show_urls = 'footnote'
 
+# Napoleon settings
+napoleon_google_docstring = True
+napoleon_numpy_docstring = False
+napoleon_include_private_with_doc = True
+napoleon_include_special_with_doc = True
+napoleon_use_admonition_for_examples = False
+napoleon_use_admonition_for_notes = False
+napoleon_use_admonition_for_references = False
+napoleon_use_ivar = False
+napoleon_use_param = False
+napoleon_use_rtype = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}

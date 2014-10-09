@@ -55,7 +55,7 @@ class AnalyseFile(DataFile):
     """
 
     def SG_Filter(self, col=None, points=15, poly=1, order=0,result=None, replace=False, header=None):
-        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data
+        """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
             col (index): Column of Data to be filtered
@@ -252,7 +252,7 @@ class AnalyseFile(DataFile):
 
 
     def add(self, a, b, replace=False, header=None):
-        """Add one column, number or array (b) to another column (a)
+        """Add one column, number or array (b) to another column (a).
 
         Args:
             a (index): First column to work with
@@ -295,7 +295,7 @@ class AnalyseFile(DataFile):
 
 
     def apply(self, func, col, replace=True, header=None):
-        """Applies the given function to each row in the data set and adds to the data set
+        """Applies the given function to each row in the data set and adds to the data set.
 
         Args:
             func (callable): A function that takes a numpy 1D array representing each row of data
@@ -324,7 +324,7 @@ class AnalyseFile(DataFile):
         return self
 
     def bin(self,xcol=None,ycol=None,bins=0.03,mode="log",**kargs):
-        """Bin x-y data into new values of x with an error bar
+        """Bin x-y data into new values of x with an error bar.
 
         Args:
             xcol (index): Index of column of data with X values
@@ -389,7 +389,7 @@ class AnalyseFile(DataFile):
         return (bin_centres,ybin,ebin,nbins)
 
     def chi2mapping(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
+        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
 
         Args:
             ini_file (string): Path to ini file with model
@@ -402,7 +402,7 @@ class AnalyseFile(DataFile):
 
 
     def clip(self, clipper,column=None):
-        """Clips the data based on the column and the clipper value
+        """Clips the data based on the column and the clipper value.
 
         Args:
             column (index): Column to look for the maximum in
@@ -426,7 +426,7 @@ class AnalyseFile(DataFile):
 
 
     def curve_fit(self, func,  xcol=None, ycol=None, p0=None, sigma=None,**kargs):
-        """General curve fitting function passed through from scipy
+        """General curve fitting function passed through from scipy.
 
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
@@ -572,7 +572,7 @@ class AnalyseFile(DataFile):
         return self
 
     def diffsum(self, a, b, replace=False, header=None):
-        """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums
+        """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums.
 
         Args:
             a (index): First column to work with
@@ -614,7 +614,7 @@ class AnalyseFile(DataFile):
 
 
     def divide(self, a, b, replace=False, header=None):
-        """Divide one column (a) by  another column, number or array (b)
+        """Divide one column (a) by  another column, number or array (b).
 
         Args:
             a (index): First column to work with
@@ -656,7 +656,7 @@ class AnalyseFile(DataFile):
 
 
     def integrate(self,xcol=None,ycol=None,result=None,result_name=None, bounds=lambda x,y:True,**kargs):
-        """Inegrate a column of data, optionally returning the cumulative integral
+        """Inegrate a column of data, optionally returning the cumulative integral.
 
         Args:
             xcol (index): The X data column index (or header)
@@ -709,7 +709,7 @@ class AnalyseFile(DataFile):
 
 
     def interpolate(self, newX,kind='linear', xcol=None ):
-        """AnalyseFile.interpolate(newX, kind='linear",xcol=None)
+        """AnalyseFile.interpolate(newX, kind='linear",xcol=None).
 
         Args:
             ewX (1D array): Row indices or X column values to interpolate with
@@ -735,12 +735,15 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model=None,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
+    def lmfit(self,model,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
         """Wrapper around lmfit module fitting.
 
-        Keyword Arguments:
+        Args:
             model (lmfit.Model): An instance of an lmfit.Model that represents the model to be fitted to the data
-            xcol, ycol (index or None): Columns to be used for the x and y data for the fitting
+            xcol (index or None): Columns to be used for the x  data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` x column
+            ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
+
+        Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try
             sigma (index): The index of the column with the y-error bars
             bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
@@ -753,10 +756,15 @@ class AnalyseFile(DataFile):
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
-            The return value is determined by the *output* parameter. Options are:
+            The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
+            relevant information about the fit.
+            The return value is determined by the *output* parameter. Options are
                 * "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
                 * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
                 * "full"    a tuple of the fit instance and the row.
+
+        See Also:
+            :py:meth:`AnalyseFile.curve_fit`
         """
 
         bounds=kargs.pop("bounds",lambda x, y: True)
@@ -891,7 +899,7 @@ class AnalyseFile(DataFile):
 
 
     def max(self, column=None, bounds=None):
-        """FInd maximum value and index in a column of data
+        """FInd maximum value and index in a column of data.
 
         Args:
             column (index): Column to look for the maximum in
@@ -921,7 +929,7 @@ class AnalyseFile(DataFile):
 
 
     def mean(self, column=None, bounds=None):
-        """FInd mean value of a data column
+        """FInd mean value of a data column.
 
         Args:
             column (index): Column to look for the maximum in
@@ -954,7 +962,7 @@ class AnalyseFile(DataFile):
 
 
     def min(self, column=None, bounds=None):
-        """FInd minimum value and index in a column of data
+        """FInd minimum value and index in a column of data.
 
         Args:
             column (index): Column to look for the maximum in
@@ -985,7 +993,7 @@ class AnalyseFile(DataFile):
 
 
     def mpfit(self, func,  xcol, ycol, p_info,  func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs ):
-        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc
+        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.
 
                 mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
 
@@ -1022,7 +1030,7 @@ class AnalyseFile(DataFile):
 
 
     def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None,parinfo=None, quiet=0, dof=None):
-        """Function that is called on every iteration of the non-linerar fitting
+        """Function that is called on every iteration of the non-linerar fitting.
 
         Args:
             myfunct (callable): Function being modelled
@@ -1042,7 +1050,7 @@ class AnalyseFile(DataFile):
 
 
     def multiply(self, a, b, replace=False, header=None):
-        """Multiply one column (a) by  another column, number or array (b)
+        """Multiply one column (a) by  another column, number or array (b).
 
         Args:
             a (index): First column to work with
@@ -1085,7 +1093,7 @@ class AnalyseFile(DataFile):
 
 
     def nlfit(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module
+        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
 
         Args:
             ini_file (string): path to ini file with model
@@ -1178,7 +1186,7 @@ class AnalyseFile(DataFile):
 
 
     def polyfit(self,xcol=None,ycol=None,polynomial_order=2, bounds=lambda x, y:True, result=None,replace=False,header=None):
-        """ Pass through to numpy.polyfit
+        """ Pass through to numpy.polyfit.
 
             Args:
                 xcol (index): Index to the column in the data with the X data in it
@@ -1216,7 +1224,7 @@ class AnalyseFile(DataFile):
 
 
     def span(self, column=None, bounds=None):
-        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into \b AnalyseFile.max and \b AnalyseFile.min
+        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.
 
         Args:
             column (index): Column to look for the maximum in
@@ -1404,7 +1412,7 @@ class AnalyseFile(DataFile):
         return self
 
     def subtract(self, a, b, replace=False, header=None):
-        """Subtract one column, number or array (b) from another column (a)
+        """Subtract one column, number or array (b) from another column (a).
 
         Args:
             a (index): First column to work with
@@ -1448,7 +1456,7 @@ class AnalyseFile(DataFile):
 
 
     def threshold(self, threshold,col=None, rising=True, falling=False,xcol=None,all_vals=False,transpose=False):
-        """Finds partial indices where the data in column passes the threshold, rising or falling
+        """Finds partial indices where the data in column passes the threshold, rising or falling.
 
         Args:
             col (index): Column index to look for data in

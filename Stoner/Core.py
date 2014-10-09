@@ -388,26 +388,26 @@ class DataFile(object):
     #   INITIALISATION
 
     def __init__(self, *args, **kargs):
-        """Constructor method for :py:class:`DataFile`
+        """Constructor method for :py:class:`DataFile`.
 
-        various forms are recognised:
-        :py:function:: DataFile('filename',<optional filetype>,<args>)
-            Creates the new DataFile object and then executes the :py:class:`DataFile`.load
-            method to load data from the given @a filename
-        :py:function:: DataFile(array)
-            Creates a new DataFile object and assigns the @a array to the
-            `DataFile.data`  attribute.
-        :py:function:: DataFile(dictionary)
-            Creates the new DataFile object, but initialises the metadata with
-            :parameter dictionary
-        :py:function:: DataFile(array,dictionary),
-            Creates the new DataFile object and does the combination of the
-            previous two forms.
-        :py:function:: DataFile(DataFile)
-            Creates the new DataFile object and initialises all data from the
-            existing :py:class:`DataFile` instance. This on the face of it does the same as
-            the assignment operator, but is more useful when one or other of the
-            DataFile objects is an instance of a sub - class of DataFile
+        various forms are recognised
+            *   :py:function:: DataFile('filename',<optional filetype>,<args>)
+                Creates the new DataFile object and then executes the :py:class:`DataFile`.load
+                method to load data from the given @a filename
+            *   :py:function:: DataFile(array)
+                Creates a new DataFile object and assigns the @a array to the
+                :py:attr:`DataFile.data`  attribute.
+            *   :py:function:: DataFile(dictionary)
+                Creates the new DataFile object, but initialises the metadata with
+                :parameter dictionary
+            *   :py:function:: DataFile(array,dictionary),
+                Creates the new DataFile object and does the combination of the
+                previous two forms.
+            *   :py:function:: DataFile(DataFile)
+                Creates the new DataFile object and initialises all data from the
+                existing :py:class:`DataFile` instance. This on the face of it does the same as
+                the assignment operator, but is more useful when one or other of the
+                DataFile objects is an instance of a sub - class of DataFile
 
         Args:
             *args (positional arguments) Variable number of arguments that match one of the
