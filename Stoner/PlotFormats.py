@@ -295,6 +295,70 @@ class JTBPlotStyle(DefaultPlotStyle):
 
     def customise_axes(self,ax):
         pass
+    
+class JTBinsetStyle(DefaultPlotStyle):
+    """Template class for Joe's Plot settings."""
+
+    fig_width_pt=244
+    fig_height_pt=244
+    show_title=False
+
+    template_text_fontsize=10
+    template_legend_fontsize=10
+    template_xtick_labelsize=10
+    template_ytick_labelsize=10
+    template_xtick_direction='in'
+    template_ytick_direction='in'
+    template_xtick_major_size=3
+    template_ytick_major_size=3
+    template_font_family="Times New Roman"
+    template_xtick_major_pad=1
+    template_ytick_major_pad=1
+    template_font_size=10
+    template_lines_linewidth=2
+    template_lines_linestyle='-'
+    template_lines_markeredgewidth=0
+    #template_lines_marker=itertools.cycle(('o','s','^','v','x'))
+    template_lines_marker=''
+    template_lines_markersize=5
+
+
+    template_axes_labelsize=10
+    template_axes_fontsize=10
+    template_axes_labelpad=-10
+    template_axes_formatter_limits=(-4, 4)
+    template_axes_grid=False
+    template_axes_color__cycle=['k','r','b','g','c','m','y']
+
+    template_figure_facecolor=(1,1,1)
+    template_figure_autolayout=True
+    template_figure_subplot_left    = 0.175  # the left side of the subplots of the figure
+    template_figure_subplot_right   = 0.9    # the right side of the subplots of the figure
+    template_figure_subplot_bottom  = 0.2    # the bottom of the subplots of the figure
+    template_figure_subplot_top     = 0.95    # the top of the subplots of the figure
+    template_figure_subplot_wspace  = -20
+    template_figure_subplot_hspace  = -10
+    template_lines_markersize=5
+
+    template_legend_loc          ='upper center'
+    template_legend_isaxes       =False
+    template_legend_numpoints    =1      # the number of points in the legend line
+    template_legend_fontsize     =10
+    template_legend_borderpad    =-1    # border whitespace in fontsize units
+    template_legend_markerscale  =1.0    # the relative size of legend markers vs. original
+    template_legend_labelspacing =0.5    # the vertical space between the legend entries in fraction of fontsize
+    template_legend_handlelength =2.     # the length of the legend lines in fraction of fontsize
+    template_legend_handleheight =0.7     # the height of the legend handle in fraction of fontsize
+    template_legend_handletextpad=0.8    # the space between the legend line and legend text in fraction of fontsize
+    template_legend_borderaxespad=0.5   # the border between the axes and legend edge in fraction of fontsize
+    template_legend_columnspacing=2.    # the border between the axes and legend edge in fraction of fontsize
+    template_legend_shadow       =False
+    template_legend_frameon      =False   # whether or not to draw a frame around legend
+    template_legend_scatterpoints=3 # number of scatter points
+
+
+    def customise_axes(self,ax):
+        pass
 
 class ThesisPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
