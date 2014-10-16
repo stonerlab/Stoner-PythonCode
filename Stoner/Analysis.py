@@ -475,12 +475,12 @@ class AnalyseFile(DataFile):
         """
 
         bounds=kargs.pop("bounds",lambda x, y: True)
-        result=kargs.pop("results",None)
+        result=kargs.pop("result",None)
         replace=kargs.pop("replace",False)
         header=kargs.pop("header",None)
         #Support either scale_covar or absolute_sigma, the latter wins if both supplied
         scale_covar=kargs.pop("scale_covar",False)
-        absolute_sigma=kargs("absolute_sigma",not scale_covar)
+        absolute_sigma=kargs.pop("absolute_sigma",not scale_covar)
         #Support both asrow and output, the latter wins if both supplied
         asrow=kargs.pop("asrow",False)
         output=kargs.pop("output","row" if asrow else "fit")
@@ -766,18 +766,18 @@ class AnalyseFile(DataFile):
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
         """
-
+        
         bounds=kargs.pop("bounds",lambda x, y: True)
-        result=kargs.pop("results",None)
+        result=kargs.pop("result",None)
         replace=kargs.pop("replace",False)
         header=kargs.pop("header",None)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
-        absolute_sigma=kargs("absolute_sigma",True)
+        absolute_sigma=kargs.pop("absolute_sigma",True)
         scale_covar=kargs.pop("scale_covar",not absolute_sigma)
         #Support both asrow and output, the latter wins if both supplied
         asrow=kargs.pop("asrow",False)
         output=kargs.pop("output","row" if asrow else "fit")
-
+        
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
@@ -788,7 +788,7 @@ class AnalyseFile(DataFile):
                 ycol=cols["ycol"][0]
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
-
+        
         xdata=working[:,self.find_col(xcol)]
         ydata=working[:,self.find_col(ycol)]
         if p0 is not None:
