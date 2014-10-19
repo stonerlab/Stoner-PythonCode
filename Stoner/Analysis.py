@@ -294,7 +294,7 @@ class AnalyseFile(DataFile):
         return self
 
 
-    def apply(self, func, col, replace=True, header=None):
+    def apply(self, func, col=None, replace=True, header=None,**kargs):
         """Applies the given function to each row in the data set and adds to the data set.
 
         Args:
@@ -308,12 +308,19 @@ class AnalyseFile(DataFile):
         Returns:
             A copy of the current instance
         """
+
+        if col is None:
+           col=self._get_cols()["ycol"][0]
         col=self.find_col(col)
         nc=_np_.zeros(len(self))
-        i=0
-        for r in self.rows():
-            nc[i]=func(r)
-            i+=1
+        for i,r in enumerate(self.rows()):
+            ret=func(r)
+            if isinstance(ret,Iterable):
+                if len(ret)==len(r):
+                    ret=ret[col]
+                else:
+                    ret=ret[0]
+            nc[i]=ret
         if header==None:
             header=func.__name__
         if replace!=True:
@@ -766,7 +773,7 @@ class AnalyseFile(DataFile):
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
         """
-        
+
         bounds=kargs.pop("bounds",lambda x, y: True)
         result=kargs.pop("result",None)
         replace=kargs.pop("replace",False)
@@ -777,7 +784,7 @@ class AnalyseFile(DataFile):
         #Support both asrow and output, the latter wins if both supplied
         asrow=kargs.pop("asrow",False)
         output=kargs.pop("output","row" if asrow else "fit")
-        
+
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
@@ -788,7 +795,7 @@ class AnalyseFile(DataFile):
                 ycol=cols["ycol"][0]
         working=self.search(xcol, bounds)
         working=ma.mask_rowcols(working,axis=0)
-        
+
         xdata=working[:,self.find_col(xcol)]
         ydata=working[:,self.find_col(ycol)]
         if p0 is not None:

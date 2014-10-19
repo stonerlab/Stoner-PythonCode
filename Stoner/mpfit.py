@@ -132,6 +132,7 @@ least-squares minimization problem.
  If AUTODERIVATIVE=0 is used then the user function must check the parameter
  FJAC, and if FJAC!=None then return the partial derivative array in the
  return list.::
+
      def myfunct(p, fjac=None, x=None, y=None, err=None)
         # Parameter values are passed in "p"
         # If FJAC!=None then partial derivatives must be comptuer.
@@ -219,10 +220,11 @@ Constraining Paremeters with the parinfo keyword
     - 'mpside' : the sidedness of the finite difference when computing
               numerical derivatives.  This field can take four
               values::
-             0 - one-sided derivative computed automatically
-             1 - one-sided derivative (f(x+h) - f(x)  )/h
-            -1 - one-sided derivative (f(x)   - f(x-h))/h
-             2 - two-sided derivative (f(x+h) - f(x-h))/(2*h)
+
+                 0 - one-sided derivative computed automatically
+                 1 - one-sided derivative (f(x+h) - f(x)  )/h
+                 -1 - one-sided derivative (f(x)   - f(x-h))/h
+                 2 - two-sided derivative (f(x+h) - f(x-h))/(2*h)
 
              Where H is the STEP parameter described above.  The
              "automatic" one-sided derivative method will chose a
@@ -262,6 +264,7 @@ Constraining Paremeters with the parinfo keyword
  fields within the PARINFO structure, and they will be ignored.
 
  PARINFO Example::
+
      parinfo = [{'value':0., 'fixed':0, 'limited':[0,0], 'limits':[0.,0.]}
                                                      for i in range(5)]
      parinfo[0]['fixed'] = 1
@@ -280,8 +283,7 @@ Constraining Paremeters with the parinfo keyword
        import numpy.oldnumeric as Numeric
        x = arange(100, float)
        p0 = [5.7, 2.2, 500., 1.5, 2000.]
-       y = ( p[0] + p[1]*[x] + p[2]*[x**2] + p[3]*sqrt(x) +
-             p[4]*log(x))
+       y = ( p[0] + p[1]*[x] + p[2]*[x**2] + p[3]*sqrt(x) + p[4]*log(x))
        fa = {'x':x, 'y':y, 'err':err}
        m = mpfit('myfunct', p0, functkw=fa)
        print 'status = ', m.status
@@ -301,8 +303,7 @@ Theory of Opertation
    the function value can be taylor expanded about x0 as follows:
 
       f(x) = f(x0) + f'(x0) . (x-x0) + (1/2) (x-x0) . f''(x0) . (x-x0)
-                                                                         (1)
-     Order    0th          1st                      2nd
+      Order    0th          1st                      2nd
 
    Here f'(x) is the gradient vector of f at x, and f''(x) is the
    Hessian matrix of second derivatives of f at x.  The vector x is
@@ -385,12 +386,14 @@ Theory of Opertation
 
                             REeferences
 
-   MINPACK-1, Jorge More', available from netlib (www.netlib.org).
-   "Optimization Software Guide," Jorge More' and Stephen Wright,
-     SIAM, *Frontiers in Applied Mathematics*, Number 14.
-   More', Jorge J., "The Levenberg-Marquardt Algorithm:
-     Implementation and Theory," in *Numerical Analysis*, ed. Watson,
-     G. A., Lecture Notes in Mathematics 630, Springer-Verlag, 1977.
+   - MINPACK-1, Jorge More', available from netlib (www.netlib.org).
+       "Optimization Software Guide," Jorge More' and Stephen Wright,
+
+   - SIAM, *Frontiers in Applied Mathematics*, Number 14.
+       More', Jorge J., "The Levenberg-Marquardt Algorithm:
+       Implementation and Theory," in *Numerical Analysis*, ed. Watson,
+
+   - G. A., Lecture Notes in Mathematics 630, Springer-Verlag, 1977.
 
                     Modification History
 

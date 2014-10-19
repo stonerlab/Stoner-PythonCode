@@ -29,7 +29,7 @@ A typical example might be to have some baseline scan that one is normalising to
 As one might expect form the name, the :py:meth:`AnalyseFile.subtract` method subtracts the second column form the first.
 Unlike :py:meth:`AnalyseFile.normalise` the first data column will not be replaced but a new column inserted and a new header
 (defaulting to 'column header 1 - column header 2') will be created. This can be overridden with the *header* and *replace*
- keyword arguments. The next two variants of the :py:meth:`AnalyseFile.subtract` method work in an analogous manner to the
+keyword arguments. The next two variants of the :py:meth:`AnalyseFile.subtract` method work in an analogous manner to the
 :py:meth:`AnalyseFile.normalise` methods. Finally the :py:meth:`AnalyseFile.add` method allows one to add two columns in a
 similar fashion::
 
@@ -69,7 +69,7 @@ Simple polynomial Fits
 ----------------------
 
 Simple least squares fitting of polynomial functions is handled by the
-:py:meth:`AnalyseFile.polyfit' method::
+:py:meth:`AnalyseFile.polyfit` method::
 
    a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
 
@@ -131,7 +131,7 @@ A full description of the lmfit module is given in the `lmffit documentation <hr
 :py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
 
 In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
-and its independent and fittable parameters, whether they have limits and what the limits are. The :py:module:`Stoner.Fit` module contains
+and its independent and fittable parameters, whether they have limits and what the limits are. The :py:mod:`Stoner.Fit` module contains
 a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
 
 The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
@@ -189,15 +189,15 @@ Each element is a dictionary with the following keys:
        of MPFIT does not use this tag in any way.  However, the default iterfunct will
        print the parameter name if available.
 *   [step] the step size to be used in calculating the numerical derivatives.
-        If set to zero, then the step size is	computed automatically.  Ignored when
+       If set to zero, then the step size is	computed automatically.  Ignored when
        AUTODERIVATIVE=0.
 *   [mpside] the sidedness of the finite difference when computing numerical
        derivatives.  This field can take four values:
 
-       *    [0]one-sided derivative computed automatically
-       *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
-       *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
-       *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
+      *    [0]one-sided derivative computed automatically
+      *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
+      *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
+      *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
             	Where H is the STEP parameter described above.  The "automatic"
                one-sided derivative method will chose a direction for the finite difference
                which does not violate any constraints.  The other methods do

@@ -49,7 +49,7 @@ class _tab_delimited(csv.Dialect):
 
 
 class _evaluatable(object):
-    """A very simple class that is just a placeholder"""
+    """A very simple class that is just a placeholder."""
     pass
 
 
@@ -133,14 +133,17 @@ class typeHintedDict(dict):
 
     def findtype(self,  value):
         """Determines the correct string type to return for common python
-        classes. Understands booleans, strings, integers, floats and _np_
-        arrays(as arrays), and dictionaries (as clusters).
+        classes.
 
         Args:
             value (any): The data value to determine the type hint for.
 
         Returns:
             A type hint string
+
+        Note:
+            Understands booleans, strings, integers, floats and _np_
+            arrays(as arrays), and dictionaries (as clusters).
         """
         typ = "String"
         for t in self.__types:
@@ -163,7 +166,7 @@ class typeHintedDict(dict):
 
     def __mungevalue(self, t, value):
         """Based on a string type t, return value cast to an
-        appropriate python class
+        appropriate python class.
 
         Args:
             t (string): is a string representing the type
@@ -234,11 +237,12 @@ class typeHintedDict(dict):
 
     def _get_name_(self,name):
         """Checks a string name for an embedded type hint and strips it out.
+
         Args:
             name(string): String containing the name with possible type hint embedeed
         Returns:
             (name,typehint) (tuple): A tuple containing just the name of the mateadata and (if found
-        the type hint string),
+                the type hint string),
         """
         name=str(name)
         m = self.__regexGetType.search(name)
@@ -254,8 +258,10 @@ class typeHintedDict(dict):
     def __getitem__(self,name):
         """Provides a get item method that checks whether its been given a typehint in the
         item name and deals with it appropriately.
+
         Args:
             name (string): metadata key to retrieve
+
         Returns:
             metadata value
         """
@@ -293,7 +299,7 @@ class typeHintedDict(dict):
                 self.__mungevalue(self._typehints[name], value))
 
     def __delitem__(self, name):
-        """Deletes the specified key
+        """Deletes the specified key.
 
         Args:
             name (string): The keyname to be deleted"""
@@ -317,7 +323,7 @@ class typeHintedDict(dict):
         return ret
 
     def type(self, key):
-        """Returns the typehint for the given k(s)
+        """Returns the typehint for the given k(s).
 
         This simply looks up the type hinting dictionary for each key it is given.
 
@@ -336,7 +342,7 @@ class typeHintedDict(dict):
 
     def export(self, key):
         """Exports a single metadata value to a string representation with type
-        hint
+        hint.
 
         In the ASCII based file format, the type hinted metadata is represented
         in the first column of a tab delimited text file as a series of lines
@@ -372,6 +378,8 @@ class DataFile(object):
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
             their py:attr:`DataFile.priority`. Each entry in the list consists of the string name of the subclass
             and the class object.
+        patterns (list): A list of strings containing file glob patterns that are typically used for datafiles
+            that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.
         priority (int): A class attribute used to indivate the order in which the autoloader should attempt to load
             a data file. See :py:meth:`DataFile.load` for details.
     """
@@ -391,28 +399,43 @@ class DataFile(object):
         """Constructor method for :py:class:`DataFile`.
 
         various forms are recognised
-            *   :py:function:: DataFile('filename',<optional filetype>,<args>)
-                Creates the new DataFile object and then executes the :py:class:`DataFile`.load
-                method to load data from the given @a filename
-            *   :py:function:: DataFile(array)
-                Creates a new DataFile object and assigns the @a array to the
-                :py:attr:`DataFile.data`  attribute.
-            *   :py:function:: DataFile(dictionary)
-                Creates the new DataFile object, but initialises the metadata with
-                :parameter dictionary
-            *   :py:function:: DataFile(array,dictionary),
-                Creates the new DataFile object and does the combination of the
-                previous two forms.
-            *   :py:function:: DataFile(DataFile)
-                Creates the new DataFile object and initialises all data from the
-                existing :py:class:`DataFile` instance. This on the face of it does the same as
-                the assignment operator, but is more useful when one or other of the
-                DataFile objects is an instance of a sub - class of DataFile
+
+        .. py:function:: DataFile('filename',<optional filetype>,<args>)
+            :noindex:
+
+            Creates the new DataFile object and then executes the :py:class:`DataFile`.load
+            method to load data from the given *filename*.
+
+        .. py:function:: DataFile(array)
+            :noindex:
+
+            Creates a new DataFile object and assigns the *array* to the
+            :py:attr:`DataFile.data`  attribute.
+
+        .. py:function:: DataFile(dictionary)
+            :noindex:
+
+            Creates the new DataFile object, but initialises the metadata with
+            :parameter dictionary
+
+        .. py:function:: DataFile(array,dictionary)
+            :noindex:
+
+            Creates the new DataFile object and does the combination of the
+            previous two forms.
+
+        .. py:function:: DataFile(DataFile)
+            :noindex:
+
+            Creates the new DataFile object and initialises all data from the
+            existing :py:class:`DataFile` instance. This on the face of it does the same as
+            the assignment operator, but is more useful when one or other of the
+            DataFile objects is an instance of a sub - class of DataFile
 
         Args:
-            *args (positional arguments) Variable number of arguments that match one of the
+            args (positional arguments): Variable number of arguments that match one of the
                 definitions above
-            **kargs (keyword Arguments) All keyword arguments that match public attributes are
+            kargs (keyword Arguments): All keyword arguments that match public attributes are
                 used to set those public attributes.
 
         Returns:
@@ -492,7 +515,7 @@ class DataFile(object):
 
 
     def __add__(self, other):
-        """ Implements a + operator to concatenate rows of data
+        """ Implements a + operator to concatenate rows of data.
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
@@ -516,7 +539,7 @@ class DataFile(object):
         return self.__add_core__(other,newdata)
 
     def __add_core__(self,other,newdata):
-        """Implements the core work of adding other to self and modifying newdata
+        """Implements the core work of adding other to self and modifying newdata.
 
         Args:
             other (DataFile,array,list): The data to be added
@@ -677,7 +700,7 @@ class DataFile(object):
         return newdata
 
     def __contains__(self, item):
-        """Operator function for membertship tests - used to check metadata contents
+        """Operator function for membertship tests - used to check metadata contents.
 
         Args:
             item(string): name of metadata key
@@ -713,7 +736,7 @@ class DataFile(object):
         return sorted(attr)
 
     def __file_dialog(self, mode):
-        """Creates a file dialog box for loading or saving ~b DataFile objects
+        """Creates a file dialog box for loading or saving ~b DataFile objects.
 
         Args:
             mode (string): The mode of the file operation  'r' or 'w'
@@ -758,7 +781,7 @@ class DataFile(object):
 
     def __getattr__(self, name):
         """
-        Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`
+        Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.
 
         Args:
             name (string): The name of the attribute to be returned.
@@ -806,13 +829,13 @@ class DataFile(object):
         raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
 
     def _getattr_by_columns(self):
-        """Gets the current data transposed
+        """Gets the current data transposed.
         """
         return self.data.T
 
 
     def _getattr_clone(self):
-        """Gets a deep copy of the current DataFile
+        """Gets a deep copy of the current DataFile.
         """
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
@@ -888,7 +911,7 @@ class DataFile(object):
 
     def _getattr_records(self):
         """Returns the data as a _np_ structured data array. If columns names are duplicated then they
-        are made unique
+        are made unique.
         """
         f=self.data.flags
         if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]: # We need our data to be contiguous before we try a records view
@@ -904,7 +927,7 @@ class DataFile(object):
         return self.data.view(dtype=dtype).reshape(len(self))
 
     def _getattr_shape(self):
-        """Pass through the numpy shape attribute of the data
+        """Pass through the numpy shape attribute of the data.
         """
         return self.data.shape
 
@@ -917,7 +940,7 @@ class DataFile(object):
         return self._setas
 
     def _getattr_subclasses(self):
-        """Return a list of all in memory subclasses of this DataFile
+        """Return a list of all in memory subclasses of this DataFile.
         """
         return {x.__name__:x for x in itersubclasses(DataFile)}
 
@@ -1037,7 +1060,7 @@ class DataFile(object):
         return ret
 
     def __getitem__(self, name):
-        """Called for DataFile[x] to return either a row or iterm of metadata
+        """Called for DataFile[x] to return either a row or iterm of metadata.
 
         Args:
             name (string or slice or int): The name, slice or number of the part of the
@@ -1098,7 +1121,7 @@ class DataFile(object):
             self.column_headers,  "metadata": self.metadata}
 
     def __iadd__(self, other):
-        """ Implements a += operator to concatenate rows of data inplace
+        """ Implements a += operator to concatenate rows of data inplace.
 
         Args:
             other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
@@ -1144,14 +1167,14 @@ class DataFile(object):
         return self.__and_core__(other,newdata)
 
     def __len__(self):
-        """Return the length of the data.shape
+        """Return the length of the data.
 
         Returns: Returns the number of rows of data
                 """
         return _np_.shape(self.data)[0]
 
     def __lshift__(self, other):
-        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function
+        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
 
         Args:
             other (string or iterable object): Used to source the DataFile object
@@ -1215,7 +1238,7 @@ class DataFile(object):
 
 
     def __parse_metadata(self, key, value):
-        """Parse the metadata string, removing the type hints into a separate dictionary from the metadata
+        """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
 
         Args:
             key (string): The name of the metadata parameter to be written,
@@ -1419,7 +1442,7 @@ class DataFile(object):
     #Private Functions
 
     def _set_mask(self, func, invert=False,  cumulative=False, col=0):
-        """Applies func to each row in self.data and uses the result to set the mask for the row
+        """Applies func to each row in self.data and uses the result to set the mask for the row.
 
         Args:
             func (callable): A Callable object of the form lambda x:True where x is a row of data (numpy
@@ -1447,7 +1470,7 @@ class DataFile(object):
                         self.data[i, j]=self.data.data[i, j]
 
     def _push_mask(self, mask=None):
-        """Copy the current data mask to a temporary store and replace it with a new mask if supplied
+        """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
 
         Args:
             mask (:py:class:numpy.array of bool or bool or None):
@@ -1462,7 +1485,7 @@ class DataFile(object):
             self.mask=mask
 
     def _pop_mask(self):
-        """Replaces the mask on the data with the last one stored by _push_mask()
+        """Replaces the mask on the data with the last one stored by _push_mask().
 
         Returns:
             Nothing"""
@@ -1570,7 +1593,7 @@ class DataFile(object):
             yield self.column(col)
 
     def del_column(self, col=None,duplicates=False):
-        """Deletes a column from the current :py:class:`DataFile` object
+        """Deletes a column from the current :py:class:`DataFile` object.
 
         Args:
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col` to the column to be deleted
@@ -1626,7 +1649,7 @@ class DataFile(object):
             return self
 
     def del_rows(self, col=None, val=None):
-        """Searchs in the numerica data for the lines that match and deletes the corresponding rows
+        """Searchs in the numerica data for the lines that match and deletes the corresponding rows.
 
         Args:
             col (list,slice,int,string, re or None): Column containg values to search for.
@@ -1672,7 +1695,7 @@ class DataFile(object):
         return self
 
     def dir(self, pattern=None):
-        """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary
+        """ Return a list of keys in the metadata, filtering wiht a regular expression if necessary.
 
         Keyword Arguments:
             pattern (string or re): is a regular expression or None to list all keys
@@ -1690,7 +1713,7 @@ class DataFile(object):
             return possible
 
     def filter(self,func=None,cols=None,reset=True):
-        """Sets the mask on rows of data by evaluating a function for each row
+        """Sets the mask on rows of data by evaluating a function for each row.
 
         Args:
             func (callable): is a callable object that should take a single list as a p[arameter representing one row.
@@ -1712,7 +1735,7 @@ class DataFile(object):
         return self
 
     def find_col(self, col):
-        """Indexes the column headers in order to locate a column of data.shape
+        """Indexes the column headers in order to locate a column of data.shape.
 
         Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
         -   Integer indices are simply checked to ensure that they are in range
@@ -1771,7 +1794,9 @@ class DataFile(object):
 
 
     def get(self, item):
-        """A wrapper around __get_item__ that handles missing keys by returning None. This is useful for the :py:class:`Stoner.Folder.DataFolder` class
+        """A wrapper around __get_item__ that handles missing keys by returning None.
+
+        This is useful for the :py:class:`Stoner.Folder.DataFolder` class.
 
         Args:
             item (string): A string representing the metadata keyname
@@ -1800,7 +1825,7 @@ class DataFile(object):
         return self.filename
 
     def insert_rows(self, row, new_data):
-        """Insert new_data into the data array at position row. This is a wrapper for numpy.insert
+        """Insert new_data into the data array at position row. This is a wrapper for numpy.insert.
 
         Args:
             row (int):  Data row to insert into
@@ -1812,7 +1837,7 @@ class DataFile(object):
         return self
 
     def keys(self):
-        """An alias for :py:meth:`DataFile.dir`(None)
+        """An alias for :py:meth:`DataFile.dir`(None).
 
         Returns:
             a list of all the keys in the metadata dictionary"""
@@ -1919,7 +1944,7 @@ class DataFile(object):
             # Should implement using a list of strings as well
 
     def rename(self, old_col, new_col):
-        """Renames columns without changing the underlying data
+        """Renames columns without changing the underlying data.
 
         Args:
             old_col (string, int, re):  Old column index or name (using standard rules)
@@ -1934,7 +1959,7 @@ class DataFile(object):
         return self
 
     def reorder_columns(self, cols, headers_too=True):
-        """Construct a new data array from the original data by assembling the columns in the order given
+        """Construct a new data array from the original data by assembling the columns in the order given.
 
         Args:
             cols (list of column indices): (referred to the oriignal
@@ -1966,7 +1991,7 @@ class DataFile(object):
 
 
     def save(self, filename=None):
-        """Saves a string representation of the current DataFile object into the file 'filename'
+        """Saves a string representation of the current DataFile object into the file 'filename'.
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
@@ -2005,7 +2030,7 @@ class DataFile(object):
         return self
 
     def search(self, xcol,value,columns=None,accuracy=0.0):
-        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows
+        """Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.
 
         Args:
             xcol (int,string.re) is a Search Column Index
@@ -2043,7 +2068,7 @@ class DataFile(object):
         return data
 
     def section(self,**kargs):
-        """Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space
+        """Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.
 
         Keyword Arguments:
             x (float, tuple, list or callable): x values ,atch this condition are included inth e section
@@ -2087,7 +2112,7 @@ class DataFile(object):
         return tmp
 
     def sort(self, order=None,reverse=False):
-        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods
+        """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.
 
         Keyword Arguments:
             order (column index or list of indices or callable function): Represent the sort order
@@ -2117,7 +2142,9 @@ class DataFile(object):
         return self
 
     def swap_column(self, swp, headers_too=True):
-        """Swaps pairs of columns in the data. Useful for reordering data for idiot programs that expect columns in a fixed order.
+        """Swaps pairs of columns in the data.
+
+        Useful for reordering data for idiot programs that expect columns in a fixed order.
 
         Args:
             swp  (tuple of list of tuples of two elements): Each
@@ -2151,7 +2178,7 @@ class DataFile(object):
         return self
 
     def unique(self, col, return_index=False, return_inverse=False):
-        """Return the unique values from the specified column - pass through for numpy.unique
+        """Return the unique values from the specified column - pass through for numpy.unique.
 
         Args:
             col (index): Column to look for unique values in
@@ -2166,7 +2193,7 @@ class DataFile(object):
 
 def itersubclasses(cls, _seen=None):
     """
-    itersubclasses(cls)
+    itersubclasses(cls).
 
     Generator over all subclasses of a given class, in depth first order.
 

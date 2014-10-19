@@ -1,16 +1,18 @@
-"""                     Stoner.nlfit  (non linear fitting)
-                        ===================================
+"""
+Stoner.nlfit  (non linear fitting)
+===================================
 
 Authors: Gavin Burnell, Rowan Temple, Nick Porter
 Date: Original fitting code for PCAR GB 2011, sim adaptation and WL model NAP Feb 2013,
-        rewritten and updated as object orientated code for generic functions and tunnelling models RCT March 2013
+
+Rewritten and updated as object orientated code for generic functions and tunnelling models RCT March 2013
 Description:  Generic non linear function fitting code using Levenberg Marquardt algorithm. Main class NLFit
-                is initialised with function to be fitted and ini file with parameter definitions.
+is initialised with function to be fitted and ini file with parameter definitions.
 """
 
 ## Import packages
 from Stoner.compat import *
-import numpy
+import numpy as _np_
 import Stoner
 from scipy.stats import chisquare
 import os
@@ -23,7 +25,7 @@ import pylab ; pylab.ion() #interactive mode, works best with iPython
 
 def nlfit(ini_file, func, data=None, chi2mapping=False):
     """Runs nlfit, taking data from the file path given in the ini_file and a fitting function
-    
+
     Args:
         ini_file(string or file): Either the name of a file or an open file descriptor
         func (string or callable): either a string with the name of a function in Stoner.FittingFuncs or a callable object
@@ -31,7 +33,7 @@ def nlfit(ini_file, func, data=None, chi2mapping=False):
     Keyword Arguments:
         data (string or DataFile): Either a Stoner.DataFile instance or None to force a file open dialog
         chi2mapping (bool): Indicates whether chi^2 mappingmode is engaged
-        
+
     Return:
         An NLFit instance
     """
@@ -58,13 +60,13 @@ def nlfit(ini_file, func, data=None, chi2mapping=False):
 
 class NLFit:
     """Class containing the code to do a NLFit or chi^2 mapping of a set of data
-    
+
     Attributes:
         simulate (bool): Just calculate data, don't fit
         function (callable): Function to fit
         ini_file (string): File containing settings for fitting
-    
-    
+
+
     """
 
 
@@ -82,7 +84,7 @@ class NLFit:
         elif not callable(func):
                 raise ValueError('Supplied function must be either a string or callable object')
         self.fit_func = func
-        self.ini_file = ini_file    
+        self.ini_file = ini_file
 
         #Read ini file
         self.config = ConfigParser.SafeConfigParser()
@@ -123,14 +125,14 @@ class NLFit:
 
         Keyword Arguements:
             action (string or None): What to go an do, may be "simulate","fit", "map" or None (default)
-            
+
         Returns:
             Nothing.
-        
+
         """
-        
+
         #work out whether to simulate or not
-        
+
         if action is None:
             if self.simulate is None: #Only look in the config file if we're not overriding the simulate property
                 self.simulate = self.config.getboolean('options', 'simulate')
@@ -144,11 +146,11 @@ class NLFit:
             self.chi2mapping=True
         else:
             raise RuntimeError("Unable to decide what to do in run()!")
-            
+
         #run sim
         if self.simulate:
             self._runsim()
-        else: 
+        else:
             self._runfit()
 
     def _runsim(self):
@@ -157,14 +159,14 @@ class NLFit:
         """
         sim_xlim = self.config.get('options', 'sim_xlim') #returns eg '-8,9'
         sim_xlim = [float(i.strip()) for i in sim_xlim.split(',')]
-        x = numpy.linspace(sim_xlim[0], sim_xlim[1], 300)
+        x = _np_.linspace(sim_xlim[0], sim_xlim[1], 300)
         parnames = self.config.get('data', 'parnames') #returns a list of comma separated names of parameters
         parnames = [i.strip() for i in parnames.split(',')]
         params = [self.config.getfloat(item,'value') for item in parnames]
         fit = self.fit_func(x, params)
 
         #save the simulation
-        sim = Stoner.DataFile(numpy.column_stack((x,fit)))
+        sim = Stoner.DataFile(_np_.column_stack((x,fit)))
         xcolname = self.config.get('data', 'x-column')
         ycolname = self.config.get('data', 'y-column')
         sim.column_headers=[xcolname, ycolname]
@@ -238,7 +240,7 @@ class NLFit:
         if d.filename is not None:
             filenameonly=os.path.basename(d.filename)
             filenameonly=os.path.splitext(filenameonly)[0]
-            
+
         self.data_input=d
         # Here is some code to allow the user to supply a preprocessing script.
         # Simply subclass NLFit with a preprocessing method and set the method name in
@@ -251,7 +253,7 @@ class NLFit:
             else:
                 if callable(preproc):
                     preproc(self)
-                    
+
             d=self.data_input
 
         ################## Fitting ###########################
@@ -273,7 +275,7 @@ class NLFit:
                     if p['fixed']==True and p['step']!=0:
                         t=steps
                         steps=[]
-                        for x in numpy.arange(p['limits'][0], p['limits'][1], p['step']):
+                        for x in _np_.arange(p['limits'][0], p['limits'][1], p['step']):
                             steps.extend([(p, x)])
                             steps.extend(t)
 
@@ -314,7 +316,7 @@ class NLFit:
                         param_text = '\n'.join(param_text)
                         pylab.text(0.1,0.9,param_text,ha='left',va='top',transform=ax.transAxes)
                     row=m.params
-                    row=numpy.append(row, chi2[0])
+                    row=_np_.append(row, chi2[0])
                     r=r+row
             elif isinstance(step, tuple):
                 (p, x)=step

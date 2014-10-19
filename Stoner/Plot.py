@@ -195,8 +195,8 @@ class PlotFile(DataFile):
             del kargs["startx"]
         else:
             startx=0
-        if "multiy" not in kargs:
-            kargs["multiy"]=False
+        if "multi_y" not in kargs:
+            kargs["multi_y"]=False
         c=self._get_cols(startx=startx)
         for k in ["xcol","ycol","zcol","ucol","vcol","wcol","xerr","yerr","zerr"]:
             if k in kargs and k=="xcol" and kargs["xcol"] is None:
@@ -204,7 +204,7 @@ class PlotFile(DataFile):
             elif k in kargs and k=="xerr" and kargs["xerr"] is None:
                 kargs["xerr"]=c.xerr
             elif k in kargs and k!="xcol" and kargs[k] is None and len(c[k])>0:
-                if kargs["multiy"]:
+                if kargs["multi_y"]:
                     kargs[k]=c[k]
                 else:
                     kargs[k]=c[k][0]
