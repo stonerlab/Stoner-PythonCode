@@ -1230,7 +1230,7 @@ class DataFile(object):
             footer=metadatarow-datarow
             self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols))
         else:
-            self.data=_np_.atleast_2d(_np_.array())
+            self.data=_np_.atleast_2d(_np_.array([]))
         if len(self.data.shape)>=2 and self.data.shape[1]>0:
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
             for i in range(len(col_headers_tmp)):

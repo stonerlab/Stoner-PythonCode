@@ -273,32 +273,35 @@ class PlotFile(DataFile):
                 All other attrbiutes are passed over to the parent class
                 """
         if name=="fig":
-            return self.__figure
+            ret=self.__figure
+        elif name=="fignum":
+            ret=self.figure.number
         elif name=="template":
-            return self._template
+            ret=self._template
         elif name=="labels":
             if len(self._labels)<len(self.column_headers):
                 self._labels.extend(self.column_headers[len(self._labels):])
-            return self._labels
+            ret=self._labels
         elif name=="subplots":
             if self.__figure is not None and len(self.__figure.axes)>len(self._subplots):
                 self._subplots=self.__figure.axes
-            return self._subplots
+            ret=self._subplots
         elif name=="axes":
             if isinstance(self.__figure, matplotlib.figure.Figure):
-                return self.__figure.axes
+                ret=self.__figure.axes
             else:
-                return None
+                ret=None
         elif name in ('xlim','ylim'):
-            return pyplot.__dict__[name]()
+            ret=pyplot.__dict__[name]()
         else:
             try:
                 return super(PlotFile, self).__getattr__(name)
             except AttributeError:
                 if name in pyplot.__dict__: # Sort of a universal pass through to pyplot
-                    return pyplot.__dict__[name]
+                    ret=pyplot.__dict__[name]
                 else:
                     raise AttributeError
+        return ret
 
     def __setattr__(self, name, value):
         """Sets the specified attribute
@@ -330,12 +333,18 @@ class PlotFile(DataFile):
                 raise ValueError("Template is not of the right class")
             self._template.apply()
         elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
+            tfig=pyplot.gcf().number # Switch back to this figure
+            pyplot.figure(self.fignum)
             if isinstance(value,tuple):
                 pyplot.__dict__[name](*value)
             elif isinstance(value,dict):
                 pyplot.__dict__[name](**value)
             else:
                 pyplot.__dict__[name](value)
+            pyplot.figure(tfig) # Put the current figure back straight
+        elif name=="column_headers": # Overwrite the labels if we overwrite the column_headers
+            self._labels=value
+            super(PlotFile,set).__setattr__(name,value)
         else:
             super(PlotFile, self).__setattr__(name, value)
 
