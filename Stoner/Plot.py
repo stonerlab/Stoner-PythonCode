@@ -25,6 +25,7 @@ from matplotlib import cm
 import matplotlib.colors as colors
 from colorsys import hls_to_rgb
 import copy
+from collections import Iterable
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions
@@ -272,10 +273,10 @@ class PlotFile(DataFile):
 
                 All other attrbiutes are passed over to the parent class
                 """
-        if name=="fig":
+        if name=="fig" or name=="__figure":
             ret=self.__figure
         elif name=="fignum":
-            ret=self.figure.number
+            ret=self.__figure.number
         elif name=="template":
             ret=self._template
         elif name=="labels":
@@ -291,14 +292,28 @@ class PlotFile(DataFile):
                 ret=self.__figure.axes
             else:
                 ret=None
-        elif name in ('xlim','ylim'):
-            ret=pyplot.__dict__[name]()
         else:
             try:
                 return super(PlotFile, self).__getattr__(name)
             except AttributeError:
-                if name in pyplot.__dict__: # Sort of a universal pass through to pyplot
+                tfig=pyplot.gcf()
+                tax=pyplot.gca() # protect the current axes and figure
+                pyplot.figure(self.fig.number)
+                ax=pyplot.gca()
+                if "get_{}".format(name) in dir(ax):
+                    func=ax.__getattribute__("get_{}".format(name))
+                    ret=func()
+                    pyplot.figure(tfig.number)
+                    pyplot.sca(tax)
+                elif name in pyplot.__dict__: # Sort of a universal pass through to pyplot
                     ret=pyplot.__dict__[name]
+                    pyplot.figure(tfig.number)
+                    pyplot.sca(tax)
+                elif name in dir(ax): # Sort of a universal pass through to pyplot
+                    ret=ax.__getattribute__(name)
+                    pyplot.figure(tfig.number)
+                    pyplot.sca(tax)
+
                 else:
                     raise AttributeError
         return ret
@@ -332,21 +347,28 @@ class PlotFile(DataFile):
             else:
                 raise ValueError("Template is not of the right class")
             self._template.apply()
-        elif name in ('xlabel','ylabel','title','subtitle','xlim','ylim'):
-            tfig=pyplot.gcf().number # Switch back to this figure
-            pyplot.figure(self.fignum)
-            if isinstance(value,tuple):
-                pyplot.__dict__[name](*value)
-            elif isinstance(value,dict):
-                pyplot.__dict__[name](**value)
-            else:
-                pyplot.__dict__[name](value)
-            pyplot.figure(tfig) # Put the current figure back straight
         elif name=="column_headers": # Overwrite the labels if we overwrite the column_headers
             self._labels=value
-            super(PlotFile,set).__setattr__(name,value)
+            super(PlotFile,self).__setattr__(name,value)
+        elif name in dir(super(PlotFile,self)):
+            super(PlotFile,self).__setattr__(name,value)
+        elif "set_{}".format(name) in dir (pyplot.Axes):
+            tfig=pyplot.gcf()
+            tax=pyplot.gca() # protect the current axes and figure
+            pyplot.figure(self.fig.number)
+            ax=pyplot.gca()
+            if  not isinstance(value,Iterable) or isinstance(value,string_types):
+                value=(value,)
+            func=ax.__getattribute__("set_{}".format(name))
+            if isinstance(value,dict):
+                func(**value)
+            else:
+                func(*value)
+            pyplot.figure(tfig.number)
+            pyplot.sca(tax)
         else:
-            super(PlotFile, self).__setattr__(name, value)
+            super(PlotFile, self).__setattr__(name,value)
+
 
     def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
         """An xyz plot that forces the use of pyplot.contour
