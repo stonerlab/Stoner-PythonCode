@@ -1228,7 +1228,7 @@ class DataFile(object):
             self.data=_np_.genfromtxt(self.filename,skip_header=1,usemask=True,delimiter="\t",usecols=range(1,cols),invalid_raise=False,comments="\0")
         elif datarow>0: # some data less than metadata
             footer=metadatarow-datarow
-            self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",usecols=range(1,cols))
+            self.data=_np_.genfromtxt(self.filename,skip_header=1,skip_footer=footer,usemask=True,delimiter="\t",comments="\0", usecols=range(1,cols))
         else:
             self.data=_np_.atleast_2d(_np_.array([]))
         if len(self.data.shape)>=2 and self.data.shape[1]>0:

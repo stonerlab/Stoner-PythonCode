@@ -45,11 +45,11 @@ the number of axes represetned.
         where the colour is mapped to hue-saturation-luminescence scale. The hue gives the in plane ange while the luminescene gives
         the out of plane component of the vector field.
     * x-y-z-u-v-w data (i.e. 3D vector field on a 3D grid) is represented as a 3D quiver plot with coloured quivers (using the same H-S-L
-        colour space mapping as above) assuming mayavi is importable. 
+        colour space mapping as above) assuming mayavi is importable.
 
 An alternative plot type for data with errorbars in :py:func:`plotutils.errorfill`. This uses a shaded line as an
 alternative to the error bars, where the shading of the line varies from intense to transparent the further one
-gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`PlotFile.contour_xyz` and a :py:meth:`PlotFile.image_plot` 
+gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`PlotFile.contour_xyz` and a :py:meth:`PlotFile.image_plot`
 methods available. These give contonour plots and 2D colour map plots respectively.
 
 Plotting 2D data
@@ -208,7 +208,14 @@ There's a couple of extra methods that just pass through to the pyplot equivalen
 Setting Axes Labels, Plot Titles and Legends
 --------------------------------------------
 
-:py:class:`PlotFile` provides some useful attributes for setting specific aspects of the figures.
+:py:class:`PlotFile` provides some useful attributes for setting specific aspects of the figures. Any
+*get_* and *set_* method of :py:class:`pyplot.Axes` can be read or written as a :py:class:`PlotFile` attribute.
+Internally this is implemented by calling the corresponding method on the current axes of the :py:class:`PlotFile`'s
+figure. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
+keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
+element tuple.
+
+Particualrly useful attributes include:
 
 -   :py:attr:`PlotFile.xlabel`, :py:attr:`PlotFile.ylabel` will set the x and y axes labels
 -   :py:attr:`PlotFile.title` will set the plot title
@@ -216,7 +223,17 @@ Setting Axes Labels, Plot Titles and Legends
 -   :py:attr:`PlotFile.labels` sets a list of strings that are the preferred name for each column. This is to
         allow the plotting routines to provide a default name for an axis label that can be different from the
         name of the column used for indexing purposes. If the label for a column is not set, then the column
-        header is used instead.
+        header is used instead. If a column header is changed, then the :py:attr:`Plotfile.labels` attribute will
+        be overwritten.
+
+In addition, you can read any method of :py:class:`pyplot.Axes` as an attribute of :py:class:`PlotFile`. This allows
+one to call the methods directly on the PlotFile instance without needing to extract a reference to the current
+axes.::
+
+    p.xlabel="My X Axis"
+    p.set_xlabel("My X Axis")
+
+are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.
 
 Plot Templates
 --------------
@@ -256,6 +273,36 @@ Further customisation is possible by creating a subclass of :py:class:`Stoner.Pl
 
 Making Multi-plot Figures
 -------------------------
+
+Adding an Inset to a Figure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :py:meth:`PlotFile.inset` method can be used to creagte an inset in the current figure. Subsequent plots
+will be to the inset until a new set of axes are chosen. The :py:class:`pyplot.Axes` instance of the inset is appended to the
+:py:attr:`PlotFile.axes` attribute.::
+
+    p.setas="xy"
+    p.plot()
+    p.inset(loc=1,width="25%",height=1)
+    p.setas="x.y"
+    p.plot()
+
+The *loc* parameter specifies the location of the inset, the width and height the size (either as a percentage or
+fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
+inset.
+
+    *   *loc* = 1 top-right inset
+    *   *loc* = 2 top left inset
+    *   *loc* = 3 bottom left inset
+    *   *loc* = 4 bottom right inset
+    *   *loc* = 5 mid-right inset
+    *   *loc* = 6 mid-left inset
+    *   *loc* = 7 mid-right inset
+    *   *loc* = 8 mid-bottom inset
+    *   *loc* = 9 mid-top inset
+    *   *loc* = 0 centre inset
+
+
 
 .. todo::
    Write about :py:attr:`PlotFile.subplots`
