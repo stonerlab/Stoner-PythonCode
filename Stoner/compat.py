@@ -16,12 +16,16 @@ if __vi__[0]==2:
     string_types=(str,unicode)
     python_v3=False
     def str2bytes(s):
-        return str(s)
+        return str(b)
+    def bytes2str(b):
+        return str(b)
 elif __vi__[0]==3:
-    string_types=(str)
+    string_types=(str,)
     python_v3=True
     def str2bytes(s):
         return bytes(str(s),"utf-8")
+    def bytes2str(b):
+        return b.decode("utf-8")
     callable=lambda obj:hasattr(obj, '__call__')
         
 index_types=string_types+(int,_pattern_type)

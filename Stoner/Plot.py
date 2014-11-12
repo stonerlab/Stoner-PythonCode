@@ -209,7 +209,7 @@ class PlotFile(DataFile):
                     kargs[k]=c[k]
                 else:
                     kargs[k]=c[k][0]
-        for k in kargs.keys():
+        for k in list(kargs.keys()):
             if k not in ["xcol","ycol","zcol","ucol","vcol","wcol","xerr","yerr","zerr"]:
                 del kargs[k]
         return _attribute_store(kargs)
@@ -245,7 +245,7 @@ class PlotFile(DataFile):
         if isinstance(otherkargs,(list,tuple)) and kwargs is not None:
             args.extend(otherkargs)
         nonkargs=dict()
-        for k in defaults.keys():
+        for k in list(defaults.keys()):
             nonkargs[k]=defaults[k]
             if k not in args:
                 del defaults[k]

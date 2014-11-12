@@ -1198,7 +1198,7 @@ class DataFile(object):
         """
         with open(self.filename,"r") as datafile:
             reader=csv.reader(datafile,dialect=_tab_delimited())
-            row=reader.next()
+            row=next(reader)
             if row[0].strip()=="TDI Format 1.5":
                 format=1.5
             elif row[0].strip()=="TDI Format=Text 1.0":
@@ -1260,7 +1260,7 @@ class DataFile(object):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
 
         if "next" in dir(reader):
-            readline=reader.next
+            readline=next(reader)
         elif "readline" in dir(reader):
             readline=reader.readline
         else:

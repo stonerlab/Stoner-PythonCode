@@ -1310,7 +1310,7 @@ class AnalyseFile(DataFile):
             for k in sorted(list(files.keys())):
                 out.groups[k]=files[k].split(morecols,morefuncs)
         else:
-            out.files=[files[k] for k in sorted(files.keys())]
+            out.files=[files[k] for k in sorted(list(files.keys()))]
         return out
 
 

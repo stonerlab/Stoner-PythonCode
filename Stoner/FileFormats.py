@@ -119,17 +119,17 @@ class VSMFile(DataFile):
         Note:
             The default values are configured fir read VSM data files
         """
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        self['Timestamp']=f.readline().strip()
+        f=fileinput.FileInput(self.filename,mode="rb") # Read filename linewise
+        self['Timestamp']=bytes2str(f.readline().strip())
         try:
             check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
             assert check is not None
-            assert f.readline().strip()==""
-        except (ValueError, AssertionError):
-            raise RuntimeError('Not a VSM File')
-        header_string=f.readline()
+            assert bytes2str(f.readline().strip())==""
+        except (ValueError, AssertionError) as e:
+            raise RuntimeError('Not a VSM File'+str(e.args))
+        header_string=bytes2str(f.readline())
         header_string=re.sub(r'["\n]', '', header_string)
-        unit_string=f.readline()
+        unit_string=bytes2str(f.readline())
         unit_string=re.sub(r'["\n]', '', unit_string)
         column_headers=zip(header_string.split(header_delim), unit_string.split(header_delim))
         self.column_headers=map(lambda x: x[0].strip()+" ("+x[1].strip()+")",  column_headers)
@@ -477,7 +477,7 @@ class RigakuFile(DataFile):
                 key=m.groups()[0].lower().replace('_','.')
                 value=m.groups()[1].decode('utf-8','ignore')
                 header[key]=value
-        keys=header.keys()
+        keys=list(header.keys())
         keys.sort()
         for key in keys:
             m=ka.match(key)
@@ -635,8 +635,8 @@ class BNLFile(DataFile):
         dateLine=linecache.getline(self.filename,self.line_numbers[3])
         motorLine=linecache.getline(self.filename,self.line_numbers[4])
         self.__setitem__('Snumber',scanLine.split()[1])
-        tmp=string.join(scanLine.split()[2:])
-        self.__setitem__('Stype',string.join(tmp.split(','))) #get rid of commas
+        tmp="".join(scanLine.split()[2:])
+        self.__setitem__('Stype',"".join(tmp.split(','))) #get rid of commas
         self.__setitem__('Sdatetime',dateLine[3:-1])  #don't want \n at end of line so use -1
         self.__setitem__('Smotor',motorLine.split()[3])
 
@@ -702,15 +702,15 @@ class FmokeFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        value=[float(x.strip()) for x in f.readline().split('\t')]
-        label=[ x.strip() for x in f.readline().split('\t')]
+        f=fileinput.FileInput(self.filename,mode="rb") # Read filename linewise
+        value=[float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+        label=[ x.strip() for x in bytes2str(f.readline()).split('\t')]
         if label[0]!="Header:":
             raise RuntimeError("Not a Focussed MOKE file !")
         del(label[0])
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
-        self.column_headers=[ x.strip() for x in f.readline().split('\t')]
+        self.column_headers=[ x.strip() for x in bytes2str(f.readline()).split('\t')]
         self.data=_np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
 
@@ -783,7 +783,7 @@ class SNSFile(DataFile):
                 if line.startswith("["): # Look for a section header
                     section=line.strip().strip("[]")
                     if section=="Data": # The Data section has one line of colum headers and then data
-                        header=data.next()[2:].split("\t")
+                        header=next(data)[2:].split("\t")
                         self.column_headers=[h.strip().decode('ascii','ignore') for h in header]
                         self.data=_np_.genfromtxt(data) # we end by reading the raw data
                     elif section=="Global Options": # This section can go into metadata
@@ -795,7 +795,7 @@ class SNSFile(DataFile):
                                 self[line[2:10].strip()]=line[11:].strip()
                     elif section=="Direct Beam Runs" or section=="Data Runs": # These are constructed into lists ofg dictionaries for each file
                         sec=list()
-                        header=data.next()
+                        header=next(data)
                         header=header[2:].strip()
                         keys = [s.strip() for s in header.split('  ') if s.strip()]
                         for line in data:
@@ -833,7 +833,7 @@ class OVFFile(DataFile):
 
         ptr=0
         with open(self.filename,"r") as data: # Slightly ugly text handling
-            line=data.next()
+            line=next(data)
             ptr+=len(line)
             line=line.strip()
             if line=="# OOMMF: rectangular mesh v1.0":
@@ -917,7 +917,7 @@ class MDAASCIIFile(DataFile):
             self.filename = filename
 
         with open(self.filename,"r") as data: # Slightly ugly text handling
-            line=data.next()
+            line=next(data)
             if line.strip()!="## mda2ascii 1.2 generated output": # bug out oif we don't like the header
                 raise RuntimeError("Not a file mda2ascii")
             for line in data:
@@ -1024,7 +1024,7 @@ class LSTemperatureFile(DataFile):
             for (k,v) in zip(keys,vals):
                 v=v.split()[0]
                 self.metadata[k]=self.metadata.string_to_type(v)
-            headers=data.next().strip().split()
+            headers=next(data).strip().split()
             self.column_headers=headers[1:]
             dat=_np_.genfromtxt(data)
             self.data=dat[:,1:]
