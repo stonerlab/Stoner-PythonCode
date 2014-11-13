@@ -10,6 +10,7 @@ import unittest
 import sys
 import os.path as path
 import numpy as np
+import re
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
@@ -30,6 +31,10 @@ class CoreDataFiletest(unittest.TestCase):
             self.assertTrue(np.all(self.d.column(i)==self.d.column(self.d.column_headers[i])),"Failed to Access column {} by string".format(i))
         # Check that access by list of strings returns multpiple columns
         self.assertTrue(np.all(self.d.column(self.d.column_headers)==self.d.data),"Failed to access all columns by list of string indices")
+        # Check regular expression column access
+        self.assertTrue(self.d.column(re.compile(r"[T-Z].*$"))==self.d.column("Temperature"),"Failed to access column by regular expression")        
+        # Check attribute column access
+        self.asserTrue(self.d.Temp==self.d.column(0),"Failed to access column by attribute name")
 
     def test_len(self):
         # Check that length of the column is the same as length of the data
@@ -58,6 +63,19 @@ class CoreDataFiletest(unittest.TestCase):
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
         
+    def test_dir(self):
+        self.assertTrue(self.d.dir("U")==["User"],"Dir method failed")
+        
+    def test_filter(self):
+        self.d._push_mask()
+        self.d.filter(lambda r:r[0]<100)
+        self.assertTrue(np.max(self.d.Temp)<100,"Failure of filter method to set mask")
+        self.assertTrue(np.ma.is_masked(max(self.d.Temp)),"Failed to mask maximum value")
+        self.d._pop_mask()
+        
+    def test_operators(self):
+        self.d2=DataFile()
+        self.d2.column_headers=["C1","C2"]
         
         
 
