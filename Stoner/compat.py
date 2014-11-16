@@ -19,6 +19,25 @@ if __vi__[0]==2:
         return str(b)
     def bytes2str(b):
         return str(b)
+    def get_filedialog(what="file",**opts):
+        """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
+        
+        Args:
+            what (str): What sort of a dialog to create - options are 'file','directory','save','files'
+            **opts (dict): Arguments to pass through to the underlying dialog function.
+            
+        Returns:
+            A file name or directory or list of files. """
+        from Tkinter import Tk
+        import tkFileDialog as filedialog
+        r=Tk()
+        r.withdraw()
+        funcs={"file":filedialog.askopenfilename,"directory":filedialog.askdirectory,"files":filedialog.askopenfilenames,"save":filedialog.asksaveasfilename}
+        if what not in funcs:
+            raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
+        else:
+            return funcs[what](**opts)
+            
 elif __vi__[0]==3:
     string_types=(str,)
     python_v3=True
@@ -26,6 +45,24 @@ elif __vi__[0]==3:
         return bytes(str(s),"utf-8")
     def bytes2str(b):
         return b.decode("utf-8")
+    def get_filedialog(what="file",**opts):
+        """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
+        
+        Args:
+            what (str): What sort of a dialog to create - options are 'file','directory','save','files'
+            **opts (dict): Arguments to pass through to the underlying dialog function.
+            
+        Returns:
+            A file name or directory or list of files. """
+        from tkinter import Tk,filedialog
+        r=Tk()
+        r.withdraw()
+        funcs={"file":filedialog.askopenfilename,"directory":filedialog.askdirectory,"files":filedialog.askopenfilenames,"save":filedialog.asksaveasfilename}
+        if what not in funcs:
+            raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
+        else:
+            return funcs[what](**opts)
+
     callable=lambda obj:hasattr(obj, '__call__')
         
 index_types=string_types+(int,_pattern_type)

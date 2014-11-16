@@ -17,7 +17,7 @@ import numpy.ma as _ma_
 import copy
 import inspect as _inspect_
 import itertools
-import collections
+from collections import Iterable,OrderedDict
 
 import sys
 
@@ -743,25 +743,21 @@ class DataFile(object):
 
         Returns:
             A filename to be used for the file operation."""
-        try:
-            from enthought.pyface.api import FileDialog, OK
-        except ImportError:
-            from pyface.api import FileDialog, OK
         # Wildcard pattern to be used in file dialogs.
 
+        descs={}
         patterns=self.patterns
+        for p in patterns:
+            descs[p]=self.__class__.__name__+" file"
         for c in self.subclasses:
-            patterns.extend(self.subclasses[c].patterns)
-        patterns=list(set(patterns))
-        p1=";".join(patterns)
-        p2=" ".join(patterns)
-
-        file_wildcard = "Data Files ({})|{}| All Files (*.*)|*.*|".format(p1,p2)
-
-        if mode == "r":
-            mode = "open"
-        elif mode == "w":
-            mode = "save as"
+            for p in (self.subclasses[c].patterns):
+                if p in descs:
+                    descs[p]+=", "+self.subclasses[c].__name__+" file"
+                else:
+                    descs[p]=self.subclasses[c].__name__+" file"
+                    
+        patterns=[(descs[p],p) for p in sorted(descs.keys())]
+        patterns.append(("All File","*.*"))
 
         if self.filename is not None:
             filename = os.path.basename(self.filename)
@@ -769,12 +765,15 @@ class DataFile(object):
         else:
             filename = ""
             dirname = ""
-        dlg = FileDialog(action=mode, wildcard=file_wildcard)
-        dlg.default_filename=filename
-        dlg.default_directory=dirname
-        dlg.open()
-        if dlg.return_code == OK:
-            self.filename = dlg.path
+        if "r" in mode:
+            mode="file"
+        elif "w" in mode:
+            mode="save"
+        else:
+            mode="directory"
+        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename,filetypes=patterns)
+        if len(dlg)!=0:
+            self.filename = dlg
             return self.filename
         else:
             return None
@@ -934,7 +933,7 @@ class DataFile(object):
     def _getattr_setas(self):
         """Get the list of column assignments."""
         if len(self._setas)> len(self.column_headers):
-            selt._setas=self._setas[:len(self.column_headers)]
+            self._setas=self._setas[:len(self.column_headers)]
         elif len(self._setas)<len(self.column_headers):
             self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
         return self._setas
@@ -942,7 +941,12 @@ class DataFile(object):
     def _getattr_subclasses(self):
         """Return a list of all in memory subclasses of this DataFile.
         """
-        return {x.__name__:x for x in itersubclasses(DataFile)}
+        subclasses={x:x.priority for x in itersubclasses(DataFile)}
+        ret=OrderedDict()
+        ret["DataFile"]=DataFile
+        for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
+            ret[cls.__name__]=cls
+        return ret
 
     def _get_cols(self,what=None,startx=0):
         """Uses the setas attribute to work out which columns to use for x,y,z etc.
@@ -1166,36 +1170,12 @@ class DataFile(object):
         newdata=self
         return self.__and_core__(other,newdata)
 
-    def __len__(self):
-        """Return the length of the data.
-
-        Returns: Returns the number of rows of data
-                """
-        return _np_.shape(self.data)[0]
-
-    def __lshift__(self, other):
-        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
-
-        Args:
-            other (string or iterable object): Used to source the DataFile object
-
-        Returns:
-            A new DataFile object
-
-        TODO:
-            Make code work better with streams
-        """
-        newdata=self.__class__()
-        if isinstance(other, str):
-            lines=itertools.imap(lambda x:x,  other.splitlines())
-            newdata.__read_iterable(lines)
-        elif isinstance(other, collections.Iterable):
-            newdata.__read_iterable(other)
-        return newdata
-
-    def __parse_data(self):
-        """Internal function to parse the tab deliminated text file
-        """
+    def _load(self,filename,*args,**kargs):
+        """Replace __parse_data with method that is more compatible with subclasses."""
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename 
         with open(self.filename,"r") as datafile:
             reader=csv.reader(datafile,dialect=_tab_delimited())
             row=next(reader)
@@ -1235,7 +1215,34 @@ class DataFile(object):
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
             for i in range(len(col_headers_tmp)):
                 self.column_headers[i]=col_headers_tmp[i]
+        
 
+    def __len__(self):
+        """Return the length of the data.
+
+        Returns: Returns the number of rows of data
+                """
+        return _np_.shape(self.data)[0]
+
+    def __lshift__(self, other):
+        """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.
+
+        Args:
+            other (string or iterable object): Used to source the DataFile object
+
+        Returns:
+            A new DataFile object
+
+        TODO:
+            Make code work better with streams
+        """
+        newdata=self.__class__()
+        if isinstance(other, str):
+            lines=itertools.imap(lambda x:x,  other.splitlines())
+            newdata.__read_iterable(lines)
+        elif isinstance(other, Iterable):
+            newdata.__read_iterable(other)
+        return newdata
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
@@ -1410,7 +1417,7 @@ class DataFile(object):
                     self._setas[self.find_col(value[typ])]=typ
                 except KeyError:
                     pass
-        elif isinstance(value,collections.Iterable):
+        elif isinstance(value,Iterable):
             if len(value)> len(self.column_headers):
                 value=value[:len(self.column_headers)]
             for v in value:
@@ -1872,40 +1879,36 @@ class DataFile(object):
             filename = self.__file_dialog('r')
         else:
             self.filename = filename
-
-        failed=True
         cls=self.__class__
-        try:
+        failed=True
+        if auto_load: # We're going to try every subclass we can
+            for cls in self.subclasses.values():
+                if self.debug:
+                    print(cls.__name__)
+                try:
+                    test=cls()
+                    test._load(self.filename, auto_load=False)
+                    failed=False
+                    self["Loaded as"]=cls.__name__
+                    break
+                except Exception as e:
+                    continue
+        else:
             if filetype is None:
-                self.__parse_data()
+                test=cls()
+                test._load(self.filename)
                 self["Loaded as"]=cls.__name__
-            else:
-                self.__class__(filetype(filename))
+                failed=False
+            elif issublcass(filetype,DataFile):
+                test=filetype(filename)
                 self["Loaded as"]=filetype.__name__
-            failed=False
-            return self
-        except Exception: # We failed to parse assuming this was a TDI
-            if auto_load: # We're going to try every subclass we can
-                subclasses={x:x.priority for x in itersubclasses(DataFile)}
-                for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
-                    if self.debug:
-                        print(cls.__class__.__name__)
-                    try:
-                        test=cls()
-                        test.load(self.filename, auto_load=False)
-                        failed=False
-                        break
-                    except Exception as e:
-                        continue
-
+                failed=False
         if failed:
             raise SyntaxError("Failed to load file")
         else:
             self.data=_ma_.masked_array(test.data)
-            self.metadata=test.metadata
+            self.metadata.update(test.metadata)
             self.column_headers=test.column_headers
-            self["Loaded as"]=cls.__name__
-
         return self
 
     def meta(self, ky):

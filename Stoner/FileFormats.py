@@ -31,7 +31,7 @@ class CSVFile(DataFile):
     
     patterns=["*.csv","*.txt"] # Recognised filename patterns
 
-    def load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
+    def _load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
 
         Args:
@@ -145,7 +145,7 @@ class VSMFile(DataFile):
         f.close()
 
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """VSM file loader routine.
 
         Args:
@@ -171,7 +171,7 @@ class BigBlueFile(CSVFile):
 
 
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Just call the parent class but with the right parameters set
 
         Args:
@@ -198,7 +198,7 @@ class QDSquidVSMFile(DataFile):
 
 
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """QDSquidVSM file loader routine.
 
         Args:
@@ -246,7 +246,7 @@ class OpenGDAFile(DataFile):
     priority=16 # Makes a positive ID of it's file type so give priority
     patterns=["*.dat"] # Recognised filename patterns
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """OpenGDA file loader routine.
 
         Args:
@@ -293,7 +293,7 @@ class SPCFile(DataFile):
     priority=64 # Can't make a positive ID of itself
     patterns=["*.spc"] # Recognised filename patterns
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
 
         Args:
@@ -408,7 +408,7 @@ class TDMSFile(DataFile):
 
 
 
-    def load(self, filename=None, *args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """TDMS file loader routine.
 
         Args:
@@ -446,7 +446,7 @@ class RigakuFile(DataFile):
     patterns=["*.ras"] # Recognised filename patterns
 
 
-    def load(self, filename=None, *args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Reads an Rigaku ras file including handling the metadata nicely
 
         Args:
@@ -528,7 +528,7 @@ class XRDFile(DataFile):
     priority=16 # Makes a positive id of its file contents
     patterns=["*.dql"] # Recognised filename patterns
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
 
         Args:
@@ -659,7 +659,7 @@ class BNLFile(DataFile):
             print('Did not import any data for {}'.format(self.filename))
 
 
-    def load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
+    def _load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
         """BNLFile.load(filename)
 
         Args:
@@ -688,7 +688,7 @@ class FmokeFile(DataFile):
     priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
     patterns=["*.dat"] # Recognised filename patterns
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Sheffield Fovussed MOKE file loader routine.
 
         Args:
@@ -720,7 +720,7 @@ class GenXFile(DataFile):
     patterns=["*.dat"] # Recognised filename patterns
     
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
@@ -765,7 +765,7 @@ class SNSFile(DataFile):
     priority=16
     patterns=["*.dat"] # Recognised filename patterns
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
@@ -824,7 +824,7 @@ class OVFFile(DataFile):
     patterns=["*.ovf"] # Recognised filename patterns
 
    
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
@@ -909,7 +909,7 @@ class MDAASCIIFile(DataFile):
     patterns=["*.txt"] # Recognised filename patterns
     
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
@@ -999,16 +999,17 @@ class LSTemperatureFile(DataFile):
     priority=16
     patterns=["*.340"]
 
-    def load(self,filename=None,*args, **kargs):
+    def _load(self,filename=None,*args, **kargs):
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
 
-        with open(self.filename,"r") as data:
+        with open(self.filename,"rb") as data:
             keys=[]
             vals=[]
             for line in data:
+                line=bytes2str(line)
                 if line.strip()=="":
                     break
                 parts=[p.strip() for p in line.split(":")]
@@ -1024,7 +1025,7 @@ class LSTemperatureFile(DataFile):
             for (k,v) in zip(keys,vals):
                 v=v.split()[0]
                 self.metadata[k]=self.metadata.string_to_type(v)
-            headers=next(data).strip().split()
+            headers=bytes2str(next(data)).strip().split()
             self.column_headers=headers[1:]
             dat=_np_.genfromtxt(data)
             self.data=dat[:,1:]
