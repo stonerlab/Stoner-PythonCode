@@ -424,3 +424,47 @@ class FluchsSondheimer(Model):
         """Guess some starting values - not very clever"""
         pars = self.make_params(l=10.0,p=0.5,sigma_0=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+def _bgintegrand(x,n):
+    return x**n/(_np_.sinh(x))
+
+def blochGrueneisen(T,thetaD,rho0,A,n):
+    """BlochGrueneiseen Function for fitting R(T).
+
+    Args:
+        T (array): Temperature Values to fit
+        thetaD (float): Debye Temperature
+        rho0 (float): Residual resisitivity
+        A (float): scattering scaling factor
+        n (float): Exponent term
+
+    Returns:
+        Evaluation of the BlochGrueneisen function for R(T)"""
+    ret=_np_.zeros(T.shape)
+    for i,t in enumerate(T):
+        intg=quad(_bgintegrand,0,thetaD/(2*t),(n,))[0]
+        ret[i]=rho0+A*(t/thetaD)**n*intg
+    return ret
+
+class BlochGrueneisen(Model):
+    """BlochGrueneiseen Function for fitting R(T).
+
+    Args:
+        T (array): Temperature Values to fit
+        thetaD (float): Debye Temperature
+        rho0 (float): Residual resisitivity
+        A (float): scattering scaling factor
+        n (float): Exponent term
+
+    Returns:
+        Evaluation of the BlochGrueneisen function for R(T)"""
+    def __init__(self, *args, **kwargs):
+        super(BlochGrueneiseen, self).__init__(blochGrueneisen, *args, **kwargs)
+
+    def guess(self, data, t=None, **kwargs):
+        """Guess some starting values - not very clever"""
+        pars = self.make_params(thetaD=900,rho0=0.01,A=0.2,n=5.0)
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+
+
