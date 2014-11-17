@@ -1912,39 +1912,7 @@ class DataFile(object):
         return self
 
     def meta(self, ky):
-        """Returns specific items of  metadata.
-
-        This is equivalent to doing DataFile.metadata[key]
-
-        Args:
-            ky (string): The name of the metadata item to be returned.
-
-        Returns:
-            Returns the item of metadata.
-
-        Note:
-           If key is not an exact match for an item of metadata,
-            then a regular expression match is carried out.
-            """
-        if isinstance(ky, str):  # Ok we go at it with a string
-            if ky in self.metadata:
-                return self.metadata[ky]
-            else:
-                test = re.compile(ky)
-                possible = [x for x in self.metadata if test.search(x)]
-                if len(possible) == 0:
-                    raise KeyError("No metadata with keyname: " + ky)
-                elif len(possible) == 1:
-                    return self.metadata[possible[0]]
-                else:
-                    d = dict()
-                    for p in possible:
-                        d[p] = self.metadata[p]
-                    return d
-        else:
-            raise TypeError("Only string are supported as search \
-            keys currently")
-            # Should implement using a list of strings as well
+        raise Warning("The meta() method has been removed. Use dictionary item access DataFile['xxx'] instead.")
 
     def rename(self, old_col, new_col):
         """Renames columns without changing the underlying data.

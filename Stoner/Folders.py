@@ -312,8 +312,8 @@ class DataFolder(object):
         if not isinstance(tmp.filename,string_types):
             tmp.filename=path.basename(f)
         for p in self.pattern:
-            if isinstance(p,re._pattern_type) and (p.search(f) is not None):
-                m=p.search(f)
+            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
+                m=p.search(tmp.filename)
                 for k in m.groupdict():
                     tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
         if self.read_means:
@@ -325,7 +325,7 @@ class DataFolder(object):
             else:
                 for h in tmp.column_headers:
                     tmp[h]=_np_.mean(tmp.column(h))
-        tmp['Loaded from']=f
+        tmp['Loaded from']=tmp.filename
         for k in self._file_attrs:
             tmp.__setattr__(k,self._file_attrs[k])
         return tmp
@@ -372,28 +372,27 @@ class DataFolder(object):
 
         Returns:
             A directory to be used for the file operation."""
-        try:
-            from enthought.pyface.api import FileDialog, DirectoryDialog, OK
-        except ImportError:
-            from pyface.api import FileDialog, DirectoryDialog, OK
         # Wildcard pattern to be used in file dialogs.
         if isinstance(self.directory, string_types):
             dirname = self.directory
         else:
             dirname = os.getcwd()
         if not self.multifile:
-            dlg = DirectoryDialog(action="open",  default_path=dirname,  message=message,  new_directory=new_directory)
-            dlg.open()
-            if dlg.return_code == OK:
-                self.directory = dlg.path
-                return self.directory
+            mode="directory"
         else:
-            dlg = FileDialog(action="open files",  default_path=dirname,  message="Select Files")
-            dlg.open()
-            if dlg.return_code == OK:
-                self.pattern=[path.basename(name) for name in dlg.paths]
-                self.directory = dlg.directory
-                return self.directory
+            mode="files"
+        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename,filetypes=patterns)
+        if len(dlg)!=0:
+            if not self.multifile:                
+                self.directory = dlg
+                ret=self.directory
+            else:
+                ret=None
+        else:
+            self.pattern=[path.basename(name) for name in dlg]
+                self.directory = path.commonprefix(dlg)
+                ret=self.directory
+        return self.directory
 
 
     def _pathsplit(self,pathstr, maxsplit=1):
