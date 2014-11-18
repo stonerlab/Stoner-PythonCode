@@ -330,6 +330,13 @@ only keys matching the pattern will be returned -- all keys containing
 *Option:*. For compatibility with normal opython semantics: :py:meth:`DataFile.keys` is
 synonymous with :py:meth:`DataFile.dir`.
 
+If the string you supply to get the metadata item does not exactly match an item of
+metadata, then it is interpreted as a regular expression to try and match against all the
+items of metadata. In this case, rather than returning a single item, all of the
+matching metadata is returned as a dictionary. PAssing a compiled regular epxression
+as the item name also has the same effect - this is useful if the regular expression
+you want to match is also an exact match to one particular metadata name.
+
 We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this::
 
@@ -382,6 +389,7 @@ headings. If one wishes to find the numeric index of a column then the
    index=d.find_col('1')
    index=d.find_col(1:10:2)
    index=d.find_col(['Temperature',2,'Resistance'])
+   index=d.find_col(re.compile(r"^[A-Z]"))
 
 :py:meth:`DataFile.find_col` takes a number of different forms. If the argument
 is an integer then it returns (trivially) the same integer, a string argument is
@@ -391,10 +399,15 @@ found then a regular expression search is carried out on the column headings. In
 both cases, only the first match is returned. If the string still doesn't match, then
 the string is checked to see if it can be cast to an integer, in which case the integer value is used.
 
-The final two examples given above
+The final three examples given above
 both return a list of indices, firstly using a slice construct - in this case
-the result is trivially the same as the slice itself, and in the last example by
-passing a list of column headers to look for.
+the result is trivially the same as the slice itself, and in the second example by
+passing a list of column headers to look for. The final example uses a compiled
+regular expression. Unlike passing a string which contains a regular expression,
+passing a compiled regular expression will return a list of all columns that
+match. This distinction allows you to use a unique partial string to match just
+one column - but if you really want all possible columns that would match the 
+pattern, then you can compile the regular expression and pass that instead.
 
 This is the function that is used internally by :py:meth:`DataFile.column`,
 :py:meth:`DataFile.search` etc and for this reason the trivial integer and slice

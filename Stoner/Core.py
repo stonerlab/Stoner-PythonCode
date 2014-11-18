@@ -1103,9 +1103,8 @@ class DataFile(object):
             return self.data[name, :]
         elif isinstance(name, _np_.ndarray) and len(name.shape)==1:
             return self.data[name, :]
-        elif isinstance(name, string_types):
-            name=str(name)
-            return self.meta(name)
+        elif isinstance(name, string_types) or isinstance(name,re._pattern_type):
+             return self.__meta__(name)
         elif isinstance(name, tuple) and len(name) == 2:
             x, y = name
             if isinstance(x, str):
@@ -1244,6 +1243,34 @@ class DataFile(object):
             newdata.__read_iterable(other)
         return newdata
 
+    def __meta__(self, ky):
+        """Returns specific items of  metadata.
+
+        This is equivalent to doing DataFile.metadata[key]
+
+        Args:
+            ky (string): The name of the metadata item to be returned.
+
+        Returns:
+            Returns the item of metadata.
+
+        Note:
+           If key is not an exact match for an item of metadata,
+            then a regular expression match is carried out.
+            """
+        if isinstance(ky, string_types):  # Ok we go at it with a string
+            if str(ky) in self.metadata:
+                ret = self.metadata[str(ky)]
+            else:
+                test = re.compile(ky)
+                ret = self.__regexp_meta__(test)
+        elif isinstance(ky,re._pattern_type):
+            ret = self.__regexp_meta__(ky)
+        else:
+            raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
+        return ret
+
+
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
 
@@ -1309,6 +1336,27 @@ class DataFile(object):
 
     def __reduce_ex__(self, p):
         return (DataFile, (), self.__getstate__())
+
+    def __regexp_meta__(self,test):
+        """Do a regular expression search for all meta data items.
+        
+        Args:
+            test (compiled regular expression): Regular expression to test against meta data key names
+            
+        Returns:
+            Either a single metadata item or a dictionary of metadata items
+        """
+        possible = [x for x in self.metadata if test.search(x)]
+        if len(possible) == 0:
+            raise KeyError("No metadata with keyname: " + ky)
+        elif len(possible) == 1:
+            ret = self.metadata[possible[0]]
+        else:
+            d = dict()
+            for p in possible:
+                d[p] = self.metadata[p]
+            ret = d
+        return ret
 
     def __repr__(self):
         """Outputs the :py:class:`DataFile` object in TDI format.
@@ -1787,7 +1835,7 @@ class DataFile(object):
             if len(possible) == 0:
                 raise KeyError('Unable to find any possible column matches for '+str(col.pattern))
             else:
-                col = self.column_headers.index(possible[0])
+                col = self.find_col(possible)
         elif isinstance(col, slice):
             indices = col.indices(_np_.shape(self.data)[1])
             col = range(*indices)
@@ -1910,9 +1958,6 @@ class DataFile(object):
             self.metadata.update(test.metadata)
             self.column_headers=test.column_headers
         return self
-
-    def meta(self, ky):
-        raise Warning("The meta() method has been removed. Use dictionary item access DataFile['xxx'] instead.")
 
     def rename(self, old_col, new_col):
         """Renames columns without changing the underlying data.
