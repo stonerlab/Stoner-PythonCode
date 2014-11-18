@@ -26,8 +26,8 @@ class DataFolder(object):
         files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
         groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
         read_means (bool): If true, create metadata when reading each file that is the mean of each column
-        pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included. 
-            If pattern is a compiled reular expression with named groups then the named groups are used to 
+        pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included.
+            If pattern is a compiled reular expression with named groups then the named groups are used to
             generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of
             files included in the py:class:`DataFolder` is the union of files that match any single pattern.
         multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
@@ -69,7 +69,7 @@ class DataFolder(object):
         elif issubclass(kargs["type"], DataFile):
             self.type=kargs["type"]
             del kargs["type"]
-        else: 
+        else:
             raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
         if not "pattern" in kargs:
             self.pattern=("*.*",)
@@ -80,7 +80,7 @@ class DataFolder(object):
                 self.pattern=(kargs["pattern"],)
             elif isinstance(kargs["pattern"],Iterable):
                 self.pattern=[x for x in kargs["pattern"]]
-            else: 
+            else:
                 raise ValueError("pattern should be a string, regular expression or iterable object")
             del kargs["pattern"]
         if not "nolist" in kargs:
@@ -93,14 +93,14 @@ class DataFolder(object):
         elif isinstance(kargs["multifile"], bool):
             self.multifile=kargs["multifile"]
             del kargs["multifile"]
-        else:  
+        else:
             raise ValueError("multifile argument must be boolean")
         if "extra_args" in kargs:
             self.extra_args=kargs["extra_args"]
         else:
             self.extra_args=dict()
         if len(args)>0:
-            if isinstance(args[0], string_types):  
+            if isinstance(args[0], string_types):
                 self.directory=args[0]
             elif isinstance(args[0],bool) and not args[0]:
                 self.directory=False
@@ -111,9 +111,9 @@ class DataFolder(object):
                 return None
         else:
             self.directory=os.getcwd()
-        if self.multifile: 
+        if self.multifile:
             recursive=False
-        else: 
+        else:
             recursive=True
         for v in kargs:
             self.__setattr__(v,kargs[v])
@@ -164,7 +164,7 @@ class DataFolder(object):
 
     def __add__(self,other):
         """Implement the addition operator for DataFolder and DataFiles."""
-        result=copy(self)        
+        result=copy(self)
         if isinstance(other,DataFolder):
             result.files.extend([self.type(f) for f in other.files])
             result.groups.update(other.groups)
@@ -173,7 +173,7 @@ class DataFolder(object):
         else:
             result=NotImplemented
         return result
-    
+
     def __delitem__(self,item):
         """Deelte and item or a group from the DataFolder
 
@@ -258,7 +258,7 @@ class DataFolder(object):
         if isinstance(i,int):
             files=self.files[i]
             tmp=self.__read__(files)
-            return tmp            
+            return tmp
         elif isinstance(i, string_types): # Ok we've done a DataFolder['filename']
             try:
                 i=self.ls.index(i)
@@ -270,7 +270,7 @@ class DataFolder(object):
                     return self.groups[i]
         elif isinstance(i, slice):
             indices = i.indices(len(self))
-            return [self[i] for i in range(*indices)]     
+            return [self[i] for i in range(*indices)]
         else:
             return self.groups[i]
 
@@ -347,7 +347,7 @@ class DataFolder(object):
 
     def __sub__(self,other):
         """Implements a subtraction operator."""
-        result=copy(self)        
+        result=copy(self)
         to_del=list()
         if isinstance(other,DataFolder):
             for f in other.ls:
@@ -383,17 +383,16 @@ class DataFolder(object):
             mode="files"
         dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename,filetypes=patterns)
         if len(dlg)!=0:
-            if not self.multifile:                
+            if not self.multifile:
                 self.directory = dlg
                 ret=self.directory
             else:
                 ret=None
         else:
             self.pattern=[path.basename(name) for name in dlg]
-                self.directory = path.commonprefix(dlg)
-                ret=self.directory
-        return self.directory
-
+            self.directory = path.commonprefix(dlg)
+            ret = self.directory
+        return ret
 
     def _pathsplit(self,pathstr, maxsplit=1):
         """split relative path into list"""
@@ -408,15 +407,15 @@ class DataFolder(object):
             if path == oldpath:
                 return path
             if maxsplit is not None and len(path) > maxsplit:
-                return path       
+                return path
 
 
     def _removeDisallowedFilenameChars(filename):
         """Utility method to clean characters in filenames
-        
+
         Args:
             filename (string): filename to cleanse
-            
+
         Returns:
             A filename with non ASCII characters stripped out
         """
@@ -516,7 +515,7 @@ class DataFolder(object):
 
     def flatten(self):
         """Compresses all the groups and sub-groups iunto a single flat file list.
-        
+
         Returns:
             A copy of the now flattened DatFolder"""
         for g in self.groups:
@@ -528,14 +527,14 @@ class DataFolder(object):
 
     def gather(self,xcol=None,ycol=None):
         """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.DataFile`
-        
+
         Keyword Arguments:
             xcol (index or None): Column in each file that has x data. if None, then the setas settings are used
             ycol (index or None): Column(s) in each filwe that contain the y data. If none, then the setas settings are used.
-            
+
         Notes:
             This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.
-            
+
         """
         def _gatherer(group,trail,xcol=None,ycol=None):
             yerr=None
@@ -551,9 +550,9 @@ class DataFolder(object):
                     yerr=cols["yerr"]
             else:
                 lookup=False
-                
+
             xcol=group[0].find_col(xcol)
-            ycol=group[0].find_col(ycol)            
+            ycol=group[0].find_col(ycol)
 
             results=group.type()
             results.metadata=group[0].metadata
@@ -609,7 +608,7 @@ class DataFolder(object):
                             setas.append("f")
             results.setas=setas
             return results
-            
+
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
 
 
@@ -620,10 +619,10 @@ class DataFolder(object):
             recursive (bool): Do a walk through all the directories for files
             directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
             flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of :py:meth:`getlist()`)
-        
+
         Returns:
             A copy of the current DataFoder directory with the files stored in the files attribute
-            
+
         getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
         directory tree finding sub directories and creating groups in the data folder for each sub directory.
         """
@@ -635,7 +634,7 @@ class DataFolder(object):
             if self.multifile:
                 self._dialog()
         if isinstance(self.directory, bool) and not self.directory:
-            self._dialog() 
+            self._dialog()
         elif self.directory is None:
             self.directory=os.getcwd()
         root=self.directory
@@ -665,7 +664,7 @@ class DataFolder(object):
                 matched.sort(reverse=True)
                 for i in matched: # reverse sort the matching indices to safely delete
                     del(files[i])
-        if recursive:           
+        if recursive:
             for d in dirs:
                 self.add_group(d)
                 self.groups[d].directory=path.join(root,d)
@@ -723,20 +722,20 @@ class DataFolder(object):
 
     def select(self,*args,**kargs):
         """A generator that can be used to select particular data files from the DataFolder
-        
+
         Args:
             args (various): A single positional argument if present is interpreted as follows:
                 * If a callable function is given, the entire DataFile is presented to it.
                     If it evaluates True then that DataFile is selected. This allows arbitary select operations
                 * If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles
-            
+
         Keyword Arguments:
             kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
                 metadata values. The value of the argument is used as follows:
                 * if is a scalar, then an equality test is carried out
                 * If is a list then a membership test is carried out
                 * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
-                
+
         Yields:
             A DataFile that matches the select requirements
         """
