@@ -213,7 +213,7 @@ class typeHintedDict(dict):
         Returns:
             A python object of the natural type for value"""
         ret=None
-        if not isinstance(value, str):
+        if not isinstance(value, string_types):
             raise TypeError("Value must be a string not a "+str(type(value)))
         value=value.strip()
         if len(value)!=0:
@@ -755,7 +755,7 @@ class DataFile(object):
                     descs[p]+=", "+self.subclasses[c].__name__+" file"
                 else:
                     descs[p]=self.subclasses[c].__name__+" file"
-                    
+
         patterns=[(descs[p],p) for p in sorted(descs.keys())]
         patterns.append(("All File","*.*"))
 
@@ -1174,7 +1174,7 @@ class DataFile(object):
         if filename is None or not filename:
             self.get_filename('r')
         else:
-            self.filename = filename 
+            self.filename = filename
         with open(self.filename,"r") as datafile:
             reader=csv.reader(datafile,dialect=_tab_delimited())
             row=next(reader)
@@ -1214,7 +1214,7 @@ class DataFile(object):
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
             for i in range(len(col_headers_tmp)):
                 self.column_headers[i]=col_headers_tmp[i]
-        
+
 
     def __len__(self):
         """Return the length of the data.
@@ -1339,10 +1339,10 @@ class DataFile(object):
 
     def __regexp_meta__(self,test):
         """Do a regular expression search for all meta data items.
-        
+
         Args:
             test (compiled regular expression): Regular expression to test against meta data key names
-            
+
         Returns:
             Either a single metadata item or a dictionary of metadata items
         """

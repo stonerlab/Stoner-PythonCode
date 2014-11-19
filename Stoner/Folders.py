@@ -193,6 +193,14 @@ class DataFolder(object):
         else:
             return NotImplemented
 
+    def __dir__(self):
+        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
+        """
+        attr=dir(type(self))
+        attr.extend(list(self.__dict__.keys()))
+        attr.extend(["basenames","ls","slgrps","setas"])
+        return attr
+
 
     def __get_file_attr__(self,item):
         if item in self._file_attrs:
@@ -381,7 +389,7 @@ class DataFolder(object):
             mode="directory"
         else:
             mode="files"
-        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename,filetypes=patterns)
+        dlg = get_filedialog(what=mode)
         if len(dlg)!=0:
             if not self.multifile:
                 self.directory = dlg
