@@ -8,8 +8,15 @@ Created on Tue Oct 08 20:14:34 2013
 """
 
 from Stoner.Analysis import AnalyseFile as _AF_
+from Stoner.Plot import PlotFile as _PF_
+import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
 from numpy import log10,floor
+
+class Data(_AF_,_PF_):
+    """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use."""
+    pass
+
 
 def split_up_down(data,col,folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
@@ -110,3 +117,4 @@ def ordinal(value):
         suffix=["th","st","nd","rd","th","th","th","th","th","th"][last_digit]
 
     return "{}{}".format(value,suffix)
+
