@@ -118,15 +118,17 @@ Facility Outputs
 
     DefaultPlotStyle
 
+:mod:`Fit` Module
+==========================
+
+.. automodule:: Stoner.Fit
+   :members:
 
 :mod:`FittingFuncs` Module
 ==========================
 
-.. module:: Stoner.FittingFuncs
-
-.. autosummary::
-    :toctree: functions
-    :template: autosummary/module.rst
+.. automodule:: Stoner.FittingFuncs
+   :members:
 
 :mod:`HDF5` Module
 =========================
@@ -144,6 +146,7 @@ Facility Outputs
 ==================
 
 .. automodule:: Stoner.Util
+   :members:
 
 
 :mod:`mpfit` Module

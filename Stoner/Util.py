@@ -14,7 +14,9 @@ from Stoner.Folders import DataFolder as _SF_
 from numpy import log10,floor
 
 class Data(_AF_,_PF_):
-    """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use."""
+    """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
+    This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
+    analysis on data files."""
     pass
 
 
