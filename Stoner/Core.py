@@ -1703,15 +1703,21 @@ class DataFile(object):
                     del self.column_headers[col]
             return self
 
-    def del_rows(self, col=None, val=None):
+    def del_rows(self, col=None, val=None,invert=False):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows.
 
         Args:
             col (list,slice,int,string, re or None): Column containg values to search for.
             val (float or callable): Specifies rows to delete. Maybe:
-                    - None - in which case whole columns are deleted,
+                    - None - in which case the *col* argument is used to identify rows to be deleted,
                     - a float in which case rows whose columncol = val are deleted
                     - or a function - in which case rows where the function evaluates to be true are deleted.
+                    - a tuple, in which case rows where column col takes value between the minium and maximum of the tuple
+                        are deleted.
+
+        Keyword Arguments:
+            invert (bool): Specifies whether to invert the logic of the test to delete a row. If True, keep the rows
+                that would have been deleted otherwise.
 
         Returns:
             The current object
@@ -1733,19 +1739,31 @@ class DataFile(object):
             if isinstance(col, slice) and val is None:
                 indices = col.indices(len(self))
                 col -= range(*indices)
-            if isinstance(col, list) and val is None:
+            if isinstance(col, list) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
-            elif isinstance(col,  int) and val is None:
+            elif isinstance(col, list) and val is None and invert:
+                for i in range(len(self)-1,-1,-1):
+                    if i not in col:
+                        self.del_rows(i)
+            elif isinstance(col,  int) and val is None and not invert:
                 self.data = _np_.delete(self.data, col, 0)
+            elif isinstance(col,  int) and val is None and invert:
+                self.del_rows([c],invert=invert)
             else:
                 col = self.find_col(col)
                 d = self.column(col)
                 if callable(val):
-                    rows = _np_.nonzero([bool(val(x[col], x) and x[col] is not _ma_.masked) for x in self])[0]
+                    rows = _np_.nonzero([(bool(val(x[col], x) & bool(x[col] is not _ma_.masked))!=invert)  for x in self])[0]
                 elif isinstance(val, float):
-                    rows = _np_.nonzero([x == val for x in d])[0]
+                    rows = _np_.nonzero([bool(x == val)!=invert for x in d])[0]
+                elif isinstance(val,Iterable) and len(val)==2:
+                    (upper,lower)=(max(list(val)),min(list(val)))
+                    print upper,lower
+                    rows= _np_.nonzero([bool(lower<=x<=upper)!=invert for x in d])[0]
+                else:
+                    raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")
                 self.data = _ma_.masked_array(_np_.delete(self.data, rows, 0), mask=_np_.delete(self.data.mask, rows, 0))
         return self
 
