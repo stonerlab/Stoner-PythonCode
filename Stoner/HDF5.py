@@ -15,7 +15,7 @@ import os.path as path
 
 class HDF5File(DataFile):
     """A sub class of DataFile that sores itself in a HDF5File or group.
-    
+
     Methods:
         load(): load a file from hdf5 file
         save(): Save a dataset to an hdf5 file.
@@ -57,10 +57,10 @@ class HDF5File(DataFile):
 
     def load(self,filename=None,**kargs):
         """Loads data from a hdf5 file
-        
+
         Args:
             h5file (string or h5py.Group): Either a string or an h5py Group object to load data from
-            
+
         Returns:
             itself after having loaded the data
         """
@@ -68,7 +68,7 @@ class HDF5File(DataFile):
             self.get_filename('r')
             filename=self.filename
         else:
-            self.filename = filename        
+            self.filename = filename
         if isinstance(filename,string_types): #We got a string, so we'll treat it like a file...
             try:
                 f=h5py.File(filename,'r')
@@ -80,13 +80,21 @@ class HDF5File(DataFile):
             raise IOError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" in f.attrs: #Ensure that if we have a type attribute it tells us we're the right type !
             assert f.attrs["type"]=="HDF5File","HDF5 group doesn't hold an HD5File"
+        else:
+            raise RuntimeError("HDF5 group doesn't hold an HD5File")
         data=f["data"]
         if numpy.product(numpy.array(data.shape))>0:
             self.data=data[...]
         else:
             self.data=[[]]
         metadata=f.require_group('metadata')
-        self.column_headers=f.attrs["column_headers"]
+        if "column_headers" in f.attrs:
+            self.column_headers=f.attrs["column_headers"]
+            print self.column_headers
+            if isinstance(self.column_headers,string_types):
+                self.column_headers=self.metadata.string_to_type(self.column_headers)
+        else:
+            raise RuntimeError("Couldn't work out where my column headers were !")
         for i in metadata.attrs:
             self[i]=metadata.attrs[i]
         if "filename" in f.attrs:
@@ -103,12 +111,12 @@ class HDF5File(DataFile):
     def save(self,h5file=None):
         """Writes the current object into  an hdf5 file or group within a file in a
         fashion that is compatible with being loaded in again with the same class.
-        
+
         Args:
             h5file (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
                 to save the file. If this is a string, the corresponding file is opened for
                 writing, written to and save again.
-                
+
         Returns
             A copy of the object
         """
@@ -144,10 +152,10 @@ class HDF5File(DataFile):
         return self
 
 class HDF5Folder(DataFolder):
-    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a 
+    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a
     method to load and save data from a single HDF5 file with groups.
-    
-    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.    
+
+    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
 
     Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that contains 'HDF5File')
     or are themsleves HDF5Folder instances (with a type attribute that reads 'HDF5Folder').
@@ -159,6 +167,9 @@ class HDF5Folder(DataFolder):
         """
         self.files=[]
         self.groups={}
+        self.read_means=False
+        self._file_attrs=dict()
+        self.pattern="*.*"
         self.File=None
         self.type=HDF5File
         for k in ["pattern","type","File","directory"]:
@@ -185,11 +196,11 @@ class HDF5Folder(DataFolder):
 
     def _dialog(self, message="Select Folder",  new_directory=True,mode='r'):
         """Creates a file dialog box for working with
-        
+
         Args:
             message (string): Message to display in dialog
             new_file (bool): True if allowed to create new directory
-            
+
         Returns:
             A directory to be used for the file operation."""
         try:
@@ -227,7 +238,7 @@ class HDF5Folder(DataFolder):
                 break
         if directory is None:
             return None
-        if isinstance(directory,str) or isinstance(directory,unicode):
+        if isinstance(directory,string_types):
             self.directory=directory
             directory=h5py.File(directory,'r')
             self.File=directory
@@ -278,10 +289,10 @@ class HDF5Folder(DataFolder):
 
     def save(self,root=None):
         """Saves a load of files to a single HDF5 file, creating groups as it goes.
-        
+
         Keyword Arguments:
             root (string): The name of the HDF5 file to save to if set to None, will prompt for a filename.
-        
+
         Return:
             A list of group paths in the HDF5 file
         """
@@ -299,20 +310,20 @@ class HDF5Folder(DataFolder):
     def _save(self,f,trail):
         """Create a virtual path of groups in the HDF5 file and save data.
 
-        Args:        
+        Args:
             f(DataFile):  A DataFile instance to save
             trail (list): The trail of groups
-            
+
         Returns:
             The new filename of the saved DataFile.
-        
+
         Ensure we have created the trail as a series of sub groups, then create a sub-groupfor the filename
         finally cast the DataFile as a HDF5File and save it, passing the new group as the filename which
         will ensure we create a sub-group in the main HDF5 file
-        
-        This routine is used by a walk_groups call - hence the prototype matches that required for 
+
+        This routine is used by a walk_groups call - hence the prototype matches that required for
         :py:meth:`Stoner.Folders.DataFolder.walk_groups`.
- 
+
         """
         tmp=self.File
         if not isinstance(f,DataFile):

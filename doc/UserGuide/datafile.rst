@@ -270,7 +270,16 @@ non-numeric character will be interpreted that many times, so::
     d.setas="...xy"
     d.setas=['.','.','.','x','y']
 
-all achieve the same effect.
+There are still more ways of setting column types with the :py:attr:`DataFile.setas` attribute:
+
+    d.seetas[3]="x"
+    d.setas["x"]=3
+    d.setas("3.xy")
+    d.setas(['.','.','.','x','y'])
+    d.setas(x=3,y=4)
+
+All achieve the same effect of setting the same columns as containing x and y data.
+
 
 Once you have identified columns for the various types, you also have access to utility attributes to access those columns:
 
@@ -406,7 +415,7 @@ passing a list of column headers to look for. The final example uses a compiled
 regular expression. Unlike passing a string which contains a regular expression,
 passing a compiled regular expression will return a list of all columns that
 match. This distinction allows you to use a unique partial string to match just
-one column - but if you really want all possible columns that would match the 
+one column - but if you really want all possible columns that would match the
 pattern, then you can compile the regular expression and pass that instead.
 
 This is the function that is used internally by :py:meth:`DataFile.column`,
@@ -644,20 +653,32 @@ Removing complete rows of data is achieved using the :py:meth:`DataFile.del_rows
 method.::
 
   d.del_rows(10)
+  d.del_rows(1:100:2)
   d.del_rows('X Col',value)
   d.del_rows('X Col',lambda x,y:x>300)
+  d.del_rows('X Col',(100,200))
+  d.del_rows(;X Col',(100,200),invert=True)
 
 
 The first variant will delete row 10 from the data set (where the first row will
-be row 0). You can also supply a list or slice to :py:meth:`DataFile.del_rows` to
-delete multiple rows.
+be row 0). You can also supply a list or slice (as in the second example) to
+:py:meth:`DataFile.del_rows` to delete multiple rows.
 
-If you do not know in advance which row to delete, then the second and third
-variants provide more advanced options. The second variant searches for and
+If you do not know in advance which row to delete, then the remiaining
+variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains *value*. The
-third variant selects which ros to delete by calling a user supplied function
+fourth variant selects which ros to delete by calling a user supplied function
 for each row. The user supplied function is the same in form and definitition as
-that used for the :py:meth:`DataFile.search` method.
+that used for the :py:meth:`DataFile.search` method::
+
+    def user_func(x_val,row_as_array):
+        return True or False
+
+The final two variants above, use a tuple to select the data. The final example makes
+use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
+rows are deleted(kept for *invert*=True) if the specified column lies between the maximum and minimum
+values of the tuple. The test is done inclusively. Any length two iterable object can be used
+for specifying the bounds.
 
 Deleting Columns of Data
 ------------------------

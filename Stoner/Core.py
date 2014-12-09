@@ -46,6 +46,162 @@ class _tab_delimited(csv.Dialect):
     doublequote=False
     lineterminator="\r\n"
 
+class _setas(object):
+    """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
+
+    def __init__(self,ref,initial_val=None,**kargs):
+        """Constructs the setas instance and sets an initial value.
+
+        Args:
+            ref (DataFile): Contains a reference to the owning DataFile instance
+
+        Keyword Arguments:
+            initial_val (string or list or dict): Initial values to set
+        """
+        self.ref=ref
+        self.setas=list()
+
+        if initial_val is not None:
+            self(initial_val)
+        elif len(kargs)>0:
+            self(**kargs)
+
+    def __call__(self,*args,**kargs):
+        """Treat the current instance as a callable object and assign columns accordingly.
+
+         Variois forms of this method are accepted::
+
+            setas("xyzuvw")
+            setas(["x"],["y"],["z"],["u"],["v"],["w"])
+            setas(x="column_1",y=3,column4="z")
+        """
+        try:
+            assert len(args)==0 or len(args)==1
+            if len(args)==1:
+                assert isinstance(args[0],string_types) or isinstance(args[0],Iterable)
+            elif len(args)==1:
+                assert len(kargs)>0
+        except AssertionError:
+            raise SyntaxError("setas must be called with a single argument - string or other iterable")
+
+        if len(self.setas)<len(self.ref.column_headers):
+            self.setas.extend(list("."*(len(self.ref.column_headers)-len(self.setas))))
+
+        if len(args)>0:
+            value=args[0]
+            if isinstance(value,string_types): # expand the number-code combos in value
+                pattern=re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.))")
+                while True:
+                    res=pattern.match(value)
+                    if res is None:
+                        break
+                    (total,count,code)=res.groups()
+                    if count=="":
+                        count=1
+                    else:
+                        count=int(count)
+                    value=value.replace(total,code*count,1)
+        else:
+            value=kargs
+        if isinstance(value,dict):
+            alt_vals=dict()
+            for k,v in value.items():
+                if v not in alt_vals:
+                    alt_vals[v]=[k]
+                else:
+                    alt_vals[v].append(k)
+
+            for typ in "xyzdefuvw":
+                if typ in value:
+                    try:
+                        for c in self.ref.find_col(value[typ],True): #x="Col1" type
+                            self.setas[c]=typ
+                    except KeyError:
+                        pass
+                if typ in alt_vals:
+                    try:
+                        for c in self.ref.find_col(alt_vals[typ],True): #col1="x" type
+                            self.setas[c]=typ
+                    except KeyError:
+                        pass
+        elif isinstance(value,Iterable):
+            if len(value)> len(self.ref.column_headers):
+                value=value[:len(self.ref.column_headers)]
+            elif len(value)<len(self.ref.column_headers):
+                value=[v for v in value] # Ensure value is now a list
+                value.extend(list("."*(len(self.ref.column_headers)-len(value))))
+            for v in value:
+                if v.lower() not in "xyzedfuvw.":
+                    raise ValueError("Set as column element is invalid: {}".format(v))
+            self.setas[:len(value)]=[v.lower() for v in value]
+        else:
+            raise ValueError("Set as column string ended with a number")
+        self.ref._cols.update(self.ref._get_cols())
+
+    def __getitem__(self,name):
+        """Permit the setas attribute to be treated like either a list or a dictionary.
+
+        Args:
+            name (int, slice or string): if *name* is an integer or a slice, return the column type
+                of the corresponding column(s). If a string, should be a single letter
+                from the set x,y,z,u,v,w,d,e,f - if so returns the corresponding
+                column(s)
+
+        Returns:
+            Either a single letter x,y,z,u,v,w,d,e or f, or a list of letters if used in
+            list mode, or a single coliumn name or list of names if used in dictionary mode.
+        """
+        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef":
+            ret=list()
+            for i,v in enumerate(self.setas):
+                if v==name:
+                    ret.append(self.ref.column_headers[i])
+        elif isinstance(name,slice):
+            indices = name.indices(len(self.setas))
+            name = range(*indices)
+            ret=[self[x] for x in name]
+        else:
+            try:
+                name=int(name)
+                ret= [self.setas[name]]
+            except ValueError:
+                raise TypeError("Index should be a number, slice or x,y,z,u,v,w,e,d of f")
+        if len(ret)==1:
+            ret=ret[0]
+        return ret
+
+    def __setitem__(self,name,value):
+        """Allow setting of the setas variable like a dictionary or a list.
+
+        Args:
+            name (string or int): If name is a string, it should be in the set x,y,z,u,v,w,d,e or f
+                and value should be a column index type. If name is an integer, then value should be
+                a single letter string in the set above.
+            value (integer or column index): See above.
+        """
+        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef":
+            self({name:value})
+        else:
+            try:
+                name=int(name)
+                self.setas[name]=value
+            except ValueError:
+                raise TypeError("Index should be a number of x,y,z,u,v,w,d,e or f")
+
+    def __len__(self):
+        return len(self.setas)
+
+    def __repr__(self):
+        if len(self.setas)> len(self.ref.column_headers):
+            self.setas=self.setas[:len(self.ref.column_headers)]
+        elif len(self.setas)<len(self.ref.column_headers):
+            self.setas.extend(list("."*(len(self.ref.column_headers)-len(self.setas))))
+        return self.setas.__repr__()
+
+    def set_ref(self,ref):
+        """The string representation of this object is the same as the string representation of the underlying list."""
+        self.ref=ref
+
 
 
 class _evaluatable(object):
@@ -452,7 +608,7 @@ class DataFile(object):
         i=len(args) if len(args)<2 else 2
         handler=[None,self._init_single,self._init_double,self._init_many][i]
         self.mask=False
-        self._setas=[]
+        self._setas=_setas(self)
         self._get_cols()
         if handler is not None:
             handler(*args,**kargs)
@@ -838,6 +994,8 @@ class DataFile(object):
         """
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
+        c._setas=_setas(c)
+        c._setas(list(self.setas))
         for attr in self.__dict__:
             if attr not in ("metadata","data","column_headers") and not callable(self.__dict__[attr]):
                 c.__dict__[attr]=self.__dict__[attr]
@@ -932,10 +1090,7 @@ class DataFile(object):
 
     def _getattr_setas(self):
         """Get the list of column assignments."""
-        if len(self._setas)> len(self.column_headers):
-            self._setas=self._setas[:len(self.column_headers)]
-        elif len(self._setas)<len(self.column_headers):
-            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
+        self._setas.ref=self #Reset the reference to point to ourselves
         return self._setas
 
     def _getattr_subclasses(self):
@@ -1432,7 +1587,7 @@ class DataFile(object):
         elif name=="T":
             self.data.T=value
         elif name=="setas":
-            self._set_setas(value)
+            self._setas(value)
         elif len(name)==1 and name in "xyzuvwdef":
             self._set_setas({name:value})
         else:
@@ -1807,7 +1962,7 @@ class DataFile(object):
             i=i+1
         return self
 
-    def find_col(self, col):
+    def find_col(self, col,force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
 
         Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
@@ -1824,6 +1979,9 @@ class DataFile(object):
 
         Args:
             col (int, a string, a re, a slice or a list):  Which column(s) to retuirn indices for.
+
+        Keyword Arguments:
+            force_list (bool): Force the output always to be a list. Mainly for internal use only
 
         Returns:
             The matching column index as an integer or a KeyError
@@ -1863,6 +2021,8 @@ class DataFile(object):
         else:
             raise TypeError('Column index must be an integer, string, \
             list or slice')
+        if force_list and not isinstance(col,list):
+            col=[col]
         return col
 
 
