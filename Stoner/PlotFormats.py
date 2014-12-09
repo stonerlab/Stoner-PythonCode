@@ -41,6 +41,35 @@ class TexFormatter(Formatter):
     def format_data_short(self,value):
         return "{:g}".format(value)
 
+class TexEngFormatter(EngFormatter):
+    """An axis tick label formatter that emits Tex formula mode code
+    so that large numbers are registered as \\times 10^{power}
+    rather than ysing E notation."""
+
+    prefix={3:"k",6:"M",9:"G",12:"T",15:"P",18:"E",21:"Z",24:"Y",
+            -3:"m",-6:"\\mu",-9:"n",-12:"p",-15:"f",-18:"a",-21:"z",-24:"y"}
+
+    def __call__(self, value, pos=None):
+        """Return the value ina  suitable texable format"""
+        if value is None or _np_.isnan(value):
+            ret=""
+        elif value!=0.0:
+            power=_np_.floor(_np_.log10(_np_.abs(value)))
+            power=(_np_.sign(power)*(_np_.floor(_np_.abs(power/3.0)))-1)*3.0
+            if _np_.abs(power)<3:
+                ret="${}$".format(value)
+            else:
+                v=int(value/(10**power))
+                ret="${}\\mathrm{{{} {}}}$".format(v,self.prefix[int(power)],self.unit)
+        else:
+            ret="$0.0$"
+        return ret
+
+    def format_data(self,value):
+        return self.__call__(value)
+
+    def format_data_short(self,value):
+        return "{:g}".format(value)
 
 class DefaultPlotStyle(object):
     """Produces a default plot style.
@@ -207,8 +236,17 @@ class DefaultPlotStyle(object):
         ax.yaxis.set_major_locator(self.ylocater())
         ax.set_xticklabels(ax.get_xticks(),size=self.template_xtick_labelsize)
         ax.set_yticklabels(ax.get_yticks(),size=self.template_ytick_labelsize)
-        ax.xaxis.set_major_formatter(self.xformatter())
-        ax.yaxis.set_major_formatter(self.yformatter())
+        if  isinstance(self.xformatter,Formatter):
+            xformatter=self.xformatter
+        else:
+            xformatter=self.xformatter()
+        if  isinstance(self.yformatter,Formatter):
+            yformatter=self.yformatter
+        else:
+            yformatter=self.yformatter()
+
+        ax.xaxis.set_major_formatter(xformatter)
+        ax.yaxis.set_major_formatter(yformatter)
         if "zaxis" in dir(ax):
             ax.zaxis.set_major_locator(self.zlocater())
             ax.set_zticklabels(ax.get_zticks(),size=self.template_ztick_labelsize)
@@ -295,7 +333,7 @@ class JTBPlotStyle(DefaultPlotStyle):
 
     def customise_axes(self,ax):
         pass
-    
+
 class JTBinsetStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 

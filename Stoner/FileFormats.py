@@ -28,7 +28,7 @@ class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
     priority=128 # Rather generic file format so make it a low priority
-    
+
     patterns=["*.csv","*.txt"] # Recognised filename patterns
 
     def _load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
@@ -160,6 +160,7 @@ class VSMFile(DataFile):
         else:
             self.filename = filename
         self.__parse_VSM()
+        self.setas(x="H_vsm",y="m (emu)")
         return self
 
 
@@ -238,6 +239,7 @@ class QDSquidVSMFile(DataFile):
             line=f.readline().strip()
         self.column_headers=f.readline().strip().split(',')
         self.data=_np_.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
+        self.setas(x="Magnetic Field",y="Moment")
         return self
 
 class OpenGDAFile(DataFile):
@@ -513,6 +515,7 @@ class RigakuFile(DataFile):
         for key in self.metadata:
             if isinstance(self[key], list):
                 self[key]=_np_.array(self[key])
+        self.setas="xy"
         return self
 
     def to_Q(self,l=1.540593):
@@ -578,6 +581,7 @@ class XRDFile(DataFile):
 
         f.close()# Cleanup
         self.data=_np_.reshape(self.data, (-1, 2))
+        self.setas="xy"
         return self
 
     def to_Q(self,l=1.540593):
@@ -600,7 +604,7 @@ class BNLFile(DataFile):
     """
     priority=16
     patterns=["*.txt"] # Recognised filename patterns
-    
+
     def __init__(self, *params):
         """Constructor modification
         BNLFile('filename')
@@ -718,7 +722,7 @@ class GenXFile(DataFile):
     """Extends DataFile for GenX Exported data."""
     priority=16
     patterns=["*.dat"] # Recognised filename patterns
-    
+
 
     def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -751,6 +755,7 @@ class GenXFile(DataFile):
             self.column_headers=[f.strip() for f in line.strip().split('\t')]
             self.data=_np_.genfromtxt(datafile)
             self["dataset"]=dataset
+            self.setas="xye"
         return self
 
 class SNSFile(DataFile):
@@ -823,7 +828,7 @@ class OVFFile(DataFile):
     priority=16
     patterns=["*.ovf"] # Recognised filename patterns
 
-   
+
     def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
@@ -838,7 +843,7 @@ class OVFFile(DataFile):
             line=line.strip()
             if line=="# OOMMF: rectangular mesh v1.0":
                 self["version"]=1
-            elif line!="# OOMMF: rectangular mesh v2.0": 
+            elif line!="# OOMMF: rectangular mesh v2.0":
                 self["version"]=2
             else: # bug out oif we don't like the header
                 raise RuntimeError("Not n OOMMF OVF File: opening line eas {}".format(line))
@@ -907,7 +912,7 @@ class MDAASCIIFile(DataFile):
     """Reads files generated from the APS."""
     priority=16
     patterns=["*.txt"] # Recognised filename patterns
-    
+
 
     def _load(self,filename=None,*args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -986,14 +991,14 @@ class MDAASCIIFile(DataFile):
                 raise RuntimeError("Overand the end of file without reading data")
             self.data=_np_.genfromtxt(data) # so that's ok then !
             return self
-                    
+
 class LSTemperatureFile(DataFile):
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
-    
+
 .. warning::
     THis class works for cernox curves in Log Ohms/Kelvin and Log Ohms/Log Kelvin. It may or may not work with any
     other temperature calibration data !
-    
+
     """
 
     priority=16
@@ -1031,7 +1036,7 @@ class LSTemperatureFile(DataFile):
             self.data=dat[:,1:]
         return self
 
-    def save(self,filename=None):        
+    def save(self,filename=None):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:
@@ -1071,13 +1076,12 @@ class LSTemperatureFile(DataFile):
                 f.write("{:11s}".format(h))
             f.write("\n\n")
             for i in range(len(self.data)): # This is a slow way to write the data, but there should only ever be 200 lines
-                line="\t".join(["{:<10.8f}".format(n) for n in self.data[i]])                
+                line="\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
                 f.write("{}\n".format(line))
         return self
 
-                
-                
-                
 
-            
+
+
+

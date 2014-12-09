@@ -648,6 +648,8 @@ class DataFile(object):
                 super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = _ma_.masked_array(arg.data)
+            self._setas=arg._setas
+            self._setas.ref=self
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
 
@@ -2116,18 +2118,26 @@ class DataFile(object):
                     test._load(self.filename, auto_load=False)
                     failed=False
                     self["Loaded as"]=cls.__name__
+                    self._setas=test._setas
+                    self._setas.ref=self
                     break
                 except Exception as e:
                     continue
+            else:
+                raise RuntimeError("Ran out of subclasses to try and load as.")
         else:
             if filetype is None:
                 test=cls()
                 test._load(self.filename)
                 self["Loaded as"]=cls.__name__
+                self._setas=test._setas
+                self._setas.ref=self
                 failed=False
             elif issublcass(filetype,DataFile):
                 test=filetype(filename)
                 self["Loaded as"]=filetype.__name__
+                self._setas=test._setas
+                self._setas.ref=self
                 failed=False
         if failed:
             raise SyntaxError("Failed to load file")
@@ -2135,6 +2145,8 @@ class DataFile(object):
             self.data=_ma_.masked_array(test.data)
             self.metadata.update(test.metadata)
             self.column_headers=test.column_headers
+            self._setas=test._setas
+            self._setas.ref=self
         return self
 
     def rename(self, old_col, new_col):
