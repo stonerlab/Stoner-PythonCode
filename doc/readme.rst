@@ -7,9 +7,9 @@ the Condensed Matter Physics group at the University of Leeds as a shared resour
 programs to do things like fitting functions to data, extract curve parameters and churn through large numbers of 
 small text data files.
 
-For a general introduction, users are referred to the Users Guide pdf file that can be found in the *doc/UserGuide* directory in 
-the github repository.  There is also an API reference in the form of a compiled help file in the *doc* directory that is 
-generated with Sphinx from the embedded docstrings in the source code.
+For a general introduction, users are referred to the Users Guide, which is part of the `online documentation 
+<http://pythonhosted.org/Stoner/>` along with the API Reference guide. The `github repository 
+<http://www.github.com/gb119/Stoner-PythonCode/> also contains some example scripts.
 
 Getting this Code
 ==================
@@ -17,12 +17,19 @@ Getting this Code
 The *Stoner* package requires numpy >=1.4, scipy >=0.12, matplotlib >=1.1, h5py and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
+At present it looks like lmfit does not install correctly with easy_install, so use pip instead
+
+.. code-block:: sh
+
+   pip install lmfit
+
+
 The easiest way to install this code is via seuptools' easy_install
 
 .. code-block:: sh
 
    easy_install Stoner
-    
+
 This will install the Stoner package into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
@@ -67,9 +74,9 @@ brutal to your computer's OS than having directory trees with millions of indivi
 Resources
 ==========
  
-Included in the package are a (small) collection of sample scripts for carrying out various operations and some sample data 
-files for testing the loading and processing of data. There is also a  :doc:`user guide <UserGuide/ugindex>` as part of
-this help file, along with a complete API reference:
+Included in the `github repository <http://www.github.com/gb119/Stoner-PythonCode/> are a (small) collection of sample scripts 
+for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a  
+:doc:`user guide <UserGuide/ugindex>` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
   
 Contact and Licensing
 =====================
@@ -77,11 +84,16 @@ Contact and Licensing
 The lead developer for this code is Dr Gavin Burnell <g.burnell@leeds.ac.uk> http://www.stoner.leeds.ac.uk/people/gb. 
 The User Guide gives the current list of other contributors to the project.
 
-This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indficated in the source file. 
+This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file. 
 The contents of this package are licensed under the terms of the GNU Public License v3
 
 Recent Changes
 ==============
+
+Version 0.2.4
+-------------
+
+Refactored the setas attribute, improvments to loading some file formats, new Engineering formatting for plots (optional)
 
 Version 0.2.0
 -------------

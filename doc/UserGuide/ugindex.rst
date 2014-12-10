@@ -15,5 +15,6 @@
    Working with Lots of Data Files <datafolder>
    Cookbook <cookbook>
    Developing and Extending <developer>
+   Credits <credits>
 
     
