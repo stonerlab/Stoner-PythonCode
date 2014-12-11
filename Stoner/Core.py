@@ -138,6 +138,7 @@ class _setas(object):
             raise ValueError("Set as column string ended with a number")
         self.ref._cols.update(self.ref._get_cols())
 
+
     def __getitem__(self,name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
 
@@ -652,6 +653,7 @@ class DataFile(object):
             self._setas.ref=self
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
+        self._cols.update(self._get_cols())
 
     def _init_double(self,*args,**kargs):
         """Two argument constructors handled here. Called form __init__"""
@@ -1505,7 +1507,7 @@ class DataFile(object):
         """
         possible = [x for x in self.metadata if test.search(x)]
         if len(possible) == 0:
-            raise KeyError("No metadata with keyname: " + ky)
+            raise KeyError("No metadata with keyname: " + test)
         elif len(possible) == 1:
             ret = self.metadata[possible[0]]
         else:

@@ -736,6 +736,8 @@ class AnalyseFile(DataFile):
         index=_np_.arange(l)
         if xcol is None:
             xcol=self._get_cols("xcol")
+        elif isinstance(xcol,bool) and not xcol:
+            xcol=None
         if xcol is not None: # We need to convert newX to row indices
             xfunc=interp1d(self.column(xcol), index, kind, 0) # xfunc(x) returns partial index
             newX=xfunc(newX)
@@ -1495,6 +1497,7 @@ class AnalyseFile(DataFile):
             xcol=self._get_cols("xcol")
 
         current=self.column(col)
+        ret=[]
         if isinstance(threshold, (list,_np_.ndarray)):
             if all_vals:
                 ret=[self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
@@ -1506,7 +1509,7 @@ class AnalyseFile(DataFile):
             else:
                 ret=[self.__threshold(threshold, current, rising=rising, falling=falling)[0]]
         if xcol is not None:
-            ret=[self.interpolate(r)[self.find_col(xcol)] for r in ret]
+            ret=[self.interpolate(r,xcol=False)[self.find_col(xcol)] for r in ret]
         if all_vals:
             return ret
         else:

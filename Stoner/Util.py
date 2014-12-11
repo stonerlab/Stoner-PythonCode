@@ -7,11 +7,12 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 
+from Stoner.Core import DataFile as _DF_
 from Stoner.Analysis import AnalyseFile as _AF_
 from Stoner.Plot import PlotFile as _PF_
 import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
-from numpy import log10,floor
+from numpy import log10,floor,max,abs,sqrt,diag
 
 class Data(_AF_,_PF_):
     """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
@@ -85,10 +86,10 @@ def format_error(value,error,latex=False):
     u_mag=floor(log10(error)) # so go round the loop again
     error=round(e2/10**u_mag)*10**u_mag # and get a new error magnitude
     if latex:
-        val_fmt_str=r"${}\pm "
+        val_fmt_str=r"${:f}\pm "
         suffix_fmt="$"
     else:
-        val_fmt_str=r"{}+/-"
+        val_fmt_str=r"{:f}+/-"
         suffix_fmt=""
     if u_mag<0:
         err_fmt_str=r"{:."+str(int(abs(u_mag)))+"f}"
@@ -120,3 +121,62 @@ def ordinal(value):
 
     return "{}{}".format(value,suffix)
 
+def hysteresis_correct(data,correct_background=True,correct_H=True, saturation_fraction=0.2):
+    """Peform corrections to a hysteresis loop.
+
+    Args:
+        data (DataFile): The data containing the hysteresis loop. The :py:attr:`DataFile.setas` attribute
+            should be set to give the H and M axes as x and y.
+
+    Keyword Arguments:
+        correct_background (bool): Correct for a diamagnetic or paramagnetic background to the hystersis loop
+            also recentres the loop about zero moment.
+        correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
+            this will remove any offset in filed due to trapped flux
+        saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be
+            fully saturated.
+
+    Returns:
+        The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
+        background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
+    """
+
+    if isinstance(data,_DF_):
+        cls=data.__class__
+    else:
+        cls=Data
+    data=Data(data)
+
+    if correct_background:
+        from Stoner.Fit import linear
+        mx=max(data.x)*(1-saturation_fraction)
+        mix=min(data.x)*(1-saturation_fraction)
+        p1,pcov=data.curve_fit(linear,absolute_sigma=False,bounds=lambda x,r:x>mx)
+        perr1=sqrt(diag(pcov))
+        p2,pcov=data.curve_fit(linear,absolute_sigma=False,bounds=lambda x,r:x<mix)
+        perr2=sqrt(diag(pcov))
+        pm=(p1+p2)/2
+        perr=sqrt(perr1**2+perr2**2)
+        data["Ms"]=(abs(p1[0])+abs(p2[0]))/2
+        data["Ms Error"]=perr[0]
+        data["Offset Moment"]=pm[0]
+        data["Offset Moment Error"]=perr[0]
+        data["Background susceptibility"]=pm[1]
+        data["Background Susceptibility Error"]=perr[1]
+        new_y=data.y-linear(data.x,*pm)
+        yc=data.find_col(data.setas["y"])
+        data.data[:,yc]=new_y
+
+    hc1=data.threshold(0.0,rising=True,falling=False)
+    hc2=data.threshold(0.0,rising=False,falling=True)
+
+    if correct_H:
+        hc_mean=(hc1+hc2)/2
+        data["Field Offset"]=hc_mean
+        xc=data.find_col(data.setas["x"])
+        data.data[:,xc]=data.x-hc_mean
+    else:
+        hc_mean=0.0
+    data["Hc"]=(hc1-hc_mean,hc2-hc_mean)
+
+    return cls(data)
