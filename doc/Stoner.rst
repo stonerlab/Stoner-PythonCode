@@ -90,6 +90,7 @@ Instrument Formats
     QDSquidVSMFile
     RigakuFile
     VSMFile
+    MokeFile
     XRDFile
     LSTemperatureFile
 

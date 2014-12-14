@@ -76,6 +76,8 @@ Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Le
     :py:class:`Stoner.FileFormats.XRDFile`
         Loads a scan file produced by Arkengarthdale - the group's Brucker D8
         XRD Machine.
+    :py:class:`Stoner.FileFormats.MokeFile`
+        Loads a file from Leeds Condensed Matter Physics MOKE system.
     :py:class:`Stoner.FileFormats.FmokeFile`
         Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
     :py:class:`Stoner.FileFormats.LSTemperatureFile`
