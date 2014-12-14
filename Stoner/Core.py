@@ -136,7 +136,7 @@ class _setas(object):
             self.setas[:len(value)]=[v.lower() for v in value]
         else:
             raise ValueError("Set as column string ended with a number")
-        self.ref._cols.update(self.ref._get_cols())
+        self.ref._cols.update(self._get_cols())
 
 
     def __getitem__(self,name):
@@ -203,7 +203,120 @@ class _setas(object):
         """The string representation of this object is the same as the string representation of the underlying list."""
         self.ref=ref
 
+    def _get_cols(self,what=None,startx=0):
+        """Uses the setas attribute to work out which columns to use for x,y,z etc.
 
+        Keyword Arguments:
+            what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary
+            starts (int): Start looking for x columns at this column.
+
+        Returns:
+            A single integer, a list of integers or a dictionary of all columns.
+        """
+
+        if len(self.setas)<len(self.ref.column_headers):
+            self.setas.extend(list("."*(len(self.ref.column_headers)-len(self.setas))))
+        try:
+            xcol=self.setas[startx:].index("x")+startx
+            maxcol=self.setas[xcol+1:].index("x")+xcol+1
+        except ValueError:
+            if "x" not in self.setas:
+                xcol=None
+                maxcol=startx
+            else:
+                maxcol=len(self.ref.column_headers)+1
+        try:
+            xerr=self.setas[startx:maxcol].index("d")+startx
+        except ValueError:
+            xerr=None
+        ycol=list()
+        yerr=list()
+        starty=xcol
+        has_yerr=False
+        while "y" in self.setas:
+            try:
+                ycol.append(self.setas[starty:maxcol].index("y")+starty)
+            except ValueError:
+                break
+            try:
+                yerr.append(self.setas[starty:maxcol].index("e")+starty)
+                has_yerr=True
+            except ValueError:
+                yerr.append(None)
+            starty=ycol[-1]+1
+        zcol=list()
+        zerr=list()
+        startz=xcol
+        has_zerr=False
+        while "z" in self.setas:
+            try:
+                zcol.append(self.setas[startz:maxcol].index("z")+startz)
+            except ValueError:
+                break
+            startz=zcol[-1]+1
+            try:
+                zerr.append(self.setas[startz:maxcol].index("g")+startz)
+                has_zerr=True
+            except ValueError:
+                zerr.append(None)
+
+        ucol=list()
+        startu=xcol
+        while "u" in self.setas:
+            try:
+                ucol.append(self.setas[startu:maxcol].index("u")+startu)
+            except ValueError:
+                break
+            startu=ucol[-1]+1
+        vcol=list()
+        startv=xcol
+        while "v" in self.setas:
+            try:
+                vcol.append(self.setas[startv:maxcol].index("v")+startv)
+            except ValueError:
+                break
+            startv=vcol[-1]+1
+        wcol=list()
+        startw=xcol
+        while "w" in self.setas:
+            try:
+                wcol.append(self.setas[startw:maxcol].index("w")+startw)
+            except ValueError:
+                break
+            startw=wcol[-1]+1
+
+        if xcol is None:
+            axes=0
+        elif len(ycol)==0:
+            axes=1
+        elif len(zcol)==0:
+            axes=2
+        else:
+            axes=3
+        if axes==2 and len(ucol)*len(vcol)>0:
+            axes=4
+        elif axes==3:
+            if len(ucol)*len(vcol)*len(wcol)>0:
+                axes=6
+            elif len(ucol)*len(vcol)>0:
+                axes=5
+        ret=_attribute_store()
+        ret.update({"xcol":xcol,"xerr":xerr,
+             "ycol":ycol,"yerr":yerr,
+                 "zcol":zcol,"zerr":zerr,
+                 "ucol":ucol,"vcol":vcol,"wcol":wcol,
+                 "axes":axes})
+        ret["has_xerr"]=xerr is not None
+        ret["has_yerr"]=has_yerr
+        ret["has_zerr"]=has_zerr
+        ret["has_uvw"]=len(ucol)!=0
+        if what=="xcol":
+            ret=ret["xcol"]
+        elif what in ("ycol","zcol","ucol","vcol","wcol","yerr","zerr"):
+            ret=ret[what][0]
+        elif what in ("ycols","zcols","ucols","vcols","wcols","yerrs","zerrs"):
+            ret=ret[what[0:-1]]
+        return ret
 
 class _evaluatable(object):
     """A very simple class that is just a placeholder."""
@@ -610,7 +723,7 @@ class DataFile(object):
         handler=[None,self._init_single,self._init_double,self._init_many][i]
         self.mask=False
         self._setas=_setas(self)
-        self._get_cols()
+        self._setas._get_cols()
         if handler is not None:
             handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
@@ -653,7 +766,7 @@ class DataFile(object):
             self._setas.ref=self
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
-        self._cols.update(self._get_cols())
+        self._cols.update(self.setas._get_cols())
 
     def _init_double(self,*args,**kargs):
         """Two argument constructors handled here. Called form __init__"""
@@ -1107,121 +1220,6 @@ class DataFile(object):
             ret[cls.__name__]=cls
         return ret
 
-    def _get_cols(self,what=None,startx=0):
-        """Uses the setas attribute to work out which columns to use for x,y,z etc.
-
-        Keyword Arguments:
-            what (string): Returns either xcol, ycol, zcol, ycols,xcols rather than the full dictionary
-            starts (int): Start looking for x columns at this column.
-
-        Returns:
-            A single integer, a list of integers or a dictionary of all columns.
-        """
-
-        if len(self._setas)<len(self.column_headers):
-            self._setas.extend(list("."*(len(self.column_headers)-len(self._setas))))
-        try:
-            xcol=self._setas[startx:].index("x")+startx
-            maxcol=self._setas[xcol+1:].index("x")+xcol+1
-        except ValueError:
-            if "x" not in self._setas:
-                xcol=None
-                maxcol=startx
-            else:
-                maxcol=len(self.column_headers)+1
-        try:
-            xerr=self._setas[startx:maxcol].index("d")+startx
-        except ValueError:
-            xerr=None
-        ycol=list()
-        yerr=list()
-        starty=xcol
-        has_yerr=False
-        while "y" in self._setas:
-            try:
-                ycol.append(self._setas[starty:maxcol].index("y")+starty)
-            except ValueError:
-                break
-            try:
-                yerr.append(self._setas[starty:maxcol].index("e")+starty)
-                has_yerr=True
-            except ValueError:
-                yerr.append(None)
-            starty=ycol[-1]+1
-        zcol=list()
-        zerr=list()
-        startz=xcol
-        has_zerr=False
-        while "z" in self._setas:
-            try:
-                zcol.append(self._setas[startz:maxcol].index("z")+startz)
-            except ValueError:
-                break
-            startz=zcol[-1]+1
-            try:
-                zerr.append(self._setas[startz:maxcol].index("g")+startz)
-                has_zerr=True
-            except ValueError:
-                zerr.append(None)
-
-        ucol=list()
-        startu=xcol
-        while "u" in self._setas:
-            try:
-                ucol.append(self._setas[startu:maxcol].index("u")+startu)
-            except ValueError:
-                break
-            startu=ucol[-1]+1
-        vcol=list()
-        startv=xcol
-        while "v" in self._setas:
-            try:
-                vcol.append(self._setas[startv:maxcol].index("v")+startv)
-            except ValueError:
-                break
-            startv=vcol[-1]+1
-        wcol=list()
-        startw=xcol
-        while "w" in self._setas:
-            try:
-                wcol.append(self._setas[startw:maxcol].index("w")+startw)
-            except ValueError:
-                break
-            startw=wcol[-1]+1
-
-        if xcol is None:
-            axes=0
-        elif len(ycol)==0:
-            axes=1
-        elif len(zcol)==0:
-            axes=2
-        else:
-            axes=3
-        if axes==2 and len(ucol)*len(vcol)>0:
-            axes=4
-        elif axes==3:
-            if len(ucol)*len(vcol)*len(wcol)>0:
-                axes=6
-            elif len(ucol)*len(vcol)>0:
-                axes=5
-        ret=_attribute_store()
-        ret.update({"xcol":xcol,"xerr":xerr,
-             "ycol":ycol,"yerr":yerr,
-                 "zcol":zcol,"zerr":zerr,
-                 "ucol":ucol,"vcol":vcol,"wcol":wcol,
-                 "axes":axes})
-        ret["has_xerr"]=xerr is not None
-        ret["has_yerr"]=has_yerr
-        ret["has_zerr"]=has_zerr
-        ret["has_uvw"]=len(ucol)!=0
-        if what=="xcol":
-            ret=ret["xcol"]
-        elif what in ("ycol","zcol","ucol","vcol","wcol","yerr","zerr"):
-            ret=ret[what][0]
-        elif what in ("ycols","zcols","ucols","vcols","wcols","yerrs","zerrs"):
-            ret=ret[what[0:-1]]
-        return ret
-
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of metadata.
 
@@ -1633,7 +1631,7 @@ class DataFile(object):
             self._setas[:len(value)]=[v.lower() for v in value]
         else:
             raise ValueError("Set as column string ended with a number")
-        self._cols.update(self._get_cols())
+        self._cols.update(self.setas._get_cols())
 
 
     def __setitem__(self, name, value):
@@ -2297,7 +2295,7 @@ class DataFile(object):
         would extract points along the line 2y=3x+2 (note the use of an < operator to avoid floating point rounding errors) where
         the z-co-ordinate is 2.
         """
-        cols=self._get_cols()
+        cols=self.setas._get_cols()
         tmp=self.clone
         xcol=cols["xcol"]
         ycol=cols["ycol"][0]

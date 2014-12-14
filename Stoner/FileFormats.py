@@ -686,6 +686,43 @@ class BNLFile(DataFile):
         return self
 
 
+class MokeFile(DataFile):
+    """Class that extgends DataFile to load files from the Leeds MOKE system."""
+
+    priotity=16
+    patterns=["*.dat","*.txt"]
+
+    def _load(self,filename=None,*args, **kargs):
+        """Leeds  MOKE file loader routine.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+            """
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        with open(self.filename,mode="rb") as f:
+            line=bytes2str(f.readline()).strip()
+            assert line=="#Leeds CM Physics MOKE","Not a datafile from the Leeds MOKE"
+            while line.startswith("#") or line=="":
+                print line
+                parts=line.split(":")
+                if len(parts)>1:
+                    key=parts[0][1:]
+                    data=":".join(parts[1:]).strip()
+                    self[key]=data
+                line=bytes2str(f.readline()).strip()
+            self.column_headers=[x.strip() for x in line.split(",")]
+            self.data=_np_.genfromtxt(f,delimiter=",")
+        self.setas="xy.de"
+        return self
+
+
 class FmokeFile(DataFile):
     """Extends DataFile to open Fmoke Files"""
 
@@ -693,7 +730,7 @@ class FmokeFile(DataFile):
     patterns=["*.dat"] # Recognised filename patterns
 
     def _load(self,filename=None,*args, **kargs):
-        """Sheffield Fovussed MOKE file loader routine.
+        """Sheffield Focussed MOKE file loader routine.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,

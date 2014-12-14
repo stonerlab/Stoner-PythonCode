@@ -75,7 +75,7 @@ class AnalyseFile(DataFile):
         """
         from Stoner.Util import ordinal
         if col is None:
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             col=(cols["xcol"],cols["ycols"][0])
         p=points
         if isinstance(col, tuple):
@@ -310,7 +310,7 @@ class AnalyseFile(DataFile):
         """
 
         if col is None:
-           col=self._get_cols()["ycol"][0]
+           col=self.setas._get_cols()["ycol"][0]
         col=self.find_col(col)
         nc=_np_.zeros(len(self))
         for i,r in enumerate(self.rows()):
@@ -358,7 +358,7 @@ class AnalyseFile(DataFile):
             yerr=None
 
         if None in (xcol,ycol):
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -424,7 +424,7 @@ class AnalyseFile(DataFile):
             assignments are used.
         """
         if column is None:
-            col=self._get_cols("ycol")
+            col=self.setas._get_cols("ycol")
         else:
             col=self.find_col(column)
         clipper=(min(clipper), max(clipper))
@@ -495,7 +495,7 @@ class AnalyseFile(DataFile):
             kargs["full_output"]=True
 
         if None in (xcol,ycol,sigma):
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -552,7 +552,7 @@ class AnalyseFile(DataFile):
                 del kwords["_startx"]
             else:
                 startx=0
-            cols=self._get_cols(startx=startx)
+            cols=self.setas._get_cols(startx=startx)
             xcol=cols["xcol"]
             ycol=cols["ycol"]
         xcol=self.find_col(xcol)
@@ -687,7 +687,7 @@ class AnalyseFile(DataFile):
 
             """
         if xcol is None or ycol is None:
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -735,7 +735,7 @@ class AnalyseFile(DataFile):
         l=_np_.shape(self.data)[0]
         index=_np_.arange(l)
         if xcol is None:
-            xcol=self._get_cols("xcol")
+            xcol=self.setas._get_cols("xcol")
         elif isinstance(xcol,bool) and not xcol:
             xcol=None
         if xcol is not None: # We need to convert newX to row indices
@@ -790,7 +790,7 @@ class AnalyseFile(DataFile):
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -925,7 +925,7 @@ class AnalyseFile(DataFile):
             assignments are used.
         """
         if column is None:
-            col=self._get_cols("ycol")
+            col=self.setas._get_cols("ycol")
         else:
             col=self.find_col(column)
         if bounds is not None:
@@ -958,7 +958,7 @@ class AnalyseFile(DataFile):
             Fix the row index when the bounds function is used - see note of \b max
         """
         if column is None:
-            col=self._get_cols("ycol")
+            col=self.setas._get_cols("ycol")
         else:
             col=self.find_col(column)
         if bounds is not None:
@@ -989,7 +989,7 @@ class AnalyseFile(DataFile):
 
                 """
         if column is None:
-            col=self._get_cols("ycol")
+            col=self.setas._get_cols("ycol")
         else:
             col=self.find_col(column)
         if bounds is not None:
@@ -1168,8 +1168,8 @@ class AnalyseFile(DataFile):
             """
 
         if ycol is None:
-            ycol=self._get_cols("ycol")
-            xcol=self._get_cols("xcol")
+            ycol=self.setas._get_cols("ycol")
+            xcol=self.setas._get_cols("xcol")
         if width is None: # Set Width to be length of data/20
             width=len(self)/20
         assert poly>=2,"poly must be at least 2nd order in peaks for checking for significance of peak or trough"
@@ -1217,7 +1217,7 @@ class AnalyseFile(DataFile):
         from Stoner.Util import ordinal
 
         if None in (xcol,ycol):
-            cols=self._get_cols()
+            cols=self.setas._get_cols()
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -1275,7 +1275,7 @@ class AnalyseFile(DataFile):
         """
         from Stoner.Folders import DataFolder
         if xcol is None:
-            xcol=self._get_cols("xcol")
+            xcol=self.setas._get_cols("xcol")
         else:
             xcol=self.find_col(xcol)
         out=DataFolder(nolist=True)
@@ -1348,11 +1348,11 @@ class AnalyseFile(DataFile):
         .
         """
         if xcol is None: #Sort out the xcolumn and y column indexes
-            xcol=self._get_cols("xcol")
+            xcol=self.setas._get_cols("xcol")
         else:
             xcol=self.find_col(xcol)
         if ycol is None:
-            ycol=self._get_cols("ycol")
+            ycol=self.setas._get_cols("ycol")
         else:
             ycol=self.find_col(ycol)
         x=self.column(xcol)+min_overlap # Get the (x,y) data from each data set to be stitched
@@ -1493,8 +1493,8 @@ class AnalyseFile(DataFile):
             argument list. In order to support the use of assigned columns, this has been swapped to the present order.
             """
         if col is None:
-            col=self._get_cols("ycol")
-            xcol=self._get_cols("xcol")
+            col=self.setas._get_cols("ycol")
+            xcol=self.setas._get_cols("xcol")
 
         current=self.column(col)
         ret=[]

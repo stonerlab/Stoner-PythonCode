@@ -198,7 +198,7 @@ class PlotFile(DataFile):
             startx=0
         if "multi_y" not in kargs:
             kargs["multi_y"]=False
-        c=self._get_cols(startx=startx)
+        c=self.setas._get_cols(startx=startx)
         for k in ["xcol","ycol","zcol","ucol","vcol","wcol","xerr","yerr","zerr"]:
             if k in kargs and k=="xcol" and kargs["xcol"] is None:
                 kargs["xcol"]=c.xcol
@@ -437,7 +437,7 @@ class PlotFile(DataFile):
                 del kargs["_startx"]
             else:
                 startx=0
-            cols=self._get_cols(startx=startx)
+            cols=self.setas._get_cols(startx=startx)
             if xcol is None:
                 xcol=cols["xcol"]
             if ycol is None:
@@ -589,7 +589,7 @@ class PlotFile(DataFile):
             axes=len(args)
         else:
             for x in [i for i in range(len(self.setas)) if self.setas[i]=="x"]:
-                cols=self._get_cols(startx=x)
+                cols=self.setas._get_cols(startx=x)
                 kargs["_startx"]=x
                 axes=cols["axes"]
 
