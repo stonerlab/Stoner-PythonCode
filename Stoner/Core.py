@@ -1556,9 +1556,11 @@ class DataFile(object):
         """Helper for the search method that returns an array of booleans for indexing matching rows."""
         x=self.find_col(xcol)
         if isinstance(value,(int,float)):
-            ix=_np_.less_equal(self.data[:,x]-value,accuracy)
+            ix=_np_.less_equal(_np_.abs(self.data[:,x]-value),accuracy)
         elif isinstance(value,tuple) and len(value)==2:
-            ix=_np_.logical_and(_np_.greater_equal(self.data[:,x]-min(value),accuracy),_np_.less(self.data[:,x]-max(value),accuracy))
+            (l,u)=(min(value),max(value))
+            delta=u-l+2*accuracy
+            ix=_np_.less_equal(_np_.abs(self.data[:,x]-l-accuracy),delta)
         elif isinstance(value,(list,_np_.ndarray)):
             ix=_np_.zeros(len(self),dtype=bool)
             for v in value:
