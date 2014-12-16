@@ -936,10 +936,7 @@ class OVFFile(DataFile):
             x=(_np_.linspace(self["xmin"],self["xmax"],self["xnode"]+1)[:-1]+self["xbase"])*1E9
             y=(_np_.linspace(self["ymin"],self["ymax"],self["ynode"]+1)[:-1]+self["ybase"])*1E9
             z=(_np_.linspace(self["zmin"],self["zmax"],self["znode"]+1)[:-1]+self["zbase"])*1E9
-            [y,x,z]=_np_.meshgrid(x,y,z)
-            x=_np_.reshape(x,(-1,1),order="F")
-            y=_np_.reshape(y,(-1,1),order="F")
-            z=_np_.reshape(z,(-1,1),order="F")
+            (y,z,x)=(_np_.ravel(i) for i in _np_.meshgrid(y,z,x))
             self.data=_np_.column_stack((x,y,z,uvwdata))
             self.column_headers=["X (nm)","Y (nm)","Z (nm)","U","V","W"]
             self.setas="xyzuvw"

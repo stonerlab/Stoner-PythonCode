@@ -481,6 +481,30 @@ class DataFolder(object):
         return self
 
 
+    def concatentate(self,sort=None,reverse=False):
+        """Concatentates all the files in a DataFolder into a single DataFile like object.
+
+        Keyword Arguments:
+            sort (column index, None or bool, or clallable function): Sort the resultant DataFile by this column (if a column index),
+                or by the *x* column if None or True, or not at all if False. *sort* is passed directly to the eponymous method as the
+                *order* paramter.
+            reverse (bool): Reverse the order of the sort (defaults to False)
+
+        Returns:
+            The current DataFolder with only one DataFile item containing all the data.
+        """
+
+        for d in f[1:]:
+            f[0]+=d
+        del f[1:]
+
+        if not isinstance(sort,bool) or sort:
+            if isinstance(sort, bool) or sort is None:
+                sort=f[0].setas["x"]
+            f[0].sort(order=sort,reverse=True)
+
+        return self
+
     def filter(self, filter=None,  invert=False):
         """Filter the current set of files by some criterion
 
