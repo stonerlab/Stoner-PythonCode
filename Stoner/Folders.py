@@ -60,6 +60,8 @@ class DataFolder(object):
 
     """
     def __init__(self, *args, **kargs):
+        self.directory=None
+        self.flatten=False
         self.files=[]
         self.read_means=False
         self.groups={}
@@ -84,7 +86,7 @@ class DataFolder(object):
                 raise ValueError("pattern should be a string, regular expression or iterable object")
             del kargs["pattern"]
         if not "nolist" in kargs:
-            nolist=False
+            nolist=(len(args)==0)
         else:
             nolist=kargs["nolist"]
             del kargs["nolist"]
@@ -97,28 +99,30 @@ class DataFolder(object):
             raise ValueError("multifile argument must be boolean")
         if "extra_args" in kargs:
             self.extra_args=kargs["extra_args"]
+            del kargs["extra_args"]
         else:
             self.extra_args=dict()
+        self.recursive=self.multifile
+        for v in kargs:
+            self.__setattr__(v,kargs[v])
+        if self.directory is None:
+            self.directory=os.getcwd()
         if len(args)>0:
             if isinstance(args[0], string_types):
                 self.directory=args[0]
+                if not nolist:
+                    self.getlist()
             elif isinstance(args[0],bool) and not args[0]:
                 self.directory=False
+                if not nolist:
+                    self.getlist()
             elif isinstance(args[0],DataFolder):
                 other=args[0]
                 for k in other.__dict__:
                     self.__dict__[k]=other.__dict__[k]
-                return None
-        else:
-            self.directory=os.getcwd()
-        if self.multifile:
-            recursive=False
-        else:
-            recursive=True
-        for v in kargs:
-            self.__setattr__(v,kargs[v])
-        if not nolist:
-            self.getlist(recursive=recursive)
+            else:
+                if not nolist:
+                    self.getlist()
 
 
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
@@ -494,14 +498,14 @@ class DataFolder(object):
             The current DataFolder with only one DataFile item containing all the data.
         """
 
-        for d in f[1:]:
-            f[0]+=d
-        del f[1:]
+        for d in self[1:]:
+            self[0]+=d
+        del self[1:]
 
         if not isinstance(sort,bool) or sort:
             if isinstance(sort, bool) or sort is None:
-                sort=f[0].setas["x"]
-            f[0].sort(order=sort,reverse=True)
+                sort=self[0].setas["x"]
+            self[0].sort(order=sort,reverse=True)
 
         return self
 
@@ -644,7 +648,7 @@ class DataFolder(object):
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
 
 
-    def getlist(self, recursive=True, directory=None,flatten=False):
+    def getlist(self, recursive=None, directory=None,flatten=None):
         """Scans the current directory, optionally recursively to build a list of filenames
 
         Keyword Arguments:
@@ -659,6 +663,10 @@ class DataFolder(object):
         directory tree finding sub directories and creating groups in the data folder for each sub directory.
         """
         self.files=[]
+        if recursive is None:
+            recursive=self.recursive
+        if flatten is None:
+            flatten=self.flatten
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):

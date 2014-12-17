@@ -272,7 +272,7 @@ non-numeric character will be interpreted that many times, so::
     d.setas="...xy"
     d.setas=['.','.','.','x','y']
 
-There are still more ways of setting column types with the :py:attr:`DataFile.setas` attribute:
+There are still more ways of setting column types with the :py:attr:`DataFile.setas` attribute::
 
     d.seetas[3]="x"
     d.setas["x"]=3
@@ -282,8 +282,7 @@ There are still more ways of setting column types with the :py:attr:`DataFile.se
 
 All achieve the same effect of setting the same columns as containing x and y data.
 
-
-Once you have identified columns for the various types, you also have access to utility attributes to access those columns:
+Once you have identified columns for the various types, you also have access to utility attributes to access those columns::
 
     d.setas="3.xye'
     d.x == d.column(3)

@@ -165,34 +165,10 @@ class HDF5Folder(DataFolder):
     def __init__(self,*args,**kargs):
         """Constructor for the HDF5Folder Class.
         """
-        self.files=[]
-        self.groups={}
-        self.read_means=False
-        self._file_attrs=dict()
-        self.pattern="*.*"
         self.File=None
         self.type=HDF5File
-        for k in ["pattern","type","File","directory"]:
-            if k in kargs:
-                self.__dict__[k]=kargs[k]
-        if len(args)>0 and (isinstance(args[0],str) or isinstance(args[0],unicode)): # Very braindead here, we should recognise pattern and a few other things here
-            self.directory=args[0]
-            if "nolist" in kargs and isinstance(kargs["nolist",bool]) and kargs["nolist"]:
-                pass
-            else:
-                self.getlist()
-        elif len(args)>0 and isinstance(args[0],DataFolder):
-            super(HDF5Folder,self).__init__(*args)
-        elif len(args)==1 and isinstance(args[0],h5py.File) or isinstance(args[0],h5py.Group):
-            grp=args[0]
-            self.directory=grp.file.fielname
-            self.File=grp.file
-            if "nolist" in kargs and isinstance(kargs["nolist",bool]) and kargs["nolist"]:
-                pass
-            else:
-                self.getlist()
-        else:
-            raise RuntimeError('Bad Constructor !')
+
+        super(HDF5Folder,self).__init__(*args,**kargs)
 
     def _dialog(self, message="Select Folder",  new_directory=True,mode='r'):
         """Creates a file dialog box for working with
@@ -226,8 +202,11 @@ class HDF5Folder(DataFolder):
         else:
             return None
 
-    def getlist(self, recursive=True, directory=None):
-        """@TODO Write the HDF5Folder getlist function"""
+    def getlist(self, recursive=None, directory=None,flatten=None):
+        """Reads the HDF5 File to construct a list of file HDF5File objects"""
+        
+        if recursive is None:
+            recursive=self.recursive
         self.files=[]
         self.groups={}
         for d in [directory,self.directory,self.File,True]:

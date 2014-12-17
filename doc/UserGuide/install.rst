@@ -43,16 +43,20 @@ machines that have Python installed. Primarily these are Numpy, SciPy and Matplo
 installation with all the necessary dependencies for the Stoner Package is to install the *Enthought Python Distribution*, 
 Canopy*. Installers for Windows, MacOS and Linux are kept in ``\\stonerlab\data\software\Python``
 
-Using the Stoner Package
-========================
+Using the Development Version of the Stoner Package
+===================================================
 
 .. note::
-   If you have installed the Stoner Package with the easy_install command
-   given above, then you can disregard this section.
+   You only need to follow this section if you are working with the 
+   version installed from the github repository. If you have installed 
+   the Stoner Package with the easy_install command given above, then you 
+   can disregard this section.
 
-The easiest way to use the Stoner Package is to add the path to the directory
-containing Stoner.py to your PYTHONPATH environment variable. This can be done
-on Macs and Linux by doing::
+The easiest way to use the development version of the Stoner Package is to add the 
+path to the directory containing the files from github to your PYTHONPATH environment 
+variable. This can be done on Macs and Linux by doing::
+
+.. code-block:: sh
 
   cd <path to PythonCode directory>
   export PYTHONPATH=`pwd`:$PYTHONPATH
@@ -74,11 +78,11 @@ or::
 Documentation
 =============
 
-This document provides a user guide to the Stoner package and its various modules and classes. 
+These pages provide a user guide to the Stoner package and its various modules and classes. 
 It is not a reference to the library but instead aims to explain the various operations that 
 are possible and provide short examples of use. For the API reference for the library, please 
-see the *Python Code API* compiled windows help file. There is also a single sided cheat sheet that 
-summarises the examples in this user guide.
+see the `Module Api Documentation <Stoner>`. There is also a single sided cheat sheet that 
+summarises the examples in this user guide in the github repository.
 
 .. warning::
    The code is still under active development to fix bugs and add features. Generally things don't 

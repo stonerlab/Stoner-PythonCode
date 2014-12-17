@@ -5,13 +5,24 @@ Cookbook
 This section gives some short examples to give an idea of things that can be
 done with the Stoner python module in just a few lines.
 
-The Utils module
-================
+The Util module
+===============
 
-.. currentmodule:: Stoner.Utils
+.. currentmodule:: Stoner.Util
 
-The **Stoner** package comes with an extra :py:mod:`Stoner.Utils` module that includes some handy utility 
+The **Stoner** package comes with an extra :py:mod:`Stoner.Util` module that includes some handy utility 
 functions. 
+
+The :py:class:`Data` Class
+--------------------------
+
+In practice, one often requires both the analysis functions of :py:class:`Stoner.Analysis.AnalyseFile` and
+the plotting functions of :py:class:`Stoner.Plot.PlotFile`. This can be done easily by creating a
+subclass that inherits from both, but for convenience, the :py:mod:`Stoner.Util` module provides the :py:class:`Data`
+class that does this for you.::
+
+    from Stoner.Util import Data
+    d=Data("File-of-data.txt")
 
 Splitting Data into rising and falling values
 ---------------------------------------------
@@ -20,13 +31,44 @@ So far the module just contains one function that will take a single :py:class:`
  object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either 
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.::
 
-    from Stoner.Utils import split_up_down
+    from Stoner.Util import split_up_down
     folder=split_up_down(data,column)
 
-*folder*is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
+In this example *folder*is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
  and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter 
 which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they 
-don't already exist) and files will be added.  
+don't already exist) and files will be added.
+
+Analysis of Hysteresis Loops
+----------------------------
+
+Since much of our group's work is concerned with measuring magnetic hystersis loops, the :py:func:`hysteresis_correct` function
+provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.::
+
+    from Stoner.Util import hysteresis_correct
+    d=hysteresis_correct('QD-SQUID-VSM.dat',correct_background=False,correct_H=False)
+    e=hysteresis_correct(d)
+
+    print "Saturation Magnetisation = {}+/-{}".format(e["Ms"],e["Ms Error"])
+    print "Coercive Field = {}".format(e["Hc"])
+    print "Remanance = {}".format(e["Remenance"])
+
+The keyword arguments provide options to turn on or off corrections to remove diamagnetic background (and offset in M),
+and any offset in H (e.g. due to trapped flux in the magnetometer). The latter option is slightly dangerous aas it will
+also remove the effect of any eexhange bias that moves the coercive field. As well as performing the corrections, the code
+will add metadata items for:
+
+    * Background susceptibility (from fitting striaght lines to the out part of the data)
+    * Saturation magnetisation and uncertainty (also from fitting lines to the out part of the data)
+    * Coervice Fields (H for zero M)
+    * Remenance (M for zero H)
+    * Saturation Fields (H where M deviates by the standard error from saturation)
+    * Maximum BH product (the point where -H * M is maximum)
+    * Loop Area (from integrating the area inside the hysteresis loop - only valide for complete loops)
+
+Some of these parameters are determined by fitting a straight line to the outer portions of the data (i.e. at the
+extrema in H). The keyword parameter *saturation_fraction* controls the extent of the data assumed to be saturated.
+
 
 Other Recipies
 ==============
@@ -97,44 +139,6 @@ using the :py:class:`PlotFile` methods to generate the surface.::
     surf&=Z(surf.x,surf.y)
     surf.setas="xyz"
     surf.plot() # or surf.plot(cstride=1,rstride=1,linewidth=0) for finer detail.
-
-Correcting a Hysteresis Loop
-----------------------------
-
-In our research we measure a lot of magnetic-hysteresis loops. In these measurements the
-hysteresis loop is often superimposed on a (diamagnetic) signal from the sample stick. Furthermore,
-the loop can be offset vertically as well. Here we will demonstrate how to use the various Stoner classes
-to correct a loop. The data for this example can be found in the sample-data folder in the source code
-repository. The basic principle is to fit a straight line to the outermost 20% of the positive and negative
-field ranges of the loops. Avergaing the co-efficients of the fit gives the diamagnetic component and
-the verticla offset. These can then be used to subtract the fit to find the residual loop.::
-
-    from Stoner.Plot import PlotFile
-    from Stoner.Analysis import AnalyseFile
-    from Stoner.FileFormats import QDSquidVSMFile
-    from Stoner.Fit import Linear
-
-    class Data(QDSquidVSMFile,PlotFile,AnalyseFile): # Create a suitable mixin of DataFile types
-        pass
-
-    d=Data("QD-SQUID-VSM.dat")
-    d.setas="3.xy" # The setas can be used in DataFile to set preferred X and Y columns
-    #Fit straight lines to the extremes of the loop to get diamagnetic component
-    pneg,pcov=d.curve_fit(Linear,bounds=lambda y,r:r<0.8*d.min(3)[0])
-    ppos,pcov=d.curve_fit(Linear,bounds=lambda y,r:r>0.8*d.max(3)[0])
-    popt=(pneg+ppos)/2 # Average of two fits gives diamgnetic slope and vertical offset
-
-    # Use average fit to remove diamagnetism and offset
-    d.add_column(d.y-Linear(d.x,*popt),"Corrected Moment",4)
-
-    # Get co-oercive fields and remancnce
-    Hc=d.threshold(0,rising=True,falling=True,all_vals=True)
-    Br=d.threshold(0,col=3,xcol=4,rising=True,falling=True,all_vals=True)
-
-    #Plot the data
-    d.plot()
-    #Legend will be badly placed for a loop
-    leged(loc=4) #Assuming you have pylab imported into the current namespace
 
 Quickly Sectioning a 3D dataset
 -------------------------------
