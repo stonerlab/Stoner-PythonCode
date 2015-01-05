@@ -128,7 +128,7 @@ class _setas(object):
             elif len(value)<len(self.column_headers):
                 value=[v for v in value] # Ensure value is now a list
                 value.extend(list("."*(len(self.column_headers)-len(value))))
-            for v in value:
+            for i,v in enumerate(list(value)):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
                 if v!="-":
@@ -1155,7 +1155,6 @@ class DataFile(object):
         elif name in ("x","y","z","d","e","f","u","v","w","r","q","p"):
             ret=self._getattr_col(name)
         elif name in dir(self):
-            print name
             return super(DataFile,self).__getattribute__(name)
         else:
             ret=None
@@ -1665,7 +1664,7 @@ class DataFile(object):
               
         if name in easy:
             easy[name](value)
-        elif len(name)==1 and name in "xyzuvwdef" and len(self.setas[name]!=0):
+        elif len(name)==1 and name in "xyzuvwdef" and len(self.setas[name])!=0:
             self.__setattr_col(name,value)
         else:
             super(DataFile,self).__setattr__(name,value)
@@ -1712,7 +1711,7 @@ class DataFile(object):
                 value=value.T
             else:
                 raise RuntimeErrpr("Value to be assigned to data columns is the wrong shape!")
-            for i,ix in enumerate(self.find_col(self.setas[name],as_list=True)):
+            for i,ix in enumerate(self.find_col(self.setas[name],force_list=True)):
                 self.data[:,ix]=value[:,i]
         elif isinstance(value,indices):
             self._set_setas({name:value})
@@ -2005,7 +2004,6 @@ class DataFile(object):
                     rows = _np_.nonzero([bool(x == val)!=invert for x in d])[0]
                 elif isinstance(val,Iterable) and len(val)==2:
                     (upper,lower)=(max(list(val)),min(list(val)))
-                    print upper,lower
                     rows= _np_.nonzero([bool(lower<=x<=upper)!=invert for x in d])[0]
                 else:
                     raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")
