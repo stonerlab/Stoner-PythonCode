@@ -88,7 +88,7 @@ class _setas(object):
         if len(args)>0:
             value=args[0]
             if isinstance(value,string_types): # expand the number-code combos in value
-                pattern=re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.))")
+                pattern=re.compile("[^0-9]*(([0-9]+?)(x|y|z|d|e|f|u|v|w|\.|\-))")
                 while True:
                     res=pattern.match(value)
                     if res is None:
@@ -109,7 +109,7 @@ class _setas(object):
                 else:
                     alt_vals[v].append(k)
 
-            for typ in "xyzdefuvw":
+            for typ in "xyzdefuvw.-":
                 if typ in value:
                     try:
                         for c in self.find_col(value[typ],True): #x="Col1" type
@@ -129,9 +129,10 @@ class _setas(object):
                 value=[v for v in value] # Ensure value is now a list
                 value.extend(list("."*(len(self.column_headers)-len(value))))
             for v in value:
-                if v.lower() not in "xyzedfuvw.":
+                if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
-            self.setas[:len(value)]=[v.lower() for v in value]
+                if v!="-":
+                    self.setas[i]=v.lower()
         else:
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
@@ -151,7 +152,7 @@ class _setas(object):
             Either a single letter x,y,z,u,v,w,d,e or f, or a list of letters if used in
             list mode, or a single coliumn name or list of names if used in dictionary mode.
         """
-        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef":
+        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef.-":
             ret=list()
             for i,v in enumerate(self.setas):
                 if v==name:
@@ -179,14 +180,20 @@ class _setas(object):
                 a single letter string in the set above.
             value (integer or column index): See above.
         """
-        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef":
+        if isinstance(name,string_types) and len(name)==1 and name in "xyzuvwdef.-":
             self({name:value})
         else:
             try:
                 name=int(name)
-                self.setas[name]=value
+                if len(value)==1 and value in "xyzuvwdef.":
+                    self.setas[name]=value
+                elif value=="-":
+                    pass
+                else:
+                    raise ValueError("Column types can only be set to x,y,z,u,v,w,d,e, or f, not to {}".format(value))
             except ValueError:
-                raise TypeError("Index should be a number of x,y,z,u,v,w,d,e or f")
+                kargs={name:value}
+                self(**kargs)
 
     def __len__(self):
         return len(self.setas)
@@ -1573,7 +1580,7 @@ class DataFile(object):
         """
         possible = [x for x in self.metadata if test.search(x)]
         if len(possible) == 0:
-            raise KeyError("No metadata with keyname: " + test)
+            raise KeyError("No metadata with keyname: " + str(test))
         elif len(possible) == 1:
             ret = self.metadata[possible[0]]
         else:
@@ -2071,7 +2078,6 @@ class DataFile(object):
             The matching column index as an integer or a KeyError
         """
         return self._setas.find_col(col,force_list)
-
 
     def get(self, item):
         """A wrapper around __get_item__ that handles missing keys by returning None.
