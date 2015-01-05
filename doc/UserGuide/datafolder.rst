@@ -88,7 +88,7 @@ Controlling the Gathering of the List of Files
 ==============================================
 
 The current root directory and pattern are stored in the *directory* and *pattern* keywords and the
-:py:math:`DataFolder.getlist` method can be used to force a new listing of files.::
+:py:meth:`DataFolder.getlist` method can be used to force a new listing of files.::
 
    f.dirctory='/home/phygbu/Data'
    f.pattern='*.txt'
@@ -159,7 +159,7 @@ of the filename whilst :py:attr:`DataFolder.ls` returns the complete path from t
 ======================================================
 
 The order of the files in a :py:class:`DataFolder` is arbitrary. If it is important to process 
-them in a given order then the :py:math:`DataFolder.sort` method can be used::
+them in a given order then the :py:meth:`DataFolder.sort` method can be used::
 
    f.sort()
    f.sort('tmperature')

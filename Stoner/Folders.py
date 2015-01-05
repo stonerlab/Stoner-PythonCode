@@ -56,7 +56,7 @@ class DataFolder(object):
         All other keywords are set as attributes of the DataFolder.
 
     Todo:
-        Handle :pyth:meth:`__init__(DataFolder)` with subclasses
+        Handle :py:meth:`__init__(DataFolder)` with subclasses
 
     """
     def __init__(self, *args, **kargs):
@@ -654,7 +654,8 @@ class DataFolder(object):
         Keyword Arguments:
             recursive (bool): Do a walk through all the directories for files
             directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
-            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of :py:meth:`getlist()`)
+            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of 
+            :py:meth:`DataFolder.getlist()`)
 
         Returns:
             A copy of the current DataFoder directory with the files stored in the files attribute
@@ -765,16 +766,18 @@ class DataFolder(object):
 
         Args:
             args (various): A single positional argument if present is interpreted as follows:
-                * If a callable function is given, the entire DataFile is presented to it.
-                    If it evaluates True then that DataFile is selected. This allows arbitary select operations
-                * If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles
+
+            * If a callable function is given, the entire DataFile is presented to it.
+                If it evaluates True then that DataFile is selected. This allows arbitary select operations
+            * If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles
 
         Keyword Arguments:
             kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
                 metadata values. The value of the argument is used as follows:
-                * if is a scalar, then an equality test is carried out
-                * If is a list then a membership test is carried out
-                * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
+
+            * if is a scalar, then an equality test is carried out
+            * If is a list then a membership test is carried out
+            * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
 
         Yields:
             A DataFile that matches the select requirements
@@ -821,6 +824,7 @@ class DataFolder(object):
                 metadata key, if callable then it is assumed that this is a a function of one paramater x
                 that is a :py:class:`Stoner.Core.DataFile` object and that returns a key value.
                 If key is not specified (default), then a sort is performed on the filename
+
         reverse (bool): Optionally sort in reverse order
 
         Returns:

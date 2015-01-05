@@ -15,7 +15,7 @@ adding and subtracting columns.::
    a.normalise(0,a2.column(0))
 
 The :py:meth:`AnalyseFile.normalise` method simply divides the data column by the reference column. By default the normalise method
-replaces the data column with the new (normalised) data and appends `'(norm)'' to the column header. The keyword arguments
+replaces the data column with the new (normalised) data and appends '(norm)' to the column header. The keyword arguments
 *header* and *replace* can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
 The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to.
@@ -198,7 +198,7 @@ Each element is a dictionary with the following keys:
       *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
       *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
       *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
-            	Where H is the STEP parameter described above.  The "automatic"
+               Where H is the STEP parameter described above.  The "automatic"
                one-sided derivative method will chose a direction for the finite difference
                which does not violate any constraints.  The other methods do
                not perform this check.  The two-sided method is in principle more precise, but

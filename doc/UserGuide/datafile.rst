@@ -504,7 +504,7 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the :py:math:`DataFile.search` method). The
+these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method). The
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

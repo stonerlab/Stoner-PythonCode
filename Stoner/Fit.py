@@ -8,7 +8,7 @@ Models are subclasses of lmfit.Model that represent the corresponding function
 
 Please do keep documentation up to date, see other functions for documentation examples.
 
-All the functions here defined for scipy.optimize.curve_fit to call themm
+All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements, other fitting routines prefere
 to have the parameters as a single list or vector. For this reason, :py:mod:`Stoner.FittingFuncs`
 has aliases of these functions that use *tuple magic to make that conversion.
@@ -363,8 +363,7 @@ class Strijkers(Model):
         Z (float): Current spin polarization through contact
 
     PCAR fitting
-    Strijkers modified BTK model
-        BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
+    Strijkers modified BTK model - BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
     Only using 1 delta, not modified for proximity
     """
