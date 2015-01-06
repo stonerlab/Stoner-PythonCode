@@ -70,7 +70,7 @@ Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Le
         The text files produced by the group's Oxford Instruments VSM
     :py:class:`Stoner.FileFormats.BigBlueFile`
         Datafiles produced by VB Code running on the Big Blue cryostat. The
-        :py:class:`Stoner.FileFormats.BigBlue` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
+        :py:class:`Stoner.FileFormats.BigBlueFile` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
         two additional parameters that specify the row on which the column headers will
         be found and the row on which the data starts.
     :py:class:`Stoner.FileFormats.XRDFile`
@@ -250,7 +250,7 @@ For example::
 
 .. _setas:
 Other ways to Identify Columns of Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
 or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
@@ -262,7 +262,8 @@ support at present for uncertainities in (u,v,w) being marked.
 
 To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
 a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
-the columns of data in order. To specify that a column has unmarked data use the '.' string.
+the columns of data in order. To specify that a column has unmarked data use the '.' string. The string '-' can also be used - this
+indicats that the current assignment is to be left as is.
 
 Alternately, you can pass :py:attr:`DataFile.setas` a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
@@ -310,6 +311,10 @@ There are some more convenience ways to set which columns to use as x,y,z etc.::
     d.setas={"x":0,"y":"Y Column title"}
     d.x=0
     d.y="Y Column title"
+   d.setas["Temperature"]="y"
+
+In each of these cases, the :py:class:`DataFile` will try to work out what you intended to achieve for maximum flexibility
+and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
 
 Working with complete rows of data
 ----------------------------------
@@ -598,6 +603,36 @@ the same or fewer rows of data as *d*.
 Working with Columns of Data
 -----------------------------
 
+Changing Individual Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :py:attr:`DataFile.data` attribute is simply a 2D numpy array, so can be directly modified like any other
+numpy array might be. If, however, the :py:attr:`DataFile.setas` attribute has been used to identify columns as
+containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
+modify the data without having to keep track any further of which column(s) is indexed. This the following will work::
+
+    d.setas="x..y..z"
+    d.x=d.x-5.0*d.y/d.z
+    d.y=d.z**2
+    d.z=np.ones(len(d))
+
+When writing to the column attriobutes you must supply a numpy array with the correct number of elements (although DataFile will
+try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
+then you should supply a 2D array with the corresponding number of columns of data setting the attribute.
+
+In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
+:py:class:`DataFile` checks to see if you are setting something that might be a column index or a numpy array. Thus the following
+also works::
+
+    d.x="Temp" # Set the Temp column to be x data
+    d.x=np.linspace(0,300,len(d)) # And set the column to contain a linear array of values from 0 to 300.
+
+You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
+On the otherhand you can do an efficient conversion to polar co-ordinates with::
+
+    d.setas="xyz"
+    (d.x,d.y,d.z)=(d.p,d.q,d.r)
+
 Rearranging Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -606,13 +641,17 @@ Sometimes it is useful to rearrange columns of data. :py:class:`DataFile` offers
    d.swap_column(('Resistance','Temperature'))
    d.swap_column(('Resistance','Temperature'),headers_too=False)
    d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
-   d.reorder([1,3,'Volt','Temp'])
-   d.reorder([1,3,'Volt','Temp'],header_too=False)
+   d.reorder_columns([1,3,'Volt','Temp'])
+   d.reorder_columns([1,3,'Volt','Temp'],header_too=False)
 
-The :py:meth:`DataFile.swap` method takes either a tuple of column names, indices or a list of such
-tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder` method takes a
+The :py:meth:`DataFile.swap_column` method takes either a tuple of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder_columns` method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
+
+.. note::
+    The :py:meth:`DataFile.swap_column` and :py:meth:`DataFile.reorder_columns` do not (at present) reorder the
+    assignments in the :py:attr:`DataFile.setas` attribute.
 
 Renaming Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
