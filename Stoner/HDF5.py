@@ -20,7 +20,7 @@ class HDF5File(DataFile):
         load(): load a file from hdf5 file
         save(): Save a dataset to an hdf5 file.
 
-    ArgsL
+    Args:
         args (tuple): Supplied arguments, only recognises one though !
         kargs (dict): Dictionary of keyword arguments
 
@@ -204,7 +204,7 @@ class HDF5Folder(DataFolder):
 
     def getlist(self, recursive=None, directory=None,flatten=None):
         """Reads the HDF5 File to construct a list of file HDF5File objects"""
-        
+
         if recursive is None:
             recursive=self.recursive
         self.files=[]

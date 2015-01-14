@@ -1074,7 +1074,7 @@ class LSTemperatureFile(DataFile):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:
-            filename (string): Fielname to save as (using the same rules as for the load routines)
+            filename (string): Filename to save as (using the same rules as for the load routines)
 
         Keyword Arguments:
             deliminator (string): Record deliniminator (defaults to a comma)

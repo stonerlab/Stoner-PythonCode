@@ -57,12 +57,13 @@ class _setas(object):
             initial_val (string or list or dict): Initial values to set
         """
         self.setas=list()
+        self.column_headers=[]
         self.cols=_attribute_store()
 
         if initial_val is not None:
             self(initial_val)
         elif len(kargs)>0:
-            self(**kargs) 
+            self(**kargs)
 
     def __call__(self,*args,**kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
@@ -136,9 +137,9 @@ class _setas(object):
         else:
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
-    
-    
-    
+
+
+
     def __getitem__(self,name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
 
@@ -170,7 +171,7 @@ class _setas(object):
         if len(ret)==1:
             ret=ret[0]
         return ret
-    
+
     def __setitem__(self,name,value):
         """Allow setting of the setas variable like a dictionary or a list.
 
@@ -209,7 +210,7 @@ class _setas(object):
         """Indexes the column headers in order to locate a column of data.shape.
 
         Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
-        
+
         -   Integer indices are simply checked to ensure that they are in range
         -   String indices are first checked for an exact match against a column header
             if that fails they are then compiled to a regular expression and the first
@@ -1046,7 +1047,7 @@ class DataFile(object):
         Returns:
             iem in self.metadata"""
         return item in self.metadata
-        
+
     def __delitem__(self,item):
         """Implements row or metadata deletion.
 
@@ -1239,8 +1240,8 @@ class DataFile(object):
 
     def __getattr__column_headers(self):
         """Pass through to the setas attribute."""
-        return self._setas.column_headers        
-        
+        return self._setas.column_headers
+
     def _getattr_dict_records(self):
         """Return the data as a dictionary of single columns with column headers for the keys.
         """
@@ -1466,13 +1467,13 @@ class DataFile(object):
         TODO:
             Make code work better with streams
         """
-        newdata=self.__class__()
+        newdata=DataFile()
         if isinstance(other, str):
             lines=itertools.imap(lambda x:x,  other.splitlines())
             newdata.__read_iterable(lines)
         elif isinstance(other, Iterable):
             newdata.__read_iterable(other)
-        return newdata
+        return self.__class__(newdata)
 
     def __meta__(self, ky):
         """Returns specific items of  metadata.
@@ -1525,7 +1526,7 @@ class DataFile(object):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
 
         if "next" in dir(reader):
-            readline=next(reader)
+            readline=reader.next
         elif "readline" in dir(reader):
             readline=reader.readline
         else:
@@ -1539,6 +1540,7 @@ class DataFile(object):
             raise RuntimeError("Not a TDI File")
         col_headers_tmp=[x.strip() for x in row[1:]]
         cols=len(col_headers_tmp)
+        self._setas=_setas("."*cols)
         self.data=_ma_.masked_array([])
         for r in reader:
             if r.strip()=="": # Blank line
@@ -1661,7 +1663,7 @@ class DataFile(object):
               "T":self.__setattr_T,
               "setas":self.__setattr_setas,
               "column_headers":self.__setattr_column_headers}
-              
+
         if name in easy:
             easy[name](value)
         elif len(name)==1 and name in "xyzuvwdef" and len(self.setas[name])!=0:
@@ -1675,16 +1677,16 @@ class DataFile(object):
             self._set_mask(value, invert=False)
         else:
             self.data.mask=value
-        
+
     def __setattr_data(self,value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
         self.__dict__["data"]=_ma_.masked_array(value)
         self._setas.shape=self.__dict__["data"].shape
-    
+
     def __setattr_T(self,value):
         """Write directly to the transposed data."""
         self.data.T=value
-        
+
     def __setattr_setas(self,value):
         """Sets a new setas assignment by calling the setas object."""
         self._setas(value)
@@ -1692,17 +1694,17 @@ class DataFile(object):
     def __setattr_column_headers(self,value):
         """Write the column_headers attribute (delagated to the setas object)."""
         self._setas.column_headers=value
-            
+
     def __setattr_col(self,name,value):
         """Attempts to either assign data columns if set up, or setas setting.
-        
+
         Args:
             name (length 1 string): Column type to work with (one of x,y,z,u,v,w,d,e or f)
             value (nd array or column index): If an ndarray and the column type corresponding to *name* is set up,
                 then overwrite the column(s) of data with this new data. If an index type, then set the corresponding setas
                 assignment to these columns.
         """
-        
+
         if isinstance(value,_np_.ndarray):
             value=_np_.atleast_2d(value)
             if value.shape[0]==self.data.shape[0]:
@@ -1766,7 +1768,7 @@ class DataFile(object):
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
-    
+
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
 
@@ -1952,7 +1954,7 @@ class DataFile(object):
         Args:
             col (list,slice,int,string, re or None): Column containg values to search for.
             val (float or callable): Specifies rows to delete. Maybe:
-            
+
                 - None - in which case the *col* argument is used to identify rows to be deleted,
                 - a float in which case rows whose columncol = val are deleted
                 - or a function - in which case rows where the function evaluates to be true are deleted.
@@ -2054,7 +2056,7 @@ class DataFile(object):
         """Indexes the column headers in order to locate a column of data.shape.
 
         Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
-        
+
         -   Integer indices are simply checked to ensure that they are in range
         -   String indices are first checked for an exact match against a column header
             if that fails they are then compiled to a regular expression and the first
