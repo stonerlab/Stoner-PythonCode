@@ -15,6 +15,7 @@ import csv
 import numpy as _np_
 import numpy.ma as _ma_
 import copy
+import os.path as path
 import inspect as _inspect_
 import itertools
 from collections import Iterable,OrderedDict
@@ -812,10 +813,7 @@ class DataFile(object):
         arg=args[0]
         if (isinstance(arg, string_types) or (isinstance(arg, bool) and not arg)):
                                     # Filename- load datafile
-            t = self.load(filename=arg, **kargs)
-            self.data = _ma_.masked_array(t.data)
-            self.metadata = t.metadata
-            self.column_headers = t.column_headers
+            self.load(filename=arg, **kargs)
         elif isinstance(arg, _np_.ndarray):
                                                 # numpy.array - set data
             self.data = _ma_.masked_array(arg)
@@ -2158,6 +2156,9 @@ class DataFile(object):
             filename = self.__file_dialog('r')
         else:
             self.filename = filename
+
+        if not path.exists(self.filename):
+            raise IOError("Cannot find {} to load".format(self.filename))
         cls=self.__class__
         failed=True
         if auto_load: # We're going to try every subclass we can
@@ -2175,7 +2176,7 @@ class DataFile(object):
                 except Exception as e:
                     continue
             else:
-                raise RuntimeError("Ran out of subclasses to try and load as.")
+                raise IOError("Ran out of subclasses to try and load as.")
         else:
             if filetype is None:
                 test=cls()

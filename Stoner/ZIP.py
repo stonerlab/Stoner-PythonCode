@@ -27,12 +27,15 @@ import os.path as path
 def test_is_zip(filename,member=""):
     """Recursively searches for a zipfile in the tree."""
     if not filename or filename=="":
-        return None
+        return False
     elif zf.is_zipfile(filename):
         return filename,member
     else:
         part=path.basename(filename)
         newfile=path.dirname(filename)
+        if newfile==filename: #reached the end of the line
+            part=filename
+            newfile=""
         if member!="":
             newmember=path.join(part,member)
         else:
@@ -157,13 +160,13 @@ class ZipFile(DataFile):
             else: # Path doesn't exist, use extension of file part to find where the zip file should be
                 parts=path.split(filename)
                 for i,part in enumerate(parts):
-                    if path.splitext(part)[1]=="zip":
+                    if path.splitext(part)[1].lower()==".zip":
                         break
                 else:
                     raise IOError("Can't figure out where the zip file is in {}".format(filename))
-                zipfile=zf.ZipExtFile(path.join(parts[:i+1]),"w")
+                zipfile=zf.ZipExtFile(path.join(*parts[:i+1]),"w")
                 close_me=True
-                member=path.join(parts[i+1:])
+                member=path.join(*parts[i+1:])
         elif isinstance(filename,zf.ZipFile): #Handle\ zipfile instance, opening if necessary
             if not filename.fp:
                 filename=zf.ZipFile(filename.filename,'a')
@@ -178,8 +181,6 @@ class ZipFile(DataFile):
                 member=zipfile.listname()[1]
             else:
                 member="DataFile.txt"
-
-        print zipfile,member
 
         zipfile.writestr(member,str(self))
         if close_me:
@@ -198,6 +199,15 @@ class ZipFolder(DataFolder):
         """
         self.File=None
         self.type=ZipFile
+
+        if len(args)>1:
+            if isinstance(args[0],string_types) and zf.is_zipfile(args[0]):
+                this.File=zf.ZipFile(args[0],"a")
+            elif isinstance(args[0],zf.ZipFile):
+                if args[0].fp:
+                    this.File=args[0]
+                else:
+                    this.File=zf.ZipFile(args[0].filename,"a")
 
         super(ZipFolder,self).__init__(*args,**kargs)
 
@@ -226,7 +236,7 @@ class ZipFolder(DataFolder):
         dlg.open()
         if dlg.return_code == OK:
             self.directory = dlg.path
-            self.File=h5py.File(self.directory,mode)
+            self.File=zf.ZipFile(self.directory,mode)
             self.File.close()
             return self.directory
         else:
@@ -260,10 +270,14 @@ class ZipFolder(DataFolder):
                 self.File=zf.ZipFile(directory,"a")
                 close_me=True
             self.directory=self.File.filename
+        elif isinstance(directory,string_types) and path.isdir(directory): #Fall back to DataFolder
+            return super(ZipFolder,self).getlist(recursive, directory,flatten)
         else:
             raise IOError("{} does not appear to be zip file!".format(directory))
         #At this point directory contains an open h5py.File object, or possibly a group
         self.files=directory.namelist()
+        if close_me:
+            directory.close()
         return self
 
 
@@ -274,7 +288,11 @@ class ZipFolder(DataFolder):
             f=tmp.filename
         elif isinstance(f,string_types): #This sis a string, so see if it maps to a path in the current File
             if isinstance(self.File,zf.ZipFile) and f in self.File.namelist():
-                tmp=ZipFile(self.File,f)
+                if not self.File.fp:
+                    with zf.ZipFile(self.File.filename,"r") as z:
+                        tmp=ZipFile(z,f)
+                else:
+                    tmp=ZipFile(self.File,f)
             else: # Otherwise fallback and try to laod from disc
                 tmp= super(ZipFolder,self).__read__(f)
         else:
@@ -309,7 +327,7 @@ class ZipFolder(DataFolder):
             self.File.close()
         self.File=zf.ZipFile(root,'a')
         tmp=self.walk_groups(self._save)
-        self.File.file.close()
+        self.File.close()
         return tmp
 
     def _save(self,f,trail):
@@ -332,8 +350,8 @@ class ZipFolder(DataFolder):
         if not isinstance(f,DataFile):
             f=DataFile(f)
         member=path.join(self.File.filename,*trail)
-        member=path.join(member,f.filename)
-        f=HDF5File(f)
+        member=path.abspath(path.join(member,f.filename))
+        f=ZipFile(f)
         f.save(member)
         return f.filename
 
