@@ -425,7 +425,7 @@ class FluchsSondheimer(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def _bgintegrand(x,n):
-    return x**n/(_np_.sinh(x))
+    return x**n/((_np_.exp(x)-1)(1-_np_.exp(-x)))
 
 def blochGrueneisen(T,thetaD,rho0,A,n):
     """BlochGrueneiseen Function for fitting R(T).
@@ -441,8 +441,8 @@ def blochGrueneisen(T,thetaD,rho0,A,n):
         Evaluation of the BlochGrueneisen function for R(T)"""
     ret=_np_.zeros(T.shape)
     for i,t in enumerate(T):
-        intg=quad(_bgintegrand,0,thetaD/(2*t),(n,))[0]
-        ret[i]=rho0+A*(t/thetaD)**n*intg
+        intg=quad(_bgintegrand,0,thetaD/(t),(n,))[0]
+        ret[i]=rho0+A*(t/thetaD)**n*intg/thetaD
     return ret
 
 class BlochGrueneisen(Model):
@@ -458,12 +458,72 @@ class BlochGrueneisen(Model):
     Returns:
         Evaluation of the BlochGrueneisen function for R(T)"""
     def __init__(self, *args, **kwargs):
-        super(BlochGrueneiseen, self).__init__(blochGrueneisen, *args, **kwargs)
+        super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
 
     def guess(self, data, t=None, **kwargs):
         """Guess some starting values - not very clever"""
         pars = self.make_params(thetaD=900,rho0=0.01,A=0.2,n=5.0)
         return update_param_vals(pars, self.prefix, **kwargs)
+        
+def langevin(H,M_s,m,T):
+    """"The Langevin function for paramagnetic M-H loops/
+    
+    Args:
+        H (array): The applied magnetic field
+        M_s (float): Saturation magnetisation
+        m (float) is the moment of a cluster
+        T (float): Temperature
+        
+    Rerturns:
+        Magnetic Momemnts (array).
+        
+    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$
+    """
+    from scipy.constants import k,mu_0
+    
+    x=mu_0*m*H/(k*T)
+    return M_s*_np_.coth(x)-1.0/x
+    
+class Langevin(Model):
+    """"The Langevin function for paramagnetic M-H loops/
+    
+    Args:
+        H (array): The applied magnetic field
+        M_s (float): Saturation magnetisation
+        m (float): is the moment of a single cluster
+        T (float): Temperature
+        
+    Rerturns:
+        Magnetic Momemnts (array).
+        
+    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$
+    """
+    def __init__(self, *args, **kwargs):
+        super(Langevin, self).__init__(langevin, *args, **kwargs)
+
+    def guess(self, data, h=None, **kwargs):
+        """Guess some starting values.
+        
+        M_s is taken as half the difference of the range of thew M data, 
+        we can find m/T from the susceptibility chi= M_s \mu_o m / kT,"""
+        M_s=(_np_.max(data)-_np_.min(data))/2.0
+        if h is not None:
+            from scipy.signal import savgol_filter
+            from scipy.constants import k,mu_0,e,electron_mass,hbar            
+            d=_np_.sort(_np_.row_stack((h,data)))
+            dd=savgol_filter(d,7,1)
+            yd=dd[1]/dd[0]
+            chi=_np_.interp(_np_.array([0]),d[0],yd)[0]
+            mT=chi/M_s*(k/mu_0)
+            #Assume T=150K for no good reason
+            m=mT*150
+        else:
+            m=1E6*(e*hbar)/(2*electron_mass) # guess 1 million Bohr Magnetrons
+        T=150
+        pars = self.make_params(M_s=M_s,m=m,T=T)
+        return update_param_vals(pars, self.prefix, **kwargs)
+        
+   
 
 
 

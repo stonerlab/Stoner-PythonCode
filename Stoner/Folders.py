@@ -61,9 +61,10 @@ class DataFolder(object):
     """
     def __init__(self, *args, **kargs):
         self.directory=None
-        self.flatten=False
         self.files=[]
+        self.flat=False
         self.read_means=False
+        self.recursive=True
         self.groups={}
         self._file_attrs=dict()
         if not "type" in kargs:
@@ -102,7 +103,6 @@ class DataFolder(object):
             del kargs["extra_args"]
         else:
             self.extra_args=dict()
-        self.recursive=self.multifile
         for v in kargs:
             self.__setattr__(v,kargs[v])
         if self.directory is None:
@@ -667,7 +667,7 @@ class DataFolder(object):
         if recursive is None:
             recursive=self.recursive
         if flatten is None:
-            flatten=self.flatten
+            flatten=self.flat
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):
@@ -843,7 +843,29 @@ class DataFolder(object):
             self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
         return self
 
-
+    def unflatten(self):
+        """Takes a file list an unflattens them according to the file paths.
+        
+        Returns:
+            A copy of the DataFolder
+        """
+        self.directory=path.commonprefix(self.ls)
+        if self.directory[-1]!=path.sep:
+            self.directory=path.dirname(self.directory)
+        relpaths=[path.relpath(f,self.directory) for f in self.ls]
+        dels=list()
+        for i,f in enumerate(relpaths):
+            grp=path.split(f)[0]
+            print f,grp
+            if grp!=f and grp!="":
+                self.add_group(grp)
+                self.groups[grp]+=self[i]
+                dels.append(i)
+        for i in sorted(dels,reverse=True):
+            del self[i]
+        for g in self.groups:
+            self.groups[g].unflatten()           
+    
     def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
         """Walks through a heirarchy of groups and calls walker for each file.
 

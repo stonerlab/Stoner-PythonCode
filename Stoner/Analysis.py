@@ -11,6 +11,7 @@ import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
+from scipy.signal import savgol_filter
 from inspect import getargspec
 from collections import Iterable
 from lmfit.model import Model,ModelFit
@@ -71,86 +72,27 @@ class AnalyseFile(DataFile):
         Notes:
             If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
-            for differentiating data.
+            for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
         """
         from Stoner.Util import ordinal
         if col is None:
             cols=self.setas._get_cols()
             col=(cols["xcol"],cols["ycols"][0])
-        p=points
-        if isinstance(col, tuple):
-            x=self.column(col[0])
-            x=_np_.append(_np_.array([x[0]]*p), x)
-            x=_np_.append(x, _np_.array([x[-1]]*p))
-            y=self.column(col[1])
-            y=_np_.append(_np_.array([y[0]]*p), y)
-            y=_np_.append(y, _np_.array([y[-1]]*p))
-            dx=self.__SG_smooth(x, self.__SG_calc_coeff(points, poly, order))
-            dy=self.__SG_smooth(y, self.__SG_calc_coeff(points, poly, order))
-            r=dy/dx
+        if isinstance(col, (list,tuple)):
+            data=self.column(list(col)).T
+            ddata=savgol_filter(data,window_length=points,polyorder=poly,deriv=order,mode="interp")
+            r=ddata[1:]/ddata[0]
         else:
-            d=self.column(col)
-            d=_np_.append(_np_.array([d[0]]*p),d)
-            d=_np_.append(d, _np_.array([d[-1]]*p))
-            r=self.__SG_smooth(d, self.__SG_calc_coeff(points, poly, order))
+            data=self.column(col)
+            r=savgol_filter(data,window_length=points,polyorder=poly,deriv=order,mode="interp")
         if result is not None:
             if not isinstance(header, string_types):
                 header='{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],ordinal(order))
             if isinstance(result, bool) and result:
                 result=self.shape[1]-1
-                self.add_column()
+            self.add_column(r,header,index=result,replace=replace)
 
-        return r[p:-p]
-
-
-    def __SG_calc_coeff(self, num_points, pol_degree=1, diff_order=0):
-        """ calculates filter coefficients for symmetric savitzky-golay filter.
-            see: http://www.nrbook.com/a/bookcpdf/c14-8.pdf
-
-        ArgsL
-            num_points (int): Number of points to use in filter
-            poll_degree (int): Order of polynomial to use in the filter - defaults to linear
-            diff_order (int): Order of differential to find - defaults to 0 which is just a smoothing operation
-
-        Returns:
-            A 1D array to convolve with the data
-
-        Note:
-            num_points   means that 2*num_points+1 values contribute to the smoother.
-        """
-
-        # setup interpolation matrix
-        # ... you might use other interpolation points
-        # and maybe other functions than monomials ....
-
-        x = _np_.arange(-num_points, num_points+1, dtype=int)
-
-        A = _np_.zeros((2*num_points+1, pol_degree+1), float)
-        for i in range(2*num_points+1):
-            for j in range(pol_degree+1):
-                A[i,j] = x[i]**j
-
-        # calculate diff_order-th row of inv(A^T A)
-        ATA = _np_.dot(A.transpose(), A)
-        rhs = _np_.zeros((pol_degree+1,), float)
-        rhs[diff_order] = (-1)**diff_order
-        wvec = _np_.linalg.solve(ATA, rhs)
-
-        # calculate filter-coefficients
-        coeff = _np_.dot(A, wvec)
-
-        return coeff
-
-
-    def __SG_smooth(self, signal, coeff):
-        """ applies coefficients calculated by calc_coeff() to signal
-
-        Really just a pass through to numpy convolve
-        """
-
-        N = _np_.size(coeff-1)/2
-        res = _np_.convolve(signal, coeff)
-        return res[N:-N]
+        return r
 
 
     def __get_math_val(self,col):
