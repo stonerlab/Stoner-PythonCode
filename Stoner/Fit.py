@@ -425,7 +425,7 @@ class FluchsSondheimer(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def _bgintegrand(x,n):
-    return x**n/((_np_.exp(x)-1)(1-_np_.exp(-x)))
+    return x**n/((_np_.exp(x)-1)*(1-_np_.exp(-x)))
 
 def blochGrueneisen(T,thetaD,rho0,A,n):
     """BlochGrueneiseen Function for fitting R(T).
@@ -442,7 +442,7 @@ def blochGrueneisen(T,thetaD,rho0,A,n):
     ret=_np_.zeros(T.shape)
     for i,t in enumerate(T):
         intg=quad(_bgintegrand,0,thetaD/(t),(n,))[0]
-        ret[i]=rho0+A*(t/thetaD)**n*intg/thetaD
+        ret[i]=rho0+A*(t/thetaD)**n*intg
     return ret
 
 class BlochGrueneisen(Model):
