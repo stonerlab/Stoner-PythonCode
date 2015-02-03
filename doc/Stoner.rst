@@ -143,11 +143,37 @@ Facility Outputs
     HDF5File
     HDF5Folder
 
+:mod:`ZIP` Module
+=========================
+
+.. module:: Stoner.ZIP
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    ZipFile
+    ZipFolder
+
+
 :mod:`Util` Module
 ==================
 
-.. automodule:: Stoner.Util
-   :members:
+.. module:: Stoner.Util
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    Data
+
+.. autosummary::
+    :toctree: functions
+    
+    format_error
+    hysteresis_correct
+    ordinal
+    split_up_down
 
 
 :mod:`mpfit` Module

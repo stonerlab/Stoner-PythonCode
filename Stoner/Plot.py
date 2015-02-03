@@ -28,7 +28,7 @@ import copy
 from collections import Iterable
 
 class PlotFile(DataFile):
-    """Extends DataFile with plotting functions
+    """Extends DataFile with plotting functions.
 
     Args:
         args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
@@ -54,7 +54,7 @@ class PlotFile(DataFile):
     no_fmt=[errorfill]
 
     def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
-        """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor
+        """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor.
 
         """
         if "template" in kargs: #Setup the template
@@ -100,7 +100,7 @@ class PlotFile(DataFile):
             self._template.customise_axes(ax)
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
-        """Utility private function to plot a 3D color mapped surface
+        """Utility private function to plot a 3D color mapped surface.
 
         Args:
             X data
@@ -120,7 +120,7 @@ class PlotFile(DataFile):
         return surf
 
     def _VectorFieldPlot(self,X,Y,Z,U,V,W,**kargs):
-        """Helper function to plot vector fields using mayavi.mlab
+        """Helper function to plot vector fields using mayavi.mlab.
 
         Args:
             X (array): X data co-ordinates
@@ -180,7 +180,7 @@ class PlotFile(DataFile):
 
 
     def __dir__(self):
-        """Handles the local attributes as well as the inherited ones"""
+        """Handles the local attributes as well as the inherited ones."""
         attr=dir(type(self))
         attr.extend(super(PlotFile,self).__dir__())
         attr.extend(list(self.__dict__.keys()))
@@ -215,7 +215,7 @@ class PlotFile(DataFile):
         return _attribute_store(kargs)
 
     def _fix_fig(self,figure):
-        """Sorts out the matplotlib figure handling"""
+        """Sorts out the matplotlib figure handling."""
         if isinstance(figure, int):
             figure=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
@@ -230,9 +230,10 @@ class PlotFile(DataFile):
 
 
     def _fix_kargs(self,function=None, defaults=None,otherkargs=None,**kargs):
-        """Fix parameters to the plotting function to provide defaults and no extransous arguments
+        """Fix parameters to the plotting function to provide defaults and no extransous arguments.
 
-        Returns dictionary of correct arguments, dictionary of all arguments"""
+        Returns:
+            dictionary of correct arguments, dictionary of all arguments"""
         if defaults is None:
             defaults=dict()
         defaults.update(kargs)
@@ -262,7 +263,7 @@ class PlotFile(DataFile):
             pyplot.savefig(str(nonkargs["save_filename"]))
 
     def __getattr__(self, name):
-        """Attribute accessor
+        """Attribute accessor.
 
         Args:
             name (string):  Name of attribute the following attributes are supported:
@@ -319,7 +320,7 @@ class PlotFile(DataFile):
         return ret
 
     def __setattr__(self, name, value):
-        """Sets the specified attribute
+        """Sets the specified attribute.
 
         Args:
             name (string): The name of the attribute to set. The cuirrent attributes are supported:
@@ -371,7 +372,7 @@ class PlotFile(DataFile):
 
 
     def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
-        """An xyz plot that forces the use of pyplot.contour
+        """An xyz plot that forces the use of pyplot.contour.
 
         Args:
             xcol (index): Xcolumn index or label
@@ -397,7 +398,7 @@ class PlotFile(DataFile):
         return self.plot_xyz(xcol,ycol,zcol,shape,xlim,ylim,**kargs)
 
     def figure(self, figure=None):
-        """Set the figure used by :py:class:`Stoner.Plot.PlotFile`
+        """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
 
         Args:
             figure A matplotlib figure or figure number
@@ -414,7 +415,7 @@ class PlotFile(DataFile):
         return self
 
     def griddata(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None,ylim=None,method="linear",**kargs):
-        """Function to convert xyz data onto a regular grid
+        """Function to convert xyz data onto a regular grid.
 
             Args:
             xcol (index): Column to be used for the X-Data
@@ -482,7 +483,7 @@ class PlotFile(DataFile):
         return np[:,:,0],np[:,:,1],Z
 
     def image_plot(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None,**kargs):
-        """Grid up the three columns of data and plot
+        """Grid up the three columns of data and plot.
 
         Args:
             xcol (index): Column to be used for the X-Data
@@ -538,7 +539,7 @@ class PlotFile(DataFile):
         return fig
 
     def inset(self,parent=None,loc=None,width=0.35, height=0.30,**kargs):
-        """Add a new set of axes as an inset to the current plot
+        """Add a new set of axes as an inset to the current plot.
 
         Keyword Arguments:
             parent (matplotlib axes): Which set of axes to add inset to, defaults to the current set
@@ -808,7 +809,7 @@ class PlotFile(DataFile):
         return self.__figure
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,  **kargs):
-        """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor()
+        """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
 
             Args:
                 xcol (index): Xcolumn index or label
@@ -902,7 +903,7 @@ class PlotFile(DataFile):
         return fig
 
     def plot_xyzuvw(self, xcol=None, ycol=None, zcol=None, ucol=None,vcol=None,wcol=None,  **kargs):
-        """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi
+        """Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.
 
             Args:
                 xcol (index): Xcolumn index or label
@@ -972,7 +973,7 @@ class PlotFile(DataFile):
         return self.__figure
 
     def quiver_plot(self,xcol=None,ycol=None,ucol=None,vcol=None,**kargs):
-        """Make a 2D Quiver plot from the data
+        """Make a 2D Quiver plot from the data.
 
         Args:
             xcol (index): Xcolumn index or label
@@ -1025,7 +1026,7 @@ class PlotFile(DataFile):
 
 
     def subplot(self,*args,**kargs):
-        """Pass throuygh for pyplot.subplot()
+        """Pass throuygh for pyplot.subplot().
 
         Args:
             rows (int): If this is the only argument, then a three digit number representing
@@ -1056,7 +1057,7 @@ class PlotFile(DataFile):
         return sp
 
 def hsl2rgb(h,s,l):
-    """Converts from hsl colourspace to rgb colour space with numpy arrays for speed
+    """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
 
     Args:
         h (array): Hue value

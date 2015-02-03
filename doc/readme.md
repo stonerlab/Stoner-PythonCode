@@ -100,6 +100,12 @@ v3
 Recent Changes
 ==============
 
+Version 0.3.0
+-------------
+
+Refactorise the setas attribute again to remove circular references. Get
+writing to the setas column attributes working.
+
 Version 0.2.5
 -------------
 
