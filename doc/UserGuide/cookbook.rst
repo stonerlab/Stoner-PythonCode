@@ -70,6 +70,28 @@ Some of these parameters are determined by fitting a straight line to the outer 
 extrema in H). The keyword parameter *saturation_fraction* controls the extent of the data assumed to be saturated.
 
 
+Formatting Error Values
+-----------------------
+
+In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
+a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
+might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the :py:mod:`Stoner.Util` module
+provides the :py:func:`Stoner.Util.format_error` function.::
+
+    from Stoner.Util import format_error
+    from scipy.constants import hbar,m_e,m_u
+    print format_error(value,error)
+    print format_error(m_e,hbar,latex=True)
+    print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng")
+    print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng",units="Js rads^{-1}kg^{-1})
+
+THe simplest form just outputs value+/- error with suitable rounding. Adding the *latex* keyword argument wraps the output in
+$...$ and replaces +/- with the equivalent latex math symbol. The *mode* argument can be *eng*,*sci* or *float*(default). The first
+uses SI prefixes in presenting the number, the second uses mantissa-exponent notation (or x10^{exponent} in latex mode). The third, 
+default, option does no particular scaling. Finally the units keyword allows the inclusion of the units for the quantity in the string
+ - particularly useful in combination with the *eng* mode.
+
+
 Other Recipies
 ==============
 
