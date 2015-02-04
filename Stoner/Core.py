@@ -1180,8 +1180,9 @@ class DataFile(object):
         """
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
-        c._setas=_setas(c)
-        c._setas(list(self.setas))
+        c._setas=_setas()
+        c.column_headers=self.column_headers
+        c.setas(list(self.setas))
         for attr in self.__dict__:
             if attr not in ("metadata","data","column_headers") and not callable(self.__dict__[attr]):
                 c.__dict__[attr]=self.__dict__[attr]
