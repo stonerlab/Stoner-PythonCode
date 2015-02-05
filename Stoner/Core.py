@@ -2319,7 +2319,7 @@ class DataFile(object):
         else:
             columns=self.find_col(columns)
             if not isinstance(columns,list):
-                data=self.data[ix,clumns]
+                data=self.data[ix,columns]
             else:
                 data=self.data[ix,columns[0]]
                 for c in columns[1:]:
