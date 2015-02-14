@@ -197,7 +197,8 @@ class DefaultPlotStyle(object):
             if attr.startswith("template_"):
                 attrname=attr[9:].replace("_",".").replace("..","_")
                 value=self.__getattribute__(attr)
-                params[attrname]=value
+                if attrname in plt.rcParams.keys():
+                    params[attrname]=value
         plt.rcdefaults() #Reset to defaults
         plt.rcParams.update(params) # Apply these parameters
 
