@@ -289,16 +289,6 @@ class DataFolder(object):
             return self.groups[i]
 
 
-    def __iter__(self):
-        """Returns the files iterator object
-
-        Returns:
-            self.files.__iter__"""
-        for f in self.files:
-            tmp=self.__read__(f)
-            yield tmp
-
-
     def __len__(self):
         """Pass through to return the length of the files array
 
@@ -306,6 +296,14 @@ class DataFolder(object):
             len(self.files)"""
         return len(self.files)
 
+
+    def __next__(self):
+        for i in range(len(self.files)):
+            yield self[i]
+            
+    def next(elf):
+        for i in range(len(self.files)):
+            yield self[i]
 
     def __read__(self,f):
         """Reads a single filename in and creates an instance of DataFile.
