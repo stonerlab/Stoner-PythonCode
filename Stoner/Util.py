@@ -39,6 +39,8 @@ def split_up_down(data,col=None,folder=None):
         col=data.setas["x"]
     a=_AF_(data)
     width=len(a)/10
+    if width%2==0: # Ensure the window for Satvisky Golay filter is odd
+        width+=1
     peaks=list(a.peaks(col,width,peaks=True,troughs=False))
     troughs=list(a.peaks(col,width,peaks=False,troughs=True))
     if len(peaks)>0 and len(troughs)>0: #Ok more than up down here
