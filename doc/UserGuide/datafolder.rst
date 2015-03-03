@@ -249,6 +249,16 @@ x and y columns are determined by the values from the :py:attr:`Stoner.Core.Data
 (you can set the value of this attribute for all files in the :py:class:`DataFolder` by setting the 
 :py:attr:`DataFolder.setas` attribute.)
 
+A similar operation to :py:meth:`DataFolder.gather` is to build a new set of data where each row corresponds
+to a set of metadata values from each file in the :py:class:`DataFolder`. This can be achieved with the
+:py:meth:`DataFolder.extract` method.::
+
+    f.extract(["Temperature","Angle","Other_metadata"])
+
+The argument to the :py:meth:`DataFolder.extract` method is a list of metadata values to be extracted from each file. The
+metadata should be convertable to an array type so that it can be included in the final result matrix. Any metadata that doesn't
+appear to be so convertible in the first file in the ;py:class:`DataFolder` is ignored. The column headings of the final results
+table are the names of the metadata that were used in the extraction.
 
 One task you might want to do would be to work through all the groups in a :py:class:`DataFolder` 
 and run some function either with each file in the group or on the whole group. This is further 

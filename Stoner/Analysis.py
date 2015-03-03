@@ -75,6 +75,8 @@ class AnalyseFile(DataFile):
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
         """
         from Stoner.Util import ordinal
+        if points % 2 ==0: #Ensure window length is odd
+                points+=1
         if col is None:
             cols=self.setas._get_cols()
             col=(cols["xcol"],cols["ycols"][0])

@@ -48,6 +48,7 @@ class DataFolder(object):
         pattern (string or re): A filename pattern - either globbing string or regular expression
         nolist (bool): Delay doing a directory scan to get data files
         multifile (bool): if True brings up a dialog for selecting files from a directory.
+        read_means (bool): Calculate the average value of each column and add it as metadata entries to the file.
 
     Returns:
         The newly constructed instance
@@ -270,6 +271,7 @@ class DataFolder(object):
         if isinstance(i,int):
             files=self.files[i]
             tmp=self.__read__(files)
+            self.files[i]=tmp
             return tmp
         elif isinstance(i, string_types): # Ok we've done a DataFolder['filename']
             try:
@@ -287,16 +289,6 @@ class DataFolder(object):
             return self.groups[i]
 
 
-    def __iter__(self):
-        """Returns the files iterator object
-
-        Returns:
-            self.files.__iter__"""
-        for f in self.files:
-            tmp=self.__read__(f)
-            yield tmp
-
-
     def __len__(self):
         """Pass through to return the length of the files array
 
@@ -304,6 +296,14 @@ class DataFolder(object):
             len(self.files)"""
         return len(self.files)
 
+
+    def __next__(self):
+        for i in range(len(self.files)):
+            yield self[i]
+            
+    def next(elf):
+        for i in range(len(self.files)):
+            yield self[i]
 
     def __read__(self,f):
         """Reads a single filename in and creates an instance of DataFile.
@@ -356,6 +356,50 @@ class DataFolder(object):
         if name in dir(DataFile()):
             self._file_attrs[name]=value
         super(DataFolder,self).__setattr__(name,value)
+        
+    def __setitem__(self,name,value):
+        """Set a DataFile or DataFolder backinto the DataFolder.
+        
+        Args:
+            name (int or string): The index of the DataFile or Folder to be replaced.
+            value (DataFile or DataFolder): The data to be stored
+            
+        Returns:
+            None
+            
+        The method operates in two modes, depending on whether the supplied value is a :py:class:`Stoner.Core.DataFile` or :py:class:`DataFolder`.
+        
+        If the value is a :py:class:`Stoner.Core.DataFile`, then the corresponding entry in the files attriobute
+        is written. The name in this case may be either a string or an integer. In the former case, the string is compared
+        to the :py:attr:`DataFolder.ls`  list of filenames and then to the :py:attr:`DataFolder.basenames` attroibute to
+        determine which entry should be replaced. If there is no match, then the new DataFile is imply appended after its 
+        :py:attr:`Stopner.Core.DataFile.filename` attribute is et to the name parameter. If name is an integer then it is used
+        simply as a numerioc index into the :py:attr:`DataFolder.files` atttribute.
+
+        If the value is a :py:class:`Stoner.Core.DataFolder`, then the name must be a string and is used to index into the
+        :py:attr:`DataFolder.groups`.        
+        """
+        if not isinstance(value,(DataFolder,DataFile)):
+            raise TypError("Can only store DataFile like objects and DataFolders in a DataFolder")
+        if isinstance(value,DataFile):
+            if isinstance(name,int):
+                self.files[name]=value
+            elif isinstance(name,string_types):
+                if name in self.ls:
+                    self.files[self.ls.index(name)]
+                elif name in self.basenames:
+                    self.files[self.basenames.index(name)]
+                else:
+                    value.filename=name
+                    self.files.append(value)
+            else:
+                raise KeyError("Cannot workout how to use {} as a key".format(name))
+        elif isinstance(value,DataFolder):
+            if isinstance(name,string_types):
+                self.groups[name]=value
+            else:
+                raise KeyError("Cannot use {} to index a group".format(name))
+                    
 
     def __sub__(self,other):
         """Implements a subtraction operator."""
@@ -509,6 +553,41 @@ class DataFolder(object):
 
         return self
 
+    def extract(self,metadata):
+        """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.
+        
+        Args:
+            metadata (list): List of metadata indices that should be used to construct the new data file.
+            
+        Returns:
+            An instance of a DataFile like object.
+        """
+        
+        def _extractor(group,trail,metadata):
+
+            results=group.type()
+            results.metadata=group[0].metadata
+
+            ok_data=list
+            for m in metadata: # Sanity check the metadata to include
+                try:
+                    test=_np_.array(results[m])
+                except:
+                    continue
+                else:
+                    ok_data.append(m)
+                    results.column_headers.extend([m]*len(test))
+            
+            row=_np_.array([])
+            for d in group:
+                for m in ok_data:
+                    row=_np_.append(row,_np_array(d[m]))
+                results+=row
+                
+            return results
+            
+        return self.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
+               
     def filter(self, filter=None,  invert=False):
         """Filter the current set of files by some criterion
 
