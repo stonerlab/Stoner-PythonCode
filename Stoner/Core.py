@@ -1443,7 +1443,7 @@ class DataFile(object):
             self.data=_np_.atleast_2d(_np_.array([]))
         if len(self.data.shape)>=2 and self.data.shape[1]>0:
             self.column_headers=["Column "+str(i) for i in range(self.data.shape[1])]
-            for i in range(len(col_headers_tmp)):
+            for i in range(min(len(self.column_headers),len(col_headers_tmp))):
                 self.column_headers[i]=col_headers_tmp[i]
 
 
@@ -2267,7 +2267,7 @@ class DataFile(object):
             # now go and ask for one
             filename = self.__file_dialog('w')
         header=["TDI Format 1.5"]
-        header.extend(self.column_headers)
+        header.extend(self.column_headers[:self.data.shape[1]])
         header="\t".join(header)
         mdkeys=sorted(self.metadata)
         if len(mdkeys)>len(self):
