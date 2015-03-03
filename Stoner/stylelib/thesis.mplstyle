@@ -1,0 +1,19 @@
+axes.labelsize:11
+font.size:11
+legend.fontsize:11
+xtick.labelsize:11
+ytick.labelsize:11
+xtick.direction:'in'
+ytick.direction:'in'
+xtick.major.size:8
+ytick.major.size:8
+font.family:"Times"
+xtick.major.pad:5
+ytick.major.pad:5
+lines.linewidth:2
+axes.formatter.limits:-5, 5
+figure.subplot.left:0.15
+figure.subplot.right:0.95
+figure.subplot.bottom:0.2
+figure.subplot.top:0.875
+figure.autolayout:False
