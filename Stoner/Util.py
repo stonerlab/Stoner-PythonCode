@@ -70,7 +70,7 @@ def split_up_down(data,col=None,folder=None):
         output.groups["falling"].files.append(working2)
     return output
 
-def format_error(value,error,latex=False,mode="float",units=""):
+def format_error(value,error,latex=False,mode="float",units="",prefix=""):
     """This handles the printing out of the answer with the uncertaintly to 1sf and the
     value to no more sf's than the uncertainty.
 
@@ -81,6 +81,10 @@ def format_error(value,error,latex=False,mode="float",units=""):
         mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
             to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
             i.e. mantissa and exponent format is used.
+        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+            inside the math-mode markers, but not embedded in \\mathrm.
 
     Returns:
         String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
@@ -92,13 +96,13 @@ def format_error(value,error,latex=False,mode="float",units=""):
         suffix_val=""
     elif mode=="eng": #Use SI prefixes
         v_mag=floor(log10(abs(value))/3.0)*3.0
-        prefix={3:"k",6:"M",9:"G",12:"T",15:"P",18:"E",21:"Z",24:"Y",
+        prefixes={3:"k",6:"M",9:"G",12:"T",15:"P",18:"E",21:"Z",24:"Y",
             -3:"m",-6:"\\mu",-9:"n",-12:"p",-15:"f",-18:"a",-21:"z",-24:"y"}
-        if v_mag in prefix:
+        if v_mag in prefixes:
             if latex:
-                suffix_val=r"\mathrm{{{{{}}}}}".format(prefix[v_mag])
+                suffix_val=r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
             else:
-                suffix_val=prefix[v_mag]
+                suffix_val=prefixes[v_mag]
             value/=10**v_mag
             error/=10**v_mag
         else: # Implies 10^-3<x<10^3
@@ -113,7 +117,7 @@ def format_error(value,error,latex=False,mode="float",units=""):
         error/=10**v_mag
     else: # Bad mode
         raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
-        
+
     # Now do the rounding of the value based on error to 1 s.f.
     e2=error
     u_mag=floor(log10(abs(error))) #work out the scale of the error
@@ -121,15 +125,20 @@ def format_error(value,error,latex=False,mode="float",units=""):
     u_mag=floor(log10(error)) # so go round the loop again
     error=round(e2/10**u_mag)*10**u_mag # and get a new error magnitude
     value=round(value/10**u_mag)*10**u_mag
+    u_mag=min(0,u_mag) # Force integer results to have no dp
+
+    #Protect {} in units string
+    units=units.replace("{","{{").replace("}","}}")
+    prefix=prefix.replace("{","{{").replace("}","}}")
     if latex: # Switch to latex math mode symbols
-        val_fmt_str=r"${{:.{}f}}\pm ".format(int(abs(u_mag)))
+        val_fmt_str=r"${}{{:.{}f}}\pm ".format(prefix,int(abs(u_mag)))
         if units!="":
             suffix_fmt=r"\mathrm{{{{{}}}}}".format(units)
         else:
             suffix_fmt=""
         suffix_fmt+="$"
     else: # Plain text
-        val_fmt_str=r"{{:.{}f}}+/-".format(int(abs(u_mag)))
+        val_fmt_str=r"{}{{:.{}f}}+/-".format(prefix,int(abs(u_mag)))
         suffix_fmt=units
     if u_mag<0: # the error is less than 1, so con strain decimal places
         err_fmt_str=r"{:."+str(int(abs(u_mag)))+"f}"
@@ -140,6 +149,8 @@ def format_error(value,error,latex=False,mode="float",units=""):
         error=int(error)
         value=int(value)
     return fmt_str.format(value,error)
+
+Hickeyify=format_error
 
 def ordinal(value):
     """Format an integer into an ordinal string.

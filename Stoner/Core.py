@@ -233,7 +233,7 @@ class _setas(object):
             The matching column index as an integer or a KeyError
         """
         if isinstance(col, int):  # col is an int so pass on
-            if not 0<=col<self.shape[1]:
+            if not 0<=col<len(self.column_headers):
                 raise IndexError('Attempting to index a non - existant column '+str(col))
         elif isinstance(col, string_types):  # Ok we have a string
             col=str(col)
