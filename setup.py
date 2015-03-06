@@ -17,7 +17,7 @@ setup(
     url = "http://github.com/~gb119/Stoner-PythonCode",
     packages=['Stoner'],
     test_suite="tests",
-    install_requires=["numpy>=1.4","scipy>=0.12","matplotlib>=1.1","h5py","lmfit"],
+    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit"],
     long_description=read('doc/readme.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",

@@ -1,0 +1,29 @@
+axes.labelsize:10
+font.size:10
+xtick.labelsize:10
+ytick.labelsize:10
+xtick.direction:'in'
+ytick.direction:'in'
+xtick.major.size:5
+ytick.major.size:5
+font.family:"Times New Roman"
+xtick.major.pad:2
+ytick.major.pad:2
+lines.linewidth:1
+axes.grid:False
+figure.autolayout:True
+lines.markersize:3
+legend.isaxes       :True
+legend.numpoints    :2      # the number of points in the legend line
+legend.fontsize     :9
+legend.borderpad    :0    # border whitespace in fontsize units
+legend.markerscale  :1.0    # the relative size of legend markers vs. original
+legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
+legend.handlelength :2.     # the length of the legend lines in fraction of fontsize
+legend.handleheight :0.7     # the height of the legend handle in fraction of fontsize
+legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
+legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
+legend.columnspacing:2.    # the border between the axes and legend edge in fraction of fontsize
+legend.shadow       :False
+legend.frameon      :False   # whether or not to draw a frame around legend
+legend.scatterpoints:3 # number of scatter points

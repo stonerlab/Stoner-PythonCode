@@ -11,7 +11,8 @@ from Stoner.compat import *
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter,Formatter
 from matplotlib.ticker import AutoLocator
-import numpy as _np_
+from os.path import join,dirname,realpath
+
 
 import numpy as _np_
 
@@ -86,29 +87,8 @@ class DefaultPlotStyle(object):
         show_zlabel (bool): show the y-xaxis labels
         show_title (bool): show the title
         show_legend (bool): show the legend
-        templat_axes_labelsize (int): Axes Label size
-        template_text_fontsize (int): Text font size
-        template_legend_fontsize (int): Legend font size
-        template_xtick_labelsize (int): X-axis tick label sizes
-        template_ytick_labelsize (int): Y-axis tick label sizes
-        template_xtick_direction ("in", "out", "both"): x-axis tick directions
-        template_ytick_direction ("in", "out", "both"): y-axis tick directions
-        template_xtick_major_size (int): x-axis tick size
-        template_ytick_major_size (int): y-axis tick size
-        template_font_family (string): Font for text
-        template_xtick_major.pad (int): Padding between ticks and labels in x-axis
-        template_ytick_major.pad (int): Padding between ticks and labels in y-axis
-        template_font_size (int): Default font size
-        template_lines_linewidth (int): Line width size
-        template_axes_formatter_limits (tuple): Use scientific notations outside of data=log10(value)
-         template_axes_grid (bool): Show grids on plot
-        template_axes_color__cycle (list): Set of colors to cycle through for plots
-        template_figure_facecolor (color): Override the grey colour of the plot border
-        template_figure_subplot_left (float): Set the left margin
-        template_figure_subplot_right (float): Set the right margin
-        template_figure_subplot_bottom (float): Set the bottom margin
-        template_figure_subplot_top (float): Set the top margin
-
+        stylename (string): Name of the matplotlib style to use
+        stylesheet (list): Calculated list of stylesheets found by traversing the class heirarchy
 
     """
 
@@ -136,33 +116,7 @@ class DefaultPlotStyle(object):
     xlocater=AutoLocator
     ylocater=AutoLocator
     zlocater=AutoLocator
-    template_axes_labelsize=12
-    template_text_fontsize=12
-    template_legend_fontsize=10
-    template_legend_frameon=False
-    template_xtick_labelsize=11
-    template_ytick_labelsize=11
-    template_ztick_labelsize=11
-    template_xtick_direction='in'
-    template_ytick_direction='in'
-    template_ztick_direction='in'
-    template_xtick_major_size=5
-    template_ytick_major_size=5
-    template_ztick_major_size=5
-    template_xtick_major_pad=4
-    template_ytick_major_pad=4
-    template_ztick_major_pad=4
-    template_font_size=14
-    template_lines_linewidth=1
-    template_axes_formatter_limits=(-1, 1)
-    template_axes_grid=False
-    template_axes_color__cycle=['k','r','g','b','c','m','y']
-    template_figure_facecolor=(1,1,1)
-    template_figure_subplot_left=0.15
-    template_figure_subplot_right=0.9
-    template_figure_subplot_bottom=0.15
-    template_figure_subplot_top=0.9
-
+    stylename="default"
     def __init__(self,**kargs):
         """Create a template instance of this template.
 
@@ -171,7 +125,16 @@ class DefaultPlotStyle(object):
         """
         self.update(**kargs)
         self.apply()
-
+        
+    def __getattr__(self,name):
+        if name=="stylesheet":
+            return self._stylesheet()
+        
+    def _stylesheet(self):
+        """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        levels=type.mro(type(self))[:-1]
+        return [join(dirname(realpath(__file__)),"stylelib",c.stylename+".mplstyle") for c in levels[::-1]]
+        
     def update(self,**kargs):
         """Update the template with new attributes from keyword arguments.
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
@@ -214,6 +177,7 @@ class DefaultPlotStyle(object):
         """Scan for all attributes that start templtate_ and build them into a dictionary
         to update matplotlib settings with.
         """
+        plt.style.use(self.stylesheet)
         self.new_figure(False)
 
         self.customise()
@@ -271,66 +235,19 @@ class DefaultPlotStyle(object):
             plt.legend()
 
 
+class GBPlotStyle(DefaultPlotStyle):
+    """Template developed for Gavin's plotting."""
+    xformatter=TexEngFormatter
+    yformatter=TexEngFormatter
+
+
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 
     fig_width_pt=244
     fig_height_pt=244
     show_title=False
-
-    template_text_fontsize=18
-    template_legend_fontsize=18
-    template_xtick_labelsize=18
-    template_ytick_labelsize=18
-    template_xtick_direction='in'
-    template_ytick_direction='in'
-    template_xtick_major_size=3
-    template_ytick_major_size=3
-    template_font_family="Times New Roman"
-    template_xtick_major_pad=5
-    template_ytick_major_pad=5
-    template_font_size=18
-    template_lines_linewidth=2
-    template_lines_linestyle='-'
-    template_lines_markeredgewidth=0
-    #template_lines_marker=itertools.cycle(('o','s','^','v','x'))
-    template_lines_marker=''
-    template_lines_markersize=5
-
-
-    template_axes_labelsize=18
-    template_axes_fontsize=18
-    template_axes_labelpad=1
-    template_axes_formatter_limits=(-4, 4)
-    template_axes_grid=False
-    template_axes_color__cycle=['k','r','b','g','c','m','y']
-
-    template_figure_facecolor=(1,1,1)
-    template_figure_autolayout=True
-    template_figure_subplot_left    = 0.175  # the left side of the subplots of the figure
-    template_figure_subplot_right   = 0.9    # the right side of the subplots of the figure
-    template_figure_subplot_bottom  = 0.2    # the bottom of the subplots of the figure
-    template_figure_subplot_top     = 0.95    # the top of the subplots of the figure
-    template_figure_subplot_wspace  = -20
-    template_figure_subplot_hspace  = -10
-    template_lines_markersize=5
-
-    template_legend_loc          ='upper center'
-    template_legend_isaxes       =False
-    template_legend_numpoints    =1      # the number of points in the legend line
-    template_legend_fontsize     =15
-    template_legend_borderpad    =0    # border whitespace in fontsize units
-    template_legend_markerscale  =1.0    # the relative size of legend markers vs. original
-    template_legend_labelspacing =0.5    # the vertical space between the legend entries in fraction of fontsize
-    template_legend_handlelength =2.     # the length of the legend lines in fraction of fontsize
-    template_legend_handleheight =0.7     # the height of the legend handle in fraction of fontsize
-    template_legend_handletextpad=0.8    # the space between the legend line and legend text in fraction of fontsize
-    template_legend_borderaxespad=0.5   # the border between the axes and legend edge in fraction of fontsize
-    template_legend_columnspacing=2.    # the border between the axes and legend edge in fraction of fontsize
-    template_legend_shadow       =False
-    template_legend_frameon      =False   # whether or not to draw a frame around legend
-    template_legend_scatterpoints=3 # number of scatter points
-
+    stylename="JTB"
 
     def customise_axes(self,ax):
         pass
@@ -341,60 +258,7 @@ class JTBinsetStyle(DefaultPlotStyle):
     fig_width_pt=244
     fig_height_pt=244
     show_title=False
-
-    template_text_fontsize=10
-    template_legend_fontsize=10
-    template_xtick_labelsize=10
-    template_ytick_labelsize=10
-    template_xtick_direction='in'
-    template_ytick_direction='in'
-    template_xtick_major_size=3
-    template_ytick_major_size=3
-    template_font_family="Times New Roman"
-    template_xtick_major_pad=1
-    template_ytick_major_pad=1
-    template_font_size=10
-    template_lines_linewidth=2
-    template_lines_linestyle='-'
-    template_lines_markeredgewidth=0
-    #template_lines_marker=itertools.cycle(('o','s','^','v','x'))
-    template_lines_marker=''
-    template_lines_markersize=5
-
-
-    template_axes_labelsize=10
-    template_axes_fontsize=10
-    template_axes_labelpad=-10
-    template_axes_formatter_limits=(-4, 4)
-    template_axes_grid=False
-    template_axes_color__cycle=['k','r','b','g','c','m','y']
-
-    template_figure_facecolor=(1,1,1)
-    template_figure_autolayout=True
-    template_figure_subplot_left    = 0.175  # the left side of the subplots of the figure
-    template_figure_subplot_right   = 0.9    # the right side of the subplots of the figure
-    template_figure_subplot_bottom  = 0.2    # the bottom of the subplots of the figure
-    template_figure_subplot_top     = 0.95    # the top of the subplots of the figure
-    template_figure_subplot_wspace  = -20
-    template_figure_subplot_hspace  = -10
-    template_lines_markersize=5
-
-    template_legend_loc          ='upper center'
-    template_legend_isaxes       =False
-    template_legend_numpoints    =1      # the number of points in the legend line
-    template_legend_fontsize     =10
-    template_legend_borderpad    =-1    # border whitespace in fontsize units
-    template_legend_markerscale  =1.0    # the relative size of legend markers vs. original
-    template_legend_labelspacing =0.5    # the vertical space between the legend entries in fraction of fontsize
-    template_legend_handlelength =2.     # the length of the legend lines in fraction of fontsize
-    template_legend_handleheight =0.7     # the height of the legend handle in fraction of fontsize
-    template_legend_handletextpad=0.8    # the space between the legend line and legend text in fraction of fontsize
-    template_legend_borderaxespad=0.5   # the border between the axes and legend edge in fraction of fontsize
-    template_legend_columnspacing=2.    # the border between the axes and legend edge in fraction of fontsize
-    template_legend_shadow       =False
-    template_legend_frameon      =False   # whether or not to draw a frame around legend
-    template_legend_scatterpoints=3 # number of scatter points
-
+    stylename="JTBinset"
 
     def customise_axes(self,ax):
         pass
@@ -405,66 +269,13 @@ class ThesisPlotStyle(DefaultPlotStyle):
     fig_width = 6.0
     fig_height= 4.0# 6"x4" plot
     show_title=False
-    templat_axes_labelsize=11
-    template_text_fontsize=11
-    template_legend_fontsize=11
-    template_xtick_labelsize=11
-    template_ytick_labelsize=11
-    template_xtick_direction='in'
-    template_ytick_direction='in'
-    template_xtick_major_size=8
-    template_ytick_major_size=8
-    template_font_family="Times"
-    template_xtick_major_pad=5
-    template_ytick_major_pad=5
-    template_font_size=9
-    template_lines_linewidth=2
-    template_axes_formatter_limits=(-5, 5)
-    template_figure_subplot_left=0.15
-    template_figure_subplot_right=0.95
-    template_figure_subplot_bottom=0.2
-    template_figure_subplot_top=0.875
-    template_figure_autolayout=False
-
+    stylename="thesis"
 
 class PRBPlotStyle(DefaultPlotStyle):
     """A figure Style for making figures for Phys Rev * Jounrals."""
     fig_width_pt=244
     show_title=False
-    templat_axes_labelsize=10
-    template_text_fontsize=10
-    template_legend_fontsize=10
-    template_xtick_labelsize=10
-    template_ytick_labelsize=10
-    template_xtick_direction='in'
-    template_ytick_direction='in'
-    template_xtick_major_size=5
-    template_ytick_major_size=5
-    template_font_family="Times New Roman"
-    template_xtick_major_pad=2
-    template_ytick_major_pad=2
-    template_font_size=10
-    template_lines_linewidth=1
-    template_axes_formatter_limits=(-4, 4)
-    template_axes_grid=False
-    template_axes_color__cycle=['k','r','g','b','c','m','y']
-    template_figure_facecolor=(1,1,1)
-    template_figure_autolayout=True
-    template_lines_markersize=3
-    template_legend_isaxes       =True
-    template_legend_numpoints    =2      # the number of points in the legend line
-    template_legend_fontsize     =9
-    template_legend_borderpad    =0    # border whitespace in fontsize units
-    template_legend_markerscale  =1.0    # the relative size of legend markers vs. original
-    template_legend_labelspacing =0.5    # the vertical space between the legend entries in fraction of fontsize
-    template_legend_handlelength =2.     # the length of the legend lines in fraction of fontsize
-    template_legend_handleheight =0.7     # the height of the legend handle in fraction of fontsize
-    template_legend_handletextpad=0.8    # the space between the legend line and legend text in fraction of fontsize
-    template_legend_borderaxespad=0.5   # the border between the axes and legend edge in fraction of fontsize
-    template_legend_columnspacing=2.    # the border between the axes and legend edge in fraction of fontsize
-    template_legend_shadow       =False
-    template_legend_frameon      =False   # whether or not to draw a frame around legend
-    template_legend_scatterpoints=3 # number of scatter points
-
+    stylename="PRB"
+    
     def customise_axes(self,ax):
         ax.locator_params(tight=True, nbins=4)
