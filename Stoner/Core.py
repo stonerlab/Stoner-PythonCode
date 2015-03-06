@@ -20,6 +20,9 @@ import inspect as _inspect_
 import itertools
 from collections import Iterable,OrderedDict
 
+class StonerLoadError(Exception):
+    pass
+
 class _attribute_store(dict):
     """A class that provides attributes that refer to columns in a DataFile instance."""
 
@@ -1407,14 +1410,17 @@ class DataFile(object):
         else:
             self.filename = filename
         with open(self.filename,"r") as datafile:
-            reader=csv.reader(datafile,dialect=_tab_delimited())
-            row=next(reader)
-            if row[0].strip()=="TDI Format 1.5":
-                format=1.5
-            elif row[0].strip()=="TDI Format=Text 1.0":
-                format=1.0
-            else:
-                raise RuntimeError("Not a TDI File")
+            try:
+                reader=csv.reader(datafile,dialect=_tab_delimited())
+                row=next(reader)
+                if row[0].strip()=="TDI Format 1.5":
+                    format=1.5
+                elif row[0].strip()=="TDI Format=Text 1.0":
+                    format=1.0
+                else:
+                    raise StonerLoadError("Not a TDI File")
+            except:
+                raise StonerLoadError("Not a TDI File")                
             col_headers_tmp=[x.strip() for x in row[1:]]
             datarow=0
             metadatarow=0
@@ -2174,7 +2180,7 @@ class DataFile(object):
                     self._setas=test._setas
                     self._setas.ref=self
                     break
-                except Exception as e:
+                except StonerLoadError as e:
                     continue
             else:
                 raise IOError("Ran out of subclasses to try and load as.")

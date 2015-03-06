@@ -90,7 +90,6 @@ class HDF5File(DataFile):
         metadata=f.require_group('metadata')
         if "column_headers" in f.attrs:
             self.column_headers=f.attrs["column_headers"]
-            print self.column_headers
             if isinstance(self.column_headers,string_types):
                 self.column_headers=self.metadata.string_to_type(self.column_headers)
         else:

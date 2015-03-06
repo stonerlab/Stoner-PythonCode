@@ -935,7 +935,6 @@ class DataFolder(object):
         dels=list()
         for i,f in enumerate(relpaths):
             grp=path.split(f)[0]
-            print f,grp
             if grp!=f and grp!="":
                 self.add_group(grp)
                 self.groups[grp]+=self[i]

@@ -19,9 +19,8 @@ from re import split
 from datetime import datetime
 import numpy.ma as ma
 
-from .Core import DataFile
+from .Core import DataFile, StonerLoadError
 from .pyTDMS import read as tdms_read
-
 
 
 class CSVFile(DataFile):
@@ -58,7 +57,7 @@ class CSVFile(DataFile):
             try:
                 tmp=header_string.index(header_delim)
             except ValueError:
-                raise RuntimeError("No Delimiters in header line")
+                raise StonerLoadError("No Delimiters in header line")
             self.column_headers=[x.strip() for x in header_string.split(header_delim)]
         else:
             self.column_headers=["Column"+str(x) for x in range(_np_.shape(self.data)[1])]
@@ -66,7 +65,7 @@ class CSVFile(DataFile):
             try:
                 data_line.index(data_delim)
             except ValueError:
-                raise RuntimeError("No delimiters in data lines")
+                raise StonerLoadError("No delimiters in data lines")
 
         self.data=_np_.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
         return self
@@ -119,30 +118,32 @@ class VSMFile(DataFile):
         Note:
             The default values are configured fir read VSM data files
         """
-        f=fileinput.FileInput(self.filename,mode="rb") # Read filename linewise
-        self['Timestamp']=bytes2str(f.readline().strip())
         try:
-            check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
-            assert check is not None
-            assert bytes2str(f.readline().strip())==""
+            with open(self.filename) as f:
+                for i,line in enumerate(f):
+                    if i==0:
+                        self["Timestamp"]=line.strip()
+                        check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
+                        assert check is not None
+                    elif i==1:
+                        assert line.strip()==""
+                    elif i==2:
+                        header_string=line.strip()
+                    elif i==3:
+                        unit_string=line.strip()
+                        self.column_headers=["{} {}".format(h,u) for h,u in 
+                            zip(header_string.split(header_delim), unit_string.split(header_delim))]                    
+                    elif i>3:
+                        break
         except (ValueError, AssertionError) as e:
-            raise RuntimeError('Not a VSM File'+str(e.args))
-        header_string=bytes2str(f.readline())
-        header_string=re.sub(r'["\n]', '', header_string)
-        unit_string=bytes2str(f.readline())
-        unit_string=re.sub(r'["\n]', '', unit_string)
-        column_headers=zip(header_string.split(header_delim), unit_string.split(header_delim))
-        self.column_headers=map(lambda x: x[0].strip()+" ("+x[1].strip()+")",  column_headers)
-        f.readline()
-        f.readline()
-
-        self.data=_np_.genfromtxt(f,dtype='float',usemask=True, delimiter=data_delim,
+            raise StonerLoadError('Not a VSM File'+str(e.args))
+        self.data=_np_.genfromtxt(self.filename,dtype='float',usemask=True, delimiter=data_delim,
                                    skip_header=data_line-1, missing_values=['         6:0','         ---'],
                                 invalid_raise=False)
+
         self.data=ma.mask_rows(self.data)
         cols=self.data.shape[1]
         self.data=_np_.reshape(self.data.compressed(),(-1,cols))
-        f.close()
 
 
     def _load(self,filename=None,*args, **kargs):
@@ -213,32 +214,34 @@ class QDSquidVSMFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        line=f.readline().strip()
-        line=f.readline().strip()
-        line=f.readline().strip()
-        if "Quantum Design" not in line:
-            raise RuntimeError("Not a Quantum Design File !")
-        while line!="[Data]":
-            if line[0]==";":
-                line=f.readline().strip()
-                continue
-            parts=line.split(',')
-            if parts[0]=="INFO":
-                key=parts[0]+parts[2]
-                key=key.title()
-                value=parts[1]
-            elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
-                key=parts[0].title()
-                value=' '.join(parts[1:])
-            else:
-                key=parts[0]+"."+parts[1]
-                key=key.title()
-                value=' '.join(parts[2:])
-            self.metadata[key]=self.metadata.string_to_type(value)
-            line=f.readline().strip()
-        self.column_headers=f.readline().strip().split(',')
-        self.data=_np_.genfromtxt(f,dtype='float',delimiter=',', invalid_raise=False)
+        with open(self.filename,"r") as f: # Read filename linewise
+            for i, line in enumerate(f):        
+                line=line.strip()
+                if i==2 and "Quantum Design" not in line:
+                    raise StonerLoadError("Not a Quantum Design File !")
+                elif "[Data]" in line:
+                    break
+                elif i<2:
+                    continue
+                if line[0]==";":
+                    line=f.readline().strip()
+                    continue
+                parts=line.split(',')
+                print(parts)
+                if parts[0]=="INFO":
+                    key=parts[0]+parts[2]
+                    key=key.title()
+                    value=parts[1]
+                elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
+                    key=parts[0].title()
+                    value=' '.join(parts[1:])
+                else:
+                    key=parts[0]+"."+parts[1]
+                    key=key.title()
+                    value=' '.join(parts[2:])
+                self.metadata[key]=self.metadata.string_to_type(value)
+            self.column_headers=f.readline().strip().split(',')
+        self.data=_np_.genfromtxt(self.filename,dtype='float',delimiter=',', invalid_raise=False,skip_header=i+2)
         self.setas(x="Magnetic Field",y="Moment")
         return self
 
@@ -262,26 +265,22 @@ class OpenGDAFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        line=f.readline().strip()
-        if line!="&SRS":
-            raise RuntimeError("Not a GDA File from Rasor ?"+str(line))
-        while f.readline().strip()!="<MetaDataAtStart>":
-            pass
-        line=f.readline().strip()
-        while line!="</MetaDataAtStart>":
-            parts=line.split('=')
-            if len(parts)!=2:
-                line=f.readline().strip()
-                continue
-            key=parts[0]
-            value=parts[1].strip()
-            self.metadata[key]=self.metadata.string_to_type(value)
+        with open(self.filename,"r") as f:
             line=f.readline().strip()
-        while f.readline().strip()!="&END":
-            pass
-        self.column_headers=f.readline().strip().split("\t")
-        self.data=_np_.genfromtxt(f,dtype='float', invalid_raise=False)
+            if line!="&SRS":
+                raise StonerLoadError("Not a GDA File from Rasor ?"+str(line))
+            for i,line in enumerate(f):
+                line=line.strip()
+                if "&END" in line:
+                    break
+                parts=line.split('=')
+                if len(parts)!=2:
+                    continue
+                key=parts[0]
+                value=parts[1].strip()
+                self.metadata[key]=self.metadata.string_to_type(value)
+            self.column_headers=f.readline().strip().split("\t")
+        self.data=_np_.genfromtxt(self.filename,dtype='float', invalid_raise=False,skip_header=i+2)
         return self
 
 class RasorFile(OpenGDAFile):
@@ -321,7 +320,7 @@ class SPCFile(DataFile):
         header=dict(zip(keys, spchdr))
 
         if header['ftflgs'] & 64: # This is the multiple XY curves in file flag.
-            raise NotImplemented("Filetype not implemented yet !")
+            raise StonerLoadError("Filetype not implemented yet !")
         else: # A single XY curve in the file.
             n=header['fnsub']
             pts=header['fnpts']
@@ -430,7 +429,7 @@ class TDMSFile(DataFile):
             assert f.read(4) == b"TDSm"
         except AssertionError:
             f.close()
-            raise RuntimeError('Not a TDMS File')
+            raise StonerLoadError('Not a TDMS File')
         f.close()
         (metadata, data)=tdms_read(self.filename)
         for key in metadata:
@@ -467,7 +466,7 @@ class RigakuFile(DataFile):
         ka=re.compile(r'(.*)\-(\d+)$')
         f=fileinput.FileInput(self.filename) # Read filename linewise
         if f.readline().strip()!="*RAS_DATA_START": # Check we have the corrrect fileformat
-                raise RuntimeError("File Format Not Recognized !")
+                raise StonerLoadError("File Format Not Recognized !")
         line=f.readline().strip()
         while line!="*RAS_HEADER_START":
             line=f.readline().strip()
@@ -552,7 +551,7 @@ class XRDFile(DataFile):
         sh=re.compile(r'\[(.+)\]') # Regexp to grab section name
         f=fileinput.FileInput(self.filename) # Read filename linewise
         if f.readline().strip()!=";RAW4.00": # Check we have the corrrect fileformat
-                raise RuntimeError("File Format Not Recognized !")
+                raise StonerLoadError("File Format Not Recognized !")
         drive=0
         for line in f: #for each line
             m=sh.search(line)
@@ -622,7 +621,7 @@ class BNLFile(DataFile):
         for line in fp:
             counter+=1
             if counter==1 and line[0]!='#':
-                raise RuntimeError("Not a BNL File ?")
+                raise StonerLoadError("Not a BNL File ?")
             if len(line)<2:continue  #if there's nothing written on the line go to the next
             elif line[0:2]=='#L':self.line_numbers[0]=counter
             elif line[0:2]=='#S':self.line_numbers[2]=counter
@@ -710,7 +709,6 @@ class MokeFile(DataFile):
             line=bytes2str(f.readline()).strip()
             assert line=="#Leeds CM Physics MOKE","Not a datafile from the Leeds MOKE"
             while line.startswith("#") or line=="":
-                print line
                 parts=line.split(":")
                 if len(parts)>1:
                     key=parts[0][1:]
@@ -744,10 +742,13 @@ class FmokeFile(DataFile):
         else:
             self.filename = filename
         f=fileinput.FileInput(self.filename,mode="rb") # Read filename linewise
-        value=[float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+        try:
+            value=[float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+        except:
+            raise StonerLoadError("Not an FMOKE file?")
         label=[ x.strip() for x in bytes2str(f.readline()).split('\t')]
         if label[0]!="Header:":
-            raise RuntimeError("Not a Focussed MOKE file !")
+            raise StonerLoadError("Not a Focussed MOKE file !")
         del(label[0])
         for k,v in zip(label, value):
                self.metadata[k]=v # Create metatdata from first 2 lines
@@ -788,7 +789,7 @@ class GenXFile(DataFile):
                 line=line[1:]
                 dataset="asymmetry"
             else:
-                raise RuntimeError("Not a GenXFile")
+                raise StonerLoadError("Not a GenXFile")
             self.column_headers=[f.strip() for f in line.strip().split('\t')]
             self.data=_np_.genfromtxt(datafile)
             self["dataset"]=dataset
@@ -817,7 +818,7 @@ class SNSFile(DataFile):
         with open(self.filename,"r") as data: # Slightly ugly text handling
             line=data.readline()
             if line.strip()!="# Datafile created by QuickNXS 0.9.39": # bug out oif we don't like the header
-                raise RuntimeError("Not a file from the SNS BL4A line")
+                raise StonerLoadError("Not a file from the SNS BL4A line")
             for line in data:
                 if line.startswith("# "): # We're in the header
                     line=line[2:].strip() # strip the header and whitespace
@@ -883,7 +884,7 @@ class OVFFile(DataFile):
             elif line!="# OOMMF: rectangular mesh v2.0":
                 self["version"]=2
             else: # bug out oif we don't like the header
-                raise RuntimeError("Not n OOMMF OVF File: opening line eas {}".format(line))
+                raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
             pattern=re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
             for line in data:
                 ptr+=len(line)
@@ -899,7 +900,7 @@ class OVFFile(DataFile):
                         val=res.group(2)
                         self[key]=self.metadata.string_to_type(val)
                     else:
-                        raise RuntimeError("Failed to understand metadata")
+                        raise StonerLoadError("Failed to understand metadata")
             fmt=re.match(r".*Data\s+(.*)",line).group(1)
             assert self["meshtype"]=="rectangular","Sorry only OVF files with rectnagular meshes are currently supported."
             if self["version"]==1:
@@ -931,7 +932,7 @@ class OVFFile(DataFile):
                     assert uvwdata[0]==123456789012345.0,"Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
                 uvwdata=_np_.reshape(uvwdata,(-1,self["valuedim"]))
             else:
-                raise RuntimeError("Unknow OVF Format {}".format(fmt))
+                raise StonerLoadError("Unknow OVF Format {}".format(fmt))
 
             x=(_np_.linspace(self["xmin"],self["xmax"],self["xnode"]+1)[:-1]+self["xbase"])*1E9
             y=(_np_.linspace(self["ymin"],self["ymax"],self["ynode"]+1)[:-1]+self["ybase"])*1E9
@@ -958,7 +959,7 @@ class MDAASCIIFile(DataFile):
         with open(self.filename,"r") as data: # Slightly ugly text handling
             line=next(data)
             if line.strip()!="## mda2ascii 1.2 generated output": # bug out oif we don't like the header
-                raise RuntimeError("Not a file mda2ascii")
+                raise StonerLoadError("Not a file mda2ascii")
             for line in data:
                 line.strip()
                 if "=" in line:
@@ -968,7 +969,7 @@ class MDAASCIIFile(DataFile):
                     # Onto the next metadata bit
                     break
             else:
-                raise RuntimeError("Overran end of headre before Extra PV block")
+                raise StonerLoadError("Overran end of headre before Extra PV block")
             pvpat=re.compile(r'^#\s+Extra\s+PV\s\d+\:(.*)')
             for line in data:
                 if line.strip()=="":
@@ -986,7 +987,7 @@ class MDAASCIIFile(DataFile):
                 else:
                     break # End of Extra PV stuff
             else:
-                raise RuntimeError("Overran Extra PV Block")
+                raise StonerLoadError("Overran Extra PV Block")
             for line in data:
                 line.strip()
                 if line.strip()=="":
@@ -997,7 +998,7 @@ class MDAASCIIFile(DataFile):
                     parts=line[2:].split("=")
                     self[parts[0].strip()]=self.metadata.string_to_type("".join(parts[1:]).strip())
             else:
-                raise RuntimeError("Overran end of scan header before column descriptions")
+                raise StonerLoadError("Overran end of scan header before column descriptions")
             colpat=re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
             self.column_headers=[]
             for line in data:
@@ -1022,7 +1023,7 @@ class MDAASCIIFile(DataFile):
                         colname=res.group(1).strip()
                     self.column_headers.append(colname)
             else:
-                raise RuntimeError("Overand the end of file without reading data")
+                raise StonerLoadError("Overand the end of file without reading data")
             self.data=_np_.genfromtxt(data) # so that's ok then !
             return self
 
@@ -1053,14 +1054,14 @@ class LSTemperatureFile(DataFile):
                     break
                 parts=[p.strip() for p in line.split(":")]
                 if len(parts)!=2:
-                    raise RuntimeError("Header doesn't contain two parts at {}".format(line.strip()))
+                    raise StonerLoadError("Header doesn't contain two parts at {}".format(line.strip()))
                 else:
                     keys.append(parts[0])
                     vals.append(parts[1])
             else:
-                raise RuntimeError("Overan the end of the file")
+                raise StonerLoadError("Overan the end of the file")
             if keys!=["Sensor Model","Serial Number","Data Format","SetPoint Limit","Temperature coefficient","Number of Breakpoints"]:
-                raise RuntimeError("Header did not contain recognised keys.")
+                raise StonerLoadError("Header did not contain recognised keys.")
             for (k,v) in zip(keys,vals):
                 v=v.split()[0]
                 self.metadata[k]=self.metadata.string_to_type(v)
