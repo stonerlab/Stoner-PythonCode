@@ -9,7 +9,7 @@ Classes include
 from Stoner.compat import *
 import h5py
 import numpy
-from .Core import DataFile
+from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
 import os.path as path
 
@@ -39,23 +39,23 @@ class HDF5File(DataFile):
 
     """
 
-    priority=32
+    priority=16
     compression='gzip'
     compression_opts=6
     patterns=["*.hdf","*.hf5"]
 
-    def __init__(self,*args,**kargs):
-        """Constructor to catch initialising with an h5py.File or h5py.Group
-        """
-        if len(args)>0:
-            other=args[0]
-            if isinstance(other,h5py.File) or isinstance(other,h5py.Group):
-                super(HDF5File,self).__init__(**kargs)
-                self.load(other,**kargs)
-            else:
-                super(HDF5File,self).__init__(*args,**kargs)
+#    def __init__(self,*args,**kargs):
+ #       """Constructor to catch initialising with an h5py.File or h5py.Group
+ #       """
+ #       if len(args)>0:
+ #           other=args[0]
+ #           if isinstance(other,h5py.File) or isinstance(other,h5py.Group):
+ #               super(HDF5File,self).__init__(**kargs)
+ #               self.load(other,**kargs)
+ #           else:
+#               super(HDF5File,self).__init__(*args,**kargs)
 
-    def load(self,filename=None,**kargs):
+    def _load(self,filename=None,**kargs):
         """Loads data from a hdf5 file
 
         Args:
@@ -73,15 +73,13 @@ class HDF5File(DataFile):
             try:
                 f=h5py.File(filename,'r')
             except IOError:
-                raise IOError("Failed to open {} as a n hdf5 file".format(filename))
+                raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
         elif isinstance(filename,h5py.File) or isinstance(filename,h5py.Group):
             f=filename
         else:
-            raise IOError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
-        if "type" in f.attrs: #Ensure that if we have a type attribute it tells us we're the right type !
-            assert f.attrs["type"]=="HDF5File","HDF5 group doesn't hold an HD5File"
-        else:
-            raise RuntimeError("HDF5 group doesn't hold an HD5File")
+            raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
+        if "type" not in f.attrs or bytes2str(f.attrs["type"])!="HDF5File": #Ensure that if we have a type attribute it tells us we're the right type !  
+            raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data=f["data"]
         if numpy.product(numpy.array(data.shape))>0:
             self.data=data[...]
@@ -92,8 +90,9 @@ class HDF5File(DataFile):
             self.column_headers=f.attrs["column_headers"]
             if isinstance(self.column_headers,string_types):
                 self.column_headers=self.metadata.string_to_type(self.column_headers)
+            self.column_headers=[bytes2str(x) for x in self.column_headers]
         else:
-            raise RuntimeError("Couldn't work out where my column headers were !")
+            raise StonerLoadError("Couldn't work out where my column headers were !")
         for i in metadata.attrs:
             self[i]=metadata.attrs[i]
         if "filename" in f.attrs:

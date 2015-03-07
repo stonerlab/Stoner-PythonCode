@@ -81,7 +81,7 @@ class _setas(object):
         try:
             assert len(args)==0 or len(args)==1
             if len(args)==1:
-                assert isinstance(args[0],string_types) or isinstance(args[0],Iterable)
+                assert isinstance(args[0],string_types) or isinstance(args[0],Iterable) or isinstance(args[0],_setas)
             elif len(args)==1:
                 assert len(kargs)>0
         except AssertionError:
@@ -104,6 +104,8 @@ class _setas(object):
                     else:
                         count=int(count)
                     value=value.replace(total,code*count,1)
+            elif isinstance(value,_setas):
+                value=value.setas
         else:
             value=kargs
         if isinstance(value,dict):
@@ -2180,7 +2182,7 @@ class DataFile(object):
                     self._setas=test._setas
                     self._setas.ref=self
                     break
-                except StonerLoadError as e:
+                except (StonerLoadError,UnicodeDecodeError) as e:
                     continue
             else:
                 raise IOError("Ran out of subclasses to try and load as.")
@@ -2204,7 +2206,7 @@ class DataFile(object):
             self.data=_ma_.masked_array(test.data)
             self.metadata.update(test.metadata)
             self.column_headers=test.column_headers
-            self._setas=test._setas
+            self.setas(test.setas)
             self._setas.ref=self
         return self
 

@@ -297,24 +297,16 @@ class PlotFile(DataFile):
             try:
                 return super(PlotFile, self).__getattr__(name)
             except AttributeError:
-                tfig=pyplot.gcf()
-                tax=pyplot.gca() # protect the current axes and figure
-                pyplot.figure(self.fig.number)
-                ax=pyplot.gca()
+                if not isinstance(self.__figure, matplotlib.figure.Figure):
+                    raise AttributeError
+                ax=self.__figure.axes
                 if "get_{}".format(name) in dir(ax):
                     func=ax.__getattribute__("get_{}".format(name))
                     ret=func()
-                    pyplot.figure(tfig.number)
-                    pyplot.sca(tax)
                 elif name in pyplot.__dict__: # Sort of a universal pass through to pyplot
                     ret=pyplot.__dict__[name]
-                    pyplot.figure(tfig.number)
-                    pyplot.sca(tax)
                 elif name in dir(ax): # Sort of a universal pass through to pyplot
                     ret=ax.__getattribute__(name)
-                    pyplot.figure(tfig.number)
-                    pyplot.sca(tax)
-
                 else:
                     raise AttributeError
         return ret

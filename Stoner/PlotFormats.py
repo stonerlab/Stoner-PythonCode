@@ -102,9 +102,6 @@ class DefaultPlotStyle(object):
     will be used. Once the leading template_ is stripped, all _ characters are replaced
     with . and then the attributes are mapped to a dictionary and used to update the rcParams
     dictionary"""
-    fig_width_pt = 433.62
-    fig_width=None
-    fig_height=None
     show_xlabel=True
     show_ylabel=True
     show_zlabel=True
@@ -143,26 +140,24 @@ class DefaultPlotStyle(object):
         for k in kargs:
             if not k.startswith("_"):
                 self.__setattr__("template_"+k,kargs[k])
-        if "fig_width" not in kargs and self.fig_width is None:
-            self.fig_width=self.fig_width_pt*self._inches_per_pt
-        if "fig_height" not in kargs and self.fig_height is None:
-            self.fig_height=self.fig_width*self._golden_mean      # height in inches
 
     def new_figure(self,figure=False):
         """This is called by PlotFile to setup a new figure before we do anything."""
         params=dict()
-        if self.fig_width is None:
+        if "fig_width_pt" in dir(self):
             self.fig_width=self.fig_width_pt*self._inches_per_pt
-        if self.fig_height is None:
+        if "fig_height_pt" in dir(self):
             self.fig_height=self.fig_width*self._golden_mean      # height in inches
-        self.template_figure_figsize =  (self.fig_width,self.fig_height)
+        if "fig_ratio" in dir(self) and "fig_width" in dir(self):
+            self.fig_height=self.fig_width/self.fig_ratio
+        if "fig_width" and "fig_height" in self.__dict__:
+            self.template_figure_figsize =  (self.fig_width,self.fig_height)
         for attr in dir(self):
             if attr.startswith("template_"):
                 attrname=attr[9:].replace("_",".").replace("..","_")
                 value=self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
                     params[attrname]=value
-        plt.rcdefaults() #Reset to defaults
         plt.rcParams.update(params) # Apply these parameters
 
         if isinstance(figure,bool) and not figure:
@@ -239,13 +234,11 @@ class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting."""
     xformatter=TexEngFormatter
     yformatter=TexEngFormatter
-
+    stylename="default"
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 
-    fig_width_pt=244
-    fig_height_pt=244
     show_title=False
     stylename="JTB"
 
@@ -255,8 +248,6 @@ class JTBPlotStyle(DefaultPlotStyle):
 class JTBinsetStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 
-    fig_width_pt=244
-    fig_height_pt=244
     show_title=False
     stylename="JTBinset"
 
@@ -266,14 +257,11 @@ class JTBinsetStyle(DefaultPlotStyle):
 class ThesisPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""
 
-    fig_width = 6.0
-    fig_height= 4.0# 6"x4" plot
     show_title=False
     stylename="thesis"
 
 class PRBPlotStyle(DefaultPlotStyle):
     """A figure Style for making figures for Phys Rev * Jounrals."""
-    fig_width_pt=244
     show_title=False
     stylename="PRB"
     

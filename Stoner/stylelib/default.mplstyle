@@ -1,22 +1,22 @@
+axes.color_cycle:K, r, g, b, c, m, y
+axes.formatter.limits:-1, 1
+axes.grid:False
 axes.labelsize:12
+figure.facecolor:1,1,1
+figure.figsize: 6,4
+figure.subplot.bottom:0.15
+figure.subplot.left:0.15
+figure.subplot.right:0.9
+figure.subplot.top:0.9
 font.size: 12
 legend.fontsize:10
 legend.frameon:False
-xtick.labelsize:11
-ytick.labelsize:11
-xtick.direction:'in'
-ytick.direction:'in''
-xtick.major.size:5
-ytick.major.size:5
-xtick.major.pad:4
-ytick.major.pad:4
-font.size:14
 lines.linewidth:1
-axes.formatter.limits:-1, 1
-axes.grid:False
-axes.color_cycle:K, r, g, b, c, m, y
-figure.facecolor:1,1,1
-figure.subplot.left:0.15
-figure.subplot.right:0.9
-figure.subplot.bottom:0.15
-figure.subplot.top:0.9
+xtick.direction:'in'
+xtick.labelsize:11
+xtick.major.pad:4
+xtick.major.size:5
+ytick.direction:'in''
+ytick.labelsize:11
+ytick.major.pad:4
+ytick.major.size:5

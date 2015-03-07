@@ -1,29 +1,30 @@
-axes.labelsize:10
-font.size:10
-xtick.labelsize:10
-ytick.labelsize:10
-xtick.direction:'in'
-ytick.direction:'in'
-xtick.major.size:5
-ytick.major.size:5
-font.family:"Times New Roman"
-xtick.major.pad:2
-ytick.major.pad:2
-lines.linewidth:1
 axes.grid:False
+axes.labelsize:10
 figure.autolayout:True
-lines.markersize:3
-legend.isaxes       :True
-legend.numpoints    :2      # the number of points in the legend line
-legend.fontsize     :9
-legend.borderpad    :0    # border whitespace in fontsize units
-legend.markerscale  :1.0    # the relative size of legend markers vs. original
-legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
-legend.handlelength :2.     # the length of the legend lines in fraction of fontsize
-legend.handleheight :0.7     # the height of the legend handle in fraction of fontsize
-legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
+figure.figsize: 3.34,3
+font.family:"Times New Roman"
+font.size:10
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
+legend.borderpad    :0    # border whitespace in fontsize units
 legend.columnspacing:2.    # the border between the axes and legend edge in fraction of fontsize
-legend.shadow       :False
+legend.fontsize     :9
 legend.frameon      :False   # whether or not to draw a frame around legend
+legend.handleheight :0.7     # the height of the legend handle in fraction of fontsize
+legend.handlelength :2.     # the length of the legend lines in fraction of fontsize
+legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
+legend.isaxes       :True
+legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
+legend.markerscale  :1.0    # the relative size of legend markers vs. original
+legend.numpoints    :2      # the number of points in the legend line
 legend.scatterpoints:3 # number of scatter points
+legend.shadow       :False
+lines.linewidth:1
+lines.markersize:3
+xtick.direction:'in'
+xtick.labelsize:10
+xtick.major.pad:2
+xtick.major.size:5
+ytick.direction:'in'
+ytick.labelsize:10
+ytick.major.pad:2
+ytick.major.size:5

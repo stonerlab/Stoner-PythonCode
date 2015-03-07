@@ -16,7 +16,7 @@ if __vi__[0]==2:
     string_types=(str,unicode)
     python_v3=False
     def str2bytes(s):
-        return str(b)
+        return str(s)
     def bytes2str(b):
         return str(b)
     def get_filedialog(what="file",**opts):
@@ -44,7 +44,10 @@ elif __vi__[0]==3:
     def str2bytes(s):
         return bytes(str(s),"utf-8")
     def bytes2str(b):
-        return b.decode("utf-8")
+        if isinstance(b,bytes):
+            return b.decode("utf-8","ignore")
+        else:
+            return b
     def get_filedialog(what="file",**opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
         
