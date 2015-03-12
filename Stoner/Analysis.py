@@ -1458,3 +1458,72 @@ class AnalyseFile(DataFile):
             return ret
         else:
             return ret[0]
+    
+    def _rolling_window(self, a, window):
+        """Takes a 1D array a and odd integer window. Output is an int
+        array of size (len(a),window-1).
+        Example: for array a=[0,1,2,3,4,5,6,7,8,9] window 3 output should be
+        [[1,2],[0,2],[1,3],[2,4] ... [7,8]].
+        ie nearest indexes to each point """
+        if window%2==0 or window<3 or window>len(a): 
+            raise ValueError("window must be an odd integer within data range")
+        r=_np_.zeros((a.shape[0],window-1),dtype=_np_.int32)
+        j=_np_.arange(-(window/2),window/2+1)
+        j=_np_.delete(j,window/2) #pop the current index
+        for i in range(len(a)):
+            r[i][:]=j+i
+        #now correct the end states
+        j=_np_.arange(window)
+        for i in range(window/2):
+            temp=_np_.delete(j,i)
+            r[i][:]=temp
+        j=_np_.arange(len(a)-window,len(a))
+        for i in range(len(a)-1-window/2,len(a)):
+            temp=_np_.delete(j,i-len(a))
+            r[i][:]=temp
+        return r
+
+    def outlier_detection(self,column,window=7,certainty=3.0,action='mask'):
+        """Function to detect outliers in a column of data, will add row numbers of 
+        detected outliers to the metadata of d, also will perform action depending
+        on request eg 'mask', 'delete' (any other action defaults to doing nothing).
+        The detection looks at a window of the data, takes the average and looks
+        to see if the current data point falls certainty * std deviations away from
+        data average.
+        
+        Args:
+            column(int or str), specifing column for outlier detection
+        
+        Keyword Arguments:
+            window(int): data window for anomoly detection
+            certainty(float): eg 3 detects data 3 standard deviations from average
+            action(str), what to do with outlying points, options are
+                             'mask','delete' anything else defaults to do nothing
+                             ('outliers' item is always added to metadata)
+        
+        Returns: 
+            A copy of the current AnalysisFile
+        """
+        
+        column=self.find_col(column) #going to be easier if this is an integer later on
+        data=self.column(column).data
+        index=[]
+        r=self._rolling_window(data,window)
+        t=_np_.zeros(len(r[1]))
+        for i in range(len(r)):
+            t[:]=data[ r[i][:] ]
+            av=_np_.average(t)
+            std=_np_.std(t) #standard deviation
+            if abs(data[i]-av)>certainty*std:
+                index.append(i)
+        self['outliers']=index #add outlier indecies to metadata
+        if action=='mask':
+            mask=_np_.zeros(self.data.shape,dtype=bool)
+            for i in index:
+                mask[i,column]=True
+            self.mask=mask
+        elif action=='delete':
+            for i in index:
+                self.del_rows(i)
+        return self
+            
