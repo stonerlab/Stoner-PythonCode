@@ -1496,7 +1496,7 @@ class AnalyseFile(DataFile):
             column=self.setas._get_cols("ycol")
         index=[]
         column=self.find_col(column) #going to be easier if this is an integer later on
-        for i,t in enumerate(self.rolling_window(window)):
+        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=True)):
             av=_np_.average(t[:,column])
             std=_np_.std(t[:,column]) #standard deviation
             if abs(data[i]-av)>certainty*std:

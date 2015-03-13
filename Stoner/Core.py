@@ -2247,12 +2247,13 @@ class DataFile(object):
         self.data = _ma_.masked_array(_np_.transpose(newdata))
         return self
 
-    def rolling_window(self,window=7, wrap=True):
+    def rolling_window(self,window=7, wrap=True,exclude_centre=False):
         """Iterator that return a rolling window section of the data.
 
         Keyword Arguments:
             window (int): Size of the rolling window (must be odd and >= 3)
             wrap (bool): Whether to use data from the other end of the array when at one end or the other.
+            exclude_centre (bool): Exclude the ciurrent row from the rolling window (defaults to False)
 
         Returns:
             Yields with a section of data that is window rows long, each iteration moves the marker
@@ -2275,10 +2276,14 @@ class DataFile(object):
                 post_data=_np_.zeros((0,self.shape[1]))
             starti=max(i-hw,0)
             stopi=min(len(self),i+hw+1)
-            if wrap:
-                ret=_np_.row_stack((pre_data,self.data[starti:stopi],post_data))
+            if exclude_centre:
+                data=_np_.row_stack((self.data[starti:i],self.data[i+1:stopi]))
             else:
-                ret=self.data[starti:stopi]
+                data=self.data[starti:stopi]
+            if wrap:
+                ret=_np_.row_stack((pre_data,data,post_data))
+            else:
+                ret=data
             yield ret
 
     def rows(self):
