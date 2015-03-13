@@ -2194,7 +2194,7 @@ class DataFile(object):
                 self._setas=test._setas
                 self._setas.ref=self
                 failed=False
-            elif issublcass(filetype,DataFile):
+            elif issubclass(filetype,DataFile):
                 test=filetype(filename)
                 self["Loaded as"]=filetype.__name__
                 self._setas=test._setas
