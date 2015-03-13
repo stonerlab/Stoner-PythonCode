@@ -732,11 +732,11 @@ class AnalyseFile(DataFile):
         output=kargs.pop("output","row" if asrow else "fit")
 
         if prefix is None:
-            prefix=model.__class__.__name__
+            prefix=model.__class__.__name__+":"
         elif not prefix:
             prefix=""
         else:
-            prefix=str(prefix)
+            prefix=str(prefix)+":"
 
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
@@ -781,11 +781,11 @@ class AnalyseFile(DataFile):
             elif result is not None:
                 raise RuntimeError("Didn't recognize result as an index type or True")
             for p in fit.params:
-                self["{}:{}".format(prefix,p)]=fit.params[p].value
-                self["{}:{} err".format(prefix,p)]=fit.params[p].stderr
+                self["{}{}".format(prefix,p)]=fit.params[p].value
+                self["{}{} err".format(prefix,p)]=fit.params[p].stderr
                 row.append([fit.params[p].value,fit.params[p].stderr])
-            self["{}:chi^2".format(prefix)]=fit.chisqr
-            self["{}:nfev".format(prefix)]=fit.nfev
+            self["{}chi^2".format(prefix)]=fit.chisqr
+            self["{}nfev".format(prefix)]=fit.nfev
             retval={"fit":fit,"row":row,"full":(fit,row)}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
