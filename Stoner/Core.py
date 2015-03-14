@@ -7,6 +7,8 @@ Classes:
         languages such as LabVIEW.
 
 """
+__all__=["StonerLoadError","DataFile"] # Don't import too muhc with from Stoner.Core import *
+
 from Stoner.compat import *
 import re
 #import pdb # for debugging

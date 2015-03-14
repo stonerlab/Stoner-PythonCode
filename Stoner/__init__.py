@@ -2,21 +2,14 @@
 
 See http://github.com/~gb119/Stoner-PythonCode for more details."""
 
-__all__=['Core', 'Analysis', 'Plot', 'FileFormats', 'PlotFormats','Folders']
+__all__=['Core', 'Analysis', 'Plot', 'PlotFormats','Folders','DataFile','Data','DataFolder']
 
 # These fake the old namespace if you do an import Stoner
 
-# Support both Python 2.7 and 3
-from Stoner.compat import *
+from .Core import DataFile
+from .Util import Data
+from Stoner.Folders import DataFolder
 
-
-from .Core import *
-"""from .Analysis import *
-from .Plot import *
-from .FileFormats import *
-from PlotFormats import *
-from .Folders import *
-"""
-__version_info__ = ('0', '4', '1')
+__version_info__ = ('0', '4', '2')
 __version__ = '.'.join(__version_info__)
 

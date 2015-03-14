@@ -2,6 +2,9 @@
 
 Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
 """
+
+__all__=["AnalyseFile"]
+
 from Stoner.compat import *
 from Stoner.Core import DataFile
 import Stoner.FittingFuncs
@@ -1110,7 +1113,7 @@ class AnalyseFile(DataFile):
             self.divide(t,base,header=header,replace=replace)
         return self
 
-    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask',func=self.__outlier,**kargs):
+    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask',func=None,**kargs):
         """Function to detect outliers in a column of data.
 
         Args:
@@ -1144,6 +1147,9 @@ class AnalyseFile(DataFile):
                 
         All extra keyword arguments are passed to the outlier detector.
         """
+
+        if func is None:
+            func=self.__outlier
 
         if column is None:
             column=self.setas._get_cols("ycol")
