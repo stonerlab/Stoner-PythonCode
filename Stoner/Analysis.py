@@ -129,7 +129,7 @@ class AnalyseFile(DataFile):
 
 
     def __outlier(self,row,column,window,metric):
-        """Outlier detector function.
+        """Internal function for outlier detector.
         
         Calculates if the current row is an outlier from the surrounding data by looking
         at the number of standard deviations away from the average of the window it is."""
