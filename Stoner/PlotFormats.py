@@ -181,14 +181,7 @@ class DefaultPlotStyle(object):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
-        if _platform == 'darwin':
-            path_font = '/Library/Fonts/'+plt.rcParams['font.family'][0].replace('"','')+'.ttf'
-            if path_font in mpl.font_manager.OSXInstalledFonts():
-                prop = mpl.font_manager.FontProperties(fname=path_font)
-                #print prop.get_name()
-                plt.rcParams['font.family'] = prop.get_name()
-            else:
-                print '%s is not an installed font'%plt.rcParams['font.family'][0].replace('"','')
+
 
     def customise_axes(self,ax):
         """This method is run when we have an axis to manipulate.

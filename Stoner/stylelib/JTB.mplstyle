@@ -10,7 +10,7 @@ figure.subplot.left    : 0.175  # the left side of the subplots of the figure
 figure.subplot.right   : 0.9    # the right side of the subplots of the figure
 figure.subplot.top     : 0.95    # the top of the subplots of the figure
 figure.subplot.wspace  : 0
-font.family:"Times New Roman"
+font.family:Times New Roman
 font.size:18
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
 legend.borderpad    :0    # border whitespace in fontsize units
@@ -22,21 +22,21 @@ legend.handlelength :2.     # the length of the legend lines in fraction of font
 legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
 legend.isaxes       :False
 legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
-legend.loc          :upper center
+legend.loc          :best
 legend.markerscale  :1.0    # the relative size of legend markers vs. original
 legend.numpoints    :1      # the number of points in the legend line
 legend.scatterpoints:3 # number of scatter points
 legend.shadow       :False
-lines.linestyle:'-'
+lines.linestyle:-
 lines.linewidth:2
 lines.marker:None
 lines.markeredgewidth:0
 lines.markersize:5
-xtick.direction:'in'
+xtick.direction:in
 xtick.labelsize:18
 xtick.major.pad:5
 xtick.major.size:3
-ytick.direction:'in'
+ytick.direction:in
 ytick.labelsize:18
 ytick.major.pad:5
 ytick.major.size:3
