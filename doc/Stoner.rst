@@ -12,6 +12,7 @@ Stoner Package
 
     typeHintedDict
     DataFile
+    StonerLoadError
 
 :mod:`Analysis` Module
 =======================
@@ -77,6 +78,7 @@ Generic Fomats
     SPCFile
     TDMSFile
     OVFFile
+    EasyPlotFile
 
 Instrument Formats
 ------------------
@@ -108,22 +110,19 @@ Facility Outputs
     SNSFile
 
 :mod:`PlotFormats` Module
-=========================
+==========================
 
-.. module:: Stoner.PlotFormats
-
-
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    DefaultPlotStyle
+.. automodapi:: Stoner.PlotFormats
+   :no-inheritance-diagram:
+   :no-heading:
 
 :mod:`Fit` Module
 ==========================
 
-.. automodule:: Stoner.Fit
-   :members:
+
+.. automodapi:: Stoner.Fit
+   :no-inheritance-diagram:
+   :no-heading:
 
 :mod:`FittingFuncs` Module
 ==========================
@@ -143,18 +142,17 @@ Facility Outputs
     HDF5File
     HDF5Folder
 
-:mod:`ZIP` Module
+:mod:`Zip` Module
 =========================
 
-.. module:: Stoner.ZIP
+.. module:: Stoner.Zip
 
-.. autosummary::
+.. autosummary:: 
    :toctree: classes
    :template: classdocs.rst
 
     ZipFile
     ZipFolder
-
 
 :mod:`Util` Module
 ==================
