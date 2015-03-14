@@ -139,17 +139,6 @@ strongly typed languages (sch as LabVIEW).</p>
 <p>mapping of the regex patterns to actual python types</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="Stoner.Core.typeHintedDict.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Core.html#typeHintedDict.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.typeHintedDict.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>typeHintedDict constructor method.</p>
-<p>Calls the dict() constructor, then runs through the keys of the
-created dictionary and either uses the string type embedded in
-the keyname to generate the type hint (and remove the
-embedded string type from the keyname) or determines the likely
-type hint from the value of the dict element.</p>
-</dd></dl>
-
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -164,7 +153,7 @@ type hint from the value of the dict element.</p>
 <td>Provides a copy method that is aware of the type hinting strings.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.typeHintedDict.export.html#Stoner.Core.typeHintedDict.export" title="Stoner.Core.typeHintedDict.export"><tt class="xref py py-obj docutils literal"><span class="pre">export</span></tt></a>(key)</td>
-<td>Exports a single metadata value to a string representation with type hint  In the ASCII based file format, the type hinted metadata is represented in the first column of a tab delimited text file as a series of lines with format keyname{typhint}=string_value.</td>
+<td>Exports a single metadata value to a string representation with type hint.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Core.typeHintedDict.findtype.html#Stoner.Core.typeHintedDict.findtype" title="Stoner.Core.typeHintedDict.findtype"><tt class="xref py py-obj docutils literal"><span class="pre">findtype</span></tt></a>(value)</td>
 <td>Determines the correct string type to return for common python classes.</td>
@@ -173,7 +162,7 @@ type hint from the value of the dict element.</p>
 <td>Given a string value try to work out if there is a better python type dor the value.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Core.typeHintedDict.type.html#Stoner.Core.typeHintedDict.type" title="Stoner.Core.typeHintedDict.type"><tt class="xref py py-obj docutils literal"><span class="pre">type</span></tt></a>(key)</td>
-<td>Returns the typehint for the given k(s)  This simply looks up the type hinting dictionary for each key it is given.</td>
+<td>Returns the typehint for the given k(s).</td>
 </tr>
 </tbody>
 </table>
@@ -239,8 +228,8 @@ type hint from the value of the dict element.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

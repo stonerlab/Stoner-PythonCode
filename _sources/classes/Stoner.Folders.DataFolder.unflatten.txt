@@ -1,0 +1,8 @@
+
+
+DataFolder.unflatten
+===================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.unflatten

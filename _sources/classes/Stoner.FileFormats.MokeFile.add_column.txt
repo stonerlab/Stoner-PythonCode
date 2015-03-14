@@ -1,0 +1,8 @@
+
+
+MokeFile.add_column
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.add_column

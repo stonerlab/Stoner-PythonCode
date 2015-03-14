@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Strijkers &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="TersoffHammann" href="Stoner.Fit.TersoffHammann.html" />
+    <link rel="prev" title="Simmons" href="Stoner.Fit.Simmons.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.TersoffHammann.html" title="TersoffHammann"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.Simmons.html" title="Simmons"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="strijkers">
+<h1>Strijkers<a class="headerlink" href="#strijkers" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Fit.Strijkers">
+<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">Strijkers</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#Strijkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Strijkers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></tt></p>
+<p>strijkers(V, params):
+:Parameters: * <strong>V = bias voltages, params=list of parameter values, imega, delta,P and Z</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>omega</strong> (<em>float</em>) &#8211;
+Broadening</li>
+<li><strong>delta</strong> (<em>float</em>) &#8211;
+SC energy Gap</li>
+<li><strong>P</strong> (<em>float</em>) &#8211;
+Interface parameter</li>
+<li><strong>Z</strong> (<em>float</em>) &#8211;
+Current spin polarization through contact</li>
+</ul>
+</div></blockquote>
+<p>PCAR fitting
+Strijkers modified BTK model - BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</p>
+<p>Only using 1 delta, not modified for proximity</p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.Strijkers.guess" title="Stoner.Fit.Strijkers.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;V])</td>
+<td>Guess starting values for a good Nb contact to a ferromagnet at 4.2K</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.Fit.Strijkers.guess">
+<tt class="descname">guess</tt><big>(</big><em>data</em>, <em>V=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#Strijkers.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Strijkers.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess starting values for a good Nb contact to a ferromagnet at 4.2K</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Fit.Simmons.html"
+                        title="previous chapter">Simmons</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Fit.TersoffHammann.html"
+                        title="next chapter">TersoffHammann</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api/Stoner.Fit.Strijkers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.TersoffHammann.html" title="TersoffHammann"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.Simmons.html" title="Simmons"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+
+
+DefaultPlotStyle
+===================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autoclass:: DefaultPlotStyle
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~DefaultPlotStyle.show_legend
+      ~DefaultPlotStyle.show_title
+      ~DefaultPlotStyle.show_xlabel
+      ~DefaultPlotStyle.show_ylabel
+      ~DefaultPlotStyle.show_zlabel
+      ~DefaultPlotStyle.stylename
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~DefaultPlotStyle.annotate
+      ~DefaultPlotStyle.apply
+      ~DefaultPlotStyle.customise
+      ~DefaultPlotStyle.customise_axes
+      ~DefaultPlotStyle.new_figure
+      ~DefaultPlotStyle.update
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: show_legend
+   .. autoattribute:: show_title
+   .. autoattribute:: show_xlabel
+   .. autoattribute:: show_ylabel
+   .. autoattribute:: show_zlabel
+   .. autoattribute:: stylename
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: annotate
+   .. automethod:: apply
+   .. automethod:: customise
+   .. automethod:: customise_axes
+   .. automethod:: new_figure
+   .. automethod:: update
+
+   
+   

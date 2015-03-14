@@ -1,0 +1,24 @@
+Stoner.Util.Data
+================
+
+.. currentmodule:: Stoner.Util
+
+.. autoclass:: Data
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Data.no_fmt
+      ~Data.patterns
+      ~Data.positional_fmt
+      ~Data.priority
+   
+   

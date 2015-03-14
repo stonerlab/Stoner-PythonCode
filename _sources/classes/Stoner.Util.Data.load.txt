@@ -1,0 +1,8 @@
+
+
+Data.load
+=====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.load

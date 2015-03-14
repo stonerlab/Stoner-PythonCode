@@ -1,0 +1,8 @@
+
+
+Data.subplot
+========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.subplot

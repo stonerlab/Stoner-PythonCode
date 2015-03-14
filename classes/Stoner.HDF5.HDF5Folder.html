@@ -65,12 +65,6 @@ method to load and save data from a single HDF5 file with groups.</p>
 <p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> for documentation on constructor.</p>
 <p>Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that contains &#8216;HDF5File&#8217;)
 or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;HDF5Folder&#8217;).</p>
-<dl class="method">
-<dt id="Stoner.HDF5.HDF5Folder.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5Folder.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5Folder.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor for the HDF5Folder Class.</p>
-</dd></dl>
-
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -81,8 +75,8 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.__init__.html#Stoner.HDF5.HDF5Folder.__init__" title="Stoner.HDF5.HDF5Folder.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor for the HDF5Folder Class.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory])</td>
-<td>&#64;TODO Write the HDF5Folder getlist function</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<td>Reads the HDF5 File to construct a list of file HDF5File objects</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save" title="Stoner.HDF5.HDF5Folder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
 <td>Saves a load of files to a single HDF5 file, creating groups as it goes.</td>
@@ -151,8 +145,8 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

@@ -1,0 +1,25 @@
+Stoner.Zip.ZipFolder
+====================
+
+.. currentmodule:: Stoner.Zip
+
+.. autoclass:: ZipFolder
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~ZipFolder.__init__
+      ~ZipFolder.getlist
+      ~ZipFolder.save
+
+   
+   
+
+   
+   
+   

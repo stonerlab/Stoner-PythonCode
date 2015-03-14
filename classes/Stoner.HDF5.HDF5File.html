@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="HDF5File.__init__" href="Stoner.HDF5.HDF5File.__init__.html" />
-    <link rel="prev" title="DefaultPlotStyle.update" href="Stoner.PlotFormats.DefaultPlotStyle.update.html" /> 
+    <link rel="next" title="HDF5File._load" href="Stoner.HDF5.HDF5File._load.html" />
+    <link rel="prev" title="WLfit" href="../api/Stoner.Fit.WLfit.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5File.__init__.html" title="HDF5File.__init__"
+          <a href="Stoner.HDF5.HDF5File._load.html" title="HDF5File._load"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+          <a href="../api/Stoner.Fit.WLfit.html" title="WLfit"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -62,20 +62,31 @@
 <em class="property">class </em><tt class="descclassname">Stoner.HDF5.</tt><tt class="descname">HDF5File</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File" title="Permalink to this definition">¶</a></dt>
 <dd><p>A sub class of DataFile that sores itself in a HDF5File or group.</p>
 <dl class="method">
-<dt>
-<tt class="descname">load(): load a file from hdf5 file</tt></dt>
-<dd></dd></dl>
+<dt id="Stoner.HDF5.HDF5File.load">
+<tt class="descname">load</tt><big>(</big><big>)</big><a class="headerlink" href="#Stoner.HDF5.HDF5File.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>load a file from hdf5 file</p>
+</dd></dl>
 
 <dl class="method">
-<dt>
-<tt class="descname">save(): Save a dataset to an hdf5 file.</tt></dt>
-<dd></dd></dl>
+<dt id="Stoner.HDF5.HDF5File.save">
+<tt class="descname">save</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a dataset to an hdf5 file.</p>
+</dd></dl>
 
-<dl class="docutils">
-<dt>ArgsL</dt>
-<dd>args (tuple): Supplied arguments, only recognises one though !
-kargs (dict): Dictionary of keyword arguments</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<em>tuple</em>) &#8211;
+Supplied arguments, only recognises one though !</li>
+<li><strong>kargs</strong> (<em>dict</em>) &#8211;
+Dictionary of keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <p>If the first non-keyword arguement is not an h5py File or Group then
 initialises with a blank parent constructor and then loads data, otherwise,
 calls parent constructor.</p>
@@ -87,12 +98,6 @@ full name + typehint of the stanard DataFile metadata dictionary
 group name or from the hdf5 filename.
 The root has an attribute <em>type</em> that must by &#8216;HDF5File&#8217; otherwise the load routine
 will refuse to load it. This is to try to avoid loading rubbish from random hdf files.</p>
-<dl class="method">
-<dt id="Stoner.HDF5.HDF5File.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor to catch initialising with an h5py.File or h5py.Group</p>
-</dd></dl>
-
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -100,13 +105,10 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.__init__.html#Stoner.HDF5.HDF5File.__init__" title="Stoner.HDF5.HDF5File.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
-<td>Constructor to catch initialising with an h5py.File or h5py.Group</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.load.html#Stoner.HDF5.HDF5File.load" title="Stoner.HDF5.HDF5File.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5File._load.html#Stoner.HDF5.HDF5File._load" title="Stoner.HDF5.HDF5File._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
 <td>Loads data from a hdf5 file</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.save.html#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([h5file])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.save.html#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([h5file])</td>
 <td>Writes the current object into  an hdf5 file or group within a file in a fashion that is compatible with being loaded in again with the same class.</td>
 </tr>
 </tbody>
@@ -119,16 +121,16 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">compression</span></tt></td>
-<td>str(object=&#8217;&#8216;) -&gt; string</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">compression_opts</span></tt></td>
-<td>int(x=0) -&gt; int or long</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
-<td>list() -&gt; new empty list</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
-<td>int(x=0) -&gt; int or long</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -146,11 +148,11 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.PlotFormats.DefaultPlotStyle.update.html"
-                        title="previous chapter">DefaultPlotStyle.update</a></p>
+  <p class="topless"><a href="../api/Stoner.Fit.WLfit.html"
+                        title="previous chapter">WLfit</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.HDF5.HDF5File.__init__.html"
-                        title="next chapter">HDF5File.__init__</a></p>
+  <p class="topless"><a href="Stoner.HDF5.HDF5File._load.html"
+                        title="next chapter">HDF5File._load</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.HDF5.HDF5File.txt"
@@ -183,10 +185,10 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5File.__init__.html" title="HDF5File.__init__"
+          <a href="Stoner.HDF5.HDF5File._load.html" title="HDF5File._load"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+          <a href="../api/Stoner.Fit.WLfit.html" title="WLfit"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -194,8 +196,8 @@ will refuse to load it. This is to try to avoid loading rubbish from random hdf 
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

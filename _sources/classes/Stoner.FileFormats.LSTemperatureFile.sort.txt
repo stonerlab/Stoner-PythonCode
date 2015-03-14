@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.sort
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.sort

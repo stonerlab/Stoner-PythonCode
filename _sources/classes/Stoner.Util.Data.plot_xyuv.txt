@@ -1,0 +1,8 @@
+
+
+Data.plot_xyuv
+==========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.plot_xyuv

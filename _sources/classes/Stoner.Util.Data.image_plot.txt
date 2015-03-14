@@ -1,0 +1,8 @@
+
+
+Data.image_plot
+===========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.image_plot

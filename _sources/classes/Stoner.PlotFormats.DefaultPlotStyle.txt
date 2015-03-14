@@ -38,31 +38,6 @@ Stoner.PlotFormats.DefaultPlotStyle
       ~DefaultPlotStyle.show_xlabel
       ~DefaultPlotStyle.show_ylabel
       ~DefaultPlotStyle.show_zlabel
-      ~DefaultPlotStyle.templat_axes_labelsize
-      ~DefaultPlotStyle.template_axes_color__cycle
-      ~DefaultPlotStyle.template_axes_formatter_limits
-      ~DefaultPlotStyle.template_axes_grid
-      ~DefaultPlotStyle.template_figure_facecolor
-      ~DefaultPlotStyle.template_figure_subplot_bottom
-      ~DefaultPlotStyle.template_figure_subplot_left
-      ~DefaultPlotStyle.template_figure_subplot_right
-      ~DefaultPlotStyle.template_figure_subplot_top
-      ~DefaultPlotStyle.template_font_size
-      ~DefaultPlotStyle.template_legend_fontsize
-      ~DefaultPlotStyle.template_legend_frameon
-      ~DefaultPlotStyle.template_lines_linewidth
-      ~DefaultPlotStyle.template_text_fontsize
-      ~DefaultPlotStyle.template_xtick_direction
-      ~DefaultPlotStyle.template_xtick_labelsize
-      ~DefaultPlotStyle.template_xtick_major_pad
-      ~DefaultPlotStyle.template_xtick_major_size
-      ~DefaultPlotStyle.template_ytick_direction
-      ~DefaultPlotStyle.template_ytick_labelsize
-      ~DefaultPlotStyle.template_ytick_major_pad
-      ~DefaultPlotStyle.template_ytick_major_size
-      ~DefaultPlotStyle.template_ztick_direction
-      ~DefaultPlotStyle.template_ztick_labelsize
-      ~DefaultPlotStyle.template_ztick_major_pad
-      ~DefaultPlotStyle.template_ztick_major_size
+      ~DefaultPlotStyle.stylename
    
    

@@ -6,7 +6,6 @@ Stoner.HDF5.HDF5Folder
 .. autoclass:: HDF5Folder
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -17,6 +16,7 @@ Stoner.HDF5.HDF5Folder
       ~HDF5Folder.__init__
       ~HDF5Folder.getlist
       ~HDF5Folder.save
+
    
    
 

@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LSTemperatureFile.get &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.FileFormats.LSTemperatureFile" href="Stoner.FileFormats.LSTemperatureFile.html" />
+    <link rel="next" title="LSTemperatureFile.get_filename" href="Stoner.FileFormats.LSTemperatureFile.get_filename.html" />
+    <link rel="prev" title="LSTemperatureFile.find_col" href="Stoner.FileFormats.LSTemperatureFile.find_col.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.get_filename.html" title="LSTemperatureFile.get_filename"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.find_col.html" title="LSTemperatureFile.find_col"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.FileFormats.LSTemperatureFile.html" accesskey="U">Stoner.FileFormats.LSTemperatureFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="lstemperaturefile-get">
+<h1>LSTemperatureFile.get<a class="headerlink" href="#lstemperaturefile-get" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.FileFormats.LSTemperatureFile.get">
+<tt class="descclassname">LSTemperatureFile.</tt><tt class="descname">get</tt><big>(</big><em>item</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.LSTemperatureFile.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper around __get_item__ that handles missing keys by returning None.</p>
+<p>This is useful for the <tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></tt> class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> (<em>string</em>) &#8211;
+A string representing the metadata keyname</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">self.metadata[item] or None if item not in self.metadata</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.find_col.html"
+                        title="previous chapter">LSTemperatureFile.find_col</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.get_filename.html"
+                        title="next chapter">LSTemperatureFile.get_filename</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.FileFormats.LSTemperatureFile.get.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.get_filename.html" title="LSTemperatureFile.get_filename"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.LSTemperatureFile.find_col.html" title="LSTemperatureFile.find_col"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.FileFormats.LSTemperatureFile.html" >Stoner.FileFormats.LSTemperatureFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

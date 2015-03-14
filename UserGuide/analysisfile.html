@@ -68,7 +68,7 @@ adding and subtracting columns.:</p>
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> method simply divides the data column by the reference column. By default the normalise method
-replaces the data column with the new (normalised) data and appends <a href="#id1"><span class="problematic" id="id2">`</span></a>&#8216;(norm)&#8217;&#8217; to the column header. The keyword arguments
+replaces the data column with the new (normalised) data and appends &#8216;(norm)&#8217; to the column header. The keyword arguments
 <em>header</em> and <em>replace</em> can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
 The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to.
@@ -81,10 +81,9 @@ a.subtract(0,a2.column(0))
 </div>
 <p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></tt></a> method subtracts the second column form the first.
 Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> the first data column will not be replaced but a new column inserted and a new header
-(defaulting to &#8216;column header 1 - column header 2&#8217;) will be created. This can be overridden with the <em>header</em> and <em>replace</em></p>
-<blockquote>
-<div>keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></tt></a> method work in an analogous manner to the</div></blockquote>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.add()</span></tt></a> method allows one to add two columns in a
+(defaulting to &#8216;column header 1 - column header 2&#8217;) will be created. This can be overridden with the <em>header</em> and <em>replace</em>
+keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></tt></a> method work in an analogous manner to the
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.add()</span></tt></a> method allows one to add two columns in a
 similar fashion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;A plus B&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -119,7 +118,7 @@ The final example will result in a <tt class="xref py py-class docutils literal"
 <div class="section" id="simple-polynomial-fits">
 <h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
 <p>Simple least squares fitting of polynomial functions is handled by the
-:py:meth:<a href="#id3"><span class="problematic" id="id4">`</span></a>AnalyseFile.polyfit&#8217; method:</p>
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.polyfit()</span></tt></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -164,11 +163,36 @@ will be called &#8216;Fitted with &#8216; and the name of the function <em>func<
 </div>
 <div class="section" id="fitting-with-limits">
 <h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="non-linear-curve-fitting-with-initialisation-file">
-<h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
-<p>For cases where one requires more flexibility in fitting data, in particular
-where the fitting parameters are constrained, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.mpfit.html#Stoner.Analysis.AnalyseFile.mpfit" title="Stoner.Analysis.AnalyseFile.mpfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.mpfit()</span></tt></a>
-method is provided. This is a pass through to the <a class="reference internal" href="../Stoner.html#module-Stoner.mpfit" title="Stoner.mpfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.mpfit</span></tt></a> module.:</p>
+<p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
+<tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></tt> function. New in version 0.2 onwards of the Package is an interface to the
+<em>lmfit</em> module.</p>
+<div class="section" id="non-linear-curve-fitting-with-lmfit">
+<h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
+<p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
+A full description of the lmfit module is given in the <cite>lmffit documentation &lt;href=http://lmfit.github.io/lmfit-py/&gt;</cite>. The
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> method is used to interact with lmfit.</p>
+<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a>, one requires a c instance. This describes a function
+and its independent and fittable parameters, whether they have limits and what the limits are. The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></tt></a> module contains
+a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.</p>
+<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">Arrehenius</span>
+<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;A_err&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;chi^2&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;nfev&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In this example we would be fitting an Arrehenius model to data contained inthe &#8216;Temp&#8217; and &#8216;Cond&#8217; columns. The resulting
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>.</p>
+<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> is controlled by the <em>output</em> keyword parameter. By default it is the <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></tt>
+instance. This contains all the information about the fit and fitting process.</p>
+</div>
+<div class="section" id="non-linear-curve-fitting-with-mpfit">
+<h4>Non-linear curve fitting with mpfit<a class="headerlink" href="#non-linear-curve-fitting-with-mpfit" title="Permalink to this headline">¶</a></h4>
+<p>Current versions of the Stoner Package contain a second constrained non-linear fitting package, <em>mpfit</em>.</p>
+<p>This is also suitable for cases where one requires more flexibility in fitting data, in particular
+where the fitting parameters are constrained, the module is accessed thrpugh the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.mpfit.html#Stoner.Analysis.AnalyseFile.mpfit" title="Stoner.Analysis.AnalyseFile.mpfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.mpfit()</span></tt></a>
+method. This is a pass through to the <a class="reference internal" href="../Stoner.html#module-Stoner.mpfit" title="Stoner.mpfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.mpfit</span></tt></a> module.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">mpfit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p_info</span><span class="p">,</span>  <span class="n">func_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(),</span> <span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">mpfit_kargs</span> <span class="p">)</span>
 </pre></div>
 </div>
@@ -222,16 +246,16 @@ print the parameter name if available.</p>
 </li>
 <li><dl class="first docutils">
 <dt>[step] the step size to be used in calculating the numerical derivatives.</dt>
-<dd><blockquote class="first">
-<div><p>If set to zero, then the step size is   computed automatically.  Ignored when</p>
-</div></blockquote>
-<p class="last">AUTODERIVATIVE=0.</p>
+<dd><p class="first last">If set to zero, then the step size is    computed automatically.  Ignored when
+AUTODERIVATIVE=0.</p>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>[mpside] the sidedness of the finite difference when computing numerical</dt>
-<dd><p class="first">derivatives.  This field can take four values:</p>
+<dd><blockquote class="first">
+<div><p>derivatives.  This field can take four values:</p>
+</div></blockquote>
 <ul class="last">
 <li><p class="first">[0]one-sided derivative computed automatically</p>
 </li>
@@ -241,10 +265,8 @@ print the parameter name if available.</p>
 </li>
 <li><dl class="first docutils">
 <dt>[2] two-sided derivative <tt class="docutils literal"><span class="pre">(f(x+h)</span> <span class="pre">-</span> <span class="pre">f(x-h))/(2*h)</span></tt></dt>
-<dd><blockquote class="first">
-<div><p>Where H is the STEP parameter described above.  The &#8220;automatic&#8221;</p>
-</div></blockquote>
-<p class="last">one-sided derivative method will chose a direction for the finite difference
+<dd><p class="first last">Where H is the STEP parameter described above.  The &#8220;automatic&#8221;
+one-sided derivative method will chose a direction for the finite difference
 which does not violate any constraints.  The other methods do
 not perform this check.  The two-sided method is in principle more precise, but
 requires twice as many function evaluations.  <strong>Default: 0</strong>.</p>
@@ -282,8 +304,8 @@ many.**Default: 1** (all parameters printed)</p>
 </li>
 </ul>
 </div>
-<div class="section" id="id5">
-<h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="non-linear-curve-fitting-with-initialisation-file">
+<h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
 <p>If you wish to fit your data to a non-linear function more complicated than a polynomial you can use
 <tt class="xref py py-meth docutils literal"><span class="pre">Stoner.nlfit.nlfit()</span></tt> or equivalently if you have an <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> instance of your data
 you can call <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.nlfit.html#Stoner.Analysis.AnalyseFile.nlfit" title="Stoner.Analysis.AnalyseFile.nlfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.nlfit()</span></tt></a>. This performs a non-linear least squares fitting algorithm to your data
@@ -388,7 +410,7 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> provides
-a <tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></tt> method to facilitate this.:</p>
+a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></tt></a> method to facilitate this.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">scan1</span><span class="o">=</span><span class="n">AnalyseFile</span><span class="p">(</span><span class="s">&#39;file 1.txt&#39;</span><span class="p">)</span>
 <span class="n">scan2</span><span class="o">=</span><span class="n">AnalyseFile</span><span class="p">(</span><span class="s">&#39;file 2.txt&#39;</span><span class="p">)</span>
 <span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Angle&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">)</span>
@@ -493,8 +515,9 @@ less equal significance. By default, only peaks are returned in order of x posit
 <li><a class="reference internal" href="#simple-polynomial-fits">Simple polynomial Fits</a></li>
 <li><a class="reference internal" href="#simple-function-fitting">Simple function fitting</a></li>
 <li><a class="reference internal" href="#fitting-with-limits">Fitting with limits</a><ul>
+<li><a class="reference internal" href="#non-linear-curve-fitting-with-lmfit">Non-linear curve fitting with lmfit</a></li>
+<li><a class="reference internal" href="#non-linear-curve-fitting-with-mpfit">Non-linear curve fitting with mpfit</a></li>
 <li><a class="reference internal" href="#non-linear-curve-fitting-with-initialisation-file">Non-linear curve fitting with initialisation file</a></li>
-<li><a class="reference internal" href="#id5">Non-linear curve fitting with initialisation file</a></li>
 </ul>
 </li>
 </ul>
@@ -565,8 +588,8 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

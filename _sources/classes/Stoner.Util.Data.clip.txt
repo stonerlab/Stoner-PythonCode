@@ -1,0 +1,8 @@
+
+
+Data.clip
+=====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.clip

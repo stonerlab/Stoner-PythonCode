@@ -6,7 +6,6 @@ Stoner.Analysis.AnalyseFile
 .. autoclass:: AnalyseFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -26,21 +25,25 @@ Stoner.Analysis.AnalyseFile
       ~AnalyseFile.divide
       ~AnalyseFile.integrate
       ~AnalyseFile.interpolate
+      ~AnalyseFile.lmfit
       ~AnalyseFile.make_bins
       ~AnalyseFile.max
       ~AnalyseFile.mean
       ~AnalyseFile.min
       ~AnalyseFile.mpfit
       ~AnalyseFile.mpfit_iterfunct
-      ~AnalyseFile.mulitply
+      ~AnalyseFile.multiply
       ~AnalyseFile.nlfit
       ~AnalyseFile.normalise
+      ~AnalyseFile.outlier_detection
       ~AnalyseFile.peaks
       ~AnalyseFile.polyfit
       ~AnalyseFile.span
       ~AnalyseFile.split
+      ~AnalyseFile.stitch
       ~AnalyseFile.subtract
       ~AnalyseFile.threshold
+
    
    
 

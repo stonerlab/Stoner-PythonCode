@@ -1,0 +1,8 @@
+
+
+MokeFile._load
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile._load

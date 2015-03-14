@@ -60,15 +60,14 @@
 <h1>VSMFile.find_col<a class="headerlink" href="#vsmfile-find-col" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.VSMFile.find_col">
-<tt class="descclassname">VSMFile.</tt><tt class="descname">find_col</tt><big>(</big><em>col</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.VSMFile.find_col" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indexes the column headers in order to locate a column of data.shape</p>
-<p>Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.
--   Integer indices are simply checked to ensure that they are in range
--   String indices are first checked for an exact match against a column header</p>
-<blockquote>
-<div>if that fails they are then compiled to a regular expression and the first
-match to a column header is taken.</div></blockquote>
+<tt class="descclassname">VSMFile.</tt><tt class="descname">find_col</tt><big>(</big><em>col</em>, <em>force_list=False</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.VSMFile.find_col" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indexes the column headers in order to locate a column of data.shape.</p>
+<p>Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</p>
 <ul class="simple">
+<li>Integer indices are simply checked to ensure that they are in range</li>
+<li>String indices are first checked for an exact match against a column header
+if that fails they are then compiled to a regular expression and the first
+match to a column header is taken.</li>
 <li>A regular expression index is simply matched against the column headers and the
 first match found is taken. This allows additional regular expression options
 such as case insensitivity.</li>
@@ -80,9 +79,14 @@ in turn.</li>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, a string, a re, a slice or a list</em>) &#8211; Which column(s) to retuirn indices for.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, a string, a re, a slice or a list</em>) &#8211;
+Which column(s) to retuirn indices for.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The matching column index as an integer or a KeyError</td>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>force_list</strong> (<em>bool</em>) &#8211;
+Force the output always to be a list. Mainly for internal use only</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The matching column index as an integer or a KeyError</td>
 </tr>
 </tbody>
 </table>
@@ -149,8 +153,8 @@ in turn.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

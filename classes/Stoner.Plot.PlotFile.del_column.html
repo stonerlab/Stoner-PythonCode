@@ -61,20 +61,20 @@
 <dl class="method">
 <dt id="Stoner.Plot.PlotFile.del_column">
 <tt class="descclassname">PlotFile.</tt><tt class="descname">del_column</tt><big>(</big><em>col=None</em>, <em>duplicates=False</em><big>)</big><a class="headerlink" href="#Stoner.Plot.PlotFile.del_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object</p>
+<dd><p>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, list or re</em>) &#8211; is the column index as defined for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></tt> to the column to be deleted</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, list or re</em>) &#8211;
+is the column index as defined for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></tt> to the column to be deleted</td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>duplicates</strong> (<em>bool</em>) &#8211;
 (default False) look for duplicated columns</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">py:class:<cite>DataFile</cite> object with the column deleted.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">The</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>The</em> &#8211;
+py:class:<cite>DataFile</cite> object with the column deleted.</td>
 </tr>
 </tbody>
 </table>
@@ -85,7 +85,7 @@
 </li>
 <li><p class="first">if col is not None and duplicates is True then all duplicates of the specified column are removed.</p>
 </li>
-<li><p class="first">If duplicates is false then &#64;a col must not be None otherwise a RuntimeError is raised.</p>
+<li><p class="first">If duplicates is False then <em>col</em> must not be None otherwise a RuntimeError is raised.</p>
 </li>
 <li><p class="first">If col is a list (duplicates should not be None) then the all the matching columns are found.</p>
 </li>
@@ -160,8 +160,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

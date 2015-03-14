@@ -1,0 +1,8 @@
+
+
+Data.plot_xyz
+=========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.plot_xyz

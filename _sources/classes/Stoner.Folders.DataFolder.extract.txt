@@ -1,0 +1,8 @@
+
+
+DataFolder.extract
+=================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.extract

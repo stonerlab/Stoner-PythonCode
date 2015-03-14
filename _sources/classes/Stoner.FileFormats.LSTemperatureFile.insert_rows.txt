@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.insert_rows
+================================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.insert_rows

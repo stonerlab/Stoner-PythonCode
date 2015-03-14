@@ -6,7 +6,6 @@ Stoner.Plot.PlotFile
 .. autoclass:: PlotFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -28,6 +27,7 @@ Stoner.Plot.PlotFile
       ~PlotFile.plot_xyzuvw
       ~PlotFile.quiver_plot
       ~PlotFile.subplot
+
    
    
 

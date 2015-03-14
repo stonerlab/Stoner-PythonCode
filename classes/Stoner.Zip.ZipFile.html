@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Zip.ZipFile &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="ZipFile.__init__" href="Stoner.Zip.ZipFile.__init__.html" />
+    <link rel="prev" title="HDF5Folder.save" href="Stoner.HDF5.HDF5Folder.save.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Zip.ZipFile.__init__.html" title="ZipFile.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stoner-zip-zipfile">
+<h1>Stoner.Zip.ZipFile<a class="headerlink" href="#stoner-zip-zipfile" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Zip.ZipFile">
+<em class="property">class </em><tt class="descclassname">Stoner.Zip.</tt><tt class="descname">ZipFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sub class of DataFile that sores itself in a zip file.</p>
+<dl class="method">
+<dt id="Stoner.Zip.ZipFile._load">
+<tt class="descname">_load</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile._load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile._load" title="Permalink to this definition">¶</a></dt>
+<dd><p>prorivate method to allow <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a> to load
+a file from zip file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.Zip.ZipFile.save">
+<tt class="descname">save</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a dataset to an zip file.</p>
+</dd></dl>
+
+<p>If the first non-keyword arguement is not an <tt class="xref py py-class docutils literal"><span class="pre">zipfile:ZipFile</span></tt> then
+initialises with a blank parent constructor and then loads data, otherwise,
+calls parent constructor.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.__init__.html#Stoner.Zip.ZipFile.__init__" title="Stoner.Zip.ZipFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor to catch initialising with an h5py.File or h5py.Group</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile._load.html#Stoner.Zip.ZipFile._load" title="Stoner.Zip.ZipFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
+<td>Load a file from the zip file, openining it as necessary</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.save.html#Stoner.Zip.ZipFile.save" title="Stoner.Zip.ZipFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Overrides the save method to allow ZipFile to be written out to disc (as a mininmalist output)</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.HDF5.HDF5Folder.save.html"
+                        title="previous chapter">HDF5Folder.save</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Zip.ZipFile.__init__.html"
+                        title="next chapter">ZipFile.__init__</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Zip.ZipFile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Zip.ZipFile.__init__.html" title="ZipFile.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

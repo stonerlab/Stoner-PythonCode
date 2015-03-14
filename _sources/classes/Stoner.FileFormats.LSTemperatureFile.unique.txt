@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.unique
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.unique

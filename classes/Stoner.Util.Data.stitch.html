@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data.stitch &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Util.Data" href="Stoner.Util.Data.html" />
+    <link rel="next" title="Data.subplot" href="Stoner.Util.Data.subplot.html" />
+    <link rel="prev" title="Data.split" href="Stoner.Util.Data.split.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.subplot.html" title="Data.subplot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.split.html" title="Data.split"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" accesskey="U">Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-stitch">
+<h1>Data.stitch<a class="headerlink" href="#data-stitch" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Util.Data.stitch">
+<tt class="descclassname">Data.</tt><tt class="descname">stitch</tt><big>(</big><em>other</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>overlap=None</em>, <em>min_overlap=0.0</em>, <em>mode='All'</em>, <em>func=None</em>, <em>p0=None</em><big>)</big><a class="headerlink" href="#Stoner.Util.Data.stitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a scaling to this data set to make it stich to another dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>other</strong> (<em>DataFile</em>) &#8211;
+Another data set that is used as the base to stitch this one on to</li>
+<li><strong>xcol,ycol (index or None): The x and y data columns. If left as None then the current setas attribute is used.</strong></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>overlap</strong> (<em>tuple of (lower,higher) or None</em>) &#8211;
+The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.</li>
+<li><strong>min_overlap</strong> (<em>float</em>) &#8211;
+If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.</li>
+<li><strong>mode</strong> (<em>str</em>) &#8211;
+Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+a stitching function that transforms <span class="math">\((x,y)\rightarrow(x',y')\)</span>. Default is to use functions defined by <a href="#id1"><span class="problematic" id="id2">*</span></a>mode*()</li>
+<li><strong>p0</strong> (<em>iterable</em>) &#8211;
+if func is not None then p0 should be the starting values for the stitching function parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A copy of the current AnalyseFile with the x and y data columns adjusted to stitch</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>To stitch the data together, the x and y data in the current data file is transforms so that
+<span class="math">\(x'=x+A\)</span> and <span class="math">\(y'=By+C\)</span> where <span class="math">\(A,B,C\)</span> are constants and <span class="math">\((x',y')\)</span> are close matches to the
+<span class="math">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
+numbers of <span class="math">\((x,y)\)</span> points <a href="#id3"><span class="problematic" id="id4">*</span></a>mode controls whether A,B, and C are fixed or adjustable</p>
+<ul class="simple">
+<li>&#8220;All&#8221; - all three parameters adjustable</li>
+<li>&#8220;Scale y, shift x&#8221; - C is fixed at 0.0</li>
+<li>&#8220;Scale and shift y&#8221; A is fixed at 0.0</li>
+<li>&#8220;Scale y&#8221; - only B is adjustable</li>
+<li>&#8220;Shift y&#8221; - Only c is adjsutable</li>
+<li>&#8220;Shift x&#8221; - Only A is adjustable</li>
+<li>&#8220;Shift both&#8221; - B is fixed at 1.0</li>
+</ul>
+<p>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.split.html"
+                        title="previous chapter">Data.split</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.subplot.html"
+                        title="next chapter">Data.subplot</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Util.Data.stitch.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.subplot.html" title="Data.subplot"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.split.html" title="Data.split"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" >Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

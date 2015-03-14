@@ -60,22 +60,34 @@
 <h1>XRDFile.del_rows<a class="headerlink" href="#xrdfile-del-rows" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.XRDFile.del_rows">
-<tt class="descclassname">XRDFile.</tt><tt class="descname">del_rows</tt><big>(</big><em>col=None</em>, <em>val=None</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.XRDFile.del_rows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows</p>
+<tt class="descclassname">XRDFile.</tt><tt class="descname">del_rows</tt><big>(</big><em>col=None</em>, <em>val=None</em>, <em>invert=False</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.XRDFile.del_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>col</strong> (<em>list,slice,int,string, re or None</em>) &#8211; Column containg values to search for.</li>
-<li><strong>val</strong> (<em>float or callable</em>) &#8211; Specifies rows to delete. Maybe:
-- None - in which case whole columns are deleted,
-- a float in which case rows whose columncol = val are deleted
-- or a function - in which case rows where the function evaluates to be true are deleted.</li>
+<li><strong>col</strong> (<em>list,slice,int,string, re or None</em>) &#8211;
+Column containg values to search for.</li>
+<li><strong>val</strong> (<em>float or callable</em>) &#8211;
+Specifies rows to delete. Maybe:<ul>
+<li>None - in which case the <em>col</em> argument is used to identify rows to be deleted,</li>
+<li>a float in which case rows whose columncol = val are deleted</li>
+<li>or a function - in which case rows where the function evaluates to be true are deleted.</li>
+<li>a tuple, in which case rows where column col takes value between the minium and maximum of the tuple
+are deleted.</li>
+</ul>
+</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The current object</p>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>invert</strong> (<em>bool</em>) &#8211;
+Specifies whether to invert the logic of the test to delete a row. If True, keep the rows
+that would have been deleted otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The current object</p>
 </td>
 </tr>
 </tbody>
@@ -154,8 +166,8 @@ argument is the current row.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

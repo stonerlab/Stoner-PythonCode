@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data.contour_xyz &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Util.Data" href="Stoner.Util.Data.html" />
+    <link rel="next" title="Data.curve_fit" href="Stoner.Util.Data.curve_fit.html" />
+    <link rel="prev" title="Data.columns" href="Stoner.Util.Data.columns.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.curve_fit.html" title="Data.curve_fit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.columns.html" title="Data.columns"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" accesskey="U">Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-contour-xyz">
+<h1>Data.contour_xyz<a class="headerlink" href="#data-contour-xyz" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Util.Data.contour_xyz">
+<tt class="descclassname">Data.</tt><tt class="descname">contour_xyz</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em>, <em>zcol=None</em>, <em>shape=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>plotter=None</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.Util.Data.contour_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>An xyz plot that forces the use of pyplot.contour.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xcol</strong> (<em>index</em>) &#8211;
+Xcolumn index or label</li>
+<li><strong>ycol</strong> (<em>index</em>) &#8211;
+Y column index or label</li>
+<li><strong>zcol</strong> (<em>index</em>) &#8211;
+Z column index or label</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>two-tuple</em>) &#8211;
+Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.</li>
+<li><strong>xlim</strong> (<em>tuple</em>) &#8211;
+The xlimits, defaults to automatically determined from data</li>
+<li><strong>ylim</strong> (<em>tuple</em>) &#8211;
+The ylimits, defaults to automatically determined from data</li>
+<li><strong>plotter</strong> (<em>function</em>) &#8211;
+Function to use to plot data. Defaults to pyplot.contour</li>
+<li><strong>show_plot</strong> (<em>bool</em>) &#8211;
+Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<em>string or None</em>) &#8211;
+If set to a string, save the plot with this filename</li>
+<li><strong>figure</strong> (<em>integer or matplotlib.figure or boolean</em>) &#8211;
+Controls which figure is used for the plot, or if a new figure is opened.</li>
+<li><strong>**kargs (dict): Other arguments are passed on to the plotter.</strong></li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matplotlib figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.columns.html"
+                        title="previous chapter">Data.columns</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.curve_fit.html"
+                        title="next chapter">Data.curve_fit</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Util.Data.contour_xyz.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.curve_fit.html" title="Data.curve_fit"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.columns.html" title="Data.columns"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" >Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

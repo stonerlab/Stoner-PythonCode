@@ -1,0 +1,8 @@
+
+
+Data.normalise
+==========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.normalise

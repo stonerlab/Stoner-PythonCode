@@ -61,14 +61,15 @@
 <dl class="method">
 <dt id="Stoner.HDF5.HDF5File.column">
 <tt class="descclassname">HDF5File.</tt><tt class="descname">column</tt><big>(</big><em>col</em><big>)</big><a class="headerlink" href="#Stoner.HDF5.HDF5File.column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extracts a column of data by index or name</p>
+<dd><p>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, list or re</em>) &#8211; is the column index as defined for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></tt></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>col</strong> (<em>int, string, list or re</em>) &#8211;
+is the column index as defined for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></tt></td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one or more columns of data</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one or more columns of data as a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>.</td>
 </tr>
 </tbody>
 </table>
@@ -135,8 +136,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

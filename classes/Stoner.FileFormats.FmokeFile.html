@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="FmokeFile.load" href="Stoner.FileFormats.FmokeFile.load.html" />
-    <link rel="prev" title="BigBlueFile.load" href="Stoner.FileFormats.BigBlueFile.load.html" /> 
+    <link rel="next" title="FmokeFile._load" href="Stoner.FileFormats.FmokeFile._load.html" />
+    <link rel="prev" title="BigBlueFile._load" href="Stoner.FileFormats.BigBlueFile._load.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.FmokeFile.load.html" title="FmokeFile.load"
+          <a href="Stoner.FileFormats.FmokeFile._load.html" title="FmokeFile._load"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BigBlueFile.load.html" title="BigBlueFile.load"
+          <a href="Stoner.FileFormats.BigBlueFile._load.html" title="BigBlueFile._load"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -61,47 +61,6 @@
 <dt id="Stoner.FileFormats.FmokeFile">
 <em class="property">class </em><tt class="descclassname">Stoner.FileFormats.</tt><tt class="descname">FmokeFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#FmokeFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.FmokeFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends DataFile to open Fmoke Files</p>
-<dl class="method">
-<dt id="Stoner.FileFormats.FmokeFile.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.FmokeFile.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></p>
-<p>various forms are recognised:
-:py:function:: DataFile(&#8216;filename&#8217;,&lt;optional filetype&gt;,&lt;args&gt;)</p>
-<blockquote>
-<div>Creates the new DataFile object and then executes the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.load
-method to load data from the given &#64;a filename</div></blockquote>
-<dl class="docutils">
-<dt>:py:function:: DataFile(array)</dt>
-<dd>Creates a new DataFile object and assigns the &#64;a array to the
-<cite>DataFile.data</cite>  attribute.</dd>
-<dt>:py:function:: DataFile(dictionary)</dt>
-<dd>Creates the new DataFile object, but initialises the metadata with
-:parameter dictionary</dd>
-<dt>:py:function:: DataFile(array,dictionary),</dt>
-<dd>Creates the new DataFile object and does the combination of the
-previous two forms.</dd>
-<dt>:py:function:: DataFile(DataFile)</dt>
-<dd><p class="first">Creates the new DataFile object and initialises all data from the
-existing <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> instance. This on the face of it does the same as
-the assignment operator, but is more useful when one or other of the
-DataFile objects is an instance of a sub - class of DataFile</p>
-<blockquote class="last">
-<div><p>definitions above</p>
-<blockquote>
-<div>used to set those public attributes.</div></blockquote>
-</div></blockquote>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A new instance of the DataFile class.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -109,8 +68,8 @@ DataFile objects is an instance of a sub - class of DataFile</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.FmokeFile.load.html#Stoner.FileFormats.FmokeFile.load" title="Stoner.FileFormats.FmokeFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename])</td>
-<td>Sheffield Fovussed MOKE file loader routine.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.FmokeFile._load.html#Stoner.FileFormats.FmokeFile._load" title="Stoner.FileFormats.FmokeFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
+<td>Sheffield Focussed MOKE file loader routine.</td>
 </tr>
 </tbody>
 </table>
@@ -122,10 +81,10 @@ DataFile objects is an instance of a sub - class of DataFile</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
-<td>list() -&gt; new empty list</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
-<td>int(x=0) -&gt; int or long</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -143,11 +102,11 @@ DataFile objects is an instance of a sub - class of DataFile</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.BigBlueFile.load.html"
-                        title="previous chapter">BigBlueFile.load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.BigBlueFile._load.html"
+                        title="previous chapter">BigBlueFile._load</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.FmokeFile.load.html"
-                        title="next chapter">FmokeFile.load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.FmokeFile._load.html"
+                        title="next chapter">FmokeFile._load</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.FileFormats.FmokeFile.txt"
@@ -180,10 +139,10 @@ DataFile objects is an instance of a sub - class of DataFile</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.FmokeFile.load.html" title="FmokeFile.load"
+          <a href="Stoner.FileFormats.FmokeFile._load.html" title="FmokeFile._load"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BigBlueFile.load.html" title="BigBlueFile.load"
+          <a href="Stoner.FileFormats.BigBlueFile._load.html" title="BigBlueFile._load"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -191,8 +150,8 @@ DataFile objects is an instance of a sub - class of DataFile</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

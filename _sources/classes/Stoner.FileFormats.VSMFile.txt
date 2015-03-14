@@ -6,7 +6,6 @@ Stoner.FileFormats.VSMFile
 .. autoclass:: VSMFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,7 +13,8 @@ Stoner.FileFormats.VSMFile
    .. autosummary::
     :toctree:
    
-      ~VSMFile.load
+      ~VSMFile._load
+
    
    
 

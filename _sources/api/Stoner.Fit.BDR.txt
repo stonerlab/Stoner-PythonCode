@@ -1,0 +1,44 @@
+
+
+BDR
+==============
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: BDR
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~BDR.guess
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: guess
+
+   
+   

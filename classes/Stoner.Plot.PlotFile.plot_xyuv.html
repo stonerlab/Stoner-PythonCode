@@ -62,23 +62,34 @@
 <dt id="Stoner.Plot.PlotFile.plot_xyuv">
 <tt class="descclassname">PlotFile.</tt><tt class="descname">plot_xyuv</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em>, <em>ucol=None</em>, <em>vcol=None</em>, <em>wcol=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotFile.plot_xyuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotFile.plot_xyuv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes an overlaid image and quiver plot.
-:param xcol: Xcolumn index or label
-:type xcol: index
-:param ycol: Y column index or label
-:type ycol: index
-:param zcol: Z column index or label
-:type zcol: index
-:param ucol: U column index or label
-:type ucol: index
-:param vcol: V column index or label
-:type vcol: index
-:param wcol: W column index or label</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-</tbody>
-</table>
+:Parameters: * <strong>xcol</strong> (<em>index</em>) &#8211;</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div>Xcolumn index or label</div></blockquote>
+<ul class="simple">
+<li><strong>ycol</strong> (<em>index</em>) &#8211;
+Y column index or label</li>
+<li><strong>zcol</strong> (<em>index</em>) &#8211;
+Z column index or label</li>
+<li><strong>ucol</strong> (<em>index</em>) &#8211;
+U column index or label</li>
+<li><strong>vcol</strong> (<em>index</em>) &#8211;
+V column index or label</li>
+<li><strong>wcol</strong> (<em>index</em>) &#8211;
+W column index or label</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Keyword Arguments:</dt>
+<dd>show_plot (bool): True Turns on interactive plot control
+title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+save_filename (string): Filename used to save the plot
+figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kargs (dict): A dictionary of other keyword arguments to pass into the plot function.</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -142,8 +153,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

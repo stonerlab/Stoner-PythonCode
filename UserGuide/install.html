@@ -92,20 +92,24 @@ installation with all the necessary dependencies for the Stoner Package is to in
 Canopy*. Installers for Windows, MacOS and Linux are kept in <tt class="docutils literal"><span class="pre">\\stonerlab\data\software\Python</span></tt></p>
 </div>
 </div>
-<div class="section" id="using-the-stoner-package">
-<h2>Using the Stoner Package<a class="headerlink" href="#using-the-stoner-package" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="using-the-development-version-of-the-stoner-package">
+<h2>Using the Development Version of the Stoner Package<a class="headerlink" href="#using-the-development-version-of-the-stoner-package" title="Permalink to this headline">¶</a></h2>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If you have installed the Stoner Package with the easy_install command
-given above, then you can disregard this section.</p>
+<p class="last">You only need to follow this section if you are working with the
+version installed from the github repository. If you have installed
+the Stoner Package with the easy_install command given above, then you
+can disregard this section.</p>
 </div>
-<p>The easiest way to use the Stoner Package is to add the path to the directory
-containing Stoner.py to your PYTHONPATH environment variable. This can be done
-on Macs and Linux by doing:</p>
-<div class="highlight-python"><div class="highlight"><pre>cd &lt;path to PythonCode directory&gt;
-export PYTHONPATH=`pwd`:$PYTHONPATH
+<p>The easiest way to use the development version of the Stoner Package is to add the
+path to the directory containing the files from github to your PYTHONPATH environment
+variable. This can be done on Macs and Linux by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre>.. code-block:: sh
 </pre></div>
 </div>
+<blockquote>
+<div>cd &lt;path to PythonCode directory&gt;
+export PYTHONPATH=`pwd`:$PYTHONPATH</div></blockquote>
 <p>On a windows machine the easiest way is to create a permanent entry to the
 folder in the system environment variables. Go to Control Panel -&gt; System -&gt;
 Advanced Tab -&gt; click on Environment button and then add or edit an entry to the
@@ -122,11 +126,11 @@ line:</p>
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>This document provides a user guide to the Stoner package and its various modules and classes.
+<p>These pages provide a user guide to the Stoner package and its various modules and classes.
 It is not a reference to the library but instead aims to explain the various operations that
 are possible and provide short examples of use. For the API reference for the library, please
-see the <em>Python Code API</em> compiled windows help file. There is also a single sided cheat sheet that
-summarises the examples in this user guide.</p>
+see the <cite>Module Api Documentation &lt;Stoner&gt;</cite>. There is also a single sided cheat sheet that
+summarises the examples in this user guide in the github repository.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">The code is still under active development to fix bugs and add features. Generally things don&#8217;t
@@ -153,7 +157,7 @@ commit the code or tell Gavin.</p>
 <li><a class="reference internal" href="#getting-the-latest-development-code">Getting the Latest Development Code</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#using-the-stoner-package">Using the Stoner Package</a></li>
+<li><a class="reference internal" href="#using-the-development-version-of-the-stoner-package">Using the Development Version of the Stoner Package</a></li>
 <li><a class="reference internal" href="#documentation">Documentation</a></li>
 </ul>
 </li>
@@ -208,8 +212,8 @@ commit the code or tell Gavin.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

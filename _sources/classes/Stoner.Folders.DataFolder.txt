@@ -6,7 +6,6 @@ Stoner.Folders.DataFolder
 .. autoclass:: DataFolder
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -16,17 +15,22 @@ Stoner.Folders.DataFolder
    
       ~DataFolder.__init__
       ~DataFolder.add_group
+      ~DataFolder.concatentate
+      ~DataFolder.extract
       ~DataFolder.filter
       ~DataFolder.filterout
       ~DataFolder.flatten
       ~DataFolder.gather
       ~DataFolder.getlist
       ~DataFolder.group
+      ~DataFolder.next
       ~DataFolder.save
       ~DataFolder.select
       ~DataFolder.sort
+      ~DataFolder.unflatten
       ~DataFolder.walk_groups
       ~DataFolder.zip_groups
+
    
    
 

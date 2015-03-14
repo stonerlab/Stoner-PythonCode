@@ -6,7 +6,6 @@ Stoner.FileFormats.RasorFile
 .. autoclass:: RasorFile
 
    
-   .. automethod:: __init__
 
    
    

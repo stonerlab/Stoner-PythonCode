@@ -1,0 +1,8 @@
+
+
+Data.apply
+======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.apply

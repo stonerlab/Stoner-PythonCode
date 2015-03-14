@@ -138,7 +138,7 @@ that you get a list of strings representing the filenames, use <a class="referen
 <div class="section" id="controlling-the-gathering-of-the-list-of-files">
 <h2>Controlling the Gathering of the List of Files<a class="headerlink" href="#controlling-the-gathering-of-the-list-of-files" title="Permalink to this headline">¶</a></h2>
 <p>The current root directory and pattern are stored in the <em>directory</em> and <em>pattern</em> keywords and the
-<a href="#id3"><span class="problematic" id="id4">:py:math:`DataFolder.getlist`</span></a> method can be used to force a new listing of files.:</p>
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><tt class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></tt></a> method can be used to force a new listing of files.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">dirctory</span><span class="o">=</span><span class="s">&#39;/home/phygbu/Data&#39;</span>
 <span class="n">f</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.txt&#39;</span>
 <span class="n">f</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
@@ -205,7 +205,7 @@ handy attributes:</p>
 of the filename whilst <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.ls" title="Stoner.Folders.DataFolder.ls"><tt class="xref py py-attr docutils literal"><span class="pre">DataFolder.ls</span></tt></a> returns the complete path from the root directory.</p>
 <hr class="docutils" />
 <p>The order of the files in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> is arbitrary. If it is important to process
-them in a given order then the <a href="#id5"><span class="problematic" id="id6">:py:math:`DataFolder.sort`</span></a> method can be used:</p>
+them in a given order then the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><tt class="xref py py-meth docutils literal"><span class="pre">DataFolder.sort()</span></tt></a> method can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;tmperature&#39;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -262,7 +262,7 @@ via the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder
 </div>
 <p>would return a list of the files measured at 4.2K and 1T.</p>
 <p>If you try indexing a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> with a string and there is no file with as its filename
-and there is a group with a key of the same string then <a href="#id7"><span class="problematic" id="id8">:py:clkass:`DataFolder`</span></a> will return the
+and there is a group with a key of the same string then <a href="#id3"><span class="problematic" id="id4">:py:clkass:`DataFolder`</span></a> will return the
 corresponding group. This allows a more compact navigation through an extended group structure.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s">&#39;project&#39;</span><span class="p">,</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;device&#39;</span><span class="p">])</span>
 <span class="n">f</span><span class="p">[</span><span class="s">&#39;ASF&#39;</span><span class="p">][</span><span class="s">&#39;ASF038&#39;</span><span class="p">][</span><span class="s">&#39;A&#39;</span><span class="p">]</span>
@@ -289,6 +289,16 @@ easily accomplished by the <a class="reference internal" href="../classes/Stoner
 x and y columns are determined by the values from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute.
 (you can set the value of this attribute for all files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> by setting the
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.setas" title="Stoner.Folders.DataFolder.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFolder.setas</span></tt></a> attribute.)</p>
+<p>A similar operation to <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><tt class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></tt></a> is to build a new set of data where each row corresponds
+to a set of metadata values from each file in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a>. This can be achieved with the
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><tt class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></tt></a> method.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s">&quot;Temperature&quot;</span><span class="p">,</span><span class="s">&quot;Angle&quot;</span><span class="p">,</span><span class="s">&quot;Other_metadata&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The argument to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><tt class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></tt></a> method is a list of metadata values to be extracted from each file. The
+metadata should be convertable to an array type so that it can be included in the final result matrix. Any metadata that doesn&#8217;t
+appear to be so convertible in the first file in the ;py:class:<cite>DataFolder</cite> is ignored. The column headings of the final results
+table are the names of the metadata that were used in the extraction.</p>
 <p>One task you might want to do would be to work through all the groups in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a>
 and run some function either with each file in the group or on the whole group. This is further
 complicated if you want to iterate over all the sub-groups within a group. The
@@ -401,8 +411,8 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

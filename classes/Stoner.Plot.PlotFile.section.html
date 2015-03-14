@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Plot.PlotFile" href="Stoner.Plot.PlotFile.html" />
-    <link rel="next" title="PlotFile.show" href="Stoner.Plot.PlotFile.show.html" />
+    <link rel="next" title="PlotFile.sort" href="Stoner.Plot.PlotFile.sort.html" />
     <link rel="prev" title="PlotFile.search" href="Stoner.Plot.PlotFile.search.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.show.html" title="PlotFile.show"
+          <a href="Stoner.Plot.PlotFile.sort.html" title="PlotFile.sort"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.Plot.PlotFile.search.html" title="PlotFile.search"
@@ -61,7 +61,7 @@
 <dl class="method">
 <dt id="Stoner.Plot.PlotFile.section">
 <tt class="descclassname">PlotFile.</tt><tt class="descname">section</tt><big>(</big><em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.Plot.PlotFile.section" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space</p>
+<dd><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -84,7 +84,7 @@ a function that takes a tuple (x,y,z) and returns True if the line is to be incl
 </tr>
 </tbody>
 </table>
-<p>Internally this function is calling <a href="#id1"><span class="problematic" id="id2">:py:math:`DataFile.search`</span></a> to pull out matching sections of the data array.
+<p>Internally this function is calling <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt> to pull out matching sections of the data array.
 To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
 conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
 data points that lie in an arbitary plane or line. eg:</p>
@@ -110,8 +110,8 @@ the z-co-ordinate is 2.</p>
   <p class="topless"><a href="Stoner.Plot.PlotFile.search.html"
                         title="previous chapter">PlotFile.search</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Plot.PlotFile.show.html"
-                        title="next chapter">PlotFile.show</a></p>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.sort.html"
+                        title="next chapter">PlotFile.sort</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Plot.PlotFile.section.txt"
@@ -144,7 +144,7 @@ the z-co-ordinate is 2.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.show.html" title="PlotFile.show"
+          <a href="Stoner.Plot.PlotFile.sort.html" title="PlotFile.sort"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.Plot.PlotFile.search.html" title="PlotFile.search"
@@ -156,8 +156,8 @@ the z-co-ordinate is 2.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

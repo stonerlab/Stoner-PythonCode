@@ -95,7 +95,7 @@ understands how to reqad the relevant file.</p>
 <dt><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a></dt>
 <dd>Tagged Data Interchange Format 1.5 &#8211; the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></tt></a></dt>
-<dd>Reads a generic comma separated value file. The <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.load.html#Stoner.FileFormats.CSVFile.load" title="Stoner.FileFormats.CSVFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></tt></a>
+<dd>Reads a generic comma separated value file. The <tt class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></tt>
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the <em>BigBlue&amp; variant, a
 further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
@@ -121,12 +121,14 @@ but has not been extensively tested.</dd>
 <dd>The text files produced by the group&#8217;s Oxford Instruments VSM</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></tt></a></dt>
 <dd>Datafiles produced by VB Code running on the Big Blue cryostat. The
-<tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlue</span></tt> version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> constructors takes
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></tt></a> version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> constructors takes
 two additional parameters that specify the row on which the column headers will
 be found and the row on which the data starts.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile" title="Stoner.FileFormats.XRDFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.XRDFile</span></tt></a></dt>
 <dd>Loads a scan file produced by Arkengarthdale - the group&#8217;s Brucker D8
 XRD Machine.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile" title="Stoner.FileFormats.MokeFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.MokeFile</span></tt></a></dt>
+<dd>Loads a file from Leeds Condensed Matter Physics MOKE system.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile" title="Stoner.FileFormats.FmokeFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.FmokeFile</span></tt></a></dt>
 <dd>Loads a file from Dan Allwood&#8217;s Focussed MOKE System in Sheffield.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile" title="Stoner.FileFormats.LSTemperatureFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.LSTemperatureFile</span></tt></a></dt>
@@ -323,7 +325,8 @@ will then use these by default in many methods when appropriate to have &#8216;x
 support at present for uncertainities in (u,v,w) being marked.</p>
 <p>To set which columns contain &#8216;x&#8217;,&#8217;y&#8217; etc data use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute. This attribute can take
 a list of single character strings from the set &#8216;x&#8217;,&#8217;y&#8217;,&#8217;z&#8217;,&#8217;d&#8217;,&#8217;e&#8217;, &#8216;f&#8217;, &#8216;u&#8217;, &#8216;v&#8217;, &#8216;w&#8217; or &#8216;.&#8217; where each element of the list refers to
-the columns of data in order. To specify that a column has unmarked data use the &#8216;.&#8217; string.</p>
+the columns of data in order. To specify that a column has unmarked data use the &#8216;.&#8217; string. The string &#8216;-&#8216; can also be used - this
+indicats that the current assignment is to be left as is.</p>
 <p>Alternately, you can pass <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
 non-numeric character will be interpreted that many times, so:</p>
@@ -332,13 +335,22 @@ non-numeric character will be interpreted that many times, so:</p>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>all achieve the same effect.</p>
+<p>There are still more ways of setting column types with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;x&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">3</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="s">&quot;3.xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">([</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All achieve the same effect of setting the same columns as containing x and y data.</p>
 <p>Once you have identified columns for the various types, you also have access to utility attributes to access those columns:</p>
-<blockquote>
-<div>d.setas=&#8221;3.xye&#8217;
+<div class="highlight-python"><div class="highlight"><pre>d.setas=&quot;3.xye&#39;
 d.x == d.column(3)
 d.y == d.column(4)
-d.e == d.column(5)</div></blockquote>
+d.e == d.column(5)
+</pre></div>
+</div>
 <p>Note that if <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> is not set then attempting to use the quick access column attributes will
 result in an exception. Once the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute is set, a further set of <em>virtual</em> or <em>derived</em> column attributes
 become available.:</p>
@@ -355,11 +367,14 @@ become available.:</p>
 <p>Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
 reduced number dimensions.</p>
 <p>There are some more convenience ways to set which columns to use as x,y,z etc.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;x&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s">&quot;y&quot;</span><span class="p">:</span><span class="s">&quot;Y Column title&quot;</span><span class="p">}</span>
-<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span>
-<span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Y Column title&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre> d.setas={&quot;x&quot;:0,&quot;y&quot;:&quot;Y Column title&quot;}
+ d.x=0
+ d.y=&quot;Y Column title&quot;
+d.setas[&quot;Temperature&quot;]=&quot;y&quot;
 </pre></div>
 </div>
+<p>In each of these cases, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> will try to work out what you intended to achieve for maximum flexibility
+and convenience when writing code. However it can be fooled if one of your columns is called &#8216;x&#8217; or &#8216;y&#8217; !</p>
 </div>
 </div>
 <div class="section" id="working-with-complete-rows-of-data">
@@ -389,6 +404,12 @@ To get a list of possible keys in the metadata, you can do:</p>
 only keys matching the pattern will be returned &#8211; all keys containing
 <em>Option:</em>. For compatibility with normal opython semantics: <a class="reference internal" href="../classes/Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.keys()</span></tt></a> is
 synonymous with <a class="reference internal" href="../classes/Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir()</span></tt></a>.</p>
+<p>If the string you supply to get the metadata item does not exactly match an item of
+metadata, then it is interpreted as a regular expression to try and match against all the
+items of metadata. In this case, rather than returning a single item, all of the
+matching metadata is returned as a dictionary. PAssing a compiled regular epxression
+as the item name also has the same effect - this is useful if the regular expression
+you want to match is also an exact match to one particular metadata name.</p>
 <p>We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s">&#39;User&#39;</span><span class="p">)</span>
@@ -438,6 +459,7 @@ index=d.find_col(&#39;Temp.*&#39;)
 index=d.find_col(&#39;1&#39;)
 index=d.find_col(1:10:2)
 index=d.find_col([&#39;Temperature&#39;,2,&#39;Resistance&#39;])
+index=d.find_col(re.compile(r&quot;^[A-Z]&quot;))
 </pre></div>
 </div>
 <p><a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></tt></a> takes a number of different forms. If the argument
@@ -447,10 +469,15 @@ case the number of the matching column heading is returned. If no exact match is
 found then a regular expression search is carried out on the column headings. In
 both cases, only the first match is returned. If the string still doesn&#8217;t match, then
 the string is checked to see if it can be cast to an integer, in which case the integer value is used.</p>
-<p>The final two examples given above
+<p>The final three examples given above
 both return a list of indices, firstly using a slice construct - in this case
-the result is trivially the same as the slice itself, and in the last example by
-passing a list of column headers to look for.</p>
+the result is trivially the same as the slice itself, and in the second example by
+passing a list of column headers to look for. The final example uses a compiled
+regular expression. Unlike passing a string which contains a regular expression,
+passing a compiled regular expression will return a list of all columns that
+match. This distinction allows you to use a unique partial string to match just
+one column - but if you really want all possible columns that would match the
+pattern, then you can compile the regular expression and pass that instead.</p>
 <p>This is the function that is used internally by <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a>,
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt></a> etc and for this reason the trivial integer and slice
 forms are implemented to allow these other functions to work with multiple
@@ -529,7 +556,7 @@ points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be u
 </div>
 <p>After the x, y, z data columns are identified, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.section()</span></tt></a> method works with
 &#8216;x&#8217;, &#8216;y&#8217; and &#8216;z&#8217; keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the <a href="#id5"><span class="problematic" id="id6">:py:math:`DataFile.search`</span></a> method). The</p>
+these keyword arguments follow the same rules as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt></a> method). The</p>
 </div>
 <div class="section" id="find-out-more-about-the-data">
 <h4>Find out more about the data<a class="headerlink" href="#find-out-more-about-the-data" title="Permalink to this headline">¶</a></h4>
@@ -613,22 +640,56 @@ In the fourth example, each element in the list is added in turn to <em>d</em>. 
 a column to <em>d</em>. In this case the requirement is that the numpy array has
 the same or fewer rows of data as <em>d</em>.</p>
 </div>
-<div class="section" id="id7">
-<h3>Working with Columns of Data<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Working with Columns of Data<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="changing-individual-columns-of-data">
+<h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></tt></a> attribute is simply a 2D numpy array, so can be directly modified like any other
+numpy array might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute has been used to identify columns as
+containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
+modify the data without having to keep track any further of which column(s) is indexed. This the following will work:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y..z&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="mf">5.0</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">z</span>
+<span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>When writing to the column attriobutes you must supply a numpy array with the correct number of elements (although DataFile will
+try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
+then you should supply a 2D array with the corresponding number of columns of data setting the attribute.</p>
+<p>In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> checks to see if you are setting something that might be a column index or a numpy array. Thus the following
+also works:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span> <span class="c"># Set the Temp column to be x data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="c"># And set the column to contain a linear array of values from 0 to 300.</span>
+</pre></div>
+</div>
+<p>You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
+On the otherhand you can do an efficient conversion to polar co-ordinates with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+<span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="rearranging-columns-of-data">
 <h4>Rearranging Columns of Data<a class="headerlink" href="#rearranging-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Sometimes it is useful to rearrange columns of data. <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> offers a couple of methods to help with this.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">((</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">))</span>
 <span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">((</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">),</span><span class="n">headers_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="s">&#39;Temp&#39;</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Curr&#39;</span><span class="p">)])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">reorder</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">reorder</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.swap()</span></tt> method takes either a tuple of column names, indices or a list of such
-tuples and swaps the columns accordingly, whilst the <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder()</span></tt> method takes a
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></tt></a> method takes either a tuple of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the <a class="reference internal" href="../classes/Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></tt></a> method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The <tt class="docutils literal"><span class="pre">headers_too=False</span></tt> options, as the name suggests, cause the column headers not be rearranged.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The <a class="reference internal" href="../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></tt></a> do not (at present) reorder the
+assignments in the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute.</p>
+</div>
 </div>
 <div class="section" id="renaming-columns-of-data">
 <h4>Renaming Columns of Data<a class="headerlink" href="#renaming-columns-of-data" title="Permalink to this headline">¶</a></h4>
@@ -665,20 +726,32 @@ up with other methods for more compact code writing.</p>
 <h3>Deleting Rows of Data<a class="headerlink" href="#deleting-rows-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Removing complete rows of data is achieved using the <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></tt></a>
 method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="s">&#39;X Col&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="s">&#39;X Col&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">300</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre>d.del_rows(10)
+d.del_rows(1:100:2)
+d.del_rows(&#39;X Col&#39;,value)
+d.del_rows(&#39;X Col&#39;,lambda x,y:x&gt;300)
+d.del_rows(&#39;X Col&#39;,(100,200))
+d.del_rows(;X Col&#39;,(100,200),invert=True)
 </pre></div>
 </div>
 <p>The first variant will delete row 10 from the data set (where the first row will
-be row 0). You can also supply a list or slice to <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></tt></a> to
-delete multiple rows.</p>
-<p>If you do not know in advance which row to delete, then the second and third
-variants provide more advanced options. The second variant searches for and
+be row 0). You can also supply a list or slice (as in the second example) to
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></tt></a> to delete multiple rows.</p>
+<p>If you do not know in advance which row to delete, then the remiaining
+variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains <em>value</em>. The
-third variant selects which ros to delete by calling a user supplied function
+fourth variant selects which ros to delete by calling a user supplied function
 for each row. The user supplied function is the same in form and definitition as
-that used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt></a> method.</p>
+that used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">user_func</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span><span class="n">row_as_array</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">True</span> <span class="ow">or</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>The final two variants above, use a tuple to select the data. The final example makes
+use of the <em>invert</em> keyword argument to reverse the sense used to selkect tows. In both cases
+rows are deleted(kept for <a href="#id6"><span class="problematic" id="id7">*</span></a>invert*=True) if the specified column lies between the maximum and minimum
+values of the tuple. The test is done inclusively. Any length two iterable object can be used
+for specifying the bounds.</p>
 </div>
 <div class="section" id="deleting-columns-of-data">
 <h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
@@ -771,7 +844,8 @@ specifies that the eliminator is a tab character.</p>
 </li>
 <li><a class="reference internal" href="#modifying-data">Modifying Data</a><ul>
 <li><a class="reference internal" href="#appending-data">Appending data</a></li>
-<li><a class="reference internal" href="#id7">Working with Columns of Data</a><ul>
+<li><a class="reference internal" href="#id5">Working with Columns of Data</a><ul>
+<li><a class="reference internal" href="#changing-individual-columns-of-data">Changing Individual Columns of Data</a></li>
 <li><a class="reference internal" href="#rearranging-columns-of-data">Rearranging Columns of Data</a></li>
 <li><a class="reference internal" href="#renaming-columns-of-data">Renaming Columns of Data</a></li>
 <li><a class="reference internal" href="#inserting-columns-of-data">Inserting Columns of Data</a></li>
@@ -836,8 +910,8 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

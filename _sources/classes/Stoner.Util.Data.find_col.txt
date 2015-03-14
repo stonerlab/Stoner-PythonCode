@@ -1,0 +1,8 @@
+
+
+Data.find_col
+=========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.find_col

@@ -61,39 +61,61 @@
 <dl class="method">
 <dt id="Stoner.Analysis.AnalyseFile.__init__">
 <tt class="descclassname">AnalyseFile.</tt><tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></p>
-<p>various forms are recognised:
-:py:function:: DataFile(&#8216;filename&#8217;,&lt;optional filetype&gt;,&lt;args&gt;)</p>
-<blockquote>
-<div>Creates the new DataFile object and then executes the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.load
-method to load data from the given &#64;a filename</div></blockquote>
-<dl class="docutils">
-<dt>:py:function:: DataFile(array)</dt>
-<dd>Creates a new DataFile object and assigns the &#64;a array to the
-<cite>DataFile.data</cite>  attribute.</dd>
-<dt>:py:function:: DataFile(dictionary)</dt>
-<dd>Creates the new DataFile object, but initialises the metadata with
-:parameter dictionary</dd>
-<dt>:py:function:: DataFile(array,dictionary),</dt>
-<dd>Creates the new DataFile object and does the combination of the
-previous two forms.</dd>
-<dt>:py:function:: DataFile(DataFile)</dt>
-<dd><p class="first">Creates the new DataFile object and initialises all data from the
+<dd><p>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.</p>
+<p>various forms are recognised</p>
+<dl class="function">
+<dt>
+<tt class="descname">DataFile</tt><big>(</big><em>'filename'</em>, <em>&lt;optional filetype&gt;</em>, <em>&lt;args&gt;</em><big>)</big></dt>
+<dd><p>Creates the new DataFile object and then executes the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.load
+method to load data from the given <em>filename</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">DataFile</tt><big>(</big><em>array</em><big>)</big></dt>
+<dd><p>Creates a new DataFile object and assigns the <em>array</em> to the
+<tt class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></tt>  attribute.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">DataFile</tt><big>(</big><em>dictionary</em><big>)</big></dt>
+<dd><p>Creates the new DataFile object, but initialises the metadata with
+:parameter dictionary</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">DataFile</tt><big>(</big><em>array</em>, <em>dictionary</em><big>)</big></dt>
+<dd><p>Creates the new DataFile object and does the combination of the
+previous two forms.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descname">DataFile</tt><big>(</big><em>DataFile</em><big>)</big></dt>
+<dd><p>Creates the new DataFile object and initialises all data from the
 existing <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> instance. This on the face of it does the same as
 the assignment operator, but is more useful when one or other of the
 DataFile objects is an instance of a sub - class of DataFile</p>
-<blockquote class="last">
-<div><p>definitions above</p>
-<blockquote>
-<div>used to set those public attributes.</div></blockquote>
-</div></blockquote>
-</dd>
-</dl>
+</dd></dl>
+
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A new instance of the DataFile class.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>positional arguments</em>) &#8211;
+Variable number of arguments that match one of the
+definitions above</li>
+<li><strong>kargs</strong> (<em>keyword Arguments</em>) &#8211;
+All keyword arguments that match public attributes are
+used to set those public attributes.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance of the DataFile class.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -160,8 +182,8 @@ DataFile objects is an instance of a sub - class of DataFile</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

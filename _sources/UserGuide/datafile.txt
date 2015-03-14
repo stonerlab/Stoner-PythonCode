@@ -70,12 +70,14 @@ Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Le
         The text files produced by the group's Oxford Instruments VSM
     :py:class:`Stoner.FileFormats.BigBlueFile`
         Datafiles produced by VB Code running on the Big Blue cryostat. The
-        :py:class:`Stoner.FileFormats.BigBlue` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
+        :py:class:`Stoner.FileFormats.BigBlueFile` version of the :py:meth:`DataFile.load` and :py:class:`DataFile` constructors takes
         two additional parameters that specify the row on which the column headers will
         be found and the row on which the data starts.
     :py:class:`Stoner.FileFormats.XRDFile`
         Loads a scan file produced by Arkengarthdale - the group's Brucker D8
         XRD Machine.
+    :py:class:`Stoner.FileFormats.MokeFile`
+        Loads a file from Leeds Condensed Matter Physics MOKE system.
     :py:class:`Stoner.FileFormats.FmokeFile`
         Loads a file from Dan Allwood's Focussed MOKE System in Sheffield.
     :py:class:`Stoner.FileFormats.LSTemperatureFile`
@@ -248,7 +250,7 @@ For example::
 
 .. _setas:
 Other ways to Identify Columns of Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
 or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
@@ -260,7 +262,8 @@ support at present for uncertainities in (u,v,w) being marked.
 
 To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
 a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
-the columns of data in order. To specify that a column has unmarked data use the '.' string.
+the columns of data in order. To specify that a column has unmarked data use the '.' string. The string '-' can also be used - this
+indicats that the current assignment is to be left as is.
 
 Alternately, you can pass :py:attr:`DataFile.setas` a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
@@ -270,9 +273,17 @@ non-numeric character will be interpreted that many times, so::
     d.setas="...xy"
     d.setas=['.','.','.','x','y']
 
-all achieve the same effect.
+There are still more ways of setting column types with the :py:attr:`DataFile.setas` attribute::
 
-Once you have identified columns for the various types, you also have access to utility attributes to access those columns:
+    d.seetas[3]="x"
+    d.setas["x"]=3
+    d.setas("3.xy")
+    d.setas(['.','.','.','x','y'])
+    d.setas(x=3,y=4)
+
+All achieve the same effect of setting the same columns as containing x and y data.
+
+Once you have identified columns for the various types, you also have access to utility attributes to access those columns::
 
     d.setas="3.xye'
     d.x == d.column(3)
@@ -300,6 +311,10 @@ There are some more convenience ways to set which columns to use as x,y,z etc.::
     d.setas={"x":0,"y":"Y Column title"}
     d.x=0
     d.y="Y Column title"
+   d.setas["Temperature"]="y"
+
+In each of these cases, the :py:class:`DataFile` will try to work out what you intended to achieve for maximum flexibility
+and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
 
 Working with complete rows of data
 ----------------------------------
@@ -329,6 +344,13 @@ In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned -- all keys containing
 *Option:*. For compatibility with normal opython semantics: :py:meth:`DataFile.keys` is
 synonymous with :py:meth:`DataFile.dir`.
+
+If the string you supply to get the metadata item does not exactly match an item of
+metadata, then it is interpreted as a regular expression to try and match against all the
+items of metadata. In this case, rather than returning a single item, all of the
+matching metadata is returned as a dictionary. PAssing a compiled regular epxression
+as the item name also has the same effect - this is useful if the regular expression
+you want to match is also an exact match to one particular metadata name.
 
 We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this::
@@ -382,6 +404,7 @@ headings. If one wishes to find the numeric index of a column then the
    index=d.find_col('1')
    index=d.find_col(1:10:2)
    index=d.find_col(['Temperature',2,'Resistance'])
+   index=d.find_col(re.compile(r"^[A-Z]"))
 
 :py:meth:`DataFile.find_col` takes a number of different forms. If the argument
 is an integer then it returns (trivially) the same integer, a string argument is
@@ -391,10 +414,15 @@ found then a regular expression search is carried out on the column headings. In
 both cases, only the first match is returned. If the string still doesn't match, then
 the string is checked to see if it can be cast to an integer, in which case the integer value is used.
 
-The final two examples given above
+The final three examples given above
 both return a list of indices, firstly using a slice construct - in this case
-the result is trivially the same as the slice itself, and in the last example by
-passing a list of column headers to look for.
+the result is trivially the same as the slice itself, and in the second example by
+passing a list of column headers to look for. The final example uses a compiled
+regular expression. Unlike passing a string which contains a regular expression,
+passing a compiled regular expression will return a list of all columns that
+match. This distinction allows you to use a unique partial string to match just
+one column - but if you really want all possible columns that would match the
+pattern, then you can compile the regular expression and pass that instead.
 
 This is the function that is used internally by :py:meth:`DataFile.column`,
 :py:meth:`DataFile.search` etc and for this reason the trivial integer and slice
@@ -481,7 +509,7 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the :py:math:`DataFile.search` method). The
+these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method). The
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -575,6 +603,36 @@ the same or fewer rows of data as *d*.
 Working with Columns of Data
 -----------------------------
 
+Changing Individual Columns of Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The :py:attr:`DataFile.data` attribute is simply a 2D numpy array, so can be directly modified like any other
+numpy array might be. If, however, the :py:attr:`DataFile.setas` attribute has been used to identify columns as
+containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
+modify the data without having to keep track any further of which column(s) is indexed. This the following will work::
+
+    d.setas="x..y..z"
+    d.x=d.x-5.0*d.y/d.z
+    d.y=d.z**2
+    d.z=np.ones(len(d))
+
+When writing to the column attriobutes you must supply a numpy array with the correct number of elements (although DataFile will
+try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
+then you should supply a 2D array with the corresponding number of columns of data setting the attribute.
+
+In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
+:py:class:`DataFile` checks to see if you are setting something that might be a column index or a numpy array. Thus the following
+also works::
+
+    d.x="Temp" # Set the Temp column to be x data
+    d.x=np.linspace(0,300,len(d)) # And set the column to contain a linear array of values from 0 to 300.
+
+You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
+On the otherhand you can do an efficient conversion to polar co-ordinates with::
+
+    d.setas="xyz"
+    (d.x,d.y,d.z)=(d.p,d.q,d.r)
+
 Rearranging Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -583,13 +641,17 @@ Sometimes it is useful to rearrange columns of data. :py:class:`DataFile` offers
    d.swap_column(('Resistance','Temperature'))
    d.swap_column(('Resistance','Temperature'),headers_too=False)
    d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
-   d.reorder([1,3,'Volt','Temp'])
-   d.reorder([1,3,'Volt','Temp'],header_too=False)
+   d.reorder_columns([1,3,'Volt','Temp'])
+   d.reorder_columns([1,3,'Volt','Temp'],header_too=False)
 
-The :py:meth:`DataFile.swap` method takes either a tuple of column names, indices or a list of such
-tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder` method takes a
+The :py:meth:`DataFile.swap_column` method takes either a tuple of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder_columns` method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
+
+.. note::
+    The :py:meth:`DataFile.swap_column` and :py:meth:`DataFile.reorder_columns` do not (at present) reorder the
+    assignments in the :py:attr:`DataFile.setas` attribute.
 
 Renaming Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -631,20 +693,32 @@ Removing complete rows of data is achieved using the :py:meth:`DataFile.del_rows
 method.::
 
   d.del_rows(10)
+  d.del_rows(1:100:2)
   d.del_rows('X Col',value)
   d.del_rows('X Col',lambda x,y:x>300)
+  d.del_rows('X Col',(100,200))
+  d.del_rows(;X Col',(100,200),invert=True)
 
 
 The first variant will delete row 10 from the data set (where the first row will
-be row 0). You can also supply a list or slice to :py:meth:`DataFile.del_rows` to
-delete multiple rows.
+be row 0). You can also supply a list or slice (as in the second example) to
+:py:meth:`DataFile.del_rows` to delete multiple rows.
 
-If you do not know in advance which row to delete, then the second and third
-variants provide more advanced options. The second variant searches for and
+If you do not know in advance which row to delete, then the remiaining
+variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains *value*. The
-third variant selects which ros to delete by calling a user supplied function
+fourth variant selects which ros to delete by calling a user supplied function
 for each row. The user supplied function is the same in form and definitition as
-that used for the :py:meth:`DataFile.search` method.
+that used for the :py:meth:`DataFile.search` method::
+
+    def user_func(x_val,row_as_array):
+        return True or False
+
+The final two variants above, use a tuple to select the data. The final example makes
+use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
+rows are deleted(kept for *invert*=True) if the specified column lies between the maximum and minimum
+values of the tuple. The test is done inclusively. Any length two iterable object can be used
+for specifying the bounds.
 
 Deleting Columns of Data
 ------------------------

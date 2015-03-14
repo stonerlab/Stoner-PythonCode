@@ -1,0 +1,8 @@
+
+
+Data.dir
+====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.dir

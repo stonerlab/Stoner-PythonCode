@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
-    <link rel="next" title="AnalyseFile.subtract" href="Stoner.Analysis.AnalyseFile.subtract.html" />
+    <link rel="next" title="AnalyseFile.stitch" href="Stoner.Analysis.AnalyseFile.stitch.html" />
     <link rel="prev" title="AnalyseFile.span" href="Stoner.Analysis.AnalyseFile.span.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.subtract.html" title="AnalyseFile.subtract"
+          <a href="Stoner.Analysis.AnalyseFile.stitch.html" title="AnalyseFile.stitch"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.Analysis.AnalyseFile.span.html" title="AnalyseFile.span"
@@ -68,19 +68,19 @@ from the original object which had the same value of a given column.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>index</em>) &#8211; The index of the column to look for values in.
+<li><strong>xcol</strong> (<em>index</em>) &#8211;
+The index of the column to look for values in.
 This can be a list in which case a <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> with groups
 with subfiles is built up by applying each item in the xcol list recursively.</li>
-<li><strong>func</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; Function that can be evaluated to find the value to determine which output object
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+Function that can be evaluated to find the value to determine which output object
 each row belongs in. If this is left as the default None then the column value is converted
 to a string and that is used.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">py:class:<cite>Stoner.Folders.DataFolder</cite> object containing the individual <a class="reference internal" href="Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">A</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>A</em> &#8211;
+py:class:<cite>Stoner.Folders.DataFolder</cite> object containing the individual <a class="reference internal" href="Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects</p>
 </td>
 </tr>
 </tbody>
@@ -108,8 +108,8 @@ in which the func values are used along with the &#64;a xcol values.</p>
   <p class="topless"><a href="Stoner.Analysis.AnalyseFile.span.html"
                         title="previous chapter">AnalyseFile.span</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.subtract.html"
-                        title="next chapter">AnalyseFile.subtract</a></p>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.stitch.html"
+                        title="next chapter">AnalyseFile.stitch</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.split.txt"
@@ -142,7 +142,7 @@ in which the func values are used along with the &#64;a xcol values.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.subtract.html" title="AnalyseFile.subtract"
+          <a href="Stoner.Analysis.AnalyseFile.stitch.html" title="AnalyseFile.stitch"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.Analysis.AnalyseFile.span.html" title="AnalyseFile.span"
@@ -154,8 +154,8 @@ in which the func values are used along with the &#64;a xcol values.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

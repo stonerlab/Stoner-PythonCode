@@ -12,6 +12,7 @@ Stoner Package
 
     typeHintedDict
     DataFile
+    StonerLoadError
 
 :mod:`Analysis` Module
 =======================
@@ -77,6 +78,7 @@ Generic Fomats
     SPCFile
     TDMSFile
     OVFFile
+    EasyPlotFile
 
 Instrument Formats
 ------------------
@@ -90,6 +92,7 @@ Instrument Formats
     QDSquidVSMFile
     RigakuFile
     VSMFile
+    MokeFile
     XRDFile
     LSTemperatureFile
 
@@ -107,26 +110,25 @@ Facility Outputs
     SNSFile
 
 :mod:`PlotFormats` Module
-=========================
+==========================
 
-.. module:: Stoner.PlotFormats
+.. automodapi:: Stoner.PlotFormats
+   :no-inheritance-diagram:
+   :no-heading:
+
+:mod:`Fit` Module
+==========================
 
 
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
-
-    DefaultPlotStyle
-
+.. automodapi:: Stoner.Fit
+   :no-inheritance-diagram:
+   :no-heading:
 
 :mod:`FittingFuncs` Module
 ==========================
 
-.. module:: Stoner.FittingFuncs
-
-.. autosummary::
-    :toctree: functions
-    :template: autosummary/module.rst
+.. automodule:: Stoner.FittingFuncs
+   :members:
 
 :mod:`HDF5` Module
 =========================
@@ -140,10 +142,36 @@ Facility Outputs
     HDF5File
     HDF5Folder
 
+:mod:`Zip` Module
+=========================
+
+.. module:: Stoner.Zip
+
+.. autosummary:: 
+   :toctree: classes
+   :template: classdocs.rst
+
+    ZipFile
+    ZipFolder
+
 :mod:`Util` Module
 ==================
 
-.. automodule:: Stoner.Util
+.. module:: Stoner.Util
+
+.. autosummary::
+   :toctree: classes
+   :template: classdocs.rst
+
+    Data
+
+.. autosummary::
+    :toctree: functions
+    
+    format_error
+    hysteresis_correct
+    ordinal
+    split_up_down
 
 
 :mod:`mpfit` Module

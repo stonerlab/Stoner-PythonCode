@@ -1,0 +1,8 @@
+
+
+Data.bin
+====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.bin

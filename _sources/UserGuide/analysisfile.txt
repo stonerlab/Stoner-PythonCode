@@ -15,7 +15,7 @@ adding and subtracting columns.::
    a.normalise(0,a2.column(0))
 
 The :py:meth:`AnalyseFile.normalise` method simply divides the data column by the reference column. By default the normalise method
-replaces the data column with the new (normalised) data and appends `'(norm)'' to the column header. The keyword arguments
+replaces the data column with the new (normalised) data and appends '(norm)' to the column header. The keyword arguments
 *header* and *replace* can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
 The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to.
@@ -29,7 +29,7 @@ A typical example might be to have some baseline scan that one is normalising to
 As one might expect form the name, the :py:meth:`AnalyseFile.subtract` method subtracts the second column form the first.
 Unlike :py:meth:`AnalyseFile.normalise` the first data column will not be replaced but a new column inserted and a new header
 (defaulting to 'column header 1 - column header 2') will be created. This can be overridden with the *header* and *replace*
- keyword arguments. The next two variants of the :py:meth:`AnalyseFile.subtract` method work in an analogous manner to the
+keyword arguments. The next two variants of the :py:meth:`AnalyseFile.subtract` method work in an analogous manner to the
 :py:meth:`AnalyseFile.normalise` methods. Finally the :py:meth:`AnalyseFile.add` method allows one to add two columns in a
 similar fashion::
 
@@ -69,7 +69,7 @@ Simple polynomial Fits
 ----------------------
 
 Simple least squares fitting of polynomial functions is handled by the
-:py:meth:`AnalyseFile.polyfit' method::
+:py:meth:`AnalyseFile.polyfit` method::
 
    a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
 
@@ -119,12 +119,43 @@ will be called 'Fitted with ' and the name of the function *func*.
 Fitting with limits
 -------------------
 
-Non-linear curve fitting with initialisation file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The Stoner package has a number of alternative fitting mechanisms that supplement the standard
+:py:func:`scipy.optimize.curve_fit` function. New in version 0.2 onwards of the Package is an interface to the
+*lmfit* module.
 
-For cases where one requires more flexibility in fitting data, in particular
-where the fitting parameters are constrained, the :py:meth:`AnalyseFile.mpfit`
-method is provided. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
+Non-linear curve fitting with lmfit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
+A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`. The
+:py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
+
+In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
+and its independent and fittable parameters, whether they have limits and what the limits are. The :py:mod:`Stoner.Fit` module contains
+a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
+
+The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
+
+    from Stoner.Fit import Arrehenius
+    model=Arrehenius(A=1E7,DE=0.01)
+    fit=a.lmfit(model,xcol="Temp",ycol="Cond",result=True,header="Fit")
+    print fit.fit_report()
+    print a["A"],a["A_err"],a["chi^2"],a["nfev"]
+
+In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+
+The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
+instance. This contains all the information about the fit and fitting process.
+
+Non-linear curve fitting with mpfit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Current versions of the Stoner Package contain a second constrained non-linear fitting package, *mpfit*.
+
+This is also suitable for cases where one requires more flexibility in fitting data, in particular
+where the fitting parameters are constrained, the module is accessed thrpugh the :py:meth:`AnalyseFile.mpfit`
+method. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
 
    a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,bounds=lambda x, y: True, **mpfit_kargs )
 
@@ -158,16 +189,16 @@ Each element is a dictionary with the following keys:
        of MPFIT does not use this tag in any way.  However, the default iterfunct will
        print the parameter name if available.
 *   [step] the step size to be used in calculating the numerical derivatives.
-        If set to zero, then the step size is	computed automatically.  Ignored when
+       If set to zero, then the step size is	computed automatically.  Ignored when
        AUTODERIVATIVE=0.
 *   [mpside] the sidedness of the finite difference when computing numerical
        derivatives.  This field can take four values:
 
-       *    [0]one-sided derivative computed automatically
-       *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
-       *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
-       *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
-            	Where H is the STEP parameter described above.  The "automatic"
+      *    [0]one-sided derivative computed automatically
+      *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
+      *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
+      *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
+               Where H is the STEP parameter described above.  The "automatic"
                one-sided derivative method will chose a direction for the finite difference
                which does not violate any constraints.  The other methods do
                not perform this check.  The two-sided method is in principle more precise, but

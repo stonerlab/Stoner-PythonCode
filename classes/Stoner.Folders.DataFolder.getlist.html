@@ -60,7 +60,7 @@
 <h1>DataFolder.getlist<a class="headerlink" href="#datafolder-getlist" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Folders.DataFolder.getlist">
-<tt class="descclassname">DataFolder.</tt><tt class="descname">getlist</tt><big>(</big><em>recursive=True</em>, <em>directory=None</em>, <em>flatten=False</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder.getlist" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">DataFolder.</tt><tt class="descname">getlist</tt><big>(</big><em>recursive=None</em>, <em>directory=None</em>, <em>flatten=None</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder.getlist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder.getlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Scans the current directory, optionally recursively to build a list of filenames</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -73,7 +73,9 @@ Do a walk through all the directories for files</li>
 <li><strong>directory</strong> (<em>string or False</em>) &#8211;
 Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.</li>
 <li><strong>flatten</strong> (<em>bool</em>) &#8211;
-After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of <a class="reference internal" href="#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><tt class="xref py py-meth docutils literal"><span class="pre">getlist()</span></tt></a>)</li>
+After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of</li>
+<li><strong>:py</strong> &#8211;
+meth:<cite>DataFolder.getlist()</cite>)</li>
 </ul>
 </td>
 </tr>
@@ -147,8 +149,8 @@ directory tree finding sub directories and creating groups in the data folder fo
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

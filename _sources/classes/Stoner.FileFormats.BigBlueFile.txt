@@ -6,7 +6,6 @@ Stoner.FileFormats.BigBlueFile
 .. autoclass:: BigBlueFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,7 +13,8 @@ Stoner.FileFormats.BigBlueFile
    .. autosummary::
     :toctree:
    
-      ~BigBlueFile.load
+      ~BigBlueFile._load
+
    
    
 

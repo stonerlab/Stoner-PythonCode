@@ -6,7 +6,6 @@ Stoner.HDF5.HDF5File
 .. autoclass:: HDF5File
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,9 +13,9 @@ Stoner.HDF5.HDF5File
    .. autosummary::
     :toctree:
    
-      ~HDF5File.__init__
-      ~HDF5File.load
+      ~HDF5File._load
       ~HDF5File.save
+
    
    
 

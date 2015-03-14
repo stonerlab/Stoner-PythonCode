@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyseFile.outlier_detection &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
+    <link rel="next" title="AnalyseFile.peaks" href="Stoner.Analysis.AnalyseFile.peaks.html" />
+    <link rel="prev" title="AnalyseFile.normalise" href="Stoner.Analysis.AnalyseFile.normalise.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.peaks.html" title="AnalyseFile.peaks"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.normalise.html" title="AnalyseFile.normalise"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analysefile-outlier-detection">
+<h1>AnalyseFile.outlier_detection<a class="headerlink" href="#analysefile-outlier-detection" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.outlier_detection">
+<tt class="descclassname">AnalyseFile.</tt><tt class="descname">outlier_detection</tt><big>(</big><em>column=None</em>, <em>window=7</em>, <em>certainty=3.0</em>, <em>action='mask'</em>, <em>func=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.outlier_detection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.outlier_detection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to detect outliers in a column of data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column(column index), specifing column for outlier detection. If not set,</strong> &#8211;</p>
+<p>defaults to the current y set column.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first">
+<li><p class="first"><strong>window</strong> (<em>int</em>) &#8211;
+data window for anomoly detection</p>
+</li>
+<li><p class="first"><strong>certainty</strong> (<em>float</em>) &#8211;
+eg 3 detects data 3 standard deviations from average</p>
+</li>
+<li><p class="first"><strong>action(str), what to do with outlying points, options are</strong> &#8211;</p>
+<p>&#8216;mask&#8217;,&#8217;delete&#8217; anything else defaults to do nothing
+(&#8216;outliers&#8217; item is always added to metadata)</p>
+</li>
+<li><p class="first"><strong>func</strong> (<em>callable</em>) &#8211;
+A function that determines if the current row is an outlier.</p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A copy of the current AnalysisFile</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>outlier_detection will add row numbers of detected outliers to the metadata
+of d, also will perform action depending on request eg &#8216;mask&#8217;, &#8216;delete&#8217;
+(any other action defaults to doing nothing).</p>
+<p>The detection looks at a window of the data, takes the average and looks
+to see if the current data point falls certainty * std deviations away from
+data average.</p>
+<p>The outlier detection function has the signatrure:</p>
+<div class="highlight-python"><div class="highlight"><pre>def outlier(row,column,window,certainity,**kargs)
+    #code
+    return True # or False
+</pre></div>
+</div>
+<p>All extra keyword arguments are passed to the outlier detector.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.normalise.html"
+                        title="previous chapter">AnalyseFile.normalise</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.peaks.html"
+                        title="next chapter">AnalyseFile.peaks</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.outlier_detection.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.peaks.html" title="AnalyseFile.peaks"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.normalise.html" title="AnalyseFile.normalise"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

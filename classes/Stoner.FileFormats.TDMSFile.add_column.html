@@ -61,12 +61,13 @@
 <dl class="method">
 <dt id="Stoner.FileFormats.TDMSFile.add_column">
 <tt class="descclassname">TDMSFile.</tt><tt class="descname">add_column</tt><big>(</big><em>column_data</em>, <em>column_header=None</em>, <em>index=None</em>, <em>func_args=None</em>, <em>replace=False</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.TDMSFile.add_column" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a column of data or inserts a column to a datafile</p>
+<dd><p>Appends a column of data or inserts a column to a datafile instance.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.array</span></tt> or list or callable) &#8211; Data to append or insert or a callable function that will generate new data</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column_data</strong> (<tt class="xref py py-class docutils literal"><span class="pre">numpy.array</span></tt> or list or callable) &#8211;
+Data to append or insert or a callable function that will generate new data</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
@@ -84,17 +85,16 @@ Replace the data or insert the data (default)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">py:class:<cite>DataFile</cite> instance with the additonal column inserted.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">The</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>A</em> &#8211;
+py:class:<cite>DataFile</cite> instance with the additonal column inserted.</p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Also modifies the original DataFile Instance.</p>
+<p class="last">Like most <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> methods, this method operates in-place in that it also modifies
+the original DataFile Instance as well as returning it.</p>
 </div>
 </dd></dl>
 
@@ -159,8 +159,8 @@ Replace the data or insert the data (default)</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

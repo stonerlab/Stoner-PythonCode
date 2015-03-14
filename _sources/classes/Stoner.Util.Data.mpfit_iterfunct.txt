@@ -1,0 +1,8 @@
+
+
+Data.mpfit_iterfunct
+================================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.mpfit_iterfunct

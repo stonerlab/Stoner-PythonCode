@@ -1,0 +1,8 @@
+
+
+Data.column
+=======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.column

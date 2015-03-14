@@ -1,0 +1,8 @@
+
+
+Data.diffsum
+========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.diffsum

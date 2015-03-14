@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
     <link rel="next" title="AnalyseFile.polyfit" href="Stoner.Analysis.AnalyseFile.polyfit.html" />
-    <link rel="prev" title="AnalyseFile.normalise" href="Stoner.Analysis.AnalyseFile.normalise.html" /> 
+    <link rel="prev" title="AnalyseFile.outlier_detection" href="Stoner.Analysis.AnalyseFile.outlier_detection.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="Stoner.Analysis.AnalyseFile.polyfit.html" title="AnalyseFile.polyfit"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.normalise.html" title="AnalyseFile.normalise"
+          <a href="Stoner.Analysis.AnalyseFile.outlier_detection.html" title="AnalyseFile.outlier_detection"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
@@ -67,11 +67,14 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ycol</strong> (<em>index</em>) &#8211; is the column name or index of the data in which to search for peaks</li>
-<li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; is the expected minium halalf-width of a peak in terms of the number of data points.
+<li><strong>ycol</strong> (<em>index</em>) &#8211;
+is the column name or index of the data in which to search for peaks</li>
+<li><strong>width</strong> (<em>float</em>) &#8211;
+is the expected minium halalf-width of a peak in terms of the number of data points.
 This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
 to experimental noise, smaller means better eable to see sharp peaks</li>
-<li><strong>poly</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; This is the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
+<li><strong>poly</strong> (<em>int</em>) &#8211;
+This is the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
 will find sharper peaks more accurately but at the risk of finding more false positives.</li>
 </ul>
 </td>
@@ -111,8 +114,8 @@ Sor the results by significance of peak</li>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.normalise.html"
-                        title="previous chapter">AnalyseFile.normalise</a></p>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.outlier_detection.html"
+                        title="previous chapter">AnalyseFile.outlier_detection</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Analysis.AnalyseFile.polyfit.html"
                         title="next chapter">AnalyseFile.polyfit</a></p>
@@ -151,7 +154,7 @@ Sor the results by significance of peak</li>
           <a href="Stoner.Analysis.AnalyseFile.polyfit.html" title="AnalyseFile.polyfit"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.normalise.html" title="AnalyseFile.normalise"
+          <a href="Stoner.Analysis.AnalyseFile.outlier_detection.html" title="AnalyseFile.outlier_detection"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
@@ -160,8 +163,8 @@ Sor the results by significance of peak</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

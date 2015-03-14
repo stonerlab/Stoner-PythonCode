@@ -1,0 +1,8 @@
+
+
+Data.nlfit
+======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.nlfit

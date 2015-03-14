@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data.mpfit &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Util.Data" href="Stoner.Util.Data.html" />
+    <link rel="next" title="Data.mpfit_iterfunct" href="Stoner.Util.Data.mpfit_iterfunct.html" />
+    <link rel="prev" title="Data.min" href="Stoner.Util.Data.min.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.mpfit_iterfunct.html" title="Data.mpfit_iterfunct"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.min.html" title="Data.min"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" accesskey="U">Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-mpfit">
+<h1>Data.mpfit<a class="headerlink" href="#data-mpfit" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Util.Data.mpfit">
+<tt class="descclassname">Data.</tt><tt class="descname">mpfit</tt><big>(</big><em>func</em>, <em>xcol</em>, <em>ycol</em>, <em>p_info</em>, <em>func_args={}</em>, <em>sigma=None</em>, <em>bounds=&lt;function &lt;lambda&gt; at 0x2acb265b5140&gt;</em>, <em>**mpfit_kargs</em><big>)</big><a class="headerlink" href="#Stoner.Util.Data.mpfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.</p>
+<blockquote>
+<div>mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+Fitting function def func(x,parameters, <a href="#id1"><span class="problematic" id="id2">**</span></a>func_args)</li>
+<li><strong>xcol, ycol (index): index the x and y data sets</strong></li>
+<li><strong>p_info</strong> (<em>list of dictionaries</em>) &#8211;
+Defines the fitting parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>sigma</strong> (<em>index</em>) &#8211;
+weights of the data poiints. If not specified, then equal weighting assumed</li>
+<li><strong>bounds</strong> (<em>callable</em>) &#8211;
+function that takes x,y pairs and returns true if to be used in the fitting</li>
+<li><strong>**mpfit_kargs: other lkeywords passed straight to mpfit</strong></li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Best fit parameters</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.min.html"
+                        title="previous chapter">Data.min</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.mpfit_iterfunct.html"
+                        title="next chapter">Data.mpfit_iterfunct</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Util.Data.mpfit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.mpfit_iterfunct.html" title="Data.mpfit_iterfunct"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.min.html" title="Data.min"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" >Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

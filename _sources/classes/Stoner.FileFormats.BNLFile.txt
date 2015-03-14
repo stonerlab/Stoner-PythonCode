@@ -6,7 +6,6 @@ Stoner.FileFormats.BNLFile
 .. autoclass:: BNLFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -15,7 +14,8 @@ Stoner.FileFormats.BNLFile
     :toctree:
    
       ~BNLFile.__init__
-      ~BNLFile.load
+      ~BNLFile._load
+
    
    
 

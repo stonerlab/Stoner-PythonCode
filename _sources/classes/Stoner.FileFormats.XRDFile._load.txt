@@ -1,0 +1,8 @@
+
+
+XRDFile._load
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile._load

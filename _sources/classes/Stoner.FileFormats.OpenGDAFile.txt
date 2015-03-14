@@ -6,7 +6,6 @@ Stoner.FileFormats.OpenGDAFile
 .. autoclass:: OpenGDAFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,7 +13,8 @@ Stoner.FileFormats.OpenGDAFile
    .. autosummary::
     :toctree:
    
-      ~OpenGDAFile.load
+      ~OpenGDAFile._load
+
    
    
 

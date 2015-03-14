@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data.split &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Util.Data" href="Stoner.Util.Data.html" />
+    <link rel="next" title="Data.stitch" href="Stoner.Util.Data.stitch.html" />
+    <link rel="prev" title="Data.span" href="Stoner.Util.Data.span.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.stitch.html" title="Data.stitch"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.span.html" title="Data.span"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" accesskey="U">Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-split">
+<h1>Data.split<a class="headerlink" href="#data-split" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Util.Data.split">
+<tt class="descclassname">Data.</tt><tt class="descname">split</tt><big>(</big><em>xcol=None</em>, <em>func=None</em><big>)</big><a class="headerlink" href="#Stoner.Util.Data.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits the current <tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt> object into multiple <tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt> objects where each one contains the rows
+from the original object which had the same value of a given column.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xcol</strong> (<em>index</em>) &#8211;
+The index of the column to look for values in.
+This can be a list in which case a <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> with groups
+with subfiles is built up by applying each item in the xcol list recursively.</li>
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+Function that can be evaluated to find the value to determine which output object
+each row belongs in. If this is left as the default None then the column value is converted
+to a string and that is used.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>A</em> &#8211;
+py:class:<cite>Stoner.Folders.DataFolder</cite> object containing the individual <tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt> objects</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing
+the complete row. The return value should be a hashable value. func can also be a list if xcol is a list,
+in which the func values are used along with the &#64;a xcol values.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.span.html"
+                        title="previous chapter">Data.span</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.stitch.html"
+                        title="next chapter">Data.stitch</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Util.Data.split.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.stitch.html" title="Data.stitch"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.span.html" title="Data.span"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" >Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

@@ -61,15 +61,18 @@
 <dl class="method">
 <dt id="Stoner.FileFormats.SNSFile.filter">
 <tt class="descclassname">SNSFile.</tt><tt class="descname">filter</tt><big>(</big><em>func=None</em>, <em>cols=None</em>, <em>reset=True</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.SNSFile.filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the mask on rows of data by evaluating a function for each row</p>
+<dd><p>Sets the mask on rows of data by evaluating a function for each row.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>func</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; is a callable object that should take a single list as a p[arameter representing one row.</li>
-<li><strong>cols</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; a list of column indices that are used to form the list of values passed to func.</li>
-<li><strong>reset</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored in the filter (so the filter is logically or&#8217;d)) The default value of None results in a complete row being passed into func.</li>
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+is a callable object that should take a single list as a p[arameter representing one row.</li>
+<li><strong>cols</strong> (<em>list</em>) &#8211;
+a list of column indices that are used to form the list of values passed to func.</li>
+<li><strong>reset</strong> (<em>bool</em>) &#8211;
+determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored in the filter (so the filter is logically or&#8217;d)) The default value of None results in a complete row being passed into func.</li>
 </ul>
 </td>
 </tr>
@@ -141,8 +144,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jun 30, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

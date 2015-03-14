@@ -272,7 +272,13 @@ Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object 
 </div>
 <div class="section" id="setting-axes-labels-plot-titles-and-legends">
 <h3>Setting Axes Labels, Plot Titles and Legends<a class="headerlink" href="#setting-axes-labels-plot-titles-and-legends" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> provides some useful attributes for setting specific aspects of the figures.</p>
+<p><a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> provides some useful attributes for setting specific aspects of the figures. Any
+<em>get_</em> and <em>set_</em> method of <tt class="xref py py-class docutils literal"><span class="pre">pyplot.Axes</span></tt> can be read or written as a <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> attribute.
+Internally this is implemented by calling the corresponding method on the current axes of the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a>&#8216;s
+figure. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
+keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
+element tuple.</p>
+<p>Particualrly useful attributes include:</p>
 <ul>
 <li><p class="first"><tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.xlabel</span></tt>, <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.ylabel</span></tt> will set the x and y axes labels</p>
 </li>
@@ -284,11 +290,20 @@ Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object 
 <dt><a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile.labels" title="Stoner.Plot.PlotFile.labels"><tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.labels</span></tt></a> sets a list of strings that are the preferred name for each column. This is to</dt>
 <dd><p class="first last">allow the plotting routines to provide a default name for an axis label that can be different from the
 name of the column used for indexing purposes. If the label for a column is not set, then the column
-header is used instead.</p>
+header is used instead. If a column header is changed, then the <tt class="xref py py-attr docutils literal"><span class="pre">Plotfile.labels</span></tt> attribute will
+be overwritten.</p>
 </dd>
 </dl>
 </li>
 </ul>
+<p>In addition, you can read any method of <tt class="xref py py-class docutils literal"><span class="pre">pyplot.Axes</span></tt> as an attribute of <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a>. This allows
+one to call the methods directly on the PlotFile instance without needing to extract a reference to the current
+axes.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">xlabel</span><span class="o">=</span><span class="s">&quot;My X Axis&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s">&quot;My X Axis&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.</p>
 </div>
 <div class="section" id="plot-templates">
 <h3>Plot Templates<a class="headerlink" href="#plot-templates" title="Permalink to this headline">¶</a></h3>
@@ -308,7 +323,7 @@ executed during the process of plotting a figure.:</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The template can either be set by passing a subclass of <a class="reference internal" href="../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></tt></a> or
+<p>The template can either be set by passing a subclass of <a class="reference internal" href="../api/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></tt></a> or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
 settings defined by the template class with your own choice - or indeed, to add further style attributes. You
 can also copy the style template from one plot to the next:</p>
@@ -324,9 +339,39 @@ are replaced with double underscores.</p>
 </div>
 <div class="section" id="making-multi-plot-figures">
 <h3>Making Multi-plot Figures<a class="headerlink" href="#making-multi-plot-figures" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="adding-an-inset-to-a-figure">
+<h4>Adding an Inset to a Figure<a class="headerlink" href="#adding-an-inset-to-a-figure" title="Permalink to this headline">¶</a></h4>
+<p>The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.inset.html#Stoner.Plot.PlotFile.inset" title="Stoner.Plot.PlotFile.inset"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.inset()</span></tt></a> method can be used to creagte an inset in the current figure. Subsequent plots
+will be to the inset until a new set of axes are chosen. The <tt class="xref py py-class docutils literal"><span class="pre">pyplot.Axes</span></tt> instance of the inset is appended to the
+<tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.axes</span></tt> attribute.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="s">&quot;25%&quot;</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The <em>loc</em> parameter specifies the location of the inset, the width and height the size (either as a percentage or
+fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
+inset.</p>
+<blockquote>
+<div><ul class="simple">
+<li><em>loc</em> = 1 top-right inset</li>
+<li><em>loc</em> = 2 top left inset</li>
+<li><em>loc</em> = 3 bottom left inset</li>
+<li><em>loc</em> = 4 bottom right inset</li>
+<li><em>loc</em> = 5 mid-right inset</li>
+<li><em>loc</em> = 6 mid-left inset</li>
+<li><em>loc</em> = 7 mid-right inset</li>
+<li><em>loc</em> = 8 mid-bottom inset</li>
+<li><em>loc</em> = 9 mid-top inset</li>
+<li><em>loc</em> = 0 centre inset</li>
+</ul>
+</div></blockquote>
 <div class="admonition-todo admonition" id="index-0">
 <p class="first admonition-title">Todo</p>
 <p class="last">Write about <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.subplots</span></tt></p>
+</div>
 </div>
 </div>
 </div>
@@ -354,7 +399,10 @@ are replaced with double underscores.</p>
 <li><a class="reference internal" href="#getting-more-control-on-the-figure">Getting More Control on the Figure</a><ul>
 <li><a class="reference internal" href="#setting-axes-labels-plot-titles-and-legends">Setting Axes Labels, Plot Titles and Legends</a></li>
 <li><a class="reference internal" href="#plot-templates">Plot Templates</a></li>
-<li><a class="reference internal" href="#making-multi-plot-figures">Making Multi-plot Figures</a></li>
+<li><a class="reference internal" href="#making-multi-plot-figures">Making Multi-plot Figures</a><ul>
+<li><a class="reference internal" href="#adding-an-inset-to-a-figure">Adding an Inset to a Figure</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -410,8 +458,8 @@ are replaced with double underscores.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

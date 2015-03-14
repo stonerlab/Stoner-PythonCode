@@ -1,0 +1,8 @@
+
+
+Data.filter
+=======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.filter

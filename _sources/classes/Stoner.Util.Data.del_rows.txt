@@ -1,0 +1,8 @@
+
+
+Data.del_rows
+=========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.del_rows

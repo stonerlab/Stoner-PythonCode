@@ -6,7 +6,6 @@ Stoner.FileFormats.XRDFile
 .. autoclass:: XRDFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,8 +13,9 @@ Stoner.FileFormats.XRDFile
    .. autosummary::
     :toctree:
    
-      ~XRDFile.load
+      ~XRDFile._load
       ~XRDFile.to_Q
+
    
    
 

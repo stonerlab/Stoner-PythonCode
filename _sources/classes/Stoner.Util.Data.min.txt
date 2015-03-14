@@ -1,0 +1,8 @@
+
+
+Data.min
+====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.min

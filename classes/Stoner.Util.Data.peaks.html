@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data.peaks &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Util.Data" href="Stoner.Util.Data.html" />
+    <link rel="next" title="Data.plot" href="Stoner.Util.Data.plot.html" />
+    <link rel="prev" title="Data.normalise" href="Stoner.Util.Data.normalise.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.plot.html" title="Data.plot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.normalise.html" title="Data.normalise"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" accesskey="U">Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-peaks">
+<h1>Data.peaks<a class="headerlink" href="#data-peaks" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Util.Data.peaks">
+<tt class="descclassname">Data.</tt><tt class="descname">peaks</tt><big>(</big><em>ycol=None</em>, <em>width=None</em>, <em>significance=None</em>, <em>xcol=None</em>, <em>peaks=True</em>, <em>troughs=False</em>, <em>poly=2</em>, <em>sort=False</em><big>)</big><a class="headerlink" href="#Stoner.Util.Data.peaks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locates peaks and/or troughs in a column of data by using SG-differentiation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ycol</strong> (<em>index</em>) &#8211;
+is the column name or index of the data in which to search for peaks</li>
+<li><strong>width</strong> (<em>float</em>) &#8211;
+is the expected minium halalf-width of a peak in terms of the number of data points.
+This is used in the differnetiation code to find local maxima. Bigger equals less sensitive
+to experimental noise, smaller means better eable to see sharp peaks</li>
+<li><strong>poly</strong> (<em>int</em>) &#8211;
+This is the order of polynomial to use when differentiating the data to locate a peak. Must &gt;=2, higher numbers
+will find sharper peaks more accurately but at the risk of finding more false positives.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>significance</strong> (<em>float</em>) &#8211;
+is used to decide whether a local maxmima is a significant peak. Essentially just the curvature
+of the data. Bigger means less sensistive, smaller means more likely to detect noise.</li>
+<li><strong>xcol</strong> (<em>index or None</em>) &#8211;
+name or index of data column that p[rovides the x-coordinate (default None)</li>
+<li><strong>peaks</strong> (<em>bool</em>) &#8211;
+select whether to measure peaks in data (default True)</li>
+<li><strong>troughs</strong> (<em>bool</em>) &#8211;
+select whether to measure troughs in data (default False)</li>
+<li><strong>sort</strong> (<em>bool</em>) &#8211;
+Sor the results by significance of peak</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.normalise.html"
+                        title="previous chapter">Data.normalise</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Util.Data.plot.html"
+                        title="next chapter">Data.plot</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Util.Data.peaks.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.plot.html" title="Data.plot"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Util.Data.normalise.html" title="Data.normalise"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Util.Data.html" >Stoner.Util.Data</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 11, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

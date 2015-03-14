@@ -61,14 +61,18 @@
 the Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple
 programs to do things like fitting functions to data, extract curve parameters and churn through large numbers of
 small text data files.</p>
-<p>For a general introduction, users are referred to the Users Guide pdf file that can be found in the <em>doc/UserGuide</em> directory in
-the github repository.  There is also an API reference in the form of a compiled help file in the <em>doc</em> directory that is
-generated with Sphinx from the embedded docstrings in the source code.</p>
+<p>For a general introduction, users are referred to the Users Guide, which is part of the <cite>online documentation
+&lt;http://pythonhosted.org/Stoner/&gt;</cite> along with the API Reference guide. The <a href="#id1"><span class="problematic" id="id2">`</span></a>github repository
+&lt;<a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">http://www.github.com/gb119/Stoner-PythonCode/</a>&gt; also contains some example scripts.</p>
 </div>
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.4, scipy &gt;=0.12, matplotlib &gt;=1.1 and h5py. Experimental code also makes use of
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.</p>
+<p>At present it looks like lmfit does not install correctly with easy_install, so use pip instead</p>
+<div class="highlight-sh"><div class="highlight"><pre>pip install lmfit
+</pre></div>
+</div>
 <p>The easiest way to install this code is via seuptools&#8217; easy_install</p>
 <div class="highlight-sh"><div class="highlight"><pre>easy_install Stoner
 </pre></div>
@@ -116,16 +120,35 @@ brutal to your computer&#8217;s OS than having directory trees with millions of 
 </div>
 <div class="section" id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
-<p>Included in the package are a (small) collection of sample scripts for carrying out various operations and some sample data
-files for testing the loading and processing of data. There is also a  <a class="reference internal" href="UserGuide/ugindex.html"><em>user guide</em></a> as part of
-this help file, along with a complete API reference:</p>
+<p>Included in the <cite>github repository &lt;http://www.github.com/gb119/Stoner-PythonCode/&gt; are a (small) collection of sample scripts
+for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
+:doc:`user guide &lt;UserGuide/ugindex&gt;</cite> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><em>complete API reference</em></a></p>
 </div>
 <div class="section" id="contact-and-licensing">
 <h2>Contact and Licensing<a class="headerlink" href="#contact-and-licensing" title="Permalink to this headline">¶</a></h2>
 <p>The lead developer for this code is Dr Gavin Burnell &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt; <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">http://www.stoner.leeds.ac.uk/people/gb</a>.
 The User Guide gives the current list of other contributors to the project.</p>
-<p>This code and the sample data are all (C) The University of Leeds 2008-2013 unless otherwise indficated in the source file.
+<p>This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3</p>
+</div>
+<div class="section" id="recent-changes">
+<h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version-0-3-0">
+<h3>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h3>
+<p>Refactorise the setas attribute again to remove circular references. Get writing to the setas column attributes working.</p>
+</div>
+<div class="section" id="version-0-2-5">
+<h3>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Permalink to this headline">¶</a></h3>
+<p>Add a MokeFile class for loading Leeds MOKE system files.</p>
+</div>
+<div class="section" id="version-0-2-4">
+<h3>Version 0.2.4<a class="headerlink" href="#version-0-2-4" title="Permalink to this headline">¶</a></h3>
+<p>Refactored the setas attribute, improvments to loading some file formats, new Engineering formatting for plots (optional)</p>
+</div>
+<div class="section" id="version-0-2-0">
+<h3>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Permalink to this headline">¶</a></h3>
+<p>Added the dependency on lmfit and depricated mpfit for doing bounded least-squares fitting of complex data functions.</p>
+</div>
 </div>
 <div class="section" id="user-guide">
 <h2>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h2>
@@ -139,6 +162,7 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/datafolder.html">Working with Lots of Data Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/cookbook.html">Cookbook</a></li>
 <li class="toctree-l2"><a class="reference internal" href="UserGuide/developer.html">Developing and Extending</a></li>
+<li class="toctree-l2"><a class="reference internal" href="UserGuide/credits.html">Credits</a></li>
 </ul>
 </li>
 </ul>
@@ -156,8 +180,8 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Folders"><tt class="docutils literal"><span class="pre">Folders</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.FileFormats"><tt class="docutils literal"><span class="pre">FileFormats</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.PlotFormats"><tt class="docutils literal"><span class="pre">PlotFormats</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.FittingFuncs"><tt class="docutils literal"><span class="pre">FittingFuncs</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.HDF5"><tt class="docutils literal"><span class="pre">HDF5</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Zip"><tt class="docutils literal"><span class="pre">Zip</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Util"><tt class="docutils literal"><span class="pre">Util</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.mpfit"><tt class="docutils literal"><span class="pre">mpfit</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.nlfit"><tt class="docutils literal"><span class="pre">nlfit</span></tt> Module</a></li>
@@ -189,6 +213,13 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 </li>
 <li><a class="reference internal" href="#resources">Resources</a></li>
 <li><a class="reference internal" href="#contact-and-licensing">Contact and Licensing</a></li>
+<li><a class="reference internal" href="#recent-changes">Recent Changes</a><ul>
+<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
+<li><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
+<li><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
+<li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#user-guide">User Guide</a></li>
 <li><a class="reference internal" href="#modules-documentatuion">Modules Documentatuion</a></li>
 </ul>
@@ -237,8 +268,8 @@ The contents of this package are licensed under the terms of the GNU Public Lice
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

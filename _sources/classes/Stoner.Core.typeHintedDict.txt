@@ -6,7 +6,6 @@ Stoner.Core.typeHintedDict
 .. autoclass:: typeHintedDict
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -20,6 +19,7 @@ Stoner.Core.typeHintedDict
       ~typeHintedDict.findtype
       ~typeHintedDict.string_to_type
       ~typeHintedDict.type
+
    
    
 

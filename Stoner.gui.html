@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="index.html" />
     <link rel="up" title="Stoner Package" href="Stoner.html" />
     <link rel="next" title="Stoner.Core.typeHintedDict" href="classes/Stoner.Core.typeHintedDict.html" />
-    <link rel="prev" title="HDF5Folder.save" href="classes/Stoner.HDF5.HDF5Folder.save.html" /> 
+    <link rel="prev" title="split_up_down" href="functions/Stoner.Util.split_up_down.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="classes/Stoner.Core.typeHintedDict.html" title="Stoner.Core.typeHintedDict"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="classes/Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+          <a href="functions/Stoner.Util.split_up_down.html" title="split_up_down"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Stoner Package</a> &raquo;</li>
           <li><a href="Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -62,8 +62,48 @@
 <span class="target" id="module-Stoner.gui"></span><p>&#8221;
 This subpackage provides modules for writing gui&#8217;s using the Stoner DataFile objects.</p>
 </div>
-<div class="section" id="traits-stoner-module">
-<h2><tt class="xref py py-mod docutils literal"><span class="pre">traits_Stoner</span></tt> Module<a class="headerlink" href="#traits-stoner-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-Stoner.gui.traits_Stoner">
+<span id="traits-stoner-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">traits_Stoner</span></tt> Module<a class="headerlink" href="#module-Stoner.gui.traits_Stoner" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="Stoner.gui.traits_Stoner.ArrayAdapter">
+<em class="property">class </em><tt class="descclassname">Stoner.gui.traits_Stoner.</tt><tt class="descname">ArrayAdapter</tt><big>(</big><em>df</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#ArrayAdapter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.ArrayAdapter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traitsui.tabular_adapter.TabularAdapter</span></tt></p>
+<p>A minimalist array adapter class for managing the display of data</p>
+<dl class="method">
+<dt id="Stoner.gui.traits_Stoner.ArrayAdapter.delete">
+<tt class="descname">delete</tt><big>(</big><em>datafile</em>, <em>trait</em>, <em>row</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#ArrayAdapter.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.ArrayAdapter.delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Stoner.gui.traits_Stoner.ArrayAdapter.get_default_value">
+<tt class="descname">get_default_value</tt><big>(</big><em>object</em>, <em>trait</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#ArrayAdapter.get_default_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.ArrayAdapter.get_default_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Stoner.gui.traits_Stoner.ArrayAdapter.insert">
+<tt class="descname">insert</tt><big>(</big><em>object</em>, <em>trait</em>, <em>row</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#ArrayAdapter.insert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.ArrayAdapter.insert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Stoner.gui.traits_Stoner.TraitsDataFile">
+<em class="property">class </em><tt class="descclassname">Stoner.gui.traits_Stoner.</tt><tt class="descname">TraitsDataFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#TraitsDataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.TraitsDataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>A subvlass of Stoner.DataFile that also inherits from HasTraits for use in building front ends</p>
+<dl class="method">
+<dt id="Stoner.gui.traits_Stoner.TraitsDataFile.load">
+<tt class="descname">load</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#TraitsDataFile.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.TraitsDataFile.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override the load to sort out the columns and headers of the array adapter</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.gui.traits_Stoner.TraitsDataFile.trait_view">
+<tt class="descname">trait_view</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/Stoner/gui/traits_Stoner.html#TraitsDataFile.trait_view"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.gui.traits_Stoner.TraitsDataFile.trait_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -80,14 +120,14 @@ This subpackage provides modules for writing gui&#8217;s using the Stoner DataFi
   <ul>
 <li><a class="reference internal" href="#">gui Package</a><ul>
 <li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">gui</span></tt> Package</a></li>
-<li><a class="reference internal" href="#traits-stoner-module"><tt class="docutils literal"><span class="pre">traits_Stoner</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-Stoner.gui.traits_Stoner"><tt class="docutils literal"><span class="pre">traits_Stoner</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="classes/Stoner.HDF5.HDF5Folder.save.html"
-                        title="previous chapter">HDF5Folder.save</a></p>
+  <p class="topless"><a href="functions/Stoner.Util.split_up_down.html"
+                        title="previous chapter">split_up_down</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="classes/Stoner.Core.typeHintedDict.html"
                         title="next chapter">Stoner.Core.typeHintedDict</a></p>
@@ -126,7 +166,7 @@ This subpackage provides modules for writing gui&#8217;s using the Stoner DataFi
           <a href="classes/Stoner.Core.typeHintedDict.html" title="Stoner.Core.typeHintedDict"
              >next</a> |</li>
         <li class="right" >
-          <a href="classes/Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+          <a href="functions/Stoner.Util.split_up_down.html" title="split_up_down"
              >previous</a> |</li>
         <li><a href="index.html">Stoner Package</a> &raquo;</li>
           <li><a href="Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -134,8 +174,8 @@ This subpackage provides modules for writing gui&#8217;s using the Stoner DataFi
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

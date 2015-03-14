@@ -1,0 +1,8 @@
+
+
+Data.make_bins
+==========================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.make_bins

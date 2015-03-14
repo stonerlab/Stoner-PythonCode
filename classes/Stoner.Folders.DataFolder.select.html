@@ -66,24 +66,31 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args</strong> (<em>various</em>) &#8211; <p>A single positional argument if present is interpreted as follows:
-* If a callable function is given, the entire DataFile is presented to it.</p>
-<blockquote>
-<div>If it evaluates True then that DataFile is selected. This allows arbitary select operations</div></blockquote>
-<ul class="simple">
-<li>If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first">
+<li><p class="first"><strong>args</strong> (<em>various</em>) &#8211;
+A single positional argument if present is interpreted as follows:</p>
+</li>
+<li><p class="first"><strong>* If a callable function is given, the entire DataFile is presented to it.</strong> &#8211;</p>
+<p>If it evaluates True then that DataFile is selected. This allows arbitary select operations</p>
+</li>
+<li><p class="first"><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles</strong></p>
+</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>kargs</strong> (<em>varuous</em>) &#8211;
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>kargs</strong> (<em>varuous</em>) &#8211;
 Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-metadata values. The value of the argument is used as follows:
-* if is a scalar, then an equality test is carried out
-* If is a list then a membership test is carried out
-* if it is a tuple of numbers then it is interpreted as a bounds test (t1&lt;=x&lt;t2)</td>
+metadata values. The value of the argument is used as follows:</li>
+<li><strong>* if is a scalar, then an equality test is carried out</strong></li>
+<li><strong>* If is a list then a membership test is carried out</strong></li>
+<li><strong>* if it is a tuple of numbers then it is interpreted as a bounds test (t1&lt;=x&lt;t2)</strong></li>
+</ul>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><em>A DataFile that matches the select requirements</em></td>
+<tr class="field-odd field"><th class="field-name">Yields:</th><td class="field-body"><p class="first last">A DataFile that matches the select requirements</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -150,8 +157,8 @@ metadata values. The value of the argument is used as follows:
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 17, 2014.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Last updated on Mar 14, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

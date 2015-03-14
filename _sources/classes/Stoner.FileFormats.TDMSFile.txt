@@ -6,7 +6,6 @@ Stoner.FileFormats.TDMSFile
 .. autoclass:: TDMSFile
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods
@@ -14,7 +13,8 @@ Stoner.FileFormats.TDMSFile
    .. autosummary::
     :toctree:
    
-      ~TDMSFile.load
+      ~TDMSFile._load
+
    
    
 

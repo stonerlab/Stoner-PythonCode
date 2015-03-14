@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.rows
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.rows

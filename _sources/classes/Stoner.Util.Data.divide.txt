@@ -1,0 +1,8 @@
+
+
+Data.divide
+=======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.divide

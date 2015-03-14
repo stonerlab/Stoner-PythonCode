@@ -1,0 +1,8 @@
+
+
+Data.add
+====================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.add
