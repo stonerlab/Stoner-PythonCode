@@ -8,11 +8,12 @@ Created on Fri Feb 07 19:57:30 2014
 """
 
 from Stoner.compat import *
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter,Formatter
 from matplotlib.ticker import AutoLocator
 from os.path import join,dirname,realpath
-
+from sys import platform as _platform
 
 import numpy as _np_
 
@@ -157,7 +158,7 @@ class DefaultPlotStyle(object):
                 attrname=attr[9:].replace("_",".").replace("..","_")
                 value=self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
-                    params[attrname]=value
+                    params[attrname]=value 
         plt.rcParams.update(params) # Apply these parameters
 
         if isinstance(figure,bool) and not figure:
@@ -173,14 +174,21 @@ class DefaultPlotStyle(object):
         to update matplotlib settings with.
         """
         plt.style.use(self.stylesheet)
-        self.new_figure(False)
-
+        
         self.customise()
 
     def customise(self):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
+        if _platform == 'darwin':
+            path_font = '/Library/Fonts/'+plt.rcParams['font.family'][0].replace('"','')+'.ttf'
+            if path_font in mpl.font_manager.OSXInstalledFonts():
+                prop = mpl.font_manager.FontProperties(fname=path_font)
+                #print prop.get_name()
+                plt.rcParams['font.family'] = prop.get_name()
+            else:
+                print '%s is not an installed font'%plt.rcParams['font.family'][0].replace('"','')
 
     def customise_axes(self,ax):
         """This method is run when we have an axis to manipulate.
