@@ -1422,7 +1422,7 @@ class DataFile(object):
                 else:
                     raise StonerLoadError("Not a TDI File")
             except:
-                raise StonerLoadError("Not a TDI File")                
+                raise StonerLoadError("Not a TDI File")
             col_headers_tmp=[x.strip() for x in row[1:]]
             datarow=0
             metadatarow=0
@@ -2194,7 +2194,7 @@ class DataFile(object):
                 self._setas=test._setas
                 self._setas.ref=self
                 failed=False
-            elif issublcass(filetype,DataFile):
+            elif issubclass(filetype,DataFile):
                 test=filetype(filename)
                 self["Loaded as"]=filetype.__name__
                 self._setas=test._setas
@@ -2246,6 +2246,45 @@ class DataFile(object):
                                                 self.find_col(col)]), axis=0)
         self.data = _ma_.masked_array(_np_.transpose(newdata))
         return self
+
+    def rolling_window(self,window=7, wrap=True,exclude_centre=False):
+        """Iterator that return a rolling window section of the data.
+
+        Keyword Arguments:
+            window (int): Size of the rolling window (must be odd and >= 3)
+            wrap (bool): Whether to use data from the other end of the array when at one end or the other.
+            exclude_centre (bool): Exclude the ciurrent row from the rolling window (defaults to False)
+
+        Returns:
+            Yields with a section of data that is window rows long, each iteration moves the marker
+            one row further on.
+        """
+
+        if window%2==0 or window<3:
+            raise valueError("Window must be an odd number bigger than or equal to three")
+
+        hw=(window-1)/2
+
+        for i in range(len(self)):
+            if i<hw:
+                pre_data=self.data[i-hw:]
+            else:
+                pre_data=_np_.zeros((0,self.shape[1]))
+            if i+1>len(self)-hw:
+                post_data=self.data[0:hw-(len(self)-i-1)]
+            else:
+                post_data=_np_.zeros((0,self.shape[1]))
+            starti=max(i-hw,0)
+            stopi=min(len(self),i+hw+1)
+            if exclude_centre:
+                data=_np_.row_stack((self.data[starti:i],self.data[i+1:stopi]))
+            else:
+                data=self.data[starti:stopi]
+            if wrap:
+                ret=_np_.row_stack((pre_data,data,post_data))
+            else:
+                ret=data
+            yield ret
 
     def rows(self):
         """Generator method that will iterate over rows of data

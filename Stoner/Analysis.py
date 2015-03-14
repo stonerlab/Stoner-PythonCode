@@ -688,7 +688,7 @@ class AnalyseFile(DataFile):
         inter=interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self,model,xcol=None,ycol=None,p0=None, sigma=None, **kargs):
+    def lmfit(self,model,xcol=None,ycol=None,p0=None, sigma=None, prefix=None, **kargs):
         """Wrapper around lmfit module fitting.
 
         Args:
@@ -730,6 +730,13 @@ class AnalyseFile(DataFile):
         #Support both asrow and output, the latter wins if both supplied
         asrow=kargs.pop("asrow",False)
         output=kargs.pop("output","row" if asrow else "fit")
+
+        if prefix is None:
+            prefix=model.__class__.__name__+":"
+        elif not prefix:
+            prefix=""
+        else:
+            prefix=str(prefix)+":"
 
         if not isinstance(model,Model):
             raise TypeError("model parameter must be an instance of lmfit.model/Model!")
@@ -774,11 +781,11 @@ class AnalyseFile(DataFile):
             elif result is not None:
                 raise RuntimeError("Didn't recognize result as an index type or True")
             for p in fit.params:
-                self[p]=fit.params[p].value
-                self[p+"_err"]=fit.params[p].stderr
+                self["{}{}".format(prefix,p)]=fit.params[p].value
+                self["{}{} err".format(prefix,p)]=fit.params[p].stderr
                 row.append([fit.params[p].value,fit.params[p].stderr])
-            self["chi^2"]=fit.chisqr
-            self["nfev"]=fit.nfev
+            self["{}chi^2".format(prefix)]=fit.chisqr
+            self["{}nfev".format(prefix)]=fit.nfev
             retval={"fit":fit,"row":row,"full":(fit,row)}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
@@ -1458,62 +1465,40 @@ class AnalyseFile(DataFile):
             return ret
         else:
             return ret[0]
-    
-    def _rolling_window(self, a, window):
-        """Takes a 1D array a and odd integer window. Output is an int
-        array of size (len(a),window-1).
-        Example: for array a=[0,1,2,3,4,5,6,7,8,9] window 3 output should be
-        [[1,2],[0,2],[1,3],[2,4] ... [7,8]].
-        ie nearest indexes to each point """
-        if window%2==0 or window<3 or window>len(a): 
-            raise ValueError("window must be an odd integer within data range")
-        r=_np_.zeros((a.shape[0],window-1),dtype=_np_.int32)
-        j=_np_.arange(-(window/2),window/2+1)
-        j=_np_.delete(j,window/2) #pop the current index
-        for i in range(len(a)):
-            r[i][:]=j+i
-        #now correct the end states
-        j=_np_.arange(window)
-        for i in range(window/2):
-            temp=_np_.delete(j,i)
-            r[i][:]=temp
-        j=_np_.arange(len(a)-window,len(a))
-        for i in range(len(a)-1-window/2,len(a)):
-            temp=_np_.delete(j,i-len(a))
-            r[i][:]=temp
-        return r
 
-    def outlier_detection(self,column,window=7,certainty=3.0,action='mask'):
-        """Function to detect outliers in a column of data, will add row numbers of 
-        detected outliers to the metadata of d, also will perform action depending
-        on request eg 'mask', 'delete' (any other action defaults to doing nothing).
-        The detection looks at a window of the data, takes the average and looks
-        to see if the current data point falls certainty * std deviations away from
-        data average.
-        
+    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask'):
+        """Function to detect outliers in a column of data.
+
         Args:
-            column(int or str), specifing column for outlier detection
-        
+            column(column index), specifing column for outlier detection. If not set,
+                defaults to the current y set column.
+
         Keyword Arguments:
             window(int): data window for anomoly detection
             certainty(float): eg 3 detects data 3 standard deviations from average
             action(str), what to do with outlying points, options are
                              'mask','delete' anything else defaults to do nothing
                              ('outliers' item is always added to metadata)
-        
-        Returns: 
+
+        Returns:
             A copy of the current AnalysisFile
+
+        outlier_detection will add row numbers of detected outliers to the metadata
+        of d, also will perform action depending on request eg 'mask', 'delete'
+        (any other action defaults to doing nothing).
+
+        The detection looks at a window of the data, takes the average and looks
+        to see if the current data point falls certainty * std deviations away from
+        data average.
         """
-        
-        column=self.find_col(column) #going to be easier if this is an integer later on
-        data=self.column(column).data
+
+        if column is None:
+            column=self.setas._get_cols("ycol")
         index=[]
-        r=self._rolling_window(data,window)
-        t=_np_.zeros(len(r[1]))
-        for i in range(len(r)):
-            t[:]=data[ r[i][:] ]
-            av=_np_.average(t)
-            std=_np_.std(t) #standard deviation
+        column=self.find_col(column) #going to be easier if this is an integer later on
+        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=True)):
+            av=_np_.average(t[:,column])
+            std=_np_.std(t[:,column]) #standard deviation
             if abs(data[i]-av)>certainty*std:
                 index.append(i)
         self['outliers']=index #add outlier indecies to metadata
@@ -1528,4 +1513,3 @@ class AnalyseFile(DataFile):
                 self.del_rows(i-j)
                 j+=1 #deletion index will change after every row removal
         return self
-            
