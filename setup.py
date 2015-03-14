@@ -16,8 +16,10 @@ setup(
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",
     packages=['Stoner'],
+    package_dir={'Stoer': 'Stoner'},
+    package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
-    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit"],
+    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit","numba"],
     long_description=read('doc/readme.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",

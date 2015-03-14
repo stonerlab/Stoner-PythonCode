@@ -1154,6 +1154,7 @@ class DataFile(object):
               "setas":self._getattr_setas,
               "column_headers":self.__getattr__column_headers
               }
+
         if name in easy:
             return easy[name]()
         elif name in ("x","y","z","d","e","f","u","v","w","r","q","p"):
@@ -1665,12 +1666,11 @@ class DataFile(object):
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
 
-        easy={"nask":self.__setattr_mask,
+        easy={"mask":self.__setattr_mask,
               "data":self.__setattr_data,
               "T":self.__setattr_T,
               "setas":self.__setattr_setas,
               "column_headers":self.__setattr_column_headers}
-
         if name in easy:
             easy[name](value)
         elif len(name)==1 and name in "xyzuvwdef" and len(self.setas[name])!=0:

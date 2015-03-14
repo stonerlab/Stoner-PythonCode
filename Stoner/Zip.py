@@ -275,7 +275,7 @@ class ZipFolder(DataFolder):
         #At this point directory contains an open h5py.File object, or possibly a group
         self.files=directory.namelist()
         if flaten is None or not flatten:
-f            self.unflatten()        
+            self.unflatten()        
         if close_me:
             directory.close()
         return self
