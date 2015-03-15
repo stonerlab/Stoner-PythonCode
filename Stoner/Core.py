@@ -830,7 +830,9 @@ class DataFile(object):
             self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             for a in arg.__dict__:
-                super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
+                print a
+                if not callable(a):
+                    super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = _ma_.masked_array(arg.data)
             self._setas=arg._setas

@@ -125,8 +125,28 @@ class DefaultPlotStyle(object):
         self.apply()
         
     def __getattr__(self,name):
+        """Provide magic to read certain attributes of the template."""
         if name=="stylesheet":
             return self._stylesheet()
+        elif name.startswith("template_"): #Magic conversion to rcParams
+            attrname=name[9:].replace("_",".").replace("..","_")
+            if attrname in plt.rcParams:
+               return plt.rcParams[attrname]
+            else:
+                raise AttributeError("template attribute not in rcParams")
+        else:
+            return super(DefaultPlotStyle,self).__getattribute__(name)
+            
+    def __setattr__(self,name,value):
+        """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
+        if name=="stylesheet":
+            raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+        elif name.startswith("template_"):
+            attrname=name[9:].replace("_",".").replace("..","_")
+            plt.rcParams[attrname]=value
+        else:
+            super(DefaultPlotStyle,self).__setattr__(name,value)
+
         
     def _stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
@@ -160,7 +180,6 @@ class DefaultPlotStyle(object):
                 if attrname in plt.rcParams.keys():
                     params[attrname]=value 
         plt.rcParams.update(params) # Apply these parameters
-
         if isinstance(figure,bool) and not figure:
             ret=None
         elif figure is not None:

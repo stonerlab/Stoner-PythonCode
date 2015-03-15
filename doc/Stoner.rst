@@ -119,7 +119,6 @@ Facility Outputs
 :mod:`Fit` Module
 ==========================
 
-
 .. automodapi:: Stoner.Fit
    :no-inheritance-diagram:
    :no-heading:
