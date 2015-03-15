@@ -263,5 +263,7 @@ napoleon_use_rtype = False
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
 
+automodapi_toctreedirnm='classes'
+
 [extensions]
 todo_include_todos=True

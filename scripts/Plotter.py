@@ -4,14 +4,14 @@ from traitsui.api import View, Group, HGroup,  VGroup,  Item,  CheckListEditor, 
 from traitsui.tabular_adapter import TabularAdapter
 from enable.api import ColorTrait, LineStyle,  Component, ComponentEditor
 
-from enthought.traits.ui.menu import Action, CloseAction, Menu, MenuBar, OKCancelButtons, Separator
+from traitsui.menu import Action, CloseAction, Menu, MenuBar, OKCancelButtons, Separator
 from enable.tools.api import DragTool
 
 from chaco.api import add_default_axes, add_default_grids, \
         OverlayPlotContainer, PlotLabel, ScatterPlot, LinePlot, ToolbarPlot,  create_line_plot, create_scatter_plot,  \
         marker_trait, Plot, ArrayPlotData, ArrayDataSource,  LinearMapper,  LogMapper, DataRange1D
 from chaco.tools.api import PanTool, ZoomTool
-from enthought.chaco.tools.cursor_tool import CursorTool, BaseCursorTool
+from chaco.tools.cursor_tool import CursorTool, BaseCursorTool
 from copy import copy
 
 
@@ -33,7 +33,7 @@ class ArrayAdapter(TabularAdapter):
     def _get_index_text(self):
         return str(self.row)
 
-class StonerPlot(HasTraits, S.DataFile):
+class StonerPlot(HasTraits, S.Data):
     """A simple x-y plotting program to play with"""
     plot = Instance(Component)
     color = ColorTrait("blue")
@@ -52,6 +52,7 @@ class StonerPlot(HasTraits, S.DataFile):
     data=Array
     metadata=Dict
     column_headers=List(['X', 'Y'])
+    
 
     def _create_plot(self, orientation="h",p_type=ToolbarPlot):
         """
@@ -140,7 +141,11 @@ class StonerPlot(HasTraits, S.DataFile):
         return traits_view
 
     def __init__(self, *args, **kargs):
+        S.Data.__init__(self,*args,**kargs)
         super(StonerPlot, self).__init__(*args, **kargs)
+        self.load(False)
+        self.xc=self.column_headers[0]
+        self.yc=self.column_headers[1]
         self.data=numpy.zeros((2, 2))
         acols=[(self.column_headers[i], i) for i in range(len(self.column_headers))]
         acols[:0]=[("index", "index")]

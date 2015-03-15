@@ -254,7 +254,16 @@ class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting."""
     xformatter=TexEngFormatter
     yformatter=TexEngFormatter
-    stylename="default"
+    stylename="GBStyle"
+    
+    def customise_axes(self,ax):
+        """Override the default axis configuration"""
+        super(GBPlotStyle,self).customise_axes(ax)
+        ax.spines["top"].set_color('none')
+        ax.spines["right"].set_color('none')
+        ax.spines["left"].set_position('zero')
+        ax.spines["bottom"].set_position('zero')
+        plt.draw
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""

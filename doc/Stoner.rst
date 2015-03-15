@@ -113,21 +113,36 @@ Facility Outputs
 ==========================
 
 .. automodapi:: Stoner.PlotFormats
-   :no-inheritance-diagram:
-   :no-heading:
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: AutoLocator
+    :skip: EngFormatter
+    :skip: Formatter
+    :skip: range
+
+
+See also the stylesheets available in the stylelib directory.
+
 
 :mod:`Fit` Module
-==========================
+=================
 
 .. automodapi:: Stoner.Fit
-   :no-inheritance-diagram:
-   :no-heading:
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: Linear
+    :skip: PowerLaw
+    :skip: Quadratic
+    :skip: Model
+    :skip: quadratic
+    :skip: jit
+    :skip: update_param_vals
+    :skip: quad
 
-:mod:`FittingFuncs` Module
-==========================
 
-.. automodule:: Stoner.FittingFuncs
-   :members:
+The following modules offer specialised file and foler formats.
 
 :mod:`HDF5` Module
 =========================

@@ -140,6 +140,34 @@ class AnalyseFile(DataFile):
         std=_np_.std(window[:,column]) #standard deviation
         return abs(row[column]-av)>metric*std
 
+    def __poly_outlier(self,row,column,window,metric,xcol=None,order=1):
+        """Alternative outlier detection function that fits a polynomial locally over the window.
+        
+        Args:
+            row (1D array): Current row of data
+            column int): Column index of y values to examine
+            window (2D array): Local window of data
+            metric (float): Some measure of how sensitive the dection should be
+
+        Keyyword Arguments:            
+            xcol (column index): Column of data to use for X values. Defaults to current setas value
+            order (int): Order of polynomial to fit. Must be < length of window-1
+            
+        Returns:
+            True if current row is an outlier
+        """
+        if order>window.shape[0]-1:
+            raise ValueError("order should be smaller than the window length.")
+        if xcol is None:
+            xcol=self.setas._get_cols("xcol")
+        else:
+            xcol=self.find_col(xcol)
+            
+        popt,pcov=_np_.polyfit(window[:,xcol],window[:,column],deg=order,cov=True)
+        pval=_np_.polyval(popt,row[xcol])
+        perr=_np_.sqrt(_np_.diag(pcov))[-1]
+        return abs(row[column]-pval)>metric*perr
+
 
     def __mpf_fn(self, p, **fa):
         """Internal routine for general non-linear least squeares fitting.
@@ -1113,7 +1141,7 @@ class AnalyseFile(DataFile):
             self.divide(t,base,header=header,replace=replace)
         return self
 
-    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask',func=None,**kargs):
+    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask',width=1,func=None,**kargs):
         """Function to detect outliers in a column of data.
 
         Args:
@@ -1126,6 +1154,7 @@ class AnalyseFile(DataFile):
             action(str), what to do with outlying points, options are
                              'mask','delete' anything else defaults to do nothing
                              ('outliers' item is always added to metadata)
+            width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
             func (callable): A function that determines if the current row is an outlier.
 
         Returns:
@@ -1155,8 +1184,8 @@ class AnalyseFile(DataFile):
             column=self.setas._get_cols("ycol")
         index=[]
         column=self.find_col(column) #going to be easier if this is an integer later on
-        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=True)):
-            if func(self.data[i],column,t,certainity,**kargs):
+        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=width)):
+            if func(self.data[i],column,t,certainty,**kargs):
                 index.append(i)
         self['outliers']=index #add outlier indecies to metadata
         if action=='mask':

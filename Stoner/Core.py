@@ -830,7 +830,6 @@ class DataFile(object):
             self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             for a in arg.__dict__:
-                print a
                 if not callable(a):
                     super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
@@ -2257,17 +2256,24 @@ class DataFile(object):
         Keyword Arguments:
             window (int): Size of the rolling window (must be odd and >= 3)
             wrap (bool): Whether to use data from the other end of the array when at one end or the other.
-            exclude_centre (bool): Exclude the ciurrent row from the rolling window (defaults to False)
+            exclude_centre (odd int or bool): Exclude the ciurrent row from the rolling window (defaults to False)
 
         Returns:
             Yields with a section of data that is window rows long, each iteration moves the marker
             one row further on.
         """
 
-        if window%2==0 or window<3:
-            raise valueError("Window must be an odd number bigger than or equal to three")
+        if isinstance(exclude_centre,bool) and exclude_centre:
+            exclude_centre=1
+        if isinstance(exclude_centre,int) and not isinstance(exclude_centre,bool):
+            if exclude_centre%2==0:
+                raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
+            elif window-exclude_centre<2 or window<3 or window%2==0:
+                raise ValueError("Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd")
 
         hw=(window-1)/2
+        if exclude_centre:
+            hc=(exclude_centre-1)/2
 
         for i in range(len(self)):
             if i<hw:
@@ -2281,7 +2287,7 @@ class DataFile(object):
             starti=max(i-hw,0)
             stopi=min(len(self),i+hw+1)
             if exclude_centre:
-                data=_np_.row_stack((self.data[starti:i],self.data[i+1:stopi]))
+                data=_np_.row_stack((self.data[starti:i-hc],self.data[i+1+hc:stopi]))
             else:
                 data=self.data[starti:stopi]
             if wrap:
