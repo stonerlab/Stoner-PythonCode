@@ -1151,7 +1151,7 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             window(int): data window for anomoly detection
             certainty(float): eg 3 detects data 3 standard deviations from average
-            action(str or callable), what to do with outlying points, options are
+            action(str or callable): what to do with outlying points, options are
                 * 'mask' outlier points are masked (default)
                 * 'mask row' outlier rows are masked
                 * 'delete'  outlier rows are deleted

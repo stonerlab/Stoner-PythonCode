@@ -956,7 +956,7 @@ class DataFile(object):
                 newdata=newdata+o
             ret=newdata
         else:
-            ret=NotImplemented('Failed in DataFile')
+            ret=NotImplemented
         for attr in self.__dict__:
             if attr not in ("metadata","data","column_headers","mask") and not attr.startswith("_"):
                 ret.__dict__[attr]=self.__dict__[attr]
@@ -1124,6 +1124,12 @@ class DataFile(object):
             return self.filename
         else:
             return None
+
+    def __floordiv__(self,other):
+        """Just aslias for self.column(other)."""
+        if not isinstance(other,index_types):
+            return NotImplemented
+        return self.column(other)
 
     def __getattr__(self, name):
         """
@@ -1409,6 +1415,32 @@ class DataFile(object):
         newdata=self
         return self.__and_core__(other,newdata)
 
+    def __imod__(self,other):
+        """Overload the % operator to mean column deletion.
+        
+        Args:
+            Other (column index): column(s) to delete.
+            
+        Return:
+            A copy of self with a column deleted.
+        """
+        newdata=self
+        return self.__mod_core__(other,newdata)
+
+
+    def __isub__(self,other):
+        """Implements what to do when subtraction operator is used.
+        
+        Args:
+            other (int,list of integers): Delete row(s) from data.
+            
+        Returns:
+            DataFile with rows removed.
+        """
+        newdata=self
+        return self.__sub_core__(other,newdata)
+
+
     def _load(self,filename,*args,**kargs):
         """Replace __parse_data with method that is more compatible with subclasses."""
         if filename is None or not filename:
@@ -1512,6 +1544,26 @@ class DataFile(object):
         else:
             raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
         return ret
+
+    def __mod__(self,other):
+        """Overload the % operator to mean column deletion.
+        
+        Args:
+            Other (column index): column(s) to delete.
+            
+        Return:
+            A copy of self with a column deleted.
+        """
+        newdata=self.clone
+        return self.__mod_core__(other,newdata)
+        
+    def __mod_core__(self,other,newdata):
+        """Implements the column deletion method."""
+        if isinstance(other,index_types):
+            newdata.del_column(other)
+        else:
+            newdata=NotImplemented
+        return newdata
 
 
     def __parse_metadata(self, key, value):
@@ -1778,6 +1830,30 @@ class DataFile(object):
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
+
+    def __sub__(self,other):
+        """Implements what to do when subtraction operator is used.
+        
+        Args:
+            other (int,list of integers): Delete row(s) from data.
+            
+        Returns:
+            DataFile with rows removed.
+        """
+        newdata=self.clone
+        return self.__sub_core__(other,newdata)
+        
+    def __sub_core__(self,other,newdata):
+        """Actually do the subtraction."""
+        if isinstance(other,(slice,int)):
+            newdata.del_rows(other)
+        elif isinstance(other,list) and _np_.all([isinstance(i,int) for i in other]):
+            newdata.del_rows(other)
+        else:
+            newdata=NotImplemented
+        return newdata
+
+            
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
