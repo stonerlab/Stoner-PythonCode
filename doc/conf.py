@@ -28,7 +28,7 @@ import sys, os
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
 'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary',
 'sphinxcontrib.napoleon','sphinx.ext.graphviz','sphinx.ext.inheritance_diagram',
-'sphinx.ext.todo','astropy.sphinx.ext.automodapi','astropy.sphinx.ext.automodsumm',
+'sphinx.ext.todo','astropy_helpers.sphinx.ext.automodapi','astropy_helpers.sphinx.ext.automodsumm',
 'sphinx.ext.mathjax']
 
 # Add any paths that contain templates here, relative to this directory.
@@ -262,6 +262,8 @@ napoleon_use_rtype = False
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'http://docs.python.org/': None}
+
+automodapi_toctreedirnm='classes'
 
 [extensions]
 todo_include_todos=True

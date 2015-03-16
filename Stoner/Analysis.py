@@ -2,6 +2,9 @@
 
 Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
 """
+
+__all__=["AnalyseFile"]
+
 from Stoner.compat import *
 from Stoner.Core import DataFile
 import Stoner.FittingFuncs
@@ -14,8 +17,11 @@ from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
 from inspect import getargspec
 from collections import Iterable
-from lmfit.model import Model,ModelFit
-
+try: #Allow lmfit to be optional
+    from lmfit.model import Model,ModelFit
+except ImportError:
+    Model=None
+    ModelFit=None
 import sys
 
 def cov2corr(M):
@@ -123,6 +129,44 @@ class AnalyseFile(DataFile):
         else:
             raise RuntimeError("Bad column index: {}".format(col))
         return data,name
+
+
+    def __outlier(self,row,column,window,metric):
+        """Internal function for outlier detector.
+        
+        Calculates if the current row is an outlier from the surrounding data by looking
+        at the number of standard deviations away from the average of the window it is."""
+        av=_np_.average(window[:,column])
+        std=_np_.std(window[:,column]) #standard deviation
+        return abs(row[column]-av)>metric*std
+
+    def __poly_outlier(self,row,column,window,metric,xcol=None,order=1):
+        """Alternative outlier detection function that fits a polynomial locally over the window.
+        
+        Args:
+            row (1D array): Current row of data
+            column int): Column index of y values to examine
+            window (2D array): Local window of data
+            metric (float): Some measure of how sensitive the dection should be
+
+        Keyyword Arguments:            
+            xcol (column index): Column of data to use for X values. Defaults to current setas value
+            order (int): Order of polynomial to fit. Must be < length of window-1
+            
+        Returns:
+            True if current row is an outlier
+        """
+        if order>window.shape[0]-1:
+            raise ValueError("order should be smaller than the window length.")
+        if xcol is None:
+            xcol=self.setas._get_cols("xcol")
+        else:
+            xcol=self.find_col(xcol)
+            
+        popt,pcov=_np_.polyfit(window[:,xcol],window[:,column],deg=order,cov=True)
+        pval=_np_.polyval(popt,row[xcol])
+        perr=_np_.sqrt(_np_.diag(pcov))[-1]
+        return abs(row[column]-pval)>metric*perr
 
 
     def __mpf_fn(self, p, **fa):
@@ -720,6 +764,9 @@ class AnalyseFile(DataFile):
             :py:meth:`AnalyseFile.curve_fit`
         """
 
+        if Model is None: #Will be the case if lmfit is not imported.
+            raise RuntimeError("To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
+
         bounds=kargs.pop("bounds",lambda x, y: True)
         result=kargs.pop("result",None)
         replace=kargs.pop("replace",False)
@@ -1094,6 +1141,63 @@ class AnalyseFile(DataFile):
             self.divide(t,base,header=header,replace=replace)
         return self
 
+    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask',width=1,func=None,**kargs):
+        """Function to detect outliers in a column of data.
+
+        Args:
+            column(column index), specifing column for outlier detection. If not set,
+                defaults to the current y set column.
+
+        Keyword Arguments:
+            window(int): data window for anomoly detection
+            certainty(float): eg 3 detects data 3 standard deviations from average
+            action(str), what to do with outlying points, options are
+                             'mask','delete' anything else defaults to do nothing
+                             ('outliers' item is always added to metadata)
+            width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
+            func (callable): A function that determines if the current row is an outlier.
+
+        Returns:
+            A copy of the current AnalysisFile
+
+        outlier_detection will add row numbers of detected outliers to the metadata
+        of d, also will perform action depending on request eg 'mask', 'delete'
+        (any other action defaults to doing nothing).
+
+        The detection looks at a window of the data, takes the average and looks
+        to see if the current data point falls certainty * std deviations away from
+        data average.
+        
+        The outlier detection function has the signatrure::
+        
+            def outlier(row,column,window,certainity,**kargs)
+                #code
+                return True # or False
+                
+        All extra keyword arguments are passed to the outlier detector.
+        """
+
+        if func is None:
+            func=self.__outlier
+
+        if column is None:
+            column=self.setas._get_cols("ycol")
+        index=[]
+        column=self.find_col(column) #going to be easier if this is an integer later on
+        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=width)):
+            if func(self.data[i],column,t,certainty,**kargs):
+                index.append(i)
+        self['outliers']=index #add outlier indecies to metadata
+        if action=='mask':
+            mask=_np_.zeros(self.data.shape,dtype=bool)
+            for i in index:
+                mask[i,column]=True
+            self.mask=mask
+        elif action=='delete':
+            for i in index:
+                self.del_rows(i)
+        return self
+
 
     def peaks(self, ycol=None, width=None, significance=None , xcol=None, peaks=True, troughs=False, poly=2,  sort=False):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
@@ -1466,50 +1570,3 @@ class AnalyseFile(DataFile):
         else:
             return ret[0]
 
-    def outlier_detection(self,column=None,window=7,certainty=3.0,action='mask'):
-        """Function to detect outliers in a column of data.
-
-        Args:
-            column(column index), specifing column for outlier detection. If not set,
-                defaults to the current y set column.
-
-        Keyword Arguments:
-            window(int): data window for anomoly detection
-            certainty(float): eg 3 detects data 3 standard deviations from average
-            action(str), what to do with outlying points, options are
-                             'mask','delete' anything else defaults to do nothing
-                             ('outliers' item is always added to metadata)
-
-        Returns:
-            A copy of the current AnalysisFile
-
-        outlier_detection will add row numbers of detected outliers to the metadata
-        of d, also will perform action depending on request eg 'mask', 'delete'
-        (any other action defaults to doing nothing).
-
-        The detection looks at a window of the data, takes the average and looks
-        to see if the current data point falls certainty * std deviations away from
-        data average.
-        """
-
-        if column is None:
-            column=self.setas._get_cols("ycol")
-        index=[]
-        column=self.find_col(column) #going to be easier if this is an integer later on
-        for i,t in enumerate(self.rolling_window(window,wrap=False,exclude_centre=True)):
-            av=_np_.average(t[:,column])
-            std=_np_.std(t[:,column]) #standard deviation
-            if abs(data[i]-av)>certainty*std:
-                index.append(i)
-        self['outliers']=index #add outlier indecies to metadata
-        if action=='mask':
-            mask=_np_.zeros(self.data.shape,dtype=bool)
-            for i in index:
-                mask[i,column]=True
-            self.mask=mask
-        elif action=='delete':
-            j=0
-            for i in index:
-                self.del_rows(i-j)
-                j+=1 #deletion index will change after every row removal
-        return self

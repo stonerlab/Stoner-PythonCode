@@ -235,6 +235,29 @@ axes.::
 
 are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.
 
+Plotting on Second Y (or X) Axes
+================================
+
+To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`PlotFile.y2` method is
+provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.::
+
+    p.plot_xy(0,1,"k-",label="First plot")
+    p.y2()
+    p.plot_xy(0,2,"r+",label="Second Plot)
+
+There is an equivalent :py:meth:`PlotFile.x2` method to create a second set of axes with a common y scale but different x scales.
+
+To work out which set of axes you are current working with the :py:attr:`PlotFile.ax` attribute can be read or set.::
+
+    p.plot_xy(0,1)
+    p.y2()
+    p.plot_xy(0,2)
+    p.ax=0 # Set back to first x,y1 plot
+    p.label="Plot 1"
+    p.ax=1 # Set to the second
+    p.yable="Plot 2"
+
+
 Plot Templates
 --------------
 

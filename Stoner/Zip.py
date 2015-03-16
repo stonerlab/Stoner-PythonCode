@@ -45,12 +45,9 @@ class ZipFile(DataFile):
     """A sub class of DataFile that sores itself in a zip file.
 
     Methods:
-        load(): load a file from hdf5 file
-        save(): Save a dataset to an hdf5 file.
-
-    Args:
-        args (tuple): Supplied arguments, only recognises one though !
-        kargs (dict): Dictionary of keyword arguments
+        _load(): prorivate method to allow :py:class:`Stoner.Core.DataFile` to load 
+                    a file from zip file
+        save(): Save a dataset to an zip file.
 
     If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
     initialises with a blank parent constructor and then loads data, otherwise,
@@ -275,7 +272,7 @@ class ZipFolder(DataFolder):
         #At this point directory contains an open h5py.File object, or possibly a group
         self.files=directory.namelist()
         if flaten is None or not flatten:
-f            self.unflatten()        
+            self.unflatten()        
         if close_me:
             directory.close()
         return self
