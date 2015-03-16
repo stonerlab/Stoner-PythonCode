@@ -1182,10 +1182,11 @@ class AnalyseFile(DataFile):
 
         IF *action* is a callable function then it should take the form of::
             
-            def action(i,row):
+            def action(i,column,row):
                 pass
                 
-        where *i* is the number of the outlier row and *row* is the data for the row.
+        where *i* is the number of the outlier row, *column* the same value as above
+        and *row* is the data for the row.
         
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
 
@@ -1216,7 +1217,7 @@ class AnalyseFile(DataFile):
                 self.del_rows(i)
         elif callable(action): # this will call the action function with each row in turn from back to start
             for i in index:
-                action(i,self.data[i])
+                action(i,column,self.data[i])
         return self
 
 
