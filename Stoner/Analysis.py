@@ -1194,8 +1194,10 @@ class AnalyseFile(DataFile):
                 mask[i,column]=True
             self.mask=mask
         elif action=='delete':
+            j=0
             for i in index:
-                self.del_rows(i)
+                self.del_rows(i-j)
+                j+=1 #deletion index will change after row removal
         return self
 
 
