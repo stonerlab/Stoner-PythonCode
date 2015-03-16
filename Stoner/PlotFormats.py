@@ -8,11 +8,12 @@ Created on Fri Feb 07 19:57:30 2014
 """
 
 from Stoner.compat import *
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter,Formatter
 from matplotlib.ticker import AutoLocator
 from os.path import join,dirname,realpath
-
+from sys import platform as _platform
 
 import numpy as _np_
 
@@ -124,8 +125,28 @@ class DefaultPlotStyle(object):
         self.apply()
         
     def __getattr__(self,name):
+        """Provide magic to read certain attributes of the template."""
         if name=="stylesheet":
             return self._stylesheet()
+        elif name.startswith("template_"): #Magic conversion to rcParams
+            attrname=name[9:].replace("_",".").replace("..","_")
+            if attrname in plt.rcParams:
+               return plt.rcParams[attrname]
+            else:
+                raise AttributeError("template attribute not in rcParams")
+        else:
+            return super(DefaultPlotStyle,self).__getattribute__(name)
+            
+    def __setattr__(self,name,value):
+        """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
+        if name=="stylesheet":
+            raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+        elif name.startswith("template_"):
+            attrname=name[9:].replace("_",".").replace("..","_")
+            plt.rcParams[attrname]=value
+        else:
+            super(DefaultPlotStyle,self).__setattr__(name,value)
+
         
     def _stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
@@ -157,9 +178,8 @@ class DefaultPlotStyle(object):
                 attrname=attr[9:].replace("_",".").replace("..","_")
                 value=self.__getattribute__(attr)
                 if attrname in plt.rcParams.keys():
-                    params[attrname]=value
+                    params[attrname]=value 
         plt.rcParams.update(params) # Apply these parameters
-
         if isinstance(figure,bool) and not figure:
             ret=None
         elif figure is not None:
@@ -173,14 +193,14 @@ class DefaultPlotStyle(object):
         to update matplotlib settings with.
         """
         plt.style.use(self.stylesheet)
-        self.new_figure(False)
-
+        
         self.customise()
 
     def customise(self):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
+
 
     def customise_axes(self,ax):
         """This method is run when we have an axis to manipulate.
@@ -234,7 +254,16 @@ class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting."""
     xformatter=TexEngFormatter
     yformatter=TexEngFormatter
-    stylename="default"
+    stylename="GBStyle"
+    
+    def customise_axes(self,ax):
+        """Override the default axis configuration"""
+        super(GBPlotStyle,self).customise_axes(ax)
+        ax.spines["top"].set_color('none')
+        ax.spines["right"].set_color('none')
+        ax.spines["left"].set_position('zero')
+        ax.spines["bottom"].set_position('zero')
+        plt.draw
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings."""

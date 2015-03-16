@@ -14,7 +14,7 @@ For a general introduction, users are referred to the Users Guide, which is part
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py and lmfit. Experimental code also makes use of
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
 At present it looks like lmfit does not install correctly with easy_install, so use pip instead

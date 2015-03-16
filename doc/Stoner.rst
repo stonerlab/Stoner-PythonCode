@@ -12,6 +12,7 @@ Stoner Package
 
     typeHintedDict
     DataFile
+    StonerLoadError
 
 :mod:`Analysis` Module
 =======================
@@ -77,6 +78,7 @@ Generic Fomats
     SPCFile
     TDMSFile
     OVFFile
+    EasyPlotFile
 
 Instrument Formats
 ------------------
@@ -108,28 +110,39 @@ Facility Outputs
     SNSFile
 
 :mod:`PlotFormats` Module
-=========================
+==========================
 
-.. module:: Stoner.PlotFormats
+.. automodapi:: Stoner.PlotFormats
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: AutoLocator
+    :skip: EngFormatter
+    :skip: Formatter
+    :skip: range
 
 
-.. autosummary::
-   :toctree: classes
-   :template: classdocs.rst
+See also the stylesheets available in the stylelib directory.
 
-    DefaultPlotStyle
 
 :mod:`Fit` Module
-==========================
+=================
 
-.. automodule:: Stoner.Fit
-   :members:
+.. automodapi:: Stoner.Fit
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: Linear
+    :skip: PowerLaw
+    :skip: Quadratic
+    :skip: Model
+    :skip: quadratic
+    :skip: jit
+    :skip: update_param_vals
+    :skip: quad
 
-:mod:`FittingFuncs` Module
-==========================
 
-.. automodule:: Stoner.FittingFuncs
-   :members:
+The following modules offer specialised file and foler formats.
 
 :mod:`HDF5` Module
 =========================
@@ -143,18 +156,17 @@ Facility Outputs
     HDF5File
     HDF5Folder
 
-:mod:`ZIP` Module
+:mod:`Zip` Module
 =========================
 
-.. module:: Stoner.ZIP
+.. module:: Stoner.Zip
 
-.. autosummary::
+.. autosummary:: 
    :toctree: classes
    :template: classdocs.rst
 
     ZipFile
     ZipFolder
-
 
 :mod:`Util` Module
 ==================

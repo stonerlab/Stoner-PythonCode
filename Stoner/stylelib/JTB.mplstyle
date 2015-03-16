@@ -22,7 +22,7 @@ legend.handlelength :2.     # the length of the legend lines in fraction of font
 legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
 legend.isaxes       :False
 legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
-legend.loc          :upper center
+legend.loc          :best
 legend.markerscale  :1.0    # the relative size of legend markers vs. original
 legend.numpoints    :1      # the number of points in the legend line
 legend.scatterpoints:3 # number of scatter points

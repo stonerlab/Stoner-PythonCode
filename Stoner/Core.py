@@ -7,6 +7,8 @@ Classes:
         languages such as LabVIEW.
 
 """
+__all__=["StonerLoadError","DataFile"] # Don't import too muhc with from Stoner.Core import *
+
 from Stoner.compat import *
 import re
 #import pdb # for debugging
@@ -828,7 +830,8 @@ class DataFile(object):
             self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             for a in arg.__dict__:
-                super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
+                if not callable(a):
+                    super(DataFile,self).__setattr__(a,copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = _ma_.masked_array(arg.data)
             self._setas=arg._setas
@@ -1154,6 +1157,7 @@ class DataFile(object):
               "setas":self._getattr_setas,
               "column_headers":self.__getattr__column_headers
               }
+
         if name in easy:
             return easy[name]()
         elif name in ("x","y","z","d","e","f","u","v","w","r","q","p"):
@@ -1422,7 +1426,7 @@ class DataFile(object):
                 else:
                     raise StonerLoadError("Not a TDI File")
             except:
-                raise StonerLoadError("Not a TDI File")                
+                raise StonerLoadError("Not a TDI File")
             col_headers_tmp=[x.strip() for x in row[1:]]
             datarow=0
             metadatarow=0
@@ -1665,12 +1669,11 @@ class DataFile(object):
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
 
-        easy={"nask":self.__setattr_mask,
+        easy={"mask":self.__setattr_mask,
               "data":self.__setattr_data,
               "T":self.__setattr_T,
               "setas":self.__setattr_setas,
               "column_headers":self.__setattr_column_headers}
-
         if name in easy:
             easy[name](value)
         elif len(name)==1 and name in "xyzuvwdef" and len(self.setas[name])!=0:
@@ -2246,6 +2249,52 @@ class DataFile(object):
                                                 self.find_col(col)]), axis=0)
         self.data = _ma_.masked_array(_np_.transpose(newdata))
         return self
+
+    def rolling_window(self,window=7, wrap=True,exclude_centre=False):
+        """Iterator that return a rolling window section of the data.
+
+        Keyword Arguments:
+            window (int): Size of the rolling window (must be odd and >= 3)
+            wrap (bool): Whether to use data from the other end of the array when at one end or the other.
+            exclude_centre (odd int or bool): Exclude the ciurrent row from the rolling window (defaults to False)
+
+        Returns:
+            Yields with a section of data that is window rows long, each iteration moves the marker
+            one row further on.
+        """
+
+        if isinstance(exclude_centre,bool) and exclude_centre:
+            exclude_centre=1
+        if isinstance(exclude_centre,int) and not isinstance(exclude_centre,bool):
+            if exclude_centre%2==0:
+                raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
+            elif window-exclude_centre<2 or window<3 or window%2==0:
+                raise ValueError("Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd")
+
+        hw=(window-1)/2
+        if exclude_centre:
+            hc=(exclude_centre-1)/2
+
+        for i in range(len(self)):
+            if i<hw:
+                pre_data=self.data[i-hw:]
+            else:
+                pre_data=_np_.zeros((0,self.shape[1]))
+            if i+1>len(self)-hw:
+                post_data=self.data[0:hw-(len(self)-i-1)]
+            else:
+                post_data=_np_.zeros((0,self.shape[1]))
+            starti=max(i-hw,0)
+            stopi=min(len(self),i+hw+1)
+            if exclude_centre:
+                data=_np_.row_stack((self.data[starti:i-hc],self.data[i+1+hc:stopi]))
+            else:
+                data=self.data[starti:stopi]
+            if wrap:
+                ret=_np_.row_stack((pre_data,data,post_data))
+            else:
+                ret=data
+            yield ret
 
     def rows(self):
         """Generator method that will iterate over rows of data

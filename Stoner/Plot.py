@@ -280,6 +280,8 @@ class PlotFile(DataFile):
             ret=self.__figure.number
         elif name=="template":
             ret=self._template
+        elif name=="ax":
+            return self.axes.index(self.fig.gca())
         elif name=="labels":
             if len(self._labels)<len(self.column_headers):
                 self._labels.extend(self.column_headers[len(self._labels):])
@@ -343,13 +345,14 @@ class PlotFile(DataFile):
         elif name=="column_headers": # Overwrite the labels if we overwrite the column_headers
             self._labels=value
             super(PlotFile,self).__setattr__(name,value)
+        elif name=="ax" and isinstance(value,int) and 0<=value<len(self.axes):
+            self.fig.sca(self.axes[value])
         elif name in dir(super(PlotFile,self)):
             super(PlotFile,self).__setattr__(name,value)
         elif "set_{}".format(name) in dir (pyplot.Axes):
             tfig=pyplot.gcf()
-            tax=pyplot.gca() # protect the current axes and figure
-            pyplot.figure(self.fig.number)
-            ax=pyplot.gca()
+            tax=tfig.gca() # protect the current axes and figure
+            ax=self.fig.gca()
             if  not isinstance(value,Iterable) or isinstance(value,string_types):
                 value=(value,)
             func=ax.__getattribute__("set_{}".format(name))
@@ -1044,9 +1047,27 @@ class PlotFile(DataFile):
             cols=args[1]
             index=args[2]
         if len(self._subplots)<rows*cols:
-            self.subplots.extend([None for i in range(rows*cols-len(self._subplots))])
+            self._subplots.extend([None for i in range(rows*cols-len(self._subplots))])
         self._subplots[index-1]=sp
         return sp
+
+    def x2(self):
+        """Generate a new set of axes with a second x-scale.
+        
+        Returns:
+            The new matplotlib.axes instance.
+        """
+        ax=self.axes[0]
+        return ax.twiny()
+        
+    def y2(self):
+        """Generate a new set of axes with a second y-scale.
+        
+        Returns:
+            The new matplotlib.axes instance
+        """
+        ax=self.axes[0]
+        return ax.twinx()
 
 def hsl2rgb(h,s,l):
     """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.
