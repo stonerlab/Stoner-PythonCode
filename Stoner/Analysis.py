@@ -1151,9 +1151,13 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             window(int): data window for anomoly detection
             certainty(float): eg 3 detects data 3 standard deviations from average
-            action(str), what to do with outlying points, options are
-                             'mask','delete' anything else defaults to do nothing
-                             ('outliers' item is always added to metadata)
+            action(str or callable): what to do with outlying points, options are
+                * 'mask' outlier points are masked (default)
+                * 'mask row' outlier rows are masked
+                * 'delete'  outlier rows are deleted
+                * callable  the value of the action keyword is called with the outlier row
+                * anything else defaults to do nothing.
+                
             width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
             func (callable): A function that determines if the current row is an outlier.
 
@@ -1175,6 +1179,17 @@ class AnalyseFile(DataFile):
                 return True # or False
                 
         All extra keyword arguments are passed to the outlier detector.
+
+        IF *action* is a callable function then it should take the form of::
+            
+            def action(i,column,row):
+                pass
+                
+        where *i* is the number of the outlier row, *column* the same value as above
+        and *row* is the data for the row.
+        
+        In all cases the indices of the outlier rows are added to the ;outlier' metadata.
+
         """
 
         if func is None:
@@ -1188,14 +1203,21 @@ class AnalyseFile(DataFile):
             if func(self.data[i],column,t,certainty,**kargs):
                 index.append(i)
         self['outliers']=index #add outlier indecies to metadata
-        if action=='mask':
+        index.reverse() #Always reverse the index in case we're deleting rows in sucession
+        if action=='mask' or action=='mask row':
             mask=_np_.zeros(self.data.shape,dtype=bool)
             for i in index:
-                mask[i,column]=True
+                if action=='mask':
+                    mask[i,column]=True
+                else:
+                    mask[i,:]=True
             self.mask=mask
         elif action=='delete':
-            for i in index:
+            for i in index: 
                 self.del_rows(i)
+        elif callable(action): # this will call the action function with each row in turn from back to start
+            for i in index:
+                action(i,column,self.data[i])
         return self
 
 
