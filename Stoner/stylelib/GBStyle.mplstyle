@@ -1,0 +1,8 @@
+axes.grid:True
+axes.labelsize:10
+figure.autolayout:True
+figure.figsize: 6.0,4.0
+font.family:Times New Roman
+font.size:10
+xtick.direction:inout
+ytick.direction:inout
