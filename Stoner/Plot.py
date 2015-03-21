@@ -298,6 +298,16 @@ class PlotFile(DataFile):
                 ret=self.__figure.axes
             else:
                 ret=None
+        elif "anme"=="_public_attrs":
+            ret=super(PlotFile,self).__getattr__(name)
+            ret.update({"fig":(int,mpl.figure.Figure),
+                        "labels":list,
+                        "template":DefaultPlotStyle,
+                        "xlim":tuple,
+                        "ylim":tuple,
+                        "title":string_types,
+                        "xlabel":string_types,
+                        "ylabel":string_types})
         else:
             try:
                 return super(PlotFile, self).__getattr__(name)

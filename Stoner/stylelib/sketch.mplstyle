@@ -1,0 +1,5 @@
+axes.color_cycle:b, r, g, c, m, y
+font.family: Comic Sans MS
+xtick.direction:inout
+ytick.direction:inout
+mathtext.default:regular

@@ -14,6 +14,7 @@ from matplotlib.ticker import EngFormatter,Formatter
 from matplotlib.ticker import AutoLocator
 from os.path import join,dirname,realpath
 from sys import platform as _platform
+from numpy.random import normal
 
 import numpy as _np_
 
@@ -122,7 +123,6 @@ class DefaultPlotStyle(object):
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
         self.update(**kargs)
-        self.apply()
 
     def __getattr__(self,name):
         """Provide magic to read certain attributes of the template."""
@@ -164,7 +164,9 @@ class DefaultPlotStyle(object):
 
     def new_figure(self,figure=False,**kargs):
         """This is called by PlotFile to setup a new figure before we do anything."""
+        plt.rcdefaults() # Start by resetting to our default settings
         params=dict()
+        self.apply()
         if "fig_width_pt" in dir(self):
             self.fig_width=self.fig_width_pt*self._inches_per_pt
         if "fig_height_pt" in dir(self):
@@ -267,8 +269,10 @@ class GBPlotStyle(DefaultPlotStyle):
     def customise_axes(self,ax):
         """Override the default axis configuration"""
         super(GBPlotStyle,self).customise_axes(ax)
-        ax.spines["top"].set_color('none')
-        ax.spines["right"].set_color('none')
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.xaxis.set_ticks_position("bottom")
+        ax.yaxis.set_ticks_position("left")
         ax.spines["left"].set_position('zero')
         ax.spines["bottom"].set_position('zero')
         plt.draw
@@ -304,3 +308,28 @@ class PRBPlotStyle(DefaultPlotStyle):
 
     def customise_axes(self,ax):
         ax.locator_params(tight=True, nbins=4)
+
+class SketchPlot(DefaultPlotStyle):
+    """Turn on xkcd plot style."""
+    stylename="sketch"
+
+    def customise(self):
+        plt.xkcd()
+
+    def customise_axes(self,ax):
+        """Override the default axis configuration"""
+        super(SketchPlot,self).customise_axes(ax)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.xaxis.set_ticks_position("bottom")
+        ax.yaxis.set_ticks_position("left")
+        ax.xaxis.label.set_rotation(normal(scale=5))
+        ax.xaxis.label.set_x(0.9)
+        ax.yaxis.label.set_rotation(normal(90,scale=5))
+        ax.yaxis.label.set_y(0.9)
+        for l in ax.get_xticklabels():
+            l.set_rotation(normal(scale=2))
+        for l in ax.get_yticklabels():
+            l.set_rotation(normal(90,scale=2))
+
+        plt.draw
