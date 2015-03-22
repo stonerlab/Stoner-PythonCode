@@ -17,7 +17,7 @@ import platform
 from inspect import getargspec
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
-from matplotlib import pyplot as pyplot
+from matplotlib import pyplot as plt
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid import inset_locator
@@ -52,11 +52,11 @@ class PlotFile(DataFile):
 
     """
 
-    positional_fmt=[pyplot.plot,pyplot.semilogx,pyplot.semilogy,pyplot.loglog]
+    positional_fmt=[plt.plot,plt.semilogx,plt.semilogy,plt.loglog]
     no_fmt=[errorfill]
 
-    def __init__(self, *args, **kargs): #Do the import of pyplot here to speed module load
-        """Constructor of \b PlotFile class. Imports pyplot and then calls the parent constructor.
+    def __init__(self, *args, **kargs): #Do the import of plt here to speed module load
+        """Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.
 
         """
         if "template" in kargs: #Setup the template
@@ -69,6 +69,7 @@ class PlotFile(DataFile):
         self._labels=self.column_headers
         self.legend=True
         self._subplots=[]
+        self.multiple="common"
 
     def _Plot(self,ix,iy,fmt,plotter,figure,**kwords):
         """Private method for plotting a single plot to a figure.
@@ -99,7 +100,7 @@ class PlotFile(DataFile):
                 fmt="-"
             plotter(x,y, fmt=fmt,figure=figure, **kwords)
         for ax in figure.axes:
-            self._template.customise_axes(ax)
+            self._template.customise_axes(ax,self)
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface.
@@ -216,7 +217,7 @@ class PlotFile(DataFile):
                 del kargs[k]
         return _attribute_store(kargs)
 
-    def _fix_fig(self,figure):
+    def _fix_fig(self,figure,**kargs):
         """Sorts out the matplotlib figure handling."""
         if isinstance(figure, int):
             figure,ax=self.template.new_figure(figure)
@@ -255,23 +256,23 @@ class PlotFile(DataFile):
                 del defaults[k]
         return defaults,nonkargs
 
-    def _fix_titles(self,**kargs):
+    def _fix_titles(self,ix,multiple,**kargs):
         """Does the titling and labelling for a matplotlib plot."""
-        self._template.annotate(self,**kargs)
+        self._template.annotate(ix,multiple,self,**kargs)
         if "show_plot" in kargs and kargs["show_plot"]:
-            pyplot.ion()
-            pyplot.draw()
-            pyplot.show()
+            plt.ion()
+            plt.draw()
+            plt.show()
         if "save_filename" in kargs and kargs["save_filename"] is not None:
-            pyplot.savefig(str(nonkargs["save_filename"]))
+            plt.savefig(str(nonkargs["save_filename"]))
 
     def __getattr__(self, name):
         """Attribute accessor.
 
         Args:
             name (string):  Name of attribute the following attributes are supported:
-                * fig - the current pyplot figure reference
-                * axes - the pyplot axes object for the current plot
+                * fig - the current plt figure reference
+                * axes - the plt axes object for the current plot
                 * xlim - the X axis limits
                 * ylim - the Y axis limits
 
@@ -318,9 +319,9 @@ class PlotFile(DataFile):
                 if "get_{}".format(name) in dir(ax):
                     func=ax.__getattribute__("get_{}".format(name))
                     ret=func()
-                elif name in pyplot.__dict__: # Sort of a universal pass through to pyplot
-                    ret=pyplot.__dict__[name]
-                elif name in dir(ax): # Sort of a universal pass through to pyplot
+                elif name in plt.__dict__: # Sort of a universal pass through to plt
+                    ret=plt.__dict__[name]
+                elif name in dir(ax): # Sort of a universal pass through to plt
                     ret=ax.__getattribute__(name)
                 else:
                     raise AttributeError
@@ -331,7 +332,7 @@ class PlotFile(DataFile):
 
         Args:
             name (string): The name of the attribute to set. The cuirrent attributes are supported:
-                * fig - set the pyplot figure isntance to use
+                * fig - set the plt figure isntance to use
                 * xlabel - set the X axis label text
                 * ylabel - set the Y axis label text
                 * title - set the plot title
@@ -362,8 +363,8 @@ class PlotFile(DataFile):
             self.fig.sca(self.axes[value])
         elif name in dir(super(PlotFile,self)):
             super(PlotFile,self).__setattr__(name,value)
-        elif "set_{}".format(name) in dir (pyplot.Axes):
-            tfig=pyplot.gcf()
+        elif "set_{}".format(name) in dir (plt.Axes):
+            tfig=plt.gcf()
             tax=tfig.gca() # protect the current axes and figure
             ax=self.fig.gca()
             if  not isinstance(value,Iterable) or isinstance(value,string_types):
@@ -373,14 +374,14 @@ class PlotFile(DataFile):
                 func(**value)
             else:
                 func(*value)
-            pyplot.figure(tfig.number)
-            pyplot.sca(tax)
+            plt.figure(tfig.number)
+            plt.sca(tax)
         else:
             super(PlotFile, self).__setattr__(name,value)
 
 
     def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
-        """An xyz plot that forces the use of pyplot.contour.
+        """An xyz plot that forces the use of plt.contour.
 
         Args:
             xcol (index): Xcolumn index or label
@@ -391,7 +392,7 @@ class PlotFile(DataFile):
             shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
             xlim (tuple): The xlimits, defaults to automatically determined from data
             ylim (tuple): The ylimits, defaults to automatically determined from data
-            plotter (function): Function to use to plot data. Defaults to pyplot.contour
+            plotter (function): Function to use to plot data. Defaults to plt.contour
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
@@ -401,7 +402,7 @@ class PlotFile(DataFile):
             A matplotlib figure
          """
         if plotter is None:
-            plotter=pyplot.contour
+            plotter=plt.contour
         kargs["plotter"]=plotter
         return self.plot_xyz(xcol,ycol,zcol,shape,xlim,ylim,**kargs)
 
@@ -505,7 +506,7 @@ class PlotFile(DataFile):
             xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
             ylabel (string): Y axes label, Default is None - guess from metadata
             zlabel (string): Z axis label, Default is None - guess from metadata
-            plotter (function): Function to use to plot data. Defaults to pyplot.contour
+            plotter (function): Function to use to plot data. Defaults to plt.contour
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
@@ -519,7 +520,7 @@ class PlotFile(DataFile):
         X,Y,Z=self.griddata(xcol,ycol,zcol,shape,xlim,ylim)
         defaults={"origin":"lower",
                   "interpolation":"bilinear",
-                  "plotter":pyplot.imshow,
+                  "plotter":plt.imshow,
                   "title":self.filename,
                   "cmap":cm.jet,
                   "figure":self.__figure,
@@ -543,7 +544,7 @@ class PlotFile(DataFile):
         aspect=(xmax-xmin)/(ymax-ymin)
         extent=[xmin,xmax,ymin,ymax]
         fig=plotter(Z,extent=extent,aspect=aspect,**kargs)
-        self._fix_titles(**nonkargs)
+        self._fix_titles(0,"none",**nonkargs)
         return fig
 
     def inset(self,parent=None,loc=None,width=0.35, height=0.30,**kargs):
@@ -584,7 +585,7 @@ class PlotFile(DataFile):
         elif not isinsance(height,string_types):
             raise RuntimeErroror("didn't Recognize width specification {}".format(width))
         if parent is None:
-            parent=pyplot.gca()
+            parent=plt.gca()
         return inset_locator.inset_axes(parent,width,height,loc,**kargs)
 
     def plot(self,*args,**kargs):
@@ -606,12 +607,12 @@ class PlotFile(DataFile):
         if 2<=axes<=6:
             plotter=plotters[axes]
             ret=plotter(*args,**kargs)
-            pyplot.show()
+            plt.show()
         else:
             raise RuntimeError("Unable to work out plot type !")
         return ret
 
-    def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=pyplot.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
+    def plot_matrix(self, xvals=None, yvals=None, rectang=None, cmap=plt.cm.jet,show_plot=True,  title='',xlabel=None, ylabel=None, zlabel=None,  figure=None, plotter=None,  **kwords):
         """Plots a surface plot by assuming that the current dataset represents a regular matrix of points.
 
             Args:
@@ -627,7 +628,7 @@ class PlotFile(DataFile):
                 ylabel (string): Y axes label, Default is None - guess from metadata
                 zlabel (string): Z axis label, Default is None - guess from metadata
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
@@ -701,7 +702,7 @@ class PlotFile(DataFile):
             figure,ax=self.template.new_figure(None)
         self.__figure=figure
         if show_plot == True:
-            pyplot.ion()
+            plt.ion()
         if plotter is None:
             plotter=self.__SurfPlotter
         plotter(xdata, ydata, zdata, cmap=cmap, **kwords)
@@ -716,18 +717,18 @@ class PlotFile(DataFile):
             else:
                 labels[label]=v
 
-        pyplot.xlabel(str(labels["xlabel"]))
-        pyplot.ylabel(str(labels["ylabel"]))
+        plt.xlabel(str(labels["xlabel"]))
+        plt.ylabel(str(labels["ylabel"]))
         if plotter==self.__SurfPlotter:
             self.axes[0].set_zlabel(str(labels["zlabel"]))
         if title=='':
             title=self.filename
-        pyplot.title(title)
-        pyplot.draw()
+        plt.title(title)
+        plt.draw()
 
         return self.__figure
 
-    def plot_xy(self,xcol=None, ycol=None, fmt=None,xerr=None, yerr=None,  **kargs):
+    def plot_xy(self,xcol=None, ycol=None, fmt=None,xerr=None, yerr=None, multiple=None, **kargs):
         """Makes a simple X-Y plot of the specified data.
 
         Args:
@@ -736,15 +737,22 @@ class PlotFile(DataFile):
 
         Keyword Arguments:
             fmt (strong or sequence of strings): Specifies the format for the plot - see matplotlib documentation for details
-            xerr,yerr (index): Columns of data to get x and y errorbars from. Setting these turns the default plotter to pyplot.errorbar
+            xerr,yerr (index): Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar
             xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
             ylabel (string): Y axes label, Default is None - guess from metadata
             zlabel (string): Z axis label, Default is None - guess from metadata
             title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
-            plotter (function): Function to use to plot data. Defaults to pyplot.plot unless error bars are set
+            plotter (function): Function to use to plot data. Defaults to plt.plot unless error bars are set
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
+            multiple (string): how to handle multiple y-axes with a common x axis. Options are:
+            
+                - *common* single y-axis (default)
+                - *panels* panels sharing common x axis
+                - *sub plots* sub plots
+                - *y2* single axes with 2 y scales
+                
             **kargs (dict): Other arguments are passed on to the plotter.
 
         Returns:
@@ -753,7 +761,7 @@ class PlotFile(DataFile):
         """
         c=self._fix_cols(xcol=xcol,ycol=ycol,xerr=xerr,yerr=yerr,multi_y=True,**kargs)
         (kargs["xerr"],kargs["yerr"])=(c.xerr,c.yerr)
-        defaults={"plotter":pyplot.plot,
+        defaults={"plotter":plt.plot,
                   "show_plot":True,
                   "figure":self.__figure,
                   "title":self.filename,
@@ -762,23 +770,25 @@ class PlotFile(DataFile):
                   "ylabel":self._col_label(self.find_col(c.ycol),True)}
         otherargs=[]
         if "plotter" not in kargs and (c.xerr is not None or c.yerr is not None): # USe and errorbar blotter by default for errors
-            kargs["plotter"]=pyplot.errorbar
+            kargs["plotter"]=plt.errorbar
             otherargs=["agg_filter","alpha","animated","antialiased","aa","axes","clip_box","clip_on","clip_path","color","c",
                        "contains","dash_capstyle","dash_joinstyle","dashes","drawstyle","fillstyle","gid","label","linestyle","ls",
                        "linewidth","lw","lod","marker","markeredgecolor","mec","markeredgewidth","mew","markerfacecolor","mfc",
                        "markerfacecoloralt","mfcalt","markersize","ms","markevery","path_effects","picker","pickradius","rasterized",
                        "sketch_params","snap","solid_capstyle","solid_joinstyle","transform","url","visible","xdata","ydata","zorder"]
         elif "plotter" not in kargs:
-            kargs["plotter"]=pyplot.plot
+            kargs["plotter"]=plt.plot
             otherargs=["agg_filter","alpha","animated","antialiased","aa","axes","clip_box","clip_on","clip_path","color","c",
                        "contains","dash_capstyle","dash_joinstyle","dashes","drawstyle","fillstyle","gid","label","linestyle","ls",
                        "linewidth","lw","lod","marker","markeredgecolor","mec","markeredgewidth","mew","markerfacecolor","mfc",
                        "markerfacecoloralt","mfcalt","markersize","ms","markevery","path_effects","picker","pickradius","rasterized",
                        "sketch_params","snap","solid_capstyle","solid_joinstyle","transform","url","visible","xdata","ydata","zorder"]
 
-
+        if multiple==None:
+            multiple=self.multiple
+        else:
+            self.multiple=multiple
         kargs,nonkargs=self._fix_kargs(None,defaults,otherargs,**kargs)
-        self.__figure=self._fix_fig(nonkargs["figure"])
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
             if err in kargs:
@@ -798,7 +808,28 @@ class PlotFile(DataFile):
         temp_kwords=copy.copy(kargs)
         if isinstance(c.ycol,(index_types)):
             c.ycol=[c.ycol]
+        if len(c.ycol)>1:
+            if multiple=="panels":
+                self.__figure,ax=plt.subplots(nrows=len(c.ycol),sharex=True,gridspec_kw={"hspace":0})
+            elif multiple=="subplots":
+                m=int(_np_.floor(_np_.sqrt(len(c.ycol))))
+                n=int(_np_.ceil(len(c.ycol)/m))
+                print m,n
+                self.__figure,ax=plt.subplots(nrows=n,ncols=m)
+            self.__figure=self._fix_fig(self.__figure)
+        else:
+            self.__figure=self._fix_fig(nonkargs["figure"])
+
         for ix in range(len(c.ycol)):
+            if multiple!="common":
+                nonkargs["ylabel"]=self._col_label(self.find_col(c.ycol[ix]))
+            if ix>0:
+                if multiple=="y2" and ix==1:
+                    self.y2()
+                    cc=plt.gca()._get_lines.color_cycle
+                    for i in range(ix):
+                        cc.next()
+            self.ax=ix
             if isinstance(fmt,list): # Fix up the format
                 fmt_t=fmt[ix]
             else:
@@ -812,8 +843,12 @@ class PlotFile(DataFile):
                 self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
             else:
                 self._Plot(c.xcol,c.ycol[ix],fmt_t,nonkargs["plotter"],self.__figure,**temp_kwords)
-
-        self._fix_titles(**nonkargs)
+            self._fix_titles(ix,multiple,**nonkargs)
+            if ix>0: # Hooks for multiple subplots
+                if multiple=="panels":
+                    loc,lab=plt.yticks()
+                    lab=[l.get_text() for l in lab]
+                    plt.yticks(loc[:-1],lab[:-1])
         return self.__figure
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,  **kargs):
@@ -866,7 +901,7 @@ class PlotFile(DataFile):
         plotter(xdata, ydata, zdata, **kargs)
         if plotter!=self.__SurfPlotter:
             del(nonkargs["zlabel"])
-        self._fix_titles(**nonkargs)
+        self._fix_titles(0,"none",**nonkargs)
         return self.__figure
 
     def plot_xyuv(self,xcol=None,ycol=None,ucol=None,vcol=None,wcol=None,**kargs):
@@ -927,7 +962,7 @@ class PlotFile(DataFile):
                 mode (string): glyph type, default is "cone"
                 scale_factor(float): Scale-size of glyphs.
                 figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
-                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be pyplot.plot (default), py.semilogy, pyplot.semilogx
+                plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
@@ -995,7 +1030,7 @@ class PlotFile(DataFile):
             xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
             ylabel (string): Y axes label, Default is None - guess from metadata
             zlabel (string): Z axis label, Default is None - guess from metadata
-            plotter (function): Function to use to plot data. Defaults to pyplot.contour
+            plotter (function): Function to use to plot data. Defaults to plt.contour
             headlength,headwidth,headaxislength (float): Controls the size of the quiver heads
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
@@ -1006,7 +1041,7 @@ class PlotFile(DataFile):
         Returns:
             A matplotlib figure instance.
 
-        Keyword arguments are all passed through to :py:func:`matplotlib.pyplot.quiver`.
+        Keyword arguments are all passed through to :py:func:`matplotlib.plt.quiver`.
 
         """
         locals().update(self._fix_cols(xcol=xcol,ycol=ycol,ucol=ucol,vcol=vcol,**kargs))
@@ -1016,7 +1051,7 @@ class PlotFile(DataFile):
                   "headaxislength":5,
                   "headwidth":4,
                   "units":"xy",
-                  "plotter":pyplot.quiver,
+                  "plotter":plt.quiver,
                   "show_plot":True,
                   "figure":self.__figure,
                   "title":self.filename,
@@ -1029,12 +1064,12 @@ class PlotFile(DataFile):
         plotter=nonkargs["plotter"]
         self.__figure=self._fix_fig(nonkargs["figure"])
         fig=plotter(self.column(self.find_col(xcol)),self.column(self.find_col(ycol)),self.column(self.find_col(ucol)),self.column(self.find_col(vcol)),**kargs)
-        self._fix_titles(**nonkargs)
+        self._fix_titles(0,"non",**nonkargs)
         return fig
 
 
     def subplot(self,*args,**kargs):
-        """Pass throuygh for pyplot.subplot().
+        """Pass throuygh for plt.subplot().
 
         Args:
             rows (int): If this is the only argument, then a three digit number representing
@@ -1050,7 +1085,7 @@ class PlotFile(DataFile):
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
         fig,ax=self.template.new_figure(self.__figure.number)
-        sp=pyplot.subplot(*args,**kargs)
+        sp=plt.subplot(*args,**kargs)
         if len(args)==1:
             rows=args[0]//100
             cols=(args[0]//10)%10
@@ -1081,7 +1116,7 @@ class PlotFile(DataFile):
         """
         ax=self.fig.gca()
         ax2=ax.twinx()
-        pyplot.subplots_adjust(right=self.__figure.subplotpars.right-0.05)
+        plt.subplots_adjust(right=self.__figure.subplotpars.right-0.05)
 
 
 def hsl2rgb(h,s,l):

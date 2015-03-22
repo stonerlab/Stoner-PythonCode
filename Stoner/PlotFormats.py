@@ -116,6 +116,20 @@ class DefaultPlotStyle(object):
     ylocater=AutoLocator
     zlocater=AutoLocator
     stylename="default"
+    
+    subplot_settings={"panels":{"xlabel":(False,False,True),
+                   "ylabel":(True,True,True),
+                   "zlabel":(False,False,False),
+                   "title":(True,False,False)},
+         "subplots":{"xlabel":(True,True,True),
+                   "ylabel":(True,True,True),
+                   "zlabel":(False,False,False),
+                   "title":(True,True,True)},
+        "y2":{"xlabel":(True,False,False),
+                   "ylabel":(True,True,True),
+                   "zlabel":(False,False,False),
+                   "title":(True,False,False)}}
+                   
     def __init__(self,**kargs):
         """Create a template instance of this template.
 
@@ -134,6 +148,8 @@ class DefaultPlotStyle(object):
                return plt.rcParams[attrname]
             else:
                 raise AttributeError("template attribute not in rcParams")
+        elif name=="showlegend":
+            return self.show_legend and len(plt.gca().get_legend_handles_labels()[1])>1
         else:
             return super(DefaultPlotStyle,self).__getattribute__(name)
 
@@ -212,7 +228,7 @@ class DefaultPlotStyle(object):
         instance attributes."""
 
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         """This method is run when we have an axis to manipulate.
 
         Args:
@@ -242,21 +258,40 @@ class DefaultPlotStyle(object):
             ax.set_zticklabels(ax.get_zticks(),size=self.template_ztick_labelsize)
             ax.zaxis.set_major_formatter(self.zformatter())
 
-    def annotate(self,plot,**kargs):
+    def annotate(self,ix,multiple,plot,**kargs):
         """Call all the routines necessary to annotate the axes etc.
 
         Args:
+            ix(integer): Index of current subplot
+            multiple (string): how to handle multiple subplots
             plot (Stoner.PlotFile): The PlotFile boject we're working with
         """
-        if "xlabel" in kargs and self.show_xlabel:
+
+
+
+        if multiple in self.subplot_settings:
+            if ix==0:
+                i=0
+            elif ix==len(plot.axes):
+                i=2
+            else:
+                i=1
+            settings={k:self.subplot_settings[multiple][k][i] for k in self.subplot_settings[multiple]}
+        else:
+            settings={"xlabel":True,
+                           "ylabel":True,
+                           "zlabel":True,
+                           "title":True}
+            
+        if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
             plt.xlabel(str(kargs["xlabel"]),size=self.template_axes_labelsize)
-        if "ylabel" in kargs and self.show_ylabel:
+        if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
             plt.ylabel(str(kargs["ylabel"]),size=self.template_axes_labelsize)
-        if "zlabel" in kargs and self.show_zlabel:
+        if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
             plot.fig.axes[0].set_zlabel(kargs["zlabel"],size=self.template_axes_labelsize)
-        if "title" in kargs and self.show_title:
+        if "title" in kargs and self.show_title and settings["title"]:
             plt.title(kargs["title"])
-        if self.show_legend and len(plt.gca().get_legend_handles_labels()[1])>1:
+        if self.showlegend:
             plt.legend()
 
 
@@ -266,9 +301,9 @@ class GBPlotStyle(DefaultPlotStyle):
     yformatter=TexEngFormatter
     stylename="GBStyle"
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         """Override the default axis configuration"""
-        super(GBPlotStyle,self).customise_axes(ax)
+        super(GBPlotStyle,self).customise_axes(ax,plot)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.xaxis.set_ticks_position("bottom")
@@ -283,7 +318,7 @@ class JTBPlotStyle(DefaultPlotStyle):
     show_title=False
     stylename="JTB"
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         pass
 
 class JTBinsetStyle(DefaultPlotStyle):
@@ -292,7 +327,7 @@ class JTBinsetStyle(DefaultPlotStyle):
     show_title=False
     stylename="JTBinset"
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         pass
 
 class ThesisPlotStyle(DefaultPlotStyle):
@@ -306,7 +341,7 @@ class PRBPlotStyle(DefaultPlotStyle):
     show_title=False
     stylename="PRB"
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         ax.locator_params(tight=True, nbins=4)
 
 class SketchPlot(DefaultPlotStyle):
@@ -316,13 +351,16 @@ class SketchPlot(DefaultPlotStyle):
     def customise(self):
         plt.xkcd()
 
-    def customise_axes(self,ax):
+    def customise_axes(self,ax,plot):
         """Override the default axis configuration"""
-        super(SketchPlot,self).customise_axes(ax)
+        super(SketchPlot,self).customise_axes(ax,plot)
         ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
+        if len(plot.axes)>1 and plot.multiple=="y2":
+            pass
+        else:
+            ax.spines["right"].set_visible(False)
+            ax.yaxis.set_ticks_position("left")
         ax.xaxis.set_ticks_position("bottom")
-        ax.yaxis.set_ticks_position("left")
         ax.xaxis.label.set_rotation(normal(scale=5))
         ax.xaxis.label.set_x(0.9)
         ax.yaxis.label.set_rotation(normal(90,scale=5))
@@ -330,6 +368,6 @@ class SketchPlot(DefaultPlotStyle):
         for l in ax.get_xticklabels():
             l.set_rotation(normal(scale=2))
         for l in ax.get_yticklabels():
-            l.set_rotation(normal(90,scale=2))
+            l.set_rotation(normal(scale=2))
 
         plt.draw
