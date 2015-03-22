@@ -12,11 +12,11 @@ font.size: 12
 legend.fontsize:10
 legend.frameon:False
 lines.linewidth:1
-xtick.direction:'in'
+xtick.direction:in
 xtick.labelsize:11
 xtick.major.pad:4
 xtick.major.size:5
-ytick.direction:'in''
+ytick.direction:in
 ytick.labelsize:11
 ytick.major.pad:4
 ytick.major.size:5

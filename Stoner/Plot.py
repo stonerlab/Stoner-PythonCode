@@ -26,6 +26,8 @@ import matplotlib.colors as colors
 from colorsys import hls_to_rgb
 import copy
 from collections import Iterable
+from mpl_toolkits.axes_grid1 import host_subplot
+import mpl_toolkits.axisartist as AA
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions.
@@ -217,15 +219,16 @@ class PlotFile(DataFile):
     def _fix_fig(self,figure):
         """Sorts out the matplotlib figure handling."""
         if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
+            figure,ax=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
+            figure,ax=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
+            ax=self.__figure.axes[0]
         else:
-            figure=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None)
         return figure
 
 
@@ -295,6 +298,16 @@ class PlotFile(DataFile):
                 ret=self.__figure.axes
             else:
                 ret=None
+        elif "anme"=="_public_attrs":
+            ret=super(PlotFile,self).__getattr__(name)
+            ret.update({"fig":(int,mpl.figure.Figure),
+                        "labels":list,
+                        "template":DefaultPlotStyle,
+                        "xlim":tuple,
+                        "ylim":tuple,
+                        "title":string_types,
+                        "xlabel":string_types,
+                        "ylabel":string_types})
         else:
             try:
                 return super(PlotFile, self).__getattr__(name)
@@ -331,7 +344,7 @@ class PlotFile(DataFile):
     """
         if name=="fig":
             self.__figure=value
-            self.template.new_figure(value.number)
+            self.fig,ax=self.template.new_figure(value.number)
         elif name=="labels":
             self._labels=value
         elif name=="template":
@@ -401,11 +414,11 @@ class PlotFile(DataFile):
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
-            figure=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None)
         elif isinstance(figure, int):
-            figure=self.template.new_figure(figure)
+            figure,ax=self.template.new_figure(figure)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
+            figure,ax=self.template.new_figure(figure.number)
         self.__figure=figure
         return self
 
@@ -677,15 +690,15 @@ class PlotFile(DataFile):
 
         #This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
-            figure=self.template.new_figure(figure)
+            figure,ax=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None)
         elif isinstance(figure, matplotlib.figure.Figure):
-            figure=self.template.new_figure(figure.number)
+            figure,ax=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
         else:
-            figure=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None)
         self.__figure=figure
         if show_plot == True:
             pyplot.ion()
@@ -1036,7 +1049,7 @@ class PlotFile(DataFile):
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        self.template.new_figure(self.__figure.number)
+        fig,ax=self.template.new_figure(self.__figure.number)
         sp=pyplot.subplot(*args,**kargs)
         if len(args)==1:
             rows=args[0]//100
@@ -1053,21 +1066,23 @@ class PlotFile(DataFile):
 
     def x2(self):
         """Generate a new set of axes with a second x-scale.
-        
+
         Returns:
             The new matplotlib.axes instance.
         """
-        ax=self.axes[0]
+        ax=self.fig.gca()
         return ax.twiny()
-        
+
     def y2(self):
         """Generate a new set of axes with a second y-scale.
-        
+
         Returns:
             The new matplotlib.axes instance
         """
-        ax=self.axes[0]
-        return ax.twinx()
+        ax=self.fig.gca()
+        ax2=ax.twinx()
+        pyplot.subplots_adjust(right=self.__figure.subplotpars.right-0.05)
+
 
 def hsl2rgb(h,s,l):
     """Converts from hsl colourspace to rgb colour space with numpy arrays for speed.

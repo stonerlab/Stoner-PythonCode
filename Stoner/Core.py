@@ -804,16 +804,17 @@ class DataFile(object):
             handler(*args,**kargs)
         self.metadata["Stoner.class"]=self.__class__.__name__
         if len(kargs)>0: # set public attributes from keywords
-            myattrs=[]
-            for x in dir(self):
-                try:
-                    if not (x.startswith("_") or callable(self.__getattr__(x))):
-                        myattrs.append(x)
-                except:
-                    pass
+            myattrs=self._public_attrs
             for k in kargs:
                 if k in myattrs:
-                    self.__setattr__(k,kargs[k])
+                    if isinstance(kargs[k],myattrs[k]):
+                        self.__setattr__(k,kargs[k])
+                    else:
+                        if isinstance(myattrs[k],tuple):
+                            typ="one of "+",".join([str(type(t)) for t in myattrs[k]])
+                        else:
+                            typ="a "+str(str(type(myattr[k])))
+                        raise TypeError("{} should be {} not a {}".format(k,typ,type(kargs[k])))
 
     # Special Methods
 
@@ -1163,7 +1164,8 @@ class DataFile(object):
               "shape":self._getattr_shape,
               "subclasses":self._getattr_subclasses,
               "setas":self._getattr_setas,
-              "column_headers":self.__getattr__column_headers
+              "column_headers":self.__getattr__column_headers,
+              "_public_attrs": self.__getattr_writeable
               }
 
         if name in easy:
@@ -1311,6 +1313,18 @@ class DataFile(object):
             ret[cls.__name__]=cls
         return ret
 
+    def __getattr_writeable(self):
+        """Return a dictionary of attributes setable by keyword argument with thier types."""
+        return {"data":_np_.ndarray,
+                "column_headers":list,
+                "setas":(string_types,list),
+                "metadata":dict,
+                "debug":bool,
+                "filename":string_types,
+                "mask":(_np_.ndarray,bool)
+                }
+
+
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of metadata.
 
@@ -1419,10 +1433,10 @@ class DataFile(object):
 
     def __imod__(self,other):
         """Overload the % operator to mean column deletion.
-        
+
         Args:
             Other (column index): column(s) to delete.
-            
+
         Return:
             A copy of self with a column deleted.
         """
@@ -1432,10 +1446,10 @@ class DataFile(object):
 
     def __isub__(self,other):
         """Implements what to do when subtraction operator is used.
-        
+
         Args:
             other (int,list of integers): Delete row(s) from data.
-            
+
         Returns:
             DataFile with rows removed.
         """
@@ -1549,16 +1563,16 @@ class DataFile(object):
 
     def __mod__(self,other):
         """Overload the % operator to mean column deletion.
-        
+
         Args:
             Other (column index): column(s) to delete.
-            
+
         Return:
             A copy of self with a column deleted.
         """
         newdata=self.clone
         return self.__mod_core__(other,newdata)
-        
+
     def __mod_core__(self,other,newdata):
         """Implements the column deletion method."""
         if isinstance(other,index_types):
@@ -1835,16 +1849,16 @@ class DataFile(object):
 
     def __sub__(self,other):
         """Implements what to do when subtraction operator is used.
-        
+
         Args:
             other (int,list of integers): Delete row(s) from data.
-            
+
         Returns:
             DataFile with rows removed.
         """
         newdata=self.clone
         return self.__sub_core__(other,newdata)
-        
+
     def __sub_core__(self,other,newdata):
         """Actually do the subtraction."""
         if isinstance(other,(slice,int)):
@@ -1855,7 +1869,7 @@ class DataFile(object):
             newdata=NotImplemented
         return newdata
 
-            
+
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
