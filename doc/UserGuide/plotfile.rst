@@ -91,6 +91,7 @@ are a number of useful plotter functions that will work like this::
 
 The X and Y axis label will be set from the column headers.
 
+
 Plotting 3D Data
 ----------------
 

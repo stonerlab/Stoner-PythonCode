@@ -814,8 +814,7 @@ class PlotFile(DataFile):
             elif multiple=="subplots":
                 m=int(_np_.floor(_np_.sqrt(len(c.ycol))))
                 n=int(_np_.ceil(len(c.ycol)/m))
-                print m,n
-                self.__figure,ax=plt.subplots(nrows=n,ncols=m)
+                self.__figure,ax=plt.subplots(nrows=m,ncols=n)
             self.__figure=self._fix_fig(self.__figure)
         else:
             self.__figure=self._fix_fig(nonkargs["figure"])

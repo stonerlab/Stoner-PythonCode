@@ -25,11 +25,20 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary',
-'sphinxcontrib.napoleon','sphinx.ext.graphviz','sphinx.ext.inheritance_diagram',
-'sphinx.ext.todo','astropy_helpers.sphinx.ext.automodapi','astropy_helpers.sphinx.ext.automodsumm',
-'sphinx.ext.mathjax']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.intersphinx', 
+              'sphinx.ext.todo',
+              'sphinx.ext.pngmath', 
+              'sphinx.ext.viewcode',
+              'sphinx.ext.autosummary',
+              'sphinxcontrib.napoleon',
+              'sphinx.ext.graphviz',
+              'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.todo',
+              'astropy_helpers.sphinx.ext.automodapi',
+              'astropy_helpers.sphinx.ext.automodsumm',
+              'sphinx.ext.mathjax' 
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
