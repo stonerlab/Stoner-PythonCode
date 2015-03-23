@@ -37,7 +37,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'astropy_helpers.sphinx.ext.automodapi',
               'astropy_helpers.sphinx.ext.automodsumm',
-              'sphinx.ext.mathjax' 
+              'sphinx.ext.mathjax',
+              'matplotlib.sphinxext.plot_directive'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
