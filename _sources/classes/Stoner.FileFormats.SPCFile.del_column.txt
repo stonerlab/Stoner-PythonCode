@@ -1,8 +1,0 @@
-
-
-SPCFile.del_column
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.del_column

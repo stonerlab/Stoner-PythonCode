@@ -1,8 +1,0 @@
-
-
-BNLFile.meta
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.meta

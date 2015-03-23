@@ -1,8 +1,0 @@
-
-
-AnalyseFile.unique
-==================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.unique

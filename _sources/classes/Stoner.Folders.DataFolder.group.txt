@@ -1,8 +1,0 @@
-
-
-DataFolder.group
-===============================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.group

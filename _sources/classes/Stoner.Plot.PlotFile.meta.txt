@@ -1,8 +1,0 @@
-
-
-PlotFile.meta
-=========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.meta

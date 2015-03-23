@@ -1,8 +1,0 @@
-
-
-CSVFile.dir
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.dir

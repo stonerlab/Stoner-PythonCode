@@ -1,8 +1,0 @@
-
-
-AnalyseFile.save
-================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.save

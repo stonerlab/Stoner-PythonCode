@@ -1,8 +1,0 @@
-
-
-AnalyseFile.max
-===============================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.max

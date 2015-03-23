@@ -1,8 +1,0 @@
-
-
-DataFolder.select
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.select

@@ -1,8 +1,0 @@
-
-
-AnalyseFile.sort
-================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.sort

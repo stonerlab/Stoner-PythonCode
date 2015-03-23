@@ -1,8 +1,0 @@
-
-
-AnalyseFile.get
-===============================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.get

@@ -1,8 +1,0 @@
-
-
-AnalyseFile.__init__
-====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.__init__

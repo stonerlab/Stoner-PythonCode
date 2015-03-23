@@ -1,8 +1,0 @@
-
-
-RigakuFile.rename
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.rename

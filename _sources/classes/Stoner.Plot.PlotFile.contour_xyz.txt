@@ -1,8 +1,0 @@
-
-
-PlotFile.contour_xyz
-================================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.contour_xyz

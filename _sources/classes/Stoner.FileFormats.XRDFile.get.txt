@@ -1,8 +1,0 @@
-
-
-XRDFile.get
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.get

@@ -1,8 +1,0 @@
-
-
-HDF5Folder.getlist
-==============================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HDF5Folder.getlist

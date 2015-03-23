@@ -1,8 +1,0 @@
-
-
-TDMSFile.meta
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.meta

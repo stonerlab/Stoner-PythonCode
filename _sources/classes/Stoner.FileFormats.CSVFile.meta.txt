@@ -1,8 +1,0 @@
-
-
-CSVFile.meta
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.meta

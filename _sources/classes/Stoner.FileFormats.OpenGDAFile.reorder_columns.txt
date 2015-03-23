@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.reorder_columns
-==============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.reorder_columns

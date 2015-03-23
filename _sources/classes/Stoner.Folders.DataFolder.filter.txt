@@ -1,8 +1,0 @@
-
-
-DataFolder.filter
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.filter

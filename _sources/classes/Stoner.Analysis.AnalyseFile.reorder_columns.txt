@@ -1,8 +1,0 @@
-
-
-AnalyseFile.reorder_columns
-===========================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.reorder_columns

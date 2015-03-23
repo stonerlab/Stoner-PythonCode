@@ -1,8 +1,0 @@
-
-
-AnalyseFile.nlfit
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.nlfit

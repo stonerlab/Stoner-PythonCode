@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.rows
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.rows

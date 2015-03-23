@@ -1,8 +1,0 @@
-
-
-DataFile.dir
-========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.dir

@@ -1,8 +1,0 @@
-
-
-VSMFile.get
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.get

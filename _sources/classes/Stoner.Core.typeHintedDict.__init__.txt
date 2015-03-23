@@ -1,8 +1,0 @@
-
-
-typeHintedDict.__init__
-===================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.__init__

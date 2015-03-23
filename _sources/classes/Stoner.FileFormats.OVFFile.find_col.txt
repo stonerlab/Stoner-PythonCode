@@ -1,8 +1,0 @@
-
-
-OVFFile.find_col
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.find_col

@@ -1,8 +1,0 @@
-
-
-SPCFile.rows
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.rows

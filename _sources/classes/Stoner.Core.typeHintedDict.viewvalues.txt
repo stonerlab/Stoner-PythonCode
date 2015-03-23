@@ -1,8 +1,0 @@
-
-
-typeHintedDict.viewvalues
-=====================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.viewvalues

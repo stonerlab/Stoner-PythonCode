@@ -1,8 +1,0 @@
-
-
-OVFFile.filter
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.filter

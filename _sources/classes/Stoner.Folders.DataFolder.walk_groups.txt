@@ -1,8 +1,0 @@
-
-
-DataFolder.walk_groups
-=====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.walk_groups

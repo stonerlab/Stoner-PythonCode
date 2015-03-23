@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.section
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.section

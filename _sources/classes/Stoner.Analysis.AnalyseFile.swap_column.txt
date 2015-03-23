@@ -1,8 +1,0 @@
-
-
-AnalyseFile.swap_column
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.swap_column

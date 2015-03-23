@@ -1,8 +1,0 @@
-
-
-BigBlueFile.del_column
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.del_column

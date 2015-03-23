@@ -1,8 +1,0 @@
-
-
-TDMSFile.sort
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.sort

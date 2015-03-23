@@ -1,8 +1,0 @@
-
-
-PlotFile.find_col
-=============================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.find_col

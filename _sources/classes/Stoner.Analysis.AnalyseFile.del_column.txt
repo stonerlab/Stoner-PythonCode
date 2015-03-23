@@ -1,8 +1,0 @@
-
-
-AnalyseFile.del_column
-======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.del_column

@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.meta
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.meta

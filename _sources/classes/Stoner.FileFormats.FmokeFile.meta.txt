@@ -1,8 +1,0 @@
-
-
-FmokeFile.meta
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.meta

@@ -1,8 +1,0 @@
-
-
-SPCFile.__init__
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.__init__

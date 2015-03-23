@@ -1,8 +1,0 @@
-
-
-typeHintedDict.get
-==============================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.get

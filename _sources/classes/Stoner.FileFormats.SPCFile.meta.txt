@@ -1,8 +1,0 @@
-
-
-SPCFile.meta
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.meta

@@ -1,8 +1,0 @@
-
-
-SNSFile.unique
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.unique

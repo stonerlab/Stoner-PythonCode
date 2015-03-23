@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.del_column
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.del_column

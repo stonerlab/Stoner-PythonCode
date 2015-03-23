@@ -1,8 +1,0 @@
-
-
-PlotFile.load
-=========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.load

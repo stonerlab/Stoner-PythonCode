@@ -1,8 +1,0 @@
-
-
-PlotFile.rows
-=========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.rows

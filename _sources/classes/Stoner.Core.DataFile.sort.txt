@@ -1,8 +1,0 @@
-
-
-DataFile.sort
-=========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.sort

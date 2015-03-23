@@ -1,8 +1,0 @@
-
-
-DataFile.insert_rows
-================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.insert_rows

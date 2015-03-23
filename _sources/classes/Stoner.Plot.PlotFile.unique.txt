@@ -1,8 +1,0 @@
-
-
-PlotFile.unique
-===========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.unique

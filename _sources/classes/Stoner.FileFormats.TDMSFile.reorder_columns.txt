@@ -1,8 +1,0 @@
-
-
-TDMSFile.reorder_columns
-===========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.reorder_columns

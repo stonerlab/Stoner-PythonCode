@@ -1,8 +1,0 @@
-
-
-AnalyseFile.chi2mapping
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.chi2mapping

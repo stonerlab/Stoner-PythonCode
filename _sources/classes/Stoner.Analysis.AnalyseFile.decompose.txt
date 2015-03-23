@@ -1,8 +1,0 @@
-
-
-AnalyseFile.decompose
-=====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.decompose
