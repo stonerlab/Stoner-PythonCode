@@ -1,0 +1,8 @@
+
+
+DataFile.rename
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.rename

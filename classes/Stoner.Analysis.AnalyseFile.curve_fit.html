@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyseFile.curve_fit &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
+    <link rel="next" title="AnalyseFile.decompose" href="Stoner.Analysis.AnalyseFile.decompose.html" />
+    <link rel="prev" title="AnalyseFile.clip" href="Stoner.Analysis.AnalyseFile.clip.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.decompose.html" title="AnalyseFile.decompose"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.clip.html" title="AnalyseFile.clip"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analysefile-curve-fit">
+<h1>AnalyseFile.curve_fit<a class="headerlink" href="#analysefile-curve-fit" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.curve_fit">
+<tt class="descclassname">AnalyseFile.</tt><tt class="descname">curve_fit</tt><big>(</big><em>func</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>bounds=&lt;function &lt;lambda&gt; at 0x2b2c611af5f0&gt;</em>, <em>result=None</em>, <em>replace=False</em>, <em>header=None</em>, <em>asrow=False</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.curve_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.curve_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>General curve fitting function passed through from scipy</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>func</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; The fitting function with the form def f(x,*p) where p is a list of fitting parameters</li>
+<li><strong>xcol</strong> (<em>index</em>) &#8211; The index of the x-column data to fit</li>
+<li><strong>ycol</strong> (<em>index</em>) &#8211; The index of the y-column data to fit</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>p0</strong> (<em>list, tuple or array</em>) &#8211;
+A vector of initial parameter values to try</li>
+<li><strong>sigma</strong> (<em>index</em>) &#8211;
+The index of the column with the y-error bars</li>
+<li><strong>bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</strong></li>
+<li><strong>result</strong> (<em>bool</em>) &#8211;
+Determines whether the fitted data should be added into the DataFile object. If result is True then
+the last column will be used. If result is a string or an integer then it is used as a column index.
+Default to None for not adding fitted data</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211;
+Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<em>string or None</em>) &#8211;
+If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>asrow</strong> (<em>bool</em>) &#8211;
+Instead of returning popt,pcov, return a single array of popt, interleaved with the standard error in popt</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>popt</strong> &#8211;
+Optimal values of the fitting parameters p
+pcov (2d array): The variance-co-variance matrix for the fitting parameters.
+If asrow is True, then return [popt[0],sqrt(pcov[0,0]),popt[1],sqrt(pcov[1,1])...popt[n],sqrt(pcov[n,n])]</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">array</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If the columns are not specified (or set to None) then the X and Y data are taken using the
+<tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt> attribute.</p>
+<p class="last">The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
+The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></tt></a> can use as an index
+but typucally either strings to be matched against column headings or integers.
+The initial parameter values and weightings default to None which corresponds to all parameters starting
+at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
+point is to be used in the fit and false if not.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.clip.html"
+                        title="previous chapter">AnalyseFile.clip</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.decompose.html"
+                        title="next chapter">AnalyseFile.decompose</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.curve_fit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.decompose.html" title="AnalyseFile.decompose"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.clip.html" title="AnalyseFile.clip"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

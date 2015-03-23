@@ -1,0 +1,8 @@
+
+
+DataFile.unique
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.unique

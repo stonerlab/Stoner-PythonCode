@@ -1,0 +1,8 @@
+
+
+typeHintedDict.findtype
+===================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.findtype

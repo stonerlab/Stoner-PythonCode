@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.search
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.search

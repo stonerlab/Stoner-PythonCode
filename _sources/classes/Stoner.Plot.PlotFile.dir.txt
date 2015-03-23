@@ -1,0 +1,8 @@
+
+
+PlotFile.dir
+========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.dir

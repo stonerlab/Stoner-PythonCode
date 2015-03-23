@@ -1,0 +1,30 @@
+Stoner.FileFormats.SPCFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: SPCFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~SPCFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SPCFile.patterns
+      ~SPCFile.priority
+   
+   

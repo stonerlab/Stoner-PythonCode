@@ -1,0 +1,8 @@
+
+
+AnalyseFile.mean
+================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.mean

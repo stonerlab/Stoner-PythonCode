@@ -1,0 +1,8 @@
+
+
+AnalyseFile.dir
+===============================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.dir

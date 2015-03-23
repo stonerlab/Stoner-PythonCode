@@ -1,0 +1,8 @@
+
+
+PlotFile.image_plot
+===============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.image_plot

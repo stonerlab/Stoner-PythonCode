@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.PlotFormats &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for Stoner.PlotFormats</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Plot Templates module - contains classes that style plots for Stoner.Plot and pyplot</span>
+<span class="sd">Created on Fri Feb 07 19:57:30 2014</span>
+
+<span class="sd">@author: Gavin Burnell</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">EngFormatter</span><span class="p">,</span><span class="n">Formatter</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoLocator</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np_</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np_</span>
+
+<span class="k">class</span> <span class="nc">TexFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code</span>
+<span class="sd">    so that large numbers are registered as \\times 10^{power}</span>
+<span class="sd">    rather than ysing E notation.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">_np_</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">=</span><span class="s">&quot;&quot;</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">!=</span><span class="mf">0.0</span><span class="p">:</span>        
+            <span class="n">power</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">power</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">4</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">=</span><span class="s">&quot;${}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">v</span><span class="o">=</span><span class="n">value</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">power</span><span class="p">)</span>
+                <span class="n">ret</span><span class="o">=</span><span class="s">&quot;${}</span><span class="se">\\</span><span class="s">times 10^{{{:.0f}}}$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">power</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="s">&quot;$0.0$&quot;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+    
+    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;{:g}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+
+<div class="viewcode-block" id="DefaultPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">DefaultPlotStyle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Produces a default plot style.</span>
+<span class="sd">    </span>
+<span class="sd">    To produce alternative plot styles, create subclasses of this plot. Either override or</span>
+<span class="sd">    create additional attributes to define rc Parameters (see Matplotlib documentation for</span>
+<span class="sd">    available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`</span>
+<span class="sd">    method to carry out additional plot formatting.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        fig_width_pt (float): Preferred width of plot in points</span>
+<span class="sd">        show_xlabel (bool): Show the title in the plot</span>
+<span class="sd">        show_ylabel (bool): Show the x-axis Labels</span>
+<span class="sd">        show_zlabel (bool): show the y-xaxis labels</span>
+<span class="sd">        show_title (bool): show the title</span>
+<span class="sd">        show_legend (bool): show the legend</span>
+<span class="sd">        templat_axes_labelsize (int): Axes Label size</span>
+<span class="sd">        template_text_fontsize (int): Text font size</span>
+<span class="sd">        template_legend_fontsize (int): Legend font size</span>
+<span class="sd">        template_xtick_labelsize (int): X-axis tick label sizes</span>
+<span class="sd">        template_ytick_labelsize (int): Y-axis tick label sizes</span>
+<span class="sd">        template_xtick_direction (&quot;in&quot;, &quot;out&quot;, &quot;both&quot;): x-axis tick directions</span>
+<span class="sd">        template_ytick_direction (&quot;in&quot;, &quot;out&quot;, &quot;both&quot;): y-axis tick directions</span>
+<span class="sd">        template_xtick_major_size (int): x-axis tick size</span>
+<span class="sd">        template_ytick_major_size (int): y-axis tick size</span>
+<span class="sd">        template_font_family (string): Font for text</span>
+<span class="sd">        template_xtick_major.pad (int): Padding between ticks and labels in x-axis</span>
+<span class="sd">        template_ytick_major.pad (int): Padding between ticks and labels in y-axis</span>
+<span class="sd">        template_font_size (int): Default font size</span>
+<span class="sd">        template_lines_linewidth (int): Line width size</span>
+<span class="sd">        template_axes_formatter_limits (tuple): Use scientific notations outside of data=log10(value)</span>
+<span class="sd">         template_axes_grid (bool): Show grids on plot</span>
+<span class="sd">        template_axes_color__cycle (list): Set of colors to cycle through for plots</span>
+<span class="sd">        template_figure_facecolor (color): Override the grey colour of the plot border</span>
+<span class="sd">        template_figure_subplot_left (float): Set the left margin</span>
+<span class="sd">        template_figure_subplot_right (float): Set the right margin</span>
+<span class="sd">        template_figure_subplot_bottom (float): Set the bottom margin</span>
+<span class="sd">        template_figure_subplot_top (float): Set the top margin</span>
+
+<span class="sd">   </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="sd">&quot;&quot;&quot;Internal class attributes.&quot;&quot;&quot;</span>
+    <span class="n">_inches_per_pt</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="mf">72.27</span>               <span class="c"># Convert pt to inch</span>
+    <span class="n">_mm_per_inch</span> <span class="o">=</span> <span class="mf">25.4</span>
+    <span class="n">_golden_mean</span> <span class="o">=</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>         <span class="c"># Aesthetic ratio</span>
+
+
+    <span class="sd">&quot;&quot;&quot;Settings for this figure type. All instance attributes which start template_</span>
+<span class="sd">    will be used. Once the leading template_ is stripped, all _ characters are replaced</span>
+<span class="sd">    with . and then the attributes are mapped to a dictionary and used to update the rcParams</span>
+<span class="sd">    dictionary&quot;&quot;&quot;</span>
+    <span class="n">fig_width_pt</span> <span class="o">=</span> <span class="mf">433.62</span>
+    <span class="n">fig_width</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">fig_height</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">show_xlabel</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">show_ylabel</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">show_zlabel</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">show_title</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">show_legend</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">xformatter</span><span class="o">=</span><span class="n">TexFormatter</span>
+    <span class="n">yformatter</span><span class="o">=</span><span class="n">TexFormatter</span>
+    <span class="n">zformatter</span><span class="o">=</span><span class="n">TexFormatter</span>    
+    <span class="n">xlocater</span><span class="o">=</span><span class="n">AutoLocator</span>
+    <span class="n">ylocater</span><span class="o">=</span><span class="n">AutoLocator</span>
+    <span class="n">zlocater</span><span class="o">=</span><span class="n">AutoLocator</span>
+    <span class="n">templat_axes_labelsize</span><span class="o">=</span><span class="mi">12</span>
+    <span class="n">template_text_fontsize</span><span class="o">=</span><span class="mi">12</span>
+    <span class="n">template_legend_fontsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_legend_frameon</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">template_xtick_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_ytick_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_ztick_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_xtick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_ytick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_ztick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_xtick_major_size</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_ytick_major_size</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_ztick_major_size</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_xtick_major_pad</span><span class="o">=</span><span class="mi">4</span>
+    <span class="n">template_ytick_major_pad</span><span class="o">=</span><span class="mi">4</span>
+    <span class="n">template_ztick_major_pad</span><span class="o">=</span><span class="mi">4</span>
+    <span class="n">template_font_size</span><span class="o">=</span><span class="mi">14</span>
+    <span class="n">template_lines_linewidth</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">template_axes_formatter_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">template_axes_grid</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">template_axes_color__cycle</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">,</span><span class="s">&#39;g&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;m&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
+    <span class="n">template_figure_facecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">template_figure_subplot_left</span><span class="o">=</span><span class="mf">0.15</span>
+    <span class="n">template_figure_subplot_right</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="n">template_figure_subplot_bottom</span><span class="o">=</span><span class="mf">0.15</span>
+    <span class="n">template_figure_subplot_top</span><span class="o">=</span><span class="mf">0.9</span> 
+
+<div class="viewcode-block" id="DefaultPlotStyle.__init__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.PlotFormats.DefaultPlotStyle.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a template instance of this template.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
+<span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="DefaultPlotStyle.update"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.PlotFormats.DefaultPlotStyle.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update the template with new attributes from keyword arguments.</span>
+<span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
+<span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&quot;template_&quot;</span><span class="o">+</span><span class="n">k</span><span class="p">,</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s">&quot;fig_width&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width_pt</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_inches_per_pt</span>
+        <span class="k">if</span> <span class="s">&quot;fig_height&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_golden_mean</span>      <span class="c"># height in inches</span>
+</div>
+<div class="viewcode-block" id="DefaultPlotStyle.new_figure"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.PlotFormats.DefaultPlotStyle.new_figure">[docs]</a>    <span class="k">def</span> <span class="nf">new_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">figure</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This is called by PlotFile to setup a new figure before we do anything.&quot;&quot;&quot;</span>
+        <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width_pt</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_inches_per_pt</span>            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_golden_mean</span>      <span class="c"># height in inches            </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template_figure_figsize</span> <span class="o">=</span>  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_width</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fig_height</span><span class="p">)</span>        
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;template_&quot;</span><span class="p">):</span>
+                <span class="n">attrname</span><span class="o">=</span><span class="n">attr</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span><span class="s">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;..&quot;</span><span class="p">,</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">attrname</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span> <span class="c">#Reset to defaults</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="c"># Apply these parameters</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">figure</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">None</span>
+        <span class="k">elif</span> <span class="n">figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figure</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_figure_figsize</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_figure_figsize</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+</div>
+<div class="viewcode-block" id="DefaultPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.PlotFormats.DefaultPlotStyle.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Scan for all attributes that start templtate_ and build them into a dictionary</span>
+<span class="sd">        to update matplotlib settings with.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_figure</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="DefaultPlotStyle.customise"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.PlotFormats.DefaultPlotStyle.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is supplied for sub classes to override to provide additional</span>
+<span class="sd">        plot customisation after the rc paramaters are updated from the class and</span>
+<span class="sd">        instance attributes.&quot;&quot;&quot;</span>
+        </div>
+<div class="viewcode-block" id="DefaultPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.PlotFormats.DefaultPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method is run when we have an axis to manipulate.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ax (matplotlib axes): The axes to be modified by this function.</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            In the DefaultPlotStyle class this method is used to set SI units</span>
+<span class="sd">            plotting mode for all axes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xlocater</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylocater</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticks</span><span class="p">(),</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_xtick_labelsize</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticks</span><span class="p">(),</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_ytick_labelsize</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xformatter</span><span class="p">())</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yformatter</span><span class="p">())</span>
+        <span class="k">if</span> <span class="s">&quot;zaxis&quot;</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zlocater</span><span class="p">())</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_zticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_zticks</span><span class="p">(),</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_ztick_labelsize</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zformatter</span><span class="p">())</span>        
+        </div>
+<div class="viewcode-block" id="DefaultPlotStyle.annotate"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.PlotFormats.DefaultPlotStyle.annotate">[docs]</a>    <span class="k">def</span> <span class="nf">annotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">plot</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call all the routines necessary to annotate the axes etc.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            plot (Stoner.PlotFile): The PlotFile boject we&#39;re working with</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&quot;xlabel&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_xlabel</span><span class="p">:</span>        
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;xlabel&quot;</span><span class="p">]),</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">templat_axes_labelsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;ylabel&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_ylabel</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;ylabel&quot;</span><span class="p">]),</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">templat_axes_labelsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;zlabel&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_zlabel</span><span class="p">:</span>
+            <span class="n">plot</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;zlabel&quot;</span><span class="p">],</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">templat_axes_labelsize</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;title&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_title</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;title&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_legend</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        
+</div></div>
+<span class="k">class</span> <span class="nc">JTBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.&quot;&quot;&quot;</span>
+
+    <span class="n">fig_width_pt</span> <span class="o">=</span> <span class="mf">700.0</span> <span class="c"># Get this from LaTeX using \showthe\columnwidth</span>
+    <span class="n">templat_axes_labelsize</span><span class="o">=</span><span class="mi">36</span>
+    <span class="n">template_text_fontsize</span><span class="o">=</span><span class="mi">36</span>
+    <span class="n">template_legend_fontsize</span><span class="o">=</span><span class="mi">24</span>
+    <span class="n">template_xtick_labelsize</span><span class="o">=</span><span class="mi">28</span>
+    <span class="n">template_ytick_labelsize</span><span class="o">=</span><span class="mi">28</span>
+    <span class="n">template_xtick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_ytick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_xtick_major_size</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_ytick_major_size</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_font_family</span><span class="o">=</span><span class="s">&quot;Arial&quot;</span>
+    <span class="n">template_xtick_major_pad</span><span class="o">=</span><span class="mi">20</span>
+    <span class="n">template_ytick_major_pad</span><span class="o">=</span><span class="mi">20</span>
+    <span class="n">template_font_size</span><span class="o">=</span><span class="mi">32</span>
+    <span class="n">template_lines_linewidth</span><span class="o">=</span><span class="mi">4</span>
+    <span class="n">template_axes_formatter_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">template_figure_subplot_left</span><span class="o">=</span><span class="mf">0.15</span>
+    <span class="n">template_figure_subplot_right</span><span class="o">=</span><span class="mf">0.95</span>
+    <span class="n">template_figure_subplot_bottom</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="n">template_figure_subplot_top</span><span class="o">=</span><span class="mf">0.875</span> 
+    <span class="n">template_figure_autolayout</span><span class="o">=</span><span class="bp">True</span> 
+
+    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">ThesisPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.&quot;&quot;&quot;</span>
+
+    <span class="n">fig_width</span> <span class="o">=</span> <span class="mf">6.0</span>
+    <span class="n">fig_height</span><span class="o">=</span> <span class="mf">4.0</span><span class="c"># 6&quot;x4&quot; plot</span>
+    <span class="n">show_title</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">templat_axes_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_text_fontsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_legend_fontsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_xtick_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_ytick_labelsize</span><span class="o">=</span><span class="mi">11</span>
+    <span class="n">template_xtick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_ytick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_xtick_major_size</span><span class="o">=</span><span class="mi">8</span>
+    <span class="n">template_ytick_major_size</span><span class="o">=</span><span class="mi">8</span>
+    <span class="n">template_font_family</span><span class="o">=</span><span class="s">&quot;Times&quot;</span>
+    <span class="n">template_xtick_major_pad</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_ytick_major_pad</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_font_size</span><span class="o">=</span><span class="mi">9</span>
+    <span class="n">template_lines_linewidth</span><span class="o">=</span><span class="mi">2</span>
+    <span class="n">template_axes_formatter_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">template_figure_subplot_left</span><span class="o">=</span><span class="mf">0.15</span>
+    <span class="n">template_figure_subplot_right</span><span class="o">=</span><span class="mf">0.95</span>
+    <span class="n">template_figure_subplot_bottom</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="n">template_figure_subplot_top</span><span class="o">=</span><span class="mf">0.875</span> 
+    <span class="n">template_figure_autolayout</span><span class="o">=</span><span class="bp">False</span>  
+
+
+<span class="k">class</span> <span class="nc">PRBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A figure Style for making figures for Phys Rev * Jounrals.&quot;&quot;&quot;</span>
+    <span class="n">fig_width_pt</span><span class="o">=</span><span class="mi">244</span>
+    <span class="n">show_title</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">templat_axes_labelsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_text_fontsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_legend_fontsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_xtick_labelsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_ytick_labelsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_xtick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_ytick_direction</span><span class="o">=</span><span class="s">&#39;in&#39;</span>
+    <span class="n">template_xtick_major_size</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_ytick_major_size</span><span class="o">=</span><span class="mi">5</span>
+    <span class="n">template_font_family</span><span class="o">=</span><span class="s">&quot;Times New Roman&quot;</span>
+    <span class="n">template_xtick_major_pad</span><span class="o">=</span><span class="mi">2</span>
+    <span class="n">template_ytick_major_pad</span><span class="o">=</span><span class="mi">2</span>
+    <span class="n">template_font_size</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">template_lines_linewidth</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">template_axes_formatter_limits</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">template_axes_grid</span><span class="o">=</span><span class="bp">False</span>
+    <span class="n">template_axes_color__cycle</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;k&#39;</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">,</span><span class="s">&#39;g&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;m&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
+    <span class="n">template_figure_facecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">template_figure_autolayout</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">template_lines_markersize</span><span class="o">=</span><span class="mi">3</span>
+    <span class="n">template_legend_isaxes</span>       <span class="o">=</span><span class="bp">True</span>
+    <span class="n">template_legend_numpoints</span>    <span class="o">=</span><span class="mi">2</span>      <span class="c"># the number of points in the legend line</span>
+    <span class="n">template_legend_fontsize</span>     <span class="o">=</span><span class="mi">9</span>
+    <span class="n">template_legend_borderpad</span>    <span class="o">=</span><span class="mi">0</span>    <span class="c"># border whitespace in fontsize units</span>
+    <span class="n">template_legend_markerscale</span>  <span class="o">=</span><span class="mf">1.0</span>    <span class="c"># the relative size of legend markers vs. original</span>
+    <span class="n">template_legend_labelspacing</span> <span class="o">=</span><span class="mf">0.5</span>    <span class="c"># the vertical space between the legend entries in fraction of fontsize</span>
+    <span class="n">template_legend_handlelength</span> <span class="o">=</span><span class="mf">2.</span>     <span class="c"># the length of the legend lines in fraction of fontsize</span>
+    <span class="n">template_legend_handleheight</span> <span class="o">=</span><span class="mf">0.7</span>     <span class="c"># the height of the legend handle in fraction of fontsize</span>
+    <span class="n">template_legend_handletextpad</span><span class="o">=</span><span class="mf">0.8</span>    <span class="c"># the space between the legend line and legend text in fraction of fontsize</span>
+    <span class="n">template_legend_borderaxespad</span><span class="o">=</span><span class="mf">0.5</span>   <span class="c"># the border between the axes and legend edge in fraction of fontsize</span>
+    <span class="n">template_legend_columnspacing</span><span class="o">=</span><span class="mf">2.</span>    <span class="c"># the border between the axes and legend edge in fraction of fontsize</span>
+    <span class="n">template_legend_shadow</span>       <span class="o">=</span><span class="bp">False</span>
+    <span class="n">template_legend_frameon</span>      <span class="o">=</span><span class="bp">False</span>   <span class="c"># whether or not to draw a frame around legend</span>
+    <span class="n">template_legend_scatterpoints</span><span class="o">=</span><span class="mi">3</span> <span class="c"># number of scatter points</span>
+
+    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax</span><span class="p">):</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">locator_params</span><span class="p">(</span><span class="n">tight</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.filter
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.filter

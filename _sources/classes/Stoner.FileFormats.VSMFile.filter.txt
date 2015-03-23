@@ -1,0 +1,8 @@
+
+
+VSMFile.filter
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.filter

@@ -1,0 +1,8 @@
+
+
+AnalyseFile.del_rows
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.del_rows

@@ -1,0 +1,8 @@
+
+
+PlotFile.filter
+===========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.filter

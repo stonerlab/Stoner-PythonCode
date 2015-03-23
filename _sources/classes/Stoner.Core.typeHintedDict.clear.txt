@@ -1,0 +1,8 @@
+
+
+typeHintedDict.clear
+================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.clear

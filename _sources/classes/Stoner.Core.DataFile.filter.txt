@@ -1,0 +1,8 @@
+
+
+DataFile.filter
+===========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.filter

@@ -1,0 +1,8 @@
+
+
+AnalyseFile.span
+================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.span

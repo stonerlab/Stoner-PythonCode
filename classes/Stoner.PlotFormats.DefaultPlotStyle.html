@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.PlotFormats.DefaultPlotStyle &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="DefaultPlotStyle.__init__" href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" />
+    <link rel="prev" title="SNSFile.load" href="Stoner.FileFormats.SNSFile.load.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" title="DefaultPlotStyle.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.SNSFile.load.html" title="SNSFile.load"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stoner-plotformats-defaultplotstyle">
+<h1>Stoner.PlotFormats.DefaultPlotStyle<a class="headerlink" href="#stoner-plotformats-defaultplotstyle" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle">
+<em class="property">class </em><tt class="descclassname">Stoner.PlotFormats.</tt><tt class="descname">DefaultPlotStyle</tt><big>(</big><em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#DefaultPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a default plot style.</p>
+<p>To produce alternative plot styles, create subclasses of this plot. Either override or
+create additional attributes to define rc Parameters (see Matplotlib documentation for
+available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`
+method to carry out additional plot formatting.</p>
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.fig_width_pt">
+<tt class="descname">fig_width_pt</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.fig_width_pt" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Preferred width of plot in points</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.show_xlabel">
+<tt class="descname">show_xlabel</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.show_xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>Show the title in the plot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.show_ylabel">
+<tt class="descname">show_ylabel</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.show_ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>Show the x-axis Labels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.show_zlabel">
+<tt class="descname">show_zlabel</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.show_zlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the y-xaxis labels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.show_title">
+<tt class="descname">show_title</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.show_title" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the title</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.show_legend">
+<tt class="descname">show_legend</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.show_legend" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the legend</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.templat_axes_labelsize">
+<tt class="descname">templat_axes_labelsize</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.templat_axes_labelsize" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Axes Label size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_text_fontsize">
+<tt class="descname">template_text_fontsize</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_text_fontsize" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Text font size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_legend_fontsize">
+<tt class="descname">template_legend_fontsize</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_legend_fontsize" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Legend font size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_labelsize">
+<tt class="descname">template_xtick_labelsize</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_labelsize" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>X-axis tick label sizes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_labelsize">
+<tt class="descname">template_ytick_labelsize</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_labelsize" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Y-axis tick label sizes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_direction">
+<tt class="descname">template_xtick_direction</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_direction" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>&#8220;in&#8221;, &#8220;out&#8221;, &#8220;both&#8221;</em></p>
+<p>x-axis tick directions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_direction">
+<tt class="descname">template_ytick_direction</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_direction" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>&#8220;in&#8221;, &#8220;out&#8221;, &#8220;both&#8221;</em></p>
+<p>y-axis tick directions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_major_size">
+<tt class="descname">template_xtick_major_size</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_major_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>x-axis tick size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_major_size">
+<tt class="descname">template_ytick_major_size</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_major_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>y-axis tick size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_font_family">
+<tt class="descname">template_font_family</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_font_family" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>string</em></p>
+<p>Font for text</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">template_xtick_major.pad (int): Padding between ticks and labels in x-axis</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<tt class="descname">template_ytick_major.pad (int): Padding between ticks and labels in y-axis</tt></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_font_size">
+<tt class="descname">template_font_size</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_font_size" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Default font size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_lines_linewidth">
+<tt class="descname">template_lines_linewidth</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_lines_linewidth" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Line width size</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_axes_formatter_limits">
+<tt class="descname">template_axes_formatter_limits</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_axes_formatter_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em></p>
+<p>Use scientific notations outside of data=log10(value)
+template_axes_grid (bool): Show grids on plot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_axes_color__cycle">
+<tt class="descname">template_axes_color__cycle</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_axes_color__cycle" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em></p>
+<p>Set of colors to cycle through for plots</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_figure_facecolor">
+<tt class="descname">template_figure_facecolor</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_facecolor" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>color</em></p>
+<p>Override the grey colour of the plot border</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_left">
+<tt class="descname">template_figure_subplot_left</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_left" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Set the left margin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_right">
+<tt class="descname">template_figure_subplot_right</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_right" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Set the right margin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_bottom">
+<tt class="descname">template_figure_subplot_bottom</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_bottom" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Set the bottom margin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_top">
+<tt class="descname">template_figure_subplot_top</tt><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_top" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Set the top margin</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.PlotFormats.DefaultPlotStyle.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#DefaultPlotStyle.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a template instance of this template.</p>
+<p>Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
+may be specified, with .&#8217;s replaced with _ and )_ replaced with __.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.PlotFormats.DefaultPlotStyle.__init__" title="Stoner.PlotFormats.DefaultPlotStyle.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(**kargs)</td>
+<td>Create a template instance of this template.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.PlotFormats.DefaultPlotStyle.annotate" title="Stoner.PlotFormats.DefaultPlotStyle.annotate"><tt class="xref py py-obj docutils literal"><span class="pre">annotate</span></tt></a>(plot,&nbsp;**kargs)</td>
+<td>Call all the routines necessary to annotate the axes etc.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.PlotFormats.DefaultPlotStyle.apply" title="Stoner.PlotFormats.DefaultPlotStyle.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>()</td>
+<td>Scan for all attributes that start <a href="#id1"><span class="problematic" id="id2">templtate_</span></a> and build them into a dictionary to update matplotlib settings with.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.PlotFormats.DefaultPlotStyle.customise" title="Stoner.PlotFormats.DefaultPlotStyle.customise"><tt class="xref py py-obj docutils literal"><span class="pre">customise</span></tt></a>()</td>
+<td>This method is supplied for sub classes to override to provide additional plot customisation after the rc paramaters are updated from the class and instance attributes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.PlotFormats.DefaultPlotStyle.customise_axes" title="Stoner.PlotFormats.DefaultPlotStyle.customise_axes"><tt class="xref py py-obj docutils literal"><span class="pre">customise_axes</span></tt></a>(ax)</td>
+<td>This method is run when we have an axis to manipulate.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.PlotFormats.DefaultPlotStyle.new_figure" title="Stoner.PlotFormats.DefaultPlotStyle.new_figure"><tt class="xref py py-obj docutils literal"><span class="pre">new_figure</span></tt></a>([figure])</td>
+<td>This is called by PlotFile to setup a new figure before we do anything.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.PlotFormats.DefaultPlotStyle.update" title="Stoner.PlotFormats.DefaultPlotStyle.update"><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt></a>(**kargs)</td>
+<td>Update the template with new attributes from keyword arguments.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">fig_height</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fig_width</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.fig_width_pt" title="Stoner.PlotFormats.DefaultPlotStyle.fig_width_pt"><tt class="xref py py-obj docutils literal"><span class="pre">fig_width_pt</span></tt></a></td>
+<td>float(x) -&gt; floating point number</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.show_legend" title="Stoner.PlotFormats.DefaultPlotStyle.show_legend"><tt class="xref py py-obj docutils literal"><span class="pre">show_legend</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.show_title" title="Stoner.PlotFormats.DefaultPlotStyle.show_title"><tt class="xref py py-obj docutils literal"><span class="pre">show_title</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.show_xlabel" title="Stoner.PlotFormats.DefaultPlotStyle.show_xlabel"><tt class="xref py py-obj docutils literal"><span class="pre">show_xlabel</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.show_ylabel" title="Stoner.PlotFormats.DefaultPlotStyle.show_ylabel"><tt class="xref py py-obj docutils literal"><span class="pre">show_ylabel</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.show_zlabel" title="Stoner.PlotFormats.DefaultPlotStyle.show_zlabel"><tt class="xref py py-obj docutils literal"><span class="pre">show_zlabel</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.templat_axes_labelsize" title="Stoner.PlotFormats.DefaultPlotStyle.templat_axes_labelsize"><tt class="xref py py-obj docutils literal"><span class="pre">templat_axes_labelsize</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_axes_color__cycle" title="Stoner.PlotFormats.DefaultPlotStyle.template_axes_color__cycle"><tt class="xref py py-obj docutils literal"><span class="pre">template_axes_color__cycle</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_axes_formatter_limits" title="Stoner.PlotFormats.DefaultPlotStyle.template_axes_formatter_limits"><tt class="xref py py-obj docutils literal"><span class="pre">template_axes_formatter_limits</span></tt></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_axes_grid</span></tt></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_facecolor" title="Stoner.PlotFormats.DefaultPlotStyle.template_figure_facecolor"><tt class="xref py py-obj docutils literal"><span class="pre">template_figure_facecolor</span></tt></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_bottom" title="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_bottom"><tt class="xref py py-obj docutils literal"><span class="pre">template_figure_subplot_bottom</span></tt></a></td>
+<td>float(x) -&gt; floating point number</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_left" title="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_left"><tt class="xref py py-obj docutils literal"><span class="pre">template_figure_subplot_left</span></tt></a></td>
+<td>float(x) -&gt; floating point number</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_right" title="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_right"><tt class="xref py py-obj docutils literal"><span class="pre">template_figure_subplot_right</span></tt></a></td>
+<td>float(x) -&gt; floating point number</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_top" title="Stoner.PlotFormats.DefaultPlotStyle.template_figure_subplot_top"><tt class="xref py py-obj docutils literal"><span class="pre">template_figure_subplot_top</span></tt></a></td>
+<td>float(x) -&gt; floating point number</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_font_size" title="Stoner.PlotFormats.DefaultPlotStyle.template_font_size"><tt class="xref py py-obj docutils literal"><span class="pre">template_font_size</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_legend_fontsize" title="Stoner.PlotFormats.DefaultPlotStyle.template_legend_fontsize"><tt class="xref py py-obj docutils literal"><span class="pre">template_legend_fontsize</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_legend_frameon</span></tt></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_lines_linewidth" title="Stoner.PlotFormats.DefaultPlotStyle.template_lines_linewidth"><tt class="xref py py-obj docutils literal"><span class="pre">template_lines_linewidth</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_text_fontsize" title="Stoner.PlotFormats.DefaultPlotStyle.template_text_fontsize"><tt class="xref py py-obj docutils literal"><span class="pre">template_text_fontsize</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_direction" title="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_direction"><tt class="xref py py-obj docutils literal"><span class="pre">template_xtick_direction</span></tt></a></td>
+<td>str(object=&#8217;&#8216;) -&gt; string</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_labelsize" title="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_labelsize"><tt class="xref py py-obj docutils literal"><span class="pre">template_xtick_labelsize</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_xtick_major_pad</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_xtick_major_size" title="Stoner.PlotFormats.DefaultPlotStyle.template_xtick_major_size"><tt class="xref py py-obj docutils literal"><span class="pre">template_xtick_major_size</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_direction" title="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_direction"><tt class="xref py py-obj docutils literal"><span class="pre">template_ytick_direction</span></tt></a></td>
+<td>str(object=&#8217;&#8216;) -&gt; string</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_labelsize" title="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_labelsize"><tt class="xref py py-obj docutils literal"><span class="pre">template_ytick_labelsize</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_ytick_major_pad</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.DefaultPlotStyle.template_ytick_major_size" title="Stoner.PlotFormats.DefaultPlotStyle.template_ytick_major_size"><tt class="xref py py-obj docutils literal"><span class="pre">template_ytick_major_size</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_ztick_direction</span></tt></td>
+<td>str(object=&#8217;&#8216;) -&gt; string</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_ztick_labelsize</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_ztick_major_pad</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">template_ztick_major_size</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.SNSFile.load.html"
+                        title="previous chapter">SNSFile.load</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html"
+                        title="next chapter">DefaultPlotStyle.__init__</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.PlotFormats.DefaultPlotStyle.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" title="DefaultPlotStyle.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.SNSFile.load.html" title="SNSFile.load"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

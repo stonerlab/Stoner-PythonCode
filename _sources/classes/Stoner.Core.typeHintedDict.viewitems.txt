@@ -1,0 +1,8 @@
+
+
+typeHintedDict.viewitems
+====================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.viewitems

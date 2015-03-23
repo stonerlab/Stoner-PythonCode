@@ -1,0 +1,8 @@
+
+
+TDMSFile.keys
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.keys

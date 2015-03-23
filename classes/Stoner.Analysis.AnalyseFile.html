@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Analysis.AnalyseFile &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="AnalyseFile.SG_Filter" href="Stoner.Analysis.AnalyseFile.SG_Filter.html" />
+    <link rel="prev" title="DataFile.unique" href="Stoner.Core.DataFile.unique.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.SG_Filter.html" title="AnalyseFile.SG_Filter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.DataFile.unique.html" title="DataFile.unique"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stoner-analysis-analysefile">
+<h1>Stoner.Analysis.AnalyseFile<a class="headerlink" href="#stoner-analysis-analysefile" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Analysis.AnalyseFile">
+<em class="property">class </em><tt class="descclassname">Stoner.Analysis.</tt><tt class="descname">AnalyseFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalyseFile</span></tt></a> extends <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a> with numpy and scipy passthrough functions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">There is no separate constructor for this class - it inherits from DataFile</p>
+</div>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></p>
+<p>various forms are recognised:
+:py:function:: DataFile(&#8216;filename&#8217;,&lt;optional filetype&gt;,&lt;args&gt;)</p>
+<blockquote>
+<div>Creates the new DataFile object and then executes the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.load
+method to load data from the given &#64;a filename</div></blockquote>
+<dl class="docutils">
+<dt>:py:function:: DataFile(array)</dt>
+<dd>Creates a new DataFile object and assigns the &#64;a array to the
+<cite>DataFile.data</cite>  attribute.</dd>
+<dt>:py:function:: DataFile(dictionary)</dt>
+<dd>Creates the new DataFile object, but initialises the metadata with
+:parameter dictionary</dd>
+<dt>:py:function:: DataFile(array,dictionary),</dt>
+<dd>Creates the new DataFile object and does the combination of the
+previous two forms.</dd>
+<dt>:py:function:: DataFile(DataFile)</dt>
+<dd><p class="first">Creates the new DataFile object and initialises all data from the
+existing <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> instance. This on the face of it does the same as
+the assignment operator, but is more useful when one or other of the
+DataFile objects is an instance of a sub - class of DataFile</p>
+<blockquote class="last">
+<div><p>definitions above</p>
+<blockquote>
+<div>used to set those public attributes.</div></blockquote>
+</div></blockquote>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A new instance of the DataFile class.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.SG_Filter.html#Stoner.Analysis.AnalyseFile.SG_Filter" title="Stoner.Analysis.AnalyseFile.SG_Filter"><tt class="xref py py-obj docutils literal"><span class="pre">SG_Filter</span></tt></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;...])</td>
+<td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data  :param col: Column of Data to be filtered :type col: index :param prints: Number of data points to use in the filtering window.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Add one column, number or array (b) to another column (a)  :param a: First column to work with :type a: index :param b: Second column to work with.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply" title="Stoner.Analysis.AnalyseFile.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>(func,&nbsp;col[,&nbsp;replace,&nbsp;header])</td>
+<td>Applies the given function to each row in the data set and adds to the data set</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><tt class="xref py py-obj docutils literal"><span class="pre">bin</span></tt></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode])</td>
+<td>Bin x-y data into new values of x with an error bar  :param xcol: Index of column of data with X values :type xcol: index :param ycol: Index of column of data with Y values :type ycol: index :param bins: Number of bins (if integer) or size of bins (if float) :type bins: int or float :param mode: &#8220;log&#8221; or &#8220;lin&#8221; for logarithmic or linear binning  :type mode: string  :Keyword Arguments: * <strong>yerr</strong> (<em>index</em>) &#8211;                       Column with y-error data if present.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.chi2mapping.html#Stoner.Analysis.AnalyseFile.chi2mapping" title="Stoner.Analysis.AnalyseFile.chi2mapping"><tt class="xref py py-obj docutils literal"><span class="pre">chi2mapping</span></tt></a>(ini_file,&nbsp;func)</td>
+<td>Non-linear fitting using the <a class="reference internal" href="../Stoner.html#module-Stoner.nlfit" title="Stoner.nlfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.nlfit</span></tt></a> module  :param ini_file: Path to ini file with model :type ini_file: string :param func_name: Name of function to fit with (as seen in FittingFuncs.py module in Stoner)                   or the function itself.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.clip.html#Stoner.Analysis.AnalyseFile.clip" title="Stoner.Analysis.AnalyseFile.clip"><tt class="xref py py-obj docutils literal"><span class="pre">clip</span></tt></a>(clipper[,&nbsp;column])</td>
+<td>Clips the data based on the column and the clipper value  :param column: Column to look for the maximum in :type column: index :param clipper: Either a tuple of (min,max) or a numpy.ndarray -                 in which case the max and min values in that array will be                 used as the clip limits :type clipper: tuple or array  :returns: This instance.&#8221;  ..</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-obj docutils literal"><span class="pre">curve_fit</span></tt></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma,&nbsp;...])</td>
+<td>General curve fitting function passed through from scipy  :param func: The fitting function with the form def f(x,*p) where p is a list of fitting parameters :type func: callable :param xcol: The index of the x-column data to fit :type xcol: index :param ycol: The index of the y-column data to fit  :type ycol: index  :Keyword Arguments: * <strong>p0</strong> (<em>list, tuple or array</em>) &#8211;                       A vector of initial parameter values to try                     * <strong>sigma</strong> (<em>index</em>) &#8211;                       The index of the column with the y-error bars                     * <a href="#id1"><span class="problematic" id="id2">**</span></a>bounds (callable) A callable object that evaluates true if a row is to be included.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.decompose.html#Stoner.Analysis.AnalyseFile.decompose" title="Stoner.Analysis.AnalyseFile.decompose"><tt class="xref py py-obj docutils literal"><span class="pre">decompose</span></tt></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
+<td>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.diffsum.html#Stoner.Analysis.AnalyseFile.diffsum" title="Stoner.Analysis.AnalyseFile.diffsum"><tt class="xref py py-obj docutils literal"><span class="pre">diffsum</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Subtract one column, number or array (b) from another column (a) and divbdatae by their sums  :param a: First column to work with :type a: index :param b: Second column to work with.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.divide.html#Stoner.Analysis.AnalyseFile.divide" title="Stoner.Analysis.AnalyseFile.divide"><tt class="xref py py-obj docutils literal"><span class="pre">divide</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Divide one column (a) by  another column, number or array (b)  :param a: First column to work with :type a: index :param b: Second column to work with.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.integrate.html#Stoner.Analysis.AnalyseFile.integrate" title="Stoner.Analysis.AnalyseFile.integrate"><tt class="xref py py-obj docutils literal"><span class="pre">integrate</span></tt></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;...])</td>
+<td>Inegrate a column of data, optionally returning the cumulative integral  :param xcol: The X data column index (or header) :type xcol: index    :Keyword Arguments: * <strong>result</strong> (<em>index or None</em>) &#8211;                       Either a column index (or header) to overwrite with the cumulative data,                       or True to add a new column or None to not store the cumulative result.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><tt class="xref py py-obj docutils literal"><span class="pre">interpolate</span></tt></a>(newX[,&nbsp;kind])</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">param ewX:</th><td class="field-body">Row indices or X column values to interpolate with</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.make_bins.html#Stoner.Analysis.AnalyseFile.make_bins" title="Stoner.Analysis.AnalyseFile.make_bins"><tt class="xref py py-obj docutils literal"><span class="pre">make_bins</span></tt></a>(xcol,&nbsp;bins,&nbsp;mode,&nbsp;**kargs)</td>
+<td>Utility method to generate bin boundaries and centres along an axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd maximum value and index in a column of data  :param column: Column to look for the maximum in  :type column: index  :Keyword Arguments: <strong>bounds</strong> (<em>callable</em>) &#8211;                     A callable function that takes a single argument list of                     numbers representing one row, and returns True for all rows to search in.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.mean.html#Stoner.Analysis.AnalyseFile.mean" title="Stoner.Analysis.AnalyseFile.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd mean value of a data column  :param column: Column to look for the maximum in  :type column: index  :Keyword Arguments: <strong>bounds</strong> (<em>callable</em>) &#8211;                     A callable function that takes a single argument list of                     numbers representing one row, and returns True for all rows to search in.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd minimum value and index in a column of data  :param column: Column to look for the maximum in  :type column: index  :Keyword Arguments: <strong>bounds</strong> (<em>callable</em>) &#8211;                     A callable function that takes a single argument list of                     numbers representing one row, and returns True for all rows to search in.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.mpfit.html#Stoner.Analysis.AnalyseFile.mpfit" title="Stoner.Analysis.AnalyseFile.mpfit"><tt class="xref py py-obj docutils literal"><span class="pre">mpfit</span></tt></a>(func,&nbsp;xcol,&nbsp;ycol,&nbsp;p_info[,&nbsp;func_args,&nbsp;...])</td>
+<td>Runs the mpfit algorithm to do a curve fitting with constrined bounds etc          mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)  :param func: Fitting function def func(x,parameters, <strong>func_args) :type func: callable  :param p_info: Defines the fitting parameters  :type p_info: list of dictionaries  :Keyword Arguments: * **sigma</strong> (<em>index</em>) &#8211;                       weights of the data poiints.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.mpfit_iterfunct.html#Stoner.Analysis.AnalyseFile.mpfit_iterfunct" title="Stoner.Analysis.AnalyseFile.mpfit_iterfunct"><tt class="xref py py-obj docutils literal"><span class="pre">mpfit_iterfunct</span></tt></a>(myfunct,&nbsp;p,&nbsp;iterator,&nbsp;fnorm)</td>
+<td>Function that is called on every iteration of the non-linerar fitting  :param myfunct: Function being modelled :type myfunct: callable :param iteration: Iteration number :type iteration: int :param fnorm: ? :type fnorm: list :param functkw: Keywords being passed to the user function :type functkw: dictionary :param parinfo: PArameter informatuion :type parinfo: list of dicts :param quiet: 0 to suppress output :type quiet: int :param dof: Figure of merit ?  :type dof: float  ..</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.mulitply.html#Stoner.Analysis.AnalyseFile.mulitply" title="Stoner.Analysis.AnalyseFile.mulitply"><tt class="xref py py-obj docutils literal"><span class="pre">mulitply</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Multiply one column (a) by  another column, number or array (b)  :param a: First column to work with :type a: index :param b: Second column to work with.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.nlfit.html#Stoner.Analysis.AnalyseFile.nlfit" title="Stoner.Analysis.AnalyseFile.nlfit"><tt class="xref py py-obj docutils literal"><span class="pre">nlfit</span></tt></a>(ini_file,&nbsp;func)</td>
+<td>Non-linear fitting using the <a class="reference internal" href="../Stoner.html#module-Stoner.nlfit" title="Stoner.nlfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.nlfit</span></tt></a> module</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-obj docutils literal"><span class="pre">normalise</span></tt></a>(target,&nbsp;base[,&nbsp;replace,&nbsp;header])</td>
+<td>Normalise data columns by dividing through by a base column value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><tt class="xref py py-obj docutils literal"><span class="pre">peaks</span></tt></a>([ycol,&nbsp;width,&nbsp;significance,&nbsp;xcol,&nbsp;...])</td>
+<td>Locates peaks and/or troughs in a column of data by using SG-differentiation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><tt class="xref py py-obj docutils literal"><span class="pre">polyfit</span></tt></a>([xcol,&nbsp;ycol,&nbsp;polynomial_order,&nbsp;...])</td>
+<td>Pass through to numpy.polyfit  :param xcol: Index to the column in the data with the X data in it :type xcol: index :param ycol: Index to the column int he data with the Y data in it :type ycol: index :param polynomial_order: Order of polynomial to fit (default 2) :param bounds: A function that evaluates True if the current row should be included in the fit :type bounds: callable :param result: Add the fitted data to the current data object in a new column (default don&#8217;t add) :type result: index or None :param replace: Overwrite or insert new data if result is not None (default False) :type replace: bool :param header: Name of column_header of replacement data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><tt class="xref py py-obj docutils literal"><span class="pre">span</span></tt></a>([column,&nbsp;bounds])</td>
+<td>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into  AnalyseFile.max and  AnalyseFile.min  :param column: Column to look for the maximum in  :type column: index  :Keyword Arguments: <strong>bounds</strong> (<em>callable</em>) &#8211;                     A callable function that takes a single argument list of                     numbers representing one row, and returns True for all rows to search in.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split" title="Stoner.Analysis.AnalyseFile.split"><tt class="xref py py-obj docutils literal"><span class="pre">split</span></tt></a>([xcol,&nbsp;func])</td>
+<td>Splits the current <a class="reference internal" href="#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> object into multiple <a class="reference internal" href="#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects where each one contains the rows from the original object which had the same value of a given column.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-obj docutils literal"><span class="pre">subtract</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Subtract one column, number or array (b) from another column (a)  :param a: First column to work with :type a: index :param b: Second column to work with.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><tt class="xref py py-obj docutils literal"><span class="pre">threshold</span></tt></a>(threshold[,&nbsp;col,&nbsp;rising,&nbsp;falling,&nbsp;...])</td>
+<td>Finds partial indices where the data in column passes the threshold, rising or falling  :param col: Column index to look for data in :type col: index :param threshold: Value to look for in column col  :type threshold: float  :Keyword Arguments: * <strong>rising</strong> (<em>bool</em>) &#8211;                       look for case where the data is increasing in value (defaukt True)                     * <strong>falling</strong> (<em>bool</em>) &#8211;                       look for case where data is fallinh in value (default False)                     * <strong>xcol</strong> (<em>index or None</em>) &#8211;                       rather than returning a fractional row index, return the                       interpolated value in column xcol                       all_vals (bool): return all crossing points of the threshold or just the first.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Core.DataFile.unique.html"
+                        title="previous chapter">DataFile.unique</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.SG_Filter.html"
+                        title="next chapter">AnalyseFile.SG_Filter</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.SG_Filter.html" title="AnalyseFile.SG_Filter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.DataFile.unique.html" title="DataFile.unique"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

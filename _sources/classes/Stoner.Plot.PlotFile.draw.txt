@@ -1,0 +1,8 @@
+
+
+PlotFile.draw
+=========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.draw

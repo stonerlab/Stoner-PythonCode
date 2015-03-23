@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.swap_column
+=============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.swap_column

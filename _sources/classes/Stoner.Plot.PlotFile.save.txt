@@ -1,0 +1,8 @@
+
+
+PlotFile.save
+=========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.save

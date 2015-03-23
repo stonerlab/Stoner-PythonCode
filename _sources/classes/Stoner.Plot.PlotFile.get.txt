@@ -1,0 +1,8 @@
+
+
+PlotFile.get
+========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.get

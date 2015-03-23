@@ -1,0 +1,8 @@
+
+
+AnalyseFile.insert_rows
+=======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.insert_rows

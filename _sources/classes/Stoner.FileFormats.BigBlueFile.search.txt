@@ -1,0 +1,8 @@
+
+
+BigBlueFile.search
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.search

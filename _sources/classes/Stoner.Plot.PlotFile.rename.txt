@@ -1,0 +1,8 @@
+
+
+PlotFile.rename
+===========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.rename

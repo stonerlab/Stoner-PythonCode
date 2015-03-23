@@ -1,0 +1,8 @@
+
+
+DataFile.meta
+=========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.meta

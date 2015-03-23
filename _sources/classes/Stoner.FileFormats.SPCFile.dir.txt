@@ -1,0 +1,8 @@
+
+
+SPCFile.dir
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.dir

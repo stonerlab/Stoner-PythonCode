@@ -1,0 +1,8 @@
+
+
+PlotFile.quiver_plot
+================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.quiver_plot

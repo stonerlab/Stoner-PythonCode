@@ -1,0 +1,8 @@
+
+
+RasorFile.find_col
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.find_col

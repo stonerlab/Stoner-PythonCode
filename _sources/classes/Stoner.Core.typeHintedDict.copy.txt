@@ -1,0 +1,8 @@
+
+
+typeHintedDict.copy
+===============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.copy

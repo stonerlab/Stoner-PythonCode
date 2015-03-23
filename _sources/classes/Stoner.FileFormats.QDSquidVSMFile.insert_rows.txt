@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.insert_rows
+=============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.insert_rows

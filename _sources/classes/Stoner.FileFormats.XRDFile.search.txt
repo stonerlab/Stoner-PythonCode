@@ -1,0 +1,8 @@
+
+
+XRDFile.search
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.search

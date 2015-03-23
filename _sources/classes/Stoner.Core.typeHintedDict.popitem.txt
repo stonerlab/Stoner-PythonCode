@@ -1,0 +1,8 @@
+
+
+typeHintedDict.popitem
+==================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.popitem

@@ -1,0 +1,8 @@
+
+
+AnalyseFile.threshold
+=====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.threshold

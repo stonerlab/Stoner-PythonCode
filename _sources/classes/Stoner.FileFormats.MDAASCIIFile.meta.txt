@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.meta
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.meta

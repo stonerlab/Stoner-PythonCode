@@ -1,0 +1,8 @@
+
+
+SPCFile.del_rows
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.del_rows

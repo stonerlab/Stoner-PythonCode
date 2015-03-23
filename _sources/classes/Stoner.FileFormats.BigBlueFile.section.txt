@@ -1,0 +1,8 @@
+
+
+BigBlueFile.section
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.section

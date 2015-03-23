@@ -1,0 +1,30 @@
+Stoner.FileFormats.QDSquidVSMFile
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: QDSquidVSMFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~QDSquidVSMFile.load
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~QDSquidVSMFile.patterns
+      ~QDSquidVSMFile.priority
+   
+   

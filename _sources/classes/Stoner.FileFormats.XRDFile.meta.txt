@@ -1,0 +1,8 @@
+
+
+XRDFile.meta
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.meta

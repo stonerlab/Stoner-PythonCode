@@ -1,0 +1,8 @@
+
+
+SPCFile.section
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.section

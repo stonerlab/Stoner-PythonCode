@@ -1,0 +1,8 @@
+
+
+TDMSFile.columns
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.columns

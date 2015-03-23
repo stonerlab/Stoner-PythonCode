@@ -1,0 +1,31 @@
+Stoner.FileFormats.CSVFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: CSVFile
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~CSVFile.load
+      ~CSVFile.save
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CSVFile.patterns
+      ~CSVFile.priority
+   
+   

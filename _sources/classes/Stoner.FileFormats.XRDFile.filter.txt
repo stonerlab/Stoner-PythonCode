@@ -1,0 +1,8 @@
+
+
+XRDFile.filter
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.filter

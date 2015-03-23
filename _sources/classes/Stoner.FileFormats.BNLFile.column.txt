@@ -1,0 +1,8 @@
+
+
+BNLFile.column
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BNLFile.column

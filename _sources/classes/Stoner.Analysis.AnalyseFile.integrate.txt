@@ -1,0 +1,8 @@
+
+
+AnalyseFile.integrate
+=====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.integrate

@@ -1,0 +1,8 @@
+
+
+FmokeFile.search
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.search

@@ -1,0 +1,8 @@
+
+
+typeHintedDict.export
+=================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.export

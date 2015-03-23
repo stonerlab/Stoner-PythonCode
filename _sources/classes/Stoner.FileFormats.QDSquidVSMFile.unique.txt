@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.unique
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.unique

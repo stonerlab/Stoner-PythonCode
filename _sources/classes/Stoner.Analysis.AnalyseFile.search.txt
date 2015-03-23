@@ -1,0 +1,8 @@
+
+
+AnalyseFile.search
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.search

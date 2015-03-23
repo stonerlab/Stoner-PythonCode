@@ -1,0 +1,8 @@
+
+
+BigBlueFile.sort
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.sort

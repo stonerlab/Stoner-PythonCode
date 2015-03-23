@@ -1,0 +1,8 @@
+
+
+HDF5File.search
+===========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: HDF5File.search

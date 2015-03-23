@@ -1,0 +1,8 @@
+
+
+AnalyseFile.bin
+===============================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.bin

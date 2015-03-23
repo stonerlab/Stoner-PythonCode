@@ -1,0 +1,8 @@
+
+
+CSVFile.del_rows
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.del_rows

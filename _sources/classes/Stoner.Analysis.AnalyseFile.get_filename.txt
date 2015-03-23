@@ -1,0 +1,8 @@
+
+
+AnalyseFile.get_filename
+========================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.get_filename

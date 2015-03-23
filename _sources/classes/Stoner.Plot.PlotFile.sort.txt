@@ -1,0 +1,8 @@
+
+
+PlotFile.sort
+=========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.sort

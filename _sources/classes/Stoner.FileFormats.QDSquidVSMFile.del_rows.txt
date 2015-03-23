@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.del_rows
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.del_rows

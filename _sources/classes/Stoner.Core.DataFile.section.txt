@@ -1,0 +1,8 @@
+
+
+DataFile.section
+============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.section

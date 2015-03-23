@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.HDF5.HDF5File &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="HDF5File.__init__" href="Stoner.HDF5.HDF5File.__init__.html" />
+    <link rel="prev" title="DefaultPlotStyle.update" href="Stoner.PlotFormats.DefaultPlotStyle.update.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5File.__init__.html" title="HDF5File.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="stoner-hdf5-hdf5file">
+<h1>Stoner.HDF5.HDF5File<a class="headerlink" href="#stoner-hdf5-hdf5file" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.HDF5.HDF5File">
+<em class="property">class </em><tt class="descclassname">Stoner.HDF5.</tt><tt class="descname">HDF5File</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sub class of DataFile that sores itself in a HDF5File or group.</p>
+<dl class="method">
+<dt>
+<tt class="descname">load(): load a file from hdf5 file</tt></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt>
+<tt class="descname">save(): Save a dataset to an hdf5 file.</tt></dt>
+<dd></dd></dl>
+
+<dl class="docutils">
+<dt>ArgsL</dt>
+<dd>args (tuple): Supplied arguments, only recognises one though !
+kargs (dict): Dictionary of keyword arguments</dd>
+</dl>
+<p>If the first non-keyword arguement is not an h5py File or Group then
+initialises with a blank parent constructor and then loads data, otherwise,
+calls parent constructor.</p>
+<p>Datalayout is dead simple, the numerical data is in a dataset called <em>data</em>,
+metadata are attribtutes of a group called <em>metadata</em> with the keynames being the
+full name + typehint of the stanard DataFile metadata dictionary
+<em>column_headers</em> are an attribute of the root file/group
+<em>filename</em> is set from either an attribute called filename, or from the
+group name or from the hdf5 filename.
+The root has an attribute <em>type</em> that must by &#8216;HDF5File&#8217; otherwise the load routine
+will refuse to load it. This is to try to avoid loading rubbish from random hdf files.</p>
+<dl class="method">
+<dt id="Stoner.HDF5.HDF5File.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5File.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5File.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor to catch initialising with an h5py.File or h5py.Group</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.__init__.html#Stoner.HDF5.HDF5File.__init__" title="Stoner.HDF5.HDF5File.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor to catch initialising with an h5py.File or h5py.Group</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.load.html#Stoner.HDF5.HDF5File.load" title="Stoner.HDF5.HDF5File.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename])</td>
+<td>Loads data from a hdf5 file</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5File.save.html#Stoner.HDF5.HDF5File.save" title="Stoner.HDF5.HDF5File.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([h5file])</td>
+<td>Writes the current object into  an hdf5 file or group within a file in a fashion that is compatible with being loaded in again with the same class.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">compression</span></tt></td>
+<td>str(object=&#8217;&#8216;) -&gt; string</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">compression_opts</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.DefaultPlotStyle.update.html"
+                        title="previous chapter">DefaultPlotStyle.update</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.HDF5.HDF5File.__init__.html"
+                        title="next chapter">HDF5File.__init__</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.HDF5.HDF5File.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.HDF5.HDF5File.__init__.html" title="HDF5File.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

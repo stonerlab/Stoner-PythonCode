@@ -1,0 +1,8 @@
+
+
+AnalyseFile.rows
+================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.rows

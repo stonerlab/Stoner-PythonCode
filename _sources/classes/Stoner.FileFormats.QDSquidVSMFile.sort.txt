@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.sort
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.sort

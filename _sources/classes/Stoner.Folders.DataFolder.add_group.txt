@@ -1,0 +1,8 @@
+
+
+DataFolder.add_group
+===================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.add_group

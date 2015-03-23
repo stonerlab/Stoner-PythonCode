@@ -1,0 +1,8 @@
+
+
+TDMSFile.load
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.load
