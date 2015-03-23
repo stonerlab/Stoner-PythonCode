@@ -2,7 +2,7 @@ axes.grid:False
 axes.labelsize:10
 figure.autolayout:True
 figure.figsize: 3.34,3
-font.family:"Times New Roman"
+font.family:Times New Roman
 font.size:10
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
 legend.borderpad    :0    # border whitespace in fontsize units

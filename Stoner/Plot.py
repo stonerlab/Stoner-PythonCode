@@ -227,10 +227,10 @@ class PlotFile(DataFile):
             figure,ax=self.template.new_figure(figure.number)
         elif isinstance(self.__figure,  matplotlib.figure.Figure):
             figure=self.__figure
-            ax=self.__figure.axes[0]
+            ax=self.__figure.gca()
         else:
             figure,ax=self.template.new_figure(None)
-        return figure
+        return figure,ax
 
 
     def _fix_kargs(self,function=None, defaults=None,otherkargs=None,**kargs):
@@ -528,7 +528,7 @@ class PlotFile(DataFile):
                   "ylabel":self._col_label(self.find_col(ycol))}
         kargs,nonkargs=self._fix_kargs(None,defaults,**kargs)
         plotter=nonkargs["plotter"]
-        self.__figure=self._fix_fig(nonkargs["figure"])
+        self.__figure,ax=self._fix_fig(nonkargs["figure"])
         if "cmap" in kargs:
             cmap=cm.get_cmap(kargs["cmap"])
         elif "cmap" in nonkargs:
@@ -576,13 +576,13 @@ class PlotFile(DataFile):
             width="{}%".format(width)
         elif isinstance(width,float) and 0<width<=1:
             width="{}%".format(width*100)
-        elif not isinsance(width,string_types):
+        elif not isinstance(width,string_types):
             raise RuntimeErroror("didn't Recognize width specification {}".format(width))
         if isinstance(height,int):
             height="{}%".format(height)
         elif isinstance(height,float) and 0<height<=1:
             height="{}%".format(height*100)
-        elif not isinsance(height,string_types):
+        elif not isinstance(height,string_types):
             raise RuntimeErroror("didn't Recognize width specification {}".format(width))
         if parent is None:
             parent=plt.gca()
@@ -747,12 +747,12 @@ class PlotFile(DataFile):
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
             multiple (string): how to handle multiple y-axes with a common x axis. Options are:
-            
+
                 - *common* single y-axis (default)
                 - *panels* panels sharing common x axis
                 - *sub plots* sub plots
                 - *y2* single axes with 2 y scales
-                
+
             **kargs (dict): Other arguments are passed on to the plotter.
 
         Returns:
@@ -815,9 +815,9 @@ class PlotFile(DataFile):
                 m=int(_np_.floor(_np_.sqrt(len(c.ycol))))
                 n=int(_np_.ceil(len(c.ycol)/m))
                 self.__figure,ax=plt.subplots(nrows=m,ncols=n)
-            self.__figure=self._fix_fig(self.__figure)
+            self.__figure,ax=self._fix_fig(self.__figure)
         else:
-            self.__figure=self._fix_fig(nonkargs["figure"])
+            self.__figure,ax=self._fix_fig(nonkargs["figure"])
 
         for ix in range(len(c.ycol)):
             if multiple!="common":
@@ -828,7 +828,8 @@ class PlotFile(DataFile):
                     cc=plt.gca()._get_lines.color_cycle
                     for i in range(ix):
                         cc.next()
-            self.ax=ix
+            if len(c.ycol)>1 and multiple in ["y2","panels","subplots"]:
+                self.ax=ix # We;re manipulating the plotting here
             if isinstance(fmt,list): # Fix up the format
                 fmt_t=fmt[ix]
             else:
@@ -896,7 +897,7 @@ class PlotFile(DataFile):
             otherkargs=[]
         kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
         plotter=nonkargs["plotter"]
-        self.__figure=self._fix_fig(nonkargs["figure"])
+        self.__figure,ax=self._fix_fig(nonkargs["figure"])
         plotter(xdata, ydata, zdata, **kargs)
         if plotter!=self.__SurfPlotter:
             del(nonkargs["zlabel"])
@@ -1061,7 +1062,7 @@ class PlotFile(DataFile):
                     "minshaft","minlength","pivot","color"]
         kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
         plotter=nonkargs["plotter"]
-        self.__figure=self._fix_fig(nonkargs["figure"])
+        self.__figure,ax=self._fix_fig(nonkargs["figure"])
         fig=plotter(self.column(self.find_col(xcol)),self.column(self.find_col(ycol)),self.column(self.find_col(ucol)),self.column(self.find_col(vcol)),**kargs)
         self._fix_titles(0,"non",**nonkargs)
         return fig
@@ -1105,7 +1106,9 @@ class PlotFile(DataFile):
             The new matplotlib.axes instance.
         """
         ax=self.fig.gca()
-        return ax.twiny()
+        ax2=ax.twiny()
+        plt.sca(ax2)
+        return ax2
 
     def y2(self):
         """Generate a new set of axes with a second y-scale.
@@ -1116,6 +1119,8 @@ class PlotFile(DataFile):
         ax=self.fig.gca()
         ax2=ax.twinx()
         plt.subplots_adjust(right=self.__figure.subplotpars.right-0.05)
+        plt.sca(ax2)
+        return ax2
 
 
 def hsl2rgb(h,s,l):

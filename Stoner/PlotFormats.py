@@ -116,7 +116,7 @@ class DefaultPlotStyle(object):
     ylocater=AutoLocator
     zlocater=AutoLocator
     stylename="default"
-    
+
     subplot_settings={"panels":{"xlabel":(False,False,True),
                    "ylabel":(True,True,True),
                    "zlabel":(False,False,False),
@@ -129,7 +129,7 @@ class DefaultPlotStyle(object):
                    "ylabel":(True,True,True),
                    "zlabel":(False,False,False),
                    "title":(True,False,False)}}
-                   
+
     def __init__(self,**kargs):
         """Create a template instance of this template.
 
@@ -137,6 +137,14 @@ class DefaultPlotStyle(object):
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
         self.update(**kargs)
+
+    def __call__(self,**kargs):
+        """Calling the template object can manipulate the rcParams that will be set."""
+        for k in kargs:
+            nk=k.replace("_",".").replace("..","_")
+            if nk in plt.rcParams:
+                super(DefaultPlotStyle,self).__setattr__("template_"+k,kargs[k])
+
 
     def __getattr__(self,name):
         """Provide magic to read certain attributes of the template."""
@@ -160,6 +168,7 @@ class DefaultPlotStyle(object):
         elif name.startswith("template_"):
             attrname=name[9:].replace("_",".").replace("..","_")
             plt.rcParams[attrname]=value
+            super(DefaultPlotStyle,self).__setattr__(name,value)
         else:
             super(DefaultPlotStyle,self).__setattr__(name,value)
 
@@ -282,7 +291,7 @@ class DefaultPlotStyle(object):
                            "ylabel":True,
                            "zlabel":True,
                            "title":True}
-            
+
         if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
             plt.xlabel(str(kargs["xlabel"]),size=self.template_axes_labelsize)
         if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
