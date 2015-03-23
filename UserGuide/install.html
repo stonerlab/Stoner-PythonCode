@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation of Stoner Package &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="next" title="Loading and Examining Data" href="datafile.html" />
+    <link rel="prev" title="The Stoner Python Package User Guide" href="ugindex.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datafile.html" title="Loading and Examining Data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ugindex.html" title="The Stoner Python Package User Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installation-of-stoner-package">
+<h1>Installation of Stoner Package<a class="headerlink" href="#installation-of-stoner-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This manual provides a user guide and reference for the Stoner python pacakage.
+The Stoner python package provides a set of python classes and functions for
+reading, manipulating and plotting data acquired with the lab equipment in the
+Condensed Matter Physics Group at the University of Leeds.</p>
+<div class="section" id="getting-the-stoner-package">
+<h3>Getting the Stoner Package<a class="headerlink" href="#getting-the-stoner-package" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to get and install the package is to make use of the EGG
+package on PyPi. This will install a reasonably stable release into your
+Python setup. Open a command prompt and run:</p>
+<div class="highlight-python"><div class="highlight"><pre>easy_install Stoner
+</pre></div>
+</div>
+<p>The advantage of getting the package this way is that it is installed into your Python path properly.
+The disadvantage is that you don&#8217;t get this user guide and the version may not be the most
+up to date (although given the fragile and continuously being broken state of the code that may be
+a good thing !).</p>
+</div>
+<div class="section" id="getting-the-latest-development-code">
+<h3>Getting the Latest Development Code<a class="headerlink" href="#getting-the-latest-development-code" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These instructions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
+download the source from GitHub</p>
+</div>
+<p>The source code for the Stoner python module is kept on github using the git
+revision control tool. A nightly development release of the code is available for copying and
+use in <tt class="docutils literal"><span class="pre">\\stonerlab\data\software\python\PythonCode\</span></tt>.</p>
+<p>The Stoner Package currently depends on a number of other modules. These are installed on the lab
+machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib.  The easiest way to get a Python
+installation with all the necessary dependencies for the Stoner Package is to install the <em>Enthought Python Distribution</em>,
+Canopy*. Installers for Windows, MacOS and Linux are kept in <tt class="docutils literal"><span class="pre">\\stonerlab\data\software\Python</span></tt></p>
+</div>
+</div>
+<div class="section" id="using-the-stoner-package">
+<h2>Using the Stoner Package<a class="headerlink" href="#using-the-stoner-package" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you have installed the Stoner Package with the easy_install command
+given above, then you can disregard this section.</p>
+</div>
+<p>The easiest way to use the Stoner Package is to add the path to the directory
+containing Stoner.py to your PYTHONPATH environment variable. This can be done
+on Macs and Linux by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd &lt;path to PythonCode directory&gt;
+export PYTHONPATH=`pwd`:$PYTHONPATH
+</pre></div>
+</div>
+<p>On a windows machine the easiest way is to create a permanent entry to the
+folder in the system environment variables. Go to Control Panel -&gt; System -&gt;
+Advanced Tab -&gt; click on Environment button and then add or edit an entry to the
+system variable PYTHONPATH.</p>
+<p>One this has been done, the Stoner module may be loaded from python command
+line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>This document provides a user guide to the Stoner package and its various modules and classes.
+It is not a reference to the library but instead aims to explain the various operations that
+are possible and provide short examples of use. For the API reference for the library, please
+see the <em>Python Code API</em> compiled windows help file. There is also a single sided cheat sheet that
+summarises the examples in this user guide.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The code is still under active development to fix bugs and add features. Generally things don&#8217;t
+get deliberately broken, but accidents happen, so if something stops working, please either fix and
+commit the code or tell Gavin.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation of Stoner Package</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#getting-the-stoner-package">Getting the Stoner Package</a></li>
+<li><a class="reference internal" href="#getting-the-latest-development-code">Getting the Latest Development Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-the-stoner-package">Using the Stoner Package</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ugindex.html"
+                        title="previous chapter">The Stoner Python Package User Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="datafile.html"
+                        title="next chapter">Loading and Examining Data</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/UserGuide/install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datafile.html" title="Loading and Examining Data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ugindex.html" title="The Stoner Python Package User Guide"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

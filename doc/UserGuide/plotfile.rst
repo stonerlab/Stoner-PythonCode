@@ -187,6 +187,15 @@ demonstrates the use of the *plotter* keyword, analogous to the 2D and 3D exampl
 As the mayavi.mlab quiver3d plotting function doesn't support a title, and axes labels by default, these are not used by
 default in this function.
 
+Very Quick Plotting
+===================
+
+For convenience, a :py:meth:`PlotFile.plot` method is defined that will try to work out the necessary details. In combination
+with the :py:attr:`Stoner.Core.DataFile.setas` attribute it allows very quick plots to be constructed.
+
+.. plot:: samples/single_plot.py
+   :include-source:
+
 
 Getting More Control on the Figure
 ==================================
@@ -198,7 +207,7 @@ combined in a single figure.::
     p1.plot_xy(0,1,'r-')
     p2.plot_xy(0,1,'bo',figure=p1.fig)
 
- Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotFile`
+Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotFile`
 instance.
 
 There's a couple of extra methods that just pass through to the pyplot equivalents::
@@ -240,11 +249,10 @@ Plotting on Second Y (or X) Axes
 ================================
 
 To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`PlotFile.y2` method is
-provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.::
+provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.
 
-    p.plot_xy(0,1,"k-",label="First plot")
-    p.y2()
-    p.plot_xy(0,2,"r+",label="Second Plot)
+.. plot:: samples/double_y_plot.py
+   :include-source:
 
 There is an equivalent :py:meth:`PlotFile.x2` method to create a second set of axes with a common y scale but different x scales.
 
@@ -256,7 +264,7 @@ To work out which set of axes you are current working with the :py:attr:`PlotFil
     p.ax=0 # Set back to first x,y1 plot
     p.label="Plot 1"
     p.ax=1 # Set to the second
-    p.yable="Plot 2"
+    p.yabel="Plot 2"
 
 
 Plot Templates
@@ -268,21 +276,23 @@ the :py:attr:`PlotFile.template` attribute can help here.
 
 A :py:attr:`PlotFile.template` template is a set of instructions that controls the default settings for many
 aspects of a matplotlib figure's style. In addition the template allows for pyplot formatting commands to be
-executed during the process of plotting a figure.::
+executed during the process of plotting a figure.
 
-    from Stoner.PlotFormats import JTBStylePlot
-    p=PlotFile()
-    p.template=JTBStylePlot()
-    p.plot()
-
-    p.template=JTBStylePlot(axes_color__cycle=["r","b","g"])
-    p.figure()
-    p.plot()
+.. plot:: samples/template2.py
+   :include-source:
 
 The template can either be set by passing a subclass of :py:class:`Stoner.PlotFormats.DefaultPlotStyle` or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
-settings defined by the template class with your own choice - or indeed, to add further style attributes. You
-can also copy the style template from one plot to the next::
+settings defined by the template class with your own choice - or indeed, to add further style attributes. This
+can be done by either calling the template and passing it arguments as keywords, or by settiong attributes directly on the template.
+Because the matplotlib *rcParams* dictionary has keys that are not valid Python identifiers, periods in the rcParams keys
+are translated as underscores and thus underscores become double underscores. When setting attributes on the template directly,
+prefix the translated rcParam key with *template_*.
+
+.. plot:: samples/template.py
+   :include-source:
+
+You can also copy the style template from one plot to the next.
 
     q=SP.PlotFile()
     q.template=p.template
@@ -303,13 +313,10 @@ Adding an Inset to a Figure
 
 The :py:meth:`PlotFile.inset` method can be used to creagte an inset in the current figure. Subsequent plots
 will be to the inset until a new set of axes are chosen. The :py:class:`pyplot.Axes` instance of the inset is appended to the
-:py:attr:`PlotFile.axes` attribute.::
+:py:attr:`PlotFile.axes` attribute.
 
-    p.setas="xy"
-    p.plot()
-    p.inset(loc=1,width="25%",height=1)
-    p.setas="x.y"
-    p.plot()
+.. plot:: samples/inset_plot.py
+   :include-source:
 
 The *loc* parameter specifies the location of the inset, the width and height the size (either as a percentage or
 fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
@@ -327,6 +334,30 @@ inset.
     *   *loc* = 0 centre inset
 
 
+Handling More than One Column of Y Data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. todo::
-   Write about :py:attr:`PlotFile.subplots`
+By default if :py:meth:`PlotFile.plot_xy` is given more than one column of y data, it will plot all
+of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of mangitude
+this can result in a less than helpful plot.
+
+.. plot:: samples/common_y_plot.py
+   :include-source:
+
+The :py:meth:`PlotFile.plot_xy` method (and also the :py:meth:`PlotFile.plot` method when doing 2D plots) will take
+a keyword argument *multiple* that can offer a number of alternatives. If you have just two y columns, or the the
+second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.
+
+.. plot:: samples/multiple_y2_plot.py
+   :include-source:
+
+Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a *ganged plot*) then
+*multiple* can be set of *panels*.
+
+.. plot:: samples/multiple_panels_plot.py
+   :include-source:
+
+Finally, you can also simply plot the y data as a grid of independent subplots.
+
+.. plot:: samples/subplot_plot.py
+   :include-source:

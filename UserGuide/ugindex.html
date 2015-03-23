@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Stoner Python Package User Guide &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="next" title="Installation of Stoner Package" href="install.html" />
+    <link rel="prev" title="Stoner-PythonCode" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of Stoner Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Stoner-PythonCode"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-stoner-python-package-user-guide">
+<h1>The Stoner Python Package User Guide<a class="headerlink" href="#the-stoner-python-package-user-guide" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Introduction and Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#introduction">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install.html#getting-the-stoner-package">Getting the Stoner Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="install.html#getting-the-latest-development-code">Getting the Latest Development Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#using-the-stoner-package">Using the Stoner Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="install.html#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datafile.html">Loading and Examining Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datafile.html#loading-a-data-file">Loading a data file</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#the-various-flavours-of-the-datafile-class">The Various Flavours of the <tt class="docutils literal"><span class="pre">DataFile</span></tt> Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#loading-data-from-a-string-or-iterable-object">Loading Data from a string or iterable object</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datafile.html#examining-and-basic-manipulations-of-data">Examining and Basic Manipulations of Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#data-structure">Data Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-columns-of-data">Working with columns of data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#working-with-complete-rows-of-data">Working with complete rows of data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#manipulating-the-metadata">Manipulating the metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#more-on-indexing-the-data">More on Indexing the data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datafile.html#modifying-data">Modifying Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#appending-data">Appending data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#id7">Working with Columns of Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#deleting-rows-of-data">Deleting Rows of Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#deleting-columns-of-data">Deleting Columns of Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#sorting-data">Sorting Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datafile.html#saving-data">Saving Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotfile.html">Plotting Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="plotfile.html#quick-plots">Quick Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plotfile.html#types-of-plot">Types of Plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-2d-data">Plotting 2D data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-3d-data">Plotting 3D Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#plotting-vector-fields">Plotting Vector Fields</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="plotfile.html#getting-more-control-on-the-figure">Getting More Control on the Figure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#setting-axes-labels-plot-titles-and-legends">Setting Axes Labels, Plot Titles and Legends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#plot-templates">Plot Templates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plotfile.html#making-multi-plot-figures">Making Multi-plot Figures</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="analysisfile.html">Manipulating and Analysing Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="analysisfile.html#normalising-and-basic-maths-operations">Normalising and Basic Maths Operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="analysisfile.html#curve-fitting">Curve Fitting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#simple-polynomial-fits">Simple polynomial Fits</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#simple-function-fitting">Simple function fitting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#fitting-with-limits">Fitting with limits</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="analysisfile.html#more-analysefile-functions">More AnalyseFile Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#applying-an-arbitary-function-through-the-data">Applying an arbitary function through the data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#basic-data-inspection">Basic Data Inspection</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="analysisfile.html#data-reduction-methods">Data Reduction Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#re-binning-data">(Re)Binning Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#stitching-datasets-together">Stitching Datasets together</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#thresholding-and-interpolating-data">Thresholding and Interpolating Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#smoothing-and-differentiating-data">Smoothing and Differentiating Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="analysisfile.html#peak-finding">Peak Finding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datafolder.html">Working with Lots of Data Files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datafolder.html#building-a-virtual-folder-of-data-files">Building a (virtual) Folder of Data Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datafolder.html#manipulating-the-file-list-in-a-folder">Manipulating the File List in a Folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datafolder.html#getting-a-list-of-files">Getting a List of Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datafolder.html#controlling-the-gathering-of-the-list-of-files">Controlling the Gathering of the List of Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datafolder.html#doing-something-with-each-file">Doing Something With Each File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datafolder.html#reducing-data">Reducing Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cookbook.html">Cookbook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#the-utils-module">The Utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#splitting-data-into-rising-and-falling-values">Splitting Data into rising and falling values</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook.html#other-recipies">Other Recipies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#extract-x-y-z-from-x-y-z-data">Extract X-Y(Z) from X-Y-Z data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#mapping-x-y-z-data-to-z-x-y-data">Mapping X-Y-Z data to Z(X,Y) data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#sampling-a-a-3d-surface-function">Sampling a A 3D Surface function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#correcting-a-hysteresis-loop">Correcting a Hysteresis Loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cookbook.html#quickly-sectioning-a-3d-dataset">Quickly Sectioning a 3D dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer.html">Developing and Extending</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="developer.html#adding-new-data-file-types">Adding New Data File Types</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Stoner-PythonCode</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installation of Stoner Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/UserGuide/ugindex.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of Stoner Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Stoner-PythonCode"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Aug 17, 2014.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
