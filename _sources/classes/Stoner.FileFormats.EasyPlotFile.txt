@@ -13,7 +13,30 @@ Stoner.FileFormats.EasyPlotFile
    .. autosummary::
     :toctree:
    
-      ~EasyPlotFile._load
+      ~EasyPlotFile.__init__
+      ~EasyPlotFile.add_column
+      ~EasyPlotFile.column
+      ~EasyPlotFile.columns
+      ~EasyPlotFile.del_column
+      ~EasyPlotFile.del_rows
+      ~EasyPlotFile.dir
+      ~EasyPlotFile.filter
+      ~EasyPlotFile.find_col
+      ~EasyPlotFile.get
+      ~EasyPlotFile.get_filename
+      ~EasyPlotFile.insert_rows
+      ~EasyPlotFile.keys
+      ~EasyPlotFile.load
+      ~EasyPlotFile.rename
+      ~EasyPlotFile.reorder_columns
+      ~EasyPlotFile.rolling_window
+      ~EasyPlotFile.rows
+      ~EasyPlotFile.save
+      ~EasyPlotFile.search
+      ~EasyPlotFile.section
+      ~EasyPlotFile.sort
+      ~EasyPlotFile.swap_column
+      ~EasyPlotFile.unique
 
    
    

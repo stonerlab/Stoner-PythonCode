@@ -1,0 +1,8 @@
+
+
+AnalyseFile.rolling_window
+==========================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.rolling_window

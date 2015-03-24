@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="ZipFile.__init__" href="Stoner.Zip.ZipFile.__init__.html" />
-    <link rel="prev" title="HDF5Folder.save" href="Stoner.HDF5.HDF5Folder.save.html" /> 
+    <link rel="prev" title="HDF5Folder.zip_groups" href="Stoner.HDF5.HDF5Folder.zip_groups.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="Stoner.Zip.ZipFile.__init__.html" title="ZipFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+          <a href="Stoner.HDF5.HDF5Folder.zip_groups.html" title="HDF5Folder.zip_groups"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -62,17 +62,15 @@
 <em class="property">class </em><tt class="descclassname">Stoner.Zip.</tt><tt class="descname">ZipFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>A sub class of DataFile that sores itself in a zip file.</p>
 <dl class="method">
-<dt id="Stoner.Zip.ZipFile._load">
-<tt class="descname">_load</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile._load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile._load" title="Permalink to this definition">¶</a></dt>
-<dd><p>prorivate method to allow <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a> to load
-a file from zip file</p>
+<dt>
+<tt class="descname">_load(): prorivate method to allow :py:class:`Stoner.Core.DataFile` to load</tt></dt>
+<dd><p>a file from zip file</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="Stoner.Zip.ZipFile.save">
-<tt class="descname">save</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/Stoner/Zip.html#ZipFile.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Zip.ZipFile.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save a dataset to an zip file.</p>
-</dd></dl>
+<dt>
+<tt class="descname">save(): Save a dataset to an zip file.</tt></dt>
+<dd></dd></dl>
 
 <p>If the first non-keyword arguement is not an <tt class="xref py py-class docutils literal"><span class="pre">zipfile:ZipFile</span></tt> then
 initialises with a blank parent constructor and then loads data, otherwise,
@@ -87,11 +85,74 @@ calls parent constructor.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.__init__.html#Stoner.Zip.ZipFile.__init__" title="Stoner.Zip.ZipFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor to catch initialising with an h5py.File or h5py.Group</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile._load.html#Stoner.Zip.ZipFile._load" title="Stoner.Zip.ZipFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
-<td>Load a file from the zip file, openining it as necessary</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.add_column.html#Stoner.Zip.ZipFile.add_column" title="Stoner.Zip.ZipFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.column.html#Stoner.Zip.ZipFile.column" title="Stoner.Zip.ZipFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.columns.html#Stoner.Zip.ZipFile.columns" title="Stoner.Zip.ZipFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.del_column.html#Stoner.Zip.ZipFile.del_column" title="Stoner.Zip.ZipFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.del_rows.html#Stoner.Zip.ZipFile.del_rows" title="Stoner.Zip.ZipFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.dir.html#Stoner.Zip.ZipFile.dir" title="Stoner.Zip.ZipFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.filter.html#Stoner.Zip.ZipFile.filter" title="Stoner.Zip.ZipFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.find_col.html#Stoner.Zip.ZipFile.find_col" title="Stoner.Zip.ZipFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.get.html#Stoner.Zip.ZipFile.get" title="Stoner.Zip.ZipFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.get_filename.html#Stoner.Zip.ZipFile.get_filename" title="Stoner.Zip.ZipFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.insert_rows.html#Stoner.Zip.ZipFile.insert_rows" title="Stoner.Zip.ZipFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.keys.html#Stoner.Zip.ZipFile.keys" title="Stoner.Zip.ZipFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.load.html#Stoner.Zip.ZipFile.load" title="Stoner.Zip.ZipFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.rename.html#Stoner.Zip.ZipFile.rename" title="Stoner.Zip.ZipFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.reorder_columns.html#Stoner.Zip.ZipFile.reorder_columns" title="Stoner.Zip.ZipFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.rolling_window.html#Stoner.Zip.ZipFile.rolling_window" title="Stoner.Zip.ZipFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.rows.html#Stoner.Zip.ZipFile.rows" title="Stoner.Zip.ZipFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.save.html#Stoner.Zip.ZipFile.save" title="Stoner.Zip.ZipFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
 <td>Overrides the save method to allow ZipFile to be written out to disc (as a mininmalist output)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.search.html#Stoner.Zip.ZipFile.search" title="Stoner.Zip.ZipFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.section.html#Stoner.Zip.ZipFile.section" title="Stoner.Zip.ZipFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.sort.html#Stoner.Zip.ZipFile.sort" title="Stoner.Zip.ZipFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFile.swap_column.html#Stoner.Zip.ZipFile.swap_column" title="Stoner.Zip.ZipFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFile.unique.html#Stoner.Zip.ZipFile.unique" title="Stoner.Zip.ZipFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -124,8 +185,8 @@ calls parent constructor.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.HDF5.HDF5Folder.save.html"
-                        title="previous chapter">HDF5Folder.save</a></p>
+  <p class="topless"><a href="Stoner.HDF5.HDF5Folder.zip_groups.html"
+                        title="previous chapter">HDF5Folder.zip_groups</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Zip.ZipFile.__init__.html"
                         title="next chapter">ZipFile.__init__</a></p>
@@ -164,7 +225,7 @@ calls parent constructor.</p>
           <a href="Stoner.Zip.ZipFile.__init__.html" title="ZipFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5Folder.save.html" title="HDF5Folder.save"
+          <a href="Stoner.HDF5.HDF5Folder.zip_groups.html" title="HDF5Folder.zip_groups"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -172,7 +233,7 @@ calls parent constructor.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

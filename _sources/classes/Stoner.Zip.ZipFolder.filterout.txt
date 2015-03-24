@@ -1,0 +1,8 @@
+
+
+ZipFolder.filterout
+==============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.filterout

@@ -1,0 +1,8 @@
+
+
+TDMSFile.rolling_window
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.rolling_window

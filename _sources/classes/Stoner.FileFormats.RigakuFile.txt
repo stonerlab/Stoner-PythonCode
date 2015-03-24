@@ -13,8 +13,31 @@ Stoner.FileFormats.RigakuFile
    .. autosummary::
     :toctree:
    
-      ~RigakuFile._load
+      ~RigakuFile.__init__
+      ~RigakuFile.add_column
+      ~RigakuFile.column
+      ~RigakuFile.columns
+      ~RigakuFile.del_column
+      ~RigakuFile.del_rows
+      ~RigakuFile.dir
+      ~RigakuFile.filter
+      ~RigakuFile.find_col
+      ~RigakuFile.get
+      ~RigakuFile.get_filename
+      ~RigakuFile.insert_rows
+      ~RigakuFile.keys
+      ~RigakuFile.load
+      ~RigakuFile.rename
+      ~RigakuFile.reorder_columns
+      ~RigakuFile.rolling_window
+      ~RigakuFile.rows
+      ~RigakuFile.save
+      ~RigakuFile.search
+      ~RigakuFile.section
+      ~RigakuFile.sort
+      ~RigakuFile.swap_column
       ~RigakuFile.to_Q
+      ~RigakuFile.unique
 
    
    

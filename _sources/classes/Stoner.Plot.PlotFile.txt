@@ -14,11 +14,24 @@ Stoner.Plot.PlotFile
     :toctree:
    
       ~PlotFile.__init__
+      ~PlotFile.add_column
+      ~PlotFile.column
+      ~PlotFile.columns
       ~PlotFile.contour_xyz
+      ~PlotFile.del_column
+      ~PlotFile.del_rows
+      ~PlotFile.dir
       ~PlotFile.figure
+      ~PlotFile.filter
+      ~PlotFile.find_col
+      ~PlotFile.get
+      ~PlotFile.get_filename
       ~PlotFile.griddata
       ~PlotFile.image_plot
+      ~PlotFile.insert_rows
       ~PlotFile.inset
+      ~PlotFile.keys
+      ~PlotFile.load
       ~PlotFile.plot
       ~PlotFile.plot_matrix
       ~PlotFile.plot_xy
@@ -26,7 +39,19 @@ Stoner.Plot.PlotFile
       ~PlotFile.plot_xyz
       ~PlotFile.plot_xyzuvw
       ~PlotFile.quiver_plot
+      ~PlotFile.rename
+      ~PlotFile.reorder_columns
+      ~PlotFile.rolling_window
+      ~PlotFile.rows
+      ~PlotFile.save
+      ~PlotFile.search
+      ~PlotFile.section
+      ~PlotFile.sort
       ~PlotFile.subplot
+      ~PlotFile.swap_column
+      ~PlotFile.unique
+      ~PlotFile.x2
+      ~PlotFile.y2
 
    
    

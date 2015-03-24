@@ -1,0 +1,44 @@
+
+
+NDimArrhenius
+========================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: NDimArrhenius
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~NDimArrhenius.guess
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: guess
+
+   
+   

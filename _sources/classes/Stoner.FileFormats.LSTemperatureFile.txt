@@ -13,8 +13,30 @@ Stoner.FileFormats.LSTemperatureFile
    .. autosummary::
     :toctree:
    
-      ~LSTemperatureFile._load
+      ~LSTemperatureFile.__init__
+      ~LSTemperatureFile.add_column
+      ~LSTemperatureFile.column
+      ~LSTemperatureFile.columns
+      ~LSTemperatureFile.del_column
+      ~LSTemperatureFile.del_rows
+      ~LSTemperatureFile.dir
+      ~LSTemperatureFile.filter
+      ~LSTemperatureFile.find_col
+      ~LSTemperatureFile.get
+      ~LSTemperatureFile.get_filename
+      ~LSTemperatureFile.insert_rows
+      ~LSTemperatureFile.keys
+      ~LSTemperatureFile.load
+      ~LSTemperatureFile.rename
+      ~LSTemperatureFile.reorder_columns
+      ~LSTemperatureFile.rolling_window
+      ~LSTemperatureFile.rows
       ~LSTemperatureFile.save
+      ~LSTemperatureFile.search
+      ~LSTemperatureFile.section
+      ~LSTemperatureFile.sort
+      ~LSTemperatureFile.swap_column
+      ~LSTemperatureFile.unique
 
    
    

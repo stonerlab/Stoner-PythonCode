@@ -95,7 +95,7 @@ understands how to reqad the relevant file.</p>
 <dt><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a></dt>
 <dd>Tagged Data Interchange Format 1.5 &#8211; the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></tt></a></dt>
-<dd>Reads a generic comma separated value file. The <tt class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></tt>
+<dd>Reads a generic comma separated value file. The <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.load.html#Stoner.FileFormats.CSVFile.load" title="Stoner.FileFormats.CSVFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></tt></a>
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the <em>BigBlue&amp; variant, a
 further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
@@ -274,13 +274,16 @@ example results in a 2 dimensional numpy array containing two columns in the
 order that they appear in the list (ie not the order that they are in the data
 file). For completeness, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method also allows one to
 pass slices to select columns and should do the expected thing.</p>
-<p>There is a convenient short cut for working with cases where the column headers are not the same
-as the names of any of the attributes of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
+<p>There are a couple of convenient short cuts/ Firstly the <em>floormod</em> operator //
+is an alias for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
+of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s">&quot;Temperature&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>both return the same data.</p>
+<p>all return the same data.</p>
 <p>Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-</p>
 <blockquote>
 <div><ol class="arabic">
@@ -752,6 +755,14 @@ use of the <em>invert</em> keyword argument to reverse the sense used to selkect
 rows are deleted(kept for <a href="#id6"><span class="problematic" id="id7">*</span></a>invert*=True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds.</p>
+<p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
+the subtration operator can be used.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">d</span><span class="o">-=-</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>The final form looks stranger than it is - it simply deletes the last row of data in place.</p>
 </div>
 <div class="section" id="deleting-columns-of-data">
 <h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
@@ -760,6 +771,13 @@ column header - the indexing rules are the same as used for the
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, there is an operator that can be used to achieve the same effect, in this
+case the modulus operator %.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s">&quot;temperature&quot;</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="mi">1</span>
+<span class="n">d</span><span class="o">%=-</span><span class="mi">1</span>
 </pre></div>
 </div>
 </div>
@@ -910,7 +928,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

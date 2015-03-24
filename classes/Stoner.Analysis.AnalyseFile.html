@@ -75,8 +75,14 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.SG_Filter.html#Stoner.Analysis.AnalyseFile.SG_Filter" title="Stoner.Analysis.AnalyseFile.SG_Filter"><tt class="xref py py-obj docutils literal"><span class="pre">SG_Filter</span></tt></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;...])</td>
 <td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.__init__.html#Stoner.Analysis.AnalyseFile.__init__" title="Stoner.Analysis.AnalyseFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Add one column, number or array (b) to another column (a).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.add_column.html#Stoner.Analysis.AnalyseFile.add_column" title="Stoner.Analysis.AnalyseFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply" title="Stoner.Analysis.AnalyseFile.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
 <td>Applies the given function to each row in the data set and adds to the data set.</td>
@@ -90,17 +96,47 @@
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.clip.html#Stoner.Analysis.AnalyseFile.clip" title="Stoner.Analysis.AnalyseFile.clip"><tt class="xref py py-obj docutils literal"><span class="pre">clip</span></tt></a>(clipper[,&nbsp;column])</td>
 <td>Clips the data based on the column and the clipper value.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.column.html#Stoner.Analysis.AnalyseFile.column" title="Stoner.Analysis.AnalyseFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.columns.html#Stoner.Analysis.AnalyseFile.columns" title="Stoner.Analysis.AnalyseFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-obj docutils literal"><span class="pre">curve_fit</span></tt></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
 <td>General curve fitting function passed through from scipy.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.decompose.html#Stoner.Analysis.AnalyseFile.decompose" title="Stoner.Analysis.AnalyseFile.decompose"><tt class="xref py py-obj docutils literal"><span class="pre">decompose</span></tt></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
 <td>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.del_column.html#Stoner.Analysis.AnalyseFile.del_column" title="Stoner.Analysis.AnalyseFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.del_rows.html#Stoner.Analysis.AnalyseFile.del_rows" title="Stoner.Analysis.AnalyseFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.diffsum.html#Stoner.Analysis.AnalyseFile.diffsum" title="Stoner.Analysis.AnalyseFile.diffsum"><tt class="xref py py-obj docutils literal"><span class="pre">diffsum</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Subtract one column, number or array (b) from another column (a) and divbdatae by their sums.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.divide.html#Stoner.Analysis.AnalyseFile.divide" title="Stoner.Analysis.AnalyseFile.divide"><tt class="xref py py-obj docutils literal"><span class="pre">divide</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.dir.html#Stoner.Analysis.AnalyseFile.dir" title="Stoner.Analysis.AnalyseFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.divide.html#Stoner.Analysis.AnalyseFile.divide" title="Stoner.Analysis.AnalyseFile.divide"><tt class="xref py py-obj docutils literal"><span class="pre">divide</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Divide one column (a) by  another column, number or array (b).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.filter.html#Stoner.Analysis.AnalyseFile.filter" title="Stoner.Analysis.AnalyseFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.find_col.html#Stoner.Analysis.AnalyseFile.find_col" title="Stoner.Analysis.AnalyseFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.get.html#Stoner.Analysis.AnalyseFile.get" title="Stoner.Analysis.AnalyseFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.get_filename.html#Stoner.Analysis.AnalyseFile.get_filename" title="Stoner.Analysis.AnalyseFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.insert_rows.html#Stoner.Analysis.AnalyseFile.insert_rows" title="Stoner.Analysis.AnalyseFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.integrate.html#Stoner.Analysis.AnalyseFile.integrate" title="Stoner.Analysis.AnalyseFile.integrate"><tt class="xref py py-obj docutils literal"><span class="pre">integrate</span></tt></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;...])</td>
 <td>Inegrate a column of data, optionally returning the cumulative integral.</td>
@@ -108,8 +144,14 @@
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><tt class="xref py py-obj docutils literal"><span class="pre">interpolate</span></tt></a>(newX[,&nbsp;kind,&nbsp;xcol])</td>
 <td>AnalyseFile.interpolate(newX, kind=&#8217;linear&#8221;,xcol=None).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-obj docutils literal"><span class="pre">lmfit</span></tt></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma,&nbsp;prefix])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.keys.html#Stoner.Analysis.AnalyseFile.keys" title="Stoner.Analysis.AnalyseFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-obj docutils literal"><span class="pre">lmfit</span></tt></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma,&nbsp;prefix])</td>
 <td>Wrapper around lmfit module fitting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.load.html#Stoner.Analysis.AnalyseFile.load" title="Stoner.Analysis.AnalyseFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.make_bins.html#Stoner.Analysis.AnalyseFile.make_bins" title="Stoner.Analysis.AnalyseFile.make_bins"><tt class="xref py py-obj docutils literal"><span class="pre">make_bins</span></tt></a>(xcol,&nbsp;bins,&nbsp;mode,&nbsp;**kargs)</td>
 <td>Utility method to generate bin boundaries and centres along an axis.</td>
@@ -147,6 +189,30 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><tt class="xref py py-obj docutils literal"><span class="pre">polyfit</span></tt></a>([xcol,&nbsp;ycol,&nbsp;polynomial_order,&nbsp;...])</td>
 <td>Pass through to numpy.polyfit.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.rename.html#Stoner.Analysis.AnalyseFile.rename" title="Stoner.Analysis.AnalyseFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.reorder_columns.html#Stoner.Analysis.AnalyseFile.reorder_columns" title="Stoner.Analysis.AnalyseFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.rolling_window.html#Stoner.Analysis.AnalyseFile.rolling_window" title="Stoner.Analysis.AnalyseFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.rows.html#Stoner.Analysis.AnalyseFile.rows" title="Stoner.Analysis.AnalyseFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.save.html#Stoner.Analysis.AnalyseFile.save" title="Stoner.Analysis.AnalyseFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.search.html#Stoner.Analysis.AnalyseFile.search" title="Stoner.Analysis.AnalyseFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.section.html#Stoner.Analysis.AnalyseFile.section" title="Stoner.Analysis.AnalyseFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.sort.html#Stoner.Analysis.AnalyseFile.sort" title="Stoner.Analysis.AnalyseFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><tt class="xref py py-obj docutils literal"><span class="pre">span</span></tt></a>([column,&nbsp;bounds])</td>
 <td>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <a class="reference internal" href="Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></tt></a> and <a class="reference internal" href="Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></tt></a>.</td>
 </tr>
@@ -159,8 +225,14 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-obj docutils literal"><span class="pre">subtract</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
 <td>Subtract one column, number or array (b) from another column (a).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><tt class="xref py py-obj docutils literal"><span class="pre">threshold</span></tt></a>(threshold[,&nbsp;col,&nbsp;rising,&nbsp;falling,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.swap_column.html#Stoner.Analysis.AnalyseFile.swap_column" title="Stoner.Analysis.AnalyseFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><tt class="xref py py-obj docutils literal"><span class="pre">threshold</span></tt></a>(threshold[,&nbsp;col,&nbsp;rising,&nbsp;falling,&nbsp;...])</td>
 <td>Finds partial indices where the data in column passes the threshold, rising or falling.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Analysis.AnalyseFile.unique.html#Stoner.Analysis.AnalyseFile.unique" title="Stoner.Analysis.AnalyseFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -241,7 +313,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

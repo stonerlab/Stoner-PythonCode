@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="BNLFile.__init__" href="Stoner.FileFormats.BNLFile.__init__.html" />
-    <link rel="prev" title="LSTemperatureFile.save" href="Stoner.FileFormats.LSTemperatureFile.save.html" /> 
+    <link rel="prev" title="LSTemperatureFile.unique" href="Stoner.FileFormats.LSTemperatureFile.unique.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
+          <a href="Stoner.FileFormats.LSTemperatureFile.unique.html" title="LSTemperatureFile.unique"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -76,8 +76,74 @@ in data/Python/PythonCode/scripts.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.__init__.html#Stoner.FileFormats.BNLFile.__init__" title="Stoner.FileFormats.BNLFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*params)</td>
 <td>Constructor modification BNLFile(&#8216;filename&#8217;) Do a normal initiation using the parent class &#8216;self&#8217; followed by adding an extra attribute line_numbers, line_numbers is a list of important line numbers in the file.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile._load.html#Stoner.FileFormats.BNLFile._load" title="Stoner.FileFormats.BNLFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>(filename,&nbsp;*args,&nbsp;**kargs)</td>
-<td>BNLFile.load(filename)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.add_column.html#Stoner.FileFormats.BNLFile.add_column" title="Stoner.FileFormats.BNLFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.column.html#Stoner.FileFormats.BNLFile.column" title="Stoner.FileFormats.BNLFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.columns.html#Stoner.FileFormats.BNLFile.columns" title="Stoner.FileFormats.BNLFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.del_column.html#Stoner.FileFormats.BNLFile.del_column" title="Stoner.FileFormats.BNLFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.del_rows.html#Stoner.FileFormats.BNLFile.del_rows" title="Stoner.FileFormats.BNLFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.dir.html#Stoner.FileFormats.BNLFile.dir" title="Stoner.FileFormats.BNLFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.filter.html#Stoner.FileFormats.BNLFile.filter" title="Stoner.FileFormats.BNLFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.find_col.html#Stoner.FileFormats.BNLFile.find_col" title="Stoner.FileFormats.BNLFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.get.html#Stoner.FileFormats.BNLFile.get" title="Stoner.FileFormats.BNLFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.get_filename.html#Stoner.FileFormats.BNLFile.get_filename" title="Stoner.FileFormats.BNLFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.insert_rows.html#Stoner.FileFormats.BNLFile.insert_rows" title="Stoner.FileFormats.BNLFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.keys.html#Stoner.FileFormats.BNLFile.keys" title="Stoner.FileFormats.BNLFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.load.html#Stoner.FileFormats.BNLFile.load" title="Stoner.FileFormats.BNLFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.rename.html#Stoner.FileFormats.BNLFile.rename" title="Stoner.FileFormats.BNLFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.reorder_columns.html#Stoner.FileFormats.BNLFile.reorder_columns" title="Stoner.FileFormats.BNLFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.rolling_window.html#Stoner.FileFormats.BNLFile.rolling_window" title="Stoner.FileFormats.BNLFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.rows.html#Stoner.FileFormats.BNLFile.rows" title="Stoner.FileFormats.BNLFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.save.html#Stoner.FileFormats.BNLFile.save" title="Stoner.FileFormats.BNLFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.search.html#Stoner.FileFormats.BNLFile.search" title="Stoner.FileFormats.BNLFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.section.html#Stoner.FileFormats.BNLFile.section" title="Stoner.FileFormats.BNLFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.sort.html#Stoner.FileFormats.BNLFile.sort" title="Stoner.FileFormats.BNLFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.swap_column.html#Stoner.FileFormats.BNLFile.swap_column" title="Stoner.FileFormats.BNLFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.unique.html#Stoner.FileFormats.BNLFile.unique" title="Stoner.FileFormats.BNLFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -110,8 +176,8 @@ in data/Python/PythonCode/scripts.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.save.html"
-                        title="previous chapter">LSTemperatureFile.save</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.unique.html"
+                        title="previous chapter">LSTemperatureFile.unique</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.BNLFile.__init__.html"
                         title="next chapter">BNLFile.__init__</a></p>
@@ -150,7 +216,7 @@ in data/Python/PythonCode/scripts.</p>
           <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
+          <a href="Stoner.FileFormats.LSTemperatureFile.unique.html" title="LSTemperatureFile.unique"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -158,7 +224,7 @@ in data/Python/PythonCode/scripts.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

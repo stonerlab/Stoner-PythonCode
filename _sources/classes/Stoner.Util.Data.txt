@@ -8,6 +8,82 @@ Stoner.Util.Data
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Data.SG_Filter
+      ~Data.__init__
+      ~Data.add
+      ~Data.add_column
+      ~Data.apply
+      ~Data.bin
+      ~Data.chi2mapping
+      ~Data.clip
+      ~Data.column
+      ~Data.columns
+      ~Data.contour_xyz
+      ~Data.curve_fit
+      ~Data.decompose
+      ~Data.del_column
+      ~Data.del_rows
+      ~Data.diffsum
+      ~Data.dir
+      ~Data.divide
+      ~Data.figure
+      ~Data.filter
+      ~Data.find_col
+      ~Data.get
+      ~Data.get_filename
+      ~Data.griddata
+      ~Data.image_plot
+      ~Data.insert_rows
+      ~Data.inset
+      ~Data.integrate
+      ~Data.interpolate
+      ~Data.keys
+      ~Data.lmfit
+      ~Data.load
+      ~Data.make_bins
+      ~Data.max
+      ~Data.mean
+      ~Data.min
+      ~Data.mpfit
+      ~Data.mpfit_iterfunct
+      ~Data.multiply
+      ~Data.nlfit
+      ~Data.normalise
+      ~Data.outlier_detection
+      ~Data.peaks
+      ~Data.plot
+      ~Data.plot_matrix
+      ~Data.plot_xy
+      ~Data.plot_xyuv
+      ~Data.plot_xyz
+      ~Data.plot_xyzuvw
+      ~Data.polyfit
+      ~Data.quiver_plot
+      ~Data.rename
+      ~Data.reorder_columns
+      ~Data.rolling_window
+      ~Data.rows
+      ~Data.save
+      ~Data.search
+      ~Data.section
+      ~Data.sort
+      ~Data.span
+      ~Data.split
+      ~Data.stitch
+      ~Data.subplot
+      ~Data.subtract
+      ~Data.swap_column
+      ~Data.threshold
+      ~Data.unique
+      ~Data.x2
+      ~Data.y2
+
+   
    
 
    

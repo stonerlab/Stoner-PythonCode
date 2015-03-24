@@ -1,0 +1,44 @@
+
+
+BlochGrueneisen
+==========================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: BlochGrueneisen
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~BlochGrueneisen.guess
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: guess
+
+   
+   

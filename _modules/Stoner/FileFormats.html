@@ -80,7 +80,7 @@
 
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.csv&quot;</span><span class="p">,</span><span class="s">&quot;*.txt&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="CSVFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.CSVFile._load.html#Stoner.FileFormats.CSVFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">header_line</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">data_line</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_delim</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="n">header_delim</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">header_line</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">data_line</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_delim</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="n">header_delim</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generic deliminated file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -119,7 +119,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="n">data_delim</span><span class="p">,</span><span class="n">skip_header</span><span class="o">=</span><span class="n">data_line</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
 <div class="viewcode-block" id="CSVFile.save"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.CSVFile.save.html#Stoner.FileFormats.CSVFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="n">deliminator</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</span>
 
@@ -196,7 +196,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">compressed</span><span class="p">(),(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">cols</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="VSMFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.VSMFile._load.html#Stoner.FileFormats.VSMFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;VSM file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -214,7 +214,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;H_vsm&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&quot;m (emu)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="BigBlueFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile">[docs]</a><span class="k">class</span> <span class="nc">BigBlueFile</span><span class="p">(</span><span class="n">CSVFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends CSVFile to load files from BigBlue&quot;&quot;&quot;</span>
 
@@ -223,7 +223,7 @@
 
 
 
-<div class="viewcode-block" id="BigBlueFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.BigBlueFile._load.html#Stoner.FileFormats.BigBlueFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just call the parent class but with the right parameters set</span>
 
 <span class="sd">        Args:</span>
@@ -241,7 +241,7 @@
 
         <span class="nb">super</span><span class="p">(</span><span class="n">BigBlueFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>  <span class="n">header_line</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">data_line</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">data_delim</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">header_delim</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="QDSquidVSMFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.QDSquidVSMFile.html#Stoner.FileFormats.QDSquidVSMFile">[docs]</a><span class="k">class</span> <span class="nc">QDSquidVSMFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from The SQUID VSM&quot;&quot;&quot;</span>
 
@@ -250,7 +250,7 @@
 
 
 
-<div class="viewcode-block" id="QDSquidVSMFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.QDSquidVSMFile._load.html#Stoner.FileFormats.QDSquidVSMFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;QDSquidVSM file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -292,14 +292,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">skip_header</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Magnetic Field&quot;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Moment&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="OpenGDAFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OpenGDAFile.html#Stoner.FileFormats.OpenGDAFile">[docs]</a><span class="k">class</span> <span class="nc">OpenGDAFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from RASOR&quot;&quot;&quot;</span>
 
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c"># Makes a positive ID of it&#39;s file type so give priority</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.dat&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="OpenGDAFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OpenGDAFile._load.html#Stoner.FileFormats.OpenGDAFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;OpenGDA file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -329,7 +329,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">mext</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">skip_header</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="RasorFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RasorFile.html#Stoner.FileFormats.RasorFile">[docs]</a><span class="k">class</span> <span class="nc">RasorFile</span><span class="p">(</span><span class="n">OpenGDAFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Just an alias for OpenGDAFile&quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -341,7 +341,7 @@
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c"># Can&#39;t make a positive ID of itself</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.spc&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="SPCFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.SPCFile._load.html#Stoner.FileFormats.SPCFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads a .scf file produced by the Renishaw Raman system (amongs others)</span>
 
 <span class="sd">        Args:</span>
@@ -454,7 +454,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
             <span class="k">return</span> <span class="bp">self</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="TDMSFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile">[docs]</a><span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A first stab at writing a file that will import TDMS files&quot;&quot;&quot;</span>
 
@@ -464,7 +464,7 @@
 
 
 
-<div class="viewcode-block" id="TDMSFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.TDMSFile._load.html#Stoner.FileFormats.TDMSFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;TDMS file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -494,7 +494,7 @@
             <span class="n">nd</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="RigakuFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RigakuFile.html#Stoner.FileFormats.RigakuFile">[docs]</a><span class="k">class</span> <span class="nc">RigakuFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads a .ras file as produced by Rigaku X-ray diffractormeters&quot;&quot;&quot;</span>
 
@@ -502,7 +502,7 @@
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.ras&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
 
-<div class="viewcode-block" id="RigakuFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RigakuFile._load.html#Stoner.FileFormats.RigakuFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads an Rigaku ras file including handling the metadata nicely</span>
 
 <span class="sd">        Args:</span>
@@ -576,7 +576,7 @@
                 <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
 <div class="viewcode-block" id="RigakuFile.to_Q"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RigakuFile.to_Q.html#Stoner.FileFormats.RigakuFile.to_Q">[docs]</a>    <span class="k">def</span> <span class="nf">to_Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="mf">1.540593</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds an additional function to covert an angualr scale to momentum transfer</span>
 
@@ -590,7 +590,7 @@
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c"># Makes a positive id of its file contents</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.dql&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="XRDFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.XRDFile._load.html#Stoner.FileFormats.XRDFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads an XRD datafile as produced by the Brucker diffractometer</span>
 
 <span class="sd">        Args:</span>
@@ -642,7 +642,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
 <div class="viewcode-block" id="XRDFile.to_Q"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.XRDFile.to_Q.html#Stoner.FileFormats.XRDFile.to_Q">[docs]</a>    <span class="k">def</span> <span class="nf">to_Q</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="mf">1.540593</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds an additional function to covert an angualr scale to momentum transfer</span>
 
@@ -722,7 +722,7 @@
             <span class="k">print</span><span class="p">(</span><span class="s">&#39;Did not import any data for {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="BNLFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.BNLFile._load.html#Stoner.FileFormats.BNLFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>        <span class="c">#fileType omitted, implicit in class call</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>        <span class="c">#fileType omitted, implicit in class call</span>
         <span class="sd">&quot;&quot;&quot;BNLFile.load(filename)</span>
 
 <span class="sd">        Args:</span>
@@ -744,14 +744,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__parse_BNL_data</span><span class="p">()</span> <span class="c">#call an internal function rather than put it in load function</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="MokeFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile">[docs]</a><span class="k">class</span> <span class="nc">MokeFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class that extgends DataFile to load files from the Leeds MOKE system.&quot;&quot;&quot;</span>
 
     <span class="n">priotity</span><span class="o">=</span><span class="mi">16</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.dat&quot;</span><span class="p">,</span><span class="s">&quot;*.txt&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="MokeFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MokeFile._load.html#Stoner.FileFormats.MokeFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Leeds  MOKE file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -781,14 +781,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.de&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="FmokeFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile">[docs]</a><span class="k">class</span> <span class="nc">FmokeFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends DataFile to open Fmoke Files&quot;&quot;&quot;</span>
 
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c"># Makes a positive ID check of its contents so give it priority in autoloading</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.dat&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="FmokeFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.FmokeFile._load.html#Stoner.FileFormats.FmokeFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sheffield Focussed MOKE file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -816,7 +816,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">invalid_raise</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <span class="k">class</span> <span class="nc">GenXFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends DataFile for GenX Exported data.&quot;&quot;&quot;</span>
     <span class="n">priority</span><span class="o">=</span><span class="mi">64</span>
@@ -869,7 +869,7 @@
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.dat&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
-<div class="viewcode-block" id="SNSFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.SNSFile._load.html#Stoner.FileFormats.SNSFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load function. File format has space delimited columns from row 3 onwards.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
@@ -918,7 +918,7 @@
                         <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="OVFFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile">[docs]</a><span class="k">class</span> <span class="nc">OVFFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.</span>
 
@@ -928,7 +928,7 @@
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.ovf&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
 
-<div class="viewcode-block" id="OVFFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OVFFile._load.html#Stoner.FileFormats.OVFFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load function. File format has space delimited columns from row 3 onwards.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
@@ -1003,14 +1003,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X (nm)&quot;</span><span class="p">,</span><span class="s">&quot;Y (nm)&quot;</span><span class="p">,</span><span class="s">&quot;Z (nm)&quot;</span><span class="p">,</span><span class="s">&quot;U&quot;</span><span class="p">,</span><span class="s">&quot;V&quot;</span><span class="p">,</span><span class="s">&quot;W&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyzuvw&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="MDAASCIIFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MDAASCIIFile.html#Stoner.FileFormats.MDAASCIIFile">[docs]</a><span class="k">class</span> <span class="nc">MDAASCIIFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Reads files generated from the APS.&quot;&quot;&quot;</span>
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.txt&quot;</span><span class="p">]</span> <span class="c"># Recognised filename patterns</span>
 
 
-<div class="viewcode-block" id="MDAASCIIFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MDAASCIIFile._load.html#Stoner.FileFormats.MDAASCIIFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load function. File format has space delimited columns from row 3 onwards.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
@@ -1084,7 +1084,7 @@
                 <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s">&quot;Overand the end of file without reading data&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">skip_header</span><span class="o">=</span><span class="n">i1</span><span class="o">+</span><span class="n">i2</span><span class="o">+</span><span class="n">i3</span><span class="o">+</span><span class="n">i4</span><span class="p">)</span> <span class="c"># so that&#39;s ok then !</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div></div>
+</div>
 <div class="viewcode-block" id="LSTemperatureFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile">[docs]</a><span class="k">class</span> <span class="nc">LSTemperatureFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A class that reads and writes Lakeshore Temperature Calibration Curves.</span>
 
@@ -1097,7 +1097,7 @@
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span>
     <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.340&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="LSTemperatureFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.LSTemperatureFile._load.html#Stoner.FileFormats.LSTemperatureFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1128,7 +1128,7 @@
             <span class="n">dat</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">dat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
 <div class="viewcode-block" id="LSTemperatureFile.save"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.LSTemperatureFile.save.html#Stoner.FileFormats.LSTemperatureFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</span>
 
@@ -1179,7 +1179,7 @@
     
     <span class="n">priority</span><span class="o">=</span><span class="mi">32</span> <span class="c"># Fairly generic, but can do some explicit testing</span>
     
-<div class="viewcode-block" id="EasyPlotFile._load"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.EasyPlotFile._load.html#Stoner.FileFormats.EasyPlotFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Private loader method.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
@@ -1231,7 +1231,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_extend_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ensure the column headers are at least i long.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span><span class="o">&lt;</span><span class="n">i</span><span class="p">:</span>
@@ -1302,7 +1302,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

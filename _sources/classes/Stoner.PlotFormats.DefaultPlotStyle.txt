@@ -1,43 +1,83 @@
-Stoner.PlotFormats.DefaultPlotStyle
+
+
+DefaultPlotStyle
 ===================================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: DefaultPlotStyle
+   :show-inheritance:
 
    
-   .. automethod:: __init__
-
-   
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~DefaultPlotStyle.__init__
-      ~DefaultPlotStyle.annotate
-      ~DefaultPlotStyle.apply
-      ~DefaultPlotStyle.customise
-      ~DefaultPlotStyle.customise_axes
-      ~DefaultPlotStyle.new_figure
-      ~DefaultPlotStyle.update
-   
+     
    
 
    
    
-   .. rubric:: Attributes
+
+   .. rubric:: Attributes Summary
 
    .. autosummary::
    
-      ~DefaultPlotStyle.fig_height
-      ~DefaultPlotStyle.fig_width
-      ~DefaultPlotStyle.fig_width_pt
       ~DefaultPlotStyle.show_legend
       ~DefaultPlotStyle.show_title
       ~DefaultPlotStyle.show_xlabel
       ~DefaultPlotStyle.show_ylabel
       ~DefaultPlotStyle.show_zlabel
       ~DefaultPlotStyle.stylename
+      ~DefaultPlotStyle.subplot_settings
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~DefaultPlotStyle.__call__
+      ~DefaultPlotStyle.annotate
+      ~DefaultPlotStyle.apply
+      ~DefaultPlotStyle.customise
+      ~DefaultPlotStyle.customise_axes
+      ~DefaultPlotStyle.new_figure
+      ~DefaultPlotStyle.update
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: show_legend
+   .. autoattribute:: show_title
+   .. autoattribute:: show_xlabel
+   .. autoattribute:: show_ylabel
+   .. autoattribute:: show_zlabel
+   .. autoattribute:: stylename
+   .. autoattribute:: subplot_settings
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __call__
+   .. automethod:: annotate
+   .. automethod:: apply
+   .. automethod:: customise
+   .. automethod:: customise_axes
+   .. automethod:: new_figure
+   .. automethod:: update
+
    
    

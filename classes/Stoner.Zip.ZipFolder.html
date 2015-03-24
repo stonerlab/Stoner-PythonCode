@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="ZipFolder.__init__" href="Stoner.Zip.ZipFolder.__init__.html" />
-    <link rel="prev" title="ZipFile.save" href="Stoner.Zip.ZipFile.save.html" /> 
+    <link rel="prev" title="ZipFile.unique" href="Stoner.Zip.ZipFile.unique.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="Stoner.Zip.ZipFolder.__init__.html" title="ZipFolder.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Zip.ZipFile.save.html" title="ZipFile.save"
+          <a href="Stoner.Zip.ZipFile.unique.html" title="ZipFile.unique"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -73,11 +73,53 @@ method to load and save data from a single Zip file.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.__init__.html#Stoner.Zip.ZipFolder.__init__" title="Stoner.Zip.ZipFolder.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor for the HDF5Folder Class.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.getlist.html#Stoner.Zip.ZipFolder.getlist" title="Stoner.Zip.ZipFolder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.add_group.html#Stoner.Zip.ZipFolder.add_group" title="Stoner.Zip.ZipFolder.add_group"><tt class="xref py py-obj docutils literal"><span class="pre">add_group</span></tt></a>(key)</td>
+<td>Add a new group to the current Folder with the given key.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.concatentate.html#Stoner.Zip.ZipFolder.concatentate" title="Stoner.Zip.ZipFolder.concatentate"><tt class="xref py py-obj docutils literal"><span class="pre">concatentate</span></tt></a>([sort,&nbsp;reverse])</td>
+<td>Concatentates all the files in a DataFolder into a single DataFile like object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.extract.html#Stoner.Zip.ZipFolder.extract" title="Stoner.Zip.ZipFolder.extract"><tt class="xref py py-obj docutils literal"><span class="pre">extract</span></tt></a>(metadata)</td>
+<td>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.filter.html#Stoner.Zip.ZipFolder.filter" title="Stoner.Zip.ZipFolder.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([filter,&nbsp;invert])</td>
+<td>Filter the current set of files by some criterion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.filterout.html#Stoner.Zip.ZipFolder.filterout" title="Stoner.Zip.ZipFolder.filterout"><tt class="xref py py-obj docutils literal"><span class="pre">filterout</span></tt></a>(filter)</td>
+<td>Synonym for self.filter(filter,invert=True)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.flatten.html#Stoner.Zip.ZipFolder.flatten" title="Stoner.Zip.ZipFolder.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">flatten</span></tt></a>()</td>
+<td>Compresses all the groups and sub-groups iunto a single flat file list.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.gather.html#Stoner.Zip.ZipFolder.gather" title="Stoner.Zip.ZipFolder.gather"><tt class="xref py py-obj docutils literal"><span class="pre">gather</span></tt></a>([xcol,&nbsp;ycol])</td>
+<td>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.getlist.html#Stoner.Zip.ZipFolder.getlist" title="Stoner.Zip.ZipFolder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
 <td>Reads the Zip File to construct a list of ZipFile objects</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.save.html#Stoner.Zip.ZipFolder.save" title="Stoner.Zip.ZipFolder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.group.html#Stoner.Zip.ZipFolder.group" title="Stoner.Zip.ZipFolder.group"><tt class="xref py py-obj docutils literal"><span class="pre">group</span></tt></a>(key)</td>
+<td>Take the files and sort them into a series of separate DataFolder objects according to the value of the key</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.next.html#Stoner.Zip.ZipFolder.next" title="Stoner.Zip.ZipFolder.next"><tt class="xref py py-obj docutils literal"><span class="pre">next</span></tt></a>(elf)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.save.html#Stoner.Zip.ZipFolder.save" title="Stoner.Zip.ZipFolder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
 <td>Saves a load of files to a single Zip file, creating members as it goes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.select.html#Stoner.Zip.ZipFolder.select" title="Stoner.Zip.ZipFolder.select"><tt class="xref py py-obj docutils literal"><span class="pre">select</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>A generator that can be used to select particular data files from the DataFolder</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.sort.html#Stoner.Zip.ZipFolder.sort" title="Stoner.Zip.ZipFolder.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([key,&nbsp;reverse])</td>
+<td>Sort the files by some key</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.unflatten.html#Stoner.Zip.ZipFolder.unflatten" title="Stoner.Zip.ZipFolder.unflatten"><tt class="xref py py-obj docutils literal"><span class="pre">unflatten</span></tt></a>()</td>
+<td>Takes a file list an unflattens them according to the file paths.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.walk_groups.html#Stoner.Zip.ZipFolder.walk_groups" title="Stoner.Zip.ZipFolder.walk_groups"><tt class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></tt></a>(walker[,&nbsp;group,&nbsp;...])</td>
+<td>Walks through a heirarchy of groups and calls walker for each file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Zip.ZipFolder.zip_groups.html#Stoner.Zip.ZipFolder.zip_groups" title="Stoner.Zip.ZipFolder.zip_groups"><tt class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></tt></a>(groups)</td>
+<td>Return a list of tuples of DataFiles drawn from the specified groups</td>
 </tr>
 </tbody>
 </table>
@@ -95,8 +137,8 @@ method to load and save data from a single Zip file.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Zip.ZipFile.save.html"
-                        title="previous chapter">ZipFile.save</a></p>
+  <p class="topless"><a href="Stoner.Zip.ZipFile.unique.html"
+                        title="previous chapter">ZipFile.unique</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Zip.ZipFolder.__init__.html"
                         title="next chapter">ZipFolder.__init__</a></p>
@@ -135,7 +177,7 @@ method to load and save data from a single Zip file.</p>
           <a href="Stoner.Zip.ZipFolder.__init__.html" title="ZipFolder.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Zip.ZipFile.save.html" title="ZipFile.save"
+          <a href="Stoner.Zip.ZipFile.unique.html" title="ZipFile.unique"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -143,7 +185,7 @@ method to load and save data from a single Zip file.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

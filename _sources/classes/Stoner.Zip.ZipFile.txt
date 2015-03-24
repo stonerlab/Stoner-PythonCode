@@ -14,8 +14,29 @@ Stoner.Zip.ZipFile
     :toctree:
    
       ~ZipFile.__init__
-      ~ZipFile._load
+      ~ZipFile.add_column
+      ~ZipFile.column
+      ~ZipFile.columns
+      ~ZipFile.del_column
+      ~ZipFile.del_rows
+      ~ZipFile.dir
+      ~ZipFile.filter
+      ~ZipFile.find_col
+      ~ZipFile.get
+      ~ZipFile.get_filename
+      ~ZipFile.insert_rows
+      ~ZipFile.keys
+      ~ZipFile.load
+      ~ZipFile.rename
+      ~ZipFile.reorder_columns
+      ~ZipFile.rolling_window
+      ~ZipFile.rows
       ~ZipFile.save
+      ~ZipFile.search
+      ~ZipFile.section
+      ~ZipFile.sort
+      ~ZipFile.swap_column
+      ~ZipFile.unique
 
    
    

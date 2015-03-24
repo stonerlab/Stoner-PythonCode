@@ -13,8 +13,30 @@ Stoner.HDF5.HDF5File
    .. autosummary::
     :toctree:
    
-      ~HDF5File._load
+      ~HDF5File.__init__
+      ~HDF5File.add_column
+      ~HDF5File.column
+      ~HDF5File.columns
+      ~HDF5File.del_column
+      ~HDF5File.del_rows
+      ~HDF5File.dir
+      ~HDF5File.filter
+      ~HDF5File.find_col
+      ~HDF5File.get
+      ~HDF5File.get_filename
+      ~HDF5File.insert_rows
+      ~HDF5File.keys
+      ~HDF5File.load
+      ~HDF5File.rename
+      ~HDF5File.reorder_columns
+      ~HDF5File.rolling_window
+      ~HDF5File.rows
       ~HDF5File.save
+      ~HDF5File.search
+      ~HDF5File.section
+      ~HDF5File.sort
+      ~HDF5File.swap_column
+      ~HDF5File.unique
 
    
    

@@ -60,7 +60,7 @@
 <h1>AnalyseFile.outlier_detection<a class="headerlink" href="#analysefile-outlier-detection" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalyseFile.outlier_detection">
-<tt class="descclassname">AnalyseFile.</tt><tt class="descname">outlier_detection</tt><big>(</big><em>column=None</em>, <em>window=7</em>, <em>certainty=3.0</em>, <em>action='mask'</em>, <em>func=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.outlier_detection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.outlier_detection" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">AnalyseFile.</tt><tt class="descname">outlier_detection</tt><big>(</big><em>column=None</em>, <em>window=7</em>, <em>certainty=3.0</em>, <em>action='mask'</em>, <em>width=1</em>, <em>func=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.outlier_detection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.outlier_detection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to detect outliers in a column of data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -71,20 +71,22 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first">
-<li><p class="first"><strong>window</strong> (<em>int</em>) &#8211;
-data window for anomoly detection</p>
-</li>
-<li><p class="first"><strong>certainty</strong> (<em>float</em>) &#8211;
-eg 3 detects data 3 standard deviations from average</p>
-</li>
-<li><p class="first"><strong>action(str), what to do with outlying points, options are</strong> &#8211;</p>
-<p>&#8216;mask&#8217;,&#8217;delete&#8217; anything else defaults to do nothing
-(&#8216;outliers&#8217; item is always added to metadata)</p>
-</li>
-<li><p class="first"><strong>func</strong> (<em>callable</em>) &#8211;
-A function that determines if the current row is an outlier.</p>
-</li>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>window</strong> (<em>int</em>) &#8211;
+data window for anomoly detection</li>
+<li><strong>certainty</strong> (<em>float</em>) &#8211;
+eg 3 detects data 3 standard deviations from average</li>
+<li><strong>action</strong> (<em>str or callable</em>) &#8211;
+what to do with outlying points, options are
+* &#8216;mask&#8217; outlier points are masked (default)
+* &#8216;mask row&#8217; outlier rows are masked
+* &#8216;delete&#8217;  outlier rows are deleted
+* callable  the value of the action keyword is called with the outlier row
+* anything else defaults to do nothing.</li>
+<li><strong>width</strong> (<em>odd integer</em>) &#8211;
+Number of rows that an outliing spike could occupy. Defaults to 1.</li>
+<li><strong>func</strong> (<em>callable</em>) &#8211;
+A function that determines if the current row is an outlier.</li>
 </ul>
 </td>
 </tr>
@@ -106,6 +108,14 @@ data average.</p>
 </pre></div>
 </div>
 <p>All extra keyword arguments are passed to the outlier detector.</p>
+<p>IF <em>action</em> is a callable function then it should take the form of:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>where <em>i</em> is the number of the outlier row, <em>column</em> the same value as above
+and <em>row</em> is the data for the row.</p>
+<p>In all cases the indices of the outlier rows are added to the ;outlier&#8217; metadata.</p>
 </dd></dl>
 
 </div>
@@ -169,7 +179,7 @@ data average.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

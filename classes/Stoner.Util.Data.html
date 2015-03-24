@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="format_error" href="../functions/Stoner.Util.format_error.html" />
-    <link rel="prev" title="ZipFolder.save" href="Stoner.Zip.ZipFolder.save.html" /> 
+    <link rel="next" title="Data.SG_Filter" href="Stoner.Util.Data.SG_Filter.html" />
+    <link rel="prev" title="ZipFolder.zip_groups" href="Stoner.Zip.ZipFolder.zip_groups.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../functions/Stoner.Util.format_error.html" title="format_error"
+          <a href="Stoner.Util.Data.SG_Filter.html" title="Data.SG_Filter"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Zip.ZipFolder.save.html" title="ZipFolder.save"
+          <a href="Stoner.Zip.ZipFolder.zip_groups.html" title="ZipFolder.zip_groups"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -63,6 +63,222 @@
 <dd><p>A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
 This &#8216;kitchen-sink&#8217; class is intended as a convenience for writing scripts that carry out both plotting and
 analysis on data files.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.SG_Filter.html#Stoner.Util.Data.SG_Filter" title="Stoner.Util.Data.SG_Filter"><tt class="xref py py-obj docutils literal"><span class="pre">SG_Filter</span></tt></a>([col,&nbsp;points,&nbsp;poly,&nbsp;order,&nbsp;...])</td>
+<td>Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.__init__.html#Stoner.Util.Data.__init__" title="Stoner.Util.Data.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor of  PlotFile class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.add.html#Stoner.Util.Data.add" title="Stoner.Util.Data.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Add one column, number or array (b) to another column (a).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.add_column.html#Stoner.Util.Data.add_column" title="Stoner.Util.Data.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.apply.html#Stoner.Util.Data.apply" title="Stoner.Util.Data.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>(func[,&nbsp;col,&nbsp;replace,&nbsp;header])</td>
+<td>Applies the given function to each row in the data set and adds to the data set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.bin.html#Stoner.Util.Data.bin" title="Stoner.Util.Data.bin"><tt class="xref py py-obj docutils literal"><span class="pre">bin</span></tt></a>([xcol,&nbsp;ycol,&nbsp;bins,&nbsp;mode])</td>
+<td>Bin x-y data into new values of x with an error bar.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.chi2mapping.html#Stoner.Util.Data.chi2mapping" title="Stoner.Util.Data.chi2mapping"><tt class="xref py py-obj docutils literal"><span class="pre">chi2mapping</span></tt></a>(ini_file,&nbsp;func)</td>
+<td>Non-linear fitting using the <a class="reference internal" href="../Stoner.html#module-Stoner.nlfit" title="Stoner.nlfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.nlfit</span></tt></a> module.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.clip.html#Stoner.Util.Data.clip" title="Stoner.Util.Data.clip"><tt class="xref py py-obj docutils literal"><span class="pre">clip</span></tt></a>(clipper[,&nbsp;column])</td>
+<td>Clips the data based on the column and the clipper value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.column.html#Stoner.Util.Data.column" title="Stoner.Util.Data.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.columns.html#Stoner.Util.Data.columns" title="Stoner.Util.Data.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.contour_xyz.html#Stoner.Util.Data.contour_xyz" title="Stoner.Util.Data.contour_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>An xyz plot that forces the use of plt.contour.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.curve_fit.html#Stoner.Util.Data.curve_fit" title="Stoner.Util.Data.curve_fit"><tt class="xref py py-obj docutils literal"><span class="pre">curve_fit</span></tt></a>(func[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma])</td>
+<td>General curve fitting function passed through from scipy.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.decompose.html#Stoner.Util.Data.decompose" title="Stoner.Util.Data.decompose"><tt class="xref py py-obj docutils literal"><span class="pre">decompose</span></tt></a>([xcol,&nbsp;ycol,&nbsp;sym,&nbsp;asym,&nbsp;replace])</td>
+<td>Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.del_column.html#Stoner.Util.Data.del_column" title="Stoner.Util.Data.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.del_rows.html#Stoner.Util.Data.del_rows" title="Stoner.Util.Data.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.diffsum.html#Stoner.Util.Data.diffsum" title="Stoner.Util.Data.diffsum"><tt class="xref py py-obj docutils literal"><span class="pre">diffsum</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Subtract one column, number or array (b) from another column (a) and divbdatae by their sums.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.dir.html#Stoner.Util.Data.dir" title="Stoner.Util.Data.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.divide.html#Stoner.Util.Data.divide" title="Stoner.Util.Data.divide"><tt class="xref py py-obj docutils literal"><span class="pre">divide</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Divide one column (a) by  another column, number or array (b).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.figure.html#Stoner.Util.Data.figure" title="Stoner.Util.Data.figure"><tt class="xref py py-obj docutils literal"><span class="pre">figure</span></tt></a>([figure])</td>
+<td>Set the figure used by <a class="reference internal" href="Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.filter.html#Stoner.Util.Data.filter" title="Stoner.Util.Data.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.find_col.html#Stoner.Util.Data.find_col" title="Stoner.Util.Data.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.get.html#Stoner.Util.Data.get" title="Stoner.Util.Data.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.get_filename.html#Stoner.Util.Data.get_filename" title="Stoner.Util.Data.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.griddata.html#Stoner.Util.Data.griddata" title="Stoner.Util.Data.griddata"><tt class="xref py py-obj docutils literal"><span class="pre">griddata</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>Function to convert xyz data onto a regular grid.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.image_plot.html#Stoner.Util.Data.image_plot" title="Stoner.Util.Data.image_plot"><tt class="xref py py-obj docutils literal"><span class="pre">image_plot</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<td>Grid up the three columns of data and plot.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.insert_rows.html#Stoner.Util.Data.insert_rows" title="Stoner.Util.Data.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.inset.html#Stoner.Util.Data.inset" title="Stoner.Util.Data.inset"><tt class="xref py py-obj docutils literal"><span class="pre">inset</span></tt></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
+<td>Add a new set of axes as an inset to the current plot.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.integrate.html#Stoner.Util.Data.integrate" title="Stoner.Util.Data.integrate"><tt class="xref py py-obj docutils literal"><span class="pre">integrate</span></tt></a>([xcol,&nbsp;ycol,&nbsp;result,&nbsp;result_name,&nbsp;...])</td>
+<td>Inegrate a column of data, optionally returning the cumulative integral.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.interpolate.html#Stoner.Util.Data.interpolate" title="Stoner.Util.Data.interpolate"><tt class="xref py py-obj docutils literal"><span class="pre">interpolate</span></tt></a>(newX[,&nbsp;kind,&nbsp;xcol])</td>
+<td>AnalyseFile.interpolate(newX, kind=&#8217;linear&#8221;,xcol=None).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.keys.html#Stoner.Util.Data.keys" title="Stoner.Util.Data.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.lmfit.html#Stoner.Util.Data.lmfit" title="Stoner.Util.Data.lmfit"><tt class="xref py py-obj docutils literal"><span class="pre">lmfit</span></tt></a>(model[,&nbsp;xcol,&nbsp;ycol,&nbsp;p0,&nbsp;sigma,&nbsp;prefix])</td>
+<td>Wrapper around lmfit module fitting.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.load.html#Stoner.Util.Data.load" title="Stoner.Util.Data.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.make_bins.html#Stoner.Util.Data.make_bins" title="Stoner.Util.Data.make_bins"><tt class="xref py py-obj docutils literal"><span class="pre">make_bins</span></tt></a>(xcol,&nbsp;bins,&nbsp;mode,&nbsp;**kargs)</td>
+<td>Utility method to generate bin boundaries and centres along an axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.max.html#Stoner.Util.Data.max" title="Stoner.Util.Data.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd maximum value and index in a column of data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.mean.html#Stoner.Util.Data.mean" title="Stoner.Util.Data.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd mean value of a data column.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.min.html#Stoner.Util.Data.min" title="Stoner.Util.Data.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a>([column,&nbsp;bounds])</td>
+<td>FInd minimum value and index in a column of data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.mpfit.html#Stoner.Util.Data.mpfit" title="Stoner.Util.Data.mpfit"><tt class="xref py py-obj docutils literal"><span class="pre">mpfit</span></tt></a>(func,&nbsp;xcol,&nbsp;ycol,&nbsp;p_info[,&nbsp;func_args,&nbsp;...])</td>
+<td>Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.mpfit_iterfunct.html#Stoner.Util.Data.mpfit_iterfunct" title="Stoner.Util.Data.mpfit_iterfunct"><tt class="xref py py-obj docutils literal"><span class="pre">mpfit_iterfunct</span></tt></a>(myfunct,&nbsp;p,&nbsp;iterator,&nbsp;fnorm)</td>
+<td>Function that is called on every iteration of the non-linerar fitting.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.multiply.html#Stoner.Util.Data.multiply" title="Stoner.Util.Data.multiply"><tt class="xref py py-obj docutils literal"><span class="pre">multiply</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Multiply one column (a) by  another column, number or array (b).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.nlfit.html#Stoner.Util.Data.nlfit" title="Stoner.Util.Data.nlfit"><tt class="xref py py-obj docutils literal"><span class="pre">nlfit</span></tt></a>(ini_file,&nbsp;func)</td>
+<td>Non-linear fitting using the <a class="reference internal" href="../Stoner.html#module-Stoner.nlfit" title="Stoner.nlfit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.nlfit</span></tt></a> module.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.normalise.html#Stoner.Util.Data.normalise" title="Stoner.Util.Data.normalise"><tt class="xref py py-obj docutils literal"><span class="pre">normalise</span></tt></a>(target,&nbsp;base[,&nbsp;replace,&nbsp;header])</td>
+<td>Normalise data columns by dividing through by a base column value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.outlier_detection.html#Stoner.Util.Data.outlier_detection" title="Stoner.Util.Data.outlier_detection"><tt class="xref py py-obj docutils literal"><span class="pre">outlier_detection</span></tt></a>([column,&nbsp;window,&nbsp;...])</td>
+<td>Function to detect outliers in a column of data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.peaks.html#Stoner.Util.Data.peaks" title="Stoner.Util.Data.peaks"><tt class="xref py py-obj docutils literal"><span class="pre">peaks</span></tt></a>([ycol,&nbsp;width,&nbsp;significance,&nbsp;xcol,&nbsp;...])</td>
+<td>Locates peaks and/or troughs in a column of data by using SG-differentiation.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.plot.html#Stoner.Util.Data.plot" title="Stoner.Util.Data.plot"><tt class="xref py py-obj docutils literal"><span class="pre">plot</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Try to make an appropriate plot based on the defined column assignments.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.plot_matrix.html#Stoner.Util.Data.plot_matrix" title="Stoner.Util.Data.plot_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></tt></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;...])</td>
+<td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.plot_xy.html#Stoner.Util.Data.plot_xy" title="Stoner.Util.Data.plot_xy"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></tt></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr,&nbsp;multiple])</td>
+<td>Makes a simple X-Y plot of the specified data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.plot_xyuv.html#Stoner.Util.Data.plot_xyuv" title="Stoner.Util.Data.plot_xyuv"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></tt></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<td>Makes an overlaid image and quiver plot.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.plot_xyz.html#Stoner.Util.Data.plot_xyz" title="Stoner.Util.Data.plot_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.plot_xyzuvw.html#Stoner.Util.Data.plot_xyzuvw" title="Stoner.Util.Data.plot_xyzuvw"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<td>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.polyfit.html#Stoner.Util.Data.polyfit" title="Stoner.Util.Data.polyfit"><tt class="xref py py-obj docutils literal"><span class="pre">polyfit</span></tt></a>([xcol,&nbsp;ycol,&nbsp;polynomial_order,&nbsp;...])</td>
+<td>Pass through to numpy.polyfit.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.quiver_plot.html#Stoner.Util.Data.quiver_plot" title="Stoner.Util.Data.quiver_plot"><tt class="xref py py-obj docutils literal"><span class="pre">quiver_plot</span></tt></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
+<td>Make a 2D Quiver plot from the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.rename.html#Stoner.Util.Data.rename" title="Stoner.Util.Data.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.reorder_columns.html#Stoner.Util.Data.reorder_columns" title="Stoner.Util.Data.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.rolling_window.html#Stoner.Util.Data.rolling_window" title="Stoner.Util.Data.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.rows.html#Stoner.Util.Data.rows" title="Stoner.Util.Data.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.save.html#Stoner.Util.Data.save" title="Stoner.Util.Data.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.search.html#Stoner.Util.Data.search" title="Stoner.Util.Data.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.section.html#Stoner.Util.Data.section" title="Stoner.Util.Data.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.sort.html#Stoner.Util.Data.sort" title="Stoner.Util.Data.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.span.html#Stoner.Util.Data.span" title="Stoner.Util.Data.span"><tt class="xref py py-obj docutils literal"><span class="pre">span</span></tt></a>([column,&nbsp;bounds])</td>
+<td>Returns a tuple of the maximum and minumum values within the given column and bounds by calling into <tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.split.html#Stoner.Util.Data.split" title="Stoner.Util.Data.split"><tt class="xref py py-obj docutils literal"><span class="pre">split</span></tt></a>([xcol,&nbsp;func])</td>
+<td>Splits the current <tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt> object into multiple <tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt> objects where each one contains the rows from the original object which had the same value of a given column.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.stitch.html#Stoner.Util.Data.stitch" title="Stoner.Util.Data.stitch"><tt class="xref py py-obj docutils literal"><span class="pre">stitch</span></tt></a>(other[,&nbsp;xcol,&nbsp;ycol,&nbsp;overlap,&nbsp;...])</td>
+<td>Apply a scaling to this data set to make it stich to another dataset.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.subplot.html#Stoner.Util.Data.subplot" title="Stoner.Util.Data.subplot"><tt class="xref py py-obj docutils literal"><span class="pre">subplot</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Pass throuygh for plt.subplot().</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.subtract.html#Stoner.Util.Data.subtract" title="Stoner.Util.Data.subtract"><tt class="xref py py-obj docutils literal"><span class="pre">subtract</span></tt></a>(a,&nbsp;b[,&nbsp;replace,&nbsp;header])</td>
+<td>Subtract one column, number or array (b) from another column (a).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.swap_column.html#Stoner.Util.Data.swap_column" title="Stoner.Util.Data.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.threshold.html#Stoner.Util.Data.threshold" title="Stoner.Util.Data.threshold"><tt class="xref py py-obj docutils literal"><span class="pre">threshold</span></tt></a>(threshold[,&nbsp;col,&nbsp;rising,&nbsp;falling,&nbsp;...])</td>
+<td>Finds partial indices where the data in column passes the threshold, rising or falling.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.unique.html#Stoner.Util.Data.unique" title="Stoner.Util.Data.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.x2.html#Stoner.Util.Data.x2" title="Stoner.Util.Data.x2"><tt class="xref py py-obj docutils literal"><span class="pre">x2</span></tt></a>()</td>
+<td>Generate a new set of axes with a second x-scale.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.y2.html#Stoner.Util.Data.y2" title="Stoner.Util.Data.y2"><tt class="xref py py-obj docutils literal"><span class="pre">y2</span></tt></a>()</td>
+<td>Generate a new set of axes with a second y-scale.</td>
+</tr>
+</tbody>
+</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -98,11 +314,11 @@ analysis on data files.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Zip.ZipFolder.save.html"
-                        title="previous chapter">ZipFolder.save</a></p>
+  <p class="topless"><a href="Stoner.Zip.ZipFolder.zip_groups.html"
+                        title="previous chapter">ZipFolder.zip_groups</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../functions/Stoner.Util.format_error.html"
-                        title="next chapter">format_error</a></p>
+  <p class="topless"><a href="Stoner.Util.Data.SG_Filter.html"
+                        title="next chapter">Data.SG_Filter</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Util.Data.txt"
@@ -135,10 +351,10 @@ analysis on data files.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../functions/Stoner.Util.format_error.html" title="format_error"
+          <a href="Stoner.Util.Data.SG_Filter.html" title="Data.SG_Filter"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Zip.ZipFolder.save.html" title="ZipFolder.save"
+          <a href="Stoner.Zip.ZipFolder.zip_groups.html" title="ZipFolder.zip_groups"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -146,7 +362,7 @@ analysis on data files.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -13,7 +13,30 @@ Stoner.FileFormats.BigBlueFile
    .. autosummary::
     :toctree:
    
-      ~BigBlueFile._load
+      ~BigBlueFile.__init__
+      ~BigBlueFile.add_column
+      ~BigBlueFile.column
+      ~BigBlueFile.columns
+      ~BigBlueFile.del_column
+      ~BigBlueFile.del_rows
+      ~BigBlueFile.dir
+      ~BigBlueFile.filter
+      ~BigBlueFile.find_col
+      ~BigBlueFile.get
+      ~BigBlueFile.get_filename
+      ~BigBlueFile.insert_rows
+      ~BigBlueFile.keys
+      ~BigBlueFile.load
+      ~BigBlueFile.rename
+      ~BigBlueFile.reorder_columns
+      ~BigBlueFile.rolling_window
+      ~BigBlueFile.rows
+      ~BigBlueFile.save
+      ~BigBlueFile.search
+      ~BigBlueFile.section
+      ~BigBlueFile.sort
+      ~BigBlueFile.swap_column
+      ~BigBlueFile.unique
 
    
    

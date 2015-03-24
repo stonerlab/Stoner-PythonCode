@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="SNSFile._load" href="Stoner.FileFormats.SNSFile._load.html" />
-    <link rel="prev" title="Stoner.FileFormats.RasorFile" href="Stoner.FileFormats.RasorFile.html" /> 
+    <link rel="next" title="SNSFile.__init__" href="Stoner.FileFormats.SNSFile.__init__.html" />
+    <link rel="prev" title="RasorFile.unique" href="Stoner.FileFormats.RasorFile.unique.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.SNSFile._load.html" title="SNSFile._load"
+          <a href="Stoner.FileFormats.SNSFile.__init__.html" title="SNSFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.RasorFile.html" title="Stoner.FileFormats.RasorFile"
+          <a href="Stoner.FileFormats.RasorFile.unique.html" title="RasorFile.unique"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -71,8 +71,77 @@ Each section seems to have a slightly different format</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile._load.html#Stoner.FileFormats.SNSFile._load" title="Stoner.FileFormats.SNSFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
-<td>Load function.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.__init__.html#Stoner.FileFormats.SNSFile.__init__" title="Stoner.FileFormats.SNSFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.add_column.html#Stoner.FileFormats.SNSFile.add_column" title="Stoner.FileFormats.SNSFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.column.html#Stoner.FileFormats.SNSFile.column" title="Stoner.FileFormats.SNSFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.columns.html#Stoner.FileFormats.SNSFile.columns" title="Stoner.FileFormats.SNSFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.del_column.html#Stoner.FileFormats.SNSFile.del_column" title="Stoner.FileFormats.SNSFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.del_rows.html#Stoner.FileFormats.SNSFile.del_rows" title="Stoner.FileFormats.SNSFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.dir.html#Stoner.FileFormats.SNSFile.dir" title="Stoner.FileFormats.SNSFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.filter.html#Stoner.FileFormats.SNSFile.filter" title="Stoner.FileFormats.SNSFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.find_col.html#Stoner.FileFormats.SNSFile.find_col" title="Stoner.FileFormats.SNSFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.get.html#Stoner.FileFormats.SNSFile.get" title="Stoner.FileFormats.SNSFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.get_filename.html#Stoner.FileFormats.SNSFile.get_filename" title="Stoner.FileFormats.SNSFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.insert_rows.html#Stoner.FileFormats.SNSFile.insert_rows" title="Stoner.FileFormats.SNSFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.keys.html#Stoner.FileFormats.SNSFile.keys" title="Stoner.FileFormats.SNSFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.load.html#Stoner.FileFormats.SNSFile.load" title="Stoner.FileFormats.SNSFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.rename.html#Stoner.FileFormats.SNSFile.rename" title="Stoner.FileFormats.SNSFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.reorder_columns.html#Stoner.FileFormats.SNSFile.reorder_columns" title="Stoner.FileFormats.SNSFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.rolling_window.html#Stoner.FileFormats.SNSFile.rolling_window" title="Stoner.FileFormats.SNSFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.rows.html#Stoner.FileFormats.SNSFile.rows" title="Stoner.FileFormats.SNSFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.save.html#Stoner.FileFormats.SNSFile.save" title="Stoner.FileFormats.SNSFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.search.html#Stoner.FileFormats.SNSFile.search" title="Stoner.FileFormats.SNSFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.section.html#Stoner.FileFormats.SNSFile.section" title="Stoner.FileFormats.SNSFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.sort.html#Stoner.FileFormats.SNSFile.sort" title="Stoner.FileFormats.SNSFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.swap_column.html#Stoner.FileFormats.SNSFile.swap_column" title="Stoner.FileFormats.SNSFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SNSFile.unique.html#Stoner.FileFormats.SNSFile.unique" title="Stoner.FileFormats.SNSFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -105,11 +174,11 @@ Each section seems to have a slightly different format</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.RasorFile.html"
-                        title="previous chapter">Stoner.FileFormats.RasorFile</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.RasorFile.unique.html"
+                        title="previous chapter">RasorFile.unique</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.SNSFile._load.html"
-                        title="next chapter">SNSFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.SNSFile.__init__.html"
+                        title="next chapter">SNSFile.__init__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.FileFormats.SNSFile.txt"
@@ -142,10 +211,10 @@ Each section seems to have a slightly different format</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.SNSFile._load.html" title="SNSFile._load"
+          <a href="Stoner.FileFormats.SNSFile.__init__.html" title="SNSFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.RasorFile.html" title="Stoner.FileFormats.RasorFile"
+          <a href="Stoner.FileFormats.RasorFile.unique.html" title="RasorFile.unique"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -153,7 +222,7 @@ Each section seems to have a slightly different format</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

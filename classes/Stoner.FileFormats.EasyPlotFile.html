@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="EasyPlotFile._load" href="Stoner.FileFormats.EasyPlotFile._load.html" />
-    <link rel="prev" title="OVFFile._load" href="Stoner.FileFormats.OVFFile._load.html" /> 
+    <link rel="next" title="EasyPlotFile.__init__" href="Stoner.FileFormats.EasyPlotFile.__init__.html" />
+    <link rel="prev" title="OVFFile.unique" href="Stoner.FileFormats.OVFFile.unique.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.EasyPlotFile._load.html" title="EasyPlotFile._load"
+          <a href="Stoner.FileFormats.EasyPlotFile.__init__.html" title="EasyPlotFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile._load.html" title="OVFFile._load"
+          <a href="Stoner.FileFormats.OVFFile.unique.html" title="OVFFile.unique"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -68,8 +68,77 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile._load.html#Stoner.FileFormats.EasyPlotFile._load" title="Stoner.FileFormats.EasyPlotFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>(filename,&nbsp;*args,&nbsp;**kargs)</td>
-<td>Private loader method.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.__init__.html#Stoner.FileFormats.EasyPlotFile.__init__" title="Stoner.FileFormats.EasyPlotFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.add_column.html#Stoner.FileFormats.EasyPlotFile.add_column" title="Stoner.FileFormats.EasyPlotFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.column.html#Stoner.FileFormats.EasyPlotFile.column" title="Stoner.FileFormats.EasyPlotFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.columns.html#Stoner.FileFormats.EasyPlotFile.columns" title="Stoner.FileFormats.EasyPlotFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.del_column.html#Stoner.FileFormats.EasyPlotFile.del_column" title="Stoner.FileFormats.EasyPlotFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.del_rows.html#Stoner.FileFormats.EasyPlotFile.del_rows" title="Stoner.FileFormats.EasyPlotFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.dir.html#Stoner.FileFormats.EasyPlotFile.dir" title="Stoner.FileFormats.EasyPlotFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.filter.html#Stoner.FileFormats.EasyPlotFile.filter" title="Stoner.FileFormats.EasyPlotFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.find_col.html#Stoner.FileFormats.EasyPlotFile.find_col" title="Stoner.FileFormats.EasyPlotFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.get.html#Stoner.FileFormats.EasyPlotFile.get" title="Stoner.FileFormats.EasyPlotFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.get_filename.html#Stoner.FileFormats.EasyPlotFile.get_filename" title="Stoner.FileFormats.EasyPlotFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.insert_rows.html#Stoner.FileFormats.EasyPlotFile.insert_rows" title="Stoner.FileFormats.EasyPlotFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.keys.html#Stoner.FileFormats.EasyPlotFile.keys" title="Stoner.FileFormats.EasyPlotFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.load.html#Stoner.FileFormats.EasyPlotFile.load" title="Stoner.FileFormats.EasyPlotFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.rename.html#Stoner.FileFormats.EasyPlotFile.rename" title="Stoner.FileFormats.EasyPlotFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.reorder_columns.html#Stoner.FileFormats.EasyPlotFile.reorder_columns" title="Stoner.FileFormats.EasyPlotFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.rolling_window.html#Stoner.FileFormats.EasyPlotFile.rolling_window" title="Stoner.FileFormats.EasyPlotFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.rows.html#Stoner.FileFormats.EasyPlotFile.rows" title="Stoner.FileFormats.EasyPlotFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.save.html#Stoner.FileFormats.EasyPlotFile.save" title="Stoner.FileFormats.EasyPlotFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.search.html#Stoner.FileFormats.EasyPlotFile.search" title="Stoner.FileFormats.EasyPlotFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.section.html#Stoner.FileFormats.EasyPlotFile.section" title="Stoner.FileFormats.EasyPlotFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.sort.html#Stoner.FileFormats.EasyPlotFile.sort" title="Stoner.FileFormats.EasyPlotFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.swap_column.html#Stoner.FileFormats.EasyPlotFile.swap_column" title="Stoner.FileFormats.EasyPlotFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.EasyPlotFile.unique.html#Stoner.FileFormats.EasyPlotFile.unique" title="Stoner.FileFormats.EasyPlotFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -102,11 +171,11 @@
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.OVFFile._load.html"
-                        title="previous chapter">OVFFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.OVFFile.unique.html"
+                        title="previous chapter">OVFFile.unique</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.EasyPlotFile._load.html"
-                        title="next chapter">EasyPlotFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.EasyPlotFile.__init__.html"
+                        title="next chapter">EasyPlotFile.__init__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.FileFormats.EasyPlotFile.txt"
@@ -139,10 +208,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.EasyPlotFile._load.html" title="EasyPlotFile._load"
+          <a href="Stoner.FileFormats.EasyPlotFile.__init__.html" title="EasyPlotFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile._load.html" title="OVFFile._load"
+          <a href="Stoner.FileFormats.OVFFile.unique.html" title="OVFFile.unique"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -150,7 +219,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

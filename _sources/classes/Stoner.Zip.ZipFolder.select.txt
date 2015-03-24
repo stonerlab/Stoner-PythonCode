@@ -1,0 +1,8 @@
+
+
+ZipFolder.select
+===========================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.select

@@ -14,8 +14,22 @@ Stoner.Zip.ZipFolder
     :toctree:
    
       ~ZipFolder.__init__
+      ~ZipFolder.add_group
+      ~ZipFolder.concatentate
+      ~ZipFolder.extract
+      ~ZipFolder.filter
+      ~ZipFolder.filterout
+      ~ZipFolder.flatten
+      ~ZipFolder.gather
       ~ZipFolder.getlist
+      ~ZipFolder.group
+      ~ZipFolder.next
       ~ZipFolder.save
+      ~ZipFolder.select
+      ~ZipFolder.sort
+      ~ZipFolder.unflatten
+      ~ZipFolder.walk_groups
+      ~ZipFolder.zip_groups
 
    
    

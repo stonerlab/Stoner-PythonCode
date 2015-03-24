@@ -1,0 +1,8 @@
+
+
+ZipFile.insert_rows
+==============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFile.insert_rows

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.columns
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.columns

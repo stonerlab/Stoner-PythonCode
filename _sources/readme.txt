@@ -90,6 +90,12 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 Recent Changes
 ==============
 
+Version 0.4.x
+-------------
+
+Refactored the PlotFormats sub module to use Matplotlib 1.4 stylesheets. Additional features in Plot
+and new outlier detection routines in AnalyseFile. Number of bugs squashed.
+
 Version 0.3.0
 -------------
 

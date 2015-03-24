@@ -190,6 +190,34 @@
         <span class="n">std</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">window</span><span class="p">[:,</span><span class="n">column</span><span class="p">])</span> <span class="c">#standard deviation</span>
         <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">-</span><span class="n">av</span><span class="p">)</span><span class="o">&gt;</span><span class="n">metric</span><span class="o">*</span><span class="n">std</span>
 
+    <span class="k">def</span> <span class="nf">__poly_outlier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="n">window</span><span class="p">,</span><span class="n">metric</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alternative outlier detection function that fits a polynomial locally over the window.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            row (1D array): Current row of data</span>
+<span class="sd">            column int): Column index of y values to examine</span>
+<span class="sd">            window (2D array): Local window of data</span>
+<span class="sd">            metric (float): Some measure of how sensitive the dection should be</span>
+
+<span class="sd">        Keyyword Arguments:            </span>
+<span class="sd">            xcol (column index): Column of data to use for X values. Defaults to current setas value</span>
+<span class="sd">            order (int): Order of polynomial to fit. Must be &lt; length of window-1</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if current row is an outlier</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">order</span><span class="o">&gt;</span><span class="n">window</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;order should be smaller than the window length.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xcol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s">&quot;xcol&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xcol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
+            
+        <span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">window</span><span class="p">[:,</span><span class="n">xcol</span><span class="p">],</span><span class="n">window</span><span class="p">[:,</span><span class="n">column</span><span class="p">],</span><span class="n">deg</span><span class="o">=</span><span class="n">order</span><span class="p">,</span><span class="n">cov</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">pval</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">popt</span><span class="p">,</span><span class="n">row</span><span class="p">[</span><span class="n">xcol</span><span class="p">])</span>
+        <span class="n">perr</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">-</span><span class="n">pval</span><span class="p">)</span><span class="o">&gt;</span><span class="n">metric</span><span class="o">*</span><span class="n">perr</span>
+
 
     <span class="k">def</span> <span class="nf">__mpf_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="o">**</span><span class="n">fa</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Internal routine for general non-linear least squeares fitting.</span>
@@ -1163,7 +1191,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">base</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-<div class="viewcode-block" id="AnalyseFile.outlier_detection"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.outlier_detection.html#Stoner.Analysis.AnalyseFile.outlier_detection">[docs]</a>    <span class="k">def</span> <span class="nf">outlier_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyseFile.outlier_detection"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.outlier_detection.html#Stoner.Analysis.AnalyseFile.outlier_detection">[docs]</a>    <span class="k">def</span> <span class="nf">outlier_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span><span class="n">certainty</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Function to detect outliers in a column of data.</span>
 
 <span class="sd">        Args:</span>
@@ -1173,9 +1201,14 @@
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            window(int): data window for anomoly detection</span>
 <span class="sd">            certainty(float): eg 3 detects data 3 standard deviations from average</span>
-<span class="sd">            action(str), what to do with outlying points, options are</span>
-<span class="sd">                             &#39;mask&#39;,&#39;delete&#39; anything else defaults to do nothing</span>
-<span class="sd">                             (&#39;outliers&#39; item is always added to metadata)</span>
+<span class="sd">            action(str or callable): what to do with outlying points, options are</span>
+<span class="sd">                * &#39;mask&#39; outlier points are masked (default)</span>
+<span class="sd">                * &#39;mask row&#39; outlier rows are masked</span>
+<span class="sd">                * &#39;delete&#39;  outlier rows are deleted</span>
+<span class="sd">                * callable  the value of the action keyword is called with the outlier row</span>
+<span class="sd">                * anything else defaults to do nothing.</span>
+<span class="sd">                </span>
+<span class="sd">            width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.</span>
 <span class="sd">            func (callable): A function that determines if the current row is an outlier.</span>
 
 <span class="sd">        Returns:</span>
@@ -1196,6 +1229,17 @@
 <span class="sd">                return True # or False</span>
 <span class="sd">                </span>
 <span class="sd">        All extra keyword arguments are passed to the outlier detector.</span>
+
+<span class="sd">        IF *action* is a callable function then it should take the form of::</span>
+<span class="sd">            </span>
+<span class="sd">            def action(i,column,row):</span>
+<span class="sd">                pass</span>
+<span class="sd">                </span>
+<span class="sd">        where *i* is the number of the outlier row, *column* the same value as above</span>
+<span class="sd">        and *row* is the data for the row.</span>
+<span class="sd">        </span>
+<span class="sd">        In all cases the indices of the outlier rows are added to the ;outlier&#39; metadata.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -1205,18 +1249,25 @@
             <span class="n">column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s">&quot;ycol&quot;</span><span class="p">)</span>
         <span class="n">index</span><span class="o">=</span><span class="p">[]</span>
         <span class="n">column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="c">#going to be easier if this is an integer later on</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rolling_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span><span class="n">wrap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">exclude_centre</span><span class="o">=</span><span class="bp">True</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">column</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">certainity</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rolling_window</span><span class="p">(</span><span class="n">window</span><span class="p">,</span><span class="n">wrap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">exclude_centre</span><span class="o">=</span><span class="n">width</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">column</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">certainty</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
                 <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         <span class="bp">self</span><span class="p">[</span><span class="s">&#39;outliers&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">index</span> <span class="c">#add outlier indecies to metadata</span>
-        <span class="k">if</span> <span class="n">action</span><span class="o">==</span><span class="s">&#39;mask&#39;</span><span class="p">:</span>
+        <span class="n">index</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span> <span class="c">#Always reverse the index in case we&#39;re deleting rows in sucession</span>
+        <span class="k">if</span> <span class="n">action</span><span class="o">==</span><span class="s">&#39;mask&#39;</span> <span class="ow">or</span> <span class="n">action</span><span class="o">==</span><span class="s">&#39;mask row&#39;</span><span class="p">:</span>
             <span class="n">mask</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
-                <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
+                <span class="k">if</span> <span class="n">action</span><span class="o">==</span><span class="s">&#39;mask&#39;</span><span class="p">:</span>
+                    <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="bp">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span>
         <span class="k">elif</span> <span class="n">action</span><span class="o">==</span><span class="s">&#39;delete&#39;</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span> 
                 <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">action</span><span class="p">):</span> <span class="c"># this will call the action function with each row in turn from back to start</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+                <span class="n">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">column</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span>
 
 </div>
@@ -1632,7 +1683,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

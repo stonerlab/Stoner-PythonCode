@@ -223,13 +223,16 @@ order that they appear in the list (ie not the order that they are in the data
 file). For completeness, the :py:meth:`DataFile.column` method also allows one to
 pass slices to select columns and should do the expected thing.
 
-There is a convenient short cut for working with cases where the column headers are not the same
-as the names of any of the attributes of the :py:class:`DataFile` object::
+There are a couple of convenient short cuts/ Firstly the *floormod* operator //
+is an alias for the :py:meth:`DataFile.column` method and secondly for working 
+with cases where the column headers are not the same as the names of any of the attributes 
+of the :py:class:`DataFile` object::
 
+  d//"Temperature"
   d.Temperature
   d.column('Temperature')
 
-both return the same data.
+all return the same data.
 
 Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
 
@@ -720,6 +723,15 @@ rows are deleted(kept for *invert*=True) if the specified column lies between th
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds.
 
+For simple caases where the row to be delted can be expressed as an integer or list of integers,
+the subtration operator can be used.::
+
+   e=d-2
+   e=d-[1,2,3]
+   d-=-1
+
+The final form looks stranger than it is - it simply deletes the last row of data in place.
+
 Deleting Columns of Data
 ------------------------
 
@@ -729,6 +741,13 @@ column header - the indexing rules are the same as used for the
 
   d.del_column('Temperature')
   d.del_column(1)
+
+Again, there is an operator that can be used to achieve the same effect, in this
+case the modulus operator %.::
+
+  e=d%"temperature"
+  e=d%1
+  d%=-1
 
 Sorting Data
 ------------

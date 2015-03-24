@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Plot.PlotFile" href="Stoner.Plot.PlotFile.html" />
-    <link rel="next" title="PlotFile.figure" href="Stoner.Plot.PlotFile.figure.html" />
-    <link rel="prev" title="PlotFile.__init__" href="Stoner.Plot.PlotFile.__init__.html" /> 
+    <link rel="next" title="PlotFile.del_column" href="Stoner.Plot.PlotFile.del_column.html" />
+    <link rel="prev" title="PlotFile.columns" href="Stoner.Plot.PlotFile.columns.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.figure.html" title="PlotFile.figure"
+          <a href="Stoner.Plot.PlotFile.del_column.html" title="PlotFile.del_column"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.__init__.html" title="PlotFile.__init__"
+          <a href="Stoner.Plot.PlotFile.columns.html" title="PlotFile.columns"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
@@ -61,7 +61,7 @@
 <dl class="method">
 <dt id="Stoner.Plot.PlotFile.contour_xyz">
 <tt class="descclassname">PlotFile.</tt><tt class="descname">contour_xyz</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em>, <em>zcol=None</em>, <em>shape=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>plotter=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotFile.contour_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotFile.contour_xyz" title="Permalink to this definition">¶</a></dt>
-<dd><p>An xyz plot that forces the use of pyplot.contour.</p>
+<dd><p>An xyz plot that forces the use of plt.contour.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -85,15 +85,14 @@ The xlimits, defaults to automatically determined from data</li>
 <li><strong>ylim</strong> (<em>tuple</em>) &#8211;
 The ylimits, defaults to automatically determined from data</li>
 <li><strong>plotter</strong> (<em>function</em>) &#8211;
-Function to use to plot data. Defaults to pyplot.contour</li>
+Function to use to plot data. Defaults to plt.contour</li>
 <li><strong>show_plot</strong> (<em>bool</em>) &#8211;
 Turn on interfactive plotting and show plot when drawn</li>
 <li><strong>save_filename</strong> (<em>string or None</em>) &#8211;
 If set to a string, save the plot with this filename</li>
 <li><strong>figure</strong> (<em>integer or matplotlib.figure or boolean</em>) &#8211;
 Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>**kargs</strong> (<em>dict</em>) &#8211;
-Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs (dict): Other arguments are passed on to the plotter.</strong></li>
 </ul>
 </td>
 </tr>
@@ -116,11 +115,11 @@ Other arguments are passed on to the plotter.</li>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Plot.PlotFile.__init__.html"
-                        title="previous chapter">PlotFile.__init__</a></p>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.columns.html"
+                        title="previous chapter">PlotFile.columns</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Plot.PlotFile.figure.html"
-                        title="next chapter">PlotFile.figure</a></p>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.del_column.html"
+                        title="next chapter">PlotFile.del_column</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Plot.PlotFile.contour_xyz.txt"
@@ -153,10 +152,10 @@ Other arguments are passed on to the plotter.</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.figure.html" title="PlotFile.figure"
+          <a href="Stoner.Plot.PlotFile.del_column.html" title="PlotFile.del_column"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.PlotFile.__init__.html" title="PlotFile.__init__"
+          <a href="Stoner.Plot.PlotFile.columns.html" title="PlotFile.columns"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
@@ -165,7 +164,7 @@ Other arguments are passed on to the plotter.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

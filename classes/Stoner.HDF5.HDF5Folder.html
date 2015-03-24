@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="HDF5Folder.__init__" href="Stoner.HDF5.HDF5Folder.__init__.html" />
-    <link rel="prev" title="HDF5File.save" href="Stoner.HDF5.HDF5File.save.html" /> 
+    <link rel="prev" title="HDF5File.unique" href="Stoner.HDF5.HDF5File.unique.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,7 +43,7 @@
           <a href="Stoner.HDF5.HDF5Folder.__init__.html" title="HDF5Folder.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5File.save.html" title="HDF5File.save"
+          <a href="Stoner.HDF5.HDF5File.unique.html" title="HDF5File.unique"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -75,11 +75,53 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.__init__.html#Stoner.HDF5.HDF5Folder.__init__" title="Stoner.HDF5.HDF5Folder.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor for the HDF5Folder Class.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.add_group.html#Stoner.HDF5.HDF5Folder.add_group" title="Stoner.HDF5.HDF5Folder.add_group"><tt class="xref py py-obj docutils literal"><span class="pre">add_group</span></tt></a>(key)</td>
+<td>Add a new group to the current Folder with the given key.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.concatentate.html#Stoner.HDF5.HDF5Folder.concatentate" title="Stoner.HDF5.HDF5Folder.concatentate"><tt class="xref py py-obj docutils literal"><span class="pre">concatentate</span></tt></a>([sort,&nbsp;reverse])</td>
+<td>Concatentates all the files in a DataFolder into a single DataFile like object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.extract.html#Stoner.HDF5.HDF5Folder.extract" title="Stoner.HDF5.HDF5Folder.extract"><tt class="xref py py-obj docutils literal"><span class="pre">extract</span></tt></a>(metadata)</td>
+<td>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.filter.html#Stoner.HDF5.HDF5Folder.filter" title="Stoner.HDF5.HDF5Folder.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([filter,&nbsp;invert])</td>
+<td>Filter the current set of files by some criterion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.filterout.html#Stoner.HDF5.HDF5Folder.filterout" title="Stoner.HDF5.HDF5Folder.filterout"><tt class="xref py py-obj docutils literal"><span class="pre">filterout</span></tt></a>(filter)</td>
+<td>Synonym for self.filter(filter,invert=True)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.flatten.html#Stoner.HDF5.HDF5Folder.flatten" title="Stoner.HDF5.HDF5Folder.flatten"><tt class="xref py py-obj docutils literal"><span class="pre">flatten</span></tt></a>()</td>
+<td>Compresses all the groups and sub-groups iunto a single flat file list.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.gather.html#Stoner.HDF5.HDF5Folder.gather" title="Stoner.HDF5.HDF5Folder.gather"><tt class="xref py py-obj docutils literal"><span class="pre">gather</span></tt></a>([xcol,&nbsp;ycol])</td>
+<td>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
 <td>Reads the HDF5 File to construct a list of file HDF5File objects</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save" title="Stoner.HDF5.HDF5Folder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.group.html#Stoner.HDF5.HDF5Folder.group" title="Stoner.HDF5.HDF5Folder.group"><tt class="xref py py-obj docutils literal"><span class="pre">group</span></tt></a>(key)</td>
+<td>Take the files and sort them into a series of separate DataFolder objects according to the value of the key</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.next.html#Stoner.HDF5.HDF5Folder.next" title="Stoner.HDF5.HDF5Folder.next"><tt class="xref py py-obj docutils literal"><span class="pre">next</span></tt></a>(elf)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save" title="Stoner.HDF5.HDF5Folder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
 <td>Saves a load of files to a single HDF5 file, creating groups as it goes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.select.html#Stoner.HDF5.HDF5Folder.select" title="Stoner.HDF5.HDF5Folder.select"><tt class="xref py py-obj docutils literal"><span class="pre">select</span></tt></a>(*args,&nbsp;**kargs)</td>
+<td>A generator that can be used to select particular data files from the DataFolder</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.sort.html#Stoner.HDF5.HDF5Folder.sort" title="Stoner.HDF5.HDF5Folder.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([key,&nbsp;reverse])</td>
+<td>Sort the files by some key</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.unflatten.html#Stoner.HDF5.HDF5Folder.unflatten" title="Stoner.HDF5.HDF5Folder.unflatten"><tt class="xref py py-obj docutils literal"><span class="pre">unflatten</span></tt></a>()</td>
+<td>Takes a file list an unflattens them according to the file paths.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.walk_groups.html#Stoner.HDF5.HDF5Folder.walk_groups" title="Stoner.HDF5.HDF5Folder.walk_groups"><tt class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></tt></a>(walker[,&nbsp;group,&nbsp;...])</td>
+<td>Walks through a heirarchy of groups and calls walker for each file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.zip_groups.html#Stoner.HDF5.HDF5Folder.zip_groups" title="Stoner.HDF5.HDF5Folder.zip_groups"><tt class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></tt></a>(groups)</td>
+<td>Return a list of tuples of DataFiles drawn from the specified groups</td>
 </tr>
 </tbody>
 </table>
@@ -97,8 +139,8 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.HDF5.HDF5File.save.html"
-                        title="previous chapter">HDF5File.save</a></p>
+  <p class="topless"><a href="Stoner.HDF5.HDF5File.unique.html"
+                        title="previous chapter">HDF5File.unique</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.HDF5.HDF5Folder.__init__.html"
                         title="next chapter">HDF5Folder.__init__</a></p>
@@ -137,7 +179,7 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
           <a href="Stoner.HDF5.HDF5Folder.__init__.html" title="HDF5Folder.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.HDF5.HDF5File.save.html" title="HDF5File.save"
+          <a href="Stoner.HDF5.HDF5File.unique.html" title="HDF5File.unique"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -145,7 +187,7 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 24, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

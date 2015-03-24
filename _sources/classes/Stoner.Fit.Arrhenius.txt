@@ -1,0 +1,44 @@
+
+
+Arrhenius
+====================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: Arrhenius
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Arrhenius.guess
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: guess
+
+   
+   

@@ -14,8 +14,22 @@ Stoner.HDF5.HDF5Folder
     :toctree:
    
       ~HDF5Folder.__init__
+      ~HDF5Folder.add_group
+      ~HDF5Folder.concatentate
+      ~HDF5Folder.extract
+      ~HDF5Folder.filter
+      ~HDF5Folder.filterout
+      ~HDF5Folder.flatten
+      ~HDF5Folder.gather
       ~HDF5Folder.getlist
+      ~HDF5Folder.group
+      ~HDF5Folder.next
       ~HDF5Folder.save
+      ~HDF5Folder.select
+      ~HDF5Folder.sort
+      ~HDF5Folder.unflatten
+      ~HDF5Folder.walk_groups
+      ~HDF5Folder.zip_groups
 
    
    

@@ -13,7 +13,30 @@ Stoner.FileFormats.QDSquidVSMFile
    .. autosummary::
     :toctree:
    
-      ~QDSquidVSMFile._load
+      ~QDSquidVSMFile.__init__
+      ~QDSquidVSMFile.add_column
+      ~QDSquidVSMFile.column
+      ~QDSquidVSMFile.columns
+      ~QDSquidVSMFile.del_column
+      ~QDSquidVSMFile.del_rows
+      ~QDSquidVSMFile.dir
+      ~QDSquidVSMFile.filter
+      ~QDSquidVSMFile.find_col
+      ~QDSquidVSMFile.get
+      ~QDSquidVSMFile.get_filename
+      ~QDSquidVSMFile.insert_rows
+      ~QDSquidVSMFile.keys
+      ~QDSquidVSMFile.load
+      ~QDSquidVSMFile.rename
+      ~QDSquidVSMFile.reorder_columns
+      ~QDSquidVSMFile.rolling_window
+      ~QDSquidVSMFile.rows
+      ~QDSquidVSMFile.save
+      ~QDSquidVSMFile.search
+      ~QDSquidVSMFile.section
+      ~QDSquidVSMFile.sort
+      ~QDSquidVSMFile.swap_column
+      ~QDSquidVSMFile.unique
 
    
    

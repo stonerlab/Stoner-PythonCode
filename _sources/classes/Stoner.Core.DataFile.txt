@@ -14,7 +14,6 @@ Stoner.Core.DataFile
     :toctree:
    
       ~DataFile.__init__
-      ~DataFile._load
       ~DataFile.add_column
       ~DataFile.column
       ~DataFile.columns

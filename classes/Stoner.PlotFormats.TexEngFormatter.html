@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TexEngFormatter &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="TexFormatter" href="Stoner.PlotFormats.TexFormatter.html" />
+    <link rel="prev" title="SketchPlot" href="Stoner.PlotFormats.SketchPlot.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.TexFormatter.html" title="TexFormatter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SketchPlot.html" title="SketchPlot"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="texengformatter">
+<h1>TexEngFormatter<a class="headerlink" href="#texengformatter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.PlotFormats.TexEngFormatter">
+<em class="property">class </em><tt class="descclassname">Stoner.PlotFormats.</tt><tt class="descname">TexEngFormatter</tt><big>(</big><em>unit=u''</em>, <em>places=None</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">matplotlib.ticker.EngFormatter</span></tt></p>
+<p>An axis tick label formatter that emits Tex formula mode code
+so that large numbers are registered as times 10^{power}
+rather than ysing E notation.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.prefix" title="Stoner.PlotFormats.TexEngFormatter.prefix"><tt class="xref py py-obj docutils literal"><span class="pre">prefix</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.__call__" title="Stoner.PlotFormats.TexEngFormatter.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(value[,&nbsp;pos])</td>
+<td>Return the value ina  suitable texable format</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.format_data" title="Stoner.PlotFormats.TexEngFormatter.format_data"><tt class="xref py py-obj docutils literal"><span class="pre">format_data</span></tt></a>(value)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.format_data_short" title="Stoner.PlotFormats.TexEngFormatter.format_data_short"><tt class="xref py py-obj docutils literal"><span class="pre">format_data_short</span></tt></a>(value)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.TexEngFormatter.prefix">
+<tt class="descname">prefix</tt><em class="property"> = {3: 'k', 6: 'M', -24: 'y', 9: 'G', -21: 'z', 12: 'T', -18: 'a', 15: 'P', -15: 'f', 18: 'E', -12: 'p', 21: 'Z', -9: 'n', 24: 'Y', -6: '\\mu', -3: 'm'}</em><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.PlotFormats.TexEngFormatter.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>value</em>, <em>pos=None</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the value ina  suitable texable format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Stoner.PlotFormats.TexEngFormatter.format_data">
+<tt class="descname">format_data</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.format_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Stoner.PlotFormats.TexEngFormatter.format_data_short">
+<tt class="descname">format_data_short</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.SketchPlot.html"
+                        title="previous chapter">SketchPlot</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.TexFormatter.html"
+                        title="next chapter">TexFormatter</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.PlotFormats.TexEngFormatter.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.TexFormatter.html" title="TexFormatter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SketchPlot.html" title="SketchPlot"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 24, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

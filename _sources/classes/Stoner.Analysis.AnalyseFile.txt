@@ -14,18 +14,32 @@ Stoner.Analysis.AnalyseFile
     :toctree:
    
       ~AnalyseFile.SG_Filter
+      ~AnalyseFile.__init__
       ~AnalyseFile.add
+      ~AnalyseFile.add_column
       ~AnalyseFile.apply
       ~AnalyseFile.bin
       ~AnalyseFile.chi2mapping
       ~AnalyseFile.clip
+      ~AnalyseFile.column
+      ~AnalyseFile.columns
       ~AnalyseFile.curve_fit
       ~AnalyseFile.decompose
+      ~AnalyseFile.del_column
+      ~AnalyseFile.del_rows
       ~AnalyseFile.diffsum
+      ~AnalyseFile.dir
       ~AnalyseFile.divide
+      ~AnalyseFile.filter
+      ~AnalyseFile.find_col
+      ~AnalyseFile.get
+      ~AnalyseFile.get_filename
+      ~AnalyseFile.insert_rows
       ~AnalyseFile.integrate
       ~AnalyseFile.interpolate
+      ~AnalyseFile.keys
       ~AnalyseFile.lmfit
+      ~AnalyseFile.load
       ~AnalyseFile.make_bins
       ~AnalyseFile.max
       ~AnalyseFile.mean
@@ -38,11 +52,21 @@ Stoner.Analysis.AnalyseFile
       ~AnalyseFile.outlier_detection
       ~AnalyseFile.peaks
       ~AnalyseFile.polyfit
+      ~AnalyseFile.rename
+      ~AnalyseFile.reorder_columns
+      ~AnalyseFile.rolling_window
+      ~AnalyseFile.rows
+      ~AnalyseFile.save
+      ~AnalyseFile.search
+      ~AnalyseFile.section
+      ~AnalyseFile.sort
       ~AnalyseFile.span
       ~AnalyseFile.split
       ~AnalyseFile.stitch
       ~AnalyseFile.subtract
+      ~AnalyseFile.swap_column
       ~AnalyseFile.threshold
+      ~AnalyseFile.unique
 
    
    

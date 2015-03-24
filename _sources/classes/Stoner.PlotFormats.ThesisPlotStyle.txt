@@ -1,0 +1,44 @@
+
+
+ThesisPlotStyle
+==================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autoclass:: ThesisPlotStyle
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~ThesisPlotStyle.show_title
+      ~ThesisPlotStyle.stylename
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: show_title
+   .. autoattribute:: stylename
+
+   
+   
+
+   
+   
+   

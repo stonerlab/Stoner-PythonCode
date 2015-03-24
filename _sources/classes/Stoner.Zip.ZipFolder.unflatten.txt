@@ -1,0 +1,8 @@
+
+
+ZipFolder.unflatten
+==============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.unflatten
