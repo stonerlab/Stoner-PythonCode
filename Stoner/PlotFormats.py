@@ -207,6 +207,11 @@ class DefaultPlotStyle(object):
                 if attrname in plt.rcParams.keys():
                     params[attrname]=value
         plt.rcParams.update(params) # Apply these parameters
+        if "projection" in kargs:
+            projection=kargs["projection"]
+            del kargs["projection"]
+        else:
+            projection="2d"
         if isinstance(figure,bool) and not figure:
             ret=None
         elif figure is not None:
@@ -215,12 +220,19 @@ class DefaultPlotStyle(object):
                 rect=[plt.rcParams["figure.subplot.{}".format(i)] for i in ["left","bottom","right","top"]]
                 rect[2]=rect[2]-rect[0]
                 rect[3]=rect[3]-rect[1]
-                ax=fig.add_axes(rect)
+                if projection=="3d":
+                    ax = fig.add_subplot(111, projection="3d")
+                else:
+                    ax=fig.add_axes(rect)
             else:
                 ax=fig.gca()
             ret=fig
         else:
-            ret,ax=plt.subplots(figsize=self.template_figure_figsize,**kargs)
+            if projection=="3d":
+                ret=plt.figure(figsize=self.template_figure_figsize,**kargs)
+                ax = ret.add_subplot(111, projection="3d")
+            else:
+                ret,ax=plt.subplots(figsize=self.template_figure_figsize,**kargs)
         return ret,ax
 
     def apply(self):

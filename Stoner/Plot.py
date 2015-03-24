@@ -11,13 +11,13 @@ from Stoner.Core import DataFile,_attribute_store
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_
-import matplotlib
 import os
 import platform
 from inspect import getargspec
 if os.name=="posix" and platform.system()=="Darwin":
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as plt
+from matplotlib import figure as mplfig
 from scipy.interpolate import griddata
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.axes_grid import inset_locator
@@ -116,7 +116,7 @@ class PlotFile(DataFile):
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
         Z=_np_.nan_to_num(Z)
-        ax = self.fig.add_subplot(111, projection='3d')
+        ax=self.__figure.gca()
         surf = ax.plot_surface(X, Y, Z, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5,extend="both")
 
@@ -220,16 +220,16 @@ class PlotFile(DataFile):
     def _fix_fig(self,figure,**kargs):
         """Sorts out the matplotlib figure handling."""
         if isinstance(figure, int):
-            figure,ax=self.template.new_figure(figure)
+            figure,ax=self.template.new_figure(figure,**kargs)
         elif isinstance(figure, bool) and not figure:
-            figure,ax=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
-            figure,ax=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+            figure,ax=self.template.new_figure(None,**kargs)
+        elif isinstance(figure, mplfig.Figure):
+            figure,ax=self.template.new_figure(figure.number,**kargs)
+        elif isinstance(self.__figure,  mplfig.Figure):
             figure=self.__figure
             ax=self.__figure.gca()
         else:
-            figure,ax=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None,**kargs)
         return figure,ax
 
 
@@ -295,13 +295,13 @@ class PlotFile(DataFile):
                 self._subplots=self.__figure.axes
             ret=self._subplots
         elif name=="axes":
-            if isinstance(self.__figure, matplotlib.figure.Figure):
+            if isinstance(self.__figure, mplfig.Figure):
                 ret=self.__figure.axes
             else:
                 ret=None
         elif "anme"=="_public_attrs":
             ret=super(PlotFile,self).__getattr__(name)
-            ret.update({"fig":(int,mpl.figure.Figure),
+            ret.update({"fig":(int,mplfig.Figure),
                         "labels":list,
                         "template":DefaultPlotStyle,
                         "xlim":tuple,
@@ -313,7 +313,7 @@ class PlotFile(DataFile):
             try:
                 return super(PlotFile, self).__getattr__(name)
             except AttributeError:
-                if not isinstance(self.__figure, matplotlib.figure.Figure):
+                if not isinstance(self.__figure, mplfig.Figure):
                     raise AttributeError
                 ax=self.__figure.axes
                 if "get_{}".format(name) in dir(ax):
@@ -379,6 +379,34 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name,value)
 
+    def colormap_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
+        """An xyz plot that forces the use of plt.contour.
+
+        Args:
+            xcol (index): Xcolumn index or label
+            ycol (index): Y column index or label
+            zcol (index): Z column index or label
+
+        Keyword Arguments:
+            shape (two-tuple): Number of points along x and y in the grid - defaults to a square of sidelength = square root of the length of the data.
+            xlim (tuple): The xlimits, defaults to automatically determined from data
+            ylim (tuple): The ylimits, defaults to automatically determined from data
+            plotter (function): Function to use to plot data. Defaults to plt.contour
+            show_plot (bool): Turn on interfactive plotting and show plot when drawn
+            save_filename (string or None): If set to a string, save the plot with this filename
+            figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
+            **kargs (dict): Other arguments are passed on to the plotter.
+
+        Returns:
+            A matplotlib figure
+         """
+        if plotter is None:
+            plotter=plt.pcolor
+        kargs["plotter"]=plotter
+        kargs["projection"]="2d"
+        return self.plot_xyz(xcol,ycol,zcol,shape,xlim,ylim,**kargs)
+
+
 
     def contour_xyz(self,xcol=None,ycol=None,zcol=None,shape=None,xlim=None, ylim=None, plotter=None,**kargs):
         """An xyz plot that forces the use of plt.contour.
@@ -418,7 +446,7 @@ class PlotFile(DataFile):
             figure,ax=self.template.new_figure(None)
         elif isinstance(figure, int):
             figure,ax=self.template.new_figure(figure)
-        elif isinstance(figure, matplotlib.figure.Figure):
+        elif isinstance(figure, mplfig.Figure):
             figure,ax=self.template.new_figure(figure.number)
         self.__figure=figure
         return self
@@ -657,7 +685,7 @@ class PlotFile(DataFile):
         #Sort out xvls values
         if isinstance(xvals, index_types): # String or int means using a column index
             if xlabel is None:
-                xlabel=self._col_clabel(xvals)
+                xlabel=self._col_label(xvals)
             if rectang is None: # Do we need to init the rectan ?
                 rectang=(0, xvals+1)
             elif isinstance(rectang, tuple): # Do we need to adjust the rectan column origin ?
@@ -694,12 +722,12 @@ class PlotFile(DataFile):
             figure,ax=self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
             figure,ax=self.template.new_figure(None)
-        elif isinstance(figure, matplotlib.figure.Figure):
+        elif isinstance(figure, mplfig.Figure):
             figure,ax=self.template.new_figure(figure.number)
-        elif isinstance(self.__figure,  matplotlib.figure.Figure):
+        elif isinstance(self.__figure,  mplfig.Figure):
             figure=self.__figure
         else:
-            figure,ax=self.template.new_figure(None)
+            figure,ax=self.template.new_figure(None,projection="3d")
         self.__figure=figure
         if show_plot == True:
             plt.ion()
@@ -724,6 +752,7 @@ class PlotFile(DataFile):
         if title=='':
             title=self.filename
         plt.title(title)
+        plt.show()
         plt.draw()
 
         return self.__figure
@@ -851,7 +880,7 @@ class PlotFile(DataFile):
                     plt.yticks(loc[:-1],lab[:-1])
         return self.__figure
 
-    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None,  **kargs):
+    def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kargs):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
 
             Args:
@@ -869,6 +898,7 @@ class PlotFile(DataFile):
                 save_filename (string): Filename used to save the plot
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
+                projection (string or None): Whether to use a 3D projection or regular 2D axes (deault is 3D)
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
@@ -897,7 +927,7 @@ class PlotFile(DataFile):
             otherkargs=[]
         kargs,nonkargs=self._fix_kargs(None,defaults,otherkargs=otherkargs,**kargs)
         plotter=nonkargs["plotter"]
-        self.__figure,ax=self._fix_fig(nonkargs["figure"])
+        self.__figure,ax=self._fix_fig(nonkargs["figure"],projection=projection)
         plotter(xdata, ydata, zdata, **kargs)
         if plotter!=self.__SurfPlotter:
             del(nonkargs["zlabel"])

@@ -72,7 +72,7 @@ is a list or a single string. Finally additional parameters can be given to spec
 is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed
 through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log
 plots. By default, :py:meth:`PlotFile.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
-are a number of useful plotter functions that will work like this::
+are a number of useful plotter functions that will work like this
 
 *   [pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
     the x-axes the log one and semilogy the y-axis.
@@ -96,46 +96,46 @@ Plotting 3D Data
 ----------------
 
 A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot
-these on a surface plot or 3D plot. The :py:meth:`PlotFile.plot_xyz` method can be used for this.::
+these on a surface plot or 3D plot. The :py:meth:`PlotFile.plot_xyz` method can be used for this.
 
-    p.plot_xyz(col_x,col_y,col_z)
-    p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
-    p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
-    p.plot_xyz(col_x,col_y,col_z,xlim=(-10,10,100),ylim=(-10,10,100))
+.. plot:: samples/3D_plot.py
+   :include-source:
+
+.. plot:: samples/colormap_plot.py
+   :include-source:
 
 By default the :py:meth:`PlotFile.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overriden with the *cmap* keyword
 parameter. If a simple 2D surface plot is required, then the *plotter* parameter should be set to a suitable function
 such as **pyplot.pcolor**.
 
- Like :py:meth:`PlotFile.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional
+Like :py:meth:`PlotFile.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional
 keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
 
- Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotFile.contour_xyz`
- method.::
+Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotFile.contour_xyz`
+method.
 
- 	p.contour_xyz(xcol,ycol,zcol,shape=(50,50))
- 	p.contour_xyz(xcol,ycol,zcol,xlim=(10,10,100),ylim=(-10,10,100))
+.. plot:: samples/contour_plot.py
+   :include-source:
 
 Both :py:meth:`PlotFile.plot_xyz` and :py:meth:`PlotFile.contour_xyz` make use of a call to :py:meth:`PlotFile.griddata`
- which is a utility method of the :py:class:`PlotFile` -- essentially this is just a pass through method to the underlying
+which is a utility method of the :py:class:`PlotFile` -- essentially this is just a pass through method to the underlying
 *scipy.interpolate.griddata** function. The shape of the grid is determined through a combination of the *xlim*, *ylim*
- and *shape* arguments.::
+and *shape* arguments.::
 
     X,Y,Z=p.griddata(xcol,ycol,zcol,shape=(100,100))
     X,Y,Z=p.griddata(xcol,ycol,zcol,xlim=(-10,10,100),ylim=(-10,10,100))
 
 If a *xlim* or *ylim* arguments are provided and are two tuples, then they set the maximum and minimum values of the relevant axis.
 If they are three tuples, then the third argument is the number of points along that axis and overrides any setting in the *shape*
- parameter. If the *xlim* or *ylim* parameters are not presents, then the maximum and minimum values of the relevant axis are used.
+parameter. If the *xlim* or *ylim* parameters are not presents, then the maximum and minimum values of the relevant axis are used.
 If no *shape* information is provided, the default is to make the shape a square of sidelength given by the square root of the
 number of points.
 
- Alternatively, if your data is already in the form of a matrix, you can use the :py:meth:`PlotFile.plot_matrix` method::
+ Alternatively, if your data is already in the form of a matrix, you can use the :py:meth:`PlotFile.plot_matrix` method.
 
-    p.plot_matrix()
-    p.plot_matrix(xvals,yvals,rectang,title="Title",xlabel="X Axis",ylabel="Y Axis",zlabel="Z Axis",cmap=matplotlib.cm.jet)
-    p.plot_matrix(plotter=pyplot.pcolor,figure=False)
+.. plot:: samples/matrix_plot.py
+   :include-source:
 
 The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
