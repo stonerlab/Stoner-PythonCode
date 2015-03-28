@@ -30,7 +30,7 @@ methods will use these to try to make a sensible plot.::
 
 
 Once the columns are identified, the :py:meth:`PlotFile.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
-available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`Plotfile.plot_xyz` as appropriate. All keyword arguments to :
+available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`PlotFile.plot_xyz` as appropriate. All keyword arguments to :
 py:meth:`PlotFile.plot` are passed on to the actual plotting method.
 
 Types of Plot
@@ -160,7 +160,7 @@ fields are visualised by using quiver plots, where a small arrow points in the d
 is proportional to the magnitude. This can also be suplemented by colour information - in one scheme a hue-saturation-luminence
 space is used, where hue described a direction in the x-y plane, the luminence describes the vertical component and the
 saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
-Following the naming convention above, the :py:meth:`Plotfile.plot_xyzuvw` method handles these plots.::
+Following the naming convention above, the :py:meth:`PlotFile.plot_xyzuvw` method handles these plots.::
 
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol)
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors="color_data")

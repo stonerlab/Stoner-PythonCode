@@ -345,7 +345,7 @@ class PlotFile(DataFile):
     """
         if name=="fig":
             self.__figure=value
-            self.fig,ax=self.template.new_figure(value.number)
+            self.__figure,ax=self.template.new_figure(value.number)
         elif name=="labels":
             self._labels=value
         elif name=="template":

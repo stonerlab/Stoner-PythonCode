@@ -133,7 +133,7 @@ class AnalyseFile(DataFile):
 
     def __outlier(self,row,column,window,metric):
         """Internal function for outlier detector.
-        
+
         Calculates if the current row is an outlier from the surrounding data by looking
         at the number of standard deviations away from the average of the window it is."""
         av=_np_.average(window[:,column])
@@ -142,17 +142,17 @@ class AnalyseFile(DataFile):
 
     def __poly_outlier(self,row,column,window,metric,xcol=None,order=1):
         """Alternative outlier detection function that fits a polynomial locally over the window.
-        
+
         Args:
             row (1D array): Current row of data
             column int): Column index of y values to examine
             window (2D array): Local window of data
             metric (float): Some measure of how sensitive the dection should be
 
-        Keyyword Arguments:            
+        Keyyword Arguments:
             xcol (column index): Column of data to use for X values. Defaults to current setas value
             order (int): Order of polynomial to fit. Must be < length of window-1
-            
+
         Returns:
             True if current row is an outlier
         """
@@ -162,7 +162,7 @@ class AnalyseFile(DataFile):
             xcol=self.setas._get_cols("xcol")
         else:
             xcol=self.find_col(xcol)
-            
+
         popt,pcov=_np_.polyfit(window[:,xcol],window[:,column],deg=order,cov=True)
         pval=_np_.polyval(popt,row[xcol])
         perr=_np_.sqrt(_np_.diag(pcov))[-1]
@@ -318,7 +318,7 @@ class AnalyseFile(DataFile):
             self.column_headers[col]=header
         return self
 
-    def bin(self,xcol=None,ycol=None,bins=0.03,mode="log",**kargs):
+    def bin(self,xcol=None,ycol=None,bins=0.03,mode="log",clone=True,**kargs):
         """Bin x-y data into new values of x with an error bar.
 
         Args:
@@ -331,9 +331,13 @@ class AnalyseFile(DataFile):
             yerr (index): Column with y-error data if present.
             bin_start (float): Manually override the minimum bin value
             bin_stop (float): Manually override the maximum bin value
+            clone (bool): Return a clone of the current AnalyseFile with binned data (True)
+                          or just the numbers (False).
 
         Returns:
-            n x 3 array of x-bin, y-bin, y-bin-error where n is the number of bins
+            Either a clone of the current data set with the new binned data or
+            tuple of (bin centres, bin values, bin errors, number points/bin),
+            depending on the *clone* parameter.
 
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
@@ -381,7 +385,21 @@ class AnalyseFile(DataFile):
             ebin[i,:]=e
             nbins[i,:]=data.shape[0]
             i+=1
-        return (bin_centres,ybin,ebin,nbins)
+        if clone:
+            ret=self.clone
+            ret.data=_np_.atleast_2d(bin_centres).T
+            ret.column_headers[0]=self.column_headers[xcol]
+            ret.setas=["x"]
+            for i in range(ybin.shape[1]):
+                ret=ret&ybin[:,i]&ebin[:,i]&nbins[:,i]
+                s=list(ret.setas)
+                s[-2:]=["y","e","."]
+                ret.setas=s
+                head=self.column_headers[ycol[i]]
+                ret.column_headers[i*3+1:i*3+5]=[head,"d{}".format(head),"#/bin {}".format(head)]
+        else:
+            ret=(bin_centres,ybin,ebin,nbins)
+        return ret
 
     def chi2mapping(self, ini_file, func):
         """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
@@ -865,15 +883,15 @@ class AnalyseFile(DataFile):
         if isinstance(bins,int): # Given a number of bins
             if mode.lower()=="lin":
                 bin_width=float(xmax-xmin)/bins
-                bin_start=linspace(xmin,xmax-bin_width,bins)
-                bin_stop=linspace(xmin+bin_width,xmax,bins)
+                bin_start=_np_.linspace(xmin,xmax-bin_width,bins)
+                bin_stop=_np_.linspace(xmin+bin_width,xmax,bins)
                 bin_centres=(bin_start+bin_stop)/2.0
             elif mode.lowerlower()=="log":
                 xminl=_np_.log(xmin)
                 xmaxl=_np_.log(xmax)
                 bin_width=float(xmaxl-xminl)/bins
-                bin_start=linspace(xminl,xmaxl-bin_width,bins)
-                bin_stop=linspace(xminl+bin_width,xmaxl,bins)
+                bin_start=_np_.linspace(xminl,xmaxl-bin_width,bins)
+                bin_stop=_np_.linspace(xminl+bin_width,xmaxl,bins)
                 bin_centres=(bin_start+bin_stop)/2.0
                 bin_start=_np_.exp(bin_start)
                 bin_stop=_np_.exp(bin_stop)
@@ -881,13 +899,15 @@ class AnalyseFile(DataFile):
         elif isinstance(bins,float): # Given a bin with as a flot
             if mode.lower()=="lin":
                 bin_width=bins
-                bins=_np_.ceil(float(xmin-xmax)/bins)
-                bin_start=linspace(xmin,xmax-bin_width,bins)
-                bin_stop=linspace(xmin+bin_width,xmax,bins)
+                bins=_np_.ceil(abs(float(xmax-xmin)/bins))
+                bin_start=_np_.linspace(xmin,xmax-bin_width,bins)
+                bin_stop=_np_.linspace(xmin+bin_width,xmax,bins)
                 bin_centres=(bin_start+bin_stop)/2.0
             elif mode.lower()=="log":
                 if not 0.0<bins<=1.0:
                     raise ValueError("Bin width must be between 0 ans 1 for log binning")
+                if xmin<=0:
+                    raise ValueError("The start of the binning must be a positive value in log mode.")
                 xp=xmin
                 splits=[]
                 centers=[]
@@ -1157,7 +1177,7 @@ class AnalyseFile(DataFile):
                 * 'delete'  outlier rows are deleted
                 * callable  the value of the action keyword is called with the outlier row
                 * anything else defaults to do nothing.
-                
+
             width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
             func (callable): A function that determines if the current row is an outlier.
 
@@ -1171,23 +1191,23 @@ class AnalyseFile(DataFile):
         The detection looks at a window of the data, takes the average and looks
         to see if the current data point falls certainty * std deviations away from
         data average.
-        
+
         The outlier detection function has the signatrure::
-        
+
             def outlier(row,column,window,certainity,**kargs)
                 #code
                 return True # or False
-                
+
         All extra keyword arguments are passed to the outlier detector.
 
         IF *action* is a callable function then it should take the form of::
-            
+
             def action(i,column,row):
                 pass
-                
+
         where *i* is the number of the outlier row, *column* the same value as above
         and *row* is the data for the row.
-        
+
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
 
         """
@@ -1213,7 +1233,7 @@ class AnalyseFile(DataFile):
                     mask[i,:]=True
             self.mask=mask
         elif action=='delete':
-            for i in index: 
+            for i in index:
                 self.del_rows(i)
         elif callable(action): # this will call the action function with each row in turn from back to start
             for i in index:

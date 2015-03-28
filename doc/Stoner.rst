@@ -39,16 +39,6 @@ Stoner Package
 
     PlotFile
 
-:mod:`plotutils` Module
-=======================
-
-.. module:: Stoner.plotutils
-
-
-.. autosummary::
-    :toctree: functions
-    :template: autosummary/module.rst
-
 
 :mod:`Folders` Module
 ======================
@@ -124,6 +114,14 @@ Facility Outputs
 
 See also the stylesheets available in the stylelib directory.
 
+:mod:`plotutils` Module
+=======================
+
+.. automodapi:: Stoner.plotutils
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+
 
 :mod:`Fit` Module
 =================
@@ -161,7 +159,7 @@ The following modules offer specialised file and foler formats.
 
 .. module:: Stoner.Zip
 
-.. autosummary:: 
+.. autosummary::
    :toctree: classes
    :template: classdocs.rst
 
@@ -181,7 +179,7 @@ The following modules offer specialised file and foler formats.
 
 .. autosummary::
     :toctree: functions
-    
+
     format_error
     hysteresis_correct
     ordinal

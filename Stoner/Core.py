@@ -180,6 +180,15 @@ class _setas(object):
             ret=ret[0]
         return ret
 
+    def __setattr__(self,name,value):
+        """Wrapper to handle some special linked attributes."""
+        super(_setas,self).__setattr__(name,value)
+        if name=="shape": # cutdown the column headers as well
+            if value[1]>len(self.column_headers):
+                self.column_headers=self.column_headers[:value[1]]
+            if value[1]>len(self.setas):
+                self.setas=self.setas[:value[1]]
+
     def __setitem__(self,name,value):
         """Allow setting of the setas variable like a dictionary or a list.
 
@@ -1758,8 +1767,15 @@ class DataFile(object):
 
     def __setattr_data(self,value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
-        self.__dict__["data"]=_ma_.masked_array(value)
-        self._setas.shape=self.__dict__["data"].shape
+        nv=_ma_.masked_array(value)
+        if len(nv.shape)==0:
+            nv=_ma_.atleast_2d(nv)
+        elif len(nv.shape)==1:
+            nv=_ma_.atleast_2d(nv).T
+        elif len(nv.shape)>2:
+            raise ValueError("DataFile.data should be no more than 2 dimensional not shaoe {}",format(nv.shape))
+        self.__dict__["data"]=nv
+        self._setas.shape=nv.shape
 
     def __setattr_T(self,value):
         """Write directly to the transposed data."""
