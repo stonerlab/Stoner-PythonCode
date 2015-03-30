@@ -1452,24 +1452,36 @@ class AnalyseFile(DataFile):
             ycol=self.setas._get_cols("ycol")
         else:
             ycol=self.find_col(ycol)
-        x=self.column(xcol)+min_overlap # Get the (x,y) data from each data set to be stitched
-        y=self.column(ycol)
-        xp=other.column(xcol)
-        yp=other.column(ycol)
-        if overlap is None: # Now sort out the overlap region
-            lower=max(_np_.min(x),_np_.min(xp))
-            upper=min(_np_.max(x),_np_.max(xp))
-        else:
+        points=self.column([xcol,ycol])
+        points=points[points[:,0].argsort()]
+        points[:,0]+=min_overlap
+        otherpoints=other.column([xcol,ycol])
+        otherpoints=otherpoints[otherpoints[:,0].argsort()]
+        self_second=_np_.max(points[:,0])>_np_.max(otherpoints[:,0])
+        if overlap is None: # Calculate the overlap
+            lower=max(_np_.min(points[:,0]),_np_.min(otherpoints[:,0]))
+            upper=min(_np_.max(points[:,0]),_np_.max(otherpoints[:,0]))
+        elif isinstance(overlap,int) and overlap>0:
+            if self_second:
+                lower=points[0,0]
+                upper=pints[0,overlap]
+            else:
+                lower=points[0,-overlap-1]
+                upper=points[0,-1]
+        elif isinstance(overlap,tuple) and len(overlap)==2 and isinstance(overlap[0],float and isinstance(overlap[1],float)):
             lower=min(overlap)
             upper=max(overlap)
-        # Now func is a function (x,y,p1,p2,p3)
-        #and p0 is vector of the correct length
-        inrange=_np_.logical_and(x>=lower,x<=upper)
-        inrange_other=_np_.logical_and(xp>=lower,xp<=upper)
-        x=x[inrange] # And throw away data that isn't in the overlap
-        y=y[inrange]
-        xp=xp[inrange_other]
-        yp=yp[inrange_other]
+        inrange=_np_.logical_and(points[:,0]>=lower,points[:,0]<=upper)
+        points=points[inrange]
+        num_pts=points.shape[0]        
+        if self_second:
+            otherpoints=otherpoints[-num_pts-1:-1]
+        else:
+            otherpoints=otherpoints[0:num_pts]
+        x=points[:,0]
+        y=points[:,1]
+        xp=otherpoints[:,0]
+        yp=otherpoints[:,1]        
         if func is None:
             opts={"all":(lambda x,y,A,B,C:(x+A,y*B+C)),
                   "scale y and shift x":(lambda x,y,A,B:(x+A,B*y)),
@@ -1501,7 +1513,6 @@ class AnalyseFile(DataFile):
         set1=_np_.append(x,y)
         set2=_np_.append(xp,yp)
         assert len(set1)==len(set2),"The number of points in the overlap are different in the two data sets"
-
         def transform(set1,*p):
             m=len(set1)/2
             x=set1[:m]
@@ -1511,10 +1522,12 @@ class AnalyseFile(DataFile):
             return out
         popt,pcov=curve_fit(transform,set1,set2,p0=p0) # Curve fit for optimal A,B,C
         perr=_np_.sqrt(_np_.diagonal(pcov))
-
-        (self.data[:,xcol],self.data[:,ycol])=func(self.data[:,xcol]+min_overlap,self.data[:,ycol],*popt)
+        self.data[:,xcol],self.data[:,ycol]=func(self.data[:,xcol],self.data[:,ycol],*popt)
         self["Stitching Coefficients"]=list(popt)
         self["Stitching Coeffient Errors"]=list(perr)
+        self["Stitching overlap"]=(lower,upper)
+        self["Stitching Window"]=num_pts
+
         return self
 
     def subtract(self, a, b, replace=False, header=None):

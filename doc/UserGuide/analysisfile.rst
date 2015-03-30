@@ -341,17 +341,16 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalyseFile` provides
-a :py:meth:`AnalyseFile.stitch` method to facilitate this.::
+a :py:meth:`AnalyseFile.stitch` method to facilitate this.
 
-    scan1=AnalyseFile('file 1.txt')
-    scan2=AnalyseFile('file 2.txt')
-    scan2.stitch(scan1,xcol="Angle",ycol="Counts")
-    scan1.setas="xy"
-    scan2.setas="xy"
-    scan2.stitch(scan1)
-    scan2.stitch(scan1,mode="shift x")
-    scan2.stitch(scan1,mode="scale y, shift x",overlap=(3.0,5.0))
-    scan2.stitch(scan1,func=my_stitcher,p0=[3.14,2.54,2.0])
+.. plot:: samples/stitch.py
+
+The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
+region to use or even a custom stiching transofmration function::
+
+    s2.stitch(s1,mode="shift x")
+    s2.stitch(s1,mode="scale y, shift x",overlap=(3.0,5.0))
+    s2.stitch(s1,func=my_stitcher,p0=[3.14,2.54,2.0])
 
 In these examples, the x and y columns of *scan2* are modified to give the best
 possible match to *scan1*. If *xcol* or *ycol* are not given then the default x and y columns as set py the

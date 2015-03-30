@@ -180,6 +180,16 @@ class _setas(object):
             ret=ret[0]
         return ret
 
+    def __getattr__(self,name):
+        if name=="clone":
+            new=_setas()
+            for attr in self.__dict__:
+                if not callable(self.__dict__[attr]):
+                    new.__dict__[attr]=copy.deepcopy(self.__dict__[attr])
+            return new
+        else:
+            return super(_setas,self).__getattribute__(name)
+
     def __setattr__(self,name,value):
         """Wrapper to handle some special linked attributes."""
         super(_setas,self).__setattr__(name,value)
@@ -718,26 +728,27 @@ class DataFile(object):
     a matrix of data, associated metadata and column headers.
 
     Attributes:
-        data (2D Array) A numpy masked array of data (usually floats)
+        data (2D Array) A numpy masked array of data (usually floats).
         metadata (typeHintedDict): of key-value metadata pairs. The dictionary
-            tries to retain information about the type of data so as to aid import and
-            export from CM group LabVIEw code.
-        column_headers (list): of strings of the column names of the data
-        title (string): The title of the measurement
+                                   tries to retain information about the type of 
+                                   data so as to aid import and export from CM group LabVIEw code.
+        column_headers (list): of strings of the column names of the data.
+        title (string): The title of the measurement.
         filename (string): The current filename of the data if loaded from or
-            already saved to disc. This is the default filename used by the :py:meth:`load` and  :py:meth:`save`
-        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask
+                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load` 
+                           and :py:meth:`Stoner.Core.DataFile.save`.
+        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
         setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
-        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape
-        records (numpoy record array): Returns the data in the form of a list of dictionaries
-        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object
+        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
+        records (numpoy record array): Returns the data in the form of a list of dictionaries.
+        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
-            their py:attr:`DataFile.priority`. Each entry in the list consists of the string name of the subclass
-            and the class object.
+                           their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the 
+                           string name of the subclass and the class object.
         patterns (list): A list of strings containing file glob patterns that are typically used for datafiles
-            that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.
+                        that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.
         priority (int): A class attribute used to indivate the order in which the autoloader should attempt to load
-            a data file. See :py:meth:`DataFile.load` for details.
+                        a data file. See :py:meth:`DataFile.load` for details.
     """
 
     #Class attributes
@@ -1208,12 +1219,10 @@ class DataFile(object):
         """
         c=self.__class__(copy.deepcopy(self))
         c.data=self.data.copy()
-        c._setas=_setas()
-        c.column_headers=self.column_headers
-        c.setas(list(self.setas))
+        c._setas=self.setas.clone
         for attr in self.__dict__:
-            if attr not in ("metadata","data","column_headers") and not callable(self.__dict__[attr]):
-                c.__dict__[attr]=self.__dict__[attr]
+            if attr not in ("metadata","data","column_headers","_setas") and not callable(self.__dict__[attr]):
+                c.__dict__[attr]=copy.deepcopy(self.__dict__[attr])
         return c
 
     def _getattr_col(self,name):
