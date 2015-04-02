@@ -299,7 +299,10 @@ class PlotFile(DataFile):
                 ret=self.__figure.axes
             else:
                 ret=None
-        elif "anme"=="_public_attrs":
+        elif name=="clone":
+            ret=super(PlotFile,self).__getattr__("clone")
+            ret.template=copy.deepcopy(self.template)
+        elif name=="_public_attrs":
             ret=super(PlotFile,self).__getattr__(name)
             ret.update({"fig":(int,mplfig.Figure),
                         "labels":list,
