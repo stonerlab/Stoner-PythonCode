@@ -344,6 +344,7 @@ best mapping between two sets of (x,y) points that are nominally the same. :py:c
 a :py:meth:`AnalyseFile.stitch` method to facilitate this.
 
 .. plot:: samples/stitch.py
+   :include-source:
 
 The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
 region to use or even a custom stiching transofmration function::
