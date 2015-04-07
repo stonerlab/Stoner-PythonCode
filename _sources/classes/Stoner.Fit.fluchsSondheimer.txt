@@ -1,8 +1,15 @@
-
-
-fluchsSondheimer
+Stoner.Fit.fluchsSondheimer
 ===========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: fluchsSondheimer
+.. autoclass:: fluchsSondheimer
+
+   
+
+   
+   
+
+   
+   
+   

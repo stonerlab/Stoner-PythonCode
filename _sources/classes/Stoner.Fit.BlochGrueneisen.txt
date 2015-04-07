@@ -1,44 +1,24 @@
-
-
-BlochGrueneisen
+Stoner.Fit.BlochGrueneisen
 ==========================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: BlochGrueneisen
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~BlochGrueneisen.__init__
       ~BlochGrueneisen.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

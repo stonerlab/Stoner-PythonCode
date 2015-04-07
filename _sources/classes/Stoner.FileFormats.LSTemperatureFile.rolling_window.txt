@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.rolling_window
+===================================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.rolling_window

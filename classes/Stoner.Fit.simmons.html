@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>simmons &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Fit.simmons &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="strijkers" href="Stoner.Fit.strijkers.html" />
-    <link rel="prev" title="powerLaw" href="Stoner.Fit.powerLaw.html" /> 
+    <link rel="next" title="Stoner.Fit.stretchedExp" href="Stoner.Fit.stretchedExp.html" />
+    <link rel="prev" title="Stoner.Fit.quadratic" href="Stoner.Fit.quadratic.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.strijkers.html" title="strijkers"
+          <a href="Stoner.Fit.stretchedExp.html" title="Stoner.Fit.stretchedExp"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.powerLaw.html" title="powerLaw"
+          <a href="Stoner.Fit.quadratic.html" title="Stoner.Fit.quadratic"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -55,16 +55,37 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="simmons">
-<h1>simmons<a class="headerlink" href="#simmons" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+  <div class="section" id="stoner-fit-simmons">
+<h1>Stoner.Fit.simmons<a class="headerlink" href="#stoner-fit-simmons" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
 <dt id="Stoner.Fit.simmons">
-<tt class="descclassname">Stoner.Fit.</tt><tt class="descname">simmons</tt><big>(</big><em>V</em>, <em>A</em>, <em>phi</em>, <em>d</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#simmons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.simmons" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simmons model tunnelling
-V=bias voltage, params=[A, phi, d]
-A in m^2, phi barrier height in eV, d barrier width in angstrom</p>
-<p>Simmons model as in
-Simmons J. App. Phys. 34 6 1963</p>
+<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">simmons</tt><a class="reference internal" href="../_modules/Stoner/Fit.html#simmons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.simmons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simmons model of electron tunnelling.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>V</strong> (<em>array</em>) &#8211;
+Bias voltage</li>
+<li><strong>A</strong> (<em>float</em>) &#8211;
+Area of barrier in m^2</li>
+<li><strong>phi</strong> (<em>float</em>) &#8211;
+barrier height in eV</li>
+<li><strong>d</strong> (<em>float</em>) &#8211;
+barrier width in angstroms</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Data for tunneling rate according to the Sommons model.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Simmons model from Simmons J. App. Phys. 34 6 1963</p>
+</div>
 </dd></dl>
 
 </div>
@@ -79,11 +100,11 @@ Simmons J. App. Phys. 34 6 1963</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.powerLaw.html"
-                        title="previous chapter">powerLaw</a></p>
+  <p class="topless"><a href="Stoner.Fit.quadratic.html"
+                        title="previous chapter">Stoner.Fit.quadratic</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.strijkers.html"
-                        title="next chapter">strijkers</a></p>
+  <p class="topless"><a href="Stoner.Fit.stretchedExp.html"
+                        title="next chapter">Stoner.Fit.stretchedExp</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Fit.simmons.txt"
@@ -116,10 +137,10 @@ Simmons J. App. Phys. 34 6 1963</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.strijkers.html" title="strijkers"
+          <a href="Stoner.Fit.stretchedExp.html" title="Stoner.Fit.stretchedExp"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.powerLaw.html" title="powerLaw"
+          <a href="Stoner.Fit.quadratic.html" title="Stoner.Fit.quadratic"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -127,7 +148,7 @@ Simmons J. App. Phys. 34 6 1963</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

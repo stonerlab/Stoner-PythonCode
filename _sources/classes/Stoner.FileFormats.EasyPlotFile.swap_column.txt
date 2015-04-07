@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.swap_column
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.swap_column

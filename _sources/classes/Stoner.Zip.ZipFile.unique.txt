@@ -1,0 +1,8 @@
+
+
+ZipFile.unique
+=========================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFile.unique

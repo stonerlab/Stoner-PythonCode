@@ -1,0 +1,8 @@
+
+
+ZipFolder.extract
+============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.extract

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TexEngFormatter &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.PlotFormats.TexEngFormatter &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,7 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="TexFormatter" href="Stoner.PlotFormats.TexFormatter.html" /> 
+    <link rel="next" title="TexEngFormatter.format_data" href="Stoner.PlotFormats.TexEngFormatter.format_data.html" />
+    <link rel="prev" title="SketchPlot.customise_axes" href="Stoner.PlotFormats.SketchPlot.customise_axes.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,8 +40,11 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.TexFormatter.html" title="TexFormatter"
+          <a href="Stoner.PlotFormats.TexEngFormatter.format_data.html" title="TexEngFormatter.format_data"
              accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SketchPlot.customise_axes.html" title="SketchPlot.customise_axes"
+             accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
@@ -51,68 +55,41 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="texengformatter">
-<h1>TexEngFormatter<a class="headerlink" href="#texengformatter" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="stoner-plotformats-texengformatter">
+<h1>Stoner.PlotFormats.TexEngFormatter<a class="headerlink" href="#stoner-plotformats-texengformatter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.PlotFormats.TexEngFormatter">
 <em class="property">class </em><tt class="descclassname">Stoner.PlotFormats.</tt><tt class="descname">TexEngFormatter</tt><big>(</big><em>unit=u''</em>, <em>places=None</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">matplotlib.ticker.EngFormatter</span></tt></p>
-<p>An axis tick label formatter that emits Tex formula mode code
+<dd><p>An axis tick label formatter that emits Tex formula mode code
 so that large numbers are registered as times 10^{power}
 rather than ysing E notation.</p>
-<p class="rubric">Attributes Summary</p>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.prefix" title="Stoner.PlotFormats.TexEngFormatter.prefix"><tt class="xref py py-obj docutils literal"><span class="pre">prefix</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.TexEngFormatter.format_data.html#Stoner.PlotFormats.TexEngFormatter.format_data" title="Stoner.PlotFormats.TexEngFormatter.format_data"><tt class="xref py py-obj docutils literal"><span class="pre">format_data</span></tt></a>(value)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.TexEngFormatter.format_data_short.html#Stoner.PlotFormats.TexEngFormatter.format_data_short" title="Stoner.PlotFormats.TexEngFormatter.format_data_short"><tt class="xref py py-obj docutils literal"><span class="pre">format_data_short</span></tt></a>(value)</td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods Summary</p>
+<p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.__call__" title="Stoner.PlotFormats.TexEngFormatter.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(value[,&nbsp;pos])</td>
-<td>Return the value ina  suitable texable format</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.format_data" title="Stoner.PlotFormats.TexEngFormatter.format_data"><tt class="xref py py-obj docutils literal"><span class="pre">format_data</span></tt></a>(value)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.TexEngFormatter.format_data_short" title="Stoner.PlotFormats.TexEngFormatter.format_data_short"><tt class="xref py py-obj docutils literal"><span class="pre">format_data_short</span></tt></a>(value)</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">prefix</span></tt></td>
 <td></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="Stoner.PlotFormats.TexEngFormatter.prefix">
-<tt class="descname">prefix</tt><em class="property"> = {3: 'k', 6: 'M', -24: 'y', 9: 'G', -21: 'z', 12: 'T', -18: 'a', 15: 'P', -15: 'f', 18: 'E', -12: 'p', 21: 'Z', -9: 'n', 24: 'Y', -6: '\\mu', -3: 'm'}</em><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.prefix" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.PlotFormats.TexEngFormatter.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>value</em>, <em>pos=None</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the value ina  suitable texable format</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="Stoner.PlotFormats.TexEngFormatter.format_data">
-<tt class="descname">format_data</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.format_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.format_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="Stoner.PlotFormats.TexEngFormatter.format_data_short">
-<tt class="descname">format_data_short</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#TexEngFormatter.format_data_short"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.TexEngFormatter.format_data_short" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -126,9 +103,12 @@ rather than ysing E notation.</p>
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.SketchPlot.customise_axes.html"
+                        title="previous chapter">SketchPlot.customise_axes</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.PlotFormats.TexFormatter.html"
-                        title="next chapter">TexFormatter</a></p>
+  <p class="topless"><a href="Stoner.PlotFormats.TexEngFormatter.format_data.html"
+                        title="next chapter">TexEngFormatter.format_data</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.PlotFormats.TexEngFormatter.txt"
@@ -161,15 +141,18 @@ rather than ysing E notation.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.TexFormatter.html" title="TexFormatter"
+          <a href="Stoner.PlotFormats.TexEngFormatter.format_data.html" title="TexEngFormatter.format_data"
              >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SketchPlot.customise_axes.html" title="SketchPlot.customise_axes"
+             >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

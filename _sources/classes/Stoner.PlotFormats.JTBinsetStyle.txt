@@ -1,34 +1,17 @@
-
-
-JTBinsetStyle
+Stoner.PlotFormats.JTBinsetStyle
 ================================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: JTBinsetStyle
-   :show-inheritance:
 
    
 
    
-   
-
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods
 
    .. autosummary::
-   
-      ~JTBinsetStyle.show_title
-      ~JTBinsetStyle.stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
+    :toctree:
    
       ~JTBinsetStyle.customise_axes
 
@@ -37,23 +20,11 @@ JTBinsetStyle
 
    
    
+   .. rubric:: Attributes
 
-   .. rubric:: Attributes Documentation
-
+   .. autosummary::
    
-   .. autoattribute:: show_title
-   .. autoattribute:: stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: customise_axes
-
+      ~JTBinsetStyle.show_title
+      ~JTBinsetStyle.stylename
    
    

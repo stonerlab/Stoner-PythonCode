@@ -1,44 +1,24 @@
-
-
-BDR
+Stoner.Fit.BDR
 ==============
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: BDR
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~BDR.__init__
       ~BDR.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

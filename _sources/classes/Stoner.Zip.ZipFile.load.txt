@@ -1,0 +1,8 @@
+
+
+ZipFile.load
+=======================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFile.load

@@ -12,11 +12,4 @@ Stoner.FileFormats.RasorFile
 
    
    
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~RasorFile.patterns
-      ~RasorFile.priority
-   
    

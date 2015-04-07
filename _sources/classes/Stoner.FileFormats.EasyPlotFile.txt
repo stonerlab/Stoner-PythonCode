@@ -24,7 +24,6 @@ Stoner.FileFormats.EasyPlotFile
 
    .. autosummary::
    
-      ~EasyPlotFile.patterns
       ~EasyPlotFile.priority
    
    

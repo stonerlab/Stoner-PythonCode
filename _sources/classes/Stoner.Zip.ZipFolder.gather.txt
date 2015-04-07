@@ -1,0 +1,8 @@
+
+
+ZipFolder.gather
+===========================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.gather

@@ -1,8 +1,15 @@
-
-
-powerLaw
+Stoner.Fit.powerLaw
 ===================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: powerLaw
+.. autoclass:: powerLaw
+
+   
+
+   
+   
+
+   
+   
+   

@@ -1,41 +1,19 @@
-
-
-DefaultPlotStyle
+Stoner.PlotFormats.DefaultPlotStyle
 ===================================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: DefaultPlotStyle
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
-      ~DefaultPlotStyle.show_legend
-      ~DefaultPlotStyle.show_title
-      ~DefaultPlotStyle.show_xlabel
-      ~DefaultPlotStyle.show_ylabel
-      ~DefaultPlotStyle.show_zlabel
-      ~DefaultPlotStyle.stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   
+      ~DefaultPlotStyle.__init__
       ~DefaultPlotStyle.annotate
       ~DefaultPlotStyle.apply
       ~DefaultPlotStyle.customise
@@ -48,32 +26,16 @@ DefaultPlotStyle
 
    
    
+   .. rubric:: Attributes
 
-   .. rubric:: Attributes Documentation
-
+   .. autosummary::
    
-   .. autoattribute:: show_legend
-   .. autoattribute:: show_title
-   .. autoattribute:: show_xlabel
-   .. autoattribute:: show_ylabel
-   .. autoattribute:: show_zlabel
-   .. autoattribute:: stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: annotate
-   .. automethod:: apply
-   .. automethod:: customise
-   .. automethod:: customise_axes
-   .. automethod:: new_figure
-   .. automethod:: update
-
+      ~DefaultPlotStyle.show_legend
+      ~DefaultPlotStyle.show_title
+      ~DefaultPlotStyle.show_xlabel
+      ~DefaultPlotStyle.show_ylabel
+      ~DefaultPlotStyle.show_zlabel
+      ~DefaultPlotStyle.stylename
+      ~DefaultPlotStyle.subplot_settings
    
    

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>BlochGrueneisen &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Fit.BlochGrueneisen &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="FluchsSondheimer" href="Stoner.Fit.FluchsSondheimer.html" />
-    <link rel="prev" title="BDR" href="Stoner.Fit.BDR.html" /> 
+    <link rel="next" title="BlochGrueneisen.__init__" href="Stoner.Fit.BlochGrueneisen.__init__.html" />
+    <link rel="prev" title="BDR.guess" href="Stoner.Fit.BDR.guess.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.FluchsSondheimer.html" title="FluchsSondheimer"
+          <a href="Stoner.Fit.BlochGrueneisen.__init__.html" title="BlochGrueneisen.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.BDR.html" title="BDR"
+          <a href="Stoner.Fit.BDR.guess.html" title="BDR.guess"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -55,13 +55,12 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="blochgrueneisen">
-<h1>BlochGrueneisen<a class="headerlink" href="#blochgrueneisen" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="stoner-fit-blochgrueneisen">
+<h1>Stoner.Fit.BlochGrueneisen<a class="headerlink" href="#stoner-fit-blochgrueneisen" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Fit.BlochGrueneisen">
 <em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">BlochGrueneisen</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#BlochGrueneisen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BlochGrueneisen" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></tt></p>
-<p>BlochGrueneiseen Function for fitting R(T).</p>
+<dd><p>BlochGrueneiseen Function for fitting R(T).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -85,25 +84,21 @@ Exponent term</li>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods Summary</p>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.BlochGrueneisen.guess" title="Stoner.Fit.BlochGrueneisen.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;t])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Fit.BlochGrueneisen.__init__.html#Stoner.Fit.BlochGrueneisen.__init__" title="Stoner.Fit.BlochGrueneisen.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Fit.BlochGrueneisen.guess.html#Stoner.Fit.BlochGrueneisen.guess" title="Stoner.Fit.BlochGrueneisen.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;t])</td>
 <td>Guess some starting values - not very clever</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.Fit.BlochGrueneisen.guess">
-<tt class="descname">guess</tt><big>(</big><em>data</em>, <em>t=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#BlochGrueneisen.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BlochGrueneisen.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess some starting values - not very clever</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -118,11 +113,11 @@ Exponent term</li>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.BDR.html"
-                        title="previous chapter">BDR</a></p>
+  <p class="topless"><a href="Stoner.Fit.BDR.guess.html"
+                        title="previous chapter">BDR.guess</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.FluchsSondheimer.html"
-                        title="next chapter">FluchsSondheimer</a></p>
+  <p class="topless"><a href="Stoner.Fit.BlochGrueneisen.__init__.html"
+                        title="next chapter">BlochGrueneisen.__init__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Fit.BlochGrueneisen.txt"
@@ -155,10 +150,10 @@ Exponent term</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.FluchsSondheimer.html" title="FluchsSondheimer"
+          <a href="Stoner.Fit.BlochGrueneisen.__init__.html" title="BlochGrueneisen.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.BDR.html" title="BDR"
+          <a href="Stoner.Fit.BDR.guess.html" title="BDR.guess"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -166,7 +161,7 @@ Exponent term</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

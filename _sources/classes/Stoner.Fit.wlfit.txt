@@ -1,8 +1,15 @@
-
-
-wlfit
+Stoner.Fit.wlfit
 ================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: wlfit
+.. autoclass:: wlfit
+
+   
+
+   
+   
+
+   
+   
+   

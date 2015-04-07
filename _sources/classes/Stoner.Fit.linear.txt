@@ -1,8 +1,15 @@
-
-
-linear
+Stoner.Fit.linear
 =================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: linear
+.. autoclass:: linear
+
+   
+
+   
+   
+
+   
+   
+   

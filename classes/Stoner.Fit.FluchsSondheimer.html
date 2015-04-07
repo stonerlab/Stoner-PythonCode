@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>FluchsSondheimer &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Fit.FluchsSondheimer &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="FowlerNordheim" href="Stoner.Fit.FowlerNordheim.html" />
-    <link rel="prev" title="BlochGrueneisen" href="Stoner.Fit.BlochGrueneisen.html" /> 
+    <link rel="next" title="FluchsSondheimer.__init__" href="Stoner.Fit.FluchsSondheimer.__init__.html" />
+    <link rel="prev" title="BlochGrueneisen.guess" href="Stoner.Fit.BlochGrueneisen.guess.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.FowlerNordheim.html" title="FowlerNordheim"
+          <a href="Stoner.Fit.FluchsSondheimer.__init__.html" title="FluchsSondheimer.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.BlochGrueneisen.html" title="BlochGrueneisen"
+          <a href="Stoner.Fit.BlochGrueneisen.guess.html" title="BlochGrueneisen.guess"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -55,13 +55,12 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="fluchssondheimer">
-<h1>FluchsSondheimer<a class="headerlink" href="#fluchssondheimer" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="stoner-fit-fluchssondheimer">
+<h1>Stoner.Fit.FluchsSondheimer<a class="headerlink" href="#stoner-fit-fluchssondheimer" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Fit.FluchsSondheimer">
 <em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">FluchsSondheimer</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#FluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.FluchsSondheimer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></tt></p>
-<p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
+<dd><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -87,25 +86,21 @@ intrinsic conductivity</li>
 <p class="first admonition-title">Note</p>
 <p class="last">Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330</p>
 </div>
-<p class="rubric">Methods Summary</p>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.FluchsSondheimer.guess" title="Stoner.Fit.FluchsSondheimer.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;t])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Fit.FluchsSondheimer.__init__.html#Stoner.Fit.FluchsSondheimer.__init__" title="Stoner.Fit.FluchsSondheimer.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Fit.FluchsSondheimer.guess.html#Stoner.Fit.FluchsSondheimer.guess" title="Stoner.Fit.FluchsSondheimer.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;t])</td>
 <td>Guess some starting values - not very clever</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="Stoner.Fit.FluchsSondheimer.guess">
-<tt class="descname">guess</tt><big>(</big><em>data</em>, <em>t=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#FluchsSondheimer.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.FluchsSondheimer.guess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Guess some starting values - not very clever</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
@@ -120,11 +115,11 @@ intrinsic conductivity</li>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.BlochGrueneisen.html"
-                        title="previous chapter">BlochGrueneisen</a></p>
+  <p class="topless"><a href="Stoner.Fit.BlochGrueneisen.guess.html"
+                        title="previous chapter">BlochGrueneisen.guess</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.FowlerNordheim.html"
-                        title="next chapter">FowlerNordheim</a></p>
+  <p class="topless"><a href="Stoner.Fit.FluchsSondheimer.__init__.html"
+                        title="next chapter">FluchsSondheimer.__init__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Fit.FluchsSondheimer.txt"
@@ -157,10 +152,10 @@ intrinsic conductivity</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.FowlerNordheim.html" title="FowlerNordheim"
+          <a href="Stoner.Fit.FluchsSondheimer.__init__.html" title="FluchsSondheimer.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.BlochGrueneisen.html" title="BlochGrueneisen"
+          <a href="Stoner.Fit.BlochGrueneisen.guess.html" title="BlochGrueneisen.guess"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -168,7 +163,7 @@ intrinsic conductivity</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -1,44 +1,24 @@
-
-
-FowlerNordheim
+Stoner.Fit.FowlerNordheim
 =========================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: FowlerNordheim
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~FowlerNordheim.__init__
       ~FowlerNordheim.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

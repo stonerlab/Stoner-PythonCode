@@ -49,11 +49,4 @@ Stoner.Analysis.AnalyseFile
 
    
    
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~AnalyseFile.patterns
-      ~AnalyseFile.priority
-   
    

@@ -25,7 +25,6 @@ Stoner.FileFormats.MokeFile
    .. autosummary::
    
       ~MokeFile.patterns
-      ~MokeFile.priority
       ~MokeFile.priotity
    
    

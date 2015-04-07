@@ -1,0 +1,8 @@
+
+
+ZipFile.swap_column
+==============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFile.swap_column

@@ -1,0 +1,8 @@
+
+
+ZipFolder.walk_groups
+================================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.walk_groups

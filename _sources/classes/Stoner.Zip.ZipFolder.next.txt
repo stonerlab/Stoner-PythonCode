@@ -1,0 +1,8 @@
+
+
+ZipFolder.next
+=========================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.next

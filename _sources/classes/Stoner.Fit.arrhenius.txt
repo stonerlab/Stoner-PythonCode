@@ -1,8 +1,15 @@
-
-
-arrhenius
+Stoner.Fit.arrhenius
 ====================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: arrhenius
+.. autoclass:: arrhenius
+
+   
+
+   
+   
+
+   
+   
+   

@@ -1,35 +1,18 @@
-
-
-TexEngFormatter
+Stoner.PlotFormats.TexEngFormatter
 ==================================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: TexEngFormatter
-   :show-inheritance:
 
    
 
    
-   
-
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
-      ~TexEngFormatter.prefix
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   
-      ~TexEngFormatter.__call__
       ~TexEngFormatter.format_data
       ~TexEngFormatter.format_data_short
 
@@ -38,24 +21,10 @@ TexEngFormatter
 
    
    
+   .. rubric:: Attributes
 
-   .. rubric:: Attributes Documentation
-
+   .. autosummary::
    
-   .. autoattribute:: prefix
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: __call__
-   .. automethod:: format_data
-   .. automethod:: format_data_short
-
+      ~TexEngFormatter.prefix
    
    

@@ -1,0 +1,8 @@
+
+
+Data.x2
+===================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.x2

@@ -1,34 +1,17 @@
-
-
-PRBPlotStyle
+Stoner.PlotFormats.PRBPlotStyle
 ===============================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: PRBPlotStyle
-   :show-inheritance:
 
    
 
    
-   
-
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods
 
    .. autosummary::
-   
-      ~PRBPlotStyle.show_title
-      ~PRBPlotStyle.stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
+    :toctree:
    
       ~PRBPlotStyle.customise_axes
 
@@ -37,23 +20,11 @@ PRBPlotStyle
 
    
    
+   .. rubric:: Attributes
 
-   .. rubric:: Attributes Documentation
-
+   .. autosummary::
    
-   .. autoattribute:: show_title
-   .. autoattribute:: stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: customise_axes
-
+      ~PRBPlotStyle.show_title
+      ~PRBPlotStyle.stylename
    
    

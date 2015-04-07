@@ -61,13 +61,13 @@
 done with the Stoner python module in just a few lines.</p>
 <div class="section" id="the-util-module">
 <h2>The Util module<a class="headerlink" href="#the-util-module" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>Stoner</strong> package comes with an extra <a class="reference internal" href="../Stoner.html#module-Stoner.Util" title="Stoner.Util"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt></a> module that includes some handy utility
+<p>The <strong>Stoner</strong> package comes with an extra <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt> module that includes some handy utility
 functions.</p>
 <div class="section" id="the-data-class">
 <h3>The <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><tt class="xref py py-class docutils literal"><span class="pre">Data</span></tt></a> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
 <p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalyseFile</span></tt></a> and
 the plotting functions of <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></tt></a>. This can be done easily by creating a
-subclass that inherits from both, but for convenience, the <a class="reference internal" href="../Stoner.html#module-Stoner.Util" title="Stoner.Util"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt></a> module provides the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><tt class="xref py py-class docutils literal"><span class="pre">Data</span></tt></a>
+subclass that inherits from both, but for convenience, the <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt> module provides the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><tt class="xref py py-class docutils literal"><span class="pre">Data</span></tt></a>
 class that does this for you.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
@@ -127,7 +127,7 @@ extrema in H). The keyword parameter <em>saturation_fraction</em> controls the e
 <h3>Formatting Error Values<a class="headerlink" href="#formatting-error-values" title="Permalink to this headline">¶</a></h3>
 <p>In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
 a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
-might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <a class="reference internal" href="../Stoner.html#module-Stoner.Util" title="Stoner.Util"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt></a> module
+might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></tt> module
 provides the <a class="reference internal" href="../functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><tt class="xref py py-func docutils literal"><span class="pre">Stoner.Util.format_error()</span></tt></a> function.:</p>
 <div class="highlight-python"><div class="highlight"><pre>from Stoner.Util import format_error
 from scipy.constants import hbar,m_e,m_u
@@ -313,7 +313,7 @@ to quickly examine the output data:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

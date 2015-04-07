@@ -1,44 +1,24 @@
-
-
-Langevin
+Stoner.Fit.Langevin
 ===================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: Langevin
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~Langevin.__init__
       ~Langevin.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

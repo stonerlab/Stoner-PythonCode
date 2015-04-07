@@ -1,27 +1,18 @@
-
-
-TexFormatter
+Stoner.PlotFormats.TexFormatter
 ===============================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: TexFormatter
-   :show-inheritance:
 
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
-      ~TexFormatter.__call__
       ~TexFormatter.format_data
       ~TexFormatter.format_data_short
 
@@ -29,18 +20,5 @@ TexFormatter
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: __call__
-   .. automethod:: format_data
-   .. automethod:: format_data_short
-
    
    

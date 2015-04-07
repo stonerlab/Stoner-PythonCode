@@ -1,44 +1,24 @@
-
-
-Strijkers
+Stoner.Fit.Strijkers
 ====================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: Strijkers
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~Strijkers.__init__
       ~Strijkers.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

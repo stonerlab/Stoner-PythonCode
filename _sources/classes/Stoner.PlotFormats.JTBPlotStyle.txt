@@ -1,34 +1,17 @@
-
-
-JTBPlotStyle
+Stoner.PlotFormats.JTBPlotStyle
 ===============================
 
 .. currentmodule:: Stoner.PlotFormats
 
 .. autoclass:: JTBPlotStyle
-   :show-inheritance:
 
    
 
    
-   
-
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods
 
    .. autosummary::
-   
-      ~JTBPlotStyle.show_title
-      ~JTBPlotStyle.stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
+    :toctree:
    
       ~JTBPlotStyle.customise_axes
 
@@ -37,23 +20,11 @@ JTBPlotStyle
 
    
    
+   .. rubric:: Attributes
 
-   .. rubric:: Attributes Documentation
-
+   .. autosummary::
    
-   .. autoattribute:: show_title
-   .. autoattribute:: stylename
-
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: customise_axes
-
+      ~JTBPlotStyle.show_title
+      ~JTBPlotStyle.stylename
    
    

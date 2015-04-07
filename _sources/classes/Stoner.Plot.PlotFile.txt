@@ -14,6 +14,7 @@ Stoner.Plot.PlotFile
     :toctree:
    
       ~PlotFile.__init__
+      ~PlotFile.colormap_xyz
       ~PlotFile.contour_xyz
       ~PlotFile.figure
       ~PlotFile.griddata
@@ -27,6 +28,8 @@ Stoner.Plot.PlotFile
       ~PlotFile.plot_xyzuvw
       ~PlotFile.quiver_plot
       ~PlotFile.subplot
+      ~PlotFile.x2
+      ~PlotFile.y2
 
    
    
@@ -38,8 +41,6 @@ Stoner.Plot.PlotFile
    .. autosummary::
    
       ~PlotFile.no_fmt
-      ~PlotFile.patterns
       ~PlotFile.positional_fmt
-      ~PlotFile.priority
    
    

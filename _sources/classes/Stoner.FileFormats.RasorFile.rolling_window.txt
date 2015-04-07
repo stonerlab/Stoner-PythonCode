@@ -1,0 +1,8 @@
+
+
+RasorFile.rolling_window
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.rolling_window

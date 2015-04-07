@@ -1,0 +1,30 @@
+Stoner.PlotFormats.SketchPlot
+=============================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autoclass:: SketchPlot
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~SketchPlot.customise
+      ~SketchPlot.customise_axes
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SketchPlot.stylename
+   
+   

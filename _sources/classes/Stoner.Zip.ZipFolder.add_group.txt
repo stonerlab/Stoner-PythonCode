@@ -1,0 +1,8 @@
+
+
+ZipFolder.add_group
+==============================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFolder.add_group

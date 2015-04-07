@@ -14,11 +14,28 @@ Stoner.Core.typeHintedDict
     :toctree:
    
       ~typeHintedDict.__init__
+      ~typeHintedDict.clear
       ~typeHintedDict.copy
       ~typeHintedDict.export
       ~typeHintedDict.findtype
+      ~typeHintedDict.fromkeys
+      ~typeHintedDict.get
+      ~typeHintedDict.has_key
+      ~typeHintedDict.items
+      ~typeHintedDict.iteritems
+      ~typeHintedDict.iterkeys
+      ~typeHintedDict.itervalues
+      ~typeHintedDict.keys
+      ~typeHintedDict.pop
+      ~typeHintedDict.popitem
+      ~typeHintedDict.setdefault
       ~typeHintedDict.string_to_type
       ~typeHintedDict.type
+      ~typeHintedDict.update
+      ~typeHintedDict.values
+      ~typeHintedDict.viewitems
+      ~typeHintedDict.viewkeys
+      ~typeHintedDict.viewvalues
 
    
    

@@ -1,44 +1,24 @@
-
-
-WLfit
+Stoner.Fit.WLfit
 ================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: WLfit
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~WLfit.__init__
       ~WLfit.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

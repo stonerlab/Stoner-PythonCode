@@ -1,44 +1,24 @@
-
-
-Simmons
+Stoner.Fit.Simmons
 ==================
 
 .. currentmodule:: Stoner.Fit
 
 .. autoclass:: Simmons
-   :show-inheritance:
 
-   
-     
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
+   .. rubric:: Methods
 
    .. autosummary::
+    :toctree:
    
+      ~Simmons.__init__
       ~Simmons.guess
 
    
    
 
    
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
    
    

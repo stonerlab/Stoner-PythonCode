@@ -90,17 +90,41 @@
 <span class="c">#Linear already builtin to lmfit.models</span>
 </div>
 <div class="viewcode-block" id="arrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.arrhenius.html#Stoner.Fit.arrhenius">[docs]</a><span class="k">def</span> <span class="nf">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span><span class="o">/</span><span class="p">(</span><span class="n">_kb</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
 </div>
 <div class="viewcode-block" id="Arrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius">[docs]</a><span class="k">class</span> <span class="nc">Arrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Arrhenius.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.Arrhenius.__init__.html#Stoner.Fit.Arrhenius.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Arrhenius</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">arrhenius</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Arrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Arrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Arrhenius.guess.html#Stoner.Fit.Arrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">d1</span><span class="p">,</span><span class="n">d2</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span><span class="mf">0.0</span>
@@ -110,16 +134,42 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="nDimArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.nDimArrhenius.html#Stoner.Fit.nDimArrhenius">[docs]</a><span class="k">def</span> <span class="nf">nDimArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor for various dimensions.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        n (float): The dimensionalirty of the model</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">arrhenius</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">n</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="NDimArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.NDimArrhenius.html#Stoner.Fit.NDimArrhenius">[docs]</a><span class="k">class</span> <span class="nc">NDimArrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor for various dimensions.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        n (float): The dimensionalirty of the model</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="NDimArrhenius.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.NDimArrhenius.__init__.html#Stoner.Fit.NDimArrhenius.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NDimArrhenius</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">nDimArrhenius</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="NDimArrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.NDimArrhenius.html#Stoner.Fit.NDimArrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="NDimArrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.NDimArrhenius.guess.html#Stoner.Fit.NDimArrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">d1</span><span class="p">,</span><span class="n">d2</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span><span class="mf">0.0</span>
@@ -129,16 +179,42 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="modArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.modArrhenius.html#Stoner.Fit.modArrhenius">[docs]</a><span class="k">def</span>  <span class="nf">modArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        n (float): The exponent of the temperature pre-factor of the model</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">n</span><span class="p">)</span><span class="o">*</span><span class="n">Arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="ModArrhenius"><a class="viewcode-back" href="../../classes/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius">[docs]</a><span class="k">class</span> <span class="nc">ModArrhenius</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): temperatyre data in K</span>
+<span class="sd">        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        </span>
+<span class="sd">        DE (float): Energy barrier in *eV*.</span>
+<span class="sd">        n (float): The exponent of the temperature pre-factor of the model</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Typically a rate corresponding to the given temperature values.</span>
+<span class="sd">        </span>
+<span class="sd">    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where</span>
+<span class="sd">    :math:`k_B` is Boltzmann&#39;s constant.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ModArrhenius.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.ModArrhenius.__init__.html#Stoner.Fit.ModArrhenius.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ModArrhenius</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">modArrhenius</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ModArrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="ModArrhenius.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.ModArrhenius.guess.html#Stoner.Fit.ModArrhenius.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">d1</span><span class="p">,</span><span class="n">d2</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span><span class="mf">0.0</span>
@@ -148,112 +224,189 @@
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="powerLaw"><a class="viewcode-back" href="../../classes/Stoner.Fit.powerLaw.html#Stoner.Fit.powerLaw">[docs]</a><span class="k">def</span> <span class="nf">powerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Power Law Fitting Equation&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Power Law Fitting Equation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): Input data</span>
+<span class="sd">        A (float): Prefactor</span>
+<span class="sd">        k (float): Pwoer</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Power law.</span>
+<span class="sd">        </span>
+<span class="sd">    :math:`p=Ax^k`&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">k</span>
 </div>
-<div class="viewcode-block" id="quadratic"><a class="viewcode-back" href="../../api/Stoner.Fit.quadratic.html#Stoner.Fit.quadratic">[docs]</a><span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+<div class="viewcode-block" id="quadratic"><a class="viewcode-back" href="../../classes/Stoner.Fit.quadratic.html#Stoner.Fit.quadratic">[docs]</a><span class="k">def</span> <span class="nf">quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Simple quadratic fitting function.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (aray): Input data</span>
+<span class="sd">        a (float): Quadratic term co-efficient</span>
+<span class="sd">        b (float): Linear term co-efficient</span>
+<span class="sd">        c (float): Constant offset term</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Array of data.</span>
+<span class="sd">        </span>
+<span class="sd">    :math:`y=ax^2+bx+c`&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">c</span>
 </div>
 <div class="viewcode-block" id="simmons"><a class="viewcode-back" href="../../classes/Stoner.Fit.simmons.html#Stoner.Fit.simmons">[docs]</a><span class="k">def</span> <span class="nf">simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simmons model tunnelling</span>
-<span class="sd">    V=bias voltage, params=[A, phi, d]</span>
-<span class="sd">    A in m^2, phi barrier height in eV, d barrier width in angstrom</span>
+    <span class="sd">&quot;&quot;&quot;Simmons model of electron tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): Bias voltage</span>
+<span class="sd">        A (float): Area of barrier in m^2</span>
+<span class="sd">        phi (float): barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstroms</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for tunneling rate according to the Sommons model. </span>
 
-<span class="sd">    Simmons model as in</span>
-<span class="sd">    Simmons J. App. Phys. 34 6 1963</span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">        Simmons model from Simmons J. App. Phys. 34 6 1963</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I</span><span class="o">=</span><span class="mf">6.2e6</span><span class="o">*</span><span class="n">A</span><span class="o">/</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">((</span><span class="n">phi</span><span class="o">-</span><span class="n">V</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.025</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="o">-</span><span class="n">V</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span><span class="o">-</span><span class="p">(</span><span class="n">phi</span><span class="o">+</span><span class="n">V</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.025</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="o">+</span><span class="n">V</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">I</span>
 </div>
 <div class="viewcode-block" id="Simmons"><a class="viewcode-back" href="../../classes/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons">[docs]</a><span class="k">class</span> <span class="nc">Simmons</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;    Simmons model as in</span>
-<span class="sd">    Simmons J. App. Phys. 34 6 1963</span>
+    <span class="sd">&quot;&quot;&quot;Simmons model of electron tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): Bias voltage</span>
+<span class="sd">        A (float): Area of barrier in m^2</span>
+<span class="sd">        phi (float): barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstroms</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for tunneling rate according to the Sommons model. </span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       Simmons model from Simmons J. App. Phys. 34 6 1963</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Simmons.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.Simmons.__init__.html#Stoner.Fit.Simmons.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Simmons</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">simmons</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Simmons.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Simmons.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Simmons.guess.html#Stoner.Fit.Simmons.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just set the A, phi and d values to typical answers for a small tunnel junction&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E-12</span><span class="p">,</span><span class="n">phi</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="bdr"><a class="viewcode-back" href="../../classes/Stoner.Fit.bdr.html#Stoner.Fit.bdr">[docs]</a><span class="k">def</span> <span class="nf">bdr</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">dphi</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;BDR model tunnelling</span>
-<span class="sd">    V=bias voltage, params=[]</span>
-<span class="sd">    A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,</span>
-<span class="sd">    d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass</span>
-
-<span class="sd">    See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)</span>
-<span class="sd">    or Tuan Comm. in Phys. 16, 1, (2006)&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;BDR model tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): ias voltage</span>
+<span class="sd">        A (float): barrier area in m^2</span>
+<span class="sd">        phi (float): average barrier height in eV</span>
+<span class="sd">        dphi (float): change in barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstrom</span>
+<span class="sd">        mass (float): effective electron mass as a fraction of electron rest mass</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for tunneling rate  according to the BDR model.</span>
+<span class="sd">        </span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)&quot;&quot;&quot;</span>
     <span class="n">I</span><span class="o">=</span><span class="mf">3.16e10</span><span class="o">*</span><span class="n">A</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">/</span><span class="n">d</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.028</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">V</span><span class="o">-</span><span class="mf">0.0214</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span><span class="o">*</span><span class="n">d</span><span class="o">*</span><span class="n">dphi</span><span class="o">/</span><span class="n">phi</span><span class="o">**</span><span class="mf">1.5</span><span class="o">*</span><span class="n">V</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mf">0.0110</span><span class="o">*</span><span class="n">mass</span><span class="o">*</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">phi</span><span class="o">*</span><span class="n">V</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">I</span>
 </div>
 <div class="viewcode-block" id="BDR"><a class="viewcode-back" href="../../classes/Stoner.Fit.BDR.html#Stoner.Fit.BDR">[docs]</a><span class="k">class</span> <span class="nc">BDR</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;BDR model tunnelling</span>
-<span class="sd">    V=bias voltage, params=[]</span>
-<span class="sd">    A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,</span>
-<span class="sd">    d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass</span>
+    <span class="sd">&quot;&quot;&quot;BDR model tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): ias voltage</span>
+<span class="sd">        A (float): barrier area in m^2</span>
+<span class="sd">        phi (float): average barrier height in eV</span>
+<span class="sd">        dphi (float): change in barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstrom</span>
+<span class="sd">        mass (float): effective electron mass as a fraction of electron rest mass</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for tunneling rate  according to the BDR model.</span>
+<span class="sd">        </span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)&quot;&quot;&quot;</span>
 
-<span class="sd">    See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)</span>
-<span class="sd">    or Tuan Comm. in Phys. 16, 1, (2006)&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BDR.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.BDR.__init__.html#Stoner.Fit.BDR.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BDR</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">bdr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="BDR.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.BDR.html#Stoner.Fit.BDR.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="BDR.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.BDR.guess.html#Stoner.Fit.BDR.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E-12</span><span class="p">,</span><span class="n">phi</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span><span class="n">dphi</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">mass</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 </div></div>
 <div class="viewcode-block" id="fowlerNordheim"><a class="viewcode-back" href="../../classes/Stoner.Fit.fowlerNordheim.html#Stoner.Fit.fowlerNordheim">[docs]</a><span class="k">def</span> <span class="nf">fowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simmons model tunnelling at V&gt;phi</span>
-<span class="sd">    V=bias voltage, params=[A, phi, d]</span>
-<span class="sd">    A in m^2, phi barrier height in eV, d barrier width in angstrom</span>
-
-<span class="sd">    Simmons model as in</span>
-<span class="sd">    Simmons J. App. Phys. 34 6 1963</span>
+    <span class="sd">&quot;&quot;&quot;Fowler Nordhiem Model of electron tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): Bias voltage</span>
+<span class="sd">        A (float): Area of barrier in m^2</span>
+<span class="sd">        phi (float): barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstroms</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Tunneling rate according to Fowler Nordheim model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I</span><span class="o">=</span><span class="n">V</span><span class="o">/</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">)</span><span class="o">*</span><span class="mf">3.38e6</span><span class="o">*</span><span class="n">A</span><span class="o">*</span><span class="n">V</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.689</span><span class="o">*</span><span class="n">phi</span><span class="o">**</span><span class="mf">1.5</span><span class="o">*</span><span class="n">d</span><span class="o">/</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">I</span>
 </div>
 <div class="viewcode-block" id="FowlerNordheim"><a class="viewcode-back" href="../../classes/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim">[docs]</a><span class="k">class</span> <span class="nc">FowlerNordheim</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simmons model tunnelling at V&gt;phi</span>
-<span class="sd">    V=bias voltage, params=[A, phi, d]</span>
-<span class="sd">    A in m^2, phi barrier height in eV, d barrier width in angstrom</span>
-
-<span class="sd">    Simmons model as in</span>
-<span class="sd">    Simmons J. App. Phys. 34 6 1963</span>
+    <span class="sd">&quot;&quot;&quot;Fowler Nordhiem Model of electron tunnelling.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): Bias voltage</span>
+<span class="sd">        A (float): Area of barrier in m^2</span>
+<span class="sd">        phi (float): barrier height in eV</span>
+<span class="sd">        d (float): barrier width in angstroms</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Tunneling rate according to Fowler Nordheim model.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="FowlerNordheim.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.FowlerNordheim.__init__.html#Stoner.Fit.FowlerNordheim.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FowlerNordheim</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">fowlerNordheim</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="FowlerNordheim.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="FowlerNordheim.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.FowlerNordheim.guess.html#Stoner.Fit.FowlerNordheim.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just set the A, phi and d values to typical answers for a small tunnel junction&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E-12</span><span class="p">,</span><span class="n">phi</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">d</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div></div>
 <div class="viewcode-block" id="tersoffHammann"><a class="viewcode-back" href="../../classes/Stoner.Fit.tersoffHammann.html#Stoner.Fit.tersoffHammann">[docs]</a><span class="k">def</span> <span class="nf">tersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip</span>
-<span class="sd">    V=bias voltage, params=[A]</span>
+    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): bias voltage</span>
+<span class="sd">        A (float): Tip conductance</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        A linear fit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">I</span><span class="o">=</span><span class="n">A</span><span class="o">*</span><span class="n">V</span>
     <span class="k">return</span> <span class="n">I</span>
 </div>
 <div class="viewcode-block" id="TersoffHammann"><a class="viewcode-back" href="../../classes/Stoner.Fit.TersoffHammann.html#Stoner.Fit.TersoffHammann">[docs]</a><span class="k">class</span> <span class="nc">TersoffHammann</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip</span>
-<span class="sd">    V=bias voltage, params=[A]</span>
+    <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): bias voltage</span>
+<span class="sd">        A (float): Tip conductance</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        A linear fit.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TersoffHammann.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.TersoffHammann.__init__.html#Stoner.Fit.TersoffHammann.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TersoffHammann</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">tersoffHammann</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="TersoffHammann.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.TersoffHammann.html#Stoner.Fit.TersoffHammann.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="TersoffHammann.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.TersoffHammann.guess.html#Stoner.Fit.TersoffHammann.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Just set the A, phi and d values to typical answers for a small tunnel junction&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="o">/</span><span class="n">V</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -263,15 +416,18 @@
 <span class="sd">    Weak localisation</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        B = mag. field, params=list of parameter values, s0, B1, B2</span>
+<span class="sd">        B (array): mag. field</span>
 <span class="sd">        s0 (float): zero field conductance</span>
 <span class="sd">        DS (float): scaling parameter</span>
 <span class="sd">        B1 (float): elastic characteristic field (B1)</span>
 <span class="sd">        B2 (float): inelastic characteristic field (B2)</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs Field for a weak localisation system</span>
 
-<span class="sd">    2D WL model as per</span>
-<span class="sd">    Wu PRL 98, 136801 (2007)</span>
-<span class="sd">    Porter PRB 86, 064423 (2012)</span>
+<span class="sd">    .. note::</span>
+
+<span class="sd">       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">e</span> <span class="o">=</span> <span class="mf">1.6e-19</span> <span class="c">#C</span>
@@ -302,23 +458,25 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Weak localisation</span>
 
-<span class="sd">    def wlfit(B, s0,DS,B1,B2):</span>
 <span class="sd">    Args:</span>
-<span class="sd">        B = mag. field, params=list of parameter values, s0, B1, B2</span>
+<span class="sd">        B (array): mag. field</span>
 <span class="sd">        s0 (float): zero field conductance</span>
 <span class="sd">        DS (float): scaling parameter</span>
 <span class="sd">        B1 (float): elastic characteristic field (B1)</span>
 <span class="sd">        B2 (float): inelastic characteristic field (B2)</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs Field for a weak localisation system</span>
 
-<span class="sd">    2D WL model as per</span>
-<span class="sd">    Wu PRL 98, 136801 (2007)</span>
-<span class="sd">    Porter PRB 86, 064423 (2012)</span>
+<span class="sd">    .. note::</span>
+
+<span class="sd">       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="WLfit.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.WLfit.__init__.html#Stoner.Fit.WLfit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WLfit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">wlfit</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="WLfit.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.WLfit.html#Stoner.Fit.WLfit.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="WLfit.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.WLfit.guess.html#Stoner.Fit.WLfit.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">s0</span><span class="p">,</span><span class="n">DS</span><span class="p">,</span><span class="n">B1</span><span class="p">,</span><span class="n">B2</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">zpos</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">B</span><span class="p">))</span>
@@ -331,20 +489,22 @@
 </div></div>
 <span class="nd">@jit</span>
 <span class="k">def</span> <span class="nf">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span><span class="n">delta</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">Z</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    strijkers(V, params):</span>
+    <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy</span>
 <span class="sd">    Args:</span>
 <span class="sd">        V = bias voltages, params=list of parameter values, imega, delta,P and Z</span>
 <span class="sd">        omega (float): Broadening</span>
 <span class="sd">        delta (float): SC energy Gap</span>
 <span class="sd">        P (float): Interface parameter</span>
 <span class="sd">        Z (float): Current spin polarization through contact</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs bias data.</span>
 
-<span class="sd">    PCAR fitting</span>
-<span class="sd">    Strijkers modified BTK model</span>
-<span class="sd">        BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
 
-<span class="sd">    Only using 1 delta, not modified for proximity</span>
+<span class="sd">    This version only uses 1 delta, not modified for proximity</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#   Parameters</span>
 
@@ -400,27 +560,49 @@
     <span class="k">return</span> <span class="n">cond</span>
 
 <div class="viewcode-block" id="strijkers"><a class="viewcode-back" href="../../classes/Stoner.Fit.strijkers.html#Stoner.Fit.strijkers">[docs]</a><span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span><span class="n">delta</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">Z</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span><span class="n">delta</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="Strijkers"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers">[docs]</a><span class="k">class</span> <span class="nc">Strijkers</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    strijkers(V, params):</span>
+    <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
+<span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        V = bias voltages, params=list of parameter values, imega, delta,P and Z</span>
+<span class="sd">        V (array): bias voltages</span>
 <span class="sd">        omega (float): Broadening</span>
 <span class="sd">        delta (float): SC energy Gap</span>
 <span class="sd">        P (float): Interface parameter</span>
 <span class="sd">        Z (float): Current spin polarization through contact</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs bias data.</span>
 
-<span class="sd">    PCAR fitting</span>
-<span class="sd">    Strijkers modified BTK model - BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
 
-<span class="sd">    Only using 1 delta, not modified for proximity</span>
+<span class="sd">    This version only uses 1 delta, not modified for proximity</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Strijkers</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">strijkers</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_strijkers_core</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">omega</span><span class="p">,</span><span class="n">delta</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Strijkers"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers">[docs]</a><span class="k">class</span> <span class="nc">Strijkers</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;strijkers Model for point-contact Andreev Reflection Spectroscopy.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        V (array): bias voltages</span>
+<span class="sd">        omega (float): Broadening</span>
+<span class="sd">        delta (float): SC energy Gap</span>
+<span class="sd">        P (float): Interface parameter</span>
+<span class="sd">        Z (float): Current spin polarization through contact</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Conductance vs bias data.</span>
 
-<div class="viewcode-block" id="Strijkers.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="sd">    .. note::</span>
+<span class="sd">    </span>
+<span class="sd">       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</span>
+
+<span class="sd">    This version only uses 1 delta, not modified for proximity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Strijkers.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.__init__.html#Stoner.Fit.Strijkers.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Strijkers</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">strijkers</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Strijkers.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Strijkers.guess.html#Stoner.Fit.Strijkers.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess starting values for a good Nb contact to a ferromagnet at 4.2K&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">omega</span><span class="o">=</span><span class="mf">0.36</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mf">1.50</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="mf">0.42</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="mf">0.15</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -434,7 +616,7 @@
 <span class="sd">        p (float): reflection co-efficient</span>
 <span class="sd">        sigma_0 (float): intrinsic conductivity</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Return:</span>
 <span class="sd">        Reduced Resistivity</span>
 
 <span class="sd">    Note:</span>
@@ -460,16 +642,16 @@
 <span class="sd">        p (float): reflection co-efficient</span>
 <span class="sd">        sigma_0 (float): intrinsic conductivity</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Return:</span>
 <span class="sd">        Reduced Resistivity</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="FluchsSondheimer.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.FluchsSondheimer.__init__.html#Stoner.Fit.FluchsSondheimer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FluchsSondheimer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">fluchsSondheimer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="FluchsSondheimer.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.FluchsSondheimer.html#Stoner.Fit.FluchsSondheimer.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="FluchsSondheimer.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.FluchsSondheimer.guess.html#Stoner.Fit.FluchsSondheimer.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess some starting values - not very clever&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">sigma_0</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -487,7 +669,7 @@
 <span class="sd">        A (float): scattering scaling factor</span>
 <span class="sd">        n (float): Exponent term</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Return:</span>
 <span class="sd">        Evaluation of the BlochGrueneisen function for R(T)&quot;&quot;&quot;</span>
     <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
@@ -505,12 +687,12 @@
 <span class="sd">        A (float): scattering scaling factor</span>
 <span class="sd">        n (float): Exponent term</span>
 
-<span class="sd">    Returns:</span>
+<span class="sd">    Return:</span>
 <span class="sd">        Evaluation of the BlochGrueneisen function for R(T)&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BlochGrueneisen.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.BlochGrueneisen.__init__.html#Stoner.Fit.BlochGrueneisen.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BlochGrueneisen</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">blochGrueneisen</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="BlochGrueneisen.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.BlochGrueneisen.html#Stoner.Fit.BlochGrueneisen.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="BlochGrueneisen.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.BlochGrueneisen.guess.html#Stoner.Fit.BlochGrueneisen.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess some starting values - not very clever&quot;&quot;&quot;</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">thetaD</span><span class="o">=</span><span class="mi">900</span><span class="p">,</span><span class="n">rho0</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -524,10 +706,10 @@
 <span class="sd">        m (float) is the moment of a cluster</span>
 <span class="sd">        T (float): Temperature</span>
 <span class="sd">        </span>
-<span class="sd">    Rerturns:</span>
+<span class="sd">    Returns:</span>
 <span class="sd">        Magnetic Momemnts (array).</span>
 <span class="sd">        </span>
-<span class="sd">    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$</span>
+<span class="sd">    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">k</span><span class="p">,</span><span class="n">mu_0</span>
     
@@ -543,15 +725,15 @@
 <span class="sd">        m (float): is the moment of a single cluster</span>
 <span class="sd">        T (float): Temperature</span>
 <span class="sd">        </span>
-<span class="sd">    Rerturns:</span>
+<span class="sd">    Returns:</span>
 <span class="sd">        Magnetic Momemnts (array).</span>
 <span class="sd">        </span>
-<span class="sd">    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$</span>
+<span class="sd">    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Langevin.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.Langevin.__init__.html#Stoner.Fit.Langevin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Langevin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">langevin</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Langevin.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Langevin.html#Stoner.Fit.Langevin.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="Langevin.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.Langevin.guess.html#Stoner.Fit.Langevin.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess some starting values.</span>
 <span class="sd">        </span>
 <span class="sd">        M_s is taken as half the difference of the range of thew M data, </span>
@@ -572,8 +754,97 @@
         <span class="n">T</span><span class="o">=</span><span class="mi">150</span>
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">M_s</span><span class="o">=</span><span class="n">M_s</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span><span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        
-   
+        </div></div>
+<div class="viewcode-block" id="vftEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.vftEquation.html#Stoner.Fit.vftEquation">[docs]</a><span class="k">def</span> <span class="nf">vftEquation</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">DE</span><span class="p">,</span><span class="n">x_0</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (float): Temperature in K</span>
+<span class="sd">        A (float): Prefactror (not temperature dependent)</span>
+<span class="sd">        DE (float): Energy barrier in eV</span>
+<span class="sd">        x_0 (float): Offset temeprature in K</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Rates according the VFT equation.</span>
+<span class="sd">        </span>
+<span class="sd">    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents</span>
+<span class="sd">    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">DE</span><span class="o">/</span><span class="p">(</span><span class="n">_kb</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x_0</span><span class="p">)))</span>
+</div>
+<div class="viewcode-block" id="VFTEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.VFTEquation.html#Stoner.Fit.VFTEquation">[docs]</a><span class="k">class</span> <span class="nc">VFTEquation</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): Temperature in K</span>
+<span class="sd">        A (float): Prefactror (not temperature dependent)</span>
+<span class="sd">        DE (float): Energy barrier in eV</span>
+<span class="sd">        x_0 (float): Offset temeprature in K</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Rates according the VFT equation.</span>
+<span class="sd">        </span>
+<span class="sd">    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents</span>
+<span class="sd">    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VFTEquation.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.VFTEquation.__init__.html#Stoner.Fit.VFTEquation.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">VFTEquation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">vftEquation</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="VFTEquation.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.VFTEquation.guess.html#Stoner.Fit.VFTEquation.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_kb</span><span class="o">=</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;Boltzmann constant&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">physical_constants</span><span class="p">[</span><span class="s">&#39;elementary charge&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">d1</span><span class="p">,</span><span class="n">d2</span><span class="p">,</span><span class="n">x0</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">x0</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="n">_np_</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
+            <span class="n">d1</span><span class="p">,</span><span class="n">d2</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">x0</span><span class="p">),</span><span class="n">_np_</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d2</span><span class="p">),</span> <span class="n">dE</span><span class="o">=</span><span class="n">_kb</span><span class="o">*</span><span class="n">d1</span><span class="p">,</span><span class="n">x_0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="stretchedExp"><a class="viewcode-back" href="../../classes/Stoner.Fit.stretchedExp.html#Stoner.Fit.stretchedExp">[docs]</a><span class="k">def</span> <span class="nf">stretchedExp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">x_0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stretched exponential fuinction.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): x data values</span>
+<span class="sd">        A (float): Constant prefactor</span>
+<span class="sd">        beta (float): Stretch factor</span>
+<span class="sd">        x_0 (float): Scaling factor for x data</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for a stretched exponentional function.</span>
+<span class="sd">        </span>
+<span class="sd">    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">x_0</span><span class="p">)</span><span class="o">**</span><span class="n">beta</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="StretchedExp"><a class="viewcode-back" href="../../classes/Stoner.Fit.StretchedExp.html#Stoner.Fit.StretchedExp">[docs]</a><span class="k">class</span> <span class="nc">StretchedExp</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stretched exponential fuinction.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (array): x data values</span>
+<span class="sd">        A (float): Constant prefactor</span>
+<span class="sd">        beta (float): Stretch factor</span>
+<span class="sd">        x_0 (float): Scaling factor for x data</span>
+<span class="sd">        </span>
+<span class="sd">    Return:</span>
+<span class="sd">        Data for a stretched exponentional function.</span>
+<span class="sd">        </span>
+<span class="sd">    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="StretchedExp.__init__"><a class="viewcode-back" href="../../classes/Stoner.Fit.StretchedExp.__init__.html#Stoner.Fit.StretchedExp.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">stretchedExp</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="StretchedExp.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.StretchedExp.guess.html#Stoner.Fit.StretchedExp.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">A</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">x0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">A</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">_np_</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span>     
+            <span class="n">d1</span><span class="p">,</span><span class="n">d2</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">_np_</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="o">/</span><span class="n">A</span><span class="p">)),</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">beta</span><span class="o">=</span><span class="n">d1</span>
+            <span class="n">x0</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">d2</span><span class="o">/</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span><span class="n">x_0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
 </pre></div></div></div>
 
           </div>
@@ -616,7 +887,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

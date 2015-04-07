@@ -349,7 +349,10 @@
                 <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">=</span><span class="bp">None</span>
-        <span class="k">elif</span> <span class="s">&quot;anme&quot;</span><span class="o">==</span><span class="s">&quot;_public_attrs&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">==</span><span class="s">&quot;clone&quot;</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="s">&quot;clone&quot;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">==</span><span class="s">&quot;_public_attrs&quot;</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&quot;fig&quot;</span><span class="p">:(</span><span class="nb">int</span><span class="p">,</span><span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
                         <span class="s">&quot;labels&quot;</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span>
@@ -429,7 +432,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">colormap_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotFile.colormap_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.colormap_xyz.html#Stoner.Plot.PlotFile.colormap_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">colormap_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An xyz plot that forces the use of plt.contour.</span>
 
 <span class="sd">        Args:</span>
@@ -457,7 +460,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">shape</span><span class="p">,</span><span class="n">xlim</span><span class="p">,</span><span class="n">ylim</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
 
-
+</div>
 <div class="viewcode-block" id="PlotFile.contour_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">contour_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An xyz plot that forces the use of plt.contour.</span>
 
@@ -1179,7 +1182,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">sp</span>
         <span class="k">return</span> <span class="n">sp</span>
 </div>
-    <span class="k">def</span> <span class="nf">x2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotFile.x2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.x2.html#Stoner.Plot.PlotFile.x2">[docs]</a>    <span class="k">def</span> <span class="nf">x2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a new set of axes with a second x-scale.</span>
 
 <span class="sd">        Returns:</span>
@@ -1189,8 +1192,8 @@
         <span class="n">ax2</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">twiny</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax2</span>
-
-    <span class="k">def</span> <span class="nf">y2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="PlotFile.y2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.y2.html#Stoner.Plot.PlotFile.y2">[docs]</a>    <span class="k">def</span> <span class="nf">y2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a new set of axes with a second y-scale.</span>
 
 <span class="sd">        Returns:</span>
@@ -1202,8 +1205,8 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax2</span>
 
-</div>
-<span class="k">def</span> <span class="nf">hsl2rgb</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">l</span><span class="p">):</span>
+</div></div>
+<div class="viewcode-block" id="hsl2rgb"><a class="viewcode-back" href="../../classes/Stoner.Plot.hsl2rgb.html#Stoner.Plot.hsl2rgb">[docs]</a><span class="k">def</span> <span class="nf">hsl2rgb</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">l</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Converts from hsl colourspace to rgb colour space with numpy arrays for speed.</span>
 
 <span class="sd">    Args:</span>
@@ -1231,7 +1234,7 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)):</span>
         <span class="n">rgb</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="o">*</span><span class="n">hls</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
     <span class="k">return</span> <span class="p">(</span><span class="mi">255</span><span class="o">*</span><span class="n">rgb</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s">&#39;u1&#39;</span><span class="p">)</span>
-</pre></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -1273,7 +1276,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

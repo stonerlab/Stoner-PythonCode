@@ -1,8 +1,15 @@
-
-
-simmons
+Stoner.Fit.simmons
 ==================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: simmons
+.. autoclass:: simmons
+
+   
+
+   
+   
+
+   
+   
+   

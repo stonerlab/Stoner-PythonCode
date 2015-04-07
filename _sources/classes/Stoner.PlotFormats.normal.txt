@@ -1,0 +1,8 @@
+
+
+normal
+=========================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autofunction:: normal

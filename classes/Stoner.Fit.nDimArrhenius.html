@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>nDimArrhenius &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Fit.nDimArrhenius &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="powerLaw" href="Stoner.Fit.powerLaw.html" />
-    <link rel="prev" title="modArrhenius" href="Stoner.Fit.modArrhenius.html" /> 
+    <link rel="next" title="Stoner.Fit.powerLaw" href="Stoner.Fit.powerLaw.html" />
+    <link rel="prev" title="Stoner.Fit.modArrhenius" href="Stoner.Fit.modArrhenius.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.powerLaw.html" title="powerLaw"
+          <a href="Stoner.Fit.powerLaw.html" title="Stoner.Fit.powerLaw"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.modArrhenius.html" title="modArrhenius"
+          <a href="Stoner.Fit.modArrhenius.html" title="Stoner.Fit.modArrhenius"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -55,12 +55,35 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="ndimarrhenius">
-<h1>nDimArrhenius<a class="headerlink" href="#ndimarrhenius" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+  <div class="section" id="stoner-fit-ndimarrhenius">
+<h1>Stoner.Fit.nDimArrhenius<a class="headerlink" href="#stoner-fit-ndimarrhenius" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
 <dt id="Stoner.Fit.nDimArrhenius">
-<tt class="descclassname">Stoner.Fit.</tt><tt class="descname">nDimArrhenius</tt><big>(</big><em>x</em>, <em>A</em>, <em>DE</em>, <em>n</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#nDimArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.nDimArrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation without T dependendent prefactor</p>
+<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">nDimArrhenius</tt><a class="reference internal" href="../_modules/Stoner/Fit.html#nDimArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.nDimArrhenius" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arrhenius Equation without T dependendent prefactor for various dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> (<em>array</em>) &#8211;
+temperatyre data in K</li>
+<li><strong>A</strong> (<em>float</em>) &#8211;
+Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.</li>
+<li><strong>DE</strong> (<em>float</em>) &#8211;
+Energy barrier in <em>eV</em>.</li>
+<li><strong>n</strong> (<em>float</em>) &#8211;
+The dimensionalirty of the model</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Typically a rate corresponding to the given temperature values.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The Arrhenius function is defined as <span class="math">\(\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)\)</span> where
+<span class="math">\(k_B\)</span> is Boltzmann&#8217;s constant.</p>
 </dd></dl>
 
 </div>
@@ -76,10 +99,10 @@
             </a></p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="Stoner.Fit.modArrhenius.html"
-                        title="previous chapter">modArrhenius</a></p>
+                        title="previous chapter">Stoner.Fit.modArrhenius</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Fit.powerLaw.html"
-                        title="next chapter">powerLaw</a></p>
+                        title="next chapter">Stoner.Fit.powerLaw</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.Fit.nDimArrhenius.txt"
@@ -112,10 +135,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.powerLaw.html" title="powerLaw"
+          <a href="Stoner.Fit.powerLaw.html" title="Stoner.Fit.powerLaw"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.modArrhenius.html" title="modArrhenius"
+          <a href="Stoner.Fit.modArrhenius.html" title="Stoner.Fit.modArrhenius"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -123,7 +146,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

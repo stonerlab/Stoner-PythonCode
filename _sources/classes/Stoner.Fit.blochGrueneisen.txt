@@ -1,8 +1,15 @@
-
-
-blochGrueneisen
+Stoner.Fit.blochGrueneisen
 ==========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: blochGrueneisen
+.. autoclass:: blochGrueneisen
+
+   
+
+   
+   
+
+   
+   
+   

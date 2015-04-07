@@ -69,17 +69,21 @@ small text data files.</p>
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
 <p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.</p>
-<p>At present it looks like lmfit does not install correctly with easy_install, so use pip instead</p>
-<div class="highlight-sh"><div class="highlight"><pre>pip install lmfit
+<p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
+However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
+<div class="highlight-sh"><div class="highlight"><pre>easy_install lmfit
 </pre></div>
 </div>
-<p>The easiest way to install this code is via seuptools&#8217; easy_install</p>
+<p>The easiest way to install the Stoner package is via seuptools&#8217; easy_install</p>
 <div class="highlight-sh"><div class="highlight"><pre>easy_install Stoner
 </pre></div>
 </div>
 <p>This will install the Stoner package into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/gb119/Stoner-PythonCode">https://github.com/gb119/Stoner-PythonCode</a></p>
+<p>The codebase is largely compatible with Python 3.4, with the expception of the 3D vector map plots which make use of
+Enthought&#8217;s <em>mayavi</em> package which is still only Python 2 compatible due to the underlying Vtk toolkit. Other issues of
+broken 3.4 code are bugs to be squashed.</p>
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
@@ -106,6 +110,8 @@ file formats. Two, however, contain additional functionality for writing analysi
 </ul>
 <p>As mentioned above, there are subclasses of <strong>DataFile</strong> in the <strong>Stoner.FileFormats</strong> module that support
 loading many of the common file formats used in our research.</p>
+<p>For rapid development of small scripts, we would recommend the <strong>Stoner.Data</strong> class which is a superclass of the above,
+and provides a &#8216;kitchen-sink&#8217; one stop shop for most of the package&#8217;s functionality.</p>
 </div>
 <div class="section" id="datafolder">
 <h3>DataFolder<a class="headerlink" href="#datafolder" title="Permalink to this headline">¶</a></h3>
@@ -136,7 +142,8 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <div class="section" id="version-0-4-x">
 <h3>Version 0.4.x<a class="headerlink" href="#version-0-4-x" title="Permalink to this headline">¶</a></h3>
 <p>Refactored the PlotFormats sub module to use Matplotlib 1.4 stylesheets. Additional features in Plot
-and new outlier detection routines in AnalyseFile. Number of bugs squashed.</p>
+and new outlier detection routines in AnalyseFile. New operators added to DataFile to make some column and row
+operations more compact. Number of bugs squashed.</p>
 </div>
 <div class="section" id="version-0-3-0">
 <h3>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h3>
@@ -178,18 +185,18 @@ and new outlier detection routines in AnalyseFile. Number of bugs squashed.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="Stoner.html">Module Api Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Core"><tt class="docutils literal"><span class="pre">Core</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Analysis"><tt class="docutils literal"><span class="pre">Analysis</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Plot"><tt class="docutils literal"><span class="pre">Plot</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Folders"><tt class="docutils literal"><span class="pre">Folders</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#core-module"><tt class="docutils literal"><span class="pre">Core</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#analysis-module"><tt class="docutils literal"><span class="pre">Analysis</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#plot-module"><tt class="docutils literal"><span class="pre">Plot</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#folders-module"><tt class="docutils literal"><span class="pre">Folders</span></tt> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.FileFormats"><tt class="docutils literal"><span class="pre">FileFormats</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.PlotFormats"><tt class="docutils literal"><span class="pre">PlotFormats</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.plotutils"><tt class="docutils literal"><span class="pre">plotutils</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.HDF5"><tt class="docutils literal"><span class="pre">HDF5</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Zip"><tt class="docutils literal"><span class="pre">Zip</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.Util"><tt class="docutils literal"><span class="pre">Util</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.mpfit"><tt class="docutils literal"><span class="pre">mpfit</span></tt> Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.html#module-Stoner.nlfit"><tt class="docutils literal"><span class="pre">nlfit</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#plotformats-module"><tt class="docutils literal"><span class="pre">PlotFormats</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#plotutils-module"><tt class="docutils literal"><span class="pre">plotutils</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#fit-module"><tt class="docutils literal"><span class="pre">Fit</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#hdf5-module"><tt class="docutils literal"><span class="pre">HDF5</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#zip-module"><tt class="docutils literal"><span class="pre">Zip</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#util-module"><tt class="docutils literal"><span class="pre">Util</span></tt> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Stoner.html#nlfit-module"><tt class="docutils literal"><span class="pre">nlfit</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -274,7 +281,7 @@ and new outlier detection routines in AnalyseFile. Number of bugs squashed.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

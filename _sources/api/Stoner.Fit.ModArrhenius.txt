@@ -1,44 +1,8 @@
 
 
-ModArrhenius
+modArrhenius
 =======================
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: ModArrhenius
-   :show-inheritance:
-
-   
-     
-   
-
-   
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-   
-      ~ModArrhenius.guess
-
-   
-   
-
-   
-   
-   
-
-   
-   
-
-   .. rubric:: Methods Documentation
-
-   
-   .. automethod:: guess
-
-   
-   
+.. autofunction:: modArrhenius

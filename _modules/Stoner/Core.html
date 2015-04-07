@@ -469,7 +469,7 @@
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="typeHintedDict"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict">[docs]</a><span class="k">class</span> <span class="nc">typeHintedDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">typeHintedDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends a regular dict to include type hints of what each key contains.</span>
 
 <span class="sd">    The CM Physics Group at Leeds makes use of a standard file format that closely matches</span>
@@ -518,7 +518,7 @@
         <span class="c"># This is used to work out the correct python class for</span>
         <span class="c"># some string types</span>
 
-<div class="viewcode-block" id="typeHintedDict.__init__"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.__init__.html#Stoner.Core.typeHintedDict.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;typeHintedDict constructor method.</span>
 
 <span class="sd">        Args:</span>
@@ -539,7 +539,7 @@
             <span class="n">value</span><span class="o">=</span><span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
             <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">value</span> <span class="c">#__Setitem__ has the logic to handle embedded type hints correctly</span>
-</div>
+
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles attribute access&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&quot;types&quot;</span><span class="p">:</span>
@@ -547,7 +547,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span>
 
-<div class="viewcode-block" id="typeHintedDict.findtype"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.findtype.html#Stoner.Core.typeHintedDict.findtype">[docs]</a>    <span class="k">def</span> <span class="nf">findtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">findtype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Determines the correct string type to return for common python</span>
 <span class="sd">        classes.</span>
 
@@ -579,7 +579,7 @@
                     <span class="n">typ</span> <span class="o">=</span> <span class="n">t</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">typ</span>
-</div>
+
     <span class="k">def</span> <span class="nf">__mungevalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Based on a string type t, return value cast to an</span>
 <span class="sd">        appropriate python class.</span>
@@ -616,7 +616,7 @@
             <span class="n">ret</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-<div class="viewcode-block" id="typeHintedDict.string_to_type"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.string_to_type.html#Stoner.Core.typeHintedDict.string_to_type">[docs]</a>    <span class="k">def</span> <span class="nf">string_to_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">string_to_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given a string value try to work out if there is a better python type dor the value.</span>
 
 <span class="sd">        First of all the first character is checked to see if it is a [ or { which would</span>
@@ -650,7 +650,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">ret</span><span class="o">=</span><span class="bp">None</span>
         <span class="k">return</span> <span class="n">ret</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_get_name_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks a string name for an embedded type hint and strips it out.</span>
 
@@ -723,7 +723,7 @@
         <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-<div class="viewcode-block" id="typeHintedDict.copy"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.copy.html#Stoner.Core.typeHintedDict.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provides a copy method that is aware of the type hinting strings.</span>
 
 <span class="sd">        This produces a flat dictionary with the type hint embedded in the key name.</span>
@@ -737,8 +737,8 @@
             <span class="n">nk</span><span class="o">=</span><span class="n">k</span><span class="o">+</span><span class="s">&quot;{&quot;</span><span class="o">+</span><span class="n">t</span><span class="o">+</span><span class="s">&quot;}&quot;</span>
             <span class="n">ret</span><span class="p">[</span><span class="n">nk</span><span class="p">]</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">ret</span>
-</div>
-<div class="viewcode-block" id="typeHintedDict.type"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.type.html#Stoner.Core.typeHintedDict.type">[docs]</a>    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the typehint for the given k(s).</span>
 
 <span class="sd">        This simply looks up the type hinting dictionary for each key it is given.</span>
@@ -755,8 +755,8 @@
                 <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-</div>
-<div class="viewcode-block" id="typeHintedDict.export"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.export.html#Stoner.Core.typeHintedDict.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Exports a single metadata value to a string representation with type</span>
 <span class="sd">        hint.</span>
 
@@ -772,7 +772,7 @@
 
 
 
-</div></div>
+
 <div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Core.DataFile` is the base class object that represents</span>
 <span class="sd">    a matrix of data, associated metadata and column headers.</span>
@@ -2755,7 +2755,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 30, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

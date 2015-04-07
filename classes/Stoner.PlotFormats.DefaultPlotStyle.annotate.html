@@ -60,14 +60,21 @@
 <h1>DefaultPlotStyle.annotate<a class="headerlink" href="#defaultplotstyle-annotate" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.PlotFormats.DefaultPlotStyle.annotate">
-<tt class="descclassname">DefaultPlotStyle.</tt><tt class="descname">annotate</tt><big>(</big><em>plot</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#DefaultPlotStyle.annotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.annotate" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">DefaultPlotStyle.</tt><tt class="descname">annotate</tt><big>(</big><em>ix</em>, <em>multiple</em>, <em>plot</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#DefaultPlotStyle.annotate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.DefaultPlotStyle.annotate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call all the routines necessary to annotate the axes etc.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>plot</strong> (<em>Stoner.PlotFile</em>) &#8211;
-The PlotFile boject we&#8217;re working with</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ix</strong> (<em>integer</em>) &#8211;
+Index of current subplot</li>
+<li><strong>multiple</strong> (<em>string</em>) &#8211;
+how to handle multiple subplots</li>
+<li><strong>plot</strong> (<em>Stoner.PlotFile</em>) &#8211;
+The PlotFile boject we&#8217;re working with</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -134,7 +141,7 @@ The PlotFile boject we&#8217;re working with</td>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 11, 2015.
+      Last updated on Apr 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

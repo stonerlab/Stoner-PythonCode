@@ -1,8 +1,15 @@
-
-
-tersoffHammann
+Stoner.Fit.tersoffHammann
 =========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: tersoffHammann
+.. autoclass:: tersoffHammann
+
+   
+
+   
+   
+
+   
+   
+   

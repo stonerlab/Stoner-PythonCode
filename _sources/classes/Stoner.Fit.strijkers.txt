@@ -1,8 +1,15 @@
-
-
-strijkers
+Stoner.Fit.strijkers
 ====================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: strijkers
+.. autoclass:: strijkers
+
+   
+
+   
+   
+
+   
+   
+   

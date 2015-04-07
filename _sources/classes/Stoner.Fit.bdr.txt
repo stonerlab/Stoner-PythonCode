@@ -1,8 +1,15 @@
-
-
-bdr
+Stoner.Fit.bdr
 ==============
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: bdr
+.. autoclass:: bdr
+
+   
+
+   
+   
+
+   
+   
+   

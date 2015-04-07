@@ -1,8 +1,15 @@
-
-
-fowlerNordheim
+Stoner.Fit.fowlerNordheim
 =========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autofunction:: fowlerNordheim
+.. autoclass:: fowlerNordheim
+
+   
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,8 @@
+
+
+ZipFile.rows
+=======================
+
+.. currentmodule:: Stoner.Zip
+
+.. automethod:: ZipFile.rows
