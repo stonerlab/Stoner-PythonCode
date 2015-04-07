@@ -2,7 +2,8 @@ axes.color_cycle:k,r,b,g,c,m,y
 axes.formatter.limits:-4, 4
 axes.grid:False
 axes.labelsize:18
-figure.autolayout:True
+axes.linewidth: 2.0
+figure.autolayout:False
 figure.facecolor:1,1,1
 figure.subplot.bottom  : 0.2    # the bottom of the subplots of the figure
 figure.subplot.hspace  : 0
@@ -35,8 +36,13 @@ lines.markersize:5
 xtick.direction:in
 xtick.labelsize:18
 xtick.major.pad:5
-xtick.major.size:3
+xtick.major.size:5
+xtick.major.width    : 1    # major tick width in points
+xtick.minor.width    : 1
+
 ytick.direction:in
 ytick.labelsize:18
 ytick.major.pad:5
-ytick.major.size:3
+ytick.major.size:5
+ytick.major.width    : 1    # major tick width in points
+ytick.minor.width    : 1
