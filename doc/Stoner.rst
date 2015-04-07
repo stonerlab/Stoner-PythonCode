@@ -4,53 +4,31 @@ Stoner Package
 :mod:`Core` Module
 ==================
 
-.. module:: Stoner.Core
-
-.. autosummary::
+.. automodsumm:: Stoner.Core
     :toctree: classes
     :template: classdocs.rst
-
-    typeHintedDict
-    DataFile
-    StonerLoadError
 
 :mod:`Analysis` Module
 =======================
 
-.. module:: Stoner.Analysis
-
-
-.. autosummary::
+.. automodsumm:: Stoner.Analysis
    :toctree: classes
    :template: classdocs.rst
-
-    AnalyseFile
 
 
 :mod:`Plot` Module
 ==================
 
-.. module:: Stoner.Plot
-
-
-.. autosummary::
+.. automodsumm:: Stoner.Plot
    :toctree: classes
    :template: classdocs.rst
-
-    PlotFile
-
 
 :mod:`Folders` Module
 ======================
 
-.. module:: Stoner.Folders
-
-
-.. autosummary::
+.. automodsumm:: Stoner.Folders
    :toctree: classes
    :template: classdocs.rst
-
-    DataFolder
 
 :mod:`FileFormats` Module
 =========================
@@ -102,14 +80,9 @@ Facility Outputs
 :mod:`PlotFormats` Module
 ==========================
 
-.. automodapi:: Stoner.PlotFormats
-    :no-heading:
-    :no-inheritance-diagram:
-    :headings: =-
-    :skip: AutoLocator
-    :skip: EngFormatter
-    :skip: Formatter
-    :skip: range
+.. automodsumm:: Stoner.PlotFormats
+   :toctree: classes
+   :template: classdocs.rst
 
 
 See also the stylesheets available in the stylelib directory.
@@ -117,27 +90,29 @@ See also the stylesheets available in the stylelib directory.
 :mod:`plotutils` Module
 =======================
 
-.. automodapi:: Stoner.plotutils
-    :no-heading:
-    :no-inheritance-diagram:
-    :headings: =-
+.. automodsumm:: Stoner.plotutils
+   :toctree: classes
+   :template: classdocs.rst
 
 
 :mod:`Fit` Module
 =================
 
-.. automodapi:: Stoner.Fit
-    :no-heading:
-    :no-inheritance-diagram:
-    :headings: =-
-    :skip: Linear
-    :skip: PowerLaw
-    :skip: Quadratic
-    :skip: Model
-    :skip: quadratic
-    :skip: jit
-    :skip: update_param_vals
-    :skip: quad
+lmfit Model Classes
+-------------------
+
+.. automodsumm:: Stoner.Fit
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
+
+Bare functions
+--------------
+
+.. automodsumm:: Stoner.Fit
+   :toctree: classes
+   :template: classdocs.rst
+   :functions-only:
 
 
 The following modules offer specialised file and foler formats.
@@ -145,62 +120,37 @@ The following modules offer specialised file and foler formats.
 :mod:`HDF5` Module
 =========================
 
-.. module:: Stoner.HDF5
-
-.. autosummary::
+.. automodsumm:: Stoner.HDF5
    :toctree: classes
    :template: classdocs.rst
-
-    HDF5File
-    HDF5Folder
 
 :mod:`Zip` Module
 =========================
 
-.. module:: Stoner.Zip
-
-.. autosummary::
+.. automodsumm:: Stoner.Zip
    :toctree: classes
    :template: classdocs.rst
-
-    ZipFile
-    ZipFolder
 
 :mod:`Util` Module
 ==================
 
-.. module:: Stoner.Util
-
-.. autosummary::
+.. automodsumm:: Stoner.Util
    :toctree: classes
    :template: classdocs.rst
-
-    Data
-
-.. autosummary::
-    :toctree: functions
-
-    format_error
-    hysteresis_correct
-    ordinal
-    split_up_down
-
-
-:mod:`mpfit` Module
-===================
-
-.. automodule:: Stoner.mpfit
 
 :mod:`nlfit` Module
 ===================
 
-.. automodule:: Stoner.nlfit
-
+.. automodsumm:: Stoner.nlfit
+   :toctree: classes
+   :template: classdocs.rst
 
 :mod:`pyTDMS` Module
 --------------------
 
-.. automodule:: Stoner.pyTDMS
+.. automodsumm:: Stoner.pyTDMS
+   :toctree: classes
+   :template: classdocs.rst
 
 
 Subpackages
