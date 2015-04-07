@@ -40,12 +40,36 @@ def linear(x, intercept, slope):
 #Linear already builtin to lmfit.models
 
 def arrhenius(x, A, DE):
-    """Arrhenius Equation without T dependendent prefactor"""
+    """Arrhenius Equation without T dependendent prefactor.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    :math:`k_B` is Boltzmann's constant.
+    """
     _kb=consts.physical_constants['Boltzmann constant'][0]/consts.physical_constants['elementary charge'][0]
     return A*_np_.exp(-DE/(_kb*x))
 
 class Arrhenius(Model):
-    """Arrhenius Equation without T dependendent prefactor"""
+    """Arrhenius Equation without T dependendent prefactor.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    :math:`k_B` is Boltzmann's constant.
+    """
 
     def __init__(self, *args, **kwargs):
         super(Arrhenius, self).__init__(arrhenius, *args, **kwargs)
@@ -60,11 +84,37 @@ class Arrhenius(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def nDimArrhenius(x, A, DE, n):
-    """Arrhenius Equation without T dependendent prefactor"""
+    """Arrhenius Equation without T dependendent prefactor for various dimensions.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        n (float): The dimensionalirty of the model
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where
+    :math:`k_B` is Boltzmann's constant.
+    """
     return arrhenius(x**n, A, DE)
 
 class NDimArrhenius(Model):
-    """Arrhenius Equation without T dependendent prefactor"""
+    """Arrhenius Equation without T dependendent prefactor for various dimensions.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        n (float): The dimensionalirty of the model
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where
+    :math:`k_B` is Boltzmann's constant.
+    """
 
     def __init__(self, *args, **kwargs):
         super(NDimArrhenius, self).__init__(nDimArrhenius, *args, **kwargs)
@@ -79,11 +129,37 @@ class NDimArrhenius(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def  modArrhenius(x, A, DE, n):
-    """Arrhenius Equation with a variable T power dependent prefactor"""
+    """Arrhenius Equation with a variable T power dependent prefactor.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        n (float): The exponent of the temperature pre-factor of the model
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    :math:`k_B` is Boltzmann's constant.  
+    """
     return (x**n)*Arrhenius(x, A, DE)
 
 class ModArrhenius(Model):
-    """Arrhenius Equation with a variable T power dependent prefactor"""
+    """Arrhenius Equation with a variable T power dependent prefactor.
+    
+    Args:
+        x (array): temperatyre data in K
+        A (float): Prefactor - temperature independent. See :py:func:modArrhenius for temperaure dependent version.        
+        DE (float): Energy barrier in *eV*.
+        n (float): The exponent of the temperature pre-factor of the model
+        
+    Return:
+        Typically a rate corresponding to the given temperature values.
+        
+    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    :math:`k_B` is Boltzmann's constant.  
+    """
 
     def __init__(self, *args, **kwargs):
         super(ModArrhenius, self).__init__(modArrhenius, *args, **kwargs)
@@ -98,27 +174,68 @@ class ModArrhenius(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def powerLaw(x, A, k):
-    """Power Law Fitting Equation"""
+    """Power Law Fitting Equation.
+    
+    Args:
+        x (array): Input data
+        A (float): Prefactor
+        k (float): Pwoer
+        
+    Return:
+        Power law.
+        
+    :math:`p=Ax^k`"""
     return A*x**k
 
 def quadratic(x, a,b,c):
+    """A Simple quadratic fitting function.
+    
+    Args:
+        x (aray): Input data
+        a (float): Quadratic term co-efficient
+        b (float): Linear term co-efficient
+        c (float): Constant offset term
+        
+    Returns:
+        Array of data.
+        
+    :math:`y=ax^2+bx+c`"""
     return a*x**2+b*x+c
 
 def simmons(V, A, phi, d):
-    """
-    Simmons model tunnelling
-    V=bias voltage, params=[A, phi, d]
-    A in m^2, phi barrier height in eV, d barrier width in angstrom
+    """Simmons model of electron tunnelling.
+    
+    Args:
+        V (array): Bias voltage
+        A (float): Area of barrier in m^2
+        phi (float): barrier height in eV
+        d (float): barrier width in angstroms
+        
+    Return:
+        Data for tunneling rate according to the Sommons model. 
 
-    Simmons model as in
-    Simmons J. App. Phys. 34 6 1963
+    .. note::
+    
+        Simmons model from Simmons J. App. Phys. 34 6 1963
     """
     I=6.2e6*A/d**2*((phi-V/2)*_np_.exp(-1.025*d*_np_.sqrt(phi-V/2))-(phi+V/2)*_np_.exp(-1.025*d*_np_.sqrt(phi+V/2)))
     return I
 
 class Simmons(Model):
-    """    Simmons model as in
-    Simmons J. App. Phys. 34 6 1963
+    """Simmons model of electron tunnelling.
+    
+    Args:
+        V (array): Bias voltage
+        A (float): Area of barrier in m^2
+        phi (float): barrier height in eV
+        d (float): barrier width in angstroms
+        
+    Return:
+        Data for tunneling rate according to the Sommons model. 
+
+    .. note::
+    
+       Simmons model from Simmons J. App. Phys. 34 6 1963
     """
 
     def __init__(self, *args, **kwargs):
@@ -130,24 +247,42 @@ class Simmons(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def bdr(V, A, phi, dphi, d, mass):
-    """BDR model tunnelling
-    V=bias voltage, params=[]
-    A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,
-    d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass
-
-    See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
-    or Tuan Comm. in Phys. 16, 1, (2006)"""
+    """BDR model tunnelling.
+    
+    Args:
+        V (array): ias voltage
+        A (float): barrier area in m^2
+        phi (float): average barrier height in eV
+        dphi (float): change in barrier height in eV
+        d (float): barrier width in angstrom
+        mass (float): effective electron mass as a fraction of electron rest mass
+        
+    Return:
+        Data for tunneling rate  according to the BDR model.
+        
+    .. note::
+    
+       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)"""
     I=3.16e10*A**2*_np_.sqrt(phi)/d*_np_.exp(-1.028*_np_.sqrt(phi)*d)*(V-0.0214*_np_.sqrt(mass)*d*dphi/phi**1.5*V**2+0.0110*mass*d**2/phi*V**3)
     return I
 
 class BDR(Model):
-    """BDR model tunnelling
-    V=bias voltage, params=[]
-    A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,
-    d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass
-
-    See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
-    or Tuan Comm. in Phys. 16, 1, (2006)"""
+    """BDR model tunnelling.
+    
+    Args:
+        V (array): ias voltage
+        A (float): barrier area in m^2
+        phi (float): average barrier height in eV
+        dphi (float): change in barrier height in eV
+        d (float): barrier width in angstrom
+        mass (float): effective electron mass as a fraction of electron rest mass
+        
+    Return:
+        Data for tunneling rate  according to the BDR model.
+        
+    .. note::
+    
+       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)"""
 
     def __init__(self, *args, **kwargs):
         super(BDR, self).__init__(bdr, *args, **kwargs)
@@ -159,25 +294,31 @@ class BDR(Model):
 
 
 def fowlerNordheim(V, A, phi, d):
-    """
-    Simmons model tunnelling at V>phi
-    V=bias voltage, params=[A, phi, d]
-    A in m^2, phi barrier height in eV, d barrier width in angstrom
-
-    Simmons model as in
-    Simmons J. App. Phys. 34 6 1963
+    """Fowler Nordhiem Model of electron tunnelling.
+    
+    Args:
+        V (array): Bias voltage
+        A (float): Area of barrier in m^2
+        phi (float): barrier height in eV
+        d (float): barrier width in angstroms
+        
+    Return:
+        Tunneling rate according to Fowler Nordheim model.
     """
     I=V/_np_.abs(V)*3.38e6*A*V**2/(d**2*phi)*_np_.exp(-0.689*phi**1.5*d/_np_.abs(V))
     return I
 
 class FowlerNordheim(Model):
-    """
-    Simmons model tunnelling at V>phi
-    V=bias voltage, params=[A, phi, d]
-    A in m^2, phi barrier height in eV, d barrier width in angstrom
-
-    Simmons model as in
-    Simmons J. App. Phys. 34 6 1963
+    """Fowler Nordhiem Model of electron tunnelling.
+    
+    Args:
+        V (array): Bias voltage
+        A (float): Area of barrier in m^2
+        phi (float): barrier height in eV
+        d (float): barrier width in angstroms
+        
+    Return:
+        Tunneling rate according to Fowler Nordheim model.
     """
 
     def __init__(self, *args, **kwargs):
@@ -189,15 +330,27 @@ class FowlerNordheim(Model):
         return update_param_vals(pars, self.prefix, **kwargs)
 
 def tersoffHammann(V, A):
-    """TersoffHamman model for tunnelling through STM tip
-    V=bias voltage, params=[A]
+    """TersoffHamman model for tunnelling through STM tip.
+    
+    Args:
+        V (array): bias voltage
+        A (float): Tip conductance
+        
+    Return:
+        A linear fit.
     """
     I=A*V
     return I
 
 class TersoffHammann(Model):
-    """TersoffHamman model for tunnelling through STM tip
-    V=bias voltage, params=[A]
+    """TersoffHamman model for tunnelling through STM tip.
+    
+    Args:
+        V (array): bias voltage
+        A (float): Tip conductance
+        
+    Return:
+        A linear fit.
     """
 
     def __init__(self, *args, **kwargs):
@@ -213,15 +366,18 @@ def wlfit(B, s0,DS,B1,B2):
     Weak localisation
 
     Args:
-        B = mag. field, params=list of parameter values, s0, B1, B2
+        B (array): mag. field
         s0 (float): zero field conductance
         DS (float): scaling parameter
         B1 (float): elastic characteristic field (B1)
         B2 (float): inelastic characteristic field (B2)
+        
+    Return:
+        Conductance vs Field for a weak localisation system
 
-    2D WL model as per
-    Wu PRL 98, 136801 (2007)
-    Porter PRB 86, 064423 (2012)
+    .. note::
+
+       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
     """
 
     e = 1.6e-19 #C
@@ -252,17 +408,19 @@ class WLfit(Model):
     """
     Weak localisation
 
-    def wlfit(B, s0,DS,B1,B2):
     Args:
-        B = mag. field, params=list of parameter values, s0, B1, B2
+        B (array): mag. field
         s0 (float): zero field conductance
         DS (float): scaling parameter
         B1 (float): elastic characteristic field (B1)
         B2 (float): inelastic characteristic field (B2)
+        
+    Return:
+        Conductance vs Field for a weak localisation system
 
-    2D WL model as per
-    Wu PRL 98, 136801 (2007)
-    Porter PRB 86, 064423 (2012)
+    .. note::
+
+       2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
     """
 
     def __init__(self, *args, **kwargs):
@@ -281,20 +439,22 @@ class WLfit(Model):
 
 @jit
 def _strijkers_core(V, omega,delta,P,Z):
-    """
-    strijkers(V, params):
+    """strijkers Model for point-contact Andreev Reflection Spectroscopy
     Args:
         V = bias voltages, params=list of parameter values, imega, delta,P and Z
         omega (float): Broadening
         delta (float): SC energy Gap
         P (float): Interface parameter
         Z (float): Current spin polarization through contact
+        
+    Return:
+        Conductance vs bias data.
 
-    PCAR fitting
-    Strijkers modified BTK model
-        BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
+    .. note::
+    
+       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
-    Only using 1 delta, not modified for proximity
+    This version only uses 1 delta, not modified for proximity
     """
     #   Parameters
 
@@ -350,22 +510,44 @@ def _strijkers_core(V, omega,delta,P,Z):
     return cond
 
 def strijkers(V, omega,delta,P,Z):
-    return _strijkers_core(V, omega,delta,P,Z)
-
-class Strijkers(Model):
-    """
-    strijkers(V, params):
+    """strijkers Model for point-contact Andreev Reflection Spectroscopy.
+    
     Args:
-        V = bias voltages, params=list of parameter values, imega, delta,P and Z
+        V (array): bias voltages
         omega (float): Broadening
         delta (float): SC energy Gap
         P (float): Interface parameter
         Z (float): Current spin polarization through contact
+        
+    Return:
+        Conductance vs bias data.
 
-    PCAR fitting
-    Strijkers modified BTK model - BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
+    .. note::
+    
+       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
 
-    Only using 1 delta, not modified for proximity
+    This version only uses 1 delta, not modified for proximity
+    """
+    return _strijkers_core(V, omega,delta,P,Z)
+
+class Strijkers(Model):
+    """strijkers Model for point-contact Andreev Reflection Spectroscopy.
+    
+    Args:
+        V (array): bias voltages
+        omega (float): Broadening
+        delta (float): SC energy Gap
+        P (float): Interface parameter
+        Z (float): Current spin polarization through contact
+        
+    Return:
+        Conductance vs bias data.
+
+    .. note::
+    
+       PCAR fitting Strijkers modified BTK model TK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000
+
+    This version only uses 1 delta, not modified for proximity
     """
     def __init__(self, *args, **kwargs):
         super(Strijkers, self).__init__(strijkers, *args, **kwargs)
@@ -384,7 +566,7 @@ def fluchsSondheimer(t,l,p,sigma_0):
         p (float): reflection co-efficient
         sigma_0 (float): intrinsic conductivity
 
-    Returns:
+    Return:
         Reduced Resistivity
 
     Note:
@@ -410,7 +592,7 @@ class FluchsSondheimer(Model):
         p (float): reflection co-efficient
         sigma_0 (float): intrinsic conductivity
 
-    Returns:
+    Return:
         Reduced Resistivity
 
     Note:
@@ -437,7 +619,7 @@ def blochGrueneisen(T,thetaD,rho0,A,n):
         A (float): scattering scaling factor
         n (float): Exponent term
 
-    Returns:
+    Return:
         Evaluation of the BlochGrueneisen function for R(T)"""
     ret=_np_.zeros(T.shape)
     for i,t in enumerate(T):
@@ -455,7 +637,7 @@ class BlochGrueneisen(Model):
         A (float): scattering scaling factor
         n (float): Exponent term
 
-    Returns:
+    Return:
         Evaluation of the BlochGrueneisen function for R(T)"""
     def __init__(self, *args, **kwargs):
         super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
@@ -474,10 +656,10 @@ def langevin(H,M_s,m,T):
         m (float) is the moment of a cluster
         T (float): Temperature
         
-    Rerturns:
+    Returns:
         Magnetic Momemnts (array).
         
-    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$
+    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.
     """
     from scipy.constants import k,mu_0
     
@@ -493,10 +675,10 @@ class Langevin(Model):
         m (float): is the moment of a single cluster
         T (float): Temperature
         
-    Rerturns:
+    Returns:
         Magnetic Momemnts (array).
         
-    The Langevin Function is $\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}$
+    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.
     """
     def __init__(self, *args, **kwargs):
         super(Langevin, self).__init__(langevin, *args, **kwargs)
@@ -523,7 +705,94 @@ class Langevin(Model):
         pars = self.make_params(M_s=M_s,m=m,T=T)
         return update_param_vals(pars, self.prefix, **kwargs)
         
-   
+def vftEquation(x, A, DE,x_0):
+    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
 
+    Args:
+        x (float): Temperature in K
+        A (float): Prefactror (not temperature dependent)
+        DE (float): Energy barrier in eV
+        x_0 (float): Offset temeprature in K
+        
+    Return:
+        Rates according the VFT equation.
+        
+    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
+    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    """
+    _kb=consts.physical_constants['Boltzmann constant'][0]/consts.physical_constants['elementary charge'][0]
+    return A*_np_.exp(-DE/(_kb*(x-x_0)))
 
+class VFTEquation(Model):
+    r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
+
+    Args:
+        x (array): Temperature in K
+        A (float): Prefactror (not temperature dependent)
+        DE (float): Energy barrier in eV
+        x_0 (float): Offset temeprature in K
+        
+    Return:
+        Rates according the VFT equation.
+        
+    The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
+    a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(VFTEquation, self).__init__(vftEquation, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        _kb=consts.physical_constants['Boltzmann constant'][0]/consts.physical_constants['elementary charge'][0]
+
+        d1,d2,x0 = 1.,0.0,1.0
+        if x is not None:
+            x0=x[_np_.argmin(_np_.abs(data))]
+            d1,d2=_np_.polyfit(-1.0/(x-x0),_np_.log(data),1)
+        pars = self.make_params(A=_np_.exp(d2), dE=_kb*d1,x_0=x0)
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+def stretchedExp(x,A,beta,x_0):
+    """A stretched exponential fuinction.
+    
+    Args:
+        x (array): x data values
+        A (float): Constant prefactor
+        beta (float): Stretch factor
+        x_0 (float): Scaling factor for x data
+        
+    Return:
+        Data for a stretched exponentional function.
+        
+    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.
+    """
+    return A*_np_.exp(-(x/x_0)**beta)
+    
+class StretchedExp(Model):
+    """A stretched exponential fuinction.
+    
+    Args:
+        x (array): x data values
+        A (float): Constant prefactor
+        beta (float): Stretch factor
+        x_0 (float): Scaling factor for x data
+        
+    Return:
+        Data for a stretched exponentional function.
+        
+    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.
+    """
+    def __init__(self, *args, **kwargs):
+        super(StretchedExp, self).__init__(stretchedExp, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+
+        A,beta,x0=1.0,1.0,1.0
+        if x is not None:
+            A=data[_np_.argmin(_np_.abs(x))]     
+            d1,d2=_np_.polyfit(_np_.log(x),_np_.log(_np_.log(data/A)),1)
+            beta=d1
+            x0=_np_.exp(d2/beta)
+        pars = self.make_params(A=A, beta=beta,x_0=x0)
+        return update_param_vals(pars, self.prefix, **kwargs)
+    
 

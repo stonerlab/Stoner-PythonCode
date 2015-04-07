@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+import os.path as path
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -103,6 +104,17 @@ pygments_style = 'sphinx'
 autosummary_generate = True
 
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
+
+#intersphinx_mapping = {
+#   'python': ('http://docs.python.org/', None),
+#    'python3': ('http://docs.python.org/3/', path.abspath(path.join(path.dirname(__file__), 'local/python3links.inv'))),
+#    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+#    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+#    'matplotlib': ('http://matplotlib.org/', None),
+#    'astropy': ('http://docs.astropy.org/en/stable/', None),
+#    'h5py': ('http://docs.h5py.org/en/latest/', None)
+#    }
+
 
 # -- Options for HTML output ---------------------------------------------------
 
