@@ -1,0 +1,8 @@
+
+
+Arrhenius
+=============================
+
+.. currentmodule:: Stoner.FittingFuncs
+
+.. autofunction:: Arrhenius

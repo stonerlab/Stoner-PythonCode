@@ -1,0 +1,8 @@
+
+
+Linear
+==========================
+
+.. currentmodule:: Stoner.FittingFuncs
+
+.. autofunction:: Linear

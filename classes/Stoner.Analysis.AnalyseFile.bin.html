@@ -60,7 +60,7 @@
 <h1>AnalyseFile.bin<a class="headerlink" href="#analysefile-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalyseFile.bin">
-<tt class="descclassname">AnalyseFile.</tt><tt class="descname">bin</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em>, <em>bins=0.03</em>, <em>mode='log'</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.bin" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">AnalyseFile.</tt><tt class="descname">bin</tt><big>(</big><em>xcol=None</em>, <em>ycol=None</em>, <em>bins=0.03</em>, <em>mode='log'</em>, <em>clone=True</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bin x-y data into new values of x with an error bar.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -86,10 +86,15 @@ Column with y-error data if present.</li>
 Manually override the minimum bin value</li>
 <li><strong>bin_stop</strong> (<em>float</em>) &#8211;
 Manually override the maximum bin value</li>
+<li><strong>clone</strong> (<em>bool</em>) &#8211;
+Return a clone of the current AnalyseFile with binned data (True)
+or just the numbers (False).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">n x 3 array of x-bin, y-bin, y-bin-error where n is the number of bins</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Either a clone of the current data set with the new binned data or
+tuple of (bin centres, bin values, bin errors, number points/bin),
+depending on the <em>clone</em> parameter.</p>
 </td>
 </tr>
 </tbody>
@@ -162,7 +167,7 @@ Michael Lindholm Nielsen</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

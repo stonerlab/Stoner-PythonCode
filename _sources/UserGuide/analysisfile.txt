@@ -59,7 +59,7 @@ and a column 'Temperature' that contains numbers above and below 100.
 The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalyseFile`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
 produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature above and below 100.
-The final example will result in a :py:class:`Stoner.Folder.DataFolder` object that has two groups each of which contains
+The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
 :py:class:`AnalyseFile` objects for each polarisation value.
 
 Curve Fitting
@@ -89,7 +89,7 @@ created and the fitted polynomial evaluated at each point.
 Simple function fitting
 -----------------------
 
-For more general curve fitting operations the :py:meth:`AnalyseFile.cruve_fit`
+For more general curve fitting operations the :py:meth:`AnalyseFile.curve_fit`
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.::
 
@@ -127,7 +127,7 @@ Non-linear curve fitting with lmfit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
-A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`. The
+A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`_. . The
 :py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
 
 In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
@@ -325,7 +325,12 @@ is the standard error in the y points in the bin and the y value is the simple m
 If **xcol** and/or **ycol** are not specified, then they are looked up from the :py:attr:`Stoner.Core.DataFile.setas` attribute. In this case, the **yerr**
 is also taken from this attribute if not specified spearately.
 
-Three 1D numpy arrays are returned, representing the x, y and y-errors for the new bins.
+IF the keyword *clone* is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
+points averaged into each bin.. If *clone* is True or not provided, :py:meth:`AnalyseFile.bin` returns a clone of the current data file with its data
+(and column headers) replaced with the newly binned data.
+
+.. plot:: samples/bins.py
+   :include-source:
 
 Stitching Datasets together
 ---------------------------
@@ -336,17 +341,16 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalyseFile` provides
-a :py:meth:`AnalyseFile.stitch` method to facilitate this.::
+a :py:meth:`AnalyseFile.stitch` method to facilitate this.
 
-    scan1=AnalyseFile('file 1.txt')
-    scan2=AnalyseFile('file 2.txt')
-    scan2.stitch(scan1,xcol="Angle",ycol="Counts")
-    scan1.setas="xy"
-    scan2.setas="xy"
-    scan2.stitch(scan1)
-    scan2.stitch(scan1,mode="shift x")
-    scan2.stitch(scan1,mode="scale 7, shift x",overlap=(3.0,5.0))
-    scan2.stitch(scan1,func=my_stitcher,p0=[3.14,2.54,2.0])
+.. plot:: samples/stitch.py
+
+The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
+region to use or even a custom stiching transofmration function::
+
+    s2.stitch(s1,mode="shift x")
+    s2.stitch(s1,mode="scale y, shift x",overlap=(3.0,5.0))
+    s2.stitch(s1,func=my_stitcher,p0=[3.14,2.54,2.0])
 
 In these examples, the x and y columns of *scan2* are modified to give the best
 possible match to *scan1*. If *xcol* or *ycol* are not given then the default x and y columns as set py the

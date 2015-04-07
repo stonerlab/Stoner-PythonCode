@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>BDR &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="BlochGrueneisen" href="Stoner.Fit.BlochGrueneisen.html" />
+    <link rel="prev" title="Arrhenius" href="Stoner.Fit.Arrhenius.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.BlochGrueneisen.html" title="BlochGrueneisen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.Arrhenius.html" title="Arrhenius"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="bdr">
+<h1>BDR<a class="headerlink" href="#bdr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Fit.BDR">
+<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">BDR</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#BDR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BDR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></tt></p>
+<p>BDR model tunnelling
+V=bias voltage, params=[]
+A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,
+d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass</p>
+<p>See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
+or Tuan Comm. in Phys. 16, 1, (2006)</p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Fit.BDR.guess" title="Stoner.Fit.BDR.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;V])</td>
+<td>Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="Stoner.Fit.BDR.guess">
+<tt class="descname">guess</tt><big>(</big><em>data</em>, <em>V=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#BDR.guess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.BDR.guess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Fit.Arrhenius.html"
+                        title="previous chapter">Arrhenius</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Fit.BlochGrueneisen.html"
+                        title="next chapter">BlochGrueneisen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/classes/Stoner.Fit.BDR.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.BlochGrueneisen.html" title="BlochGrueneisen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Fit.Arrhenius.html" title="Arrhenius"
+             >previous</a> |</li>
+        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Mar 30, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

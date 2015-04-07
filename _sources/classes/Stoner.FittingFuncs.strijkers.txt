@@ -1,0 +1,8 @@
+
+
+strijkers
+=============================
+
+.. currentmodule:: Stoner.FittingFuncs
+
+.. autofunction:: strijkers

@@ -1,0 +1,8 @@
+
+
+NDimArrhenius
+=================================
+
+.. currentmodule:: Stoner.FittingFuncs
+
+.. autofunction:: NDimArrhenius

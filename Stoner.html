@@ -103,17 +103,6 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="module-Stoner.plotutils">
-<span id="plotutils-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">plotutils</span></tt> Module<a class="headerlink" href="#module-Stoner.plotutils" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-</tbody>
-</table>
-</div>
 <div class="section" id="module-Stoner.Folders">
 <span id="folders-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">Folders</span></tt> Module<a class="headerlink" href="#module-Stoner.Folders" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="longtable docutils">
@@ -223,317 +212,237 @@
 <p>Plot Templates module - contains classes that style plots for Stoner.Plot and pyplot
 Created on Fri Feb 07 19:57:30 2014</p>
 <p>&#64;author: Gavin Burnell</p>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">AutoLocator</span></tt>()</td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">bytes2str</span></tt>(b)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">DefaultPlotStyle</span></tt></a>(**kargs)</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">dirname</span></tt>(p)</td>
+<td>Returns the directory component of a pathname</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_filedialog</span></tt>([what])</td>
+<td>Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">join</span></tt>(a,&nbsp;*p)</td>
+<td>Join two or more pathname components, inserting &#8216;/&#8217; as needed.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">normal</span></tt>([loc,&nbsp;scale,&nbsp;size])</td>
+<td>Draw random samples from a normal (Gaussian) distribution.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">realpath</span></tt>(filename)</td>
+<td>Return the canonical path of the specified filename, eliminating any symbolic links encountered in the path.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">str2bytes</span></tt>(s)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">DefaultPlotStyle</span></tt></a>(**kargs)</td>
 <td>Produces a default plot style.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">EngFormatter</span></tt>([unit,&nbsp;places])</td>
-<td>Formats axis values using engineering prefixes to represent powers of 1000, plus a specified unit, e.g., 10 MHz instead of 1e7.</td>
-</tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">Formatter</span></tt></td>
-<td>Convert the tick location to a string</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.PlotFormats.GBPlotStyle.html#Stoner.PlotFormats.GBPlotStyle" title="Stoner.PlotFormats.GBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">GBPlotStyle</span></tt></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.GBPlotStyle.html#Stoner.PlotFormats.GBPlotStyle" title="Stoner.PlotFormats.GBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">GBPlotStyle</span></tt></a>(**kargs)</td>
 <td>Template developed for Gavin&#8217;s plotting.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.PlotFormats.JTBPlotStyle.html#Stoner.PlotFormats.JTBPlotStyle" title="Stoner.PlotFormats.JTBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">JTBPlotStyle</span></tt></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.JTBPlotStyle.html#Stoner.PlotFormats.JTBPlotStyle" title="Stoner.PlotFormats.JTBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">JTBPlotStyle</span></tt></a>(**kargs)</td>
 <td>Template class for Joe&#8217;s Plot settings.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.PlotFormats.JTBinsetStyle.html#Stoner.PlotFormats.JTBinsetStyle" title="Stoner.PlotFormats.JTBinsetStyle"><tt class="xref py py-obj docutils literal"><span class="pre">JTBinsetStyle</span></tt></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.JTBinsetStyle.html#Stoner.PlotFormats.JTBinsetStyle" title="Stoner.PlotFormats.JTBinsetStyle"><tt class="xref py py-obj docutils literal"><span class="pre">JTBinsetStyle</span></tt></a>(**kargs)</td>
 <td>Template class for Joe&#8217;s Plot settings.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.PlotFormats.PRBPlotStyle" title="Stoner.PlotFormats.PRBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">PRBPlotStyle</span></tt></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.PlotFormats.PRBPlotStyle" title="Stoner.PlotFormats.PRBPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">PRBPlotStyle</span></tt></a>(**kargs)</td>
 <td>A figure Style for making figures for Phys Rev * Jounrals.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><tt class="xref py py-obj docutils literal"><span class="pre">TexEngFormatter</span></tt></a>([unit,&nbsp;places])</td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">SketchPlot</span></tt>(**kargs)</td>
+<td>Turn on xkcd plot style.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><tt class="xref py py-obj docutils literal"><span class="pre">TexEngFormatter</span></tt></a>([unit,&nbsp;places])</td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><tt class="xref py py-obj docutils literal"><span class="pre">TexFormatter</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><tt class="xref py py-obj docutils literal"><span class="pre">TexFormatter</span></tt></a></td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">ThesisPlotStyle</span></tt></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><tt class="xref py py-obj docutils literal"><span class="pre">ThesisPlotStyle</span></tt></a>(**kargs)</td>
 <td>Template class for Joe&#8217;s Plot settings.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">range</span></tt></td>
-<td>alias of <tt class="xref py py-class docutils literal"><span class="pre">xrange</span></tt></td>
+</tbody>
+</table>
+<p>See also the stylesheets available in the stylelib directory.</p>
+</div>
+</div>
+<div class="section" id="module-Stoner.plotutils">
+<span id="plotutils-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">plotutils</span></tt> Module<a class="headerlink" href="#module-Stoner.plotutils" title="Permalink to this headline">¶</a></h2>
+<p>Created on Mon Jun 02 22:37:42 2014</p>
+<p>A copy of mpltools.special.errorfill with a few hacks to make it place nice</p>
+<p>This software is licensed under the Modified BSD License.</p>
+<p>Copyright (c) 2012, Tony S. Yu
+All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.</li>
+<li>Neither the name &#8220;mpltools&#8221; nor the names of its contributors may be used
+to endorse or promote products derived from this software without
+specific prior written permission.</li>
+</ul>
+</div></blockquote>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#8220;AS IS&#8221; AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<div class="section" id="id1">
+<h3>Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">errorfill</span></tt>(x,&nbsp;y[,&nbsp;yerr,&nbsp;xerr,&nbsp;color,&nbsp;ls,&nbsp;lw,&nbsp;...])</td>
+<td>Plot data with errors marked by a filled region.</td>
 </tr>
 </tbody>
 </table>
 <hr class="docutils" />
 <span class="target" id="module-Stoner.Fit"></span><div class="section" id="stoner-fit-functions-and-lmfit-models-for-fitting-data">
-<h3>Stoner.Fit: Functions and lmfit.Models for fitting data<a class="headerlink" href="#stoner-fit-functions-and-lmfit-models-for-fitting-data" title="Permalink to this headline">¶</a></h3>
+<h4>Stoner.Fit: Functions and lmfit.Models for fitting data<a class="headerlink" href="#stoner-fit-functions-and-lmfit-models-for-fitting-data" title="Permalink to this headline">¶</a></h4>
 <p>Functions should accept an array of x values and a number of parmeters,
 they should then return an array of y values the same size as the x array.</p>
 <p>Models are subclasses of lmfit.Model that represent the corresponding function</p>
 <p>Please do keep documentation up to date, see other functions for documentation examples.</p>
 <p>All the functions here defined for scipy.optimize.curve_fit to call themm
 i.e. the parameters are expanded to separate arguements, other fitting routines prefere
-to have the parameters as a single list or vector. For this reason, <a class="reference internal" href="#module-Stoner.FittingFuncs" title="Stoner.FittingFuncs"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt></a>
-has aliases of these functions that use <a href="#id1"><span class="problematic" id="id2">*</span></a>tuple magic to make that conversion.</p>
+to have the parameters as a single list or vector. For this reason, <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt>
+has aliases of these functions that use <a href="#id2"><span class="problematic" id="id3">*</span></a>tuple magic to make that conversion.</p>
 <p>If you are writing new functions, please add them here first and then alias then with the parameter
 list form in FittingFuncs.</p>
 </div>
+</div>
+<div class="section" id="id4">
+<h3>Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.arrhenius.html#Stoner.Fit.arrhenius" title="Stoner.Fit.arrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">arrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.arrhenius.html#Stoner.Fit.arrhenius" title="Stoner.Fit.arrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">arrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE)</td>
 <td>Arrhenius Equation without T dependendent prefactor</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.bdr.html#Stoner.Fit.bdr" title="Stoner.Fit.bdr"><tt class="xref py py-obj docutils literal"><span class="pre">bdr</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;dphi,&nbsp;d,&nbsp;mass)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.bdr.html#Stoner.Fit.bdr" title="Stoner.Fit.bdr"><tt class="xref py py-obj docutils literal"><span class="pre">bdr</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;dphi,&nbsp;d,&nbsp;mass)</td>
 <td>BDR model tunnelling</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.blochGrueneisen.html#Stoner.Fit.blochGrueneisen" title="Stoner.Fit.blochGrueneisen"><tt class="xref py py-obj docutils literal"><span class="pre">blochGrueneisen</span></tt></a>(T,&nbsp;thetaD,&nbsp;rho0,&nbsp;A,&nbsp;n)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.blochGrueneisen.html#Stoner.Fit.blochGrueneisen" title="Stoner.Fit.blochGrueneisen"><tt class="xref py py-obj docutils literal"><span class="pre">blochGrueneisen</span></tt></a>(T,&nbsp;thetaD,&nbsp;rho0,&nbsp;A,&nbsp;n)</td>
 <td>BlochGrueneiseen Function for fitting R(T).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.fluchsSondheimer.html#Stoner.Fit.fluchsSondheimer" title="Stoner.Fit.fluchsSondheimer"><tt class="xref py py-obj docutils literal"><span class="pre">fluchsSondheimer</span></tt></a>(t,&nbsp;l,&nbsp;p,&nbsp;sigma_0)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.fluchsSondheimer.html#Stoner.Fit.fluchsSondheimer" title="Stoner.Fit.fluchsSondheimer"><tt class="xref py py-obj docutils literal"><span class="pre">fluchsSondheimer</span></tt></a>(t,&nbsp;l,&nbsp;p,&nbsp;sigma_0)</td>
 <td>Evaluate a Fluchs-Sondheumer model function for conductivity.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.fowlerNordheim.html#Stoner.Fit.fowlerNordheim" title="Stoner.Fit.fowlerNordheim"><tt class="xref py py-obj docutils literal"><span class="pre">fowlerNordheim</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;d)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.fowlerNordheim.html#Stoner.Fit.fowlerNordheim" title="Stoner.Fit.fowlerNordheim"><tt class="xref py py-obj docutils literal"><span class="pre">fowlerNordheim</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;d)</td>
 <td>Simmons model tunnelling at V&gt;phi</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">jit</span></tt>([signature_or_function,&nbsp;[locals={},&nbsp;...)</td>
-<td>This function is used to compile a Python function into native code.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.langevin.html#Stoner.Fit.langevin" title="Stoner.Fit.langevin"><tt class="xref py py-obj docutils literal"><span class="pre">langevin</span></tt></a>(H,&nbsp;M_s,&nbsp;m,&nbsp;T)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.langevin.html#Stoner.Fit.langevin" title="Stoner.Fit.langevin"><tt class="xref py py-obj docutils literal"><span class="pre">langevin</span></tt></a>(H,&nbsp;M_s,&nbsp;m,&nbsp;T)</td>
 <td>&#8220;The Langevin function for paramagnetic M-H loops/</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.linear.html#Stoner.Fit.linear" title="Stoner.Fit.linear"><tt class="xref py py-obj docutils literal"><span class="pre">linear</span></tt></a>(x,&nbsp;intercept,&nbsp;slope)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.linear.html#Stoner.Fit.linear" title="Stoner.Fit.linear"><tt class="xref py py-obj docutils literal"><span class="pre">linear</span></tt></a>(x,&nbsp;intercept,&nbsp;slope)</td>
 <td>Simple linear function</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.modArrhenius.html#Stoner.Fit.modArrhenius" title="Stoner.Fit.modArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">modArrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE,&nbsp;n)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.modArrhenius.html#Stoner.Fit.modArrhenius" title="Stoner.Fit.modArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">modArrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE,&nbsp;n)</td>
 <td>Arrhenius Equation with a variable T power dependent prefactor</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.nDimArrhenius.html#Stoner.Fit.nDimArrhenius" title="Stoner.Fit.nDimArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">nDimArrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE,&nbsp;n)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.nDimArrhenius.html#Stoner.Fit.nDimArrhenius" title="Stoner.Fit.nDimArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">nDimArrhenius</span></tt></a>(x,&nbsp;A,&nbsp;DE,&nbsp;n)</td>
 <td>Arrhenius Equation without T dependendent prefactor</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.powerLaw.html#Stoner.Fit.powerLaw" title="Stoner.Fit.powerLaw"><tt class="xref py py-obj docutils literal"><span class="pre">powerLaw</span></tt></a>(x,&nbsp;A,&nbsp;k)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.powerLaw.html#Stoner.Fit.powerLaw" title="Stoner.Fit.powerLaw"><tt class="xref py py-obj docutils literal"><span class="pre">powerLaw</span></tt></a>(x,&nbsp;A,&nbsp;k)</td>
 <td>Power Law Fitting Equation</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">quad</span></tt>(func,&nbsp;a,&nbsp;b[,&nbsp;args,&nbsp;full_output,&nbsp;...])</td>
-<td>Compute a definite integral.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.quadratic.html#Stoner.Fit.quadratic" title="Stoner.Fit.quadratic"><tt class="xref py py-obj docutils literal"><span class="pre">quadratic</span></tt></a>(x,&nbsp;a,&nbsp;b,&nbsp;c)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.simmons.html#Stoner.Fit.simmons" title="Stoner.Fit.simmons"><tt class="xref py py-obj docutils literal"><span class="pre">simmons</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;d)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.simmons.html#Stoner.Fit.simmons" title="Stoner.Fit.simmons"><tt class="xref py py-obj docutils literal"><span class="pre">simmons</span></tt></a>(V,&nbsp;A,&nbsp;phi,&nbsp;d)</td>
 <td>Simmons model tunnelling</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.strijkers.html#Stoner.Fit.strijkers" title="Stoner.Fit.strijkers"><tt class="xref py py-obj docutils literal"><span class="pre">strijkers</span></tt></a>(V,&nbsp;omega,&nbsp;delta,&nbsp;P,&nbsp;Z)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.strijkers.html#Stoner.Fit.strijkers" title="Stoner.Fit.strijkers"><tt class="xref py py-obj docutils literal"><span class="pre">strijkers</span></tt></a>(V,&nbsp;omega,&nbsp;delta,&nbsp;P,&nbsp;Z)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.tersoffHammann.html#Stoner.Fit.tersoffHammann" title="Stoner.Fit.tersoffHammann"><tt class="xref py py-obj docutils literal"><span class="pre">tersoffHammann</span></tt></a>(V,&nbsp;A)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.tersoffHammann.html#Stoner.Fit.tersoffHammann" title="Stoner.Fit.tersoffHammann"><tt class="xref py py-obj docutils literal"><span class="pre">tersoffHammann</span></tt></a>(V,&nbsp;A)</td>
 <td>TersoffHamman model for tunnelling through STM tip</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">update_param_vals</span></tt>(pars,&nbsp;prefix,&nbsp;**kwargs)</td>
-<td>convenience function to update parameter values</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.wlfit.html#Stoner.Fit.wlfit" title="Stoner.Fit.wlfit"><tt class="xref py py-obj docutils literal"><span class="pre">wlfit</span></tt></a>(B,&nbsp;s0,&nbsp;DS,&nbsp;B1,&nbsp;B2)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.wlfit.html#Stoner.Fit.wlfit" title="Stoner.Fit.wlfit"><tt class="xref py py-obj docutils literal"><span class="pre">wlfit</span></tt></a>(B,&nbsp;s0,&nbsp;DS,&nbsp;B1,&nbsp;B2)</td>
 <td>Weak localisation</td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="id5">
+<h3>Classes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius" title="Stoner.Fit.Arrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">Arrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.Arrhenius.html#Stoner.Fit.Arrhenius" title="Stoner.Fit.Arrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">Arrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Arrhenius Equation without T dependendent prefactor</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.BDR.html#Stoner.Fit.BDR" title="Stoner.Fit.BDR"><tt class="xref py py-obj docutils literal"><span class="pre">BDR</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.BDR.html#Stoner.Fit.BDR" title="Stoner.Fit.BDR"><tt class="xref py py-obj docutils literal"><span class="pre">BDR</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>BDR model tunnelling</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.BlochGrueneisen.html#Stoner.Fit.BlochGrueneisen" title="Stoner.Fit.BlochGrueneisen"><tt class="xref py py-obj docutils literal"><span class="pre">BlochGrueneisen</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.BlochGrueneisen.html#Stoner.Fit.BlochGrueneisen" title="Stoner.Fit.BlochGrueneisen"><tt class="xref py py-obj docutils literal"><span class="pre">BlochGrueneisen</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>BlochGrueneiseen Function for fitting R(T).</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.FluchsSondheimer.html#Stoner.Fit.FluchsSondheimer" title="Stoner.Fit.FluchsSondheimer"><tt class="xref py py-obj docutils literal"><span class="pre">FluchsSondheimer</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.FluchsSondheimer.html#Stoner.Fit.FluchsSondheimer" title="Stoner.Fit.FluchsSondheimer"><tt class="xref py py-obj docutils literal"><span class="pre">FluchsSondheimer</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Evaluate a Fluchs-Sondheumer model function for conductivity.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim" title="Stoner.Fit.FowlerNordheim"><tt class="xref py py-obj docutils literal"><span class="pre">FowlerNordheim</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.FowlerNordheim.html#Stoner.Fit.FowlerNordheim" title="Stoner.Fit.FowlerNordheim"><tt class="xref py py-obj docutils literal"><span class="pre">FowlerNordheim</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Simmons model tunnelling at V&gt;phi</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.Langevin.html#Stoner.Fit.Langevin" title="Stoner.Fit.Langevin"><tt class="xref py py-obj docutils literal"><span class="pre">Langevin</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.Langevin.html#Stoner.Fit.Langevin" title="Stoner.Fit.Langevin"><tt class="xref py py-obj docutils literal"><span class="pre">Langevin</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>&#8220;The Langevin function for paramagnetic M-H loops/</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">Linear</span></tt></td>
-<td>alias of <tt class="xref py py-class docutils literal"><span class="pre">LinearModel</span></tt></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius" title="Stoner.Fit.ModArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">ModArrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.ModArrhenius.html#Stoner.Fit.ModArrhenius" title="Stoner.Fit.ModArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">ModArrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Arrhenius Equation with a variable T power dependent prefactor</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt>(func[,&nbsp;independent_vars,&nbsp;param_names,&nbsp;...])</td>
-<td>Create a model from a user-defined function.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.NDimArrhenius.html#Stoner.Fit.NDimArrhenius" title="Stoner.Fit.NDimArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">NDimArrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.NDimArrhenius.html#Stoner.Fit.NDimArrhenius" title="Stoner.Fit.NDimArrhenius"><tt class="xref py py-obj docutils literal"><span class="pre">NDimArrhenius</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Arrhenius Equation without T dependendent prefactor</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">PowerLaw</span></tt></td>
-<td>alias of <tt class="xref py py-class docutils literal"><span class="pre">PowerLawModel</span></tt></td>
-</tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">Quadratic</span></tt></td>
-<td>alias of <tt class="xref py py-class docutils literal"><span class="pre">QuadraticModel</span></tt></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons" title="Stoner.Fit.Simmons"><tt class="xref py py-obj docutils literal"><span class="pre">Simmons</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.Simmons.html#Stoner.Fit.Simmons" title="Stoner.Fit.Simmons"><tt class="xref py py-obj docutils literal"><span class="pre">Simmons</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Simmons model as in Simmons J.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers" title="Stoner.Fit.Strijkers"><tt class="xref py py-obj docutils literal"><span class="pre">Strijkers</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.Strijkers.html#Stoner.Fit.Strijkers" title="Stoner.Fit.Strijkers"><tt class="xref py py-obj docutils literal"><span class="pre">Strijkers</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>strijkers(V, params):</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/Stoner.Fit.TersoffHammann.html#Stoner.Fit.TersoffHammann" title="Stoner.Fit.TersoffHammann"><tt class="xref py py-obj docutils literal"><span class="pre">TersoffHammann</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Fit.TersoffHammann.html#Stoner.Fit.TersoffHammann" title="Stoner.Fit.TersoffHammann"><tt class="xref py py-obj docutils literal"><span class="pre">TersoffHammann</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>TersoffHamman model for tunnelling through STM tip</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/Stoner.Fit.WLfit.html#Stoner.Fit.WLfit" title="Stoner.Fit.WLfit"><tt class="xref py py-obj docutils literal"><span class="pre">WLfit</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Fit.WLfit.html#Stoner.Fit.WLfit" title="Stoner.Fit.WLfit"><tt class="xref py py-obj docutils literal"><span class="pre">WLfit</span></tt></a>(*args,&nbsp;**kwargs)</td>
 <td>Weak localisation</td>
 </tr>
 </tbody>
 </table>
-<hr class="docutils" />
-<span class="target" id="module-Stoner.FittingFuncs"></span><div class="section" id="library-of-functions-that-nlfit-can-use-to-fit-to">
-<h3>Library of functions that nlfit can use to fit to.<a class="headerlink" href="#library-of-functions-that-nlfit-can-use-to-fit-to" title="Permalink to this headline">¶</a></h3>
-<p>Functions should accept an array of x values and a list of parmeters, they should then return an array of y values
-the same size as the x array.</p>
-<p>Please do keep documentation up to date, see other functions for documentation examples</p>
-<p>These are just wrappers to Stoner.Fit which has the functions defined in terms of multiple parameter arguments.
-New functions should be added to Stoner.Fit first and aliased here.</p>
-<dl class="function">
-<dt id="Stoner.FittingFuncs.Arrhenius">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">Arrhenius</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#Arrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.Arrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation without T dependendent prefactor</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.BDR">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">BDR</tt><big>(</big><em>V</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#BDR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.BDR" title="Permalink to this definition">¶</a></dt>
-<dd><p>BDR model tunnelling
-V=bias voltage, params=[A, phi, dphi, d, mass]
-A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,
-d: barrier width in angstrom, mass: effective electron mass as a fraction of electron rest mass</p>
-<p>See Brinkman et. al. J. Appl. Phys. 41 1915 (1970)
-or Tuan Comm. in Phys. 16, 1, (2006)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.FluchsSondheimer">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">FluchsSondheimer</tt><big>(</big><em>t</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#FluchsSondheimer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.FluchsSondheimer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate a Fluchs-Sondheumer model function for conductivity.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>t</strong> (<em>array</em>) &#8211;
-Thickness values</li>
-<li><strong>params</strong> (<em>array</em>) &#8211;
-[mean-free-path, reflection co-efficient,sigma_0]</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Reduced Resistivity</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330</p>
-</div>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.FowlerNordheim">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">FowlerNordheim</tt><big>(</big><em>V</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#FowlerNordheim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.FowlerNordheim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simmons model tunnelling at V&gt;phi
-V=bias voltage, params=[A, phi, d]
-A in m^2, phi barrier height in eV, d barrier width in angstrom</p>
-<p>Simmons model as in
-Simmons J. App. Phys. 34 6 1963</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.Linear">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">Linear</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#Linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.Linear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple linear function</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.ModArrhenius">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">ModArrhenius</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#ModArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.ModArrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation with a variable T power dependent prefactor</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.NDimArrhenius">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">NDimArrhenius</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#NDimArrhenius"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.NDimArrhenius" title="Permalink to this definition">¶</a></dt>
-<dd><p>Arrhenius Equation without T dependendent prefactor</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.PowerLaw">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">PowerLaw</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#PowerLaw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.PowerLaw" title="Permalink to this definition">¶</a></dt>
-<dd><p>Power Law Fitting Equation</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.Quadratic">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">Quadratic</tt><big>(</big><em>x</em>, <em>p</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#Quadratic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.Quadratic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simple Qudratic Function.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.Simmons">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">Simmons</tt><big>(</big><em>V</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#Simmons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.Simmons" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simmons model tunnelling
-V=bias voltage, params=[A, phi, d]
-A in m^2, phi barrier height in eV, d barrier width in angstrom</p>
-<p>Simmons model as in
-Simmons J. App. Phys. 34 6 1963</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.TersoffHammann">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">TersoffHammann</tt><big>(</big><em>V</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#TersoffHammann"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.TersoffHammann" title="Permalink to this definition">¶</a></dt>
-<dd><p>TersoffHamman model for tunnelling through STM tip
-V=bias voltage, params=[A]</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.WLfit">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">WLfit</tt><big>(</big><em>B</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#WLfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.WLfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Weak localisation
-VRH(B, params):
-B = mag. field, params=list of parameter values, s0, B1, B2</p>
-<p>2D WL model as per
-Wu PRL 98, 136801 (2007)
-Porter PRB 86, 064423 (2012)</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="Stoner.FittingFuncs.strijkers">
-<tt class="descclassname">Stoner.FittingFuncs.</tt><tt class="descname">strijkers</tt><big>(</big><em>V</em>, <em>params</em><big>)</big><a class="reference internal" href="_modules/Stoner/FittingFuncs.html#strijkers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FittingFuncs.strijkers" title="Permalink to this definition">¶</a></dt>
-<dd><p>strijkers(V, params):</p>
-<p>Args:
-V (array): bias voltages
-params (list): parameter values: omega, delta,P and Z</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>PCAR fitting Strijkers modified BTK model
-BTK PRB 25 4515 1982, Strijkers PRB 63, 104510 2000</p>
-<p class="last">Only using 1 delta, not modified for proximity</p>
-</div>
-</dd></dl>
-
+<p>The following modules offer specialised file and foler formats.</p>
 </div>
 </div>
 <div class="section" id="module-Stoner.HDF5">
@@ -1100,7 +1009,6 @@ IMMM Hannover
 <li><a class="reference internal" href="#module-Stoner.Core"><tt class="docutils literal"><span class="pre">Core</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-Stoner.Analysis"><tt class="docutils literal"><span class="pre">Analysis</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-Stoner.Plot"><tt class="docutils literal"><span class="pre">Plot</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-Stoner.plotutils"><tt class="docutils literal"><span class="pre">plotutils</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-Stoner.Folders"><tt class="docutils literal"><span class="pre">Folders</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-Stoner.FileFormats"><tt class="docutils literal"><span class="pre">FileFormats</span></tt> Module</a><ul>
 <li><a class="reference internal" href="#generic-fomats">Generic Fomats</a></li>
@@ -1109,8 +1017,17 @@ IMMM Hannover
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.PlotFormats"><tt class="docutils literal"><span class="pre">PlotFormats</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-Stoner.plotutils"><tt class="docutils literal"><span class="pre">plotutils</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#id1">Functions</a><ul>
 <li><a class="reference internal" href="#stoner-fit-functions-and-lmfit-models-for-fitting-data">Stoner.Fit: Functions and lmfit.Models for fitting data</a></li>
-<li><a class="reference internal" href="#library-of-functions-that-nlfit-can-use-to-fit-to">Library of functions that nlfit can use to fit to.</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id4">Functions</a></li>
+<li><a class="reference internal" href="#id5">Classes</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-Stoner.HDF5"><tt class="docutils literal"><span class="pre">HDF5</span></tt> Module</a></li>
@@ -1181,7 +1098,7 @@ IMMM Hannover
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -29,32 +29,32 @@ Getting the Latest Development Code
 
 
 .. note::
-   
+
    These instructions are for members of the University of Leeds Condensed Matter Physics Group. External users are recommended to
    download the source from GitHub
 
 
-The source code for the Stoner python module is kept on github using the git 
+The source code for the Stoner python module is kept on github using the git
 revision control tool. A nightly development release of the code is available for copying and
-use in ``\\stonerlab\data\software\python\PythonCode\``. 
+use in ``\\stonerlab\data\software\python\PythonCode\``.
 
-The Stoner Package currently depends on a number of other modules. These are installed on the lab 
+The Stoner Package currently depends on a number of other modules. These are installed on the lab
 machines that have Python installed. Primarily these are Numpy, SciPy and Matplotlib.  The easiest way to get a Python
-installation with all the necessary dependencies for the Stoner Package is to install the *Enthought Python Distribution*, 
+installation with all the necessary dependencies for the Stoner Package is to install the *Enthought Python Distribution*,
 Canopy*. Installers for Windows, MacOS and Linux are kept in ``\\stonerlab\data\software\Python``
 
 Using the Development Version of the Stoner Package
 ===================================================
 
 .. note::
-   You only need to follow this section if you are working with the 
-   version installed from the github repository. If you have installed 
-   the Stoner Package with the easy_install command given above, then you 
+   You only need to follow this section if you are working with the
+   version installed from the github repository. If you have installed
+   the Stoner Package with the easy_install command given above, then you
    can disregard this section.
 
-The easiest way to use the development version of the Stoner Package is to add the 
-path to the directory containing the files from github to your PYTHONPATH environment 
-variable. This can be done on Macs and Linux by doing::
+The easiest way to use the development version of the Stoner Package is to add the
+path to the directory containing the files from github to your PYTHONPATH environment
+variable. This can be done on Macs and Linux by doing.
 
 .. code-block:: sh
 
@@ -78,14 +78,14 @@ or::
 Documentation
 =============
 
-These pages provide a user guide to the Stoner package and its various modules and classes. 
-It is not a reference to the library but instead aims to explain the various operations that 
-are possible and provide short examples of use. For the API reference for the library, please 
-see the `Module Api Documentation <Stoner>`. There is also a single sided cheat sheet that 
+These pages provide a user guide to the Stoner package and its various modules and classes.
+It is not a reference to the library but instead aims to explain the various operations that
+are possible and provide short examples of use. For the API reference for the library, please
+see the `Module Api Documentation <Stoner>`. There is also a single sided cheat sheet that
 summarises the examples in this user guide in the github repository.
 
 .. warning::
-   The code is still under active development to fix bugs and add features. Generally things don't 
-   get deliberately broken, but accidents happen, so if something stops working, please either fix and 
+   The code is still under active development to fix bugs and add features. Generally things don't
+   get deliberately broken, but accidents happen, so if something stops working, please either fix and
    commit the code or tell Gavin.
 

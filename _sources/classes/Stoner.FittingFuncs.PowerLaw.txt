@@ -1,0 +1,8 @@
+
+
+PowerLaw
+============================
+
+.. currentmodule:: Stoner.FittingFuncs
+
+.. autofunction:: PowerLaw

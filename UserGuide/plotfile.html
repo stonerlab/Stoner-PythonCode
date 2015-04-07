@@ -81,7 +81,7 @@ methods will use these to try to make a sensible plot.:</p>
 </pre></div>
 </div>
 <p>Once the columns are identified, the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot()</span></tt></a> method can be used to do the actual plotting. This is simply a wrapper that insepects the
-available columns and calls either <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> or <tt class="xref py py-meth docutils literal"><span class="pre">Plotfile.plot_xyz()</span></tt> as appropriate. All keyword arguments to :
+available columns and calls either <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> or <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> as appropriate. All keyword arguments to :
 py:meth:<cite>PlotFile.plot</cite> are passed on to the actual plotting method.</p>
 </div>
 <div class="section" id="types-of-plot">
@@ -132,13 +132,11 @@ is a list or a single string. Finally additional parameters can be given to spec
 is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed
 through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log
 plots. By default, <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> uses the <strong>pyplot.plot</strong> function to produce linear scaler plots. There
-are a number of useful plotter functions that will work like this:</p>
-<div class="highlight-python"><div class="highlight"><pre>*   [pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
-</pre></div>
-</div>
-<blockquote>
-<div>the x-axes the log one and semilogy the y-axis.</div></blockquote>
+are a number of useful plotter functions that will work like this</p>
 <ul>
+<li><p class="first">[pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
+the x-axes the log one and semilogy the y-axis.</p>
+</li>
 <li><p class="first">[pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.</p>
 </li>
 <li><p class="first">[pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are
@@ -159,53 +157,112 @@ passed as keyword arguments, <em>xerr</em> or <em>yerr</em>. In standard matplot
 <div class="section" id="plotting-3d-data">
 <h3>Plotting 3D Data<a class="headerlink" href="#plotting-3d-data" title="Permalink to this headline">¶</a></h3>
 <p>A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot
-these on a surface plot or 3D plot. The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> method can be used for this.:</p>
-<div class="highlight-python"><div class="highlight"><pre>p.plot_xyz(col_x,col_y,col_z)
-p.plot_xyz(col_x,col_y,col_z,cmap=matplotlib.cm.jet)
-p.plot)xyz(col-x,col-y,col-z,plotter=pyplot.pcolor)
-p.plot_xyz(col_x,col_y,col_z,xlim=(-10,10,100),ylim=(-10,10,100))
+these on a surface plot or 3D plot. The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> method can be used for this.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span>
+
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">&amp;</span><span class="n">x</span><span class="o">&amp;</span><span class="n">y</span><span class="o">&amp;</span><span class="n">z</span>
+<span class="n">p</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Surface plot&quot;</span>
 </pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/3D_plot.py">Source code</a>, <a class="reference external" href="../samples/3D_plot.png">png</a>, <a class="reference external" href="../samples/3D_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/3D_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/3D_plot.png" src="../_images/3D_plot.png" />
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">&amp;</span><span class="n">x</span><span class="o">&amp;</span><span class="n">y</span><span class="o">&amp;</span><span class="n">z</span>
+<span class="n">p</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">colormap_xyz</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Colourmap plot&quot;</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/colormap_plot.py">Source code</a>, <a class="reference external" href="../samples/colormap_plot.png">png</a>, <a class="reference external" href="../samples/colormap_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/colormap_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/colormap_plot.png" src="../_images/colormap_plot.png" />
 </div>
 <p>By default the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided <em>matplotlib.cm.jet</em> colour-map. This can be overriden with the <em>cmap</em> keyword
 parameter. If a simple 2D surface plot is required, then the <em>plotter</em> parameter should be set to a suitable function
 such as <strong>pyplot.pcolor</strong>.</p>
-<blockquote>
-<div>Like <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a>, a <em>figure</em> parameter can be used to control the figure being used and any additional</div></blockquote>
-<p>keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.</p>
-<blockquote>
-<div><p>Another option is a contour plot based on <tt class="docutils literal"><span class="pre">(x,y,z)</span></tt> data points. This can be done with the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.contour_xyz()</span></tt></a>
-method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">contour_xyz</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">))</span>
-<span class="n">p</span><span class="o">.</span><span class="n">contour_xyz</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<p>Like <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a>, a <em>figure</em> parameter can be used to control the figure being used and any additional
+keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.</p>
+<p>Another option is a contour plot based on <tt class="docutils literal"><span class="pre">(x,y,z)</span></tt> data points. This can be done with the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.contour_xyz()</span></tt></a>
+method.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">&amp;</span><span class="n">x</span><span class="o">&amp;</span><span class="n">y</span><span class="o">&amp;</span><span class="n">z</span>
+<span class="n">p</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">contour_xyz</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Contour plot&quot;</span>
 </pre></div>
 </div>
-</div></blockquote>
-<dl class="docutils">
-<dt>Both <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.contour_xyz()</span></tt></a> make use of a call to <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata" title="Stoner.Plot.PlotFile.griddata"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.griddata()</span></tt></a></dt>
-<dd>which is a utility method of the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> &#8211; essentially this is just a pass through method to the underlying</dd>
-<dt><em>scipy.interpolate.griddata*</em> function. The shape of the grid is determined through a combination of the <em>xlim</em>, <em>ylim</em></dt>
-<dd><p class="first">and <em>shape</em> arguments.:</p>
-<div class="last highlight-python"><div class="highlight"><pre><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">griddata</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<p>(<a class="reference external" href="../samples/contour_plot.py">Source code</a>, <a class="reference external" href="../samples/contour_plot.png">png</a>, <a class="reference external" href="../samples/contour_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/contour_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/contour_plot.png" src="../_images/contour_plot.png" />
+</div>
+<p>Both <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.contour_xyz()</span></tt></a> make use of a call to <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata" title="Stoner.Plot.PlotFile.griddata"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.griddata()</span></tt></a>
+which is a utility method of the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> &#8211; essentially this is just a pass through method to the underlying
+<em>scipy.interpolate.griddata*</em> function. The shape of the grid is determined through a combination of the <em>xlim</em>, <em>ylim</em>
+and <em>shape</em> arguments.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">griddata</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
 <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">griddata</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 <p>If a <em>xlim</em> or <em>ylim</em> arguments are provided and are two tuples, then they set the maximum and minimum values of the relevant axis.
-If they are three tuples, then the third argument is the number of points along that axis and overrides any setting in the <em>shape</em></p>
-<blockquote>
-<div>parameter. If the <em>xlim</em> or <em>ylim</em> parameters are not presents, then the maximum and minimum values of the relevant axis are used.</div></blockquote>
-<p>If no <em>shape</em> information is provided, the default is to make the shape a square of sidelength given by the square root of the
+If they are three tuples, then the third argument is the number of points along that axis and overrides any setting in the <em>shape</em>
+parameter. If the <em>xlim</em> or <em>ylim</em> parameters are not presents, then the maximum and minimum values of the relevant axis are used.
+If no <em>shape</em> information is provided, the default is to make the shape a square of sidelength given by the square root of the
 number of points.</p>
 <blockquote>
-<div><p>Alternatively, if your data is already in the form of a matrix, you can use the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_matrix()</span></tt></a> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">()</span>
-<span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">(</span><span class="n">xvals</span><span class="p">,</span><span class="n">yvals</span><span class="p">,</span><span class="n">rectang</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Title&quot;</span><span class="p">,</span><span class="n">xlabel</span><span class="o">=</span><span class="s">&quot;X Axis&quot;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="s">&quot;Y Axis&quot;</span><span class="p">,</span><span class="n">zlabel</span><span class="o">=</span><span class="s">&quot;Z Axis&quot;</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">pyplot</span><span class="o">.</span><span class="n">pcolor</span><span class="p">,</span><span class="n">figure</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div>Alternatively, if your data is already in the form of a matrix, you can use the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_matrix()</span></tt></a> method.</div></blockquote>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">101</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">101</span><span class="p">))</span>
+<span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">&amp;</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span><span class="o">&amp;</span><span class="n">z</span>
+<span class="n">p</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">]</span>
+<span class="n">p</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">101</span><span class="p">)])</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Data as Matrix&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div></blockquote>
+<p>(<a class="reference external" href="../samples/matrix_plot.py">Source code</a>, <a class="reference external" href="../samples/matrix_plot.png">png</a>, <a class="reference external" href="../samples/matrix_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/matrix_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/matrix_plot.png" src="../_images/matrix_plot.png" />
+</div>
 <p>The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
 the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults
@@ -228,7 +285,7 @@ fields are visualised by using quiver plots, where a small arrow points in the d
 is proportional to the magnitude. This can also be suplemented by colour information - in one scheme a hue-saturation-luminence
 space is used, where hue described a direction in the x-y plane, the luminence describes the vertical component and the
 saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
-Following the naming convention above, the <tt class="xref py py-meth docutils literal"><span class="pre">Plotfile.plot_xyzuvw()</span></tt> method handles these plots.:</p>
+Following the naming convention above, the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw" title="Stoner.Plot.PlotFile.plot_xyzuvw"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyzuvw()</span></tt></a> method handles these plots.:</p>
 <div class="highlight-python"><div class="highlight"><pre>p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol)
 p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors=&quot;color_data&quot;)
 p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors=np.random(len(p))
@@ -253,18 +310,32 @@ demonstrates the use of the <em>plotter</em> keyword, analogous to the 2D and 3D
 default in this function.</p>
 </div>
 </div>
+<div class="section" id="very-quick-plotting">
+<h2>Very Quick Plotting<a class="headerlink" href="#very-quick-plotting" title="Permalink to this headline">¶</a></h2>
+<p>For convenience, a <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot()</span></tt></a> method is defined that will try to work out the necessary details. In combination
+with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute it allows very quick plots to be constructed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+<span class="c"># Quick plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/single_plot.py">Source code</a>, <a class="reference external" href="../samples/single_plot.png">png</a>, <a class="reference external" href="../samples/single_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/single_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/single_plot.png" src="../_images/single_plot.png" />
+</div>
+</div>
 <div class="section" id="getting-more-control-on-the-figure">
 <h2>Getting More Control on the Figure<a class="headerlink" href="#getting-more-control-on-the-figure" title="Permalink to this headline">¶</a></h2>
 <p>It is useful to be able to get access to the matplotlib figure that is used for each <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> instance. The
 <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile.fig" title="Stoner.Plot.PlotFile.fig"><tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.fig</span></tt></a> attribute can do this, thus allowing plots from multiple <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> instances to be
 combined in a single figure.:</p>
-<div class="highlight-python"><div class="highlight"><pre>   p1.plot_xy(0,1,&#39;r-&#39;)
-   p2.plot_xy(0,1,&#39;bo&#39;,figure=p1.fig)
-
-Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotFile`
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p1</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;r-&#39;</span><span class="p">)</span>
+<span class="n">p2</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;bo&#39;</span><span class="p">,</span><span class="n">figure</span><span class="o">=</span><span class="n">p1</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>instance.</p>
+<p>Likewise the <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.axes</span></tt> attribute returns the current axes object of the current figure in use by the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a>
+instance.</p>
 <p>There&#8217;s a couple of extra methods that just pass through to the pyplot equivalents:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 <span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -305,6 +376,34 @@ axes.:</p>
 </div>
 <p>are both equivalent, but the latter form allows access to the full keyword arguments of the x axis label control.</p>
 </div>
+</div>
+<div class="section" id="plotting-on-second-y-or-x-axes">
+<h2>Plotting on Second Y (or X) Axes<a class="headerlink" href="#plotting-on-second-y-or-x-axes" title="Permalink to this headline">¶</a></h2>
+<p>To plot a second curve using the same x axis, but a different y axis scale, the <tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.y2()</span></tt> method is
+provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;k-&quot;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">y2</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;r-&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/double_y_plot.py">Source code</a>, <a class="reference external" href="../samples/double_y_plot.png">png</a>, <a class="reference external" href="../samples/double_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/double_y_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/double_y_plot.png" src="../_images/double_y_plot.png" />
+</div>
+<p>There is an equivalent <tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.x2()</span></tt> method to create a second set of axes with a common y scale but different x scales.</p>
+<p>To work out which set of axes you are current working with the <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.ax</span></tt> attribute can be read or set.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">y2</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">ax</span><span class="o">=</span><span class="mi">0</span> <span class="c"># Set back to first x,y1 plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Plot 1&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">ax</span><span class="o">=</span><span class="mi">1</span> <span class="c"># Set to the second</span>
+<span class="n">p</span><span class="o">.</span><span class="n">yabel</span><span class="o">=</span><span class="s">&quot;Plot 2&quot;</span>
+</pre></div>
+</div>
 <div class="section" id="plot-templates">
 <h3>Plot Templates<a class="headerlink" href="#plot-templates" title="Permalink to this headline">¶</a></h3>
 <p>Frequently one wishes to create many plots that have a similar set of formatting options - for example
@@ -312,25 +411,39 @@ in a thesis or to conform to a journal&#8217;s specifications. The <a class="ref
 the <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.template</span></tt> attribute can help here.</p>
 <p>A <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.template</span></tt> template is a set of instructions that controls the default settings for many
 aspects of a matplotlib figure&#8217;s style. In addition the template allows for pyplot formatting commands to be
-executed during the process of plotting a figure.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">JTBStylePlot</span>
-<span class="n">p</span><span class="o">=</span><span class="n">PlotFile</span><span class="p">()</span>
-<span class="n">p</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">JTBStylePlot</span><span class="p">()</span>
-<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-
-<span class="n">p</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">JTBStylePlot</span><span class="p">(</span><span class="n">axes_color__cycle</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;r&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;g&quot;</span><span class="p">])</span>
-<span class="n">p</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+executed during the process of plotting a figure.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">SketchPlot</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">SketchPlot</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The template can either be set by passing a subclass of <a class="reference internal" href="../api/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></tt></a> or
+<p>(<a class="reference external" href="../samples/template2.py">Source code</a>, <a class="reference external" href="../samples/template2.png">png</a>, <a class="reference external" href="../samples/template2.hires.png">hires.png</a>, <a class="reference external" href="../samples/template2.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/template2.png" src="../_images/template2.png" />
+</div>
+<p>The template can either be set by passing a subclass of <a class="reference internal" href="../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></tt></a> or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
-settings defined by the template class with your own choice - or indeed, to add further style attributes. You
-can also copy the style template from one plot to the next:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">q</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">()</span>
-<span class="n">q</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">template</span>
+settings defined by the template class with your own choice - or indeed, to add further style attributes. This
+can be done by either calling the template and passing it arguments as keywords, or by settiong attributes directly on the template.
+Because the matplotlib <em>rcParams</em> dictionary has keys that are not valid Python identifiers, periods in the rcParams keys
+are translated as underscores and thus underscores become double underscores. When setting attributes on the template directly,
+prefix the translated rcParam key with <em>template_</em>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">())</span>
+<span class="n">p</span><span class="o">.</span><span class="n">template</span><span class="p">(</span><span class="n">axes_color__cycle</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;r&quot;</span><span class="p">,</span><span class="s">&quot;g&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">])</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../samples/template.py">Source code</a>, <a class="reference external" href="../samples/template.png">png</a>, <a class="reference external" href="../samples/template.hires.png">hires.png</a>, <a class="reference external" href="../samples/template.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/template.png" src="../_images/template.png" />
+</div>
+<p>You can also copy the style template from one plot to the next.</p>
+<blockquote>
+<div>q=SP.PlotFile()
+q.template=p.template</div></blockquote>
 <p>The possible attributes that can be passed over to the template are essentially all the rc parameters for matplotlib
 (see <tt class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.rcParams()</span></tt>) except that periods &#8216;.&#8217; are replced with underscores &#8216;_&#8217; and single underscores
 are replaced with double underscores.</p>
@@ -343,13 +456,19 @@ are replaced with double underscores.</p>
 <h4>Adding an Inset to a Figure<a class="headerlink" href="#adding-an-inset-to-a-figure" title="Permalink to this headline">¶</a></h4>
 <p>The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.inset.html#Stoner.Plot.PlotFile.inset" title="Stoner.Plot.PlotFile.inset"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.inset()</span></tt></a> method can be used to creagte an inset in the current figure. Subsequent plots
 will be to the inset until a new set of axes are chosen. The <tt class="xref py py-class docutils literal"><span class="pre">pyplot.Axes</span></tt> instance of the inset is appended to the
-<tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.axes</span></tt> attribute.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
+<tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.axes</span></tt> attribute.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">p</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="s">&quot;25%&quot;</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">inset</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">width</span><span class="o">=</span><span class="s">&quot;50%&quot;</span><span class="p">,</span><span class="n">height</span><span class="o">=</span><span class="s">&quot;50%&quot;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="c">#Turn off the inset title</span>
 </pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/inset_plot.py">Source code</a>, <a class="reference external" href="../samples/inset_plot.png">png</a>, <a class="reference external" href="../samples/inset_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/inset_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/inset_plot.png" src="../_images/inset_plot.png" />
 </div>
 <p>The <em>loc</em> parameter specifies the location of the inset, the width and height the size (either as a percentage or
 fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
@@ -368,9 +487,61 @@ inset.</p>
 <li><em>loc</em> = 0 centre inset</li>
 </ul>
 </div></blockquote>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Write about <tt class="xref py py-attr docutils literal"><span class="pre">PlotFile.subplots</span></tt></p>
+</div>
+<div class="section" id="handling-more-than-one-column-of-y-data">
+<h4>Handling More than One Column of Y Data<a class="headerlink" href="#handling-more-than-one-column-of-y-data" title="Permalink to this headline">¶</a></h4>
+<p>By default if <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> is given more than one column of y data, it will plot all
+of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of mangitude
+this can result in a less than helpful plot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
+<span class="c"># Quick plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/common_y_plot.py">Source code</a>, <a class="reference external" href="../samples/common_y_plot.png">png</a>, <a class="reference external" href="../samples/common_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/common_y_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/common_y_plot.png" src="../_images/common_y_plot.png" />
+</div>
+<p>The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> method (and also the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot()</span></tt></a> method when doing 2D plots) will take
+a keyword argument <em>multiple</em> that can offer a number of alternatives. If you have just two y columns, or the the
+second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
+<span class="c"># Quick plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s">&quot;y2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/multiple_y2_plot.py">Source code</a>, <a class="reference external" href="../samples/multiple_y2_plot.png">png</a>, <a class="reference external" href="../samples/multiple_y2_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_y2_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/multiple_y2_plot.png" src="../_images/multiple_y2_plot.png" />
+</div>
+<p>Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a <em>ganged plot</em>) then
+<em>multiple</em> can be set of <em>panels</em>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
+<span class="c"># Quick plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s">&quot;panels&quot;</span><span class="p">)</span>
+<span class="c">#Helps to fix layout !</span>
+<span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/multiple_panels_plot.py">Source code</a>, <a class="reference external" href="../samples/multiple_panels_plot.png">png</a>, <a class="reference external" href="../samples/multiple_panels_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_panels_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/multiple_panels_plot.png" src="../_images/multiple_panels_plot.png" />
+</div>
+<p>Finally, you can also simply plot the y data as a grid of independent subplots.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
+<span class="c"># Quick plot</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s">&quot;subplots&quot;</span><span class="p">)</span>
+<span class="c">#Helps to fix layout !</span>
+<span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/subplot_plot.py">Source code</a>, <a class="reference external" href="../samples/subplot_plot.png">png</a>, <a class="reference external" href="../samples/subplot_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/subplot_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/subplot_plot.png" src="../_images/subplot_plot.png" />
 </div>
 </div>
 </div>
@@ -396,11 +567,16 @@ inset.</p>
 <li><a class="reference internal" href="#plotting-vector-fields">Plotting Vector Fields</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#very-quick-plotting">Very Quick Plotting</a></li>
 <li><a class="reference internal" href="#getting-more-control-on-the-figure">Getting More Control on the Figure</a><ul>
 <li><a class="reference internal" href="#setting-axes-labels-plot-titles-and-legends">Setting Axes Labels, Plot Titles and Legends</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#plotting-on-second-y-or-x-axes">Plotting on Second Y (or X) Axes</a><ul>
 <li><a class="reference internal" href="#plot-templates">Plot Templates</a></li>
 <li><a class="reference internal" href="#making-multi-plot-figures">Making Multi-plot Figures</a><ul>
 <li><a class="reference internal" href="#adding-an-inset-to-a-figure">Adding an Inset to a Figure</a></li>
+<li><a class="reference internal" href="#handling-more-than-one-column-of-y-data">Handling More than One Column of Y Data</a></li>
 </ul>
 </li>
 </ul>
@@ -458,7 +634,7 @@ inset.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

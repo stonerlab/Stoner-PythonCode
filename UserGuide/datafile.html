@@ -61,32 +61,27 @@
 <h2>Loading a data file<a class="headerlink" href="#loading-a-data-file" title="Permalink to this headline">¶</a></h2>
 <p>The first step in using the Stoner module is to load some data from a
 measurement.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">VSMFile</span><span class="p">(</span><span class="s">&#39;my_VSM_data.fld&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this example we have loaded data from <tt class="docutils literal"><span class="pre">my_data.txt</span></tt> which should be in the
-current directory &#8211; here we are assuming that <tt class="docutils literal"><span class="pre">my_data.txt</span></tt> contains data in the
-<em>TDI Format 1.5</em> which is produced by the LabVIEW rigs. Assuming that the
-file successfully loads, <tt class="docutils literal"><span class="pre">d</span></tt>, is an instance of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object. Here
-the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> constructor has been used to both create the instance and load the
-data in one go.</p>
+current directory</p>
+<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></tt></a>
+class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
+detect the format of many of the measurement files that we use in our research.</p>
+<p>The native file format for the Stoner package is known as the <em>TDI 1.5</em> format - a tab delimited text file
+that stores arbitary metadata and a single 2D data set. It closely matches the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> class of the
+<a class="reference internal" href="../Stoner.html#module-Stoner.Core" title="Stoner.Core"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Core</span></tt></a> module.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> will also read a related text format where the first column of the first line contains the string <em>TDI Fromat=Text 1.0</em>
 which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.</p>
 </div>
-<p>The second example shows the use of one of the sub-classes of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object to load data
-from a specific instrument (in this case the VSM).</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This is an API change from earlier versions of the Stoner package where a second parameter on the constructor of the DataFile object was used to identify the type of data file. This syntax is now depreciated !).</p>
-</div>
 <div class="section" id="the-various-flavours-of-the-datafile-class">
 <h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
 <p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></tt></a> method that
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load" title="Stoner.Core.DataFile._load"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></tt></a> method that
 understands how to reqad the relevant file.</p>
 <div class="section" id="base-classes-and-generic-formats">
 <h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
@@ -156,11 +151,12 @@ the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.
 </div></blockquote>
 <p>These classes can be used directly to load data from the appropriate format.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner</span>
+<span class="kn">import</span> <span class="nn">stoner.FileFormats</span> <span class="kn">as</span> <span class="nn">SFF</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
-<span class="n">v</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">VSMFIle</span><span class="p">()</span>
+<span class="n">v</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">VSMFIle</span><span class="p">()</span>
 <span class="n">v</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_VSM_data.fld&#39;</span><span class="p">)</span>
-<span class="n">c</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s">&#39;data.csv&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">c</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s">&#39;data.csv&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -274,13 +270,16 @@ example results in a 2 dimensional numpy array containing two columns in the
 order that they appear in the list (ie not the order that they are in the data
 file). For completeness, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method also allows one to
 pass slices to select columns and should do the expected thing.</p>
-<p>There is a convenient short cut for working with cases where the column headers are not the same
-as the names of any of the attributes of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
+<p>There are a couple of convenient short cuts/ Firstly the <em>floormod</em> operator //
+is an alias for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
+of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s">&quot;Temperature&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
 <span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>both return the same data.</p>
+<p>all return the same data.</p>
 <p>Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-</p>
 <blockquote>
 <div><ol class="arabic">
@@ -644,7 +643,7 @@ the same or fewer rows of data as <em>d</em>.</p>
 <h3>Working with Columns of Data<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></tt></a> attribute is simply a 2D numpy array, so can be directly modified like any other
+<p>The <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></tt> attribute is simply a 2D numpy array, so can be directly modified like any other
 numpy array might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt></a> attribute has been used to identify columns as
 containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
 modify the data without having to keep track any further of which column(s) is indexed. This the following will work:</p>
@@ -752,6 +751,14 @@ use of the <em>invert</em> keyword argument to reverse the sense used to selkect
 rows are deleted(kept for <a href="#id6"><span class="problematic" id="id7">*</span></a>invert*=True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds.</p>
+<p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
+the subtration operator can be used.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">d</span><span class="o">-=-</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>The final form looks stranger than it is - it simply deletes the last row of data in place.</p>
 </div>
 <div class="section" id="deleting-columns-of-data">
 <h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
@@ -760,6 +767,13 @@ column header - the indexing rules are the same as used for the
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></tt></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, there is an operator that can be used to achieve the same effect, in this
+case the modulus operator %.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s">&quot;temperature&quot;</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="mi">1</span>
+<span class="n">d</span><span class="o">%=-</span><span class="mi">1</span>
 </pre></div>
 </div>
 </div>
@@ -910,7 +924,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

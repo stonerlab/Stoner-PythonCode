@@ -230,6 +230,25 @@
             <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ret</span>
 
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="s">&quot;clone&quot;</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
+                    <span class="n">new</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">new</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_setas</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wrapper to handle some special linked attributes.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_setas</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="s">&quot;shape&quot;</span><span class="p">:</span> <span class="c"># cutdown the column headers as well</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[:</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[:</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Allow setting of the setas variable like a dictionary or a list.</span>
 
@@ -290,8 +309,10 @@
 <span class="sd">            The matching column index as an integer or a KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>  <span class="c"># col is an int so pass on</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span><span class="o">&lt;=</span><span class="n">col</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">col</span><span class="o">&gt;=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&#39;Attempting to index a non - existant column &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">col</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="o">%</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c"># Ok we have a string</span>
             <span class="n">col</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">:</span>  <span class="c"># and it is an exact string match</span>
@@ -757,26 +778,27 @@
 <span class="sd">    a matrix of data, associated metadata and column headers.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        data (2D Array) A numpy masked array of data (usually floats)</span>
+<span class="sd">        data (2D Array) A numpy masked array of data (usually floats).</span>
 <span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary</span>
-<span class="sd">            tries to retain information about the type of data so as to aid import and</span>
-<span class="sd">            export from CM group LabVIEw code.</span>
-<span class="sd">        column_headers (list): of strings of the column names of the data</span>
-<span class="sd">        title (string): The title of the measurement</span>
+<span class="sd">                                   tries to retain information about the type of </span>
+<span class="sd">                                   data so as to aid import and export from CM group LabVIEw code.</span>
+<span class="sd">        column_headers (list): of strings of the column names of the data.</span>
+<span class="sd">        title (string): The title of the measurement.</span>
 <span class="sd">        filename (string): The current filename of the data if loaded from or</span>
-<span class="sd">            already saved to disc. This is the default filename used by the :py:meth:`load` and  :py:meth:`save`</span>
-<span class="sd">        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask</span>
+<span class="sd">                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load` </span>
+<span class="sd">                           and :py:meth:`Stoner.Core.DataFile.save`.</span>
+<span class="sd">        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.</span>
 <span class="sd">        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</span>
-<span class="sd">        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape</span>
-<span class="sd">        records (numpoy record array): Returns the data in the form of a list of dictionaries</span>
-<span class="sd">        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object</span>
+<span class="sd">        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</span>
+<span class="sd">        records (numpoy record array): Returns the data in the form of a list of dictionaries.</span>
+<span class="sd">        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.</span>
 <span class="sd">        subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by</span>
-<span class="sd">            their py:attr:`DataFile.priority`. Each entry in the list consists of the string name of the subclass</span>
-<span class="sd">            and the class object.</span>
+<span class="sd">                           their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the </span>
+<span class="sd">                           string name of the subclass and the class object.</span>
 <span class="sd">        patterns (list): A list of strings containing file glob patterns that are typically used for datafiles</span>
-<span class="sd">            that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.</span>
+<span class="sd">                        that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.</span>
 <span class="sd">        priority (int): A class attribute used to indivate the order in which the autoloader should attempt to load</span>
-<span class="sd">            a data file. See :py:meth:`DataFile.load` for details.</span>
+<span class="sd">                        a data file. See :py:meth:`DataFile.load` for details.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c">#Class attributes</span>
@@ -852,16 +874,17 @@
             <span class="n">handler</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s">&quot;Stoner.class&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span> <span class="c"># set public attributes from keywords</span>
-            <span class="n">myattrs</span><span class="o">=</span><span class="p">[]</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">x</span><span class="p">))):</span>
-                        <span class="n">myattrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="k">pass</span>
+            <span class="n">myattrs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="nb">tuple</span><span class="p">):</span>
+                            <span class="n">typ</span><span class="o">=</span><span class="s">&quot;one of &quot;</span><span class="o">+</span><span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">]])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">typ</span><span class="o">=</span><span class="s">&quot;a &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">myattr</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;{} should be {} not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">typ</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
 
     <span class="c"># Special Methods</span>
 </div>
@@ -880,7 +903,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+                    <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">arg</span><span class="o">.</span><span class="n">_setas</span>
@@ -1005,7 +1029,7 @@
                 <span class="n">newdata</span><span class="o">=</span><span class="n">newdata</span><span class="o">+</span><span class="n">o</span>
             <span class="n">ret</span><span class="o">=</span><span class="n">newdata</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">NotImplemented</span><span class="p">(</span><span class="s">&#39;Failed in DataFile&#39;</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">NotImplemented</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;metadata&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="s">&quot;column_headers&quot;</span><span class="p">,</span><span class="s">&quot;mask&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
@@ -1174,6 +1198,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
 
+    <span class="k">def</span> <span class="nf">__floordiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just aslias for self.column(other).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Called for :py:class:`DataFile`.x to handle some special pseudo attributes and otherwise to act as a shortcut for :py:meth:`column`.</span>
@@ -1204,7 +1234,8 @@
               <span class="s">&quot;shape&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_getattr_shape</span><span class="p">,</span>
               <span class="s">&quot;subclasses&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_getattr_subclasses</span><span class="p">,</span>
               <span class="s">&quot;setas&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_getattr_setas</span><span class="p">,</span>
-              <span class="s">&quot;column_headers&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr__column_headers</span>
+              <span class="s">&quot;column_headers&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr__column_headers</span><span class="p">,</span>
+              <span class="s">&quot;_public_attrs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getattr_writeable</span>
               <span class="p">}</span>
 
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">easy</span><span class="p">:</span>
@@ -1238,12 +1269,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">c</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
-        <span class="n">c</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">))</span>
+        <span class="n">c</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;metadata&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="s">&quot;column_headers&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
-                <span class="n">c</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;metadata&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="s">&quot;column_headers&quot;</span><span class="p">,</span><span class="s">&quot;_setas&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
+                <span class="n">c</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">_getattr_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
@@ -1352,6 +1381,18 @@
             <span class="n">ret</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">]</span><span class="o">=</span><span class="n">cls</span>
         <span class="k">return</span> <span class="n">ret</span>
 
+    <span class="k">def</span> <span class="nf">__getattr_writeable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary of attributes setable by keyword argument with thier types.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s">&quot;data&quot;</span><span class="p">:</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                <span class="s">&quot;column_headers&quot;</span><span class="p">:</span><span class="nb">list</span><span class="p">,</span>
+                <span class="s">&quot;setas&quot;</span><span class="p">:(</span><span class="n">string_types</span><span class="p">,</span><span class="nb">list</span><span class="p">),</span>
+                <span class="s">&quot;metadata&quot;</span><span class="p">:</span><span class="nb">dict</span><span class="p">,</span>
+                <span class="s">&quot;debug&quot;</span><span class="p">:</span><span class="nb">bool</span><span class="p">,</span>
+                <span class="s">&quot;filename&quot;</span><span class="p">:</span><span class="n">string_types</span><span class="p">,</span>
+                <span class="s">&quot;mask&quot;</span><span class="p">:(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span>
+                <span class="p">}</span>
+
+
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Called for DataFile[x] to return either a row or iterm of metadata.</span>
 
@@ -1458,6 +1499,32 @@
         <span class="n">newdata</span><span class="o">=</span><span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__and_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">__imod__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overload the % operator to mean column deletion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Other (column index): column(s) to delete.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            A copy of self with a column deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newdata</span><span class="o">=</span><span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mod_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__isub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements what to do when subtraction operator is used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (int,list of integers): Delete row(s) from data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFile with rows removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newdata</span><span class="o">=</span><span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="DataFile._load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Replace __parse_data with method that is more compatible with subclasses.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
@@ -1561,6 +1628,26 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Only strings and regular expressions  are supported as search keys for metadata&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">__mod__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overload the % operator to mean column deletion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            Other (column index): column(s) to delete.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            A copy of self with a column deleted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newdata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mod_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__mod_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements the column deletion method.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
+            <span class="n">newdata</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newdata</span><span class="o">=</span><span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="n">newdata</span>
 
 
     <span class="k">def</span> <span class="nf">__parse_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1739,8 +1826,15 @@
 
     <span class="k">def</span> <span class="nf">__setattr_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the data attribute, but force it through numpy.ma.masked_array first.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">_ma_</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">nv</span><span class="o">=</span><span class="n">_ma_</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">nv</span><span class="o">=</span><span class="n">_ma_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">nv</span><span class="o">=</span><span class="n">_ma_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">nv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;DataFile.data should be no more than 2 dimensional not shaoe {}&quot;</span><span class="p">,</span><span class="n">format</span><span class="p">(</span><span class="n">nv</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">nv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="n">nv</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="k">def</span> <span class="nf">__setattr_T</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write directly to the transposed data.&quot;&quot;&quot;</span>
@@ -1827,6 +1921,30 @@
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provides an implementation for str(DataFile) that does not shorten the output.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__repr_core__</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements what to do when subtraction operator is used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (int,list of integers): Delete row(s) from data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFile with rows removed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">newdata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">newdata</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Actually do the subtraction.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,(</span><span class="nb">slice</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span>
+            <span class="n">newdata</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_np_</span><span class="o">.</span><span class="n">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">other</span><span class="p">]):</span>
+            <span class="n">newdata</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">newdata</span><span class="o">=</span><span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="n">newdata</span>
+
+
 
     <span class="k">def</span> <span class="nf">_push_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Copy the current data mask to a temporary store and replace it with a new mask if supplied.</span>
@@ -2305,17 +2423,24 @@
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            window (int): Size of the rolling window (must be odd and &gt;= 3)</span>
 <span class="sd">            wrap (bool): Whether to use data from the other end of the array when at one end or the other.</span>
-<span class="sd">            exclude_centre (bool): Exclude the ciurrent row from the rolling window (defaults to False)</span>
+<span class="sd">            exclude_centre (odd int or bool): Exclude the ciurrent row from the rolling window (defaults to False)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Yields with a section of data that is window rows long, each iteration moves the marker</span>
 <span class="sd">            one row further on.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">window</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="n">window</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">valueError</span><span class="p">(</span><span class="s">&quot;Window must be an odd number bigger than or equal to three&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exclude_centre</span><span class="p">:</span>
+            <span class="n">exclude_centre</span><span class="o">=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">exclude_centre</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;If excluding the centre of the window, this must be an odd number of rows.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">window</span><span class="o">-</span><span class="n">exclude_centre</span><span class="o">&lt;</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">window</span><span class="o">&lt;</span><span class="mi">3</span> <span class="ow">or</span> <span class="n">window</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd&quot;</span><span class="p">)</span>
 
         <span class="n">hw</span><span class="o">=</span><span class="p">(</span><span class="n">window</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>
+            <span class="n">hc</span><span class="o">=</span><span class="p">(</span><span class="n">exclude_centre</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">hw</span><span class="p">:</span>
@@ -2329,7 +2454,7 @@
             <span class="n">starti</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="n">hw</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">stopi</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">i</span><span class="o">+</span><span class="n">hw</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">stopi</span><span class="p">]))</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">i</span><span class="o">-</span><span class="n">hc</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">hc</span><span class="p">:</span><span class="n">stopi</span><span class="p">]))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">stopi</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">wrap</span><span class="p">:</span>
@@ -2630,7 +2755,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

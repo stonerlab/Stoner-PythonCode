@@ -63,32 +63,32 @@
 
 <span class="kn">import</span> <span class="nn">Stoner.Fit</span> <span class="kn">as</span> <span class="nn">_SF</span>
 
-<div class="viewcode-block" id="Linear"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.Linear">[docs]</a><span class="k">def</span> <span class="nf">Linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="Linear"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.Linear.html#Stoner.FittingFuncs.Linear">[docs]</a><span class="k">def</span> <span class="nf">Linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple linear function&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">Lineaer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Arrhenius"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.Arrhenius">[docs]</a><span class="k">def</span> <span class="nf">Arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="Arrhenius"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.Arrhenius.html#Stoner.FittingFuncs.Arrhenius">[docs]</a><span class="k">def</span> <span class="nf">Arrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">Arrhehius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="NDimArrhenius"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.NDimArrhenius">[docs]</a><span class="k">def</span> <span class="nf">NDimArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="NDimArrhenius"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.NDimArrhenius.html#Stoner.FittingFuncs.NDimArrhenius">[docs]</a><span class="k">def</span> <span class="nf">NDimArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Arrhenius Equation without T dependendent prefactor&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">NDimArrhehius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="ModArrhenius"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.ModArrhenius">[docs]</a><span class="k">def</span>  <span class="nf">ModArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="ModArrhenius"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.ModArrhenius.html#Stoner.FittingFuncs.ModArrhenius">[docs]</a><span class="k">def</span>  <span class="nf">ModArrhenius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Arrhenius Equation with a variable T power dependent prefactor&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">ModArrhehius</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="PowerLaw"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.PowerLaw">[docs]</a><span class="k">def</span> <span class="nf">PowerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="PowerLaw"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.PowerLaw.html#Stoner.FittingFuncs.PowerLaw">[docs]</a><span class="k">def</span> <span class="nf">PowerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Power Law Fitting Equation&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">PowerLaw</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Quadratic"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.Quadratic">[docs]</a><span class="k">def</span> <span class="nf">Quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="Quadratic"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.Quadratic.html#Stoner.FittingFuncs.Quadratic">[docs]</a><span class="k">def</span> <span class="nf">Quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simple Qudratic Function.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">Quadratic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="Simmons"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.Simmons">[docs]</a><span class="k">def</span> <span class="nf">Simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="Simmons"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.Simmons.html#Stoner.FittingFuncs.Simmons">[docs]</a><span class="k">def</span> <span class="nf">Simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simmons model tunnelling</span>
 <span class="sd">    V=bias voltage, params=[A, phi, d]</span>
 <span class="sd">    A in m^2, phi barrier height in eV, d barrier width in angstrom</span>
@@ -98,7 +98,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">Simmons</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="BDR"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.BDR">[docs]</a><span class="k">def</span> <span class="nf">BDR</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="BDR"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.BDR.html#Stoner.FittingFuncs.BDR">[docs]</a><span class="k">def</span> <span class="nf">BDR</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;BDR model tunnelling</span>
 <span class="sd">    V=bias voltage, params=[A, phi, dphi, d, mass]</span>
 <span class="sd">    A: in m^2, phi: average barrier height in eV, dphi: change in barrier height in eV,</span>
@@ -108,7 +108,7 @@
 <span class="sd">    or Tuan Comm. in Phys. 16, 1, (2006)&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">BDR</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="FowlerNordheim"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.FowlerNordheim">[docs]</a><span class="k">def</span> <span class="nf">FowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="FowlerNordheim"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.FowlerNordheim.html#Stoner.FittingFuncs.FowlerNordheim">[docs]</a><span class="k">def</span> <span class="nf">FowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Simmons model tunnelling at V&gt;phi</span>
 <span class="sd">    V=bias voltage, params=[A, phi, d]</span>
 <span class="sd">    A in m^2, phi barrier height in eV, d barrier width in angstrom</span>
@@ -118,13 +118,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">FowlerNordheim</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TersoffHammann"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.TersoffHammann">[docs]</a><span class="k">def</span> <span class="nf">TersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="TersoffHammann"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.TersoffHammann.html#Stoner.FittingFuncs.TersoffHammann">[docs]</a><span class="k">def</span> <span class="nf">TersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;TersoffHamman model for tunnelling through STM tip</span>
 <span class="sd">    V=bias voltage, params=[A]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">TersoffHammann</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WLfit"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.WLfit">[docs]</a><span class="k">def</span> <span class="nf">WLfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="WLfit"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.WLfit.html#Stoner.FittingFuncs.WLfit">[docs]</a><span class="k">def</span> <span class="nf">WLfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Weak localisation</span>
 <span class="sd">    VRH(B, params):</span>
 <span class="sd">    B = mag. field, params=list of parameter values, s0, B1, B2</span>
@@ -135,7 +135,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">WLfit</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="strijkers"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.strijkers">[docs]</a><span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="strijkers"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.strijkers.html#Stoner.FittingFuncs.strijkers">[docs]</a><span class="k">def</span> <span class="nf">strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;strijkers(V, params):</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
@@ -151,7 +151,7 @@
     <span class="k">return</span> <span class="n">_SF</span><span class="o">.</span><span class="n">Strijkers</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="o">*</span><span class="n">params</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="FluchsSondheimer"><a class="viewcode-back" href="../../Stoner.html#Stoner.FittingFuncs.FluchsSondheimer">[docs]</a><span class="k">def</span> <span class="nf">FluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="FluchsSondheimer"><a class="viewcode-back" href="../../classes/Stoner.FittingFuncs.FluchsSondheimer.html#Stoner.FittingFuncs.FluchsSondheimer">[docs]</a><span class="k">def</span> <span class="nf">FluchsSondheimer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span><span class="n">params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Evaluate a Fluchs-Sondheumer model function for conductivity.</span>
 
 <span class="sd">    Args:</span>
@@ -207,7 +207,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

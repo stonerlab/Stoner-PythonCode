@@ -110,7 +110,7 @@ and a column &#8216;Temperature&#8217; that contains numbers above and below 100
 <p>The first example would return a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object  containing two separate isntances of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
 produce a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object containing two <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects for the rows with temperature above and below 100.
-The final example will result in a <tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></tt> object that has two groups each of which contains
+The final example will result in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object that has two groups each of which contains
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects for each polarisation value.</p>
 </div>
 <div class="section" id="curve-fitting">
@@ -136,7 +136,7 @@ created and the fitted polynomial evaluated at each point.</p>
 </div>
 <div class="section" id="simple-function-fitting">
 <h3>Simple function fitting<a class="headerlink" href="#simple-function-fitting" title="Permalink to this headline">¶</a></h3>
-<p>For more general curve fitting operations the <tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.cruve_fit()</span></tt>
+<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a>
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span> <span class="p">)</span>
@@ -169,7 +169,7 @@ will be called &#8216;Fitted with &#8216; and the name of the function <em>func<
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
 <p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
-A full description of the lmfit module is given in the <cite>lmffit documentation &lt;href=http://lmfit.github.io/lmfit-py/&gt;</cite>. The
+A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> method is used to interact with lmfit.</p>
 <p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a>, one requires a c instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The <a class="reference internal" href="../Stoner.html#module-Stoner.Fit" title="Stoner.Fit"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></tt></a> module contains
@@ -313,7 +313,7 @@ and returns the <a class="reference internal" href="../classes/Stoner.Analysis.A
 it also plots the fit. There is an example run script, ini file and data file in <tt class="docutils literal"><span class="pre">/scripts/</span></tt> in the github repository.
 Hhave a look at them to see how to use this function.</p>
 <p>The function to fit to can either be created by the user and passed in or one of a library of current existing functions
-can be used from the <a class="reference internal" href="../Stoner.html#module-Stoner.FittingFuncs" title="Stoner.FittingFuncs"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt></a> (just pass in the name of the function you wish to use as a string).
+can be used from the <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt> (just pass in the name of the function you wish to use as a string).
 The function takes its fitting parameters information from a .ini file created by the user,
 look at the example .ini file mentioned above for the format, you can see that it allows for the parameters to be fixed
 or constrained which can be very useful for fitting.</p>
@@ -323,7 +323,7 @@ or constrained which can be very useful for fitting.</p>
 <li>2D weak localisation</li>
 <li>Strijkers model for PCAR fitting</li>
 </ul>
-<p>Please see the function documentation in <a class="reference internal" href="../Stoner.html#module-Stoner.FittingFuncs" title="Stoner.FittingFuncs"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt></a> for more information about these models.
+<p>Please see the function documentation in <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FittingFuncs</span></tt> for more information about these models.
 Please do add functions you think would be of use to everybody, have a look at the current functions for examples,
 the main thing is that the function must take an x array and a list of parameters, apply a function and then
 return the resulting array.</p>
@@ -400,7 +400,33 @@ error bar on the bin bceomes the quadrature sum of the individual error bars on 
 is the standard error in the y points in the bin and the y value is the simple mean of the data.</p>
 <p>If <strong>xcol</strong> and/or <strong>ycol</strong> are not specified, then they are looked up from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute. In this case, the <strong>yerr</strong>
 is also taken from this attribute if not specified spearately.</p>
-<p>Three 1D numpy arrays are returned, representing the x, y and y-errors for the new bins.</p>
+<p>IF the keyword <em>clone</em> is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
+points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></tt></a> returns a clone of the current data file with its data
+(and column headers) replaced with the newly binned data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.plotutils</span> <span class="kn">import</span> <span class="n">errorfill</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mi">6</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mi">8</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
+
+<span class="n">e</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
+<span class="n">f</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
+
+<span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;0.05 bins&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;0.25 bins&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Bin demo&quot;</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/bins.py">Source code</a>)</p>
 </div>
 <div class="section" id="stitching-datasets-together">
 <h3>Stitching Datasets together<a class="headerlink" href="#stitching-datasets-together" title="Permalink to this headline">¶</a></h3>
@@ -410,16 +436,16 @@ combinaed scan. In the ideal world, these scans could simple be joing together (
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> provides
-a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></tt></a> method to facilitate this.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">scan1</span><span class="o">=</span><span class="n">AnalyseFile</span><span class="p">(</span><span class="s">&#39;file 1.txt&#39;</span><span class="p">)</span>
-<span class="n">scan2</span><span class="o">=</span><span class="n">AnalyseFile</span><span class="p">(</span><span class="s">&#39;file 2.txt&#39;</span><span class="p">)</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Angle&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">)</span>
-<span class="n">scan1</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">)</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;shift x&quot;</span><span class="p">)</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;scale 7, shift x&quot;</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">))</span>
-<span class="n">scan2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">scan1</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">my_stitcher</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">3.14</span><span class="p">,</span><span class="mf">2.54</span><span class="p">,</span><span class="mf">2.0</span><span class="p">])</span>
+a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></tt></a> method to facilitate this.</p>
+<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>, <a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/stitch.png" src="../_images/stitch.png" />
+</div>
+<p>The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
+region to use or even a custom stiching transofmration function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;shift x&quot;</span><span class="p">)</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;scale y, shift x&quot;</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">))</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">my_stitcher</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">3.14</span><span class="p">,</span><span class="mf">2.54</span><span class="p">,</span><span class="mf">2.0</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>In these examples, the x and y columns of <em>scan2</em> are modified to give the best
@@ -588,7 +614,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

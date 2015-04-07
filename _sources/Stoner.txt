@@ -39,16 +39,6 @@ Stoner Package
 
     PlotFile
 
-:mod:`plotutils` Module
-=======================
-
-.. module:: Stoner.plotutils
-
-
-.. autosummary::
-    :toctree: functions
-    :template: autosummary/module.rst
-
 
 :mod:`Folders` Module
 ======================
@@ -113,22 +103,44 @@ Facility Outputs
 ==========================
 
 .. automodapi:: Stoner.PlotFormats
-   :no-inheritance-diagram:
-   :no-heading:
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: AutoLocator
+    :skip: EngFormatter
+    :skip: Formatter
+    :skip: range
+
+
+See also the stylesheets available in the stylelib directory.
+
+:mod:`plotutils` Module
+=======================
+
+.. automodapi:: Stoner.plotutils
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+
 
 :mod:`Fit` Module
-==========================
-
+=================
 
 .. automodapi:: Stoner.Fit
-   :no-inheritance-diagram:
-   :no-heading:
+    :no-heading:
+    :no-inheritance-diagram:
+    :headings: =-
+    :skip: Linear
+    :skip: PowerLaw
+    :skip: Quadratic
+    :skip: Model
+    :skip: quadratic
+    :skip: jit
+    :skip: update_param_vals
+    :skip: quad
 
-:mod:`FittingFuncs` Module
-==========================
 
-.. automodule:: Stoner.FittingFuncs
-   :members:
+The following modules offer specialised file and foler formats.
 
 :mod:`HDF5` Module
 =========================
@@ -147,7 +159,7 @@ Facility Outputs
 
 .. module:: Stoner.Zip
 
-.. autosummary:: 
+.. autosummary::
    :toctree: classes
    :template: classdocs.rst
 
@@ -167,7 +179,7 @@ Facility Outputs
 
 .. autosummary::
     :toctree: functions
-    
+
     format_error
     hysteresis_correct
     ordinal

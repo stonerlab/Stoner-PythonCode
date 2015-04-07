@@ -148,7 +148,7 @@ keyword arguments to pass to  DataFile.__init__</li>
 <td>Constructor of  PlotFile class.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
-<td>An xyz plot that forces the use of pyplot.contour.</td>
+<td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.figure.html#Stoner.Plot.PlotFile.figure" title="Stoner.Plot.PlotFile.figure"><tt class="xref py py-obj docutils literal"><span class="pre">figure</span></tt></a>([figure])</td>
 <td>Set the figure used by <a class="reference internal" href="#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></tt></a>.</td>
@@ -168,13 +168,13 @@ keyword arguments to pass to  DataFile.__init__</li>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></tt></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;...])</td>
 <td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></tt></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></tt></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr,&nbsp;multiple])</td>
 <td>Makes a simple X-Y plot of the specified data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyuv.html#Stoner.Plot.PlotFile.plot_xyuv" title="Stoner.Plot.PlotFile.plot_xyuv"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></tt></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Makes an overlaid image and quiver plot.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
 <td>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw" title="Stoner.Plot.PlotFile.plot_xyzuvw"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
@@ -184,7 +184,7 @@ keyword arguments to pass to  DataFile.__init__</li>
 <td>Make a 2D Quiver plot from the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.subplot.html#Stoner.Plot.PlotFile.subplot" title="Stoner.Plot.PlotFile.subplot"><tt class="xref py py-obj docutils literal"><span class="pre">subplot</span></tt></a>(*args,&nbsp;**kargs)</td>
-<td>Pass throuygh for pyplot.subplot().</td>
+<td>Pass throuygh for plt.subplot().</td>
 </tr>
 </tbody>
 </table>
@@ -271,7 +271,7 @@ keyword arguments to pass to  DataFile.__init__</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 14, 2015.
+      Last updated on Mar 30, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
