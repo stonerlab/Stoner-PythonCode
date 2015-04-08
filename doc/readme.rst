@@ -17,14 +17,14 @@ Getting this Code
 The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  and lmfit. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
-At present it looks like lmfit does not install correctly with easy_install, so use pip instead
+Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
+However, this can by installed with the usual tools such as *easy_install* or *pip*.
 
 .. code-block:: sh
 
-   pip install lmfit
+   easy_install lmfit
 
-
-The easiest way to install this code is via seuptools' easy_install
+The easiest way to install the Stoner package is via seuptools' easy_install
 
 .. code-block:: sh
 
@@ -34,6 +34,9 @@ This will install the Stoner package into your current Python environment. Since
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
+The codebase is largely compatible with Python 3.4, with the expception of the 3D vector map plots which make use of
+Enthought's *mayavi* package which is still only Python 2 compatible due to the underlying Vtk toolkit. Other issues of
+broken 3.4 code are bugs to be squashed.
 
 Overview
 ========
@@ -58,6 +61,9 @@ file formats. Two, however, contain additional functionality for writing analysi
 
 As mentioned above, there are subclasses of **DataFile** in the **Stoner.FileFormats** module that support
 loading many of the common file formats used in our research.
+
+For rapid development of small scripts, we would recommend the **Stoner.Data** class which is a superclass of the above,
+and provides a 'kitchen-sink' one stop shop for most of the package's functionality.
 
 DataFolder
 ----------
@@ -94,7 +100,8 @@ Version 0.4.x
 -------------
 
 Refactored the PlotFormats sub module to use Matplotlib 1.4 stylesheets. Additional features in Plot
-and new outlier detection routines in AnalyseFile. Number of bugs squashed.
+and new outlier detection routines in AnalyseFile. New operators added to DataFile to make some column and row
+operations more compact. Number of bugs squashed.
 
 Version 0.3.0
 -------------

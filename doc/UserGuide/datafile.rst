@@ -11,34 +11,31 @@ Loading a data file
 The first step in using the Stoner module is to load some data from a
 measurement.::
 
-  import Stoner
-  d=Stoner.DataFile('my_data.txt')
-  d=Stoner.VSMFile('my_VSM_data.fld')
-
+   from Stoner import Data
+   d=Data('my_data.txt')
 
 In this example we have loaded data from ``my_data.txt`` which should be in the
-current directory -- here we are assuming that ``my_data.txt`` contains data in the
-*TDI Format 1.5* which is produced by the LabVIEW rigs. Assuming that the
-file successfully loads, ``d``, is an instance of the :py:class:`DataFile` object. Here
-the :py:class:`DataFile` constructor has been used to both create the instance and load the
-data in one go.
+current directory
+
+The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Util.Data`
+class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
+detect the format of many of the measurement files that we use in our research.
+
+The native file format for the Stoner package is known as the *TDI 1.5* format - a tab delimited text file
+that stores arbitary metadata and a single 2D data set. It closely matches the :py:class:`DataFile` class of the
+:py:mod:`Stoner.Core` module.
 
 .. note::
     :py:class:`DataFile` will also read a related text format where the first column of the first line contains the string *TDI Fromat=Text 1.0*
     which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.
 
-The second example shows the use of one of the sub-classes of the :py:class:`DataFile` object to load data
-from a specific instrument (in this case the VSM).
-
-.. warning::
-    This is an API change from earlier versions of the Stoner package where a second parameter on the constructor of the DataFile object was used to identify the type of data file. This syntax is now depreciated !).
 
 
 The Various Flavours of the :py:class:`DataFile` Class
 ------------------------------------------------------
 
 To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-:py:class:`DataFile` class. Each subclass typically provides its own version of the :py:meth:`DataFile.load` method that
+:py:class:`DataFile` class. Each subclass typically provides its own version of the :py:meth:`DataFile._load` method that
 understands how to reqad the relevant file.
 
 Base Classes and Generic Formats
@@ -103,11 +100,12 @@ Classes for Instruments at Major Facilities
 These classes can be used directly to load data from the appropriate format.::
 
    import Stoner
+   import stoner.FileFormats as SFF
    d=Stoner.DataFile()
    d.load('my_data.txt')
-   v=Stoner.VSMFIle()
+   v=SFF.VSMFIle()
    v.load('my_VSM_data.fld')
-   c=Stoner.CSVFile('data.csv',1,0,',',',')
+   c=SFF.CSVFile('data.csv',1,0,',',',')
 
 .. note::
    The load method, like many of the DataFile methods returns a copy of
@@ -224,8 +222,8 @@ file). For completeness, the :py:meth:`DataFile.column` method also allows one t
 pass slices to select columns and should do the expected thing.
 
 There are a couple of convenient short cuts/ Firstly the *floormod* operator //
-is an alias for the :py:meth:`DataFile.column` method and secondly for working 
-with cases where the column headers are not the same as the names of any of the attributes 
+is an alias for the :py:meth:`DataFile.column` method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
 of the :py:class:`DataFile` object::
 
   d//"Temperature"

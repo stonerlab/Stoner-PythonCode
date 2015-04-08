@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+import os.path as path
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,11 +26,21 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo',
-'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary',
-'sphinxcontrib.napoleon','sphinx.ext.graphviz','sphinx.ext.inheritance_diagram',
-'sphinx.ext.todo','astropy_helpers.sphinx.ext.automodapi','astropy_helpers.sphinx.ext.automodsumm',
-'sphinx.ext.mathjax']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.intersphinx',
+              'sphinx.ext.todo',
+              'sphinx.ext.pngmath',
+              'sphinx.ext.viewcode',
+              'sphinx.ext.autosummary',
+              'sphinxcontrib.napoleon',
+              'sphinx.ext.graphviz',
+              'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.todo',
+              'astropy_helpers.sphinx.ext.automodapi',
+              'astropy_helpers.sphinx.ext.automodsumm',
+              'sphinx.ext.mathjax',
+              'matplotlib.sphinxext.plot_directive'
+              ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -93,6 +104,17 @@ pygments_style = 'sphinx'
 autosummary_generate = True
 
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
+
+#intersphinx_mapping = {
+#   'python': ('http://docs.python.org/', None),
+#    'python3': ('http://docs.python.org/3/', path.abspath(path.join(path.dirname(__file__), 'local/python3links.inv'))),
+#    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+#    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+#    'matplotlib': ('http://matplotlib.org/', None),
+#    'astropy': ('http://docs.astropy.org/en/stable/', None),
+#    'h5py': ('http://docs.h5py.org/en/latest/', None)
+#    }
+
 
 # -- Options for HTML output ---------------------------------------------------
 
