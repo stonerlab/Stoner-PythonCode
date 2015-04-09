@@ -23,6 +23,13 @@ import itertools
 from collections import Iterable,OrderedDict
 
 class StonerLoadError(Exception):
+    """An exception thrown by the file loading routines in the Stoner Package.
+    
+    This special exception is thrown when one of the subclasses of :py:class:`Stoner.Core.DataFile`
+    attmpts and then fails to load some data from disk. Generally speaking this is not a real
+    error, but simply indicates that the file format is not recognised by that particular subclass,
+    and thus another subclass should have a go instead.
+    """
     pass
 
 class _attribute_store(dict):
@@ -745,22 +752,22 @@ class DataFile(object):
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
                            their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the 
                            string name of the subclass and the class object.
-        patterns (list): A list of strings containing file glob patterns that are typically used for datafiles
-                        that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.
-        priority (int): A class attribute used to indivate the order in which the autoloader should attempt to load
-                        a data file. See :py:meth:`DataFile.load` for details.
     """
 
-    #Class attributes
-    #Priority is the load order for the class
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
     priority=32
+    
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
     patterns=["*.txt","*.tdi"] # Recognised filename patterns
 
 
     _conv_string=_np_.vectorize(lambda x:str(x))
     _conv_float=_np_.vectorize(lambda x:float(x))
-
-    #   INITIALISATION
 
     def __init__(self, *args, **kargs):
         """Constructor method for :py:class:`DataFile`.
@@ -2300,7 +2307,8 @@ class DataFile(object):
                     failed=False
                     self["Loaded as"]=cls.__name__
                     self._setas=test._setas
-                    self._setas.ref=self
+                    for attr in test._public_attrs:
+                       self.__setattr__(attr,test.__getattr__(attr))                 
                     break
                 except (StonerLoadError,UnicodeDecodeError) as e:
                     continue
