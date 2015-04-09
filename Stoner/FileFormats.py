@@ -35,7 +35,7 @@ class CSVFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.csv","*.txt"] # Recognised filename patterns
 
-    def _load(self,filename=None,header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
+    def _load(self, filename=None, header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
 
         Args:
@@ -57,25 +57,25 @@ class CSVFile(DataFile):
         else:
             self.filename = filename
         if header_line is not None:
-            header_string=linecache.getline(self.filename, header_line)
-            header_string=re.sub(r'["\n]', '', header_string)
+            header_string = linecache.getline(self.filename, header_line)
+            header_string = re.sub(r'["\n]', '', header_string)
             try:
-                tmp=header_string.index(header_delim)
+                tmp = header_string.index(header_delim)
             except ValueError:
                 raise StonerLoadError("No Delimiters in header line")
-            self.column_headers=[x.strip() for x in header_string.split(header_delim)]
+            self.column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
-            self.column_headers=["Column"+str(x) for x in range(_np_.shape(self.data)[1])]
-            data_line=linecache.getline(self.filename,data_line)
+            self.column_headers = ["Column" + str(x) for x in range(_np_.shape(self.data)[1])]
+            data_line = linecache.getline(self.filename, data_line)
             try:
                 data_line.index(data_delim)
             except ValueError:
                 raise StonerLoadError("No delimiters in data lines")
 
-        self.data=_np_.genfromtxt(self.filename,dtype='float',delimiter=data_delim,skip_header=data_line-1)
+        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line - 1)
         return self
 
-    def save(self,filename, deliminator=','):
+    def save(self, filename, deliminator=','):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:
@@ -87,15 +87,15 @@ class CSVFile(DataFile):
         Returns:
             A copy of itself."""
         if filename is None:
-            filename=self.filename
-        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
-            filename=self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator,quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        i=0
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog('w')
+        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        i = 0
         spamWriter.writerow(self.column_headers)
-        while i< self.data.shape[0]:
+        while i < self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
-            i+=1
+            i += 1
         return self
 
 
@@ -130,33 +130,38 @@ class VSMFile(DataFile):
         """
         try:
             with open(self.filename) as f:
-                for i,line in enumerate(f):
-                    if i==0:
-                        self["Timestamp"]=line.strip()
-                        check=datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
+                for i, line in enumerate(f):
+                    if i == 0:
+                        self["Timestamp"] = line.strip()
+                        check = datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
                         assert check is not None
-                    elif i==1:
-                        assert line.strip()==""
-                    elif i==2:
-                        header_string=line.strip()
-                    elif i==3:
-                        unit_string=line.strip()
-                        self.column_headers=["{} {}".format(h,u) for h,u in 
-                            zip(header_string.split(header_delim), unit_string.split(header_delim))]                    
-                    elif i>3:
+                    elif i == 1:
+                        assert line.strip() == ""
+                    elif i == 2:
+                        header_string = line.strip()
+                    elif i == 3:
+                        unit_string = line.strip()
+                        self.column_headers = [
+                            "{} {}".format(h, u)
+                            for h, u in zip(header_string.split(header_delim), unit_string.split(header_delim))
+                        ]
+                    elif i > 3:
                         break
-        except (ValueError, AssertionError,TypeError) as e:
-            raise StonerLoadError('Not a VSM File'+str(e.args))
-        self.data=_np_.genfromtxt(self.filename,dtype='float',usemask=True, delimiter=data_delim,
-                                   skip_header=data_line-1, missing_values=['         6:0','         ---'],
-                                invalid_raise=False)
+        except (ValueError, AssertionError, TypeError) as e:
+            raise StonerLoadError('Not a VSM File' + str(e.args))
+        self.data = _np_.genfromtxt(self.filename,
+                                    dtype='float',
+                                    usemask=True,
+                                    delimiter=data_delim,
+                                    skip_header=data_line - 1,
+                                    missing_values=['         6:0', '         ---'],
+                                    invalid_raise=False)
 
-        self.data=ma.mask_rows(self.data)
-        cols=self.data.shape[1]
-        self.data=_np_.reshape(self.data.compressed(),(-1,cols))
+        self.data = ma.mask_rows(self.data)
+        cols = self.data.shape[1]
+        self.data = _np_.reshape(self.data.compressed(), (-1, cols))
 
-
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """VSM file loader routine.
 
         Args:
@@ -171,7 +176,7 @@ class VSMFile(DataFile):
         else:
             self.filename = filename
         self.__parse_VSM()
-        self.setas(x="H_vsm",y="m (emu)")
+        self.setas(x="H_vsm", y="m (emu)")
         return self
 
 
@@ -188,8 +193,7 @@ class BigBlueFile(CSVFile):
     patterns=["*.dat","*.iv","*.rvt"] # Recognised filename patterns
 
 
-
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Just call the parent class but with the right parameters set
 
         Args:
@@ -205,8 +209,9 @@ class BigBlueFile(CSVFile):
         else:
             self.filename = filename
 
-        super(BigBlueFile,self).load(self, self.filename,  header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        super(BigBlueFile, self).load(self, self.filename, header_line=3, data_line=7, data_delim=' ', header_delim=',')
         return self
+
 
 class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
@@ -221,8 +226,7 @@ class QDSquidVSMFile(DataFile):
     patterns=["*.dat"] # Recognised filename patterns
 
 
-
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """QDSquidVSM file loader routine.
 
         Args:
@@ -236,34 +240,35 @@ class QDSquidVSMFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename,"r") as f: # Read filename linewise
-            for i, line in enumerate(f):        
-                line=line.strip()
-                if i==2 and "Quantum Design" not in line:
+        with open(self.filename, "r") as f:  # Read filename linewise
+            for i, line in enumerate(f):
+                line = line.strip()
+                if i == 2 and "Quantum Design" not in line:
                     raise StonerLoadError("Not a Quantum Design File !")
                 elif "[Data]" in line:
                     break
-                elif i<2:
+                elif i < 2:
                     continue
-                if line[0]==";":
+                if line[0] == ";":
                     continue
-                parts=line.split(',')
-                if parts[0]=="INFO":
-                    key=parts[0]+parts[2]
-                    key=key.title()
-                    value=parts[1]
+                parts = line.split(',')
+                if parts[0] == "INFO":
+                    key = parts[0] + parts[2]
+                    key = key.title()
+                    value = parts[1]
                 elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
-                    key=parts[0].title()
-                    value=' '.join(parts[1:])
+                    key = parts[0].title()
+                    value = ' '.join(parts[1:])
                 else:
-                    key=parts[0]+"."+parts[1]
-                    key=key.title()
-                    value=' '.join(parts[2:])
-                self.metadata[key]=self.metadata.string_to_type(value)
-            self.column_headers=f.next().strip().split(',')
-        self.data=_np_.genfromtxt(self.filename,dtype='float',delimiter=',', invalid_raise=False,skip_header=i+2)
-        self.setas(x="Magnetic Field",y="Moment")
+                    key = parts[0] + "." + parts[1]
+                    key = key.title()
+                    value = ' '.join(parts[2:])
+                self.metadata[key] = self.metadata.string_to_type(value)
+            self.column_headers = f.next().strip().split(',')
+        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
+        self.setas(x="Magnetic Field", y="Moment")
         return self
+
 
 class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
@@ -277,7 +282,7 @@ class OpenGDAFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.dat"] # Recognised filename patterns
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """OpenGDA file loader routine.
 
         Args:
@@ -291,22 +296,23 @@ class OpenGDAFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename,"r") as f:
-            for i,line in enumerate(f):
-                line=line.strip()
-                if i==0 and line!="&SRS":
-                    raise StonerLoadError("Not a GDA File from Rasor ?"+str(line))
+        with open(self.filename, "r") as f:
+            for i, line in enumerate(f):
+                line = line.strip()
+                if i == 0 and line != "&SRS":
+                    raise StonerLoadError("Not a GDA File from Rasor ?" + str(line))
                 if "&END" in line:
                     break
-                parts=line.split('=')
-                if len(parts)!=2:
+                parts = line.split('=')
+                if len(parts) != 2:
                     continue
-                key=parts[0]
-                value=parts[1].strip()
-                self.metadata[key]=self.metadata.string_to_type(value)
-            self.column_headers=f.mext().strip().split("\t")
-        self.data=_np_.genfromtxt(self.filename,dtype='float', invalid_raise=False,skip_header=i+1)
+                key = parts[0]
+                value = parts[1].strip()
+                self.metadata[key] = self.metadata.string_to_type(value)
+            self.column_headers = f.mext().strip().split("\t")
+        self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 1)
         return self
+
 
 class RasorFile(OpenGDAFile):
     """Just an alias for OpenGDAFile"""
@@ -325,7 +331,7 @@ class SPCFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.spc"] # Recognised filename patterns
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
 
         Args:
@@ -345,97 +351,114 @@ class SPCFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        filesize=os.stat(self.filename).st_size            
+        filesize = os.stat(self.filename).st_size
         with open(filename, 'rb') as f:
-            spchdr=struct.unpack(b'BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
-            keys=("ftflgs","fversn","fexper","fexp","fnpts","ffirst","flast","fnsub","fxtype","fytype","fztype","fpost","fres","fsource","fpeakpt","fspare1","fspare2","fspare3","fspare4","fspare5","fspare6","fspare7","fspare8","fcm","nt","fcatx","flogoff","fmods","fprocs","flevel","fsampin","ffactor","fmethod","fzinc","fwplanes","fwinc","fwtype","fwtype","fresv")
-            header=dict(zip(keys, spchdr))
-    
-            if header['ftflgs']>63 or not (75<=header['fversn']<=77): # This is the multiple XY curves in file flag.
+            spchdr = struct.unpack(b'BBBciddiBBBBi9s9sH8f30s130siiBBHf48sfifB187s', f.read(512))
+            keys = ("ftflgs", "fversn", "fexper", "fexp", "fnpts", "ffirst", "flast", "fnsub", "fxtype", "fytype",
+                    "fztype", "fpost", "fres", "fsource", "fpeakpt", "fspare1", "fspare2", "fspare3", "fspare4",
+                    "fspare5", "fspare6", "fspare7", "fspare8", "fcm", "nt", "fcatx", "flogoff", "fmods", "fprocs",
+                    "flevel", "fsampin", "ffactor", "fmethod", "fzinc", "fwplanes", "fwinc", "fwtype", "fwtype",
+                    "fresv")
+            header = dict(zip(keys, spchdr))
+
+            if header['ftflgs'] > 63 or not (75 <= header['fversn'] <=
+                                             77):  # This is the multiple XY curves in file flag.
                 raise StonerLoadError("Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**header))
-            else: # A single XY curve in the file.
-                n=header['fnsub']
-                pts=header['fnpts']
-                if header['ftflgs'] & 128: # We need to read some X Data
-                    if 4*pts>filesize-f.tell():
+            else:  # A single XY curve in the file.
+                n = header['fnsub']
+                pts = header['fnpts']
+                if header['ftflgs'] & 128:  # We need to read some X Data
+                    if 4 * pts > filesize - f.tell():
                         raise StonerLoadError("Trying to read too much data!")
-                    xvals=f.read(4*pts) # I think storing X vals directly implies that each one is 4 bytes....
-                    xdata=_np_.array(struct.unpack(str2bytes(str(pts)+"f"), xvals))
-                else: # Generate the X Data ourselves
-                    first=header['ffirst']
-                    last=header['flast']
-                    if pts>1E6: # Something not right here !
+                    xvals = f.read(4 * pts)  # I think storing X vals directly implies that each one is 4 bytes....
+                    xdata = _np_.array(struct.unpack(str2bytes(str(pts) + "f"), xvals))
+                else:  # Generate the X Data ourselves
+                    first = header['ffirst']
+                    last = header['flast']
+                    if pts > 1E6:  # Something not right here !
                         raise StonerLoadError("More than 1 million points requested. Bugging out now!")
-                    xdata=_np_.linspace(first, last, pts)
-                data=_np_.zeros((pts,  (n+1))) # initialise the data soace
-                data[:, 0]=xdata # Put in the X-Data
-                xvars=["Arbitrary","Wavenumber (cm-1)","Micrometers (um)","Nanometers (nm)","Seconds","Minutes","Hertz (Hz)","Kilohertz (KHz)","Megahertz (MHz)","Mass (M/z)","Parts per million (PPM)","Days","Years","Raman Shift (cm-1)","Raman Shift (cm-1)","eV","XYZ text labels in fcatxt (old 0x4D version only)","Diode Number","Channel","Degrees","Temperature (F)","Temperature (C)","Temperature (K)","Data Points","Milliseconds (mSec)","Microseconds (uSec)","Nanoseconds (nSec)","Gigahertz (GHz)","Centimeters (cm)","Meters (m)","Millimeters (mm)","Hours","Hours"]
-                yvars=["Arbitrary Intensity","Interferogram","Absorbance","Kubelka-Monk","Counts","Volts","Degrees","Milliamps","Millimeters","Millivolts","Log(1/R)","Percent","Percent","Intensity","Relative Intensity","Energy","Decibel","Temperature (F)","Temperature (C)","Temperature (K)","Index of Refraction [N]","Extinction Coeff. [K]","Real","Imaginary","Complex","Complex","Transmission (ALL HIGHER MUST HAVE VALLEYS!)","Reflectance","Arbitrary or Single Beam with Valley Peaks","Emission","Emission"]
-                column_headers=[xvars[header['fxtype']]] # And label the X column correctly
-    
+                    xdata = _np_.linspace(first, last, pts)
+                data = _np_.zeros((pts, (n + 1)))  # initialise the data soace
+                data[:, 0] = xdata  # Put in the X-Data
+                xvars = ["Arbitrary", "Wavenumber (cm-1)", "Micrometers (um)", "Nanometers (nm)", "Seconds", "Minutes",
+                         "Hertz (Hz)", "Kilohertz (KHz)", "Megahertz (MHz)", "Mass (M/z)", "Parts per million (PPM)",
+                         "Days", "Years", "Raman Shift (cm-1)", "Raman Shift (cm-1)", "eV",
+                         "XYZ text labels in fcatxt (old 0x4D version only)", "Diode Number", "Channel", "Degrees",
+                         "Temperature (F)", "Temperature (C)", "Temperature (K)", "Data Points", "Milliseconds (mSec)",
+                         "Microseconds (uSec)", "Nanoseconds (nSec)", "Gigahertz (GHz)", "Centimeters (cm)",
+                         "Meters (m)", "Millimeters (mm)", "Hours", "Hours"]
+                yvars = ["Arbitrary Intensity", "Interferogram", "Absorbance", "Kubelka-Monk", "Counts", "Volts",
+                         "Degrees", "Milliamps", "Millimeters", "Millivolts", "Log(1/R)", "Percent", "Percent",
+                         "Intensity", "Relative Intensity", "Energy", "Decibel", "Temperature (F)", "Temperature (C)",
+                         "Temperature (K)", "Index of Refraction [N]", "Extinction Coeff. [K]", "Real", "Imaginary",
+                         "Complex", "Complex", "Transmission (ALL HIGHER MUST HAVE VALLEYS!)", "Reflectance",
+                         "Arbitrary or Single Beam with Valley Peaks", "Emission", "Emission"]
+                column_headers = [xvars[header['fxtype']]]  # And label the X column correctly
+
                 #Now we're going to read the Y-data
                 # Start by preping some vars for use
-    
-                subhdr_keys=("subflgs","subexp","subindx", "subtime", "subnext", "subnois", "subnpts", "subscan", "subwlevel", "subresv")
-                if header['ftflgs'] &1:
-                    y_width=2
-                    y_fmt='h'
-                    divisor=2**16
+
+                subhdr_keys = ("subflgs", "subexp", "subindx", "subtime", "subnext", "subnois", "subnpts", "subscan",
+                               "subwlevel", "subresv")
+                if header['ftflgs'] & 1:
+                    y_width = 2
+                    y_fmt = 'h'
+                    divisor = 2 ** 16
                 else:
-                    y_width=4
-                    y_fmt='i'
-                    divisor=2**32
-                if n*(y_width*pts+32)>filesize-f.tell():
+                    y_width = 4
+                    y_fmt = 'i'
+                    divisor = 2 ** 32
+                if n * (y_width * pts + 32) > filesize - f.tell():
                     raise StonerLoadError("No good, going to read too much data!")
-                for j in range(n): # We have n sub-scans
+                for j in range(n):  # We have n sub-scans
                     # Read the subheader and import into the main metadata dictionary as scan#:<subheader item>
-                    subhdr=struct.unpack(b'BBHfffIIf4s', f.read(32))
-                    subheader=dict(zip(["scan"+str(j)+":"+x for x in subhdr_keys], subhdr))
-    
+                    subhdr = struct.unpack(b'BBHfffIIf4s', f.read(32))
+                    subheader = dict(zip(["scan" + str(j) + ":" + x for x in subhdr_keys], subhdr))
+
                     # Now read the y-data
-                    exponent=subheader["scan"+str(j)+':subexp']
-                    if int(exponent) & -128: # Data is unscaled direct floats
-                        ydata=_np_.array(struct.unpack(str2bytes(str(pts)+"f"), f.read(pts*y_width)))
-                    else: # Data is scaled by exponent
-                        yvals=struct.unpack(str2bytes(str(pts)+y_fmt), f.read(pts*y_width))
-                        ydata=_np_.array(yvals, dtype='float64')*(2**exponent)/divisor
-    
-                    # Pop the y-data into the array and merge the matadata in too.
-                    data[:, j+1]=ydata
-                    header=dict(header, **subheader)
-                    column_headers.append("Scan"+str(j)+":"+yvars[header['fytype']])
-    
-                # Now we're going to read any log information
-                if header['flogoff']!=0: # Ok, we've got a log, so read the log header and merge into metadata
-                    logstc=struct.unpack(b'IIIII44s', f.read(64))
-                    logstc_keys=("logsizd", "logsizm", "logtxto", "logbins", "logdsks", "logrsvr")
-                    logheader=dict(zip(logstc_keys, logstc))
-                    header=dict(header, **logheader)
-    
+                    exponent = subheader["scan" + str(j) + ':subexp']
+                    if int(exponent) & -128:  # Data is unscaled direct floats
+                        ydata = _np_.array(struct.unpack(str2bytes(str(pts) + "f"), f.read(pts * y_width)))
+                    else:  # Data is scaled by exponent
+                        yvals = struct.unpack(str2bytes(str(pts) + y_fmt), f.read(pts * y_width))
+                        ydata = _np_.array(yvals, dtype='float64') * (2 ** exponent) / divisor
+
+    # Pop the y-data into the array and merge the matadata in too.
+                    data[:, j + 1] = ydata
+                    header = dict(header, **subheader)
+                    column_headers.append("Scan" + str(j) + ":" + yvars[header['fytype']])
+
+    # Now we're going to read any log information
+                if header['flogoff'] != 0:  # Ok, we've got a log, so read the log header and merge into metadata
+                    logstc = struct.unpack(b'IIIII44s', f.read(64))
+                    logstc_keys = ("logsizd", "logsizm", "logtxto", "logbins", "logdsks", "logrsvr")
+                    logheader = dict(zip(logstc_keys, logstc))
+                    header = dict(header, **logheader)
+
                     # Can't handle either binary log information or ion disk log information (wtf is this anyway !)
-                    if header['logbins']+header['logdsks']>filesize-f.tell():
+                    if header['logbins'] + header['logdsks'] > filesize - f.tell():
                         raise StonerLoadError("Too much logfile data to read")
-                    f.read(header['logbins']+header['logdsks'])
-    
+                    f.read(header['logbins'] + header['logdsks'])
+
                     # The renishaw seems to put a 16 character timestamp next - it's not in the spec but never mind that.
-                    header['Date-Time']=f.read(16)
+                    header['Date-Time'] = f.read(16)
                     # Now read the rest of the file as log text
-                    logtext=f.read()
+                    logtext = f.read()
                     # We expect things to be single lines terminated with a CR-LF of the format key=value
                     for line in split(b"[\r\n]+", logtext):
                         if b"=" in line:
-                            parts= line.split(b'=')
-                            key=parts[0].decode()
-                            value=parts[1].decode()
-                            header[key]=value
+                            parts = line.split(b'=')
+                            key = parts[0].decode()
+                            value = parts[1].decode()
+                            header[key] = value
             # Ok now build the Stoner.DataFile instance to return
-            self.data=data
+            self.data = data
             # The next bit generates the metadata. We don't just copy the metadata because we need to figure out the typehints first - hence the loop here to call DataFile.__setitem()
             for x in header:
-                self[x]=header[x]
-            self.column_headers=column_headers
-            if len(self.column_headers)==2:
-                self.setas="xy"
+                self[x] = header[x]
+            self.column_headers = column_headers
+            if len(self.column_headers) == 2:
+                self.setas = "xy"
             return self
 
 
@@ -450,7 +473,6 @@ class TDMSFile(DataFile):
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.tdms"] # Recognised filename patterns
-
 
 
     def _load(self, filename=None, *args, **kargs):
@@ -468,21 +490,22 @@ class TDMSFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        f=open(self.filename,"rb") # Read filename linewise
+        f = open(self.filename, "rb")  # Read filename linewise
         try:
             assert f.read(4) == b"TDSm"
         except AssertionError:
             f.close()
             raise StonerLoadError('Not a TDMS File')
         f.close()
-        (metadata, data)=tdms_read(self.filename)
+        (metadata, data) = tdms_read(self.filename)
         for key in metadata:
-            self.metadata[key]=metadata[key]
+            self.metadata[key] = metadata[key]
         self.column_headers = list()
         for column in data:
-            nd=data[column]
+            nd = data[column]
             self.add_column(nd, column)
         return self
+
 
 class RigakuFile(DataFile):
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
@@ -512,72 +535,78 @@ class RigakuFile(DataFile):
             self.get_filename('rb')
         else:
             self.filename = filename
-        sh=re.compile(r'^\*([^\s]+)\s+(.*)$') # Regexp to grab the keys
-        ka=re.compile(r'(.*)\-(\d+)$')
-        header=dict()
-        with open(self.filename,"rb") as f:
-            for i,line in enumerate(f):
-                line=bytes2str(line).strip()
-                if i==0 and line!="*RAS_DATA_START":
+        sh = re.compile(r'^\*([^\s]+)\s+(.*)$')  # Regexp to grab the keys
+        ka = re.compile(r'(.*)\-(\d+)$')
+        header = dict()
+        with open(self.filename, "rb") as f:
+            for i, line in enumerate(f):
+                line = bytes2str(line).strip()
+                if i == 0 and line != "*RAS_DATA_START":
                     raise StonerLoadError("Not a Rigaku file!")
-                if line=="*RAS_HEADER_START":
+                if line == "*RAS_HEADER_START":
                     break
-            for i2,line in enumerate(f):
-                line=bytes2str(line).strip()
-                m=sh.match(line)
+            for i2, line in enumerate(f):
+                line = bytes2str(line).strip()
+                m = sh.match(line)
                 if m:
-                    key=m.groups()[0].lower().replace('_','.')
+                    key = m.groups()[0].lower().replace('_', '.')
                     try:
-                        value=m.groups()[1].decode('utf-8','ignore')
+                        value = m.groups()[1].decode('utf-8', 'ignore')
                     except AttributeError:
-                        value=m.groups()[1]
-                    header[key]=value
+                        value = m.groups()[1]
+                    header[key] = value
                 if "*RAS_INT_START" in line:
                     break
-            keys=list(header.keys())
+            keys = list(header.keys())
             keys.sort()
             for key in keys:
-                m=ka.match(key)
-                value=header[key].strip()
+                m = ka.match(key)
+                value = header[key].strip()
                 try:
-                    newvalue=literal_eval(value.strip('"'))
+                    newvalue = literal_eval(value.strip('"'))
                 except Exception:
-                    newvalue=literal_eval(value)
+                    newvalue = literal_eval(value)
                 if m:
-                    key=m.groups()[0]
+                    key = m.groups()[0]
                     if key in self.metadata and not (isinstance(self[key], _np_.ndarray) or isinstance(self[key], list)):
                         if isinstance(self[key], str):
-                            self[key]=list([self[key]])
+                            self[key] = list([self[key]])
                         else:
-                            self[key]=_np_.array(self[key])
+                            self[key] = _np_.array(self[key])
                     if key not in self.metadata:
                         if isinstance(newvalue, str):
-                            self[key]=list([newvalue])
+                            self[key] = list([newvalue])
                         else:
-                            self[key]=_np_.array([newvalue])
+                            self[key] = _np_.array([newvalue])
                     else:
                         if isinstance(self[key][0], str):
                             self[key].append(newvalue)
                         else:
-                            self[key]=_np_.append(self[key], newvalue)
+                            self[key] = _np_.append(self[key], newvalue)
                 else:
-                    self.metadata[key]=newvalue
+                    self.metadata[key] = newvalue
 
-        self.data=_np_.genfromtxt(self.filename, dtype='float', delimiter=' ', invalid_raise=False,comments="*",skip_header=i+i2+1)
-        self.column_headers=['Column'+str(i) for i in range(self.data.shape[1])]
-        self.column_headers[0:2]=[self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
+        self.data = _np_.genfromtxt(self.filename,
+                                    dtype='float',
+                                    delimiter=' ',
+                                    invalid_raise=False,
+                                    comments="*",
+                                    skip_header=i + i2 + 1)
+        self.column_headers = ['Column' + str(i) for i in range(self.data.shape[1])]
+        self.column_headers[0:2] = [self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
         for key in self.metadata:
             if isinstance(self[key], list):
-                self[key]=_np_.array(self[key])
-        self.setas="xy"
+                self[key] = _np_.array(self[key])
+        self.setas = "xy"
         return self
 
-    def to_Q(self,l=1.540593):
+    def to_Q(self, l=1.540593):
         """Adds an additional function to covert an angualr scale to momentum transfer
 
         returns a copy of itself."""
 
-        self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+
 
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
@@ -615,22 +644,23 @@ class XRDFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        sh=re.compile(r'\[(.+)\]') # Regexp to grab section name
-        f=fileinput.FileInput(self.filename) # Read filename linewise
-        if f.readline().strip()!=";RAW4.00": # Check we have the corrrect fileformat
-                raise StonerLoadError("File Format Not Recognized !")
-        drive=0
-        for line in f: #for each line
-            m=sh.search(line)
-            if m: # This is a new section
-                section=m.group(1)
-                if section=="Drive": #If this is a Drive section we need to know which Drive Section it is
-                    section=section+str(drive)
-                    drive=drive+1
-                elif section=="Data": # Data section contains the business but has a redundant first line
+        sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
+        f = fileinput.FileInput(self.filename)  # Read filename linewise
+        if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
+            raise StonerLoadError("File Format Not Recognized !")
+        drive = 0
+        for line in f:  #for each line
+            m = sh.search(line)
+            if m:  # This is a new section
+                section = m.group(1)
+                if section == "Drive":  #If this is a Drive section we need to know which Drive Section it is
+                    section = section + str(drive)
+                    drive = drive + 1
+                elif section == "Data":  # Data section contains the business but has a redundant first line
                     f.readline()
-                for line in f: #Now start reading lines in this section...
-                    if line.strip()=="": # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
+                for line in f:  #Now start reading lines in this section...
+                    if line.strip(
+                    ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
                         break
                     elif section=="Data": # In the Data section read lines of data value,vale
                         parts=line.split(',')
@@ -648,15 +678,16 @@ class XRDFile(DataFile):
         f.close()# Cleanup
         self.data=_np_.reshape(self.data, (-1, 2))
         self.setas="xy"
-        self.fource_bounce=self["HardwareConfiguration:Monochromator"]==1
+        self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
         return self
 
-    def to_Q(self,l=1.540593):
+    def to_Q(self, l=1.540593):
         """Adds an additional function to covert an angualr scale to momentum transfer
 
         returns a copy of itself."""
 
-        self.add_column((4*_np_.pi/l)*_np_.sin(_np_.pi*self.column(0)/360),"Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+
 
 class BNLFile(DataFile):
     """
@@ -685,39 +716,38 @@ class BNLFile(DataFile):
         Do a normal initiation using the parent class 'self' followed by adding an extra attribute line_numbers,
         line_numbers is a list of important line numbers in the file.
         I've left it open for someone to add options for more args if they wish."""
-        super(BNLFile,self).__init__(*params)
-        self.line_numbers=[]
+        super(BNLFile, self).__init__(*params)
+        self.line_numbers = []
 
     def __find_lines(self):
         """returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]"""
-        fp=open(self.filename,'r')
-        self.line_numbers=[0,0,0,0,0]
-        counter=0
+        fp = open(self.filename, 'r')
+        self.line_numbers = [0, 0, 0, 0, 0]
+        counter = 0
         for line in fp:
-            counter+=1
-            if counter==1 and line[0]!='#':
+            counter += 1
+            if counter == 1 and line[0] != '#':
                 raise StonerLoadError("Not a BNL File ?")
-            if len(line)<2:continue  #if there's nothing written on the line go to the next
-            elif line[0:2]=='#L':self.line_numbers[0]=counter
-            elif line[0:2]=='#S':self.line_numbers[2]=counter
-            elif line[0:2]=='#D':self.line_numbers[3]=counter
-            elif line[0:2]=='#P':self.line_numbers[4]=counter
-            elif line[0] in ['0','1','2','3','4','5','6','7','8','9']:
-                self.line_numbers[1]=counter
+            if len(line) < 2: continue  #if there's nothing written on the line go to the next
+            elif line[0:2] == '#L': self.line_numbers[0] = counter
+            elif line[0:2] == '#S': self.line_numbers[2] = counter
+            elif line[0:2] == '#D': self.line_numbers[3] = counter
+            elif line[0:2] == '#P': self.line_numbers[4] = counter
+            elif line[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                self.line_numbers[1] = counter
                 break
 
     def __get_metadata(self):
         """Metadata found is scan number 'Snumber', scan type and parameters 'Stype',
         scan date/time 'Sdatetime' and z motor position 'Smotor'."""
-        scanLine=linecache.getline(self.filename,self.line_numbers[2])
-        dateLine=linecache.getline(self.filename,self.line_numbers[3])
-        motorLine=linecache.getline(self.filename,self.line_numbers[4])
-        self.__setitem__('Snumber',scanLine.split()[1])
-        tmp="".join(scanLine.split()[2:])
-        self.__setitem__('Stype',"".join(tmp.split(','))) #get rid of commas
-        self.__setitem__('Sdatetime',dateLine[3:-1])  #don't want \n at end of line so use -1
-        self.__setitem__('Smotor',motorLine.split()[3])
-
+        scanLine = linecache.getline(self.filename, self.line_numbers[2])
+        dateLine = linecache.getline(self.filename, self.line_numbers[3])
+        motorLine = linecache.getline(self.filename, self.line_numbers[4])
+        self.__setitem__('Snumber', scanLine.split()[1])
+        tmp = "".join(scanLine.split()[2:])
+        self.__setitem__('Stype', "".join(tmp.split(',')))  #get rid of commas
+        self.__setitem__('Sdatetime', dateLine[3:-1])  #don't want \n at end of line so use -1
+        self.__setitem__('Smotor', motorLine.split()[3])
 
     def __parse_BNL_data(self):
         """
@@ -726,18 +756,18 @@ class BNLFile(DataFile):
         """
         self.__find_lines()
         """creates a list, line_numbers, formatted [header_line,data_line,scan_line,date_line,motor_line]"""
-        header_string=linecache.getline(self.filename, self.line_numbers[0])
-        header_string=re.sub(r'["\n]', '', header_string) #get rid of new line character
-        header_string=re.sub(r'#L', '', header_string) #get rid of line indicator character
-        self.column_headers=map(lambda x: x.strip(),  header_string.split())
+        header_string = linecache.getline(self.filename, self.line_numbers[0])
+        header_string = re.sub(r'["\n]', '', header_string)  #get rid of new line character
+        header_string = re.sub(r'#L', '', header_string)  #get rid of line indicator character
+        self.column_headers = map(lambda x: x.strip(), header_string.split())
         self.__get_metadata()
-        try: self.data=_np_.genfromtxt(self.filename,skip_header=self.line_numbers[1]-1)
+        try:
+            self.data = _np_.genfromtxt(self.filename, skip_header=self.line_numbers[1] - 1)
         except IOError:
-            self.data=_np_.array([0])
+            self.data = _np_.array([0])
             print('Did not import any data for {}'.format(self.filename))
 
-
-    def _load(self,filename, *args, **kargs):        #fileType omitted, implicit in class call
+    def _load(self, filename, *args, **kargs):  #fileType omitted, implicit in class call
         """BNLFile.load(filename)
 
         Args:
@@ -755,8 +785,8 @@ class BNLFile(DataFile):
             to load data but unfortunately Brookhaven data isn't very plain so there's
             a new method below.
         """
-        self.filename=filename
-        self.__parse_BNL_data() #call an internal function rather than put it in load function
+        self.filename = filename
+        self.__parse_BNL_data()  #call an internal function rather than put it in load function
         return self
 
 
@@ -772,7 +802,8 @@ class MokeFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.dat","*.txt"]
 
-    def _load(self,filename=None,*args, **kargs):
+
+    def _load(self, filename=None, *args, **kargs):
         """Leeds  MOKE file loader routine.
 
         Args:
@@ -786,20 +817,20 @@ class MokeFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename,mode="rb") as f:
-            line=bytes2str(f.readline()).strip()
-            if line!="#Leeds CM Physics MOKE":
+        with open(self.filename, mode="rb") as f:
+            line = bytes2str(f.readline()).strip()
+            if line != "#Leeds CM Physics MOKE":
                 raise StonerLoadError("Not a datafile from the Leeds MOKE")
-            while line.startswith("#") or line=="":
-                parts=line.split(":")
-                if len(parts)>1:
-                    key=parts[0][1:]
-                    data=":".join(parts[1:]).strip()
-                    self[key]=data
-                line=bytes2str(f.readline()).strip()
-            self.column_headers=[x.strip() for x in line.split(",")]
-            self.data=_np_.genfromtxt(f,delimiter=",")
-        self.setas="xy.de"
+            while line.startswith("#") or line == "":
+                parts = line.split(":")
+                if len(parts) > 1:
+                    key = parts[0][1:]
+                    data = ":".join(parts[1:]).strip()
+                    self[key] = data
+                line = bytes2str(f.readline()).strip()
+            self.column_headers = [x.strip() for x in line.split(",")]
+            self.data = _np_.genfromtxt(f, delimiter=",")
+        self.setas = "xy.de"
         return self
 
 
@@ -815,7 +846,7 @@ class FmokeFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.dat"] # Recognised filename patterns
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Sheffield Focussed MOKE file loader routine.
 
         Args:
@@ -829,20 +860,21 @@ class FmokeFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        f=fileinput.FileInput(self.filename,mode="rb") # Read filename linewise
+        f = fileinput.FileInput(self.filename, mode="rb")  # Read filename linewise
         try:
-            value=[float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+            value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
         except:
             raise StonerLoadError("Not an FMOKE file?")
-        label=[ x.strip() for x in bytes2str(f.readline()).split('\t')]
-        if label[0]!="Header:":
+        label = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+        if label[0] != "Header:":
             raise StonerLoadError("Not a Focussed MOKE file !")
-        del(label[0])
-        for k,v in zip(label, value):
-               self.metadata[k]=v # Create metatdata from first 2 lines
-        self.column_headers=[ x.strip() for x in bytes2str(f.readline()).split('\t')]
-        self.data=_np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
+        del (label[0])
+        for k, v in zip(label, value):
+            self.metadata[k] = v  # Create metatdata from first 2 lines
+        self.column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+        self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         return self
+
 
 class GenXFile(DataFile):
     """Extends DataFile for GenX Exported data."""
@@ -857,39 +889,40 @@ class GenXFile(DataFile):
     patterns=["*.dat"] # Recognised filename patterns
 
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
-        pattern=re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
-        pattern2=re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
-        with open(self.filename,"r") as datafile:
-            line=datafile.readline()
-            match=pattern.match(line)
-            match2=pattern2.match(line)
+        pattern = re.compile(r'# Dataset "([^\"]*)" exported from GenX on (.*)$')
+        pattern2 = re.compile(r"#\sFile\sexported\sfrom\sGenX\'s\sReflectivity\splugin")
+        with open(self.filename, "r") as datafile:
+            line = datafile.readline()
+            match = pattern.match(line)
+            match2 = pattern2.match(line)
             if match is not None:
-                dataset=match.groups()[0]
-                date=match.groups()[1]
-                line=datafile.readline()
-                line=datafile.readline()
-                line=line[1:]
-                self["date"]=date
+                dataset = match.groups()[0]
+                date = match.groups()[1]
+                line = datafile.readline()
+                line = datafile.readline()
+                line = line[1:]
+                self["date"] = date
             elif match2 is not None:
-                line=datafile.readline()
-                self["date"]=line.split(':')[1].strip()
+                line = datafile.readline()
+                self["date"] = line.split(':')[1].strip()
                 datafile.readline()
-                line=datafile.readline()
-                line=line[1:]
-                dataset="asymmetry"
+                line = datafile.readline()
+                line = line[1:]
+                dataset = "asymmetry"
             else:
                 raise StonerLoadError("Not a GenXFile")
-            self.column_headers=[f.strip() for f in line.strip().split('\t')]
-            self.data=_np_.genfromtxt(datafile)
-            self["dataset"]=dataset
-            self.setas="xye"
+            self.column_headers = [f.strip() for f in line.strip().split('\t')]
+            self.data = _np_.genfromtxt(datafile)
+            self["dataset"] = dataset
+            self.setas = "xye"
         return self
+
 
 class SNSFile(DataFile):
     """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from
@@ -909,53 +942,53 @@ class SNSFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.dat"] # Recognised filename patterns
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
 
-        with open(self.filename,"r") as data: # Slightly ugly text handling
-            line=data.readline()
-            if line.strip()!="# Datafile created by QuickNXS 0.9.39": # bug out oif we don't like the header
+        with open(self.filename, "r") as data:  # Slightly ugly text handling
+            line = data.readline()
+            if line.strip() != "# Datafile created by QuickNXS 0.9.39":  # bug out oif we don't like the header
                 raise StonerLoadError("Not a file from the SNS BL4A line")
             for line in data:
-                if line.startswith("# "): # We're in the header
-                    line=line[2:].strip() # strip the header and whitespace
+                if line.startswith("# "):  # We're in the header
+                    line = line[2:].strip()  # strip the header and whitespace
 
-                if line.startswith("["): # Look for a section header
-                    section=line.strip().strip("[]")
-                    if section=="Data": # The Data section has one line of colum headers and then data
-                        header=next(data)[2:].split("\t")
-                        self.column_headers=[h.strip().decode('ascii','ignore') for h in header]
-                        self.data=_np_.genfromtxt(data) # we end by reading the raw data
-                    elif section=="Global Options": # This section can go into metadata
+                if line.startswith("["):  # Look for a section header
+                    section = line.strip().strip("[]")
+                    if section == "Data":  # The Data section has one line of colum headers and then data
+                        header = next(data)[2:].split("\t")
+                        self.column_headers = [h.strip().decode('ascii', 'ignore') for h in header]
+                        self.data = _np_.genfromtxt(data)  # we end by reading the raw data
+                    elif section == "Global Options":  # This section can go into metadata
                         for line in data:
-                            line=line[2:].strip()
-                            if line.strip()=="":
+                            line = line[2:].strip()
+                            if line.strip() == "":
                                 break
                             else:
-                                self[line[2:10].strip()]=line[11:].strip()
-                    elif section=="Direct Beam Runs" or section=="Data Runs": # These are constructed into lists ofg dictionaries for each file
-                        sec=list()
-                        header=next(data)
-                        header=header[2:].strip()
+                                self[line[2:10].strip()] = line[11:].strip()
+                    elif section == "Direct Beam Runs" or section == "Data Runs":  # These are constructed into lists ofg dictionaries for each file
+                        sec = list()
+                        header = next(data)
+                        header = header[2:].strip()
                         keys = [s.strip() for s in header.split('  ') if s.strip()]
                         for line in data:
-                            line=line[2:].strip()
-                            if line=="":
+                            line = line[2:].strip()
+                            if line == "":
                                 break
                             else:
                                 values = [s.strip() for s in line.split('  ') if s.strip()]
-                                sec.append(dict(zip(keys,values)))
-                        self[section]=sec
-                else: # We must still be in the opening un-labelled section of meta data
+                                sec.append(dict(zip(keys, values)))
+                        self[section] = sec
+                else:  # We must still be in the opening un-labelled section of meta data
                     if ":" in line:
-                        i=line.index(":")
-                        key=line[:i].strip()
-                        value=line[i+1:].strip()
-                        self[key.strip()]=value.strip()
+                        i = line.index(":")
+                        key = line[:i].strip()
+                        value = line[i + 1:].strip()
+                        self[key.strip()] = value.strip()
         return self
 
 
@@ -974,81 +1007,89 @@ class OVFFile(DataFile):
     patterns=["*.ovf"] # Recognised filename patterns
 
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
 
-        ptr=0
-        with open(self.filename,"r") as data: # Slightly ugly text handling
-            line=next(data)
-            ptr+=len(line)
-            line=line.strip()
-            if line=="# OOMMF: rectangular mesh v1.0":
-                self["version"]=1
-            elif line!="# OOMMF: rectangular mesh v2.0":
-                self["version"]=2
-            else: # bug out oif we don't like the header
+        ptr = 0
+        with open(self.filename, "r") as data:  # Slightly ugly text handling
+            line = next(data)
+            ptr += len(line)
+            line = line.strip()
+            if line == "# OOMMF: rectangular mesh v1.0":
+                self["version"] = 1
+            elif line != "# OOMMF: rectangular mesh v2.0":
+                self["version"] = 2
+            else:  # bug out oif we don't like the header
                 raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
-            pattern=re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
-            for i,line in enumerate(data):
-                ptr+=len(line)
+            pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
+            for i, line in enumerate(data):
+                ptr += len(line)
                 line.strip()
-                if line.startswith("# Begin: Data"): # marks the start of the trext
+                if line.startswith("# Begin: Data"):  # marks the start of the trext
                     break
                 elif line.startswith("# Begin:") or line.startswith("# End:"):
                     continue
                 else:
-                    res=pattern.match(line)
+                    res = pattern.match(line)
                     if res is not None:
-                        key=res.group(1)
-                        val=res.group(2)
-                        self[key]=self.metadata.string_to_type(val)
+                        key = res.group(1)
+                        val = res.group(2)
+                        self[key] = self.metadata.string_to_type(val)
                     else:
                         raise StonerLoadError("Failed to understand metadata")
-            fmt=re.match(r".*Data\s+(.*)",line).group(1)
-            assert self["meshtype"]=="rectangular","Sorry only OVF files with rectnagular meshes are currently supported."
-            if self["version"]==1:
-                if self["meshtype"]=="rectangular":
-                    self["valuedim"]=3
+            fmt = re.match(r".*Data\s+(.*)", line).group(1)
+            assert self["meshtype"] == "rectangular", "Sorry only OVF files with rectnagular meshes are currently supported."
+            if self["version"] == 1:
+                if self["meshtype"] == "rectangular":
+                    self["valuedim"] = 3
                 else:
-                    self["valuedim"]=6
-        if fmt=="Text":
-            uvwdata=_np_.genfromtxt(self.filename,skip_header=i+2)
-        elif fmt=="Binary 4":
-            if self["version"]==1:
-                dt=_np_.dtype('>f4')
+                    self["valuedim"] = 6
+        if fmt == "Text":
+            uvwdata = _np_.genfromtxt(self.filename, skip_header=i + 2)
+        elif fmt == "Binary 4":
+            if self["version"] == 1:
+                dt = _np_.dtype('>f4')
             else:
-                dt=_np_.dtype('<f4')
-            with open(filename,"rb") as bindata:
+                dt = _np_.dtype('<f4')
+            with open(filename, "rb") as bindata:
                 bindata.seek(ptr)
-                uvwdata=_np_.fromfile(bindata,dtype=dt,count=1+self["xnodes"]*self["ynodes"]*self["znodes"]*self["valuedim"])
-                assert uvwdata[0]==1234567.0,"Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
-            uvwdata=uvwdata[1:]
-            uvwdata=_np_.reshape(uvwdata,(-1,self["valuedim"]))
-        elif fmt=="Binary 8":
-            if self["version"]==1:
-                dt=_np_.dtype('>f8')
+                uvwdata = _np_.fromfile(bindata,
+                                        dtype=dt,
+                                        count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"])
+                assert uvwdata[0] == 1234567.0, "Binary 4 format check value incorrect ! Actual Value was {}".format(
+                    uvwdata[0])
+            uvwdata = uvwdata[1:]
+            uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
+        elif fmt == "Binary 8":
+            if self["version"] == 1:
+                dt = _np_.dtype('>f8')
             else:
-                dt=_np_.dtype('<f8')
-            with open(filename,"rb") as bindata:
+                dt = _np_.dtype('<f8')
+            with open(filename, "rb") as bindata:
                 bindata.seek(ptr)
-                uvwdata=_np_.fromfile(bindata,dtype=dt,count=1+self["xnodes"]*self["ynodes"]*self["znodes"]*self["valuedim"])
-                assert uvwdata[0]==123456789012345.0,"Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
-            uvwdata=_np_.reshape(uvwdata,(-1,self["valuedim"]))
+                uvwdata = _np_.fromfile(bindata,
+                                        dtype=dt,
+                                        count=1 + self["xnodes"] * self["ynodes"] * self["znodes"] * self["valuedim"])
+                assert uvwdata[
+                    0
+                ] == 123456789012345.0, "Binary 4 format check value incorrect ! Actual Value was {}".format(uvwdata[0])
+            uvwdata = _np_.reshape(uvwdata, (-1, self["valuedim"]))
         else:
             raise StonerLoadError("Unknow OVF Format {}".format(fmt))
 
-        x=(_np_.linspace(self["xmin"],self["xmax"],self["xnode"]+1)[:-1]+self["xbase"])*1E9
-        y=(_np_.linspace(self["ymin"],self["ymax"],self["ynode"]+1)[:-1]+self["ybase"])*1E9
-        z=(_np_.linspace(self["zmin"],self["zmax"],self["znode"]+1)[:-1]+self["zbase"])*1E9
-        (y,z,x)=(_np_.ravel(i) for i in _np_.meshgrid(y,z,x))
-        self.data=_np_.column_stack((x,y,z,uvwdata))
-        self.column_headers=["X (nm)","Y (nm)","Z (nm)","U","V","W"]
-        self.setas="xyzuvw"
+        x = (_np_.linspace(self["xmin"], self["xmax"], self["xnode"] + 1)[:-1] + self["xbase"]) * 1E9
+        y = (_np_.linspace(self["ymin"], self["ymax"], self["ynode"] + 1)[:-1] + self["ybase"]) * 1E9
+        z = (_np_.linspace(self["zmin"], self["zmax"], self["znode"] + 1)[:-1] + self["zbase"]) * 1E9
+        (y, z, x) = (_np_.ravel(i) for i in _np_.meshgrid(y, z, x))
+        self.data = _np_.column_stack((x, y, z, uvwdata))
+        self.column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
+        self.setas = "xyzuvw"
         return self
+
 
 class MDAASCIIFile(DataFile):
     """Reads files generated from the APS."""
@@ -1063,80 +1104,81 @@ class MDAASCIIFile(DataFile):
     patterns=["*.txt"] # Recognised filename patterns
 
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
 
-        with open(self.filename,"r") as data: # Slightly ugly text handling
-            for i1,line in enumerate(data):            
-                if i1==0 and line.strip()!="## mda2ascii 1.2 generated output": # bug out oif we don't like the header
+        with open(self.filename, "r") as data:  # Slightly ugly text handling
+            for i1, line in enumerate(data):
+                if i1 == 0 and line.strip() != "## mda2ascii 1.2 generated output":  # bug out oif we don't like the header
                     raise StonerLoadError("Not a file mda2ascii")
                 line.strip()
                 if "=" in line:
-                    parts=line[2:].split("=")
-                    self[parts[0].strip()]=self.metadata.string_to_type("".join(parts[1:]).strip())
+                    parts = line[2:].split("=")
+                    self[parts[0].strip()] = self.metadata.string_to_type("".join(parts[1:]).strip())
                 elif line.startswith("#  Extra PV:"):
                     # Onto the next metadata bit
                     break
-            pvpat=re.compile(r'^#\s+Extra\s+PV\s\d+\:(.*)')
-            for i2,line in enumerate(data):
-                if line.strip()=="":
+            pvpat = re.compile(r'^#\s+Extra\s+PV\s\d+\:(.*)')
+            for i2, line in enumerate(data):
+                if line.strip() == "":
                     continue
                 elif line.startswith("# Extra PV"):
-                    res=pvpat.match(line)
-                    bits=[b.strip().strip(r'"') for b in res.group(1).split(',')]
-                    if bits[1]=="":
-                        key=bits[0]
+                    res = pvpat.match(line)
+                    bits = [b.strip().strip(r'"') for b in res.group(1).split(',')]
+                    if bits[1] == "":
+                        key = bits[0]
                     else:
-                        key=bits[1]
-                    if len(bits)>3:
-                        key=key+" ({})".format(bits[3])
-                    self[key]=self.metadata.string_to_type(bits[2])
+                        key = bits[1]
+                    if len(bits) > 3:
+                        key = key + " ({})".format(bits[3])
+                    self[key] = self.metadata.string_to_type(bits[2])
                 else:
-                    break # End of Extra PV stuff
+                    break  # End of Extra PV stuff
             else:
                 raise StonerLoadError("Overran Extra PV Block")
-            for i3,line in enumerate(data):
+            for i3, line in enumerate(data):
                 line.strip()
-                if line.strip()=="":
+                if line.strip() == "":
                     continue
                 elif line.startswith("# Column Descriptions:"):
-                    break # Start of column headers now
+                    break  # Start of column headers now
                 elif "=" in line:
-                    parts=line[2:].split("=")
-                    self[parts[0].strip()]=self.metadata.string_to_type("".join(parts[1:]).strip())
+                    parts = line[2:].split("=")
+                    self[parts[0].strip()] = self.metadata.string_to_type("".join(parts[1:]).strip())
             else:
                 raise StonerLoadError("Overran end of scan header before column descriptions")
-            colpat=re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
-            self.column_headers=[]
-            for i4,line in enumerate(data):
-                res=colpat.match(line)
+            colpat = re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
+            self.column_headers = []
+            for i4, line in enumerate(data):
+                res = colpat.match(line)
                 line.strip()
-                if line.strip()=="":
+                if line.strip() == "":
                     continue
                 elif line.startswith("# 1-D Scan Values"):
-                    break # Start of data
+                    break  # Start of data
                 elif res is not None:
                     if "," in res.group(2):
-                        bits=[b.strip() for b in res.group(2).split(",")]
-                        if bits[-2]=="":
-                            colname=bits[0]
+                        bits = [b.strip() for b in res.group(2).split(",")]
+                        if bits[-2] == "":
+                            colname = bits[0]
                         else:
-                            colname=bits[-2]
-                        if bits[-1]!="":
-                            colname+=" ({})".format(bits[-1])
+                            colname = bits[-2]
+                        if bits[-1] != "":
+                            colname += " ({})".format(bits[-1])
                         if colname in self.column_headers:
-                            colname="{}:{}".format(bits[0],colname)
+                            colname = "{}:{}".format(bits[0], colname)
                     else:
-                        colname=res.group(1).strip()
+                        colname = res.group(1).strip()
                     self.column_headers.append(colname)
             else:
                 raise StonerLoadError("Overand the end of file without reading data")
-        self.data=_np_.genfromtxt(self.filename,skip_header=i1+i2+i3+i4) # so that's ok then !
+        self.data = _np_.genfromtxt(self.filename, skip_header=i1 + i2 + i3 + i4)  # so that's ok then !
         return self
+
 
 class LSTemperatureFile(DataFile):
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
@@ -1156,39 +1198,40 @@ class LSTemperatureFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.340"]
 
-    def _load(self,filename=None,*args, **kargs):
+    def _load(self, filename=None, *args, **kargs):
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
 
-        with open(self.filename,"rb") as data:
-            keys=[]
-            vals=[]
+        with open(self.filename, "rb") as data:
+            keys = []
+            vals = []
             for line in data:
-                line=bytes2str(line)
-                if line.strip()=="":
+                line = bytes2str(line)
+                if line.strip() == "":
                     break
-                parts=[p.strip() for p in line.split(":")]
-                if len(parts)!=2:
+                parts = [p.strip() for p in line.split(":")]
+                if len(parts) != 2:
                     raise StonerLoadError("Header doesn't contain two parts at {}".format(line.strip()))
                 else:
                     keys.append(parts[0])
                     vals.append(parts[1])
             else:
                 raise StonerLoadError("Overan the end of the file")
-            if keys!=["Sensor Model","Serial Number","Data Format","SetPoint Limit","Temperature coefficient","Number of Breakpoints"]:
+            if keys != ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit", "Temperature coefficient",
+                        "Number of Breakpoints"]:
                 raise StonerLoadError("Header did not contain recognised keys.")
-            for (k,v) in zip(keys,vals):
-                v=v.split()[0]
-                self.metadata[k]=self.metadata.string_to_type(v)
-            headers=bytes2str(next(data)).strip().split()
-            self.column_headers=headers[1:]
-            dat=_np_.genfromtxt(data)
-            self.data=dat[:,1:]
+            for (k, v) in zip(keys, vals):
+                v = v.split()[0]
+                self.metadata[k] = self.metadata.string_to_type(v)
+            headers = bytes2str(next(data)).strip().split()
+            self.column_headers = headers[1:]
+            dat = _np_.genfromtxt(data)
+            self.data = dat[:, 1:]
         return self
 
-    def save(self,filename=None):
+    def save(self, filename=None):
         """Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)
 
         Args:
@@ -1200,38 +1243,41 @@ class LSTemperatureFile(DataFile):
         Returns:
             A copy of itself."""
         if filename is None:
-            filename=self.filename
-        if filename is None or (isinstance(filename, bool) and not filename): # now go and ask for one
-            filename=self.__file_dialog('w')
-        with open(filename,"w") as f:
-            for k in ["Sensor Model","Serial Number","Data Format","SetPoint Limit","Temperature coefficient","Number of Breakpoints"]:
-                if k in ["Sensor Model","Serial Number","Data Format","SetPoint Limit"]:
-                    kstr="{:16s}".format(k+":")
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog('w')
+        with open(filename, "w") as f:
+            for k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit", "Temperature coefficient",
+                      "Number of Breakpoints"]:
+                if k in ["Sensor Model", "Serial Number", "Data Format", "SetPoint Limit"]:
+                    kstr = "{:16s}".format(k + ":")
                 else:
-                    kstr="{}:   ".format(k)
-                v=self[k]
-                if k=="Data Format":
-                    units=["()","()","()","()","(Log Ohms/Kelvin)","(Log Ohms/Log Kelvin)"]
-                    vstr="{}      {}".format(v,units[int(v)])
-                elif k=="SetPointLimit":
-                    vstr="{}      (Kelvin)".format(v)
-                elif k=="Temperature coefficient":
-                    vstr="{} {}".format(v,["(positive)","(negative)"][v])
-                elif k=="Number of Breakpoints":
-                    vstr=str(len(self))
+                    kstr = "{}:   ".format(k)
+                v = self[k]
+                if k == "Data Format":
+                    units = ["()", "()", "()", "()", "(Log Ohms/Kelvin)", "(Log Ohms/Log Kelvin)"]
+                    vstr = "{}      {}".format(v, units[int(v)])
+                elif k == "SetPointLimit":
+                    vstr = "{}      (Kelvin)".format(v)
+                elif k == "Temperature coefficient":
+                    vstr = "{} {}".format(v, ["(positive)", "(negative)"][v])
+                elif k == "Number of Breakpoints":
+                    vstr = str(len(self))
                 else:
-                    vstr=str(v)
-                f.write("{}{}\n".format(kstr,vstr))
+                    vstr = str(v)
+                f.write("{}{}\n".format(kstr, vstr))
             f.write("\n")
             f.write("No.   ")
             for h in self.column_headers:
                 f.write("{:11s}".format(h))
             f.write("\n\n")
-            for i in range(len(self.data)): # This is a slow way to write the data, but there should only ever be 200 lines
-                line="\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
+            for i in range(
+                len(self.data)):  # This is a slow way to write the data, but there should only ever be 200 lines
+                line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
                 f.write("{}\n".format(line))
         return self
+
 
 class EasyPlotFile(DataFile):
     """A class that will extract as much as it can from an EasyPlot save File."""
@@ -1248,81 +1294,76 @@ class EasyPlotFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-            
-        datastart=-1
-        dataend=-1
 
-        with open(self.filename,"r") as data:
+        datastart = -1
+        dataend = -1
+
+        with open(self.filename, "r") as data:
             if "******** EasyPlot save file ********" not in data.read(1024):
                 raise StonerLoadError("Not an EasyPlot Save file?")
             else:
                 data.seek(0)
-            for i,line in enumerate(data):
-                line=line.strip()
-                if line=="":
+            for i, line in enumerate(data):
+                line = line.strip()
+                if line == "":
                     continue
-                if line[0] not in "-0123456789" and datastart>0 and dataend<0:
-                    dataend=i
+                if line[0] not in "-0123456789" and datastart > 0 and dataend < 0:
+                    dataend = i
                 if line.startswith('"') and ":" in line:
-                    parts=[x.strip() for x in line.strip('"').split(':')]
-                    self[parts[0]]=self.metadata.string_to_type(":".join(parts[1:]))
-                elif line.startswith("/"): # command
-                    parts=[x.strip('"') for x in csv.reader([line],delimiter=" ").next() if x!=""]
-                    cmd=parts[0].strip("/")
-                    if len(cmd)>1:
-                        cmdname="_{}_cmd".format(cmd)
-                        if cmdname in dir(self): #If this command is implemented as a function run it
+                    parts = [x.strip() for x in line.strip('"').split(':')]
+                    self[parts[0]] = self.metadata.string_to_type(":".join(parts[1:]))
+                elif line.startswith("/"):  # command
+                    parts = [x.strip('"') for x in csv.reader([line], delimiter=" ").next() if x != ""]
+                    cmd = parts[0].strip("/")
+                    if len(cmd) > 1:
+                        cmdname = "_{}_cmd".format(cmd)
+                        if cmdname in dir(self):  #If this command is implemented as a function run it
                             self.__getattr__("_{}_cmd".format(cmd))(parts[1:])
                         else:
-                            if len(parts[1:])>1:
-                                cmd=cmd+"."+parts[1]
-                                value=",".join(parts[2:])
-                            elif len(parts[1:])==1:
-                                value=parts[1]
+                            if len(parts[1:]) > 1:
+                                cmd = cmd + "." + parts[1]
+                                value = ",".join(parts[2:])
+                            elif len(parts[1:]) == 1:
+                                value = parts[1]
                             else:
-                                value=True
-                            self[cmd]=value
-                elif line[0] in "-0123456789" and datastart<0: #start of data
-                    datastart=i
+                                value = True
+                            self[cmd] = value
+                elif line[0] in "-0123456789" and datastart < 0:  #start of data
+                    datastart = i
                     if "," in line:
-                        delimiter=","
+                        delimiter = ","
                     else:
-                        delimiter=None
-        if dataend<0:
-            dataend=i
-        self.data=_np_.genfromtxt(self.filename,skip_header=datastart,skip_footer=i-dataend,delimiter=delimiter)
-        if self.data.shape[1]==2:
-            self.setas="xy"
+                        delimiter = None
+        if dataend < 0:
+            dataend = i
+        self.data = _np_.genfromtxt(self.filename, skip_header=datastart, skip_footer=i - dataend, delimiter=delimiter)
+        if self.data.shape[1] == 2:
+            self.setas = "xy"
         return self
 
-    def _extend_columns(self,i):
+    def _extend_columns(self, i):
         """Ensure the column headers are at least i long."""
-        if len(self.column_headers)<i:
-            l=len(self.column_headers)
-            self.column_headers.extend(["Column {}".format (x) for x in range (l,i)])
-    
-    def _et_cmd(self,parts):
+        if len(self.column_headers) < i:
+            l = len(self.column_headers)
+            self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
+
+    def _et_cmd(self, parts):
         """Handle axis labellling command."""
-        if parts[0]=="x":
+        if parts[0] == "x":
             self._extend_columns(1)
-            self.column_headers[0]=parts[1]
-        elif parts[0]=="y":
+            self.column_headers[0] = parts[1]
+        elif parts[0] == "y":
             self._extend_columns(2)
-            self.column_headers[1]=parts[1]
-        elif parts[0]=="g":
-            self["title"]=parts[1]
-                
-    def _td_cmd(self,parts):
-        self.setas=parts[0]
-        
-    def _sa_cmd(self,parts):
+            self.column_headers[1] = parts[1]
+        elif parts[0] == "g":
+            self["title"] = parts[1]
+
+    def _td_cmd(self, parts):
+        self.setas = parts[0]
+
+    def _sa_cmd(self, parts):
         """The sa (set-axis?) command."""
-        if parts[0]=="l": #Legend
-            col=int(parts[2])
-            self._extend_columns(col+1)
-            self.column_headers[col]=parts[1]
-            
-        
-
-
-
+        if parts[0] == "l":  #Legend
+            col = int(parts[2])
+            self._extend_columns(col + 1)
+            self.column_headers[col] = parts[1]
