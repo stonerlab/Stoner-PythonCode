@@ -15,14 +15,56 @@ from Stoner.Folders import DataFolder as _SF_
 from Stoner.Fit import linear
 from numpy import log10, floor, max, abs, sqrt, diag, argmax
 from scipy.integrate import trapz
+from sys import float_info
 
 
 class Data(_AF_, _PF_):
     """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""
-    pass
+    
+    def format(self,key,latex=False, mode="float", units=None, prefix=None):
+        """Return the contents of key pretty formatted using :py:func:`format_error`.
+        
+        Args:
+            key (string): Name of a metadata key that identifies the balue to be formatted.
+        latex (bool): If true, then latex formula codes will be used for +/- symbol for matplotlib annotations
+        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+            i.e. mantissa and exponent format is used.
+        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+            inside the math-mode markers, but not embedded in \\mathrm.
 
+        Returns:
+            A pretty string representation.
+            
+        The if key="key", then the value is self["key"], the error is self["key err"], the default prefix is self["key label"]+"=" or "key=",
+        the units are self["key units"] or "".
+        
+        """
+        try:
+            value=float(self[key])
+        except ValueError:
+            raise KeyError("{} should be a floating point value of the metadata.",format(key))
+        try:
+            error=float(self[key+" err"])
+        except KeyError:
+            error=float_info.epsilon
+        if prefix is None:
+            try:
+                prefix="{} = ".format(self["key label"])
+            except KeyError:
+                prefix="{} =".format(key)
+        if units is None:
+            try:
+                units=self[key+" units"]
+            except KeyError:
+                units=""
+        return format_error(value,error,latex,mode,units,prefix)
+        
+        
 
 def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling

@@ -19,6 +19,7 @@ from inspect import getargspec
 from collections import Iterable
 try:  #Allow lmfit to be optional
     from lmfit.model import Model, ModelFit
+    from lmfit import Parameters
 except ImportError:
     Model = None
     ModelFit = None
@@ -510,13 +511,13 @@ class AnalyseFile(DataFile):
             sigma = working[:, self.find_col(sigma)]
         xdat = working[:, self.find_col(xcol)]
         ydat = working[:, self.find_col(ycol)]
-        ret = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
-        popt = ret[0]
-        pcov = ret[1]
+        popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+        perr=_np_.sqrt(_np_.diag(pcov))
         if result is not None:
             args = getargspec(func)[0]
-            for i in range(len(popt)):
-                self['Fit ' + func.__name__ + '.' + str(args[i + 1])] = popt[i]
+            for val,err,name in zip(popt,pcov,args[1:]):
+                self['{}:{}',format(func.__name__,name)] = val
+                self['{}:{} err',format(func.__name__,name)] = err
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
@@ -524,8 +525,8 @@ class AnalyseFile(DataFile):
                 result = self.shape[1] - 1
             self.apply(lambda x: func(x[xc], *popt), result, replace=replace, header=header)
         row = _np_.array([])
-        for i in range(len(popt)):
-            row = _np_.append(row, [popt[i], _np_.sqrt(pcov[i, i])])
+        for val,err in zip(popt,perr):
+            row = _np_.append(row, [val,err])
         ret = ret + (row, )
         retval = {"fit": (popt, pcov), "row": row, "full": ret}
         if output not in retval:
@@ -779,6 +780,7 @@ class AnalyseFile(DataFile):
         if Model is None:  #Will be the case if lmfit is not imported.
             raise RuntimeError(
                 "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
+        
 
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
@@ -791,6 +793,18 @@ class AnalyseFile(DataFile):
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
+        if isinstance(model, Model):
+            pass
+        elif issubclass(model,Model):
+            model=model()
+        elif callable(model):
+            model=Model(model)
+            if len(p0)!=len(model.param_names):
+                for k in model.param_names:
+                    if k not in kargs:
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))     
+            raise TypeError("model parameter must be an instance of lmfit.model/Model!")
+
         if prefix is None:
             prefix = model.__class__.__name__ + ":"
         elif not prefix:
@@ -798,8 +812,6 @@ class AnalyseFile(DataFile):
         else:
             prefix = str(prefix) + ":"
 
-        if not isinstance(model, Model):
-            raise TypeError("model parameter must be an instance of lmfit.model/Model!")
         if xcol is None or ycol is None:
             cols = self.setas._get_cols()
             if xcol is None:
@@ -814,11 +826,16 @@ class AnalyseFile(DataFile):
         if p0 is not None:
             if isinstance(p0, (list, tuple, _np_.ndarray)):
                 p0 = {p: pv for p, pv in zip(model.param_names, p0)}
+            elif isinstance(p0,Parameters):
+                p0={k:p0[k].value for k in p0}
             if not isinstance(p0, dict):
-                raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
+                raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
                 p0.update(kargs)
-        else:
-            p0 = kargs
+                p0={p0[k] for k in model.param_names}
+        else: # Guess p0 then update kargs
+            p0=model.guess(ydata,xdata)
+            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+               
 
         if sigma is not None:
             if isinstance(sigma, index_types):

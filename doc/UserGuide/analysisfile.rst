@@ -140,13 +140,19 @@ The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:met
     model=Arrehenius(A=1E7,DE=0.01)
     fit=a.lmfit(model,xcol="Temp",ycol="Cond",result=True,header="Fit")
     print fit.fit_report()
-    print a["A"],a["A_err"],a["chi^2"],a["nfev"]
+    print a["Arrehenius:A"],a["Arrehenius:A err"],a["chi^2"],a["nfev"]
 
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
 
 The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
 instance. This contains all the information about the fit and fitting process.
+
+You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguements, then the model's
+*guess* method is called (e.g. :py:meth:`Stoner.Fit.Arrhenius.guess`) to determine parameters fromt he data. For example:
+
+.. plot:: samples/lmfit_example.py
+   :include-source:
 
 Non-linear curve fitting with mpfit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

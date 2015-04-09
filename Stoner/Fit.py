@@ -830,7 +830,12 @@ class StretchedExp(Model):
         A, beta, x0 = 1.0, 1.0, 1.0
         if x is not None:
             A = data[_np_.argmin(_np_.abs(x))]
-            d1, d2 = _np_.polyfit(_np_.log(x), _np_.log(_np_.log(data / A)), 1)
+            x=_np_.log(x)
+            y=_np_.log(-_np_.log(data / A))
+            d=_np_.column_stack((x,y))
+            d=d[~_np_.isnan(d).any(axis=1)]
+            d=d[~_np_.isinf(d).any(axis=1)]
+            d1, d2 = _np_.polyfit(d[:,0],d[:,1], 1)
             beta = d1
             x0 = _np_.exp(d2 / beta)
         pars = self.make_params(A=A, beta=beta, x_0=x0)
