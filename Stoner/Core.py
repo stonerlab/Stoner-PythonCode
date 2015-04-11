@@ -202,12 +202,17 @@ class _setas(object):
     def __setattr__(self, name, value):
         """Wrapper to handle some special linked attributes."""
         super(_setas, self).__setattr__(name, value)
-        if name == "shape":  # cutdown the column headers as well
-            if value[1] > len(self.column_headers):
-                self.column_headers = self.column_headers[:value[1]]
-            if value[1] > len(self.setas):
-                self.setas = self.setas[:value[1]]
-
+        if name == "shape":  # Force setas annd acolumn_headers to match shape
+            c=value[1]
+            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
+            self.__dict__["setas"]=self.setas[:c]            
+            self.__dict__["column_headers"].extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
+            self.__dict__["column_headers"] = self.column_headers[:c]
+        elif name=="column_headers":
+            c=len(self.column_headers)
+            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
+            self.__dict__["setas"]=self.setas[:c]            
+            
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
 
@@ -1231,12 +1236,13 @@ class DataFile(object):
     def _getattr_clone(self):
         """Gets a deep copy of the current DataFile.
         """
-        c = self.__class__(copy.deepcopy(self))
+        c = self.__class__()
+        for attr in self._public_attrs:
+            if attr not in self.__dict__ or callable(self.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+                continue
+            c.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
         c.data = self.data.copy()
         c._setas = self.setas.clone
-        for attr in self.__dict__:
-            if attr not in ("metadata", "data", "column_headers", "_setas") and not callable(self.__dict__[attr]):
-                c.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
         return c
 
     def _getattr_col(self, name):

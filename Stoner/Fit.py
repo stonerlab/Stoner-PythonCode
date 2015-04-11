@@ -17,6 +17,7 @@ If you are writing new functions, please add them here first and then alias then
 list form in FittingFuncs.
 """
 
+from .compat import *
 import numpy as _np_
 from scipy.special import digamma
 from lmfit import Model
@@ -26,19 +27,93 @@ from lmfit.models import QuadraticModel as Quadratic
 from lmfit.models import update_param_vals
 from scipy.integrate import quad
 import scipy.constants.codata as consts
+if python_v3:
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 try:
     from numba import jit
 except ImportError:
     pass
 
+def _get_model_(model):
+    """Utility meothd to manage creating an lmfit.Model.
+    
+    Args:
+        mode (str, callable, Model): The model to be setup.
+        
+    Returns:
+        An llmfit.Model instance
+        
+    model can be of several different types that deterine what to do:
+    
+    -   A string, in which ase it should be a fully qualified name of a function or class to be imported.
+        The part after the final period will be assumed to be the name and the remainder the module to be
+        imported.
+    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+        Model instance is constructed
+    -   A subclass of llmfit.Model - in whcih case it is instantiated.
+    -   A Model instance - in which case no further action is necessary.
+    
+    """
+    if isinstance(mode,string_types): #model is a string, so we;ll try importing it now
+        parts=model.split(".")
+        model=parts[-1]
+        module=".".join(parts[:-1])        
+        model=__import__(modsules,globals(),locals(),(model))
+    if not isinstance(model,Model) and callable(model): # Ok, wrap the callable in a model
+        model=Model(model)
+    if issubclass(model,Model): # ok perhaps we've got a model class rather than an instance
+        model=model()
+    if not isinstance(model,Model):
+        raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
+    return model
+
 
 def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
 
-#Linear already builtin to lmfit.models
+def cfg_model_from_ini(inifile,model=None):
+    """Utility function to configure an lmfit Model from an inifile.
+    
+    Args:
+        inifile (str or file): Path to the ini file to be read
 
+    Keyword Arguments:
+        model (callable or lmfit.Model or None): What to use as a model function.
+        
+    Returns:
+        An llmfit.Model configured with parameter hints for fitting with.    
+    """
+    config = ConfigParser.SafeConfigParser()
+    if isinstance(inifile,string_types):
+        config.read(inifile)
+    elif isinstance(inifile,file):
+        config.readfp(inifile)
+        
+    if model is None: # Check to see if config file specified a model
+        try:
+            model=config.get("Options","model")
+        except:
+            raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
+    model=_get_model_(model)
+    for p in model.param_names:
+        if not config.has_section(p):
+            raise RuntimeError("Config file does not have a section for parameter {}".format(p))
+        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str}
+        kargs=dict()
+        for k in keys:
+           if config.has_option(p,k):
+               if keys[k]==bool:
+                   kargs[k]=config.getboolean(p,k)
+               elif keys[k]==float:
+                   kargs[k]=config.getfloat(p,k)
+               elif keys[k]==str:
+                    kargs[k]==config.get(p,v)
+        model.set_param_hint(**kargs)
+    return model
 
 def arrhenius(x, A, DE):
     """Arrhenius Equation without T dependendent prefactor.

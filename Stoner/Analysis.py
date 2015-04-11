@@ -390,7 +390,7 @@ class AnalyseFile(DataFile):
             for i in range(ybin.shape[1]):
                 ret = ret & ybin[:, i] & ebin[:, i] & nbins[:, i]
                 s = list(ret.setas)
-                s[-2:] = ["y", "e", "."]
+                s[-3:] = ["y", "e", "."]
                 ret.setas = s
                 head = self.column_headers[ycol[i]]
                 ret.column_headers[i * 3 + 1:i * 3 + 5] = [head, "d{}".format(head), "#/bin {}".format(head)]
@@ -768,10 +768,11 @@ class AnalyseFile(DataFile):
         Returns:
             The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
             relevant information about the fit.
-            The return value is determined by the *output* parameter. Options are
-                * "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
-                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                * "full"    a tuple of the fit instance and the row.
+            
+        The return value is determined by the *output* parameter. Options are
+            - "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
+            - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+            - "full"    a tuple of the fit instance and the row.
 
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
@@ -803,7 +804,7 @@ class AnalyseFile(DataFile):
                 for k in model.param_names:
                     if k not in kargs:
                         raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))     
-            raise TypeError("model parameter must be an instance of lmfit.model/Model!")
+            raise TypeError("{} must be an instance of lmfit/Model!".format(model.__name__))
 
         if prefix is None:
             prefix = model.__class__.__name__ + ":"
@@ -832,9 +833,13 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
                 p0.update(kargs)
                 p0={p0[k] for k in model.param_names}
-        else: # Guess p0 then update kargs
-            p0=model.guess(ydata,xdata)
-            p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+        else: #Do we already have parameter hints ?
+            check=True
+            for p in model.param_names:
+                check&=p in model.param_hints and "value" in model.param_hints[p]
+            if not check: # Ok, param_hints didn't have all the parameter values setup.
+                p0=model.guess(ydata,xdata)
+                p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
                
 
         if sigma is not None:

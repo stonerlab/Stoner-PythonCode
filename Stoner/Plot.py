@@ -301,6 +301,7 @@ class PlotFile(DataFile):
         elif name == "clone":
             ret = super(PlotFile, self).__getattr__("clone")
             ret.template = copy.deepcopy(self.template)
+            ret.labels=self.labels
         elif name == "_public_attrs":
             ret = super(PlotFile, self).__getattr__(name)
             ret.update({
