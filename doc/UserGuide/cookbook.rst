@@ -28,14 +28,14 @@ Splitting Data into rising and falling values
 ---------------------------------------------
 
 So far the module just contains one function that will take a single :py:class:`Stoner.Core.DataFile`
- object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either 
+object and split it into a series of :py:class:`Stoner.Core.DataFile` objects where one column is either 
 rising or falling. This is designed to help deal with analysis problems involving hysteretic data.::
 
     from Stoner.Util import split_up_down
     folder=split_up_down(data,column)
 
-In this example *folder*is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
- and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter 
+In this example *folder* is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
+and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter 
 which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they 
 don't already exist) and files will be added.
 
@@ -85,11 +85,11 @@ provides the :py:func:`Stoner.Util.format_error` function.::
     print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng")
     print format_error(hbar/m_e,hbar/m_u,latex=True,mode="eng",units="Js rads^{-1}kg^{-1})
 
-THe simplest form just outputs value+/- error with suitable rounding. Adding the *latex* keyword argument wraps the output in
+The simplest form just outputs value+/- error with suitable rounding. Adding the *latex* keyword argument wraps the output in
 $...$ and replaces +/- with the equivalent latex math symbol. The *mode* argument can be *eng*,*sci* or *float*(default). The first
 uses SI prefixes in presenting the number, the second uses mantissa-exponent notation (or x10^{exponent} in latex mode). The third, 
 default, option does no particular scaling. Finally the units keyword allows the inclusion of the units for the quantity in the string
- - particularly useful in combination with the *eng* mode.
+- particularly useful in combination with the *eng* mode.
 
 
 Other Recipies

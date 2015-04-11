@@ -806,7 +806,7 @@ class DataFile(object):
             :noindex:
 
             Creates the new DataFile object, but initialises the metadata with
-            :parameter dictionary
+            :parameter: dictionary
 
         .. py:function:: DataFile(array,dictionary)
             :noindex:

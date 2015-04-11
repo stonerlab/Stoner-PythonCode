@@ -79,7 +79,7 @@ class AnalyseFile(DataFile):
             A numpy array representing the smoothed or differentiated data.
 
         Notes:
-            If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
+            If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
         """
@@ -451,22 +451,17 @@ class AnalyseFile(DataFile):
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
             absolute_sigma (bool, defaults to True) If False, `sigma` denotes relative weights of the data points.
-                The returned covariance matrix `pcov` is based on *estimated*
-                errors in the data, and is not affected by the overall
-                magnitude of the values in `sigma`. Only the relative
-                magnitudes of the `sigma` values matter.
-                If True, `sigma` describes one standard deviation errors of
-                the input data points. The estimated covariance in `pcov` is
-                based on these values.
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
             pcov (2d array): The variance-co-variance matrix for the fitting parameters.
-            The return value is determined by the *output* parameter. Options are:
-                * "ffit"    (tuple of popt,pcov)
-                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+
+        The return value is determined by the *output* parameter. Options are:
+            * "ffit"    (tuple of popt,pcov)
+            * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+            * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+            
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
@@ -477,6 +472,14 @@ class AnalyseFile(DataFile):
             The initial parameter values and weightings default to None which corresponds to all parameters starting
             at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
             point is to be used in the fit and false if not.
+            
+            
+            The *absolute_sigma* keyword determines whether the returned covariance matrix `pcov` is based on *estimated* errors in 
+            the data, and is not affected by the overall magnitude of the values in `sigma`. Only the relative magnitudes of the 
+            *sigma* values matter.
+            If True, `sigma` describes one standard deviation errors of the input data points. The estimated covariance in `pcov` is
+            based on these values.
+
 
         See Also:
             :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
@@ -890,7 +893,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
-                boundaries and centres for each bin.
+            boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
         if "bin_start" in kargs:
@@ -1034,17 +1037,15 @@ class AnalyseFile(DataFile):
     def mpfit(self, func, xcol, ycol, p_info, func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs):
         """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.
 
-                mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
-
         Args:
-            func (callable): Fitting function def func(x,parameters, **func_args)
+            func (callable): Fitting function def func(x,parameters, \\*\\*func_args)
             xcol, ycol (index): index the x and y data sets
             p_info (list of dictionaries): Defines the fitting parameters
 
         Keyword Arguments:
             sigma (index): weights of the data poiints. If not specified, then equal weighting assumed
             bounds (callable): function that takes x,y pairs and returns true if to be used in the fitting
-            **mpfit_kargs: other lkeywords passed straight to mpfit
+            mpfit_kargs: other lkeywords passed straight to mpfit
 
         Returns:
             Best fit parameters
@@ -1437,7 +1438,7 @@ class AnalyseFile(DataFile):
             overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
             min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
             mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
-            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*()
+            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
@@ -1446,16 +1447,16 @@ class AnalyseFile(DataFile):
         To stitch the data together, the x and y data in the current data file is transforms so that
         :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
         :math:`(x,y)` data in *other*. The algorithm assumes that the overlap region contains equal
-        numbers of :math:`(x,y)` points *mode controls whether A,B, and C are fixed or adjustable
+        numbers of :math:`(x,y)` points *mode* controls whether A,B, and C are fixed or adjustable
 
-        * "All" - all three parameters adjustable
-        * "Scale y, shift x" - C is fixed at 0.0
-        * "Scale and shift y" A is fixed at 0.0
-        * "Scale y" - only B is adjustable
-        * "Shift y" - Only c is adjsutable
-        * "Shift x" - Only A is adjustable
-        * "Shift both" - B is fixed at 1.0
-        .
+            - "All" - all three parameters adjustable
+            - "Scale y, shift x" - C is fixed at 0.0
+            - "Scale and shift y" A is fixed at 0.0
+            - "Scale y" - only B is adjustable
+            - "Shift y" - Only c is adjsutable
+            - "Shift x" - Only A is adjustable
+            - "Shift both" - B is fixed at 1.0
+
         """
         if xcol is None:  #Sort out the xcolumn and y column indexes
             xcol = self.setas._get_cols("xcol")

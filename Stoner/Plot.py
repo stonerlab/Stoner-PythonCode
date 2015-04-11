@@ -37,16 +37,6 @@ class PlotFile(DataFile):
         args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
         kargs (dict):  keyword arguments to pass to \b DataFile.__init__
 
-    Methods:
-        plot_xy: Basic 2D plotting function
-        plot_xyz: 3D plotting function
-        griddata: Method to transform xyz data to a matrix
-        contour_xyz: Plots x,y,z points as a contour plot
-        plot_matrix: Plots a matrix as a 2D colour image plot
-        draw: Pass throuygh to matplotlib draw
-        show: Pass through to matploitlib show
-        figure: Pass through to maplotlib figure.
-
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
         labels (list of string): List of axis labels as aternates to the column_headers

@@ -41,19 +41,19 @@ def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.
     
     Args:
-        mode (str, callable, Model): The model to be setup.
+        model (str, callable, Model): The model to be setup.
         
     Returns:
         An llmfit.Model instance
         
-    model can be of several different types that deterine what to do:
+    model can be of several different types that determine what to do:
     
-    -   A string, in which ase it should be a fully qualified name of a function or class to be imported.
+    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
         The part after the final period will be assumed to be the name and the remainder the module to be
         imported.
     -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
         Model instance is constructed
-    -   A subclass of llmfit.Model - in whcih case it is instantiated.
+    -   A subclass of lmfit.Model - in whcih case it is instantiated.
     -   A Model instance - in which case no further action is necessary.
     
     """
@@ -82,10 +82,21 @@ def cfg_model_from_ini(inifile,model=None):
         inifile (str or file): Path to the ini file to be read
 
     Keyword Arguments:
-        model (callable or lmfit.Model or None): What to use as a model function.
+        model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.
         
     Returns:
-        An llmfit.Model configured with parameter hints for fitting with.    
+        An llmfit.Model configured with parameter hints for fitting with.
+        
+    model can be of several different types that determine what to do:
+    
+    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
+        The part after the final period will be assumed to be the name and the remainder the module to be
+        imported.
+    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+        Model instance is constructed
+    -   A subclass of lmfit.Model - in whcih case it is instantiated.
+    -   A Model instance - in which case no further action is necessary.
+        
     """
     config = ConfigParser.SafeConfigParser()
     if isinstance(inifile,string_types):
