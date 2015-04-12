@@ -39,15 +39,15 @@ except ImportError:
 
 def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.
-    
+
     Args:
         model (str, callable, Model): The model to be setup.
-        
+
     Returns:
         An llmfit.Model instance
-        
+
     model can be of several different types that determine what to do:
-    
+
     -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
         The part after the final period will be assumed to be the name and the remainder the module to be
         imported.
@@ -55,12 +55,12 @@ def _get_model_(model):
         Model instance is constructed
     -   A subclass of lmfit.Model - in whcih case it is instantiated.
     -   A Model instance - in which case no further action is necessary.
-    
+
     """
     if isinstance(mode,string_types): #model is a string, so we;ll try importing it now
         parts=model.split(".")
         model=parts[-1]
-        module=".".join(parts[:-1])        
+        module=".".join(parts[:-1])
         model=__import__(modsules,globals(),locals(),(model))
     if not isinstance(model,Model) and callable(model): # Ok, wrap the callable in a model
         model=Model(model)
@@ -77,18 +77,18 @@ def linear(x, intercept, slope):
 
 def cfg_model_from_ini(inifile,model=None):
     """Utility function to configure an lmfit Model from an inifile.
-    
+
     Args:
         inifile (str or file): Path to the ini file to be read
 
     Keyword Arguments:
         model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.
-        
+
     Returns:
-        An llmfit.Model configured with parameter hints for fitting with.
-        
+        An llmfit.Model,, a 2D array of starting values for each parameter
+
     model can be of several different types that determine what to do:
-    
+
     -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
         The part after the final period will be assumed to be the name and the remainder the module to be
         imported.
@@ -96,14 +96,19 @@ def cfg_model_from_ini(inifile,model=None):
         Model instance is constructed
     -   A subclass of lmfit.Model - in whcih case it is instantiated.
     -   A Model instance - in which case no further action is necessary.
-        
+
+    The returned model is configured with parameter hints for fitting with. The second return value is
+    a 2D array which lists the starting values for one or more fits. If the inifile describes mapping out
+    the :math:`\\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
+
+
     """
     config = ConfigParser.SafeConfigParser()
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,file):
         config.readfp(inifile)
-        
+
     if model is None: # Check to see if config file specified a model
         try:
             model=config.get("Options","model")
@@ -113,8 +118,9 @@ def cfg_model_from_ini(inifile,model=None):
     for p in model.param_names:
         if not config.has_section(p):
             raise RuntimeError("Config file does not have a section for parameter {}".format(p))
-        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str}
+        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float}
         kargs=dict()
+        vals=[]
         for k in keys:
            if config.has_option(p,k):
                if keys[k]==bool:
@@ -123,8 +129,18 @@ def cfg_model_from_ini(inifile,model=None):
                    kargs[k]=config.getfloat(p,k)
                elif keys[k]==str:
                     kargs[k]==config.get(p,v)
-        model.set_param_hint(**kargs)
-    return model
+        if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
+            step=kargs["step"]
+            del kargs["step"]
+            if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?
+                vals.append(_np_.arange(kars[min],kargs[max]+kargs[step]/10,kargs[step]))
+            else: # Nope, just make a single value step here
+                vals.append(_np_.array(kargs["value"]))
+        model.set_param_hint(p,**kargs) # set the model parameter hint
+        msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
+        msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
+        msh=_np_.column_stack(msh)
+    return model,msh
 
 def arrhenius(x, A, DE):
     """Arrhenius Equation without T dependendent prefactor.
