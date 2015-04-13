@@ -7,8 +7,6 @@ __all__ = ["AnalyseFile"]
 
 from Stoner.compat import *
 from Stoner.Core import DataFile
-import Stoner.FittingFuncs
-import Stoner.nlfit
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -24,37 +22,6 @@ except ImportError:
     Model = None
     ModelFit = None
 import sys
-
-
-def cov2corr(M):
-    """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc
-
-    Args:
-        M (2D _np_.array): Co-varriance Matric
-
-    Returns:
-        Correlation Matrix.
-    """
-    if (not isinstance(M, _np_.ndarray)) or (not (len(M.shape) == 2)) or (not (M.shape[0] == M.shape[1])):
-        raise ValueError('cov2corr expects a square ndarray, got %s' % M)
-
-    if _np_.isnan(M).any():
-        raise ValueError('Found NaNs in my covariance matrix: %s' % M)
-
-# TODO check Nan and positive diagonal
-    d = M.diagonal()
-    if (d < 0).any():
-        raise ValueError('Expected positive elements for square matrix, got diag = %s' % d)
-
-    n = M.shape[0]
-    R = _np_.ndarray((n, n))
-    for i in range(n):
-        for j in range(n):
-            d = M[i, j] / _np_.sqrt(M[i, i] * M[j, j])
-            R[i, j] = d
-
-    return R
-
 
 class AnalyseFile(DataFile):
     """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
@@ -170,37 +137,65 @@ class AnalyseFile(DataFile):
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
         return abs(row[column] - pval) > metric * perr
 
-    def __mpf_fn(self, p, **fa):
-        """Internal routine for general non-linear least squeares fitting.
-
+    def __lmfit_p0_dict(self,p0):
+        """Works out an initial starting value dictionary for lmfit.
+        
         Args:
-            p (list or tuple): fitting parameter values for fitting function .
-
-        Keyword Arguments:
-            func (callable): fitting function
-            x (array of float): X values
-            y(array of float): Y data values
-            err (array of float): Weightings of data values
-
-        Note:
-            All other keywords are passed to the fitting function directly.
-
+            p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
+            
         Returns:
-            Difference between model values ad actual y values divided by weighting.
+            Dictionary of parameter starting points.
         """
-        func = fa['func']
-        x = fa['x']
-        y = fa['y']
-        err = fa['err']
-        del (fa['x'])
-        del (fa['y'])
-        del (fa['func'])
-        del (fa['fjac'])
-        del (fa['err'])
-        model = func(x, p, **fa)
-        # stop the calculation.
-        status = 0
-        return [status, (y - model) / err]
+        if isinstance(p0, (list, tuple, _np_.ndarray)):
+            p0 = {p: pv for p, pv in zip(model.param_names, p0)}
+        elif isinstance(p0,Parameters):
+            p0={k:p0[k].value for k in p0}
+        if not isinstance(p0, dict):
+            raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
+            p0.update(kargs)
+            p0={p0[k] for k in model.param_names}
+        return p0
+
+    def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,result=False,header="",replace=False,output="row"):
+        """Carry out a single fit wioth lmfit.
+        
+        Args:
+            model (lmfit.Model): Configured model
+            ydata (array): y data to fit
+            scale_covat (bool): Whether sigmas are absolute or relative.
+            sigma (array): Uncertainties of ydata.
+            p0 (dict): Dictionary of parameters including independent data
+            result (bool,str): Where the result goes
+            header (str): Name of new data column if used
+            replace (bool): whether to add new dataa
+            output (str): What to return
+            
+        Returns:
+            Results froma  fit or raises and exception.
+        """
+        
+        fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
+        if fit.success:
+            row = []
+            if isinstance(result, index_types) or (isinstance(result, bool) and result):
+                self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
+            elif result is not None:
+                raise RuntimeError("Didn't recognize result as an index type or True")
+            for p in fit.params:
+                self["{}{}".format(prefix, p)] = fit.params[p].value
+                self["{}{} err".format(prefix, p)] = fit.params[p].stderr
+                row.append([fit.params[p].value, fit.params[p].stderr])
+            self["{}chi^2".format(prefix)] = fit.chisqr
+            self["{}nfev".format(prefix)] = fit.nfev
+            retval = {"fit": fit, "row": row, "full": (fit, row)}
+            if output not in retval:
+                raise RuntimeError("Failed to recognise output format:{}".format(output))
+            else:
+                return retval[output]
+        else:
+            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
+        
+        
 
     def __threshold(self, threshold, data, rising=True, falling=False):
         """ Internal function that implements the threshold method - also used in peak-finder
@@ -397,18 +392,6 @@ class AnalyseFile(DataFile):
         else:
             ret = (bin_centres, ybin, ebin, nbins)
         return ret
-
-    def chi2mapping(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
-
-        Args:
-            ini_file (string): Path to ini file with model
-            func_name (string or callable): Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                or the function itself.
-
-        ReturnsL
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled), DataFile instance of parameter steps"""
-        return Stoner.nlfit.nlfit(ini_file, func, data=self, chi2mapping=True)
 
     def clip(self, clipper, column=None):
         """Clips the data based on the column and the clipper value.
@@ -757,7 +740,7 @@ class AnalyseFile(DataFile):
             ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple or array): A vector of initial parameter values to try
+            p0 (list, tuple or array): A vector of initial parameter values to try.
             sigma (index): The index of the column with the y-error bars
             bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -779,6 +762,13 @@ class AnalyseFile(DataFile):
 
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
+            
+        .. note::
+        
+           If *p0* is fed a 2D array, then it assumed that you want to calculate :math:`\\chi^2` for different starting parameters
+           with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
+           values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
+           columns are the fitted values of the parameters with an additional column for :math:`\\chi^2`.
         """
 
         if Model is None:  #Will be the case if lmfit is not imported.
@@ -828,14 +818,11 @@ class AnalyseFile(DataFile):
         xdata = working[:, self.find_col(xcol)]
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
-            if isinstance(p0, (list, tuple, _np_.ndarray)):
-                p0 = {p: pv for p, pv in zip(model.param_names, p0)}
-            elif isinstance(p0,Parameters):
-                p0={k:p0[k].value for k in p0}
-            if not isinstance(p0, dict):
-                raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-                p0.update(kargs)
-                p0={p0[k] for k in model.param_names}
+            if not (isinstance(p0,_np_.ndarray) and len(p0.shape)!=2):
+                p0=self.__lmfit_p0_dict(p0)
+                single_fit=True
+            else:
+                single_fit=False
         else: #Do we already have parameter hints ?
             check=True
             for p in model.param_names:
@@ -856,28 +843,20 @@ class AnalyseFile(DataFile):
             sigma = _np_.ones(len(xdata))
             scale_covar = True
         xvar = model.independent_vars[0]
-        p0[xvar] = xdata
+        
+        if single_fit:
+            p0[xvar] = xdata
 
-        fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
-        if fit.success:
-            row = []
-            if isinstance(result, index_types) or (isinstance(result, bool) and result):
-                self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
-            elif result is not None:
-                raise RuntimeError("Didn't recognize result as an index type or True")
-            for p in fit.params:
-                self["{}{}".format(prefix, p)] = fit.params[p].value
-                self["{}{} err".format(prefix, p)] = fit.params[p].stderr
-                row.append([fit.params[p].value, fit.params[p].stderr])
-            self["{}chi^2".format(prefix)] = fit.chisqr
-            self["{}nfev".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": row, "full": (fit, row)}
-            if output not in retval:
-                raise RuntimeError("Failed to recognise output format:{}".format(output))
-            else:
-                return retval[output]
-        else:
-            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
+            ret_val=self.__lmfit_one(self,model,ydata,scale_covar,sigma,p0,result,header,replace,output)
+        else: # chi^2 mode
+            pn=p0
+            ret_val=_np_.zeroes((pn.shape[0],pn.shape[1]+1))
+            for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
+                p0=self.__lmfit_p0_dict(p0)
+                p0[xvar] = xdata
+                ret_val[i,:]=self.__lmfit_one(self,model,ydata,scale_covar,sigma,p0)
+        return ret_val
+                
 
     def make_bins(self, xcol, bins, mode, **kargs):
         """Utility method to generate bin boundaries and centres along an axis.
@@ -1034,59 +1013,6 @@ class AnalyseFile(DataFile):
             self._pop_mask()
         return result
 
-    def mpfit(self, func, xcol, ycol, p_info, func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs):
-        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.
-
-        Args:
-            func (callable): Fitting function def func(x,parameters, \\*\\*func_args)
-            xcol, ycol (index): index the x and y data sets
-            p_info (list of dictionaries): Defines the fitting parameters
-
-        Keyword Arguments:
-            sigma (index): weights of the data poiints. If not specified, then equal weighting assumed
-            bounds (callable): function that takes x,y pairs and returns true if to be used in the fitting
-            mpfit_kargs: other lkeywords passed straight to mpfit
-
-        Returns:
-            Best fit parameters
-        """
-        from .mpfit import mpfit
-        if sigma == None:
-            working = self.search(xcol, bounds, [xcol, ycol])
-            x = working[:, 0]
-            y = working[:, 1]
-            sigma = _np_.ones(_np_.shape(y), _np_.float64)
-        else:
-            working = self.search(xcol, bounds, [xcol, ycol, sigma])
-            x = working[:, 0]
-            y = working[:, 1]
-            sigma = working[:, 2]
-        func_args["x"] = x
-        func_args["y"] = y
-        func_args["err"] = sigma
-        func_args["func"] = func
-        m = mpfit(self.__mpf_fn, parinfo=p_info, functkw=func_args, **mpfit_kargs)
-        return m
-
-    def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None, parinfo=None, quiet=0, dof=None):
-        """Function that is called on every iteration of the non-linerar fitting.
-
-        Args:
-            myfunct (callable): Function being modelled
-            iteration (int): Iteration number
-            fnorm (list): ?
-            functkw (dictionary): Keywords being passed to the user function
-            parinfo (list of dicts): PArameter informatuion
-            quiet (int): 0 to suppress output
-            dof (float): Figure of merit ?
-
-        Note:
-            This functionb just prints a full stop for every iteration.
-
-        """
-        sys.stdout.write('.')
-        sys.stdout.flush()
-
     def multiply(self, a, b, replace=False, header=None):
         """Multiply one column (a) by  another column, number or array (b).
 
@@ -1129,19 +1055,6 @@ class AnalyseFile(DataFile):
         if err_calc is not None:
             self.add_column(err_data, err_header, a + 1, replace=False)
         return self
-
-    def nlfit(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
-
-        Args:
-            ini_file (string): path to ini file with model
-            func (string or callable):Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                    or function instance to fit with
-
-        Returns:
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled in the inifile)
-        """
-        return Stoner.nlfit.nlfit(ini_file, func, data=self)
 
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.

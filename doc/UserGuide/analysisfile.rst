@@ -154,102 +154,51 @@ You can pass the model as a subclass of model, if you don't pass initial values 
 .. plot:: samples/lmfit_example.py
    :include-source:
 
-Non-linear curve fitting with mpfit
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Current versions of the Stoner Package contain a second constrained non-linear fitting package, *mpfit*.
-
-This is also suitable for cases where one requires more flexibility in fitting data, in particular
-where the fitting parameters are constrained, the module is accessed thrpugh the :py:meth:`AnalyseFile.mpfit`
-method. This is a pass through to the :py:mod:`Stoner.mpfit` module.::
-
-   a.mpfit(func,  xcol, ycol, p_info,  func_args=dict(), sigma=None,bounds=lambda x, y: True, **mpfit_kargs )
-
-In this case, the *func* argument takes a slightly different
-prototype:``def func(x,parameters, **func_args)`` where *parameters*
-is a list of the fitting parameters and *func_args* provides a
-dictionary of fixed \ie non-fitting parameters. *xcol* and *ycol*
-are the column indices for the x and y data, *bounds* is a bounding
-function to select only those rows to use for fitting the function, and
-*sigma* are the weightings for each data-point. The remaining arguments
-are a dictionary of keywords to pass through to the :py:mod:`Stoner.mpfit` routine and
-*p_info* which is a list of dictionaries which is used to control the
-parameters in the fit. This described below.
-
-*p_info* contains one element for each parameter used to fit the data.
-Each element is a dictionary with the following keys:
-
-*   [value] the starting parameter value (but see the START_PARAMS parameter
-       for more information).
-*   [fixed] a boolean value, whether the parameter is to be held fixed or
-       not.  Fixed parameters are not varied by MPFIT, but are passed on to MYFUNCT for
-       evaluation.
-*   [limited] a two-element boolean array.  If the first/second element is
-       set, then the parameter is bounded on the lower/upper side.  A parameter can be
-       bounded on both sides.  Both LIMITED and LIMITS must be given together.
-*   [limits] a two-element float array.  Gives the parameter limits on the
-       lower and upper sides, respectively.  Zero, one or two of these values can be
-       set, depending on the values of LIMITED.  Both LIMITED and LIMITS must be given
-       together.
-*   [parname] a string, giving the name of the parameter.  The fitting code
-       of MPFIT does not use this tag in any way.  However, the default iterfunct will
-       print the parameter name if available.
-*   [step] the step size to be used in calculating the numerical derivatives.
-       If set to zero, then the step size is	computed automatically.  Ignored when
-       AUTODERIVATIVE=0.
-*   [mpside] the sidedness of the finite difference when computing numerical
-       derivatives.  This field can take four values:
-
-      *    [0]one-sided derivative computed automatically
-      *    [1]one-sided derivative ``(f(x+h) - f(x)  )/h``
-      *    [-1] one-sided derivative ``(f(x)   - f(x-h))/h``
-      *    [2] two-sided derivative ``(f(x+h) - f(x-h))/(2*h)``
-               Where H is the STEP parameter described above.  The "automatic"
-               one-sided derivative method will chose a direction for the finite difference
-               which does not violate any constraints.  The other methods do
-               not perform this check.  The two-sided method is in principle more precise, but
-               requires twice as many function evaluations.  **Default: 0**.
-
-*   [mpmaxstep] the maximum change to be made in the parameter value.  During
-       the fitting process, the parameter will never be changed by more than this value
-       in one iteration. A value of 0 indicates no maximum.  **Default: 0**.
-*   [tied] a string expression which 'ties' the parameter to other	free or
-       fixed parameters.  Any expression involving	constants and the parameter
-       array P are permitted.Example: if parameter 2 is always to be twice parameter 1
-       then use the following: ``parinfo(2).tied = '2 * p(1)'``. Since they are
-       totally constrained, tied parameters are considered to be fixed; no errors are
-       computed for them.[ NOTE: the PARNAME can't be used in expressions. ]
-*   [mpprint] if set to 1, then the default iterfunct will print the
-       parameter value.  If set to 0, the parameter value will not be printed.  This
-       tag can be used to selectively print only a few parameter values out of
-       many.**Default: 1** (all parameters printed)
-
 Non-linear curve fitting with initialisation file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you wish to fit your data to a non-linear function more complicated than a polynomial you can use
-:py:meth:`Stoner.nlfit.nlfit` or equivalently if you have an :py:class:`AnalyseFile` instance of your data
-you can call :py:meth:`AnalyseFile.nlfit`. This performs a non-linear least squares fitting algorithm to your data
-and returns the :py:class:`AnalyseFile` instance used with an additional final column that is the fit,
-it also plots the fit. There is an example run script, ini file and data file in ``/scripts/`` in the github repository.
-Hhave a look at them to see how to use this function.
+For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
+edit the source code. :py:meth:`AnalyseFile.lmfit` and :py:mod:`Stoner.Fit` provide some mechanisms to enable this.
 
-The function to fit to can either be created by the user and passed in or one of a library of current existing functions
-can be used from the :py:mod:`Stoner.FittingFuncs` (just pass in the name of the function you wish to use as a string).
-The function takes its fitting parameters information from a .ini file created by the user,
-look at the example .ini file mentioned above for the format, you can see that it allows for the parameters to be fixed
-or constrained which can be very useful for fitting.
+Firstly, the initialisation file should take the form like so.::
 
-Current functions existing in FittingFunctions.py:
+    [Options]
+    model: Stoner.Fit.Arrehnius
 
-*    Various tunnelling I-V models including BDR, Simmons, Field emission and Tersoff Hamman STM.
-*    2D weak localisation
-*    Strijkers model for PCAR fitting
+    [Data]
+    filename: False
+    type: Stoner.FileFormats.SPCDFile
+    xcol: "Temperature"
+    ycol: "Counts"
+    yerr: 2
 
-Please see the function documentation in :py:mod:`Stoner.FittingFuncs` for more information about these models.
-Please do add functions you think would be of use to everybody, have a look at the current functions for examples,
-the main thing is that the function must take an x array and a list of parameters, apply a function and then
-return the resulting array.
+    [A]
+    vary: true
+    min: 1.0
+    max: 1000.0
+    value: 50.0
+
+    [DE]
+    vary: False
+    min: 1.0
+    max: 1.5
+    value: 1.0
+    step: 0.01
+
+This initialisation file can be passed to :py:func:`Stoner.Fit.cfg_data_from_ini` which will use the information in the [Data]
+section to read in the data file and identify the x and y columns.
+
+The initialisation file can then be passed to :py:func:`Stoner.Fit.cfg_mode_from_ini` which will use the configuration file to
+setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
+returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`AnalyseFile.lmfit`. Depending
+on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
+:math:`\\chi^2` goodeness of fit.::
+
+    from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini
+    d=cfg_data_from_ini("My config.ini")
+    model, p0 = cfg_model_from_ini("My config.ini")
+    result=d.lmfit(model,p0=p0)
+    
 
 More AnalyseFile Functions
 ==========================

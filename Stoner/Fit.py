@@ -9,12 +9,7 @@ Models are subclasses of lmfit.Model that represent the corresponding function
 Please do keep documentation up to date, see other functions for documentation examples.
 
 All the functions here defined for scipy.optimize.curve\_fit to call themm
-i.e. the parameters are expanded to separate arguements, other fitting routines prefere
-to have the parameters as a single list or vector. For this reason, :py:mod:`Stoner.FittingFuncs`
-has aliases of these functions that use *tuple magic to make that conversion.
-
-If you are writing new functions, please add them here first and then alias then with the parameter
-list form in FittingFuncs.
+i.e. the parameters are expanded to separate arguements.
 """
 
 from .compat import *
@@ -75,11 +70,75 @@ def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
 
+def cfg_data_from_ini(inifile,filename=None):
+    """Read an inifile and load and configure a DataFile from it.
+    
+    Args:
+        inifile (str or file): Path to the ini file to be read.
+        
+    Keyword Arguments:
+        filename (strig,boolean or None): File to load that contains the data.
+
+    Returns:
+        An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.
+        
+    The inifile should contain a [Data] section that contains the following keys:
+    
+    -  **type (str):** optional name of DataFile subclass to import.
+    -  **filename (str or boolean):** optionally used if *filename* parameter is None.
+    - **xcol (column index):** defines the x-column data for fitting.
+    - **ycol (column index):** defines the y-column data for fitting.
+    - **yerr (column index):** Optional column with uncertainity values for the data
+    """
+    config = ConfigParser.SafeConfigParser()
+    from Stoner.Util import Data
+    if isinstance(inifile,string_types):
+        config.read(inifile)
+    elif isinstance(inifile,file):
+        config.readfp(inifile)
+    if not config.has_section("Data"):
+        raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
+        
+    if config.has_option("Data","type"):
+        typ=config.get("Data","type").split(".")
+        typ_mod=typ[:-1]
+        typ=typ[-1]
+        typ = __import__(typ_mod,fromlist=[typ])
+    else:
+        typ = None
+    
+    if filename is None:
+        if not config.has_option("Data","filename"):
+            filename=False
+        else:
+            filename=config.get("Data","filename")
+            if filename in ["False","True"]:
+                filename=bool(filename)
+                
+    data=Data(filename,auto_load=False,filetype=typ)
+
+    cols={"xcol":0,"ycol":1,"yerr":None} # Defaults
+    
+    for c in ["xcol","ycol","yerr"]:   
+        if not config.has_option("Data",c):
+            pass
+        else:
+            try:
+                cols[c]=config.get("Data",c)
+                cols[c]=int(cols[c])
+            except ValueError:
+                pass
+        if cols[c] is None:
+            del cols[c]
+
+    data.setas(**cols)    
+    return data            
+
 def cfg_model_from_ini(inifile,model=None):
     """Utility function to configure an lmfit Model from an inifile.
 
     Args:
-        inifile (str or file): Path to the ini file to be read
+        inifile (str or file): Path to the ini file to be read.
 
     Keyword Arguments:
         model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.

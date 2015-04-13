@@ -183,25 +183,6 @@ Functions
    :template: funcdocs.rst
    :functions-only:
 
-:mod:`nlfit` Module
-===================
-
-
-Classes
--------
-
-.. automodsumm:: Stoner.nlfit
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Functions
----------
-.. automodsumm:: Stoner.nlfit
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
 :mod:`pyTDMS` Module
 --------------------
 
