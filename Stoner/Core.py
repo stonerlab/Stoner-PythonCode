@@ -25,7 +25,7 @@ from collections import Iterable, OrderedDict
 
 class StonerLoadError(Exception):
     """An exception thrown by the file loading routines in the Stoner Package.
-    
+
     This special exception is thrown when one of the subclasses of :py:class:`Stoner.Core.DataFile`
     attmpts and then fails to load some data from disk. Generally speaking this is not a real
     error, but simply indicates that the file format is not recognised by that particular subclass,
@@ -205,14 +205,14 @@ class _setas(object):
         if name == "shape":  # Force setas annd acolumn_headers to match shape
             c=value[1]
             self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
-            self.__dict__["setas"]=self.setas[:c]            
+            self.__dict__["setas"]=self.setas[:c]
             self.__dict__["column_headers"].extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
             self.__dict__["column_headers"] = self.column_headers[:c]
         elif name=="column_headers":
             c=len(self.column_headers)
             self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
-            self.__dict__["setas"]=self.setas[:c]            
-            
+            self.__dict__["setas"]=self.setas[:c]
+
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
 
@@ -777,7 +777,7 @@ class DataFile(object):
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
     priority=32
-    
+
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.txt","*.tdi"] # Recognised filename patterns
@@ -888,20 +888,27 @@ class DataFile(object):
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__"""
         (arg0, arg1) = args
-        if isinstance(arg0, _np_.ndarray):
+        if isinstance(arg0,_np_.ndarray) and isinstance(arg1,_np_.ndarray) and len(arg0.shape)==1 and len(arg1.shape)==1:
+            self._init_many(*args,**kargs)
+        elif isinstance(arg0, _np_.ndarray):
             self.data = _ma_.masked_array(arg0)
         elif isinstance(arg0, dict):
             self.metadata = arg0.copy()
         elif isinstance(arg0, str) and isinstance(arg1, str):
             self.load(arg0, arg1)
-        if isinstance(arg1, _np_.ndarray):
+        if not isinstance(arg0,_np_.ndarray) and isinstance(arg1, _np_.ndarray):
             self.data = _ma_.masked_array(arg1)
         elif isinstance(arg1, dict):
             self.metadata = arg1.copy()
 
     def _init_many(self, *args, **kargs):
         """Handles more than two arguments to the constructor - called from init."""
-        self.load(*args, **kargs)
+        for a in args:
+            if not (isinstance(a,_np_.ndarray) and len(a.shape)==1):
+                self.load(*args, **kargs)
+                break
+        else:
+            self.data=_np_.column_stack(args)
 
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data.
@@ -2327,7 +2334,7 @@ class DataFile(object):
                     self["Loaded as"]=cls.__name__
                     self._setas=test._setas
                     for attr in test._public_attrs:
-                       self.__setattr__(attr,test.__getattr__(attr))                 
+                       self.__setattr__(attr,test.__getattr__(attr))
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:
                     continue

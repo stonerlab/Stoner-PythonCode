@@ -137,12 +137,12 @@ class AnalyseFile(DataFile):
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
         return abs(row[column] - pval) > metric * perr
 
-    def __lmfit_p0_dict(self,p0):
+    def __lmfit_p0_dict(self,p0,model):
         """Works out an initial starting value dictionary for lmfit.
-        
+
         Args:
             p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
-            
+
         Returns:
             Dictionary of parameter starting points.
         """
@@ -156,9 +156,9 @@ class AnalyseFile(DataFile):
             p0={p0[k] for k in model.param_names}
         return p0
 
-    def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,result=False,header="",replace=False,output="row"):
+    def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
         """Carry out a single fit wioth lmfit.
-        
+
         Args:
             model (lmfit.Model): Configured model
             ydata (array): y data to fit
@@ -169,11 +169,11 @@ class AnalyseFile(DataFile):
             header (str): Name of new data column if used
             replace (bool): whether to add new dataa
             output (str): What to return
-            
+
         Returns:
             Results froma  fit or raises and exception.
         """
-        
+
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
@@ -194,8 +194,8 @@ class AnalyseFile(DataFile):
                 return retval[output]
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
-        
-        
+
+
 
     def __threshold(self, threshold, data, rising=True, falling=False):
         """ Internal function that implements the threshold method - also used in peak-finder
@@ -444,7 +444,7 @@ class AnalyseFile(DataFile):
             * "ffit"    (tuple of popt,pcov)
             * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
-            
+
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
@@ -455,10 +455,10 @@ class AnalyseFile(DataFile):
             The initial parameter values and weightings default to None which corresponds to all parameters starting
             at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
             point is to be used in the fit and false if not.
-            
-            
-            The *absolute_sigma* keyword determines whether the returned covariance matrix `pcov` is based on *estimated* errors in 
-            the data, and is not affected by the overall magnitude of the values in `sigma`. Only the relative magnitudes of the 
+
+
+            The *absolute_sigma* keyword determines whether the returned covariance matrix `pcov` is based on *estimated* errors in
+            the data, and is not affected by the overall magnitude of the values in `sigma`. Only the relative magnitudes of the
             *sigma* values matter.
             If True, `sigma` describes one standard deviation errors of the input data points. The estimated covariance in `pcov` is
             based on these values.
@@ -731,7 +731,7 @@ class AnalyseFile(DataFile):
         inter = interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, prefix=None, **kargs):
+    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, prefix=None,**kargs):
         """Wrapper around lmfit module fitting.
 
         Args:
@@ -754,7 +754,7 @@ class AnalyseFile(DataFile):
         Returns:
             The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
             relevant information about the fit.
-            
+
         The return value is determined by the *output* parameter. Options are
             - "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
             - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
@@ -762,9 +762,9 @@ class AnalyseFile(DataFile):
 
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
-            
+
         .. note::
-        
+
            If *p0* is fed a 2D array, then it assumed that you want to calculate :math:`\\chi^2` for different starting parameters
            with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
            values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
@@ -774,7 +774,7 @@ class AnalyseFile(DataFile):
         if Model is None:  #Will be the case if lmfit is not imported.
             raise RuntimeError(
                 "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
-        
+
 
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
@@ -789,15 +789,19 @@ class AnalyseFile(DataFile):
 
         if isinstance(model, Model):
             pass
-        elif issubclass(model,Model):
+        elif type(model)=="class" and issubclass(model,Model):
             model=model()
         elif callable(model):
             model=Model(model)
-            if len(p0)!=len(model.param_names):
+            if p0 is None or len(p0)!=len(model.param_names):
+                p0=dict()
                 for k in model.param_names:
                     if k not in kargs:
-                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))     
-            raise TypeError("{} must be an instance of lmfit/Model!".format(model.__name__))
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))
+                    else:
+                        p0[k] = kargs[k]
+        else:
+            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
         if prefix is None:
             prefix = model.__class__.__name__ + ":"
@@ -819,7 +823,7 @@ class AnalyseFile(DataFile):
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
             if not (isinstance(p0,_np_.ndarray) and len(p0.shape)!=2):
-                p0=self.__lmfit_p0_dict(p0)
+                p0=self.__lmfit_p0_dict(p0,model)
                 single_fit=True
             else:
                 single_fit=False
@@ -830,7 +834,7 @@ class AnalyseFile(DataFile):
             if not check: # Ok, param_hints didn't have all the parameter values setup.
                 p0=model.guess(ydata,xdata)
                 p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
-               
+
 
         if sigma is not None:
             if isinstance(sigma, index_types):
@@ -843,20 +847,20 @@ class AnalyseFile(DataFile):
             sigma = _np_.ones(len(xdata))
             scale_covar = True
         xvar = model.independent_vars[0]
-        
+
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(self,model,ydata,scale_covar,sigma,p0,result,header,replace,output)
+            ret_val=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeroes((pn.shape[0],pn.shape[1]+1))
             for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
-                p0=self.__lmfit_p0_dict(p0)
+                p0=self.__lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(self,model,ydata,scale_covar,sigma,p0)
+                ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,)
         return ret_val
-                
+
 
     def make_bins(self, xcol, bins, mode, **kargs):
         """Utility method to generate bin boundaries and centres along an axis.
