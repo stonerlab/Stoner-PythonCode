@@ -769,6 +769,10 @@ class AnalyseFile(DataFile):
            with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
            values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
            columns are the fitted values of the parameters with an additional column for :math:`\\chi^2`.
+
+          Example:
+              .. plot:: samples/lmfit_simple.py
+                 :include-source:
         """
 
         if Model is None:  #Will be the case if lmfit is not imported.
