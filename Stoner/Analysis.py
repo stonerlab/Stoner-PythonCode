@@ -833,6 +833,7 @@ class AnalyseFile(DataFile):
                 single_fit=False
         else: #Do we already have parameter hints ?
             check=True
+            single_fit = True
             for p in model.param_names:
                 check&=p in model.param_hints and "value" in model.param_hints[p]
             if not check: # Ok, param_hints didn't have all the parameter values setup.
@@ -851,6 +852,8 @@ class AnalyseFile(DataFile):
             sigma = _np_.ones(len(xdata))
             scale_covar = True
         xvar = model.independent_vars[0]
+        if p0 is None: # We're working off parameter hints, but still need to set the independent var
+            p0=dict()
 
         if single_fit:
             p0[xvar] = xdata
