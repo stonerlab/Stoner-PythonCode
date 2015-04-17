@@ -13,10 +13,10 @@ d=cfg_data_from_ini("PCAR-New.ini","../sample-data/PCAR Co Data.csv")
 model,p0=cfg_model_from_ini("PCAR-New.ini",data=d)
 
 fit=d.lmfit(model,result=True,header="lmfit")
-text= "\n".join([d.format("Strijkers:{}".format(k),latex=True) for k in model.param_names])
 
 d.plot_xy(0,[1,2],["r-","bo"]) # plot the data
+d.annotate_fit(model,x=10)
+
 d.xlim=(-30,35)
-d.text(6.5,1.04,text)
 
 print fit.fit_report()

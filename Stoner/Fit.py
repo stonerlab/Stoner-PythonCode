@@ -197,6 +197,10 @@ def cfg_model_from_ini(inifile,model=None,data=None):
             for k in keys: # remove keywords not needed
                 if k in kargs:
                     data["{}{} {}".format(prefix,p,k)]=kargs[k]
+            if "lmfit.prerfix" in data:
+                data["lmfit.prefix"].append(prefix)
+            else:
+                data["lmfit.prefix"]=[prefix]
         if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
             step=kargs.pop("step")
             if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?

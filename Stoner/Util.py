@@ -64,6 +64,46 @@ class Data(_AF_, _PF_):
                 units=""
         return format_error(value,error,latex,mode,units,prefix)
 
+    def annotate_fit(self,model,x=None,y=None,prefix=None):
+        """Annotate a plot with some information about a fit.
+
+        Args:
+            mode (lmfit/Model): The model used to describe the fit to be annotated.
+
+        Keyword Parameters:
+            x (float): x co-ordinate of the label
+            y (float)L y co-ordinate of the label
+            prefix (str): The prefix placed ahead of the model parameters in the metadata.
+
+        Returns:
+            A copy of the current Data instance
+
+        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
+        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
+        are set to be 0.75 * maximum x and y limit of the plot.
+        """
+        if prefix is not None:
+            prefix="" if prefix == "" else prefix+":"
+        elif "lmfit.prefix" in self:
+            prefix=self["lmfit.prefix"][0]
+        else:
+            prefix=model.prefix+":"
+
+        if x is None:
+            xl,xr=self.xlim()
+            x=(xr-xl)*0.75+xl
+        if y is None:
+            yb,yt=self.ylim()
+            y=0.5*(yt-yb)+yb
+
+        text= "\n".join([self.format("{}{}".format(prefix,k),latex=True) for k in model.param_names])
+
+        self.text(x,y,text)
+
+        return self
+
+
+
 
 
 def split_up_down(data, col=None, folder=None):
