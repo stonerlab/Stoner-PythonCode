@@ -12,7 +12,8 @@ All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
 
-from .compat import *
+from Stoner.compat import *
+from Stoner.Core import DataFile
 import numpy as _np_
 from scipy.special import digamma
 from lmfit import Model
@@ -52,15 +53,15 @@ def _get_model_(model):
     -   A Model instance - in which case no further action is necessary.
 
     """
-    if isinstance(mode,string_types): #model is a string, so we;ll try importing it now
+    if isinstance(model,string_types): #model is a string, so we;ll try importing it now
         parts=model.split(".")
         model=parts[-1]
         module=".".join(parts[:-1])
-        model=__import__(modsules,globals(),locals(),(model))
+        model=__import__(module,globals(),locals(),(model)).__getattribute__(model)
+    if type(model).__name__=="type" and issubclass(model,Model): # ok perhaps we've got a model class rather than an instance
+        model=model()
     if not isinstance(model,Model) and callable(model): # Ok, wrap the callable in a model
         model=Model(model)
-    if issubclass(model,Model): # ok perhaps we've got a model class rather than an instance
-        model=model()
     if not isinstance(model,Model):
         raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
     return model
@@ -72,18 +73,18 @@ def linear(x, intercept, slope):
 
 def cfg_data_from_ini(inifile,filename=None):
     """Read an inifile and load and configure a DataFile from it.
-    
+
     Args:
         inifile (str or file): Path to the ini file to be read.
-        
+
     Keyword Arguments:
         filename (strig,boolean or None): File to load that contains the data.
 
     Returns:
         An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.
-        
+
     The inifile should contain a [Data] section that contains the following keys:
-    
+
     -  **type (str):** optional name of DataFile subclass to import.
     -  **filename (str or boolean):** optionally used if *filename* parameter is None.
     - **xcol (column index):** defines the x-column data for fitting.
@@ -98,15 +99,15 @@ def cfg_data_from_ini(inifile,filename=None):
         config.readfp(inifile)
     if not config.has_section("Data"):
         raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
-        
+
     if config.has_option("Data","type"):
         typ=config.get("Data","type").split(".")
-        typ_mod=typ[:-1]
+        typ_mod=".".join(typ[:-1])
         typ=typ[-1]
-        typ = __import__(typ_mod,fromlist=[typ])
+        typ = __import__(typ_mod,fromlist=[typ]).__getattribute__(typ)
     else:
         typ = None
-    
+    data=Data()
     if filename is None:
         if not config.has_option("Data","filename"):
             filename=False
@@ -114,12 +115,10 @@ def cfg_data_from_ini(inifile,filename=None):
             filename=config.get("Data","filename")
             if filename in ["False","True"]:
                 filename=bool(filename)
-                
-    data=Data(filename,auto_load=False,filetype=typ)
+    data.load(filename,auto_load=False,filetype=typ)
+    cols={"x":0,"y":1,"e":None} # Defaults
 
-    cols={"xcol":0,"ycol":1,"yerr":None} # Defaults
-    
-    for c in ["xcol","ycol","yerr"]:   
+    for c in ["x","y","e"]:
         if not config.has_option("Data",c):
             pass
         else:
@@ -131,10 +130,10 @@ def cfg_data_from_ini(inifile,filename=None):
         if cols[c] is None:
             del cols[c]
 
-    data.setas(**cols)    
-    return data            
+    data.setas(**cols)
+    return data
 
-def cfg_model_from_ini(inifile,model=None):
+def cfg_model_from_ini(inifile,model=None,data=None):
     """Utility function to configure an lmfit Model from an inifile.
 
     Args:
@@ -142,6 +141,7 @@ def cfg_model_from_ini(inifile,model=None):
 
     Keyword Arguments:
         model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.
+        data (DataFile): if supplied, the details of the parameter hints and labels and units are included in the data's metadata.
 
     Returns:
         An llmfit.Model,, a 2D array of starting values for each parameter
@@ -174,12 +174,17 @@ def cfg_model_from_ini(inifile,model=None):
         except:
             raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
     model=_get_model_(model)
+    if config.has_option("option","prefix"):
+        prefix = config.get("option","prefix")
+    else:
+        prefix = model.__class__.__name__
+    prefix += ":"
+    vals=[]
     for p in model.param_names:
         if not config.has_section(p):
             raise RuntimeError("Config file does not have a section for parameter {}".format(p))
-        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float}
+        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float,"label":str,"units":str}
         kargs=dict()
-        vals=[]
         for k in keys:
            if config.has_option(p,k):
                if keys[k]==bool:
@@ -187,18 +192,25 @@ def cfg_model_from_ini(inifile,model=None):
                elif keys[k]==float:
                    kargs[k]=config.getfloat(p,k)
                elif keys[k]==str:
-                    kargs[k]==config.get(p,v)
+                    kargs[k]=config.get(p,k)
+        if isinstance(data,DataFile): # stuff the parameter hint data into metadata
+            for k in keys: # remove keywords not needed
+                if k in kargs:
+                    data["{}{} {}".format(prefix,p,k)]=kargs[k]
         if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
-            step=kargs["step"]
-            del kargs["step"]
+            step=kargs.pop("step")
             if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?
                 vals.append(_np_.arange(kars[min],kargs[max]+kargs[step]/10,kargs[step]))
             else: # Nope, just make a single value step here
                 vals.append(_np_.array(kargs["value"]))
+        else: # Nope, just make a single value step here
+            vals.append(_np_.array(kargs["value"]))
+        kargs={k:kargs[k] for k in kargs if k in ["value","max","min","vary"]}
         model.set_param_hint(p,**kargs) # set the model parameter hint
-        msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
-        msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
-        msh=_np_.column_stack(msh)
+    print vals
+    msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
+    msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
+    msh=_np_.column_stack(msh)
     return model,msh
 
 def arrhenius(x, A, DE):
@@ -1001,3 +1013,41 @@ class StretchedExp(Model):
             x0 = _np_.exp(d2 / beta)
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+def kittelEquation(H,gamma,M_s,H_k):
+    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        gamma (float): gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    """
+    return (consts.mu0*gamme/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
+
+class KittelEquation(Model):
+    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        gamma (float): gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    """
+    def __init__(self, *args, **kwargs):
+        super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        M_s=(_np_.pi*data/consts.mu0)/H-H
+
+        pars = self.make_params(gamma=2, M_s=M_s, H_k=0.0)
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+

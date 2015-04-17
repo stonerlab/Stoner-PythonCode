@@ -2323,13 +2323,14 @@ class DataFile(object):
             raise IOError("Cannot find {} to load".format(self.filename))
         cls = self.__class__
         failed = True
-        if auto_load:  # We're going to try every subclass we can
+        if auto_load:  # We're going to try every subclass we canA
             for cls in self.subclasses.values():
                 if self.debug:
                     print(cls.__name__)
                 try:
                     test = cls()
-                    test._load(self.filename, auto_load=False)
+                    kargs.pop("auto_load",None)
+                    test._load(self.filename,auto_load=False,*args,**kargs)
                     failed=False
                     self["Loaded as"]=cls.__name__
                     self._setas=test._setas
@@ -2343,13 +2344,14 @@ class DataFile(object):
         else:
             if filetype is None:
                 test = cls()
-                test._load(self.filename)
+                test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = cls.__name__
                 self._setas = test._setas
                 self._setas.ref = self
                 failed = False
-            elif issubclass(filetype, DataFile):
-                test = filetype(filename)
+            elif type(filetype).__name__=="type" and issubclass(filetype, DataFile):
+                test = filetype()
+                test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = filetype.__name__
                 self._setas = test._setas
                 self._setas.ref = self
