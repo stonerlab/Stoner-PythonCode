@@ -57,7 +57,7 @@ class CSVFile(DataFile):
         else:
             self.filename = filename
         if header_line is not None:
-            header_string = linecache.getline(self.filename, header_line)
+            header_string = linecache.getline(self.filename, header_line+1)
             header_string = re.sub(r'["\n]', '', header_string)
             try:
                 tmp = header_string.index(header_delim)
@@ -72,7 +72,7 @@ class CSVFile(DataFile):
             except ValueError:
                 raise StonerLoadError("No delimiters in data lines")
 
-        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line - 1)
+        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
         return self
 
     def save(self, filename, deliminator=','):
@@ -468,7 +468,7 @@ class TDMSFile(DataFile):
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.    
+    #      file type before attempting to read data.
     priority=16 # Makes a positive ID of its file contents
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
@@ -700,7 +700,7 @@ class BNLFile(DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
-    
+
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
@@ -1285,9 +1285,9 @@ class EasyPlotFile(DataFile):
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.    
+    #      file type before attempting to read data.
     priority=32 # Fairly generic, but can do some explicit testing
-    
+
     def _load(self,filename, *args, **kargs):
         """Private loader method."""
         if filename is None or not filename:

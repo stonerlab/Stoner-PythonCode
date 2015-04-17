@@ -173,7 +173,6 @@ class AnalyseFile(DataFile):
         Returns:
             Results froma  fit or raises and exception.
         """
-
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
@@ -731,7 +730,7 @@ class AnalyseFile(DataFile):
         inter = interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, prefix=None,**kargs):
+    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
         """Wrapper around lmfit module fitting.
 
         Args:
@@ -807,12 +806,8 @@ class AnalyseFile(DataFile):
         else:
             raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-        if prefix is None:
-            prefix = model.__class__.__name__ + ":"
-        elif not prefix:
-            prefix = ""
-        else:
-            prefix = str(prefix) + ":"
+
+        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
         if xcol is None or ycol is None:
             cols = self.setas._get_cols()

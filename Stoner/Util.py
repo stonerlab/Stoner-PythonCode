@@ -22,10 +22,10 @@ class Data(_AF_, _PF_):
     """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""
-    
+
     def format(self,key,latex=False, mode="float", units=None, prefix=None):
         """Return the contents of key pretty formatted using :py:func:`format_error`.
-        
+
         Args:
             key (string): Name of a metadata key that identifies the balue to be formatted.
         latex (bool): If true, then latex formula codes will be used for +/- symbol for matplotlib annotations
@@ -39,10 +39,10 @@ class Data(_AF_, _PF_):
 
         Returns:
             A pretty string representation.
-            
+
         The if key="key", then the value is self["key"], the error is self["key err"], the default prefix is self["key label"]+"=" or "key=",
         the units are self["key units"] or "".
-        
+
         """
         try:
             value=float(self[key])
@@ -54,7 +54,7 @@ class Data(_AF_, _PF_):
             error=float_info.epsilon
         if prefix is None:
             try:
-                prefix="{} = ".format(self["key label"])
+                prefix="{} = ".format(self[key+" label"])
             except KeyError:
                 prefix="{} =".format(key)
         if units is None:
@@ -63,8 +63,8 @@ class Data(_AF_, _PF_):
             except KeyError:
                 units=""
         return format_error(value,error,latex,mode,units,prefix)
-        
-        
+
+
 
 def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
