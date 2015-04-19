@@ -160,30 +160,10 @@ Non-linear curve fitting with initialisation file
 For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
 edit the source code. :py:meth:`AnalyseFile.lmfit` and :py:mod:`Stoner.Fit` provide some mechanisms to enable this.
 
-Firstly, the initialisation file should take the form like so.::
+Firstly, the initialisation file should take the form like so.
 
-    [Options]
-    model: Stoner.Fit.Arrehnius
-
-    [Data]
-    filename: False
-    type: Stoner.FileFormats.SPCDFile
-    xcol: "Temperature"
-    ycol: "Counts"
-    yerr: 2
-
-    [A]
-    vary: true
-    min: 1.0
-    max: 1000.0
-    value: 50.0
-
-    [DE]
-    vary: False
-    min: 1.0
-    max: 1.5
-    value: 1.0
-    step: 0.01
+.. include:: ../scripts/PCAR-New.ini
+   :literal:
 
 This initialisation file can be passed to :py:func:`Stoner.Fit.cfg_data_from_ini` which will use the information in the [Data]
 section to read in the data file and identify the x and y columns.
@@ -192,13 +172,10 @@ The initialisation file can then be passed to :py:func:`Stoner.Fit.cfg_mode_from
 setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
 returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`AnalyseFile.lmfit`. Depending
 on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
-:math:`\\chi^2` goodeness of fit.::
+:math:`\\chi^2` goodeness of fit.
 
-    from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini
-    d=cfg_data_from_ini("My config.ini")
-    model, p0 = cfg_model_from_ini("My config.ini")
-    result=d.lmfit(model,p0=p0)
-    
+.. plot:: ../scripts/lmfit-demo.py
+   
 
 More AnalyseFile Functions
 ==========================
