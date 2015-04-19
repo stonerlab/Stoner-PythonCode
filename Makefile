@@ -6,7 +6,7 @@ endif
 PYTHON_SETUP	=	python setup.py
 
 egg:
-	$(PYTHON_SETUP) egg_info -d bdist_egg upload
+	$(PYTHON_SETUP) egg_info -bb1 bdist_egg upload
 
 doc: docbuild
 	$(PYTHON_SETUP) upload_sphinx
@@ -14,5 +14,5 @@ doc: docbuild
 
 docbuild: FORCE
 	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html
-	
-FORCE:	
+
+FORCE:
