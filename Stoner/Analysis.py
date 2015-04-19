@@ -176,15 +176,18 @@ class AnalyseFile(DataFile):
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
-            if isinstance(result, index_types) or (isinstance(result, bool) and result):
+            if (isinstance(result, bool) and result):
+                self.add_column(fit.best_fit, column_header=header, index=None)                
+            elif isinstance(result, index_types):
                 self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
             elif result is not None:
                 raise RuntimeError("Didn't recognize result as an index type or True")
             for p in fit.params:
                 self["{}{}".format(prefix, p)] = fit.params[p].value
                 self["{}{} err".format(prefix, p)] = fit.params[p].stderr
-                row.append([fit.params[p].value, fit.params[p].stderr])
+                row.extend([fit.params[p].value, fit.params[p].stderr])
             self["{}chi^2".format(prefix)] = fit.chisqr
+            row.append(fit.chisqr)
             self["{}nfev".format(prefix)] = fit.nfev
             retval = {"fit": fit, "row": row, "full": (fit, row)}
             if output not in retval:
@@ -821,11 +824,15 @@ class AnalyseFile(DataFile):
         xdata = working[:, self.find_col(xcol)]
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
-            if not (isinstance(p0,_np_.ndarray) and len(p0.shape)!=2):
+            if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
+                if p0.shape[0]==1: # Actually a single fit
+                    p0=self.__lmfit_p0_dict(p0[0],model)
+                    single_fit=True
+                else: # Is chi^2 mapping
+                    single_fit=False
+            else:
                 p0=self.__lmfit_p0_dict(p0,model)
                 single_fit=True
-            else:
-                single_fit=False
         else: #Do we already have parameter hints ?
             check=True
             single_fit = True
@@ -839,8 +846,10 @@ class AnalyseFile(DataFile):
         if sigma is not None:
             if isinstance(sigma, index_types):
                 sigma = working[:, self.find_col(sigma)]
-            elif isinstance(sigma, (list, tuple, _np_.ndarray)):
+            elif isinstance(sigma, (list, tuple)):
                 sigma = _np_.ndarray(sigma)
+            elif isinstance(sigma,_np_.ndarray):
+                pass
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
         else:
@@ -856,11 +865,11 @@ class AnalyseFile(DataFile):
             ret_val=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
         else: # chi^2 mode
             pn=p0
-            ret_val=_np_.zeroes((pn.shape[0],pn.shape[1]+1))
+            ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
             for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
                 p0=self.__lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,)
+                ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix)
         return ret_val
 
 

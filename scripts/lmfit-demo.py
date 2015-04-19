@@ -14,9 +14,7 @@ model,p0=cfg_model_from_ini("PCAR-New.ini",data=d)
 
 fit=d.lmfit(model,result=True,header="lmfit")
 
-d.plot_xy(0,[1,2],["r-","bo"]) # plot the data
-d.annotate_fit(model,x=10)
-
-d.xlim=(-30,35)
+d.plot_xy(0,[2,1],["r-","bo"]) # plot the data
+d.annotate_fit(model,x=0.05,y=0.65,xycoords="axes fraction")
 
 print fit.fit_report()

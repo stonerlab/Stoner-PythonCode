@@ -204,14 +204,13 @@ def cfg_model_from_ini(inifile,model=None,data=None):
         if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
             step=kargs.pop("step")
             if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?
-                vals.append(_np_.arange(kars[min],kargs[max]+kargs[step]/10,kargs[step]))
+                vals.append(_np_.arange(kargs["min"],kargs["max"]+step/10,step))
             else: # Nope, just make a single value step here
                 vals.append(_np_.array(kargs["value"]))
         else: # Nope, just make a single value step here
             vals.append(_np_.array(kargs["value"]))
         kargs={k:kargs[k] for k in kargs if k in ["value","max","min","vary"]}
         model.set_param_hint(p,**kargs) # set the model parameter hint
-    print vals
     msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
     msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
     msh=_np_.column_stack(msh)

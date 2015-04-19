@@ -64,7 +64,7 @@ class Data(_AF_, _PF_):
                 units=""
         return format_error(value,error,latex,mode,units,prefix)
 
-    def annotate_fit(self,model,x=None,y=None,prefix=None):
+    def annotate_fit(self,model,x=None,y=None,prefix=None,**kargs):
         """Annotate a plot with some information about a fit.
 
         Args:
@@ -97,8 +97,7 @@ class Data(_AF_, _PF_):
             y=0.5*(yt-yb)+yb
 
         text= "\n".join([self.format("{}{}".format(prefix,k),latex=True) for k in model.param_names])
-
-        self.text(x,y,text)
+        self.annotate(text, xy=(x,y), **kargs)
 
         return self
 

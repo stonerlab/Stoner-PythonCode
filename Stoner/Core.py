@@ -23,6 +23,28 @@ import itertools
 from collections import Iterable, OrderedDict
 
 
+def copy_into(source,dest):
+    """Copies the data associated with source to dest.
+    
+    Args:
+        source(DataFile): The DataFile object to be copied from
+        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
+        
+    Returns:
+        The modified *dest* DataFile.
+        
+    Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
+    overwrites the attributes that represent the data in the DataFile.
+    """
+    for attr in source._public_attrs:
+        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+            continue
+        dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
+    dest.data = source.data.copy()
+    dest._setas = source.setas.clone
+    return dest
+
+
 class StonerLoadError(Exception):
     """An exception thrown by the file loading routines in the Stoner Package.
 
@@ -1244,13 +1266,7 @@ class DataFile(object):
         """Gets a deep copy of the current DataFile.
         """
         c = self.__class__()
-        for attr in self._public_attrs:
-            if attr not in self.__dict__ or callable(self.__dict__[attr]) or attr in ["data","setas","column_headers"]:
-                continue
-            c.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
-        c.data = self.data.copy()
-        c._setas = self.setas.clone
-        return c
+        return copy_into(self,c)
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
