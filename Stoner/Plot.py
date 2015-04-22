@@ -15,6 +15,7 @@ import os
 import platform
 from inspect import getargspec
 if os.name == "posix" and platform.system() == "Darwin":
+    import matplotlib
     matplotlib.use('MacOSX')
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
@@ -950,7 +951,7 @@ class PlotFile(DataFile):
         if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == self.__SurfPlotter):
             otherkargs = ["rstride", "cstride", "color", "cmap", "facecolors", "norm", "vmin", "vmax", "shade"]
         else:
-            otherkargs = []
+            otherkargs = ["vmin", "vmax","shade","color"]
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
