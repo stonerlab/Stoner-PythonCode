@@ -26,9 +26,14 @@ from .pyTDMS import read as tdms_read
 class CSVFile(DataFile):
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
-    priority = 128  # Rather generic file format so make it a low priority
-
-    patterns = ["*.csv", "*.txt"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=128 # Rather generic file format so make it a low priority
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.csv","*.txt"] # Recognised filename patterns
 
     def _load(self, filename=None, header_line=0, data_line=1, data_delim=',', header_delim=',', **kargs):
         """Generic deliminated file loader routine.
@@ -52,7 +57,7 @@ class CSVFile(DataFile):
         else:
             self.filename = filename
         if header_line is not None:
-            header_string = linecache.getline(self.filename, header_line)
+            header_string = linecache.getline(self.filename, header_line+1)
             header_string = re.sub(r'["\n]', '', header_string)
             try:
                 tmp = header_string.index(header_delim)
@@ -67,7 +72,7 @@ class CSVFile(DataFile):
             except ValueError:
                 raise StonerLoadError("No delimiters in data lines")
 
-        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line - 1)
+        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
         return self
 
     def save(self, filename, deliminator=','):
@@ -97,9 +102,15 @@ class CSVFile(DataFile):
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
 
-    priority = 16  # Now makes a positive ID of its contents
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Now makes a positive ID of its contents
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.fld"] # Recognised filename patterns
 
-    patterns = ["*.fld"]  # Recognised filename patterns
 
     def __parse_VSM(self, header_line=3, data_line=7, data_delim=' ', header_delim=','):
         """An intrernal function for parsing deliminated data without a leading column of metadata.copy
@@ -172,8 +183,15 @@ class VSMFile(DataFile):
 class BigBlueFile(CSVFile):
     """Extends CSVFile to load files from BigBlue"""
 
-    priority = 64  # Also rather generic file format so make a lower priority
-    patterns = ["*.dat", "*.iv", "*.rvt"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=64 # Also rather generic file format so make a lower priority
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat","*.iv","*.rvt"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """Just call the parent class but with the right parameters set
@@ -198,8 +216,15 @@ class BigBlueFile(CSVFile):
 class QDSquidVSMFile(DataFile):
     """Extends DataFile to load files from The SQUID VSM"""
 
-    priority = 16  # Is able to make a positive ID of its file content, so get priority to check
-    patterns = ["*.dat"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Is able to make a positive ID of its file content, so get priority to check
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """QDSquidVSM file loader routine.
@@ -248,8 +273,14 @@ class QDSquidVSMFile(DataFile):
 class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
 
-    priority = 16  # Makes a positive ID of it's file type so give priority
-    patterns = ["*.dat"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Makes a positive ID of it's file type so give priority
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """OpenGDA file loader routine.
@@ -291,8 +322,14 @@ class RasorFile(OpenGDAFile):
 class SPCFile(DataFile):
     """Extends DataFile to load SPC files from Raman"""
 
-    priority = 16  # Can't make a positive ID of itself
-    patterns = ["*.spc"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Can't make a positive ID of itself
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.spc"] # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
@@ -428,9 +465,15 @@ class SPCFile(DataFile):
 class TDMSFile(DataFile):
     """A first stab at writing a file that will import TDMS files"""
 
-    Objects = dict()
-    priority = 16  # Makes a positive ID of its file contents
-    patterns = ["*.tdms"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Makes a positive ID of its file contents
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.tdms"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """TDMS file loader routine.
@@ -467,8 +510,15 @@ class TDMSFile(DataFile):
 class RigakuFile(DataFile):
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
 
-    priority = 16  #Can make a positive id of file from first line
-    patterns = ["*.ras"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 #Can make a positive id of file from first line
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.ras"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """Reads an Rigaku ras file including handling the metadata nicely
@@ -561,10 +611,22 @@ class RigakuFile(DataFile):
 class XRDFile(DataFile):
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
-    priority = 16  # Makes a positive id of its file contents
-    patterns = ["*.dql"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Makes a positive id of its file contents
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dql"] # Recognised filename patterns
 
-    def _load(self, filename=None, *args, **kargs):
+    def __getattr__(self,name):
+        ret=super(XRDFile,self).__getattr__(name)
+        if name=="_public_attrs":
+            ret.update({"four_bounce":bool})
+        return ret
+
+    def _load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
 
         Args:
@@ -600,24 +662,23 @@ class XRDFile(DataFile):
                     if line.strip(
                     ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
                         break
-                    elif section == "Data":  # In the Data section read lines of data value,vale
-                        parts = line.split(',')
-                        angle = parts[0].strip()
-                        counts = parts[1].strip()
-                        dataline = _np_.array([float(angle), float(counts)])
-                        self.data = _np_.append(self.data, dataline)
-                    else:  # Other sections contain metadata
-                        parts = line.split('=')
-                        key = parts[0].strip()
-                        data = parts[1].strip()
-                        self[
-                            section + ":" + key
-                        ] = data  # Keynames in main metadata are section:key - use theDataFile magic to do type determination
-        self.column_headers = ['Angle', 'Counts']  # Assume the columns were Angles and Counts
+                    elif section=="Data": # In the Data section read lines of data value,vale
+                        parts=line.split(',')
+                        angle=parts[0].strip()
+                        counts=parts[1].strip()
+                        dataline=_np_.array([float(angle), float(counts)])
+                        self.data=_np_.append(self.data, dataline)
+                    else: # Other sections contain metadata
+                        parts=line.split('=')
+                        key=parts[0].strip()
+                        data=parts[1].strip()
+                        self[section+":"+key]=data # Keynames in main metadata are section:key - use theDataFile magic to do type determination
+        self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
-        f.close()  # Cleanup
-        self.data = _np_.reshape(self.data, (-1, 2))
-        self.setas = "xy"
+        f.close()# Cleanup
+        self.data=_np_.reshape(self.data, (-1, 2))
+        self.setas="xy"
+        self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
         return self
 
     def to_Q(self, l=1.540593):
@@ -639,8 +700,15 @@ class BNLFile(DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
-    priority = 64
-    patterns = ["*.txt"]  # Recognised filename patterns
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=64
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.txt"] # Recognised filename patterns
 
     def __init__(self, *params):
         """Constructor modification
@@ -725,8 +793,15 @@ class BNLFile(DataFile):
 class MokeFile(DataFile):
     """Class that extgends DataFile to load files from the Leeds MOKE system."""
 
-    priotity = 16
-    patterns = ["*.dat", "*.txt"]
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priotity=16
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat","*.txt"]
+
 
     def _load(self, filename=None, *args, **kargs):
         """Leeds  MOKE file loader routine.
@@ -762,8 +837,14 @@ class MokeFile(DataFile):
 class FmokeFile(DataFile):
     """Extends DataFile to open Fmoke Files"""
 
-    priority = 16  # Makes a positive ID check of its contents so give it priority in autoloading
-    patterns = ["*.dat"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16 # Makes a positive ID check of its contents so give it priority in autoloading
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Sheffield Focussed MOKE file loader routine.
@@ -797,8 +878,16 @@ class FmokeFile(DataFile):
 
 class GenXFile(DataFile):
     """Extends DataFile for GenX Exported data."""
-    priority = 64
-    patterns = ["*.dat"]  # Recognised filename patterns
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=64
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -844,8 +933,14 @@ class SNSFile(DataFile):
 
     """
 
-    priority = 16
-    patterns = ["*.dat"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -902,8 +997,15 @@ class OVFFile(DataFile):
 
     OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported"""
 
-    priority = 16
-    patterns = ["*.ovf"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.ovf"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -991,8 +1093,16 @@ class OVFFile(DataFile):
 
 class MDAASCIIFile(DataFile):
     """Reads files generated from the APS."""
-    priority = 16
-    patterns = ["*.txt"]  # Recognised filename patterns
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.txt"] # Recognised filename patterns
+
 
     def _load(self, filename=None, *args, **kargs):
         """Load function. File format has space delimited columns from row 3 onwards."""
@@ -1079,8 +1189,14 @@ class LSTemperatureFile(DataFile):
 
     """
 
-    priority = 16
-    patterns = ["*.340"]
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=16
+     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.340"]
 
     def _load(self, filename=None, *args, **kargs):
         if filename is None or not filename:
@@ -1166,9 +1282,13 @@ class LSTemperatureFile(DataFile):
 class EasyPlotFile(DataFile):
     """A class that will extract as much as it can from an EasyPlot save File."""
 
-    priority = 32  # Fairly generic, but can do some explicit testing
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=32 # Fairly generic, but can do some explicit testing
 
-    def _load(self, filename, *args, **kargs):
+    def _load(self,filename, *args, **kargs):
         """Private loader method."""
         if filename is None or not filename:
             self.get_filename('r')

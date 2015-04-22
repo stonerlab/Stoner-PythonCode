@@ -1,7 +1,9 @@
 *****************
 Developer's Guide
 *****************
+
 .. currentmodule:: Stoner.Core
+
 This section provides some notes and guidance on extending the Stoner Package.
 
 Adding New Data File Types
@@ -10,6 +12,7 @@ Adding New Data File Types
 The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using. If so, then the best thing would be to include it in the \textbf{fileFormats} module in the package, otherwise you should just write the class in your own script files. In either case, develop the class in your own script files first.
 
 The best way to implement handling a new data format is to write a new subclass of :py:class:`DataFile`::
+
     class NewInstrumentFile(DataFile):
         """Extends DataFile to load files from somewhere else
     

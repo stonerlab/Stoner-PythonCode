@@ -23,7 +23,36 @@ import itertools
 from collections import Iterable, OrderedDict
 
 
+def copy_into(source,dest):
+    """Copies the data associated with source to dest.
+    
+    Args:
+        source(DataFile): The DataFile object to be copied from
+        dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
+        
+    Returns:
+        The modified *dest* DataFile.
+        
+    Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
+    overwrites the attributes that represent the data in the DataFile.
+    """
+    for attr in source._public_attrs:
+        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+            continue
+        dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
+    dest.data = source.data.copy()
+    dest._setas = source.setas.clone
+    return dest
+
+
 class StonerLoadError(Exception):
+    """An exception thrown by the file loading routines in the Stoner Package.
+
+    This special exception is thrown when one of the subclasses of :py:class:`Stoner.Core.DataFile`
+    attmpts and then fails to load some data from disk. Generally speaking this is not a real
+    error, but simply indicates that the file format is not recognised by that particular subclass,
+    and thus another subclass should have a go instead.
+    """
     pass
 
 
@@ -195,11 +224,16 @@ class _setas(object):
     def __setattr__(self, name, value):
         """Wrapper to handle some special linked attributes."""
         super(_setas, self).__setattr__(name, value)
-        if name == "shape":  # cutdown the column headers as well
-            if value[1] > len(self.column_headers):
-                self.column_headers = self.column_headers[:value[1]]
-            if value[1] > len(self.setas):
-                self.setas = self.setas[:value[1]]
+        if name == "shape":  # Force setas annd acolumn_headers to match shape
+            c=value[1]
+            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
+            self.__dict__["setas"]=self.setas[:c]
+            self.__dict__["column_headers"].extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
+            self.__dict__["column_headers"] = self.column_headers[:c]
+        elif name=="column_headers":
+            c=len(self.column_headers)
+            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
+            self.__dict__["setas"]=self.setas[:c]
 
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
@@ -757,21 +791,21 @@ class DataFile(object):
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
                            their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the
                            string name of the subclass and the class object.
-        patterns (list): A list of strings containing file glob patterns that are typically used for datafiles
-                        that the :py:meth:`DataFile.load` method will read. This is used for the file dialog boxes.
-        priority (int): A class attribute used to indivate the order in which the autoloader should attempt to load
-                        a data file. See :py:meth:`DataFile.load` for details.
     """
 
-    #Class attributes
-    #Priority is the load order for the class
-    priority = 32
-    patterns = ["*.txt", "*.tdi"]  # Recognised filename patterns
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=32
+
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.txt","*.tdi"] # Recognised filename patterns
 
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
-
-    #   INITIALISATION
 
     def __init__(self, *args, **kargs):
         """Constructor method for :py:class:`DataFile`.
@@ -794,7 +828,7 @@ class DataFile(object):
             :noindex:
 
             Creates the new DataFile object, but initialises the metadata with
-            :parameter dictionary
+            :parameter: dictionary
 
         .. py:function:: DataFile(array,dictionary)
             :noindex:
@@ -876,20 +910,27 @@ class DataFile(object):
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__"""
         (arg0, arg1) = args
-        if isinstance(arg0, _np_.ndarray):
+        if isinstance(arg0,_np_.ndarray) and isinstance(arg1,_np_.ndarray) and len(arg0.shape)==1 and len(arg1.shape)==1:
+            self._init_many(*args,**kargs)
+        elif isinstance(arg0, _np_.ndarray):
             self.data = _ma_.masked_array(arg0)
         elif isinstance(arg0, dict):
             self.metadata = arg0.copy()
         elif isinstance(arg0, str) and isinstance(arg1, str):
             self.load(arg0, arg1)
-        if isinstance(arg1, _np_.ndarray):
+        if not isinstance(arg0,_np_.ndarray) and isinstance(arg1, _np_.ndarray):
             self.data = _ma_.masked_array(arg1)
         elif isinstance(arg1, dict):
             self.metadata = arg1.copy()
 
     def _init_many(self, *args, **kargs):
         """Handles more than two arguments to the constructor - called from init."""
-        self.load(*args, **kargs)
+        for a in args:
+            if not (isinstance(a,_np_.ndarray) and len(a.shape)==1):
+                self.load(*args, **kargs)
+                break
+        else:
+            self.data=_np_.column_stack(args)
 
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data.
@@ -1224,13 +1265,8 @@ class DataFile(object):
     def _getattr_clone(self):
         """Gets a deep copy of the current DataFile.
         """
-        c = self.__class__(copy.deepcopy(self))
-        c.data = self.data.copy()
-        c._setas = self.setas.clone
-        for attr in self.__dict__:
-            if attr not in ("metadata", "data", "column_headers", "_setas") and not callable(self.__dict__[attr]):
-                c.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
-        return c
+        c = self.__class__()
+        return copy_into(self,c)
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
@@ -2303,17 +2339,19 @@ class DataFile(object):
             raise IOError("Cannot find {} to load".format(self.filename))
         cls = self.__class__
         failed = True
-        if auto_load:  # We're going to try every subclass we can
+        if auto_load:  # We're going to try every subclass we canA
             for cls in self.subclasses.values():
                 if self.debug:
                     print(cls.__name__)
                 try:
                     test = cls()
-                    test._load(self.filename, auto_load=False)
-                    failed = False
-                    self["Loaded as"] = cls.__name__
-                    self._setas = test._setas
-                    self._setas.ref = self
+                    kargs.pop("auto_load",None)
+                    test._load(self.filename,auto_load=False,*args,**kargs)
+                    failed=False
+                    self["Loaded as"]=cls.__name__
+                    self._setas=test._setas
+                    for attr in test._public_attrs:
+                       self.__setattr__(attr,test.__getattr__(attr))
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:
                     continue
@@ -2322,13 +2360,14 @@ class DataFile(object):
         else:
             if filetype is None:
                 test = cls()
-                test._load(self.filename)
+                test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = cls.__name__
                 self._setas = test._setas
                 self._setas.ref = self
                 failed = False
-            elif issubclass(filetype, DataFile):
-                test = filetype(filename)
+            elif type(filetype).__name__=="type" and issubclass(filetype, DataFile):
+                test = filetype()
+                test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = filetype.__name__
                 self._setas = test._setas
                 self._setas.ref = self

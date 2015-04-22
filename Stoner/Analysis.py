@@ -7,8 +7,6 @@ __all__ = ["AnalyseFile"]
 
 from Stoner.compat import *
 from Stoner.Core import DataFile
-import Stoner.FittingFuncs
-import Stoner.nlfit
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -19,41 +17,11 @@ from inspect import getargspec
 from collections import Iterable
 try:  #Allow lmfit to be optional
     from lmfit.model import Model, ModelFit
+    from lmfit import Parameters
 except ImportError:
     Model = None
     ModelFit = None
 import sys
-
-
-def cov2corr(M):
-    """ Converts a covariance matrix to a correlation matrix. Taken from bvp.utils.misc
-
-    Args:
-        M (2D _np_.array): Co-varriance Matric
-
-    Returns:
-        Correlation Matrix.
-    """
-    if (not isinstance(M, _np_.ndarray)) or (not (len(M.shape) == 2)) or (not (M.shape[0] == M.shape[1])):
-        raise ValueError('cov2corr expects a square ndarray, got %s' % M)
-
-    if _np_.isnan(M).any():
-        raise ValueError('Found NaNs in my covariance matrix: %s' % M)
-
-# TODO check Nan and positive diagonal
-    d = M.diagonal()
-    if (d < 0).any():
-        raise ValueError('Expected positive elements for square matrix, got diag = %s' % d)
-
-    n = M.shape[0]
-    R = _np_.ndarray((n, n))
-    for i in range(n):
-        for j in range(n):
-            d = M[i, j] / _np_.sqrt(M[i, i] * M[j, j])
-            R[i, j] = d
-
-    return R
-
 
 class AnalyseFile(DataFile):
     """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
@@ -78,7 +46,7 @@ class AnalyseFile(DataFile):
             A numpy array representing the smoothed or differentiated data.
 
         Notes:
-            If col is not specified or is None then the :py:atrt:`DataFile.setas` column assignments are used
+            If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
         """
@@ -169,37 +137,67 @@ class AnalyseFile(DataFile):
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
         return abs(row[column] - pval) > metric * perr
 
-    def __mpf_fn(self, p, **fa):
-        """Internal routine for general non-linear least squeares fitting.
+    def __lmfit_p0_dict(self,p0,model):
+        """Works out an initial starting value dictionary for lmfit.
 
         Args:
-            p (list or tuple): fitting parameter values for fitting function .
-
-        Keyword Arguments:
-            func (callable): fitting function
-            x (array of float): X values
-            y(array of float): Y data values
-            err (array of float): Weightings of data values
-
-        Note:
-            All other keywords are passed to the fitting function directly.
+            p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
 
         Returns:
-            Difference between model values ad actual y values divided by weighting.
+            Dictionary of parameter starting points.
         """
-        func = fa['func']
-        x = fa['x']
-        y = fa['y']
-        err = fa['err']
-        del (fa['x'])
-        del (fa['y'])
-        del (fa['func'])
-        del (fa['fjac'])
-        del (fa['err'])
-        model = func(x, p, **fa)
-        # stop the calculation.
-        status = 0
-        return [status, (y - model) / err]
+        if isinstance(p0, (list, tuple, _np_.ndarray)):
+            p0 = {p: pv for p, pv in zip(model.param_names, p0)}
+        elif isinstance(p0,Parameters):
+            p0={k:p0[k].value for k in p0}
+        if not isinstance(p0, dict):
+            raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
+            p0.update(kargs)
+            p0={p0[k] for k in model.param_names}
+        return p0
+
+    def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
+        """Carry out a single fit wioth lmfit.
+
+        Args:
+            model (lmfit.Model): Configured model
+            ydata (array): y data to fit
+            scale_covat (bool): Whether sigmas are absolute or relative.
+            sigma (array): Uncertainties of ydata.
+            p0 (dict): Dictionary of parameters including independent data
+            result (bool,str): Where the result goes
+            header (str): Name of new data column if used
+            replace (bool): whether to add new dataa
+            output (str): What to return
+
+        Returns:
+            Results froma  fit or raises and exception.
+        """
+        fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
+        if fit.success:
+            row = []
+            if (isinstance(result, bool) and result):
+                self.add_column(fit.best_fit, column_header=header, index=None)                
+            elif isinstance(result, index_types):
+                self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
+            elif result is not None:
+                raise RuntimeError("Didn't recognize result as an index type or True")
+            for p in fit.params:
+                self["{}{}".format(prefix, p)] = fit.params[p].value
+                self["{}{} err".format(prefix, p)] = fit.params[p].stderr
+                row.extend([fit.params[p].value, fit.params[p].stderr])
+            self["{}chi^2".format(prefix)] = fit.chisqr
+            row.append(fit.chisqr)
+            self["{}nfev".format(prefix)] = fit.nfev
+            retval = {"fit": fit, "row": row, "full": (fit, row)}
+            if output not in retval:
+                raise RuntimeError("Failed to recognise output format:{}".format(output))
+            else:
+                return retval[output]
+        else:
+            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
+
+
 
     def __threshold(self, threshold, data, rising=True, falling=False):
         """ Internal function that implements the threshold method - also used in peak-finder
@@ -389,25 +387,13 @@ class AnalyseFile(DataFile):
             for i in range(ybin.shape[1]):
                 ret = ret & ybin[:, i] & ebin[:, i] & nbins[:, i]
                 s = list(ret.setas)
-                s[-2:] = ["y", "e", "."]
+                s[-3:] = ["y", "e", "."]
                 ret.setas = s
                 head = self.column_headers[ycol[i]]
                 ret.column_headers[i * 3 + 1:i * 3 + 5] = [head, "d{}".format(head), "#/bin {}".format(head)]
         else:
             ret = (bin_centres, ybin, ebin, nbins)
         return ret
-
-    def chi2mapping(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
-
-        Args:
-            ini_file (string): Path to ini file with model
-            func_name (string or callable): Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                or the function itself.
-
-        ReturnsL
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled), DataFile instance of parameter steps"""
-        return Stoner.nlfit.nlfit(ini_file, func, data=self, chi2mapping=True)
 
     def clip(self, clipper, column=None):
         """Clips the data based on the column and the clipper value.
@@ -450,22 +436,17 @@ class AnalyseFile(DataFile):
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
             absolute_sigma (bool, defaults to True) If False, `sigma` denotes relative weights of the data points.
-                The returned covariance matrix `pcov` is based on *estimated*
-                errors in the data, and is not affected by the overall
-                magnitude of the values in `sigma`. Only the relative
-                magnitudes of the `sigma` values matter.
-                If True, `sigma` describes one standard deviation errors of
-                the input data points. The estimated covariance in `pcov` is
-                based on these values.
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
             popt (array): Optimal values of the fitting parameters p
             pcov (2d array): The variance-co-variance matrix for the fitting parameters.
-            The return value is determined by the *output* parameter. Options are:
-                * "ffit"    (tuple of popt,pcov)
-                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+
+        The return value is determined by the *output* parameter. Options are:
+            * "ffit"    (tuple of popt,pcov)
+            * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+            * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
             :py:attr:`DataFile.setas` attribute.
@@ -476,6 +457,14 @@ class AnalyseFile(DataFile):
             The initial parameter values and weightings default to None which corresponds to all parameters starting
             at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
             point is to be used in the fit and false if not.
+
+
+            The *absolute_sigma* keyword determines whether the returned covariance matrix `pcov` is based on *estimated* errors in
+            the data, and is not affected by the overall magnitude of the values in `sigma`. Only the relative magnitudes of the
+            *sigma* values matter.
+            If True, `sigma` describes one standard deviation errors of the input data points. The estimated covariance in `pcov` is
+            based on these values.
+
 
         See Also:
             :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
@@ -510,13 +499,13 @@ class AnalyseFile(DataFile):
             sigma = working[:, self.find_col(sigma)]
         xdat = working[:, self.find_col(xcol)]
         ydat = working[:, self.find_col(ycol)]
-        ret = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
-        popt = ret[0]
-        pcov = ret[1]
+        popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+        perr=_np_.sqrt(_np_.diag(pcov))
         if result is not None:
             args = getargspec(func)[0]
-            for i in range(len(popt)):
-                self['Fit ' + func.__name__ + '.' + str(args[i + 1])] = popt[i]
+            for val,err,name in zip(popt,pcov,args[1:]):
+                self['{}:{}',format(func.__name__,name)] = val
+                self['{}:{} err',format(func.__name__,name)] = err
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
@@ -524,8 +513,8 @@ class AnalyseFile(DataFile):
                 result = self.shape[1] - 1
             self.apply(lambda x: func(x[xc], *popt), result, replace=replace, header=header)
         row = _np_.array([])
-        for i in range(len(popt)):
-            row = _np_.append(row, [popt[i], _np_.sqrt(pcov[i, i])])
+        for val,err in zip(popt,perr):
+            row = _np_.append(row, [val,err])
         ret = ret + (row, )
         retval = {"fit": (popt, pcov), "row": row, "full": ret}
         if output not in retval:
@@ -744,7 +733,7 @@ class AnalyseFile(DataFile):
         inter = interp1d(index, self.data, kind, 0)
         return inter(newX)
 
-    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None, prefix=None, **kargs):
+    def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
         """Wrapper around lmfit module fitting.
 
         Args:
@@ -753,7 +742,7 @@ class AnalyseFile(DataFile):
             ycol (index or None): Columns to be used for the  y data for the fitting. If not givem defaults to the :py:attr:`Stoner.Core.DataFile.setas` y column
 
         Keyword Arguments:
-            p0 (list, tuple or array): A vector of initial parameter values to try
+            p0 (list, tuple or array): A vector of initial parameter values to try.
             sigma (index): The index of the column with the y-error bars
             bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
@@ -767,18 +756,31 @@ class AnalyseFile(DataFile):
         Returns:
             The lmfit module will refurn an instance of the :py:class:`lmfit.models.ModelFit` class that contains all
             relevant information about the fit.
-            The return value is determined by the *output* parameter. Options are
-                * "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
-                * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
-                * "full"    a tuple of the fit instance and the row.
+
+        The return value is determined by the *output* parameter. Options are
+            - "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
+            - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
+            - "full"    a tuple of the fit instance and the row.
 
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
+
+        .. note::
+
+           If *p0* is fed a 2D array, then it assumed that you want to calculate :math:`\\chi^2` for different starting parameters
+           with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
+           values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
+           columns are the fitted values of the parameters with an additional column for :math:`\\chi^2`.
+
+          Example:
+              .. plot:: samples/lmfit_simple.py
+                 :include-source:
         """
 
         if Model is None:  #Will be the case if lmfit is not imported.
             raise RuntimeError(
                 "To use the lmfit function you need to be able to import the lmfit module\n Try pip install lmfit\nat a command prompt.")
+
 
         bounds = kargs.pop("bounds", lambda x, y: True)
         result = kargs.pop("result", None)
@@ -791,15 +793,25 @@ class AnalyseFile(DataFile):
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
 
-        if prefix is None:
-            prefix = model.__class__.__name__ + ":"
-        elif not prefix:
-            prefix = ""
+        if isinstance(model, Model):
+            pass
+        elif type(model)=="class" and issubclass(model,Model):
+            model=model()
+        elif callable(model):
+            model=Model(model)
+            if p0 is None or len(p0)!=len(model.param_names):
+                p0=dict()
+                for k in model.param_names:
+                    if k not in kargs:
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))
+                    else:
+                        p0[k] = kargs[k]
         else:
-            prefix = str(prefix) + ":"
+            raise TypeError("{} must be an instance of lmfit.Model or a cllable function!".format(model))
 
-        if not isinstance(model, Model):
-            raise TypeError("model parameter must be an instance of lmfit.model/Model!")
+
+        prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
+
         if xcol is None or ycol is None:
             cols = self.setas._get_cols()
             if xcol is None:
@@ -812,47 +824,54 @@ class AnalyseFile(DataFile):
         xdata = working[:, self.find_col(xcol)]
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
-            if isinstance(p0, (list, tuple, _np_.ndarray)):
-                p0 = {p: pv for p, pv in zip(model.param_names, p0)}
-            if not isinstance(p0, dict):
-                raise RuntimeError("p0 should have been a tuple, list, ndarray or dict")
-                p0.update(kargs)
-        else:
-            p0 = kargs
+            if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
+                if p0.shape[0]==1: # Actually a single fit
+                    p0=self.__lmfit_p0_dict(p0[0],model)
+                    single_fit=True
+                else: # Is chi^2 mapping
+                    single_fit=False
+            else:
+                p0=self.__lmfit_p0_dict(p0,model)
+                single_fit=True
+        else: #Do we already have parameter hints ?
+            check=True
+            single_fit = True
+            for p in model.param_names:
+                check&=p in model.param_hints and "value" in model.param_hints[p]
+            if not check: # Ok, param_hints didn't have all the parameter values setup.
+                p0=model.guess(ydata,xdata)
+                p0={k:kargs[k] if k in kargs else p0[k].value for k in p0}
+
 
         if sigma is not None:
             if isinstance(sigma, index_types):
                 sigma = working[:, self.find_col(sigma)]
-            elif isinstance(sigma, (list, tuple, _np_.ndarray)):
+            elif isinstance(sigma, (list, tuple)):
                 sigma = _np_.ndarray(sigma)
+            elif isinstance(sigma,_np_.ndarray):
+                pass
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
         else:
             sigma = _np_.ones(len(xdata))
             scale_covar = True
         xvar = model.independent_vars[0]
-        p0[xvar] = xdata
+        if p0 is None: # We're working off parameter hints, but still need to set the independent var
+            p0=dict()
 
-        fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
-        if fit.success:
-            row = []
-            if isinstance(result, index_types) or (isinstance(result, bool) and result):
-                self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
-            elif result is not None:
-                raise RuntimeError("Didn't recognize result as an index type or True")
-            for p in fit.params:
-                self["{}{}".format(prefix, p)] = fit.params[p].value
-                self["{}{} err".format(prefix, p)] = fit.params[p].stderr
-                row.append([fit.params[p].value, fit.params[p].stderr])
-            self["{}chi^2".format(prefix)] = fit.chisqr
-            self["{}nfev".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": row, "full": (fit, row)}
-            if output not in retval:
-                raise RuntimeError("Failed to recognise output format:{}".format(output))
-            else:
-                return retval[output]
-        else:
-            raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
+        if single_fit:
+            p0[xvar] = xdata
+
+            ret_val=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
+        else: # chi^2 mode
+            pn=p0
+            ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
+            for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
+                p0=self.__lmfit_p0_dict(p0,model)
+                p0[xvar] = xdata
+                ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix)
+        return ret_val
+
 
     def make_bins(self, xcol, bins, mode, **kargs):
         """Utility method to generate bin boundaries and centres along an axis.
@@ -868,7 +887,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
-                boundaries and centres for each bin.
+            boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
         if "bin_start" in kargs:
@@ -1009,61 +1028,6 @@ class AnalyseFile(DataFile):
             self._pop_mask()
         return result
 
-    def mpfit(self, func, xcol, ycol, p_info, func_args=dict(), sigma=None, bounds=lambda x, y: True, **mpfit_kargs):
-        """Runs the mpfit algorithm to do a curve fitting with constrined bounds etc.
-
-                mpfit(func, xcol, ycol, p_info, func_args=dict(),sigma=None,bounds=labdax,y:True,**mpfit_kargs)
-
-        Args:
-            func (callable): Fitting function def func(x,parameters, **func_args)
-            xcol, ycol (index): index the x and y data sets
-            p_info (list of dictionaries): Defines the fitting parameters
-
-        Keyword Arguments:
-            sigma (index): weights of the data poiints. If not specified, then equal weighting assumed
-            bounds (callable): function that takes x,y pairs and returns true if to be used in the fitting
-            **mpfit_kargs: other lkeywords passed straight to mpfit
-
-        Returns:
-            Best fit parameters
-        """
-        from .mpfit import mpfit
-        if sigma == None:
-            working = self.search(xcol, bounds, [xcol, ycol])
-            x = working[:, 0]
-            y = working[:, 1]
-            sigma = _np_.ones(_np_.shape(y), _np_.float64)
-        else:
-            working = self.search(xcol, bounds, [xcol, ycol, sigma])
-            x = working[:, 0]
-            y = working[:, 1]
-            sigma = working[:, 2]
-        func_args["x"] = x
-        func_args["y"] = y
-        func_args["err"] = sigma
-        func_args["func"] = func
-        m = mpfit(self.__mpf_fn, parinfo=p_info, functkw=func_args, **mpfit_kargs)
-        return m
-
-    def mpfit_iterfunct(self, myfunct, p, iterator, fnorm, functkw=None, parinfo=None, quiet=0, dof=None):
-        """Function that is called on every iteration of the non-linerar fitting.
-
-        Args:
-            myfunct (callable): Function being modelled
-            iteration (int): Iteration number
-            fnorm (list): ?
-            functkw (dictionary): Keywords being passed to the user function
-            parinfo (list of dicts): PArameter informatuion
-            quiet (int): 0 to suppress output
-            dof (float): Figure of merit ?
-
-        Note:
-            This functionb just prints a full stop for every iteration.
-
-        """
-        sys.stdout.write('.')
-        sys.stdout.flush()
-
     def multiply(self, a, b, replace=False, header=None):
         """Multiply one column (a) by  another column, number or array (b).
 
@@ -1106,19 +1070,6 @@ class AnalyseFile(DataFile):
         if err_calc is not None:
             self.add_column(err_data, err_header, a + 1, replace=False)
         return self
-
-    def nlfit(self, ini_file, func):
-        """Non-linear fitting using the :py:mod:`Stoner.nlfit` module.
-
-        Args:
-            ini_file (string): path to ini file with model
-            func (string or callable):Name of function to fit with (as seen in FittingFuncs.py module in Stoner)
-                    or function instance to fit with
-
-        Returns:
-            AnalyseFile instance, matplotlib.fig instance (or None if plotting disabled in the inifile)
-        """
-        return Stoner.nlfit.nlfit(ini_file, func, data=self)
 
     def normalise(self, target, base, replace=True, header=None):
         """Normalise data columns by dividing through by a base column value.
@@ -1415,7 +1366,7 @@ class AnalyseFile(DataFile):
             overlap (tuple of (lower,higher) or None): The band of x values that are used in both data sets to match, if left as None, thenthe common overlap of the x data is used.
             min_overlap (float): If you know that overlap must be bigger than a certain amount, the bounds between the two data sets needs to be adjusted. In this case min_overlap shifts the boundary of the overlap on this DataFile.
             mode (str): Unless *func* is specified, controls which parameters are actually variable, defaults to all of them.
-            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*()
+            func (callable): a stitching function that transforms :math:`(x,y)\\rightarrow(x',y')`. Default is to use functions defined by *mode*
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
@@ -1424,16 +1375,16 @@ class AnalyseFile(DataFile):
         To stitch the data together, the x and y data in the current data file is transforms so that
         :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
         :math:`(x,y)` data in *other*. The algorithm assumes that the overlap region contains equal
-        numbers of :math:`(x,y)` points *mode controls whether A,B, and C are fixed or adjustable
+        numbers of :math:`(x,y)` points *mode* controls whether A,B, and C are fixed or adjustable
 
-        * "All" - all three parameters adjustable
-        * "Scale y, shift x" - C is fixed at 0.0
-        * "Scale and shift y" A is fixed at 0.0
-        * "Scale y" - only B is adjustable
-        * "Shift y" - Only c is adjsutable
-        * "Shift x" - Only A is adjustable
-        * "Shift both" - B is fixed at 1.0
-        .
+            - "All" - all three parameters adjustable
+            - "Scale y, shift x" - C is fixed at 0.0
+            - "Scale and shift y" A is fixed at 0.0
+            - "Scale y" - only B is adjustable
+            - "Shift y" - Only c is adjsutable
+            - "Shift x" - Only A is adjustable
+            - "Shift both" - B is fixed at 1.0
+
         """
         if xcol is None:  #Sort out the xcolumn and y column indexes
             xcol = self.setas._get_cols("xcol")

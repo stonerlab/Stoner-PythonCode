@@ -9,14 +9,11 @@ Models are subclasses of lmfit.Model that represent the corresponding function
 Please do keep documentation up to date, see other functions for documentation examples.
 
 All the functions here defined for scipy.optimize.curve\_fit to call themm
-i.e. the parameters are expanded to separate arguements, other fitting routines prefere
-to have the parameters as a single list or vector. For this reason, :py:mod:`Stoner.FittingFuncs`
-has aliases of these functions that use *tuple magic to make that conversion.
-
-If you are writing new functions, please add them here first and then alias then with the parameter
-list form in FittingFuncs.
+i.e. the parameters are expanded to separate arguements.
 """
 
+from Stoner.compat import *
+from Stoner.Core import DataFile
 import numpy as _np_
 from scipy.special import digamma
 from lmfit import Model
@@ -26,19 +23,198 @@ from lmfit.models import QuadraticModel as Quadratic
 from lmfit.models import update_param_vals
 from scipy.integrate import quad
 import scipy.constants.codata as consts
+if python_v3:
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 try:
     from numba import jit
 except ImportError:
     pass
 
+def _get_model_(model):
+    """Utility meothd to manage creating an lmfit.Model.
+
+    Args:
+        model (str, callable, Model): The model to be setup.
+
+    Returns:
+        An llmfit.Model instance
+
+    model can be of several different types that determine what to do:
+
+    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
+        The part after the final period will be assumed to be the name and the remainder the module to be
+        imported.
+    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+        Model instance is constructed
+    -   A subclass of lmfit.Model - in whcih case it is instantiated.
+    -   A Model instance - in which case no further action is necessary.
+
+    """
+    if isinstance(model,string_types): #model is a string, so we;ll try importing it now
+        parts=model.split(".")
+        model=parts[-1]
+        module=".".join(parts[:-1])
+        model=__import__(module,globals(),locals(),(model)).__getattribute__(model)
+    if type(model).__name__=="type" and issubclass(model,Model): # ok perhaps we've got a model class rather than an instance
+        model=model()
+    if not isinstance(model,Model) and callable(model): # Ok, wrap the callable in a model
+        model=Model(model)
+    if not isinstance(model,Model):
+        raise TypeError("model {} is not an instance of llmfit.Model".format(model.__name__))
+    return model
+
 
 def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
 
-#Linear already builtin to lmfit.models
+def cfg_data_from_ini(inifile,filename=None):
+    """Read an inifile and load and configure a DataFile from it.
 
+    Args:
+        inifile (str or file): Path to the ini file to be read.
+
+    Keyword Arguments:
+        filename (strig,boolean or None): File to load that contains the data.
+
+    Returns:
+        An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.
+
+    The inifile should contain a [Data] section that contains the following keys:
+
+    -  **type (str):** optional name of DataFile subclass to import.
+    -  **filename (str or boolean):** optionally used if *filename* parameter is None.
+    - **xcol (column index):** defines the x-column data for fitting.
+    - **ycol (column index):** defines the y-column data for fitting.
+    - **yerr (column index):** Optional column with uncertainity values for the data
+    """
+    config = ConfigParser.SafeConfigParser()
+    from Stoner.Util import Data
+    if isinstance(inifile,string_types):
+        config.read(inifile)
+    elif isinstance(inifile,file):
+        config.readfp(inifile)
+    if not config.has_section("Data"):
+        raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
+
+    if config.has_option("Data","type"):
+        typ=config.get("Data","type").split(".")
+        typ_mod=".".join(typ[:-1])
+        typ=typ[-1]
+        typ = __import__(typ_mod,fromlist=[typ]).__getattribute__(typ)
+    else:
+        typ = None
+    data=Data()
+    if filename is None:
+        if not config.has_option("Data","filename"):
+            filename=False
+        else:
+            filename=config.get("Data","filename")
+            if filename in ["False","True"]:
+                filename=bool(filename)
+    data.load(filename,auto_load=False,filetype=typ)
+    cols={"x":0,"y":1,"e":None} # Defaults
+
+    for c in ["x","y","e"]:
+        if not config.has_option("Data",c):
+            pass
+        else:
+            try:
+                cols[c]=config.get("Data",c)
+                cols[c]=int(cols[c])
+            except ValueError:
+                pass
+        if cols[c] is None:
+            del cols[c]
+
+    data.setas(**cols)
+    return data
+
+def cfg_model_from_ini(inifile,model=None,data=None):
+    """Utility function to configure an lmfit Model from an inifile.
+
+    Args:
+        inifile (str or file): Path to the ini file to be read.
+
+    Keyword Arguments:
+        model (str, callable, lmfit.Model instance or sub-class or None): What to use as a model function.
+        data (DataFile): if supplied, the details of the parameter hints and labels and units are included in the data's metadata.
+
+    Returns:
+        An llmfit.Model,, a 2D array of starting values for each parameter
+
+    model can be of several different types that determine what to do:
+
+    -   A string. In which ase it should be a fully qualified name of a function or class to be imported.
+        The part after the final period will be assumed to be the name and the remainder the module to be
+        imported.
+    -   A callable object. In this case the callable will be passed to the constructor of Model and a fresh
+        Model instance is constructed
+    -   A subclass of lmfit.Model - in whcih case it is instantiated.
+    -   A Model instance - in which case no further action is necessary.
+
+    The returned model is configured with parameter hints for fitting with. The second return value is
+    a 2D array which lists the starting values for one or more fits. If the inifile describes mapping out
+    the :math:`\\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
+
+
+    """
+    config = ConfigParser.SafeConfigParser()
+    if isinstance(inifile,string_types):
+        config.read(inifile)
+    elif isinstance(inifile,file):
+        config.readfp(inifile)
+
+    if model is None: # Check to see if config file specified a model
+        try:
+            model=config.get("Options","model")
+        except:
+            raise RuntimeError("Model is notspecifed either as keyword argument or in inifile")
+    model=_get_model_(model)
+    if config.has_option("option","prefix"):
+        prefix = config.get("option","prefix")
+    else:
+        prefix = model.__class__.__name__
+    prefix += ":"
+    vals=[]
+    for p in model.param_names:
+        if not config.has_section(p):
+            raise RuntimeError("Config file does not have a section for parameter {}".format(p))
+        keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float,"label":str,"units":str}
+        kargs=dict()
+        for k in keys:
+           if config.has_option(p,k):
+               if keys[k]==bool:
+                   kargs[k]=config.getboolean(p,k)
+               elif keys[k]==float:
+                   kargs[k]=config.getfloat(p,k)
+               elif keys[k]==str:
+                    kargs[k]=config.get(p,k)
+        if isinstance(data,DataFile): # stuff the parameter hint data into metadata
+            for k in keys: # remove keywords not needed
+                if k in kargs:
+                    data["{}{} {}".format(prefix,p,k)]=kargs[k]
+            if "lmfit.prerfix" in data:
+                data["lmfit.prefix"].append(prefix)
+            else:
+                data["lmfit.prefix"]=[prefix]
+        if "step" in kargs: #We use step for creating a chi^2 mapping, but not for a parameter hint
+            step=kargs.pop("step")
+            if "vary" in kargs and "min" in kargs and "max" in kargs and not kargs["vary"]: # Make chi^2?
+                vals.append(_np_.arange(kargs["min"],kargs["max"]+step/10,step))
+            else: # Nope, just make a single value step here
+                vals.append(_np_.array(kargs["value"]))
+        else: # Nope, just make a single value step here
+            vals.append(_np_.array(kargs["value"]))
+        kargs={k:kargs[k] for k in kargs if k in ["value","max","min","vary"]}
+        model.set_param_hint(p,**kargs) # set the model parameter hint
+    msh=_np_.meshgrid(*vals) # make a mesh of all possible parameter values to test
+    msh=[m.ravel() for m in msh] # tidy it up and combine into one 2D array
+    msh=_np_.column_stack(msh)
+    return model,msh
 
 def arrhenius(x, A, DE):
     """Arrhenius Equation without T dependendent prefactor.
@@ -830,8 +1006,51 @@ class StretchedExp(Model):
         A, beta, x0 = 1.0, 1.0, 1.0
         if x is not None:
             A = data[_np_.argmin(_np_.abs(x))]
-            d1, d2 = _np_.polyfit(_np_.log(x), _np_.log(_np_.log(data / A)), 1)
+            x=_np_.log(x)
+            y=_np_.log(-_np_.log(data / A))
+            d=_np_.column_stack((x,y))
+            d=d[~_np_.isnan(d).any(axis=1)]
+            d=d[~_np_.isinf(d).any(axis=1)]
+            d1, d2 = _np_.polyfit(d[:,0],d[:,1], 1)
             beta = d1
             x0 = _np_.exp(d2 / beta)
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
+
+def kittelEquation(H,gamma,M_s,H_k):
+    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        gamma (float): gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    """
+    return (consts.mu0*gamme/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
+
+class KittelEquation(Model):
+    """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
+
+    Args:
+        H (array): Magnetic fields in A/m
+        gamma (float): gyromagnetic radius
+        M_s (float): Magnetisation of sample in A/m
+        H_k (float): Anisotropy field term (including demagnetising factors) in A/m
+
+    Returns:
+        Reesonance peak frequencies in Hz
+    """
+    def __init__(self, *args, **kwargs):
+        super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
+
+    def guess(self, data, x=None, **kwargs):
+        """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+        M_s=(_np_.pi*data/consts.mu0)/H-H
+
+        pars = self.make_params(gamma=2, M_s=M_s, H_k=0.0)
+        return update_param_vals(pars, self.prefix, **kwargs)
+
+

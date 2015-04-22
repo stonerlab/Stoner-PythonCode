@@ -55,7 +55,7 @@ methods available. These give contonour plots and 2D colour map plots respective
 Plotting 2D data
 ----------------
 
-*x-y* plots are produced by the :py:meth:`PlotFile.plot_xy' method::
+*x-y* plots are produced by the :py:meth:`PlotFile.plot_xy` method::
 
    p.plot_xy(column_x, column_y)
    p.plot_xy(column_x, [y1,y2])
@@ -170,7 +170,7 @@ Following the naming convention above, the :py:meth:`PlotFile.plot_xyzuvw` metho
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,plotter=myplotfunc)
 
 The :py:meth:`PlotFile.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
-Enthought. The import is done when the plot is required to speed loading times for the :py:module:`Stoner.Plot` when
+Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.Plot` when
 2D plotting only is required.
 
 The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second

@@ -16,11 +16,7 @@ import os.path as path
 
 class HDF5File(DataFile):
     """A sub class of DataFile that sores itself in a HDF5File or group.
-
-    Methods:
-        load(): load a file from hdf5 file
-        save(): Save a dataset to an hdf5 file.
-
+    
     Args:
         args (tuple): Supplied arguments, only recognises one though !
         kargs (dict): Dictionary of keyword arguments
