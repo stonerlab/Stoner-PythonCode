@@ -819,7 +819,7 @@ class DataFolder(object):
             x=self[f]
             v=key(x)
             self.add_group(v)
-            self.groups[v].files.append(f)
+            self.groups[v].files.append(x)
         self.files=[]
         if len(next_keys)>0:
             for g in self.groups:

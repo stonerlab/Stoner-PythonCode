@@ -3,7 +3,7 @@ axes.formatter.limits:-4, 4
 axes.grid:False
 axes.labelsize:18
 axes.linewidth: 2.0
-figure.autolayout:True
+figure.autolayout:False
 figure.facecolor:1,1,1
 figure.subplot.bottom  : 0.2    # the bottom of the subplots of the figure
 figure.subplot.hspace  : 0
