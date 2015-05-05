@@ -1,0 +1,8 @@
+
+
+VFTEquation.__init__
+===============================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: VFTEquation.__init__

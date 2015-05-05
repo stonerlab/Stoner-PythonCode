@@ -76,9 +76,6 @@ in data/Python/PythonCode/scripts.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.__init__.html#Stoner.FileFormats.BNLFile.__init__" title="Stoner.FileFormats.BNLFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*params)</td>
 <td>Constructor modification BNLFile(&#8216;filename&#8217;) Do a normal initiation using the parent class &#8216;self&#8217; followed by adding an extra attribute line_numbers, line_numbers is a list of important line numbers in the file.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile._load.html#Stoner.FileFormats.BNLFile._load" title="Stoner.FileFormats.BNLFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>(filename,&nbsp;*args,&nbsp;**kargs)</td>
-<td>BNLFile.load(filename)</td>
-</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -89,10 +86,10 @@ in data/Python/PythonCode/scripts.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
-<td></td>
+<td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
-<td></td>
+<td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 </tbody>
 </table>
@@ -158,7 +155,7 @@ in data/Python/PythonCode/scripts.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -13,6 +13,7 @@ Stoner.PlotFormats.TexEngFormatter
    .. autosummary::
     :toctree:
    
+      ~TexEngFormatter.__call__
       ~TexEngFormatter.format_data
       ~TexEngFormatter.format_data_short
 

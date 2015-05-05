@@ -1,0 +1,15 @@
+Stoner.Plot.absolute_import
+===========================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: absolute_import
+
+   
+
+   
+   
+
+   
+   
+   

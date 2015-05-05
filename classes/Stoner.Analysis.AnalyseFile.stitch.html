@@ -83,7 +83,7 @@ If you know that overlap must be bigger than a certain amount, the bounds betwee
 <li><strong>mode</strong> (<em>str</em>) &#8211;
 Unless <em>func</em> is specified, controls which parameters are actually variable, defaults to all of them.</li>
 <li><strong>func</strong> (<em>callable</em>) &#8211;
-a stitching function that transforms <span class="math">\((x,y)\rightarrow(x',y')\)</span>. Default is to use functions defined by <a href="#id1"><span class="problematic" id="id2">*</span></a>mode*()</li>
+a stitching function that transforms <span class="math">\((x,y)\rightarrow(x',y')\)</span>. Default is to use functions defined by <em>mode</em></li>
 <li><strong>p0</strong> (<em>iterable</em>) &#8211;
 if func is not None then p0 should be the starting values for the stitching function parameters</li>
 </ul>
@@ -97,8 +97,9 @@ if func is not None then p0 should be the starting values for the stitching func
 <p>To stitch the data together, the x and y data in the current data file is transforms so that
 <span class="math">\(x'=x+A\)</span> and <span class="math">\(y'=By+C\)</span> where <span class="math">\(A,B,C\)</span> are constants and <span class="math">\((x',y')\)</span> are close matches to the
 <span class="math">\((x,y)\)</span> data in <em>other</em>. The algorithm assumes that the overlap region contains equal
-numbers of <span class="math">\((x,y)\)</span> points <a href="#id3"><span class="problematic" id="id4">*</span></a>mode controls whether A,B, and C are fixed or adjustable</p>
-<ul class="simple">
+numbers of <span class="math">\((x,y)\)</span> points <em>mode</em> controls whether A,B, and C are fixed or adjustable</p>
+<blockquote>
+<div><ul class="simple">
 <li>&#8220;All&#8221; - all three parameters adjustable</li>
 <li>&#8220;Scale y, shift x&#8221; - C is fixed at 0.0</li>
 <li>&#8220;Scale and shift y&#8221; A is fixed at 0.0</li>
@@ -107,7 +108,7 @@ numbers of <span class="math">\((x,y)\)</span> points <a href="#id3"><span class
 <li>&#8220;Shift x&#8221; - Only A is adjustable</li>
 <li>&#8220;Shift both&#8221; - B is fixed at 1.0</li>
 </ul>
-<p>.</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -171,7 +172,7 @@ numbers of <span class="math">\((x,y)\)</span> points <a href="#id3"><span class
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

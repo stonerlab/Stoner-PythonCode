@@ -8,14 +8,6 @@ Stoner.FileFormats.QDSquidVSMFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~QDSquidVSMFile._load
-
-   
    
 
    

@@ -13,7 +13,6 @@ Stoner.FileFormats.RigakuFile
    .. autosummary::
     :toctree:
    
-      ~RigakuFile._load
       ~RigakuFile.to_Q
 
    

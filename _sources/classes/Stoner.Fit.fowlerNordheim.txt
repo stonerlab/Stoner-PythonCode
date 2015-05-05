@@ -1,11 +1,20 @@
-Stoner.Fit.fowlerNordheim
+Stoner.Fit.FowlerNordheim
 =========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: fowlerNordheim
+.. autoclass:: FowlerNordheim
 
    
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~FowlerNordheim.__init__
+      ~FowlerNordheim.guess
 
    
    

@@ -73,7 +73,7 @@ for plotting.</p>
 <h2>Quick Plots<a class="headerlink" href="#quick-plots" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">PlotFile</span></tt></a> is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for &#8216;x&#8217;, &#8216;y&#8217; axes and
-for containing error bars. This is done with the <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt> attribute (see <em class="xref std std-ref">setas</em> for full details). Once this is done, the plotting
+for containing error bars. This is done with the <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt> attribute (see <a class="reference internal" href="datafile.html#setas"><em>Other ways to Identify Columns of Data</em></a> for full details). Once this is done, the plotting
 methods will use these to try to make a sensible plot.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xye&quot;</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="s">&quot;e&quot;</span><span class="p">]</span>
@@ -115,7 +115,7 @@ gets from the mean value. For 3D x-y-z plotting there is a <a class="reference i
 methods available. These give contonour plots and 2D colour map plots respectively.</p>
 <div class="section" id="plotting-2d-data">
 <h3>Plotting 2D data<a class="headerlink" href="#plotting-2d-data" title="Permalink to this headline">¶</a></h3>
-<p><em>x-y</em> plots are produced by the :py:meth:<a href="#id1"><span class="problematic" id="id2">`</span></a>PlotFile.plot_xy&#8217; method:</p>
+<p><em>x-y</em> plots are produced by the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></tt></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span> <span class="n">column_y</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span> <span class="p">[</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">])</span>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s">&#39;ro&#39;</span><span class="p">)</span>
@@ -295,7 +295,7 @@ p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,plotter=myplotfunc)
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw" title="Stoner.Plot.PlotFile.plot_xyzuvw"><tt class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyzuvw()</span></tt></a> method uses a default vector field plot function that is based on mayavi from
-Enthought. The import is done when the plot is required to speed loading times for the <a href="#id3"><span class="problematic" id="id4">:py:module:`Stoner.Plot`</span></a> when
+Enthought. The import is done when the plot is required to speed loading times for the <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Plot</span></tt> when
 2D plotting only is required.</p>
 <p>The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
 examnple will instead color them using the specified column from the data. The third example demonstrates passing in
@@ -634,7 +634,7 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

@@ -13,7 +13,6 @@ Stoner.FileFormats.LSTemperatureFile
    .. autosummary::
     :toctree:
    
-      ~LSTemperatureFile._load
       ~LSTemperatureFile.save
 
    

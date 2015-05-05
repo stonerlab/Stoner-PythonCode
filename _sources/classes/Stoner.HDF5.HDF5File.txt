@@ -13,7 +13,6 @@ Stoner.HDF5.HDF5File
    .. autosummary::
     :toctree:
    
-      ~HDF5File._load
       ~HDF5File.save
 
    

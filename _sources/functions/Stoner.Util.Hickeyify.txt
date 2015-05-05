@@ -1,0 +1,8 @@
+
+
+Hickeyify
+=====================
+
+.. currentmodule:: Stoner.Util
+
+.. autofunction:: Hickeyify

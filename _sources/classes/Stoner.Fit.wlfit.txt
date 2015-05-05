@@ -1,11 +1,20 @@
-Stoner.Fit.wlfit
+Stoner.Fit.WLfit
 ================
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: wlfit
+.. autoclass:: WLfit
 
    
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~WLfit.__init__
+      ~WLfit.guess
 
    
    

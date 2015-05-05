@@ -1,0 +1,15 @@
+Stoner.HDF5.print_function
+==========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. autoclass:: print_function
+
+   
+
+   
+   
+
+   
+   
+   

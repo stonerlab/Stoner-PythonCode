@@ -1,0 +1,15 @@
+Stoner.Folders.unicode_literals
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: unicode_literals
+
+   
+
+   
+   
+
+   
+   
+   

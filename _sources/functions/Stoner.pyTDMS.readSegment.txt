@@ -1,0 +1,8 @@
+
+
+readSegment
+=========================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: readSegment

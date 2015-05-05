@@ -8,6 +8,14 @@ Stoner.Util.Data
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Data.format
+
+   
    
 
    

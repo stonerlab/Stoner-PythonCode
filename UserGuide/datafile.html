@@ -81,7 +81,7 @@ which are produced by some of the LabVIEW rigs used by the Device Materials Grou
 <div class="section" id="the-various-flavours-of-the-datafile-class">
 <h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
 <p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load" title="Stoner.Core.DataFile._load"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></tt></a> method that
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> class. Each subclass typically provides its own version of the <tt class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></tt> method that
 understands how to reqad the relevant file.</p>
 <div class="section" id="base-classes-and-generic-formats">
 <h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
@@ -94,7 +94,7 @@ understands how to reqad the relevant file.</p>
 routine takes four additional parameters to the constructor and load methods. In
 addition to the two extra arguments used for the <em>BigBlue&amp; variant, a
 further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
-also offers a **save*</em> method to allow data to be saved in a simple deliminated text way (see Section <em class="xref std std-ref">save</em> for details).</dd>
+also offers a **save*</em> method to allow data to be saved in a simple deliminated text way (see Section <a class="reference internal" href="#save"><em>Saving Data</em></a> for details).</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile" title="Stoner.FileFormats.SPCFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.SPCFile</span></tt></a></dt>
 <dd>Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
 Raman spectrometers. This may also work for other instruments that produce spc files,
@@ -185,7 +185,7 @@ from happening use the <tt class="docutils literal"><span class="pre">auto_load=
 <p>In some circumstances you may have a string representation of a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object and want to
 transform this into a proper <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object. This might be, for example, from transmitting
 the data over a network connection or receiving it from another program. In these situations the
-<em>left shift operator</em>,``&lt;&lt;<a href="#id1"><span class="problematic" id="id2">``</span></a>, can be used.:</p>
+<em>left shift operator</em> <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> can be used.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">string_of_data</span>
 <span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">iterable_object</span>
 </pre></div>
@@ -218,7 +218,7 @@ These can be accessed like so:</p>
 </div>
 </div>
 <div class="section" id="masked-data-and-why-you-care">
-<h4>Masked Data and Why You Care<a class="headerlink" href="#masked-data-and-why-you-care" title="Permalink to this headline">¶</a></h4>
+<span id="maskeddata"></span><h4>Masked Data and Why You Care<a class="headerlink" href="#masked-data-and-why-you-care" title="Permalink to this headline">¶</a></h4>
 <p>Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements.
 This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean
 value or plotting some data. One could, of course, simply ignore the masking option and use the data as is,
@@ -244,7 +244,7 @@ be executed, passing each row of the data array to the user supplied function as
 supplied function can then either return a single boolean value &#8211; in which case it will be used to mask
 the entire row &#8211; or a list of boolean values to mask individual cells in the current row.</p>
 <p>By default when the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object is printed or saved, data values that have been masked are replaced
-with a <a href="#id3"><span class="problematic" id="id4">``</span></a>fill&#8217;&#8217; value of 10^20.</p>
+with a &#8220;fill&#8221; value of 10^20.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
@@ -315,7 +315,7 @@ col=re.compile(&#8216;^temp&#8217;,re.IGNORECASE)
 d.column(col)</dd>
 </dl>
 <div class="section" id="other-ways-to-identify-columns-of-data">
-<h4>Other ways to Identify Columns of Data<a class="headerlink" href="#other-ways-to-identify-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<span id="setas"></span><h4>Other ways to Identify Columns of Data<a class="headerlink" href="#other-ways-to-identify-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Often in a calculation with some data you will be using one column for &#8216;x&#8217; values and one or more &#8216;y&#8217; columns
 or indeed having &#8216;z&#8217; column data and uncertainties in all of these (conventionally we call these &#8216;d&#8217;, &#8216;e&#8217; and &#8216;f&#8217; columns
 so that &#8216;e&#8217; data is the error in the y data). DataFile has a concept of marking a column as containing such data and
@@ -532,7 +532,7 @@ equality or ranges (i.e. when the value parameter is a float or a tuple) - this 
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.</p>
 <p>Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
-operations. This is where the masked array (see &#8216;<em class="xref std std-ref">maskeddata</em>) comes into its own.
+operations. This is where the masked array (see &#8216;<a class="reference internal" href="#maskeddata"><em>Masked Data and Why You Care</em></a>) comes into its own.
 To select which rows of data have been masked off, use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><tt class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></tt></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
@@ -639,8 +639,8 @@ In the fourth example, each element in the list is added in turn to <em>d</em>. 
 a column to <em>d</em>. In this case the requirement is that the numpy array has
 the same or fewer rows of data as <em>d</em>.</p>
 </div>
-<div class="section" id="id5">
-<h3>Working with Columns of Data<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Working with Columns of Data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>The <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></tt> attribute is simply a 2D numpy array, so can be directly modified like any other
@@ -748,7 +748,7 @@ that used for the <a class="reference internal" href="../classes/Stoner.Core.Dat
 </div>
 <p>The final two variants above, use a tuple to select the data. The final example makes
 use of the <em>invert</em> keyword argument to reverse the sense used to selkect tows. In both cases
-rows are deleted(kept for <a href="#id6"><span class="problematic" id="id7">*</span></a>invert*=True) if the specified column lies between the maximum and minimum
+rows are deleted(kept for <em>invert</em> = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds.</p>
 <p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
@@ -788,7 +788,7 @@ columns. Currently only ascending sorts are supported.:</p>
 </div>
 </div>
 <div class="section" id="saving-data">
-<h3>Saving Data<a class="headerlink" href="#saving-data" title="Permalink to this headline">¶</a></h3>
+<span id="save"></span><h3>Saving Data<a class="headerlink" href="#saving-data" title="Permalink to this headline">¶</a></h3>
 <p>Only saving data in the <em>TDI format</em> and as comma or tab deliminated formats is supported.</p>
 <p>For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
@@ -858,7 +858,7 @@ specifies that the eliminator is a tab character.</p>
 </li>
 <li><a class="reference internal" href="#modifying-data">Modifying Data</a><ul>
 <li><a class="reference internal" href="#appending-data">Appending data</a></li>
-<li><a class="reference internal" href="#id5">Working with Columns of Data</a><ul>
+<li><a class="reference internal" href="#id1">Working with Columns of Data</a><ul>
 <li><a class="reference internal" href="#changing-individual-columns-of-data">Changing Individual Columns of Data</a></li>
 <li><a class="reference internal" href="#rearranging-columns-of-data">Rearranging Columns of Data</a></li>
 <li><a class="reference internal" href="#renaming-columns-of-data">Renaming Columns of Data</a></li>
@@ -924,7 +924,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

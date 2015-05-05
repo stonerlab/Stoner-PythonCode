@@ -1,0 +1,8 @@
+
+
+BlochGrueneisen.guess
+================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: BlochGrueneisen.guess

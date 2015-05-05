@@ -8,14 +8,6 @@ Stoner.FileFormats.VSMFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~VSMFile._load
-
-   
    
 
    

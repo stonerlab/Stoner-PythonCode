@@ -60,7 +60,12 @@
 <dl class="class">
 <dt id="Stoner.Core.StonerLoadError">
 <em class="property">class </em><tt class="descclassname">Stoner.Core.</tt><tt class="descname">StonerLoadError</tt><a class="reference internal" href="../_modules/Stoner/Core.html#StonerLoadError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.StonerLoadError" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>An exception thrown by the file loading routines in the Stoner Package.</p>
+<p>This special exception is thrown when one of the subclasses of <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a>
+attmpts and then fails to load some data from disk. Generally speaking this is not a real
+error, but simply indicates that the file format is not recognised by that particular subclass,
+and thus another subclass should have a go instead.</p>
+</dd></dl>
 
 </div>
 
@@ -122,7 +127,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

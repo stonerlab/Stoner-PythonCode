@@ -111,7 +111,7 @@ no data files in them.:</p>
 </pre></div>
 </div>
 <p>If you need to combine multiple <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> objects or add <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a>
-objects to an existing <a href="#id1"><span class="problematic" id="id2">:py:ckass:`DataFolder`</span></a> then the arithmetic addition operator can be used:</p>
+objects to an existing <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> then the arithmetic addition operator can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre>f2=DataFolder(&#39;/data/test1&#39;)
 f3=DataFolder(&#39;/data/test2&#39;)
 f=f2+f3
@@ -170,11 +170,9 @@ then additional metadata is set for each file that contains the mean value of ea
 </div>
 <div class="section" id="doing-something-with-each-file">
 <h2>Doing Something With Each File<a class="headerlink" href="#doing-something-with-each-file" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt>A <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> is an object that you can iterate over, lading the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a></dt>
-<dd>type object for each of the files in turn. This probides an easy way to run through a set of files,</dd>
-</dl>
-<p>performing the same operation on each:</p>
+<p>A <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> is an object that you can iterate over, lading the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a>
+type object for each of the files in turn. This probides an easy way to run through a set of files,
+performing the same operation on each:</p>
 <div class="highlight-python"><div class="highlight"><pre>folder=DataFolder(pattern=&#39;*.tdi&#39;)
 for f in folder:
             f=AnalyseFile(f)
@@ -262,7 +260,7 @@ via the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder
 </div>
 <p>would return a list of the files measured at 4.2K and 1T.</p>
 <p>If you try indexing a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> with a string and there is no file with as its filename
-and there is a group with a key of the same string then <a href="#id3"><span class="problematic" id="id4">:py:clkass:`DataFolder`</span></a> will return the
+and there is a group with a key of the same string then <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">DataFolder</span></tt></a> will return the
 corresponding group. This allows a more compact navigation through an extended group structure.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s">&#39;project&#39;</span><span class="p">,</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;device&#39;</span><span class="p">])</span>
 <span class="n">f</span><span class="p">[</span><span class="s">&#39;ASF&#39;</span><span class="p">][</span><span class="s">&#39;ASF038&#39;</span><span class="p">][</span><span class="s">&#39;A&#39;</span><span class="p">]</span>
@@ -411,7 +409,7 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

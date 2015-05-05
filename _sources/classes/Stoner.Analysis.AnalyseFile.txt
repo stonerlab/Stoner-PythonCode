@@ -17,7 +17,6 @@ Stoner.Analysis.AnalyseFile
       ~AnalyseFile.add
       ~AnalyseFile.apply
       ~AnalyseFile.bin
-      ~AnalyseFile.chi2mapping
       ~AnalyseFile.clip
       ~AnalyseFile.curve_fit
       ~AnalyseFile.decompose
@@ -30,10 +29,7 @@ Stoner.Analysis.AnalyseFile
       ~AnalyseFile.max
       ~AnalyseFile.mean
       ~AnalyseFile.min
-      ~AnalyseFile.mpfit
-      ~AnalyseFile.mpfit_iterfunct
       ~AnalyseFile.multiply
-      ~AnalyseFile.nlfit
       ~AnalyseFile.normalise
       ~AnalyseFile.outlier_detection
       ~AnalyseFile.peaks

@@ -1,0 +1,15 @@
+Stoner.Folders.python_v3
+========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: python_v3
+
+   
+
+   
+   
+
+   
+   
+   

@@ -8,14 +8,6 @@ Stoner.FileFormats.OpenGDAFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~OpenGDAFile._load
-
-   
    
 
    

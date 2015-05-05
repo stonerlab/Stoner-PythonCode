@@ -1,0 +1,8 @@
+
+
+readObject
+========================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: readObject

@@ -1,0 +1,8 @@
+
+
+dataTypeTranscription
+===================================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: dataTypeTranscription

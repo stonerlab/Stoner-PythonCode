@@ -1,0 +1,8 @@
+
+
+vftEquation
+======================
+
+.. currentmodule:: Stoner.Fit
+
+.. autofunction:: vftEquation

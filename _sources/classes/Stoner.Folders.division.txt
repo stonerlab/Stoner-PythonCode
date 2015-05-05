@@ -1,0 +1,15 @@
+Stoner.Folders.division
+=======================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: division
+
+   
+
+   
+   
+
+   
+   
+   

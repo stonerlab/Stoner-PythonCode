@@ -80,20 +80,42 @@ Facility Outputs
 :mod:`PlotFormats` Module
 ==========================
 
+
+Classes
+-------
+
 .. automodsumm:: Stoner.PlotFormats
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
 
+Functions
+---------
+.. automodsumm:: Stoner.PlotFormats
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 See also the stylesheets available in the stylelib directory.
 
 :mod:`plotutils` Module
 =======================
 
+
+Classes
+-------
+
 .. automodsumm:: Stoner.plotutils
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
 
+Functions
+---------
+.. automodsumm:: Stoner.plotutils
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`Fit` Module
 =================
@@ -110,8 +132,8 @@ Bare functions
 --------------
 
 .. automodsumm:: Stoner.Fit
-   :toctree: classes
-   :template: classdocs.rst
+   :toctree: functions
+   :template: funcdocs.rst
    :functions-only:
 
 
@@ -127,30 +149,58 @@ The following modules offer specialised file and foler formats.
 :mod:`Zip` Module
 =========================
 
+
+Classes
+-------
+
 .. automodsumm:: Stoner.Zip
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.Zip
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`Util` Module
 ==================
 
+Classes
+-------
+
 .. automodsumm:: Stoner.Util
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
 
-:mod:`nlfit` Module
-===================
-
-.. automodsumm:: Stoner.nlfit
-   :toctree: classes
-   :template: classdocs.rst
+Functions
+---------
+.. automodsumm:: Stoner.Util
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`pyTDMS` Module
 --------------------
 
+
+Classes
+-------
+
 .. automodsumm:: Stoner.pyTDMS
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.pyTDMS
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 
 Subpackages

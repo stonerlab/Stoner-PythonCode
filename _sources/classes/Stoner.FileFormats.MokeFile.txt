@@ -8,14 +8,6 @@ Stoner.FileFormats.MokeFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~MokeFile._load
-
-   
    
 
    

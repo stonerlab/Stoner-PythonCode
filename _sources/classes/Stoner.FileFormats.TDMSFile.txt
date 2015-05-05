@@ -8,14 +8,6 @@ Stoner.FileFormats.TDMSFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~TDMSFile._load
-
-   
    
 
    
@@ -24,7 +16,6 @@ Stoner.FileFormats.TDMSFile
 
    .. autosummary::
    
-      ~TDMSFile.Objects
       ~TDMSFile.patterns
       ~TDMSFile.priority
    

@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="MDAASCIIFile._load" href="Stoner.FileFormats.MDAASCIIFile._load.html" />
-    <link rel="prev" title="BNLFile._load" href="Stoner.FileFormats.BNLFile._load.html" /> 
+    <link rel="next" title="Stoner.FileFormats.OpenGDAFile" href="Stoner.FileFormats.OpenGDAFile.html" />
+    <link rel="prev" title="BNLFile.__init__" href="Stoner.FileFormats.BNLFile.__init__.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile._load.html" title="MDAASCIIFile._load"
+          <a href="Stoner.FileFormats.OpenGDAFile.html" title="Stoner.FileFormats.OpenGDAFile"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BNLFile._load.html" title="BNLFile._load"
+          <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -61,18 +61,6 @@
 <dt id="Stoner.FileFormats.MDAASCIIFile">
 <em class="property">class </em><tt class="descclassname">Stoner.FileFormats.</tt><tt class="descname">MDAASCIIFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#MDAASCIIFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.MDAASCIIFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reads files generated from the APS.</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.MDAASCIIFile._load.html#Stoner.FileFormats.MDAASCIIFile._load" title="Stoner.FileFormats.MDAASCIIFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
-<td>Load function.</td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -81,10 +69,10 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
-<td></td>
+<td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
-<td></td>
+<td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 </tbody>
 </table>
@@ -102,11 +90,11 @@
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.BNLFile._load.html"
-                        title="previous chapter">BNLFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.BNLFile.__init__.html"
+                        title="previous chapter">BNLFile.__init__</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile._load.html"
-                        title="next chapter">MDAASCIIFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.OpenGDAFile.html"
+                        title="next chapter">Stoner.FileFormats.OpenGDAFile</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.FileFormats.MDAASCIIFile.txt"
@@ -139,10 +127,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile._load.html" title="MDAASCIIFile._load"
+          <a href="Stoner.FileFormats.OpenGDAFile.html" title="Stoner.FileFormats.OpenGDAFile"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BNLFile._load.html" title="BNLFile._load"
+          <a href="Stoner.FileFormats.BNLFile.__init__.html" title="BNLFile.__init__"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -150,7 +138,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

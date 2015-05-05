@@ -1,0 +1,15 @@
+Stoner.Folders.print_function
+=============================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: print_function
+
+   
+
+   
+   
+
+   
+   
+   

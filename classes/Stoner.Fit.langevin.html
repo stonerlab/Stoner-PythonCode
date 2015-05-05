@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Stoner.Fit.langevin &mdash; Stoner Pacakge API Documentation</title>
+    <title>Stoner.Fit.Langevin &mdash; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="Stoner.Fit.linear" href="Stoner.Fit.linear.html" />
-    <link rel="prev" title="Stoner.Fit.fowlerNordheim" href="Stoner.Fit.fowlerNordheim.html" /> 
+    <link rel="next" title="Langevin.__init__" href="Stoner.Fit.Langevin.__init__.html" />
+    <link rel="prev" title="KittelEquation.guess" href="Stoner.Fit.KittelEquation.guess.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.linear.html" title="Stoner.Fit.linear"
+          <a href="Stoner.Fit.Langevin.__init__.html" title="Langevin.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.fowlerNordheim.html" title="Stoner.Fit.fowlerNordheim"
+          <a href="Stoner.Fit.KittelEquation.guess.html" title="KittelEquation.guess"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -56,10 +56,10 @@
           <div class="body">
             
   <div class="section" id="stoner-fit-langevin">
-<h1>Stoner.Fit.langevin<a class="headerlink" href="#stoner-fit-langevin" title="Permalink to this headline">¶</a></h1>
+<h1>Stoner.Fit.Langevin<a class="headerlink" href="#stoner-fit-langevin" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="Stoner.Fit.langevin">
-<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">langevin</tt><a class="reference internal" href="../_modules/Stoner/Fit.html#langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.langevin" title="Permalink to this definition">¶</a></dt>
+<dt id="Stoner.Fit.Langevin">
+<em class="property">class </em><tt class="descclassname">Stoner.Fit.</tt><tt class="descname">Langevin</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Fit.html#Langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Langevin" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#8220;The Langevin function for paramagnetic M-H loops/</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -70,7 +70,8 @@
 The applied magnetic field</li>
 <li><strong>M_s</strong> (<em>float</em>) &#8211;
 Saturation magnetisation</li>
-<li><strong>m (float) is the moment of a cluster</strong></li>
+<li><strong>m</strong> (<em>float</em>) &#8211;
+is the moment of a single cluster</li>
 <li><strong>T</strong> (<em>float</em>) &#8211;
 Temperature</li>
 </ul>
@@ -82,6 +83,21 @@ Temperature</li>
 </tbody>
 </table>
 <p>The Langevin Function is <span class="math">\(\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}\)</span>.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Fit.Langevin.__init__.html#Stoner.Fit.Langevin.__init__" title="Stoner.Fit.Langevin.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Fit.Langevin.guess.html#Stoner.Fit.Langevin.guess" title="Stoner.Fit.Langevin.guess"><tt class="xref py py-obj docutils literal"><span class="pre">guess</span></tt></a>(data[,&nbsp;h])</td>
+<td>Guess some starting values.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -96,14 +112,14 @@ Temperature</li>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Fit.fowlerNordheim.html"
-                        title="previous chapter">Stoner.Fit.fowlerNordheim</a></p>
+  <p class="topless"><a href="Stoner.Fit.KittelEquation.guess.html"
+                        title="previous chapter">KittelEquation.guess</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Fit.linear.html"
-                        title="next chapter">Stoner.Fit.linear</a></p>
+  <p class="topless"><a href="Stoner.Fit.Langevin.__init__.html"
+                        title="next chapter">Langevin.__init__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Fit.langevin.txt"
+    <li><a href="../_sources/classes/Stoner.Fit.Langevin.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -133,10 +149,10 @@ Temperature</li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.linear.html" title="Stoner.Fit.linear"
+          <a href="Stoner.Fit.Langevin.__init__.html" title="Langevin.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Fit.fowlerNordheim.html" title="Stoner.Fit.fowlerNordheim"
+          <a href="Stoner.Fit.KittelEquation.guess.html" title="KittelEquation.guess"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -144,7 +160,7 @@ Temperature</li>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

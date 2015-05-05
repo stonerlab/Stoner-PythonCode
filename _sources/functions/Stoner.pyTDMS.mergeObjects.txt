@@ -1,0 +1,8 @@
+
+
+mergeObjects
+==========================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: mergeObjects

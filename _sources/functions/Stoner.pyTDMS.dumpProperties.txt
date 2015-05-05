@@ -1,0 +1,8 @@
+
+
+dumpProperties
+============================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: dumpProperties

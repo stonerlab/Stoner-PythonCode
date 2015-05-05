@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.update
+===================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: DefaultPlotStyle.update

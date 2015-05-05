@@ -1,0 +1,8 @@
+
+
+dataTypeLength
+============================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: dataTypeLength

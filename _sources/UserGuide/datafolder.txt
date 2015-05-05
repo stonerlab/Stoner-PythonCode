@@ -60,7 +60,7 @@ no data files in them.::
 	f.flatten()
 
 If you need to combine multiple :py:class:`DataFolder` objects or add :py:class:`Stoner.Core.DataFile`
-objects to an existing :py:ckass:`DataFolder` then the arithmetic addition operator can be used::
+objects to an existing :py:class:`DataFolder` then the arithmetic addition operator can be used::
 
    f2=DataFolder('/data/test1')
    f3=DataFolder('/data/test2')
@@ -123,7 +123,7 @@ Doing Something With Each File
 ===============================
 
 A :py:class:`DataFolder` is an object that you can iterate over, lading the :py:class:`Stoner.Core.DataFile`
- type object for each of the files in turn. This probides an easy way to run through a set of files, 
+type object for each of the files in turn. This probides an easy way to run through a set of files, 
 performing the same operation on each::
 
     folder=DataFolder(pattern='*.tdi')
@@ -156,6 +156,7 @@ The difference between these two is that :py:attr:`DataFolder.basenames` will re
 of the filename whilst :py:attr:`DataFolder.ls` returns the complete path from the root directory.
 
 .. _groups: Sorting, Filtering and Grouping Data Files
+
 ======================================================
 
 The order of the files in a :py:class:`DataFolder` is arbitrary. If it is important to process 
@@ -219,7 +220,7 @@ via the :py:attr:`DataFolder.group` attribute::
 would return a list of the files measured at 4.2K and 1T.
 
 If you try indexing a :py:class:`DataFolder` with a string and there is no file with as its filename 
-and there is a group with a key of the same string then :py:clkass:`DataFolder` will return the 
+and there is a group with a key of the same string then :py:class:`DataFolder` will return the 
 corresponding group. This allows a more compact navigation through an extended group structure.::
 
     f.group(['project','sample','device'])

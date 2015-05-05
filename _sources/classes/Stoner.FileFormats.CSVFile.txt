@@ -13,7 +13,6 @@ Stoner.FileFormats.CSVFile
    .. autosummary::
     :toctree:
    
-      ~CSVFile._load
       ~CSVFile.save
 
    

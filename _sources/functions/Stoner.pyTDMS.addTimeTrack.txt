@@ -1,0 +1,8 @@
+
+
+addTimeTrack
+==========================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: addTimeTrack

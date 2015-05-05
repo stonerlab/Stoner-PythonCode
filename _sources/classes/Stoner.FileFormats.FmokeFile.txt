@@ -8,14 +8,6 @@ Stoner.FileFormats.FmokeFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~FmokeFile._load
-
-   
    
 
    

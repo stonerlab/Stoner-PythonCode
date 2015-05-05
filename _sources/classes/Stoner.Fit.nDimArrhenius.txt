@@ -1,11 +1,20 @@
-Stoner.Fit.nDimArrhenius
+Stoner.Fit.NDimArrhenius
 ========================
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: nDimArrhenius
+.. autoclass:: NDimArrhenius
 
    
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~NDimArrhenius.__init__
+      ~NDimArrhenius.guess
 
    
    

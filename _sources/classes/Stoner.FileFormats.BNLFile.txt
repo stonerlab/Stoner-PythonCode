@@ -14,7 +14,6 @@ Stoner.FileFormats.BNLFile
     :toctree:
    
       ~BNLFile.__init__
-      ~BNLFile._load
 
    
    

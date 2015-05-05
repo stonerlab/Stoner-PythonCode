@@ -1,0 +1,15 @@
+Stoner.Plot.unicode_literals
+============================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: unicode_literals
+
+   
+
+   
+   
+
+   
+   
+   

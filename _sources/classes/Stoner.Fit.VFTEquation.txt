@@ -1,0 +1,24 @@
+Stoner.Fit.VFTEquation
+======================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: VFTEquation
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~VFTEquation.__init__
+      ~VFTEquation.guess
+
+   
+   
+
+   
+   
+   

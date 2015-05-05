@@ -1,0 +1,8 @@
+
+
+read
+==================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: read

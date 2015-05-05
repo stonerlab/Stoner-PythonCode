@@ -60,7 +60,7 @@
 <h1>AnalyseFile.lmfit<a class="headerlink" href="#analysefile-lmfit" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalyseFile.lmfit">
-<tt class="descclassname">AnalyseFile.</tt><tt class="descname">lmfit</tt><big>(</big><em>model</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>prefix=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.lmfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.lmfit" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">AnalyseFile.</tt><tt class="descname">lmfit</tt><big>(</big><em>model</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.lmfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.lmfit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapper around lmfit module fitting.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -79,7 +79,7 @@ Columns to be used for the  y data for the fitting. If not givem defaults to the
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
 <li><strong>p0</strong> (<em>list, tuple or array</em>) &#8211;
-A vector of initial parameter values to try</li>
+A vector of initial parameter values to try.</li>
 <li><strong>sigma</strong> (<em>index</em>) &#8211;
 The index of the column with the y-error bars</li>
 <li><strong>bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</strong></li>
@@ -98,25 +98,61 @@ Specifiy what to return.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p><em>The lmfit module will refurn an instance of the</em> &#8211;
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>The lmfit module will refurn an instance of the</em> &#8211;
 py:class:<cite>lmfit.models.ModelFit</cite> class that contains all
-relevant information about the fit.
-The return value is determined by the <em>output</em> parameter. Options are</p>
-<blockquote>
-<div><ul class="simple">
-<li>&#8220;ffit&#8221;    just the <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></tt> instance</li>
-<li>&#8220;row&#8221;     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
-<li>&#8220;full&#8221;    a tuple of the fit instance and the row.</li>
-</ul>
-</div></blockquote>
-</p>
+relevant information about the fit.</p>
 </td>
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>The return value is determined by the <em>output</em> parameter. Options are</dt>
+<dd><ul class="first last simple">
+<li>&#8220;ffit&#8221;    just the <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></tt> instance</li>
+<li>&#8220;row&#8221;     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</li>
+<li>&#8220;full&#8221;    a tuple of the fit instance and the row.</li>
+</ul>
+</dd>
+</dl>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<blockquote>
+<div>If <em>p0</em> is fed a 2D array, then it assumed that you want to calculate <span class="math">\(\chi^2\)</span> for different starting parameters
+with some variables fixed. In this mode, fitting is carried out repeatedly with each row representing one attempt with different
+values of the parameters. In this mode the return value is a 2D array whose rows correspond to the inputs to the rows of p0, the
+columns are the fitted values of the parameters with an additional column for <span class="math">\(\chi^2\)</span>.</div></blockquote>
+<dl class="last docutils">
+<dt>Example:</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
+
+<span class="c">#Make some data</span>
+<span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">10.0</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mf">1.7</span><span class="p">)</span><span class="o">+</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">101</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Time&quot;</span><span class="p">,</span><span class="s">&quot;Signal&quot;</span><span class="p">],</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span> <span class="c"># plot our data</span>
+
+<span class="c">#Do the fitting and plot the result</span>
+<span class="n">fit</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">:</span><span class="n">A</span><span class="o">+</span><span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">C</span><span class="p">),</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">,</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">C</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;b-&quot;</span><span class="p">)</span>
+
+<span class="c"># Make nice label of the parameters</span>
+<span class="n">text</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;Model:A&quot;</span><span class="p">,</span><span class="s">&quot;Model:B&quot;</span><span class="p">,</span><span class="s">&quot;Model:C&quot;</span><span class="p">]])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/lmfit_simple.py">Source code</a>, <a class="reference external" href="../samples/lmfit_simple.png">png</a>, <a class="reference external" href="../samples/lmfit_simple.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_simple.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/lmfit_simple.png" src="../_images/lmfit_simple.png" />
+</div>
+</dd>
+</dl>
 </div>
 </dd></dl>
 
@@ -181,7 +217,7 @@ The return value is determined by the <em>output</em> parameter. Options are</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

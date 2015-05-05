@@ -1,0 +1,8 @@
+
+
+isChannel
+=======================
+
+.. currentmodule:: Stoner.pyTDMS
+
+.. autofunction:: isChannel

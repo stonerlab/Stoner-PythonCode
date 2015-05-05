@@ -1,0 +1,15 @@
+Stoner.Folders.index_types
+==========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: index_types
+
+   
+
+   
+   
+
+   
+   
+   

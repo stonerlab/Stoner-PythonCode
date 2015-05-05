@@ -8,14 +8,6 @@ Stoner.FileFormats.SPCFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~SPCFile._load
-
-   
    
 
    

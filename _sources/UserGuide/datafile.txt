@@ -131,7 +131,7 @@ Loading Data from a string or iterable object
 In some circumstances you may have a string representation of a :py:class:`DataFile` object and want to
 transform this into a proper :py:class:`DataFile` object. This might be, for example, from transmitting
 the data over a network connection or receiving it from another program. In these situations the
-*left shift operator*,``<<``, can be used.::
+*left shift operator* ``<<`` can be used.::
 
    data=Stoner.Core.DataFile() << string_of_data
    data=Stoner.Core.DataFile() << iterable_object
@@ -165,6 +165,7 @@ These can be accessed like so::
 
 
 .. _maskeddata:
+
 Masked Data and Why You Care
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -195,7 +196,7 @@ supplied function can then either return a single boolean value -- in which case
 the entire row -- or a list of boolean values to mask individual cells in the current row.
 
 By default when the :py:class:`DataFile` object is printed or saved, data values that have been masked are replaced
-with a ``fill'' value of 10^20.
+with a "fill" value of 10^20.
 
 .. warning::
    This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
@@ -250,6 +251,7 @@ For example::
     d.column(col)
 
 .. _setas:
+
 Other ways to Identify Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -338,6 +340,7 @@ What happens if you use a string and not a number in the above examples ?::
 
 in this case, it is assumed that you meant the metadata with key *User*.
 To get a list of possible keys in the metadata, you can do::
+
   d.dir()
   d.dir('Option\:.*')
 
@@ -717,7 +720,7 @@ that used for the :py:meth:`DataFile.search` method::
 
 The final two variants above, use a tuple to select the data. The final example makes
 use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
-rows are deleted(kept for *invert*=True) if the specified column lies between the maximum and minimum
+rows are deleted(kept for *invert* = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds.
 
@@ -759,6 +762,7 @@ columns. Currently only ascending sorts are supported.::
 
 
 .. _save:
+
 Saving Data
 -----------
 

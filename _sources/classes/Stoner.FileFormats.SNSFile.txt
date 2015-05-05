@@ -8,14 +8,6 @@ Stoner.FileFormats.SNSFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~SNSFile._load
-
-   
    
 
    

@@ -8,14 +8,6 @@ Stoner.FileFormats.MDAASCIIFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~MDAASCIIFile._load
-
-   
    
 
    

@@ -8,14 +8,6 @@ Stoner.FileFormats.EasyPlotFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~EasyPlotFile._load
-
-   
    
 
    

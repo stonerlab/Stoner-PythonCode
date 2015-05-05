@@ -13,6 +13,7 @@ Stoner.PlotFormats.DefaultPlotStyle
    .. autosummary::
     :toctree:
    
+      ~DefaultPlotStyle.__call__
       ~DefaultPlotStyle.__init__
       ~DefaultPlotStyle.annotate
       ~DefaultPlotStyle.apply

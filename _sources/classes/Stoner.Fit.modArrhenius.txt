@@ -1,11 +1,20 @@
-Stoner.Fit.modArrhenius
+Stoner.Fit.ModArrhenius
 =======================
 
 .. currentmodule:: Stoner.Fit
 
-.. autoclass:: modArrhenius
+.. autoclass:: ModArrhenius
 
    
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~ModArrhenius.__init__
+      ~ModArrhenius.guess
 
    
    

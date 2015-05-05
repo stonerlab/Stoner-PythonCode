@@ -26,7 +26,7 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="VSMFile._load" href="Stoner.FileFormats.VSMFile._load.html" />
+    <link rel="next" title="Stoner.FileFormats.MokeFile" href="Stoner.FileFormats.MokeFile.html" />
     <link rel="prev" title="RigakuFile.to_Q" href="Stoner.FileFormats.RigakuFile.to_Q.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.VSMFile._load.html" title="VSMFile._load"
+          <a href="Stoner.FileFormats.MokeFile.html" title="Stoner.FileFormats.MokeFile"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.FileFormats.RigakuFile.to_Q.html" title="RigakuFile.to_Q"
@@ -61,18 +61,6 @@
 <dt id="Stoner.FileFormats.VSMFile">
 <em class="property">class </em><tt class="descclassname">Stoner.FileFormats.</tt><tt class="descname">VSMFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#VSMFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.VSMFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends DataFile to open VSM Files</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.VSMFile._load.html#Stoner.FileFormats.VSMFile._load" title="Stoner.FileFormats.VSMFile._load"><tt class="xref py py-obj docutils literal"><span class="pre">_load</span></tt></a>([filename])</td>
-<td>VSM file loader routine.</td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -81,10 +69,10 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
-<td></td>
+<td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
 <tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
-<td></td>
+<td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 </tbody>
 </table>
@@ -105,8 +93,8 @@
   <p class="topless"><a href="Stoner.FileFormats.RigakuFile.to_Q.html"
                         title="previous chapter">RigakuFile.to_Q</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.VSMFile._load.html"
-                        title="next chapter">VSMFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.MokeFile.html"
+                        title="next chapter">Stoner.FileFormats.MokeFile</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.FileFormats.VSMFile.txt"
@@ -139,7 +127,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.VSMFile._load.html" title="VSMFile._load"
+          <a href="Stoner.FileFormats.MokeFile.html" title="Stoner.FileFormats.MokeFile"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.FileFormats.RigakuFile.to_Q.html" title="RigakuFile.to_Q"
@@ -150,7 +138,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

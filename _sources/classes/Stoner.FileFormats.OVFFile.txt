@@ -8,14 +8,6 @@ Stoner.FileFormats.OVFFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~OVFFile._load
-
-   
    
 
    

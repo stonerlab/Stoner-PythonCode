@@ -1,0 +1,8 @@
+
+
+errorfill
+==========================
+
+.. currentmodule:: Stoner.plotutils
+
+.. autofunction:: errorfill

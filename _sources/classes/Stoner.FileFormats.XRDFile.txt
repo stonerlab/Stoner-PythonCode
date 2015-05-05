@@ -13,7 +13,6 @@ Stoner.FileFormats.XRDFile
    .. autosummary::
     :toctree:
    
-      ~XRDFile._load
       ~XRDFile.to_Q
 
    

@@ -8,14 +8,6 @@ Stoner.FileFormats.BigBlueFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~BigBlueFile._load
-
-   
    
 
    

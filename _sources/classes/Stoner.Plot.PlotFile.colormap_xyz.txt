@@ -1,0 +1,8 @@
+
+
+PlotFile.colormap_xyz
+=================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.colormap_xyz

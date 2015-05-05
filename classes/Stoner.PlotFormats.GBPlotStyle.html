@@ -61,6 +61,21 @@
 <dt id="Stoner.PlotFormats.GBPlotStyle">
 <em class="property">class </em><tt class="descclassname">Stoner.PlotFormats.</tt><tt class="descname">GBPlotStyle</tt><big>(</big><em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#GBPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.GBPlotStyle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Template developed for Gavin&#8217;s plotting.</p>
+<p>This is largely an experimental class for trying things out rather than
+for serious plotting.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">GBPlotStyle</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">GBPlotStyle</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">-</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/GBStyle.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/GBStyle.png">png</a>, <a class="reference external" href="../samples/plotstyles/GBStyle.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/GBStyle.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/GBStyle.png" src="../_images/GBStyle.png" />
+</div>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -147,7 +162,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>

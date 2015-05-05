@@ -26,8 +26,8 @@
     <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="DefaultPlotStyle.__init__" href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" />
-    <link rel="prev" title="SNSFile._load" href="Stoner.FileFormats.SNSFile._load.html" /> 
+    <link rel="next" title="DefaultPlotStyle.__call__" href="Stoner.PlotFormats.DefaultPlotStyle.__call__.html" />
+    <link rel="prev" title="Stoner.FileFormats.SNSFile" href="Stoner.FileFormats.SNSFile.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" title="DefaultPlotStyle.__init__"
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.__call__.html" title="DefaultPlotStyle.__call__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.SNSFile._load.html" title="SNSFile._load"
+          <a href="Stoner.FileFormats.SNSFile.html" title="Stoner.FileFormats.SNSFile"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -121,6 +121,18 @@ method to carry out additional plot formatting.</p>
 <p>Calculated list of stylesheets found by traversing the class heirarchy</p>
 </dd></dl>
 
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/default.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/default.png">png</a>, <a class="reference external" href="../samples/plotstyles/default.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/default.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/default.png" src="../_images/default.png" />
+</div>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -128,25 +140,28 @@ method to carry out additional plot formatting.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.PlotFormats.DefaultPlotStyle.__init__" title="Stoner.PlotFormats.DefaultPlotStyle.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.__call__.html#Stoner.PlotFormats.DefaultPlotStyle.__call__" title="Stoner.PlotFormats.DefaultPlotStyle.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(**kargs)</td>
+<td>Calling the template object can manipulate the rcParams that will be set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.PlotFormats.DefaultPlotStyle.__init__" title="Stoner.PlotFormats.DefaultPlotStyle.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(**kargs)</td>
 <td>Create a template instance of this template.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.PlotFormats.DefaultPlotStyle.annotate" title="Stoner.PlotFormats.DefaultPlotStyle.annotate"><tt class="xref py py-obj docutils literal"><span class="pre">annotate</span></tt></a>(ix,&nbsp;multiple,&nbsp;plot,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.PlotFormats.DefaultPlotStyle.annotate" title="Stoner.PlotFormats.DefaultPlotStyle.annotate"><tt class="xref py py-obj docutils literal"><span class="pre">annotate</span></tt></a>(ix,&nbsp;multiple,&nbsp;plot,&nbsp;**kargs)</td>
 <td>Call all the routines necessary to annotate the axes etc.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.PlotFormats.DefaultPlotStyle.apply" title="Stoner.PlotFormats.DefaultPlotStyle.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.PlotFormats.DefaultPlotStyle.apply" title="Stoner.PlotFormats.DefaultPlotStyle.apply"><tt class="xref py py-obj docutils literal"><span class="pre">apply</span></tt></a>()</td>
 <td>Scan for all attributes that start <a href="#id1"><span class="problematic" id="id2">templtate_</span></a> and build them into a dictionary to update matplotlib settings with.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.PlotFormats.DefaultPlotStyle.customise" title="Stoner.PlotFormats.DefaultPlotStyle.customise"><tt class="xref py py-obj docutils literal"><span class="pre">customise</span></tt></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.PlotFormats.DefaultPlotStyle.customise" title="Stoner.PlotFormats.DefaultPlotStyle.customise"><tt class="xref py py-obj docutils literal"><span class="pre">customise</span></tt></a>()</td>
 <td>This method is supplied for sub classes to override to provide additional plot customisation after the rc paramaters are updated from the class and instance attributes.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.PlotFormats.DefaultPlotStyle.customise_axes" title="Stoner.PlotFormats.DefaultPlotStyle.customise_axes"><tt class="xref py py-obj docutils literal"><span class="pre">customise_axes</span></tt></a>(ax,&nbsp;plot)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.PlotFormats.DefaultPlotStyle.customise_axes" title="Stoner.PlotFormats.DefaultPlotStyle.customise_axes"><tt class="xref py py-obj docutils literal"><span class="pre">customise_axes</span></tt></a>(ax,&nbsp;plot)</td>
 <td>This method is run when we have an axis to manipulate.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.PlotFormats.DefaultPlotStyle.new_figure" title="Stoner.PlotFormats.DefaultPlotStyle.new_figure"><tt class="xref py py-obj docutils literal"><span class="pre">new_figure</span></tt></a>([figure])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.PlotFormats.DefaultPlotStyle.new_figure" title="Stoner.PlotFormats.DefaultPlotStyle.new_figure"><tt class="xref py py-obj docutils literal"><span class="pre">new_figure</span></tt></a>([figure])</td>
 <td>This is called by PlotFile to setup a new figure before we do anything.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.PlotFormats.DefaultPlotStyle.update" title="Stoner.PlotFormats.DefaultPlotStyle.update"><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.PlotFormats.DefaultPlotStyle.update" title="Stoner.PlotFormats.DefaultPlotStyle.update"><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt></a>(**kargs)</td>
 <td>Update the template with new attributes from keyword arguments.</td>
 </tr>
 </tbody>
@@ -195,11 +210,11 @@ method to carry out additional plot formatting.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.SNSFile._load.html"
-                        title="previous chapter">SNSFile._load</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.SNSFile.html"
+                        title="previous chapter">Stoner.FileFormats.SNSFile</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html"
-                        title="next chapter">DefaultPlotStyle.__init__</a></p>
+  <p class="topless"><a href="Stoner.PlotFormats.DefaultPlotStyle.__call__.html"
+                        title="next chapter">DefaultPlotStyle.__call__</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/classes/Stoner.PlotFormats.DefaultPlotStyle.txt"
@@ -232,10 +247,10 @@ method to carry out additional plot formatting.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.PlotFormats.DefaultPlotStyle.__init__.html" title="DefaultPlotStyle.__init__"
+          <a href="Stoner.PlotFormats.DefaultPlotStyle.__call__.html" title="DefaultPlotStyle.__call__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.SNSFile._load.html" title="SNSFile._load"
+          <a href="Stoner.FileFormats.SNSFile.html" title="Stoner.FileFormats.SNSFile"
              >previous</a> |</li>
         <li><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -243,7 +258,7 @@ method to carry out additional plot formatting.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Apr 07, 2015.
+      Last updated on May 05, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
