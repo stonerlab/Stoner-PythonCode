@@ -1,7 +1,8 @@
 axes.color_cycle:k,r,b,g,c,m,y
 axes.formatter.limits:-4, 4
 axes.grid:False
-axes.labelsize:10
+axes.labelsize:14
+axes.linewidth: 1.0
 figure.autolayout:True
 figure.facecolor:1,1,1
 figure.figsize:3,2.25
@@ -12,11 +13,11 @@ figure.subplot.right   : 0.9    # the right side of the subplots of the figure
 figure.subplot.top     : 0.95    # the top of the subplots of the figure
 figure.subplot.wspace  : 0.0
 font.family:Times New Roman
-font.size:10
+font.size:14
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
 legend.borderpad    :-1    # border whitespace in fontsize units
 legend.columnspacing:2.    # the border between the axes and legend edge in fraction of fontsize
-legend.fontsize     :10
+legend.fontsize     :14
 legend.frameon      :False   # whether or not to draw a frame around legend
 legend.handleheight :0.7     # the height of the legend handle in fraction of fontsize
 legend.handlelength :2.     # the length of the legend lines in fraction of fontsize
@@ -34,10 +35,15 @@ lines.marker:None
 lines.markeredgewidth:0
 lines.markersize:5
 xtick.direction:in
-xtick.labelsize:10
-xtick.major.pad:1
-xtick.major.size:3
+xtick.labelsize:11
+xtick.major.pad:5
+xtick.major.size:5
+xtick.major.width    : 0.5    # major tick width in points
+xtick.minor.width    : 0.5
+
 ytick.direction:in
-ytick.labelsize:10
-ytick.major.pad:1
-ytick.major.size:3
+ytick.labelsize:11
+ytick.major.pad:5
+ytick.major.size:5
+ytick.major.width    : 0.5    # major tick width in points
+ytick.minor.width    : 0.5

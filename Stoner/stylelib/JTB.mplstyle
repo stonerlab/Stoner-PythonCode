@@ -46,3 +46,10 @@ ytick.major.pad:5
 ytick.major.size:5
 ytick.major.width    : 1    # major tick width in points
 ytick.minor.width    : 1
+
+image.aspect : auto             # equal | auto | a number
+image.interpolation  : bilinear  # see help(imshow) for options
+image.cmap   : RdBu               # gray | jet etc...
+image.lut    : 256               # the size of the colormap lookup table
+image.origin : upper             # lower | upper
+image.resample  : False
