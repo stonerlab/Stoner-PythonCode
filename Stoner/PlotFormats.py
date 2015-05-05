@@ -103,6 +103,10 @@ class DefaultPlotStyle(object):
         stylename (string): Name of the matplotlib style to use
         stylesheet (list): Calculated list of stylesheets found by traversing the class heirarchy
 
+    Example
+        .. plot:: samples/plotstyles/default.py
+            :include-source:
+
     """
     """Internal class attributes."""
     _inches_per_pt = 1.0 / 72.27  # Convert pt to inch
@@ -111,7 +115,9 @@ class DefaultPlotStyle(object):
     """Settings for this figure type. All instance attributes which start template_
     will be used. Once the leading template_ is stripped, all _ characters are replaced
     with . and then the attributes are mapped to a dictionary and used to update the rcParams
-    dictionary"""
+    dictionary
+
+    """
     show_xlabel = True
     show_ylabel = True
     show_zlabel = True
@@ -325,7 +331,17 @@ class DefaultPlotStyle(object):
 
 
 class GBPlotStyle(DefaultPlotStyle):
-    """Template developed for Gavin's plotting."""
+    """Template developed for Gavin's plotting.
+    
+    This is largely an experimental class for trying things out rather than
+    for serious plotting.
+
+    Example
+        .. plot:: samples/plotstyles/GBStyle.py
+            :include-source:
+    
+    
+    """
     xformatter = TexEngFormatter
     yformatter = TexEngFormatter
     stylename = "GBStyle"
@@ -343,7 +359,13 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
-    """Template class for Joe's Plot settings."""
+    """Template class for Joe's Plot settings.
+    
+    Example
+        .. plot:: samples/plotstyles/JTBStyle.py
+            :include-source:
+    
+"""
 
     show_title = False
     stylename = "JTB"
@@ -370,7 +392,12 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
-    """A figure Style for making figures for Phys Rev * Jounrals."""
+    """A figure Style for making figures for Phys Rev * Jounrals.
+    
+    Example
+        .. plot:: samples/plotstyles/PRBStyle.py
+            :include-source:
+    """
     show_title = False
     stylename = "PRB"
 
@@ -379,7 +406,17 @@ class PRBPlotStyle(DefaultPlotStyle):
 
 
 class SketchPlot(DefaultPlotStyle):
-    """Turn on xkcd plot style."""
+    """Turn on xkcd plot style.
+
+    Implemented as a bit of a joke, but perhaps someone will use this in a real
+    presentation one day ?    
+     
+    Example
+        .. plot:: samples/plotstyles/SketchStyle.py
+            :include-source:
+    
+    
+    """
     stylename = "sketch"
 
     def customise(self):
