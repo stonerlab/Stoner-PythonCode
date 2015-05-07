@@ -509,8 +509,8 @@ class AnalyseFile(DataFile):
         if result is not None:
             args = getargspec(func)[0]
             for val,err,name in zip(popt,pcov,args[1:]):
-                self['{}:{}',format(func.__name__,name)] = val
-                self['{}:{} err',format(func.__name__,name)] = err
+                self['{}:{}'.format(func.__name__,name)] = val
+                self['{}:{} err'.format(func.__name__,name)] = err
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
