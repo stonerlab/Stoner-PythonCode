@@ -1999,7 +1999,7 @@ class DataFile(object):
             index = self.find_col(index)
             if column_header is None:
                 column_header = self.column_headers[index]
-
+                
 # The following 2 lines make the array we are adding a
 # [1, x] array, i.e. a column by first making it 2d and
 # then transposing it.
@@ -2043,10 +2043,13 @@ class DataFile(object):
         if not replace:
             if len(self.column_headers) == 1:
                 index=0
-            self.column_headers.insert(index, column_header)
+                self.column_headers[index] = column_header
+            else:
+                self.column_headers.pop()
+                self.column_headers.insert(index, column_header)
         else:
             self.column_headers[index] = column_header
-
+            
         return self
 
     def column(self, col):
