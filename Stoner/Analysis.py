@@ -499,13 +499,18 @@ class AnalyseFile(DataFile):
             sigma = working[:, self.find_col(sigma)]
         xdat = working[:, self.find_col(xcol)]
         ydat = working[:, self.find_col(ycol)]
-        popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+        ret=()
+        if output == "full":
+            popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+            ret = (popt,pcov,infodict,mesg,ier)
+        else:
+            popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
         perr=_np_.sqrt(_np_.diag(pcov))
         if result is not None:
             args = getargspec(func)[0]
             for val,err,name in zip(popt,pcov,args[1:]):
-                self['{}:{}',format(func.__name__,name)] = val
-                self['{}:{} err',format(func.__name__,name)] = err
+                self['{}:{}'.format(func.__name__,name)] = val
+                self['{}:{} err'.format(func.__name__,name)] = err
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
