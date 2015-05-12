@@ -298,7 +298,9 @@ class AnalyseFile(DataFile):
         for i, r in enumerate(self.rows()):
             ret = func(r)
             if isinstance(ret, Iterable):
-                if len(ret) == len(r):
+                if _np_.size(ret) == 1:
+                    ret = ret
+                elif len(ret) == len(r):
                     ret = ret[col]
                 else:
                     ret = ret[0]
@@ -423,7 +425,7 @@ class AnalyseFile(DataFile):
 
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
-            xcol (index): The index of the x-column data to fit
+            xcol (index, list): The index of the x-column data to fit. If list sends a tuple of x columns to func for N-d fitting. 
             ycol (index): The index of the y-column data to fit
 
         Keyword Arguments:
@@ -497,7 +499,12 @@ class AnalyseFile(DataFile):
         working = ma.mask_rowcols(working, axis=0)
         if sigma is not None:
             sigma = working[:, self.find_col(sigma)]
-        xdat = working[:, self.find_col(xcol)]
+        if isinstance(xcol,list):
+            xdat=()
+            for c in xcol:
+                xdat = xdat  + (working[:, self.find_col(c)],)
+        else:
+            xdat = working[:, self.find_col(xcol)]
         ydat = working[:, self.find_col(ycol)]
         ret=()
         if output == "full":
@@ -511,7 +518,12 @@ class AnalyseFile(DataFile):
             for val,err,name in zip(popt,pcov,args[1:]):
                 self['{}:{}'.format(func.__name__,name)] = val
                 self['{}:{} err'.format(func.__name__,name)] = err
-            xc = self.find_col(xcol)
+            if isinstance(xcol,list):
+                xc=()
+                for c in xcol:
+                    xc = xc  + (self.find_col(c),)
+            else:
+                xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
             if isinstance(result, bool) and result:
@@ -791,6 +803,7 @@ class AnalyseFile(DataFile):
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
+        fit_2d = kargs.pop("2d", False)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         scale_covar = kargs.pop("scale_covar", not absolute_sigma)
@@ -817,16 +830,21 @@ class AnalyseFile(DataFile):
 
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
-        if xcol is None or ycol is None:
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"][0]
-        working = self.search(xcol, bounds)
-        working = ma.mask_rowcols(working, axis=0)
+        if not fit_2d:
+            if xcol is None or ycol is None:
+                cols = self.setas._get_cols()
+                if xcol is None:
+                    xcol = cols["xcol"]
+                if ycol is None:
+                    ycol = cols["ycol"][0]
+            working = self.search(xcol, bounds)
+            working = ma.mask_rowcols(working, axis=0)
+        else:
+            working = self.search(xcol[0], bounds)
+            working = ma.mask_rowcols(working, axis=0)
+            
 
-        xdata = working[:, self.find_col(xcol)]
+        xdata = (working[:, self.find_col(xcol[0])],working[:, self.find_col(xcol[1])])
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
             if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
