@@ -519,9 +519,9 @@ class AnalyseFile(DataFile):
                 self['{}:{}'.format(func.__name__,name)] = val
                 self['{}:{} err'.format(func.__name__,name)] = err
             if isinstance(xcol,list):
-                xc=()
+                xc=[]
                 for c in xcol:
-                    xc = xc  + (self.find_col(c),)
+                    xc.append(self.find_col(c),)
             else:
                 xc = self.find_col(xcol)
             if not isinstance(header, string_types):
