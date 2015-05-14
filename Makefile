@@ -6,7 +6,7 @@ endif
 PYTHON_SETUP	=	python setup.py
 
 egg:
-	$(PYTHON_SETUP) egg_info -bb2 bdist_egg upload
+	$(PYTHON_SETUP) egg_info -bb3 bdist_egg upload
 
 doc: docbuild
 	$(PYTHON_SETUP) upload_sphinx
