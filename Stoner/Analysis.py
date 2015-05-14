@@ -177,7 +177,7 @@ class AnalyseFile(DataFile):
         if fit.success:
             row = []
             if (isinstance(result, bool) and result):
-                self.add_column(fit.best_fit, column_header=header, index=None)                
+                self.add_column(fit.best_fit, column_header=header, index=None)
             elif isinstance(result, index_types):
                 self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
             elif result is not None:
@@ -520,7 +520,7 @@ class AnalyseFile(DataFile):
         row = _np_.array([])
         for val,err in zip(popt,perr):
             row = _np_.append(row, [val,err])
-        ret = ret + (row, )
+        ret = (pcov,popt,row)
         retval = {"fit": (popt, pcov), "row": row, "full": ret}
         if output not in retval:
             raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
