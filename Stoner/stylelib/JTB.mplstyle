@@ -1,9 +1,9 @@
 axes.color_cycle:k,r,b,g,c,m,y
-axes.formatter.limits:-4, 4
+axes.formatter.limits:-3, 3
 axes.grid:False
 axes.labelsize:18
 axes.linewidth: 2.0
-figure.autolayout:False
+figure.autolayout:True
 figure.facecolor:1,1,1
 figure.subplot.bottom  : 0.2    # the bottom of the subplots of the figure
 figure.subplot.hspace  : 0
