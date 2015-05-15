@@ -803,7 +803,6 @@ class AnalyseFile(DataFile):
         result = kargs.pop("result", None)
         replace = kargs.pop("replace", False)
         header = kargs.pop("header", None)
-        fit_2d = kargs.pop("2d", False)
         # Support both absolute_sigma and scale_covar, but scale_covar wins here (c.f.curve_fit)
         absolute_sigma = kargs.pop("absolute_sigma", True)
         scale_covar = kargs.pop("scale_covar", not absolute_sigma)
@@ -830,21 +829,18 @@ class AnalyseFile(DataFile):
 
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
-        if not fit_2d:
-            if xcol is None or ycol is None:
-                cols = self.setas._get_cols()
-                if xcol is None:
-                    xcol = cols["xcol"]
-                if ycol is None:
-                    ycol = cols["ycol"][0]
-            working = self.search(xcol, bounds)
-            working = ma.mask_rowcols(working, axis=0)
-        else:
-            working = self.search(xcol[0], bounds)
-            working = ma.mask_rowcols(working, axis=0)
-            
+        
+        if xcol is None or ycol is None:
+            cols = self.setas._get_cols()
+            if xcol is None:
+                xcol = cols["xcol"]
+            if ycol is None:
+                ycol = cols["ycol"][0]
+        working = self.search(xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
 
-        xdata = (working[:, self.find_col(xcol[0])],working[:, self.find_col(xcol[1])])
+
+        xdata = working[:, self.find_col(xcol)]
         ydata = working[:, self.find_col(ycol)]
         if p0 is not None:
             if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
