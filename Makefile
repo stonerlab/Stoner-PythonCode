@@ -8,6 +8,9 @@ PYTHON_SETUP	=	python setup.py
 egg:
 	$(PYTHON_SETUP) egg_info -bb3 bdist_egg upload
 
+wheel:
+	$(PYTHON_SETUP)  -bb4 bdist_wheel -universal upload
+
 doc: docbuild
 	$(PYTHON_SETUP) upload_sphinx
 	cp -ar doc/_build/html/* ../gh-pages/
