@@ -13,10 +13,11 @@ v2 corrections: less automation saving time
                 shift algorithm is different to make for better zeroing
 
 """
+from __future__ import print_function
 
-print "Analysis program for VSM files" \
-       "\n\n\n"
-print 'Please wait while program loads...\n'
+print("Analysis program for VSM files" \
+       "\n\n\n")
+print('Please wait while program loads...\n')
 import Stoner
 import numpy as np
 import matplotlib.pyplot as plot
@@ -134,7 +135,7 @@ os.chdir(directoryName)
 filenames=os.listdir(directoryName)
 i=0
 for item in filenames:
-    print i,'. ',item
+    print(i,'. ',item)
     i+=1
 fCounter=int(raw_input('Enter the number of the file you wish to start at (program will cycle through files from that point.):\n'))
 if 'EditedFiles' not in filenames: os.mkdir('EditedFiles')
@@ -158,20 +159,20 @@ while(True):
             try: Data=Stoner.TDIFile('EditedFiles/'+pathsplit[0]+'_edit.txt'); break
             except ValueError:
                timeout+=1     #if get 5 files unreadable in a row then finish the program
-               print 'Could not read file ',path
+               print('Could not read file ',path)
                if timeout<=5: break
     fw.close()
     while(True):
         plotmH(Data)
         if not('Original m (emu)' in Data.column_headers): Data.add_column(Data.column('m (emu)'),'Original m (emu)')
-        print '\nOK you have 5 options here, have a look at the plot and please tell me which ones ',\
-               'you would like by entering a string eg "125" for options 1, 2 and 5\n'
-        print '0. Do nothing \n' ,\
+        print('\nOK you have 5 options here, have a look at the plot and please tell me which ones ',\
+               'you would like by entering a string eg "125" for options 1, 2 and 5\n')
+        print('0. Do nothing \n' ,\
             '1.  Give true m from R (if theta is not zeroed in your data this will give you true m) \n' ,\
             '2.  Remove a drift in m with time \n' ,\
             '3.  Remove a diamagnetic background \n' ,\
             '4.  Remove an overall shift in m \n' ,\
-            '5.  Reflect graph in y axis \n'
+            '5.  Reflect graph in y axis \n')
 
         strOp=raw_input('')
         operations=[]  #array of options selected

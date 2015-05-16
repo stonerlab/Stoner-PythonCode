@@ -7,6 +7,7 @@ Classes:
         languages such as LabVIEW.
 
 """
+from __future__ import print_function
 __all__ = ["StonerLoadError", "DataFile"]  # Don't import too muhc with from Stoner.Core import *
 
 from Stoner.compat import *

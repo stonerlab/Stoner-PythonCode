@@ -7,6 +7,7 @@ is run last.
 
 Eacg class should implement a load() method and optionally a save() method.
 """
+from __future__ import print_function
 from Stoner.compat import *
 import linecache
 import re
@@ -1313,7 +1314,7 @@ class EasyPlotFile(DataFile):
                     parts = [x.strip() for x in line.strip('"').split(':')]
                     self[parts[0]] = self.metadata.string_to_type(":".join(parts[1:]))
                 elif line.startswith("/"):  # command
-                    parts = [x.strip('"') for x in csv.reader([line], delimiter=" ").next() if x != ""]
+                    parts = [x.strip('"') for x in next(csv.reader([line], delimiter=" ")) if x != ""]
                     cmd = parts[0].strip("/")
                     if len(cmd) > 1:
                         cmdname = "_{}_cmd".format(cmd)

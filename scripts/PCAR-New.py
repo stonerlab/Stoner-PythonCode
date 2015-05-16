@@ -3,6 +3,7 @@
 Gavin Burnell g.burnell@leeds.ac.uk
 
 """
+from __future__ import print_function
 
 # Import packages
 
@@ -47,7 +48,7 @@ class working(Data):
         discard=self.config.has_option("Data","dicard") and self.config.getboolean("Data",'discard')
         if discard:
             v_limit=self.config.get("Data",'v_limit')
-            print "Discarding data beyond v_limit={}".format(v_limit)
+            print("Discarding data beyond v_limit={}".format(v_limit))
             self.del_rows(self.vcol,lambda x,y:abs(x)>v_limit)
         return self
             
@@ -60,14 +61,14 @@ class working(Data):
         """
 
         if self.config.has_option("Options", "normalise") and self.config.getboolean("Options", "normalise"):
-            print "Normalising Data"
+            print("Normalising Data")
             Gn=self.config.getfloat("Data", 'Normal_conductance')
             v_scale=self.config.getfloat("Data", "v_scale")
             if self.config.has_option("Options", "fancy_normaliser") and self.config.getboolean("Options", "fancy_normaliser"):
                 vmax, vp=self.max(self.vcol)
                 vmin, vp=self.min(self.vcol)
                 p, pv=self.curve_fit(quadratic, bounds=lambda x, y:(x>0.9*vmax) or (x<0.9*vmin))
-                print "Fitted normal conductance background of G="+str(p[0])+"V^2 +"+str(p[1])+"V+"+str(p[2])
+                print("Fitted normal conductance background of G="+str(p[0])+"V^2 +"+str(p[1])+"V+"+str(p[2]))
                 self["normalise.coeffs"]=p
                 self["normalise.coeffs_err"]=np.sqrt(np.diag(pv))
                 self.apply(lambda x:x[self.gcol]/quadratic(x[self.vcol], *p), self.gcol)
@@ -82,11 +83,11 @@ class working(Data):
             take the average of these and then subtract it.
         """
         if self.config.has_option("Options", "remove_offset") and self.config.getboolean("Options", "remove_offset"):
-            print "Doing offset correction"
+            print("Doing offset correction")
             peaks=self.peaks(self.gcol,len(self)/20,0,xcol=self.vcol,poly=4,peaks=True,troughs=True)
             peaks=filter(lambda x: abs(x)<4*self.delta['value'], peaks)
             offset=np.mean(np.array(peaks))
-            print "Mean offset ="+str(offset)
+            print("Mean offset ="+str(offset))
             self.apply(lambda x:x[self.vcol]-offset, self.vcol)
         return self
 
@@ -112,7 +113,7 @@ class working(Data):
             if self.save_fit:
                 self.save(False)
             if self.report:
-                print fit.fit_report()
+                print(fit.fit_report())
         else: #chi^2 mapping mode
             ret=Data()
             ret.data=fit
@@ -138,7 +139,7 @@ class working(Data):
             plots.append(ix*2+2)
             plots.remove(fixed)
             errors.remove(fixed+1)
-            print ret.column_headers,fixed,plots,errors
+            print(ret.column_headers,fixed,plots,errors)
             if self.show_plot:
                 ret.plot_xy(fixed,plots,yerr=tuple(errors),multiple="panels")
             if self.save_fit:

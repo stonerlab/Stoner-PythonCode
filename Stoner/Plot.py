@@ -872,7 +872,7 @@ class PlotFile(DataFile):
                     self.y2()
                     cc = plt.gca()._get_lines.color_cycle
                     for i in range(ix):
-                        cc.next()
+                        next(cc)
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
                 self.ax = ix  # We;re manipulating the plotting here
             if isinstance(fmt, list):  # Fix up the format

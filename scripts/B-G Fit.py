@@ -6,6 +6,7 @@ Sample script for fitting BlochGrueneisen function to a data file
 
 @author: phygbu
 """
+from __future__ import print_function
 
 from Stoner.Util import Data,format_error
 from Stoner.Fit import blochGrueneisen
@@ -18,14 +19,14 @@ def bg_wrapper(T,tD,r0,A):
 
 
 def select_col(data,message):
-    print "Unable to guess column"
+    print("Unable to guess column")
     for i,col in enumerate(data.column_headers):
-        print "{} : {}".format(i,col)
+        print("{} : {}".format(i,col))
     while True:
         try:
             return int(raw_input(message))
         except ValueError:
-            print "Please select a column number"
+            print("Please select a column number")
             continue
 
 # Load a datafile
@@ -49,7 +50,7 @@ rho0=d.min(r_col)[0]
 A=rho0*40
 thetaD=300.0
 p0=[thetaD,rho0,A]
-print "Initial guesses: {}".format(p0)
+print("Initial guesses: {}".format(p0))
 
 d.del_rows(0,lambda x,r:any(isnan(r)))
 

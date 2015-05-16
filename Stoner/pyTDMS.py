@@ -9,6 +9,7 @@ http://florisvanvugt.free.fr/
 
 Updated with Python3 tweaks by Gavin Burnell
 """
+from __future__ import print_function
 from Stoner.compat import *
 import struct
 import os
@@ -367,7 +368,7 @@ def readMetaData(f):
         (objectpath, rawdataindex, rawdata, properties) = obj
 
         if verbose:
-            print("Read object", objectpath)
+            print(("Read object", objectpath))
 
 # Add this object, or, if an object with the same objectpath
 # exists already, make it update that one.
@@ -448,7 +449,7 @@ def readRawData(f, leadin, segmentobjects, objectorder, filesize):
     n_chunks = total_chunks / chunk_size
 
     if verbose:
-        print("Ready for reading", total_chunks, "bytes (", chunk_size, ") in", n_chunks, "chunks", )
+        print(("Ready for reading", total_chunks, "bytes (", chunk_size, ") in", n_chunks, "chunks", ))
 
     if interleaved:
         if verbose:
