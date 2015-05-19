@@ -330,8 +330,7 @@ class _setas(object):
         elif isinstance(col, list):
             col = [self.find_col(x) for x in col]
         else:
-            raise TypeError('Column index must be an integer, string, \
-            list or slice')
+            raise TypeError('Column index must be an integer, string, list or slice, not a {}'.format(type(col)))
         if force_list and not isinstance(col, list):
             col = [col]
         return col

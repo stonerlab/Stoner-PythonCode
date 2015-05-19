@@ -108,7 +108,10 @@ class PlotFile(DataFile):
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
         Z = _np_.nan_to_num(Z)
-        ax = self.__figure.gca()
+        if "ax" not in kargs:
+            ax=Axes3d(self.fig)
+        else:
+            ax=kargs.pop("ax")
         surf = ax.plot_surface(X, Y, Z, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
@@ -929,8 +932,8 @@ class PlotFile(DataFile):
             "title": self.filename,
             "save_filename": None,
             "cmap": cm.jet,
-            "rstride": zdata.shape[0] / 50,
-            "cstride": zdata.shape[1] / 50
+            "rstride": max(1,zdata.shape[0] / 50),
+            "cstride": max(1,zdata.shape[1] / 50)
         }
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
         for k in coltypes:
@@ -940,13 +943,13 @@ class PlotFile(DataFile):
                     label = ",".join(label)
                 defaults[k] = label
         if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == self.__SurfPlotter):
-            otherkargs = ["rstride", "cstride", "color", "cmap", "facecolors", "norm", "vmin", "vmax", "shade"]
+            otherkargs = ["rstride", "cstride", "color", "cmap", "facecolors", "norm", "vmin", "vmax", "shade","linewidth","ax"]
         else:
-            otherkargs = ["vmin", "vmax","shade","color"]
+            otherkargs = ["vmin", "vmax","shade","color","linewidth"]
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
-        plotter(xdata, ydata, zdata, **kargs)
+        self.plot3d=plotter(xdata, ydata, zdata, **kargs)
         if plotter != self.__SurfPlotter:
             del (nonkargs["zlabel"])
         self._fix_titles(0, "none", **nonkargs)

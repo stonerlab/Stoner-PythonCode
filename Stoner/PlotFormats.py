@@ -317,18 +317,19 @@ class DefaultPlotStyle(object):
             settings = {k: self.subplot_settings[multiple][k][i] for k in self.subplot_settings[multiple]}
         else:
             settings = {"xlabel": True, "ylabel": True, "zlabel": True, "title": True}
-
-        if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
-            plt.xlabel(str(kargs["xlabel"]), size=self.template_axes_labelsize)
-        if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
-            plt.ylabel(str(kargs["ylabel"]), size=self.template_axes_labelsize)
-        if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
-            plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes_labelsize)
-        if "title" in kargs and self.show_title and settings["title"]:
-            plt.title(kargs["title"])
-        if self.showlegend:
-            plt.legend()
-
+        try:
+            if "xlabel" in kargs and self.show_xlabel and settings["xlabel"]:
+                plt.xlabel(str(kargs["xlabel"]), size=self.template_axes_labelsize)
+            if "ylabel" in kargs and self.show_ylabel and settings["ylabel"]:
+                plt.ylabel(str(kargs["ylabel"]), size=self.template_axes_labelsize)
+            if "zlabel" in kargs and self.show_zlabel and settings["zlabel"]:
+                plot.fig.axes[0].set_zlabel(kargs["zlabel"], size=self.template_axes_labelsize)
+            if "title" in kargs and self.show_title and settings["title"]:
+                plt.title(kargs["title"])
+            if self.showlegend:
+                plt.legend()
+        except AttributeError:
+            pass
 
 class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting.

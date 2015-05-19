@@ -176,12 +176,22 @@ class AnalyseFile(DataFile):
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
-            if (isinstance(result, bool) and result):
+            # Store our current mask, calculate new column's mask and turn off mask
+            tmp_mask=self.mask
+            col_mask=_np_.any(tmp_mask,axis=1)
+            self.mask=False
+            
+            if (isinstance(result, bool) and result): # Appending data and mask
                 self.add_column(fit.best_fit, column_header=header, index=None)
-            elif isinstance(result, index_types):
+                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+            elif isinstance(result, index_types): # Inserting data and mask
                 self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
-            elif result is not None:
+                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+            elif result is not None: # Oops restore mask and bail
+                self.mask=tmp_mask
                 raise RuntimeError("Didn't recognize result as an index type or True")
+            self.mask=tmp_mask #Restore mask
+
             for p in fit.params:
                 self["{}{}".format(prefix, p)] = fit.params[p].value
                 self["{}{} err".format(prefix, p)] = fit.params[p].stderr
@@ -518,17 +528,23 @@ class AnalyseFile(DataFile):
             for val,err,name in zip(popt,pcov,args[1:]):
                 self['{}:{}'.format(func.__name__,name)] = val
                 self['{}:{} err'.format(func.__name__,name)] = err
-            if isinstance(xcol,list):
-                xc=[]
-                for c in xcol:
-                    xc.append(self.find_col(c),)
-            else:
-                xc = self.find_col(xcol)
+            xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
-            if isinstance(result, bool) and result:
+            
+            # Store our current mask, calculate new column's mask and turn off mask
+            tmp_mask=self.mask
+            col_mask=_np_.any(tmp_mask,axis=1)
+            self.mask=False
+
+            if isinstance(result, bool) and result:#Appending data to end of data
                 result = self.shape[1] - 1
-            self.apply(lambda x: func(x[xc], *popt), result, replace=replace, header=header)
+                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+            else: # Inserting data
+                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+            new_col=func(xdat,*popt)            
+            self.add_column(new_col,index=result, replace=replace, column_header=header)
+            self.mask=tmp_mask
         row = _np_.array([])
         for val,err in zip(popt,perr):
             row = _np_.append(row, [val,err])
