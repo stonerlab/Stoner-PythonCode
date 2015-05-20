@@ -124,6 +124,8 @@ class DataFolder(object):
             else:
                 if not nolist:
                     self.getlist()
+        else: 
+            self.getlist()
 
 
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
