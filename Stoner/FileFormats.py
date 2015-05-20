@@ -1367,3 +1367,50 @@ class EasyPlotFile(DataFile):
             col = int(parts[2])
             self._extend_columns(col + 1)
             self.column_headers[col] = parts[1]
+
+class PinkLibFile(DataFile):
+    """Extends DataFile to load files from MdV's PINK library - as used by the GMR anneal rig."""
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=32 # reasonably generic format
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.dat"] # Recognised filename patterns
+
+
+    def _load(self, filename=None, *args, **kargs):
+        """PinkLib file loader routine.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+            """
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        with open(self.filename, "r") as f:  # Read filename linewise
+            if "PINKlibrary" not in f.readline():
+                raise StonerLoadError("Not a PINK file")
+            f=f.readlines()
+            happened_before=False
+            for i, line in enumerate(f):
+                if line[0]!='#' and not happened_before:
+                    header_line=i-2 #-2 because there's a commented out data line
+                    happened_before=True
+                    continue #want to get the metadata at the bottom of the file too
+                elif any(s in line for s in ('Start time', 'End time', 'Title')):
+                    tmp=line.strip('#').split(':')
+                    self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
+            self.column_headers = f[header_line].strip('#\t ').split('\t')    
+            data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
+            self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
+            if all(h in self.column_headers for h in ('T (C)', 'R (Ohm)')): 
+                self.setas(x='T (C)', y='R (Ohm)')           
+        return self
