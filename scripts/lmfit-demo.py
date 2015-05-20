@@ -5,6 +5,7 @@ Created on Thu Oct 02 21:17:41 2014
 
 @author: phygbu
 """
+from __future__ import print_function
 
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini
 
@@ -17,4 +18,4 @@ fit=d.lmfit(model,result=True,header="lmfit")
 d.plot_xy(0,[2,1],["r-","bo"]) # plot the data
 d.annotate_fit(model,x=0.05,y=0.65,xycoords="axes fraction")
 
-print fit.fit_report()
+print(fit.fit_report())

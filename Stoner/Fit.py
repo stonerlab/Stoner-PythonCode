@@ -28,10 +28,12 @@ if python_v3:
 else:
     import ConfigParser
 
-try:
+try: # numba is an optional dependency
     from numba import jit
 except ImportError:
-    pass
+    def jit(func):
+        """Null decorator function."""
+        return func
 
 def _get_model_(model):
     """Utility meothd to manage creating an lmfit.Model.

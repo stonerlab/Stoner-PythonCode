@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Plotting DataFile wiuth Chaco, TraitsUI, TraitsUI
 from traits.api import HasTraits, Instance,  Array, Int, List, Enum,  Str,  Tuple,  Font,  Property, Dict
 from traitsui.api import View, Group, HGroup,  VGroup,  Item,  CheckListEditor, Handler,  TreeEditor, TreeNode, VSplit, Tabbed,  TabularEditor, ValueEditor
@@ -226,7 +227,7 @@ class StonerPlot(HasTraits, S.Data):
         for p in pp:
             plot=self.plot.components[p]
             if isinstance(plot, LinePlot) and attr=="outline_color":
-                print value
+                print(value)
                 plot.set(**t)
             else:
                 plot.set(**t)

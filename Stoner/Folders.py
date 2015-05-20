@@ -815,11 +815,11 @@ class DataFolder(object):
         if isinstance(key, string_types):
             k=key
             key=lambda x:x.get(k)
-        for f in self.files:
+        for f in self.ls:
             x=self[f]
             v=key(x)
             self.add_group(v)
-            self.groups[v].files.append(f)
+            self.groups[v].files.append(x)
         self.files=[]
         if len(next_keys)>0:
             for g in self.groups:

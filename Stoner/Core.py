@@ -7,6 +7,7 @@ Classes:
         languages such as LabVIEW.
 
 """
+from __future__ import print_function
 __all__ = ["StonerLoadError", "DataFile"]  # Don't import too muhc with from Stoner.Core import *
 
 from Stoner.compat import *
@@ -25,14 +26,14 @@ from collections import Iterable, OrderedDict
 
 def copy_into(source,dest):
     """Copies the data associated with source to dest.
-    
+
     Args:
         source(DataFile): The DataFile object to be copied from
         dest (DataFile): The DataFile objrct to be changed by recieving the copiued data.
-        
+
     Returns:
         The modified *dest* DataFile.
-        
+
     Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
     overwrites the attributes that represent the data in the DataFile.
     """
@@ -329,8 +330,7 @@ class _setas(object):
         elif isinstance(col, list):
             col = [self.find_col(x) for x in col]
         else:
-            raise TypeError('Column index must be an integer, string, \
-            list or slice')
+            raise TypeError('Column index must be an integer, string, list or slice, not a {}'.format(type(col)))
         if force_list and not isinstance(col, list):
             col = [col]
         return col
@@ -1999,14 +1999,7 @@ class DataFile(object):
             index = self.find_col(index)
             if column_header is None:
                 column_header = self.column_headers[index]
-        if not replace:
-            if len(self.column_headers) == 0:
-                self.column_headers = [column_header]
-            else:
-                self.column_headers.insert(index, column_header)
-        else:
-            self.column_headers[index] = column_header
-
+                
 # The following 2 lines make the array we are adding a
 # [1, x] array, i.e. a column by first making it 2d and
 # then transposing it.
@@ -2046,6 +2039,17 @@ class DataFile(object):
                 self.data = _ma_.masked_array(_np_.transpose(_np_.atleast_2d(_np__data)))
             else:
                 self.data = _ma_.masked_array(_np_.insert(self.data, index, _np__data, 1))
+        #Finally sort out column headers
+        if not replace:
+            if len(self.column_headers) == 1:
+                index=0
+                self.column_headers[index] = column_header
+            else:
+                self.column_headers.pop()
+                self.column_headers.insert(index, column_header)
+        else:
+            self.column_headers[index] = column_header
+            
         return self
 
     def column(self, col):

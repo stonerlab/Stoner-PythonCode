@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Normaliser with Stoner module
 import Stoner.Core as SC
 import Stoner.Folders as SF
@@ -78,7 +79,7 @@ def norm_group(pos,trail,**kargs):
     posfile=posfile&pos[0].column(0)
     posfile.column_headers=['Energy']
     for f in pos:
-        print str(f["run"])+str(f.find_col(signal))
+        print(str(f["run"])+str(f.find_col(signal)))
         posfile=posfile&f.column(signal)
     posfile.add_column(lambda r:np.mean(r[1:]),"mean drain")
     ec=posfile.find_col('Energy')

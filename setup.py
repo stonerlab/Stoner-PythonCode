@@ -1,7 +1,6 @@
 import os
 from setuptools import setup
 import Stoner
-reload(Stoner)
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -16,7 +15,7 @@ setup(
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",
     packages=['Stoner'],
-    package_dir={'Stoer': 'Stoner'},
+    package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
     install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit","numba"],

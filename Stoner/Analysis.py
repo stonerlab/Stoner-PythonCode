@@ -176,12 +176,22 @@ class AnalyseFile(DataFile):
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
-            if (isinstance(result, bool) and result):
-                self.add_column(fit.best_fit, column_header=header, index=None)                
-            elif isinstance(result, index_types):
+            # Store our current mask, calculate new column's mask and turn off mask
+            tmp_mask=self.mask
+            col_mask=_np_.any(tmp_mask,axis=1)
+            self.mask=False
+            
+            if (isinstance(result, bool) and result): # Appending data and mask
+                self.add_column(fit.best_fit, column_header=header, index=None)
+                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+            elif isinstance(result, index_types): # Inserting data and mask
                 self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
-            elif result is not None:
+                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+            elif result is not None: # Oops restore mask and bail
+                self.mask=tmp_mask
                 raise RuntimeError("Didn't recognize result as an index type or True")
+            self.mask=tmp_mask #Restore mask
+
             for p in fit.params:
                 self["{}{}".format(prefix, p)] = fit.params[p].value
                 self["{}{} err".format(prefix, p)] = fit.params[p].stderr
@@ -298,7 +308,9 @@ class AnalyseFile(DataFile):
         for i, r in enumerate(self.rows()):
             ret = func(r)
             if isinstance(ret, Iterable):
-                if len(ret) == len(r):
+                if _np_.size(ret) == 1:
+                    ret = ret
+                elif len(ret) == len(r):
                     ret = ret[col]
                 else:
                     ret = ret[0]
@@ -423,7 +435,7 @@ class AnalyseFile(DataFile):
 
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
-            xcol (index): The index of the x-column data to fit
+            xcol (index, list): The index of the x-column data to fit. If list sends a tuple of x columns to func for N-d fitting. 
             ycol (index): The index of the y-column data to fit
 
         Keyword Arguments:
@@ -497,25 +509,46 @@ class AnalyseFile(DataFile):
         working = ma.mask_rowcols(working, axis=0)
         if sigma is not None:
             sigma = working[:, self.find_col(sigma)]
-        xdat = working[:, self.find_col(xcol)]
+        if isinstance(xcol,list):
+            xdat=()
+            for c in xcol:
+                xdat = xdat  + (working[:, self.find_col(c)],)
+        else:
+            xdat = working[:, self.find_col(xcol)]
         ydat = working[:, self.find_col(ycol)]
-        popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+        ret=()
+        if output == "full":
+            popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+            ret = (popt,pcov,infodict,mesg,ier)
+        else:
+            popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
         perr=_np_.sqrt(_np_.diag(pcov))
         if result is not None:
             args = getargspec(func)[0]
             for val,err,name in zip(popt,pcov,args[1:]):
-                self['{}:{}',format(func.__name__,name)] = val
-                self['{}:{} err',format(func.__name__,name)] = err
+                self['{}:{}'.format(func.__name__,name)] = val
+                self['{}:{} err'.format(func.__name__,name)] = err
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
-            if isinstance(result, bool) and result:
+            
+            # Store our current mask, calculate new column's mask and turn off mask
+            tmp_mask=self.mask
+            col_mask=_np_.any(tmp_mask,axis=1)
+            self.mask=False
+
+            if isinstance(result, bool) and result:#Appending data to end of data
                 result = self.shape[1] - 1
-            self.apply(lambda x: func(x[xc], *popt), result, replace=replace, header=header)
+                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+            else: # Inserting data
+                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+            new_col=func(xdat,*popt)            
+            self.add_column(new_col,index=result, replace=replace, column_header=header)
+            self.mask=tmp_mask
         row = _np_.array([])
         for val,err in zip(popt,perr):
             row = _np_.append(row, [val,err])
-        ret = ret + (row, )
+        ret = (pcov,popt,row)
         retval = {"fit": (popt, pcov), "row": row, "full": ret}
         if output not in retval:
             raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
@@ -812,6 +845,7 @@ class AnalyseFile(DataFile):
 
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
+        
         if xcol is None or ycol is None:
             cols = self.setas._get_cols()
             if xcol is None:
@@ -820,6 +854,7 @@ class AnalyseFile(DataFile):
                 ycol = cols["ycol"][0]
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
+
 
         xdata = working[:, self.find_col(xcol)]
         ydata = working[:, self.find_col(ycol)]

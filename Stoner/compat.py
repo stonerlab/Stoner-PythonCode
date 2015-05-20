@@ -82,6 +82,4 @@ elif __vi__[0] == 3:
         else:
             return funcs[what](**opts)
 
-    callable = lambda obj: hasattr(obj, '__call__')
-
 index_types = string_types + (int, _pattern_type)
