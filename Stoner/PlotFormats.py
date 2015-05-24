@@ -245,7 +245,7 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = fig.gca()
+                ax = fig.gca(projection=projection)
             ret = fig
         else:
             if projection == "3d":

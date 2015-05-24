@@ -107,11 +107,8 @@ class PlotFile(DataFile):
             A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
+        ax=plt.gca(projection="3d")
         Z = _np_.nan_to_num(Z)
-        if "ax" not in kargs:
-            ax=Axes3d(self.fig)
-        else:
-            ax=kargs.pop("ax")
         surf = ax.plot_surface(X, Y, Z, **kargs)
         self.fig.colorbar(surf, shrink=0.5, aspect=5, extend="both")
 
@@ -221,7 +218,7 @@ class PlotFile(DataFile):
             figure, ax = self.template.new_figure(figure.number, **kargs)
         elif isinstance(self.__figure, mplfig.Figure):
             figure = self.__figure
-            ax = self.__figure.gca()
+            ax = self.__figure.gca(**kargs)
         else:
             figure, ax = self.template.new_figure(None, **kargs)
         return figure, ax
@@ -238,6 +235,13 @@ class PlotFile(DataFile):
         # Now inspect the plotting function to see what it takes.
         if function is None:
             function = defaults["plotter"]
+            if isinstance(function,string_types):
+                if "projection" in kargs:
+                    projection=kargs["projection"]
+                else:
+                    projection="rectilinear"
+                function=plt.gca(projection=projection).__getattribute__(function)
+                
         (args, vargs, kwargs, defs) = getargspec(function)
         # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
         if isinstance(otherkargs, (list, tuple)) and kwargs is not None:
@@ -402,7 +406,7 @@ class PlotFile(DataFile):
         if plotter is None:
             plotter = plt.pcolor
         kargs["plotter"] = plotter
-        kargs["projection"] = "2d"
+        kargs["projection"] = "rectilinear"
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
@@ -431,7 +435,7 @@ class PlotFile(DataFile):
         kargs["plotter"] = plotter
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
-    def figure(self, figure=None):
+    def figure(self, figure=None,projection="rectilinear"):
         """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
 
         Args:
@@ -440,11 +444,11 @@ class PlotFile(DataFile):
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
-            figure, ax = self.template.new_figure(None)
+            figure, ax = self.template.new_figure(None,projection=projection)
         elif isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure)
+            figure, ax = self.template.new_figure(figure,projection=projection)
         elif isinstance(figure, mplfig.Figure):
-            figure, ax = self.template.new_figure(figure.number)
+            figure, ax = self.template.new_figure(figure.number,projection=projection)
         self.__figure = figure
         return self
 
@@ -949,6 +953,8 @@ class PlotFile(DataFile):
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
+        if isinstance(plotter,string_types):
+            plotter=ax.__getattribute__(plotter)
         self.plot3d=plotter(xdata, ydata, zdata, **kargs)
         if plotter != self.__SurfPlotter:
             del (nonkargs["zlabel"])

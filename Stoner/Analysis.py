@@ -525,9 +525,10 @@ class AnalyseFile(DataFile):
         perr=_np_.sqrt(_np_.diag(pcov))
         if result is not None:
             args = getargspec(func)[0]
-            for val,err,name in zip(popt,pcov,args[1:]):
+            for val,err,name in zip(popt,perr,args[1:]):
                 self['{}:{}'.format(func.__name__,name)] = val
                 self['{}:{} err'.format(func.__name__,name)] = err
+                self['{}:{} label'.format(func.__name__,name)]=name
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
