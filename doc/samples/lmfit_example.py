@@ -3,13 +3,13 @@ from Stoner.Fit import StretchedExp
 
 #Load dat and plot
 d=Data("lmfit_data.txt",setas="xy")
-d.plot(fmt="+")
 
 # Do the fit
 d.lmfit(StretchedExp,result=True,header="Fit",prefix=False)
+# plot
+d.setas="xyy"
 
-# plot again
-d.plot(fmt="-")
+d.plot(fmt=["+","-"])
 # Make apretty label using Stoner.Util methods
 text="$y=A\\exp\\left[\\left(-\\frac{x}{x_0}\\right)^\\beta\\right]$\n"
 text+="\n".join([d.format(k,latex=True) for k in StretchedExp().param_names])

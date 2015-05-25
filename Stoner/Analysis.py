@@ -13,7 +13,7 @@ from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
 from scipy.optimize import curve_fit
 from scipy.signal import savgol_filter
-from inspect import getargspec
+from inspect import getargspec,isclass
 from collections import Iterable
 try:  #Allow lmfit to be optional
     from lmfit.model import Model, ModelFit
@@ -509,7 +509,7 @@ class AnalyseFile(DataFile):
         working = ma.mask_rowcols(working, axis=0)
         if sigma is not None:
             sigma = working[:, self.find_col(sigma)]
-        if isinstance(xcol,list):
+        if isinstance(xcol,Iterable):
             xdat=()
             for c in xcol:
                 xdat = xdat  + (working[:, self.find_col(c)],)
@@ -826,10 +826,10 @@ class AnalyseFile(DataFile):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-
+        
         if isinstance(model, Model):
             pass
-        elif type(model)=="class" and issubclass(model,Model):
+        elif isclass(model) and issubclass(model,Model):
             model=model()
         elif callable(model):
             model=Model(model)

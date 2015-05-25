@@ -116,6 +116,17 @@ index at which the fitted data will be inserted (*replace* **False**) or overwri
 The fitted data will be given the column header *header* unless *header* is not a string, in which ase the column
 will be called 'Fitted with ' and the name of the function *func*.
 
+Fitting 3D Data
+---------------
+
+:py:meth:`AnalyseFile.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
+the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
+illustrates this by fitting a plane to a collection of points in 3D space.
+
+.. plot:: samples/curve_fit_plane.py
+    :include-source:
+
 Fitting with limits
 -------------------
 
@@ -175,6 +186,7 @@ on the presence and values of the *vary* and *step* keys, tnhe code will either 
 :math:`\\chi^2` goodeness of fit.
 
 .. plot:: ../scripts/lmfit-demo.py
+    :include-source:
    
 
 More AnalyseFile Functions

@@ -382,6 +382,39 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
+    def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
+        """Appends a column of data or inserts a column to a datafile instance.
+
+        Args:
+            column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
+
+        Keyword Arguments:
+            column_header (string): The text to set the column header to,
+                if not supplied then defaults to 'col#'
+            index (int or string): The  index (numeric or string) to insert (or replace) the data
+            func_args (dict): If column_data is a callable object, then this argument
+                can be used to supply a dictionary of function arguments to the callable object.
+            replace (bool): Replace the data or insert the data (default)
+
+        Returns:
+            A :py:class:`DataFile` instance with the additonal column inserted.
+
+        Note:
+            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
+            the original DataFile Instance as well as returning it."""
+            
+        # Call the parent method and then update this label
+        super(PlotFile,self).add_column(column_data,column_header,index,func_args,replace)
+        #Mostly this is duplicating the parent method
+        if index is None:
+            index = len(self.column_headers)-1
+        else:
+            index = self.find_col(index)               
+
+        self.labels[index]=column_header
+        return self
+
+
     def colormap_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
 

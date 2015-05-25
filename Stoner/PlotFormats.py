@@ -231,7 +231,7 @@ class DefaultPlotStyle(object):
             projection = kargs["projection"]
             del kargs["projection"]
         else:
-            projection = "2d"
+            projection = "rectilinear"
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:

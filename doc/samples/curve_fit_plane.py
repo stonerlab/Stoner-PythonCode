@@ -4,6 +4,7 @@ from numpy.random import normal
 from numpy import linspace,meshgrid,column_stack
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.cm as cmap
+import matplotlib.pyplot as plt
 
 
 
@@ -28,7 +29,7 @@ d.plot_xyz(linewidth=0,cmap=cmap.jet)
 txt="$z=c-ax+by$\n"
 txt+="\n".join([d.format("plane:{}".format(k),latex=True) for k in ["a","b","c"]])
 
-ax=gca(projection="3d")    
+ax=plt.gca(projection="3d")    
 ax.text(15,5,-50,txt)
 d.draw()
 
