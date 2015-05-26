@@ -220,6 +220,7 @@ class PlotFile(DataFile):
             figure = self.__figure
             ax = self.__figure.gca(**kargs)
         else:
+            print "templte new figure"
             figure, ax = self.template.new_figure(None, **kargs)
         return figure, ax
 
@@ -241,7 +242,9 @@ class PlotFile(DataFile):
                 else:
                     projection="rectilinear"
                 function=plt.gca(projection=projection).__getattribute__(function)
-                
+                if self.__figure is not plt.gcf():
+                    plt.close(plt.gcf())
+
         (args, vargs, kwargs, defs) = getargspec(function)
         # Manually overide the list of arguments that the plotting function takes if it takes keyword dictionary
         if isinstance(otherkargs, (list, tuple)) and kwargs is not None:
@@ -402,14 +405,14 @@ class PlotFile(DataFile):
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it."""
-            
+
         # Call the parent method and then update this label
         super(PlotFile,self).add_column(column_data,column_header,index,func_args,replace)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
         else:
-            index = self.find_col(index)               
+            index = self.find_col(index)
 
         self.labels[index]=column_header
         return self
@@ -983,7 +986,7 @@ class PlotFile(DataFile):
             otherkargs = ["rstride", "cstride", "color", "cmap", "facecolors", "norm", "vmin", "vmax", "shade","linewidth","ax"]
         else:
             otherkargs = ["vmin", "vmax","shade","color","linewidth"]
-        kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
+        kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, projection=projection,**kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
         if isinstance(plotter,string_types):

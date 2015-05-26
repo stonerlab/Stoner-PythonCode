@@ -62,6 +62,8 @@ produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:
 The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
 :py:class:`AnalyseFile` objects for each polarisation value.
 
+.. _curve_fit_guide:
+
 Curve Fitting
 =============
 
@@ -116,16 +118,10 @@ index at which the fitted data will be inserted (*replace* **False**) or overwri
 The fitted data will be given the column header *header* unless *header* is not a string, in which ase the column
 will be called 'Fitted with ' and the name of the function *func*.
 
-Fitting 3D Data
----------------
 
-:py:meth:`AnalyseFile.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
-variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
-the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
-illustrates this by fitting a plane to a collection of points in 3D space.
+See also :ref:`Fitting_tricks`
 
-.. plot:: samples/curve_fit_plane.py
-    :include-source:
+.. _fitting_with_limits:
 
 Fitting with limits
 -------------------
@@ -187,7 +183,7 @@ on the presence and values of the *vary* and *step* keys, tnhe code will either 
 
 .. plot:: ../scripts/lmfit-demo.py
     :include-source:
-   
+
 
 More AnalyseFile Functions
 ==========================
@@ -244,6 +240,8 @@ Data Reduction Methods
 
 :py:class:`AnalyseFile` offers a number of methods to assist in data reduction and data processing.
 
+.. _binning_guide:
+
 (Re)Binning Data
 ----------------
 
@@ -275,6 +273,8 @@ points averaged into each bin.. If *clone* is True or not provided, :py:meth:`An
 
 .. plot:: samples/bins.py
    :include-source:
+
+.. _stitch_guide:
 
 Stitching Datasets together
 ---------------------------
@@ -353,6 +353,8 @@ The parameters for this fitting are controlled by the *points* and *poly* parame
 the algorithm to work. *resul;t*, *replace* and *header* specify that the calculated data should also be added to
 the :py:class:`AnalyseFile` instance, optionally replacing an existing column indexed by *result* and given a new header
 *header*. The nature of the local fitting means that the first and last *poly*/2 points are not valid.
+
+.. _peak_finding:
 
 Peak Finding
 ------------

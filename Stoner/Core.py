@@ -327,7 +327,7 @@ class _setas(object):
             indices = col.indices(_np_.shape(self.data)[1])
             col = range(*indices)
             col = self.find_col(col)
-        elif isinstance(col, list):
+        elif isinstance(col, Iterable):
             col = [self.find_col(x) for x in col]
         else:
             raise TypeError('Column index must be an integer, string, list or slice, not a {}'.format(type(col)))
@@ -1999,7 +1999,7 @@ class DataFile(object):
             index = self.find_col(index)
             if column_header is None:
                 column_header = self.column_headers[index]
-                
+
 # The following 2 lines make the array we are adding a
 # [1, x] array, i.e. a column by first making it 2d and
 # then transposing it.
@@ -2049,7 +2049,7 @@ class DataFile(object):
                 self.column_headers.insert(index, column_header)
         else:
             self.column_headers[index] = column_header
-            
+
         return self
 
     def column(self, col):
@@ -2117,13 +2117,15 @@ class DataFile(object):
                 self.data = _ma_.compress_cols(self.data)
             else:
                 c = self.find_col(col)
+                ch=self.column_headers
                 self.data = _ma_.masked_array(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
                 if isinstance(c, list):
                     c.sort(reverse=True)
                 else:
                     c = [c]
                 for col in c:
-                    del self.column_headers[col]
+                    del ch[col]
+                self.column_headers=ch
             return self
 
     def del_rows(self, col=None, val=None, invert=False):

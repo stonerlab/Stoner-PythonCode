@@ -180,7 +180,7 @@ class AnalyseFile(DataFile):
             tmp_mask=self.mask
             col_mask=_np_.any(tmp_mask,axis=1)
             self.mask=False
-            
+
             if (isinstance(result, bool) and result): # Appending data and mask
                 self.add_column(fit.best_fit, column_header=header, index=None)
                 tmp_mask=_np_.column_stack((tmp_mask,col_mask))
@@ -348,6 +348,9 @@ class AnalyseFile(DataFile):
         Note:
             Algorithm inspired by MatLab code wbin,    Copyright (c) 2012:
             Michael Lindholm Nielsen
+
+        See Also:
+            User Guide section :ref:`binning_guide`
         """
 
         if "yerr" in kargs:
@@ -435,8 +438,8 @@ class AnalyseFile(DataFile):
 
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
-            xcol (index, list): The index of the x-column data to fit. If list sends a tuple of x columns to func for N-d fitting. 
-            ycol (index): The index of the y-column data to fit
+            xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
+            ycol (index or array): The index of the y-column data to fit. If an array, then should be 1D and the same length as the data.
 
         Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try
@@ -480,6 +483,7 @@ class AnalyseFile(DataFile):
 
         See Also:
             :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
+            User guide section :ref:`curve_fit_guide`
         """
 
         bounds = kargs.pop("bounds", lambda x, y: True)
@@ -515,7 +519,13 @@ class AnalyseFile(DataFile):
                 xdat = xdat  + (working[:, self.find_col(c)],)
         else:
             xdat = working[:, self.find_col(xcol)]
-        ydat = working[:, self.find_col(ycol)]
+
+        if isinstance(ycol,index_types):
+            ydat = working[:, self.find_col(ycol)]
+        elif isinstance(ycol,_np_.ndarray) and len(ycol.shape)==1 and len(ycol)==len(self):
+            ydat=ycol
+        else:
+            raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
         ret=()
         if output == "full":
             popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
@@ -532,7 +542,7 @@ class AnalyseFile(DataFile):
             xc = self.find_col(xcol)
             if not isinstance(header, string_types):
                 header = 'Fitted with ' + func.__name__
-            
+
             # Store our current mask, calculate new column's mask and turn off mask
             tmp_mask=self.mask
             col_mask=_np_.any(tmp_mask,axis=1)
@@ -543,7 +553,7 @@ class AnalyseFile(DataFile):
                 tmp_mask=_np_.column_stack((tmp_mask,col_mask))
             else: # Inserting data
                 tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-            new_col=func(xdat,*popt)            
+            new_col=func(xdat,*popt)
             self.add_column(new_col,index=result, replace=replace, column_header=header)
             self.mask=tmp_mask
         row = _np_.array([])
@@ -798,6 +808,7 @@ class AnalyseFile(DataFile):
 
         See Also:
             :py:meth:`AnalyseFile.curve_fit`
+            User guide section :ref:`fitting_with_limits`
 
         .. note::
 
@@ -826,7 +837,7 @@ class AnalyseFile(DataFile):
         #Support both asrow and output, the latter wins if both supplied
         asrow = kargs.pop("asrow", False)
         output = kargs.pop("output", "row" if asrow else "fit")
-        
+
         if isinstance(model, Model):
             pass
         elif isclass(model) and issubclass(model,Model):
@@ -846,7 +857,7 @@ class AnalyseFile(DataFile):
 
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
-        
+
         if xcol is None or ycol is None:
             cols = self.setas._get_cols()
             if xcol is None:
@@ -1234,7 +1245,11 @@ class AnalyseFile(DataFile):
             sort (bool): Sor the results by significance of peak
 
         Returns:
-            If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none, returns a 1D array of the x positions of the peaks/troughs.
+            If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none,
+            returns a 1D array of the x positions of the peaks/troughs.
+
+        See Also:
+            User guide section :ref:`peak_finding`
             """
 
         if ycol is None:
@@ -1420,6 +1435,9 @@ class AnalyseFile(DataFile):
             - "Shift y" - Only c is adjsutable
             - "Shift x" - Only A is adjustable
             - "Shift both" - B is fixed at 1.0
+
+        See Also:
+            User Guide section :ref:`stitch_guide`
 
         """
         if xcol is None:  #Sort out the xcolumn and y column indexes
