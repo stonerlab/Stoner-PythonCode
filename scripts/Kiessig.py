@@ -6,17 +6,17 @@
 
 from Stoner import Data
 from Stoner.Fit import Linear
+from Stoner.Util import format_error
 from lmfit.models import ExponentialModel
-
-
 import numpy as np
 import matplotlib.pyplot as pyplot
 from copy import copy
 
 filename=False
-sensitivity=20
+sensitivity=50
 
 critical_edge=0.8
+fringe_offset=1
 
 d=Data(filename,setas="xy") #Load the low angle scan
 
@@ -31,47 +31,46 @@ d=Data(filename,setas="xy") #Load the low angle scan
 d.lmfit(ExponentialModel,result=True,replace=False,header="Envelope")
 d.subtract("Counts","Envelope",replace=False,header="peaks")
 d%="Envelope"
-t=Data(d.interpolate(d.peaks(significance=sensitivity,width=4,poly=4)))
-sys.exit()
+t=Data(d.interpolate(d.peaks(significance=sensitivity,width=8,poly=4)))
+
 t.column_headers=copy(d.column_headers)
-t.fig=d.plot_xy("Angle","peaks")
-t.plot_xy("Angle","peaks","ro")
 d%='peaks'
 t%='peaks'
-
 d.setas="xy"
-d.column_headers[d.find_col('Angle')]=r"Reflection Angle $\theta$"
+d.labels[d.find_col('Angle')]=r"Reflection Angle $\theta$"
 t.del_rows(0, lambda x,y: x<critical_edge)
 t.setas="xy"
-t.figure()
-t.plot(fmt='ro',  plotter=pyplot.semilogy)
+t.template.fig_width=7.0
+t.template.fig_height=5.0
+t.plot(fmt='go',  plotter=pyplot.semilogy)
 main_fig=d.plot(figure=t.fig, plotter=pyplot.semilogy)
 d.show()
 #Now convert the angle to sin^2
 t.apply(lambda x: np.sin(np.radians(x[0]/2.0))**2, 0,header=r"$sin^2\theta$")
 # Now create the m^2 order
-m=np.arange(len(t))+1
+m=np.arange(len(t))+fringe_offset
 m=m**2
 #And add it to t
 t.add_column(m, column_header='$m^2$')
 #Now we can it a straight line
-t.setas="x.y"
-p, pcov=t.curve_fit(linear,result=True,replace=False,header="Fit")
-g=p[1]
-gerr=np.sqrt(pcov[1,1])/g
+t.setas="x..y"
+fit=t.lmfit(Linear,result=True,replace=False,header="Fit")
+g=t["LinearModel:slope"]
+gerr=t["LinearModel:slope err"]/g
 g=np.sqrt(1.0/g)
 gerr/=2.0
 l=float(d['Lambda'])
 th=l/(2*g)
 therr=th*(gerr)
 
-t.inset(loc="top right")
-t.plot_xy(r"Fit",r"$sin^2\theta$", 'b-')
-t.plot_xy(r"$m^2$",r"$sin^2\theta$", 'ro')
+t.inset(loc="top right",width=0.5,height=0.4)
+t.plot_xy(r"Fit",r"$sin^2\theta$", 'b-',label="Fit")
+t.plot_xy(r"$m^2$",r"$sin^2\theta$", 'ro',label="Peak Position")
 t.xlabel="Fringe $m^2$"
 t.ylabel=r"$sin^2\theta$"
-t.title=None
-t.show()
+t.title=""
+plt.legend(loc="upper left")
+t.draw()
 pyplot.sca(t.axes[0])
 # Get the wavelength from the metadata
 # Calculate thickness and report

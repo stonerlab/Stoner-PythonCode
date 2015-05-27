@@ -66,7 +66,7 @@ class Data(_AF_, _PF_):
                 units=""
         return format_error(value,error,latex,mode,units,prefix)
 
-    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,**kargs):
+    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
         """Annotate a plot with some information about a fit.
 
         Args:
@@ -77,9 +77,11 @@ class Data(_AF_, _PF_):
             y (float): y co-ordinate of the label
             z (float): z co-ordinbate of the label if the current axes are 3D
             prefix (str): The prefix placed ahead of the model parameters in the metadata.
+            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,
+                return just the text and don't add to a plot.
 
         Returns:
-            A copy of the current Data instance
+            A copy of the current Data instance if text_only is False, otherwise returns the text.
 
         If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
@@ -109,21 +111,22 @@ class Data(_AF_, _PF_):
             yb,yt=self.ylim()
             y=0.5*(yt-yb)+yb
 
-        print model.param_names
-        print model.prefix
 
         text= "\n".join([self.format("{}{}".format(prefix,k),latex=True) for k in model.param_names])
-        ax=self.fig.gca()
-        if "zlim" in ax.properties():
-            #3D plot then
-            if z is None:
-                zb,zt=ax.properties()["zlim"]
-                z=0.5*(zt-zb)+zb
-            ax.text3D(x,y,z,text)
+        if not text_only:
+            ax=self.fig.gca()
+            if "zlim" in ax.properties():
+                #3D plot then
+                if z is None:
+                    zb,zt=ax.properties()["zlim"]
+                    z=0.5*(zt-zb)+zb
+                ax.text3D(x,y,z,text)
+            else:
+                ax.annotate(text, xy=(x,y), **kargs)
+            ret=self
         else:
-            ax.annotate(text, xy=(x,y), **kargs)
-
-        return self
+            ret=text
+        return ret
 
 
 

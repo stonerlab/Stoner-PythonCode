@@ -11,7 +11,7 @@ import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.interpolate import interp1d
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 from inspect import getargspec,isclass
 from collections import Iterable
@@ -221,6 +221,9 @@ class AnalyseFile(DataFile):
             A numpy array of fractional indices where the data has crossed the threshold assuming a
             straight line interpolation between two points.
         """
+
+
+        # First we find all points where we cross zero in the correct direction
         current = data
         previous = _np_.roll(current, 1)
         index = _np_.arange(len(current))
@@ -233,8 +236,19 @@ class AnalyseFile(DataFile):
             expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
         else:
             expr = lambda x: False
-        intr = lambda x: x[0] - 1 + (x[1] - threshold) / (x[1] - x[2])
-        return _np_.array([intr(x) for x in sdat if expr(x) and intr(x) > 0])
+
+        # Now we refine the estimate of zero crossing with a cubic interpolation
+        # and use Newton's root finding method to locate the zero in the interpolated data
+
+        intr=interp1d(index,data-threshold,kind="cubic")
+        roots=[]
+        for ix,x in enumerate(sdat):
+            if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
+                try:
+                    roots.append(newton(intr,ix))
+                except ValueError: # fell off the end here
+                    pass
+        return _np_.array(roots)
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
@@ -317,11 +331,7 @@ class AnalyseFile(DataFile):
             nc[i] = ret
         if header == None:
             header = func.__name__
-        if replace != True:
-            self = self.add_column(nc, header, col)
-        else:
-            self.data[:, col] = _np_.reshape(nc, -1)
-            self.column_headers[col] = header
+        self = self.add_column(nc, header, col)
         return self
 
     def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
@@ -549,7 +559,7 @@ class AnalyseFile(DataFile):
             self.mask=False
 
             if isinstance(result, bool) and result:#Appending data to end of data
-                result = self.shape[1] - 1
+                result = None
                 tmp_mask=_np_.column_stack((tmp_mask,col_mask))
             else: # Inserting data
                 tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
@@ -1225,7 +1235,7 @@ class AnalyseFile(DataFile):
                 action(i, column, self.data[i])
         return self
 
-    def peaks(self, ycol=None, width=None, significance=None, xcol=None, peaks=True, troughs=False, poly=2, sort=False):
+    def peaks(self, ycol=None, width=None, significance=None, xcol=None, peaks=True, troughs=False, poly=2, sort=False,modify=False):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
         Args:
@@ -1243,9 +1253,12 @@ class AnalyseFile(DataFile):
             peaks (bool): select whether to measure peaks in data (default True)
             troughs (bool): select whether to measure troughs in data (default False)
             sort (bool): Sor the results by significance of peak
+            modify (book): If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
 
         Returns:
-            If xcol is None then returns conplete rows of data corresponding to the found peaks/troughs. If xcol is not none,
+            If *modify* is true, then returns a the AnalyseFile with the data set to just the peaks/troughs. If *modify* is false (default),
+            then the return value depends on *ycol* and *xcol*. If *ycol* is not None and *xcol* is None, then returns conplete rows of
+            data corresponding to the found peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then
             returns a 1D array of the x positions of the peaks/troughs.
 
         See Also:
@@ -1258,26 +1271,51 @@ class AnalyseFile(DataFile):
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
-        if significance is None:  # Guess the significance based on the range of y and width settings
-            dm = self.max(ycol)[0]
-            dp = self.min(ycol)[0]
-            dm = dm - dp
-            significance = 0.2 * dm / (4 * width ** 2)
         d1 = self.SG_Filter(ycol, width, poly, 1)
-        i = _np_.arange(len(d1))
-        d2 = interp1d(i, self.SG_Filter(ycol, width, poly, 2))
+        d2 = self.SG_Filter(ycol, 2*width, poly, 2) # 2nd differential requires more smoothing
+
+        #We're going to ignore the start and end of the arrays
+        index_offset=int(width/2)
+        d1=d1[index_offset:-index_offset]
+        d2=d2[index_offset:-index_offset]
+
+        #Set the significance from the 2nd ifferential if not already set
+        if significance is None:  # Guess the significance based on the range of y and width settings
+            significance = _np_.max(_np_.abs(d2))/20.0 # Base an apriori significance on max d2y/dx2 / 20
+        elif isinstance(significance, int): # integer significance is inverse to floating
+            significance = _np_.max(_np_.abs(d2))/significance # Base an apriori significance on max d2y/dx2 / 20
+
+        i = _np_.arange(len(self))
+        d2_interp = interp1d(_np_.arange(len(d2)), d2,kind='cubic')
+        # Ensure we have some X-data
         if xcol == None:
+            full_data=True
             xcol = i
         else:
+            full_data=False
             xcol = self.column(xcol)
-        index = interp1d(i, xcol)
-        w = abs(xcol[0] - xcol[width])  # Approximate width of our search peak in xcol
-        z = _np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
-        z = [zv for zv in z
-             if zv > w / 2.0 and zv < max(xcol) - w / 2.0]  #Throw out peaks or troughts too near the ends
+        xdata = interp1d(i, xcol,kind="cubic")
+
+
+        possible_peaks = _np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
+        curvature=_np_.abs(d2_interp(possible_peaks))
+
+        # Filter just the significant peaks
+        possible_peaks=_np_.array([p for ix,p in enumerate(possible_peaks) if abs(curvature[ix])>significance])
+        # Sort in order of significance
         if sort:
-            z = _np_.take(z, _np_.argsort(d2(z)))
-        return index([x for x in z if _np_.abs(d2(x)) > significance])
+            possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_func(possible_peaks))))
+
+        if modify:
+            self.data=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
+            ret=self
+        elif full_data:
+            ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
+        else:
+            ret=xdata(possible_peaks+index_offset)
+
+        # Return - but remembering to add back on the offset that we took off due to differentials not working at start and end
+        return ret
 
     def polyfit(self,
                 xcol=None,

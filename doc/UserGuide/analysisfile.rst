@@ -118,6 +118,12 @@ index at which the fitted data will be inserted (*replace* **False**) or overwri
 The fitted data will be given the column header *header* unless *header* is not a string, in which ase the column
 will be called 'Fitted with ' and the name of the function *func*.
 
+The utility method of the :py:class:`Stoner.Util.Data`, :py:meth:`Stoner.Util.Data.annotate_fit` is useful
+for adding appropriately formatted details of the fit to the plot.
+
+.. plot:: samples/curve_fit_line.py
+    :include-source:
+
 
 See also :ref:`Fitting_tricks`
 
@@ -373,8 +379,15 @@ The algorithm used is to differentiate the data with a Savitsky-Golay filter - w
 Zero crossing values in the derivative are located and then the second derivative is found for these points and are used to identify
 peaks and troughs in the data. The *width* and *poly* keywords are used to control the order of polynomial and the width of the window
 used for calculating the derivative - a lower order of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
-Only peaks and troughs whose second derivatives are larger than *significance* are returned, and if *sort* is True, the peaks are returned
-in order of their significance. *peaks* and *troughs* select whether to return peaks or troughs.
+The *significance* parameter controls which peaks and troughs are returned. If *signficance* is a float, then only peaks and troughs whose
+second derivatives are larger than *significance* are returned. If *significance* is an integer, then maxmium snd derivative in the data is divided
+by the supplied significance and used as the threshold on which peaks and troughs to return. If *significance* is not provided then a value of 20 is used.
+Finally, if *sort* is True, the peaks are returned in order of their significance. *peaks* and *troughs* select whether to return peaks or troughs.
 
 The default values of width and saignificance are set on the assumption that a data set will have less than about 10 peaks of more or
 less equal significance. By default, only peaks are returned in order of x position.
+
+The example below shows how to use :py:meth:`AnalyseFile.peaks` to filter out just the peak positions in a set of data.
+
+.. plot:: samples/peaks_example.py
+    :include-source:

@@ -220,7 +220,6 @@ class PlotFile(DataFile):
             figure = self.__figure
             ax = self.__figure.gca(**kargs)
         else:
-            print "templte new figure"
             figure, ax = self.template.new_figure(None, **kargs)
         return figure, ax
 
@@ -903,10 +902,10 @@ class PlotFile(DataFile):
                 m = int(_np_.floor(_np_.sqrt(len(c.ycol))))
                 n = int(_np_.ceil(len(c.ycol) / m))
                 self.__figure, ax = plt.subplots(nrows=m, ncols=n)
-            self.__figure, ax = self._fix_fig(self.__figure)
+            else:
+                self.__figure, ax = self._fix_fig(self.__figure)
         else:
             self.__figure, ax = self._fix_fig(nonkargs["figure"])
-
         for ix in range(len(c.ycol)):
             if multiple != "common":
                 nonkargs["ylabel"] = self._col_label(self.find_col(c.ycol[ix]))
@@ -917,7 +916,7 @@ class PlotFile(DataFile):
                     for i in range(ix):
                         next(cc)
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
-                self.ax = ix  # We;re manipulating the plotting here
+                self.ax = ix  # We're manipulating the plotting here
             if isinstance(fmt, list):  # Fix up the format
                 fmt_t = fmt[ix]
             else:
