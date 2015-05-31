@@ -15,6 +15,7 @@ from copy import copy
 import unicodedata
 import string
 from collections import Iterable
+from inspect import ismethod
 
 from .Core import DataFile
 
@@ -88,9 +89,9 @@ class DataFolder(object):
                 raise ValueError("pattern should be a string, regular expression or iterable object")
             del kargs["pattern"]
         if not "nolist" in kargs:
-            nolist=(len(args)==0)
+            self.nolist=(len(args)==0)
         else:
-            nolist=kargs["nolist"]
+            self.nolist=kargs["nolist"]
             del kargs["nolist"]
         if not "multifile" in kargs:
             self.multifile = False
@@ -111,21 +112,22 @@ class DataFolder(object):
         if len(args)>0:
             if isinstance(args[0], string_types):
                 self.directory=args[0]
-                if not nolist:
+                if not self.nolist:
                     self.getlist()
             elif isinstance(args[0],bool) and not args[0]:
                 self.directory=False
-                if not nolist:
+                if not self.nolist:
                     self.getlist()
             elif isinstance(args[0],DataFolder):
                 other=args[0]
                 for k in other.__dict__:
                     self.__dict__[k]=other.__dict__[k]
             else:
-                if not nolist:
+                if not self.nolist:
                     self.getlist()
-        else: 
-            self.getlist()
+        else:
+            if not self.nolist:
+                self.getlist()
 
 
     def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
@@ -201,11 +203,13 @@ class DataFolder(object):
             return NotImplemented
 
     def __dir__(self):
-        """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
+        """Returns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
         """
         attr=dir(type(self))
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(["basenames","ls","slgrps","setas"])
+        attr.extend(["basenames","ls","lsgrps","keys"])
+        attr.extend(dir(self.type))
+        attr=list(set(attr))
         return attr
 
 
@@ -232,28 +236,79 @@ class DataFolder(object):
             lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
 
         """
-        if item=="basenames":
-            ret=[]
-            for x in self.files:
-                if isinstance(x,DataFile):
-                    ret.append(path.basename(x.filename))
-                elif isinstance(x,string_types):
-                    ret.append(path.basename(x))
-            return ret
-        elif item=="lsgrp":
-            return list(self.groups.keys())
-        elif item=="ls":
-            ret=[]
-            for f in self.files:
-                if isinstance(f,string_types):
-                    ret.append(f)
-                elif isinstance(f,DataFile):
-                    ret.append(f.filename)
-            return ret
-        elif item in ("setas",):
-            return __get_file_attr__(item)
-        else:
-            return super(DataFolder,self).__getattribute__(item)
+        if not item.startswith("_"):
+            easy={"basenames":self.__getattr__basenme,
+                  "lsgrp":self.__getattr__lsgrp,
+                  "keys":self.__getattr__keys,
+                  "ls":self.__getattr__ls}
+            if item in easy: # Pass through for function calls
+                ret=easy[item]()
+            elif hasattr(self.type,item): #Something is in our DataFile type
+                if ismethod(getattr(self.type,item)): # It's a method
+                    ret=self.__getattr_proxy(item)
+                else: # It's a static attribute
+                    ret=self.__get_file_attr__(item)
+            elif item in ("setas",): # Special hidden attrs of our DataFile type
+                ret=self.__get_file_attr__(item)
+            else: # Ok, pass back
+                ret=super(DataFolder,self).__getattribute__(item)
+        else: # We dpon't intercept private or special methods
+            ret=super(DataFolder,self).__getattribute__(item)
+        return ret
+
+    def __getattr__basenme(self):
+        """Returns a list of just the filename parts of the DataFolder."""
+        ret=[]
+        for x in self.files:
+            if isinstance(x,DataFile):
+                ret.append(path.basename(x.filename))
+            elif isinstance(x,string_types):
+                ret.append(path.basename(x))
+        return ret
+
+    def __getattr__keys(self):
+        return self.__getattr__lsgrp
+
+    def __getattr__lsgrp(self):
+        """Returns a list of the groups as a generator."""
+        for k in self.groups.keys():
+            yield k
+
+    def __getattr__ls(self):
+        ret=[]
+        for f in self.files:
+            if isinstance(f,string_types):
+                ret.append(f)
+            elif isinstance(f,DataFile):
+                ret.append(f.filename)
+        return ret
+
+    def __getattr_proxy(self,item):
+        """Make a prpoxy call to access a method of the DataFile like types.
+
+        Args:
+            item (string): Name of method of DataFile class to be called
+
+        Returns:
+            Either a modifed copy of this DataFolder or a list of return values
+            from evaluating the method for each file in the Folder.
+        """
+        def _wrapper_(*args,**kargs):
+            """Wraps a call to the DataFile type for magic method calling.
+            Note:
+                This relies on being defined inside the enclosure of the DataFolder method
+                so we have access to self and item"""
+            retvals=[]
+            for ix,f in enumerate(self):
+                meth=f.__getattribute__(item)
+                ret=meth(*args,**kargs)
+                if ret is not f: # method did not returned a modified version of the DataFile
+                    retvals.append(ret)
+            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our DataFolder
+                retvals=self
+            return retvals
+        #Ok that;s the wrapper function, now return  it for the user to mess around with.
+        return _wrapper_
 
     def __getitem__(self, i):
         """Load and returen DataFile type objects based on the filenames in self.files
@@ -302,7 +357,7 @@ class DataFolder(object):
     def __next__(self):
         for i in range(len(self.files)):
             yield self[i]
-            
+
     def next(elf):
         for i in range(len(self.files)):
             yield self[i]
@@ -358,28 +413,28 @@ class DataFolder(object):
         if name in dir(DataFile()):
             self._file_attrs[name]=value
         super(DataFolder,self).__setattr__(name,value)
-        
+
     def __setitem__(self,name,value):
         """Set a DataFile or DataFolder backinto the DataFolder.
-        
+
         Args:
             name (int or string): The index of the DataFile or Folder to be replaced.
             value (DataFile or DataFolder): The data to be stored
-            
+
         Returns:
             None
-            
+
         The method operates in two modes, depending on whether the supplied value is a :py:class:`Stoner.Core.DataFile` or :py:class:`DataFolder`.
-        
+
         If the value is a :py:class:`Stoner.Core.DataFile`, then the corresponding entry in the files attriobute
         is written. The name in this case may be either a string or an integer. In the former case, the string is compared
         to the :py:attr:`DataFolder.ls`  list of filenames and then to the :py:attr:`DataFolder.basenames` attroibute to
-        determine which entry should be replaced. If there is no match, then the new DataFile is imply appended after its 
+        determine which entry should be replaced. If there is no match, then the new DataFile is imply appended after its
         :py:attr:`Stopner.Core.DataFile.filename` attribute is et to the name parameter. If name is an integer then it is used
         simply as a numerioc index into the :py:attr:`DataFolder.files` atttribute.
 
         If the value is a :py:class:`Stoner.Core.DataFolder`, then the name must be a string and is used to index into the
-        :py:attr:`DataFolder.groups`.        
+        :py:attr:`DataFolder.groups`.
         """
         if not isinstance(value,(DataFolder,DataFile)):
             raise TypError("Can only store DataFile like objects and DataFolders in a DataFolder")
@@ -401,7 +456,7 @@ class DataFolder(object):
                 self.groups[name]=value
             else:
                 raise KeyError("Cannot use {} to index a group".format(name))
-                    
+
 
     def __sub__(self,other):
         """Implements a subtraction operator."""
@@ -557,14 +612,14 @@ class DataFolder(object):
 
     def extract(self,metadata):
         """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.
-        
+
         Args:
             metadata (list): List of metadata indices that should be used to construct the new data file.
-            
+
         Returns:
             An instance of a DataFile like object.
         """
-        
+
         def _extractor(group,trail,metadata):
 
             results=group.type()
@@ -579,17 +634,17 @@ class DataFolder(object):
                 else:
                     ok_data.append(m)
                     results.column_headers.extend([m]*len(test))
-            
+
             row=_np_.array([])
             for d in group:
                 for m in ok_data:
                     row=_np_.append(row,_np_array(d[m]))
                 results+=row
-                
+
             return results
-            
+
         return self.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
-               
+
     def filter(self, filter=None,  invert=False):
         """Filter the current set of files by some criterion
 
@@ -735,7 +790,7 @@ class DataFolder(object):
         Keyword Arguments:
             recursive (bool): Do a walk through all the directories for files
             directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
-            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of 
+            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of
             :py:meth:`DataFolder.getlist()`)
 
         Returns:
@@ -816,7 +871,7 @@ class DataFolder(object):
             next_keys=[]
         if isinstance(key, string_types):
             k=key
-            key=lambda x:x.get(k)
+            key=lambda x:x[k]
         for f in self.ls:
             x=self[f]
             v=key(x)
@@ -926,7 +981,7 @@ class DataFolder(object):
 
     def unflatten(self):
         """Takes a file list an unflattens them according to the file paths.
-        
+
         Returns:
             A copy of the DataFolder
         """
@@ -944,8 +999,8 @@ class DataFolder(object):
         for i in sorted(dels,reverse=True):
             del self[i]
         for g in self.groups:
-            self.groups[g].unflatten()           
-    
+            self.groups[g].unflatten()
+
     def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
         """Walks through a heirarchy of groups and calls walker for each file.
 

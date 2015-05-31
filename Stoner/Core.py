@@ -2181,7 +2181,7 @@ class DataFile(object):
                 col = self.find_col(col)
                 d = self.column(col)
                 if callable(val):
-                    rows = _np_.nonzero([(bool(val(x[col], x) & bool(x[col] is not _ma_.masked)) != invert)
+                    rows = _np_.nonzero([(bool(val(x[col], x) and bool(x[col] is not _ma_.masked)) != invert)
                                          for x in self])[0]
                 elif isinstance(val, float):
                     rows = _np_.nonzero([bool(x == val) != invert for x in d])[0]

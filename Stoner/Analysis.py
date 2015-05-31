@@ -758,7 +758,7 @@ class AnalyseFile(DataFile):
             final = _np_.array(final)
         return final
 
-    def interpolate(self, newX, kind='linear', xcol=None):
+    def interpolate(self, newX, kind='linear', xcol=None,replace=False):
         """AnalyseFile.interpolate(newX, kind='linear",xcol=None).
 
         Args:
@@ -766,10 +766,13 @@ class AnalyseFile(DataFile):
 
         Keyword Arguments:
             kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
-            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.peaks
+            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.
+            replace (bool): If true, then the current AnalyseFile's data is replaced with the  newly interpolated data and the current AnalyseFile is
+                returned.
+
 
         Returns:
-            2D numpy array representing a section of the current object's data.
+            2D numpy array representing a section of the current object's data if replace is False(default) or the modofied AnalyseFile if replace is true.
 
         Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
@@ -785,7 +788,12 @@ class AnalyseFile(DataFile):
             xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
             newX = xfunc(newX)
         inter = interp1d(index, self.data, kind, 0)
-        return inter(newX)
+        if replace:
+            self.data=inter(newX)
+            ret=self
+        else:
+            ret=inter(newX)
+        return ret
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
         """Wrapper around lmfit module fitting.
@@ -930,7 +938,7 @@ class AnalyseFile(DataFile):
         return ret_val
 
 
-    def make_bins(self, xcol, bins, mode, **kargs):
+    def make_bins(self, xcol, bins, mode="lin", **kargs):
         """Utility method to generate bin boundaries and centres along an axis.
 
         Args:
@@ -947,17 +955,20 @@ class AnalyseFile(DataFile):
             boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
+        if mode not in ["lin","log"]:
+            raise ValueError("Mode should be either  'lin' or 'log' not {}".format(mode))
+
         if "bin_start" in kargs:
             xmin = kargs["bin_start"]
         if "bin_stop" in kargs:
             xmax = kargs["bin_stop"]
         if isinstance(bins, int):  # Given a number of bins
-            if mode.lower() == "lin":
+            if mode.lower().startswith("lin"):
                 bin_width = float(xmax - xmin) / bins
                 bin_start = _np_.linspace(xmin, xmax - bin_width, bins)
                 bin_stop = _np_.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
-            elif mode.lowerlower() == "log":
+            elif mode.lower().startswith("log"):
                 xminl = _np_.log(xmin)
                 xmaxl = _np_.log(xmax)
                 bin_width = float(xmaxl - xminl) / bins
@@ -968,13 +979,13 @@ class AnalyseFile(DataFile):
                 bin_stop = _np_.exp(bin_stop)
                 bin_centres = _np_.exp(bin_centres)
         elif isinstance(bins, float):  # Given a bin with as a flot
-            if mode.lower() == "lin":
+            if mode.lower().startswith("lin"):
                 bin_width = bins
                 bins = _np_.ceil(abs(float(xmax - xmin) / bins))
                 bin_start = _np_.linspace(xmin, xmax - bin_width, bins)
                 bin_stop = _np_.linspace(xmin + bin_width, xmax, bins)
                 bin_centres = (bin_start + bin_stop) / 2.0
-            elif mode.lower() == "log":
+            elif mode.lower().startswith("log"):
                 if not 0.0 < bins <= 1.0:
                     raise ValueError("Bin width must be between 0 ans 1 for log binning")
                 if xmin <= 0:
@@ -990,6 +1001,8 @@ class AnalyseFile(DataFile):
                 bin_start = _np_.array(splits[:-1])
                 bin_stop = _np_.array(splits[1:])
                 bin_centres = _np_.array(centers)
+        else:
+            raise TypeError("bins must be either an integer or a float, not a {}".format(type(bins)))
         if len(bin_start) > len(self):
             raise ValueError("Attempting to bin into more bins than there is data.")
         return bin_start, bin_stop, bin_centres
@@ -1436,7 +1449,7 @@ class AnalyseFile(DataFile):
                 else:
                     files[key] = files[key] + r
         for k in files:
-            files[k].filename = "{}={}".format(xcol, k)
+            files[k].filename = "{}:{}={}".format(files[k].filename,self.column_headers[xcol], k)
         if len(morecols) > 0:
             for k in sorted(list(files.keys())):
                 out.groups[k] = files[k].split(morecols, morefuncs)
