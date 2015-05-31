@@ -144,7 +144,7 @@ type of :py:class:`Stoner.Core.DataFile` inside the DataFolder. When you access 
 is actually a method of the DataFile, the call a method that wraps a call to each DataFile in turn. If the method
 on the DataFile returns the DataFile back, then this is sotred in the DataFolder. In this case the result back
 to the user is the revised DataFolder. If, on the otherhand, the method when executed on the DataFile returns some other
-return value, then the user is returned a list of all of those return values. CFor example:
+return value, then the user is returned a list of all of those return values. CFor example::
 
     newT=np.linspace(1.4,10,100)
     folder=DataFolder(pattern="*.txt",type=Stoner.Data)
@@ -217,7 +217,7 @@ direction together and those with magnetic field in a negative direction togethe
 :py:meth:`DataFolder.group` method provides a powerful way to do this. Suppose we have a series of
 data curves taken at a variety of temperatures and with three different magnetic fields::
 
-   f.group{'temperature'}
+   f.group('temperature')
    f.group(lambda x:"positive" if x['B-Field']>0 else "negative")
    f.group(['temperature',lambda x:"positive" if x['B-Field']>0 else "negative"])
    f.groups
@@ -243,8 +243,10 @@ If you try indexing a :py:class:`DataFolder` with a string and there is no file 
 and there is a group with a key of the same string then :py:class:`DataFolder` will return the
 corresponding group. This allows a more compact navigation through an extended group structure.::
 
-    f.group(['project','sample','device'])
-    f['ASF']['ASF038']['A']
+    f.group(['project','sample','device']) # group will take a list
+    f['ASF']['ASF038']['A'] # Succsibe indexing
+    f['ASF','ASF038','A'] # index with a tuple - will go and get a file if requested
+
 
 If you just ant to create a new empty group in your :py:class:`DataFoler`, you can use
 the :py:meth:`DataFolder.add_group` method.::

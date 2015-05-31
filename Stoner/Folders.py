@@ -342,6 +342,11 @@ class DataFolder(object):
         elif isinstance(i, slice):
             indices = i.indices(len(self))
             return [self[i] for i in range(*indices)]
+        elif isinstance(i,tuple):
+            g=self
+            for ix in i:
+                g=g[ix]
+            return g
         else:
             return self.groups[i]
 
@@ -361,6 +366,16 @@ class DataFolder(object):
     def next(elf):
         for i in range(len(self.files)):
             yield self[i]
+
+    def _pruner_(self,grp,breadcrumb):
+        """Removes any empty groups fromthe DataFolder tree."""
+        if len(grp)==0:
+            self._pruneable.append(breadcrumb)
+            ret=True
+        else:
+            ret=False
+        return ret
+
 
     def __read__(self,f):
         """Reads a single filename in and creates an instance of DataFile.
@@ -883,6 +898,28 @@ class DataFolder(object):
                 self.groups[g].group(next_keys)
         return self
 
+    def prune(self):
+        """Remove any groups from the DataFolder (and subgroups).
+
+        Returns:
+            A copy of thte pruned DataFolder."""
+        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
+        self.walk_groups(self._pruner_,group=True)
+        while len(self._pruneable)!=0:
+            for p in self._pruneable:
+                pth=tuple(p[:-1])
+                item=p[-1]
+                if len(pth)==0:
+                    del self[item]
+                else:
+                    grp=self[pth]
+                    del grp[item]
+            self._pruneable=[]
+            self.walk_groups(self._pruner_,group=True)
+        del self._pruneable
+        return self
+
+
 
     def save(self,root=None):
         """Save the entire data folder out to disc using the groups as a directory tree,
@@ -1008,7 +1045,7 @@ class DataFolder(object):
             walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.
 
         Keyword Arguments:
-            group (bool): (default False) determines whether the wealker function will expect to be given the DataFolder
+            group (bool): (default False) determines whether the walker function will expect to be given the DataFolder
                 representing the lowest level group or individual DataFile objects from the lowest level group
             replace_terminal (bool): if group is True and the walker function returns an instance of DataFile then the return value is appended
                 to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
