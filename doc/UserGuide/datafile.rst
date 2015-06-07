@@ -144,6 +144,57 @@ from disk::
 
    data=Stoner.Core.DataFile()<<open("File on Disk.txt")
 
+Constructing :py:class:`DataFile`s from Scratch
+-----------------------------------------------
+
+The constructor :py:class:`DataFile`, :py:meth:`DataFile.__init__` will try its best to guess what your intention
+was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
+arguments were passed:
+
+Single Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A single argument passed to :py:meth:`DataFile.__init__` is interpreted as follows:
+
+-   A string is assumed to be a filename, and therefore a DataFile is created by loading a file.
+-   A 2 numpy array is taken as the numeric data for the new DataFile
+-   A list or other iterable of strings is assumed to represent the column headers
+-   A list or other iterable of numpy arrays is assumed to represent a sequence of columns
+-   A dictionary with string keys and numpy array values of equal length is taken as a set of columns whose
+    header labels are the keys of the dictionaries.
+-   Otherwise a dictionary is treated as the metadata for the new DataFile instance.
+
+Two Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the second argument is a dictionary or a list or other iterables of strings, then the first argument interpreted as for
+the sibgle argument constructors above, and then the second argument is interpreted in the same way. (Internally this done by calling the
+single argument constructor function twice, once for each argument.)
+
+Many Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If there are more than two arguments and they are numpy arrays, then they are used as the columns of the new DataFile.
+
+Keyword Arguments in Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After the positional arguments are dealt with, any keywords that match attriobutes of the DataFile are used to set the corresponding
+attribute.
+
+Examples
+^^^^^^^^
+
+.. code::
+
+    # Load a file from disc, set the setas attribute and column headers
+    d=DataFile("filename.txt",setas="xy", column_headers=["X-Data","Y-Data"])
+    # Create a DataFile from a dictionary:
+    d=DataFile({"Temperature":temp_array,"Resistance":res_data})
+    # The same, but set metadata too
+    d=DataFile({"Temperature":temp_array,"Resistance":res_data},{"User":"Fred","Sample":"X234_a","Field":2.4})
+
+
 Examining and Basic Manipulations of Data
 =========================================
 
@@ -443,11 +494,17 @@ This can be done quite easily::
   	print column
   ......
 
-The first example could also have been written more compactly as::
+If there is no mask set, then the first example could also have been written more compactly as::
 
   for row in d:
   	print row
   ......
+
+.. note::
+
+    :py:meth:`DataFile.rows` and :py:meth:`DataFile.columns` both take an optional parameter *not_masked*. If this is True then these iterator
+    methods will skip over any rows/columns with masked out data values. When iterating over the :py:class:`DataFile` instance directly the
+    masked rows are skipped over.
 
 Searching, sectioning and filtering the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -642,20 +699,19 @@ Rearranging Columns of Data
 
 Sometimes it is useful to rearrange columns of data. :py:class:`DataFile` offers a couple of methods to help with this.::
 
-   d.swap_column(('Resistance','Temperature'))
-   d.swap_column(('Resistance','Temperature'),headers_too=False)
+   d.swap_column('Resistance','Temperature')
+   d.swap_column('Resistance','Temperature',headers_too=False,setas_too=False)
    d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
    d.reorder_columns([1,3,'Volt','Temp'])
-   d.reorder_columns([1,3,'Volt','Temp'],header_too=False)
+   d.reorder_columns([1,3,'Volt','Temp'],header_too=False,setas_too=False)
 
-The :py:meth:`DataFile.swap_column` method takes either a tuple of column names, indices or a list of such
+The :py:meth:`DataFile.swap_column` method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
 tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder_columns` method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
 
 .. note::
-    The :py:meth:`DataFile.swap_column` and :py:meth:`DataFile.reorder_columns` do not (at present) reorder the
-    assignments in the :py:attr:`DataFile.setas` attribute.
+    The addition of the setas_too keyword to swap the column assignments around as well is new in 0.5rc1
 
 Renaming Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -722,7 +778,11 @@ The final two variants above, use a tuple to select the data. The final example 
 use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
 rows are deleted(kept for *invert* = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
-for specifying the bounds.
+for specifying the bounds. Fianlly, if you call :py:meth:`DataFile.del_rows` with no arguments at all, then
+it removes all rows where at least one column of data is masked out.::
+
+    d.filter(lambda r:r[0]>50) # Mask all rows where the first column is greater than 50
+    d.del_rows() # Then delete them.
 
 For simple caases where the row to be delted can be expressed as an integer or list of integers,
 the subtration operator can be used.::

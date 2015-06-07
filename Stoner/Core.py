@@ -46,6 +46,55 @@ def copy_into(source,dest):
     return dest
 
 
+def all_type(iterator,typ):
+    """Determines if an interable omnly contains a common type.
+
+    Arguments:
+        iterator (Iterable): The object to check if it is all iterable
+        typ (class): The type to check for.
+
+    Returns:
+        True if all elements are of the type typ, or False if not.
+
+    Notes:
+        Routine will iterate the *iterator* and break when an element is not of
+        the search type *typ*.
+    """
+    ret=False
+    for i in iterator:
+        if not isinstance(i,typ):
+            break
+    else:
+        ret=True
+    return ret
+
+def all_size(iterator,size=None):
+    """Check whether each element if uterator is the same length/shape.
+
+    Arguments:
+        iterator (Iterable) list or other iterable of things with a length or shape
+
+    Keyword Arguments:
+        size(int, tuple or None): Required size of each item in iterator.
+
+    Returns:
+        True if all objects are the size specified (or the same size if size is None).
+    """
+    if hasattr(iterator[0],"shape"):
+        sizer=lambda x:x.shape
+    else:
+        sizer=lambda x:len(x)
+
+    if size is None:
+        size=sizer(iterator[0])
+    ret=False
+    for i in iterator:
+        if sizer(i)!=size:
+            break
+    else:
+        ret=True
+    return ret
+
 class StonerLoadError(Exception):
     """An exception thrown by the file loading routines in the Stoner Package.
 
@@ -827,8 +876,9 @@ class DataFile(object):
         .. py:function:: DataFile(dictionary)
             :noindex:
 
-            Creates the new DataFile object, but initialises the metadata with
-            :parameter: dictionary
+            Creates the new DataFile object. If the dictionary keys are all strigns and the values are all
+            numpy D arrays of equal length, then assumes the dictionary represents columns of data and the keys
+            are the column titles, otherwise initialises the metadata with :parameter: dictionary.
 
         .. py:function:: DataFile(array,dictionary)
             :noindex:
@@ -891,10 +941,15 @@ class DataFile(object):
             self.load(filename=arg, **kargs)
         elif isinstance(arg, _np_.ndarray):
             # numpy.array - set data
-            self.data = _ma_.masked_array(arg)
+            self.data = _ma_.masked_array(_np_.atleast_2d(arg))
             self.column_headers = ['Column_{}'.format(x) for x in range(_np_.shape(args[0])[1])]
-        elif isinstance(arg, dict):  # Dictionary - use as metadata
-            self.metadata = arg.copy()
+        elif isinstance(arg, dict):  # Dictionary - use as data or metadata
+            if all_type(arg.keys(),string_types) and all_type(arg.values(),_np_.ndarray) and _np_.all(
+                [len(arg[k].shape)==1 and _np_.all(len(arg[k])==len(arg.values()[0])) for k in arg]):
+                self.data=_np_.column_stack(tuple(arg.values()))
+                self.column_headers=list(arg.keys())
+            else:
+                self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             for a in arg.__dict__:
                 if not callable(a):
@@ -903,6 +958,10 @@ class DataFile(object):
             self.data = _ma_.masked_array(arg.data)
             self._setas = arg._setas
             self._setas.ref = self
+        elif isinstance(arg,Iterable) and all_type(arg,string_types):
+            self.column_headers=list(arg)
+        elif isinstance(arg,Iterable) and all_type(arg,_np_.ndarray):
+            self._init_many(*arg,**kargs)
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
         self._setas.cols.update(self.setas._get_cols())
@@ -910,18 +969,11 @@ class DataFile(object):
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__"""
         (arg0, arg1) = args
-        if isinstance(arg0,_np_.ndarray) and isinstance(arg1,_np_.ndarray) and len(arg0.shape)==1 and len(arg1.shape)==1:
+        if isinstance(arg1,dict) or (isinstance(arg1,Iterable) and all_type(arg1,string_types)):
+            self._init_single(arg0,**kargs)
+            self._init_single(arg1,**kargs)
+        elif isinstance(arg0,_np_.ndarray) and isinstance(arg1,_np_.ndarray) and len(arg0.shape)==1 and len(arg1.shape)==1:
             self._init_many(*args,**kargs)
-        elif isinstance(arg0, _np_.ndarray):
-            self.data = _ma_.masked_array(arg0)
-        elif isinstance(arg0, dict):
-            self.metadata = arg0.copy()
-        elif isinstance(arg0, str) and isinstance(arg1, str):
-            self.load(arg0, arg1)
-        if not isinstance(arg0,_np_.ndarray) and isinstance(arg1, _np_.ndarray):
-            self.data = _ma_.masked_array(arg1)
-        elif isinstance(arg1, dict):
-            self.metadata = arg1.copy()
 
     def _init_many(self, *args, **kargs):
         """Handles more than two arguments to the constructor - called from init."""
@@ -1515,6 +1567,16 @@ class DataFile(object):
         newdata = self
         return self.__sub_core__(other, newdata)
 
+    def __iter__(self):
+        """Provide agenerator for iterating.
+
+        Pass through to :py:meth:`DataFile.rows` for the actual work.
+
+        Returns:
+            Next row"""
+        for r in self.rows(True):
+            yield r
+
     def _load(self, filename, *args, **kargs):
         """Replace __parse_data with method that is more compatible with subclasses."""
         if filename is None or not filename:
@@ -1649,6 +1711,7 @@ class DataFile(object):
         else:
             newdata = NotImplemented
         return newdata
+
 
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
@@ -2062,13 +2125,16 @@ class DataFile(object):
             one or more columns of data as a :py:class:`numpy.ndarray`."""
         return self.data[:, self.find_col(col)]
 
-    def columns(self):
+    def columns(self,not_masked=False):
         """Generator method that will iterate over the columns of data int he datafile.
 
         Yields:
             Returns the next column of data."""
-        for col in range(self.data.shape[1]):
-            yield self.column(col)
+        for ix,col in enumerate(self.data.T):
+            if _ma_.ismasked(col):
+                continue
+            else:
+                yield self.column(col)
 
     def del_column(self, col=None, duplicates=False):
         """Deletes a column from the current :py:class:`DataFile` object.
@@ -2218,7 +2284,8 @@ class DataFile(object):
         Args:
             func (callable): is a callable object that should take a single list as a p[arameter representing one row.
             cols (list): a list of column indices that are used to form the list of values passed to func.
-            reset (bool): determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored in the filter (so the filter is logically or'd)) The default value of None results in a complete row being passed into func.
+            reset (bool): determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored
+                in the filter (so the filter is logically or'd)) The default value of None results in a complete row being passed into func.
 
         Returns:
             The current object with the mask set
@@ -2403,7 +2470,7 @@ class DataFile(object):
         self.column_headers[old_col] = new_col
         return self
 
-    def reorder_columns(self, cols, headers_too=True):
+    def reorder_columns(self, cols, headers_too=True,setas_too=True):
         """Construct a new data array from the original data by assembling the columns in the order given.
 
         Args:
@@ -2411,11 +2478,15 @@ class DataFile(object):
                 data set) from which to assemble the new data set
             headers_too (bool): Reorder the column headers in the same
                 way as the data (defaults to True)
+            setas_too (bool): Reorder the column assignments in the same
+                way as the data (defaults to True)
 
         Returns:
             A copy of the modified DataFile object"""
         if headers_too:
             self.column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+        if setas_too:
+            self.setas = [self.setas[self.find_col(x)] for x in cols]
 
         newdata = _np_.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
         for col in cols:
@@ -2470,14 +2541,19 @@ class DataFile(object):
                 ret = data
             yield ret
 
-    def rows(self):
+    def rows(self,not_masked=False):
         """Generator method that will iterate over rows of data
+
+        Keyword Arguments:
+            not_masked(bool): If a row is masked and this is true, then don't return this row.
 
         Yields:
             Returns the next row of data"""
-        r = _np_.shape(self.data)[0]
-        for row in range(r):
-            yield self.data[row]
+        for row in self.data:
+            if _ma_.is_masked(row) and not_masked:
+                continue
+            else:
+                yield row
 
     def save(self, filename=None):
         """Saves a string representation of the current DataFile object into the file 'filename'.
@@ -2618,7 +2694,7 @@ class DataFile(object):
         recs = self.records
         if callable(order):
             d = sorted(recs, cmp=order)
-        elif isinstance(order, list) or isinstance(order, tuple):
+        elif isinstance(order, Iterable):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = _np_.sort(recs, order=order)
         else:
@@ -2629,7 +2705,7 @@ class DataFile(object):
         self.data = _ma_.masked_array(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
         return self
 
-    def swap_column(self, swp, headers_too=True):
+    def swap_column(self, *swp,**kargs):
         """Swaps pairs of columns in the data.
 
         Useful for reordering data for idiot programs that expect columns in a fixed order.
@@ -2650,15 +2726,23 @@ class DataFile(object):
             element of the list. Thus in principle the @swp could contain
             lists of lists of tuples
         """
-        if isinstance(swp, list):
+
+        headers_too=kargs.pop("headers_too",True)
+        setas_too=kargs.pop("setas_too",True)
+
+        if len(swp)==1:
+            swp=swp[0]
+        if isinstance(swp, list) and all_type(swp,tuple) and all_size(swp,2):
             for item in swp:
-                self.swap_column(item, headers_too)
+                self.swap_column(item, headers_too=headers_too)
         elif isinstance(swp, tuple):
             col1 = self.find_col(swp[0])
             col2 = self.find_col(swp[1])
             self.data[:, [col1, col2]] = self.data[:, [col2, col1]]
             if headers_too:
                 self.column_headers[col1], self.column_headers[col2] = self.column_headers[col2], self.column_headers[col1]
+            if setas_too:
+                 self.setas[col1], self.setas[col2] = self.setas[col2], self.setas[col1]
         else:
             raise TypeError("Swap parameter must be either a tuple or a \
             list of tuples")
