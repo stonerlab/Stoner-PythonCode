@@ -818,6 +818,111 @@ class typeHintedDict(dict):
         return "{}{{{}}}={}".format(key, self.type(key), self[key])
 
 
+class DataRow(_ma_.MaskedArray):
+    """An ndarray with a copy of the setas attribute to allow indexing by name.
+
+    This array subclass is returned from various bits of the Stoner package when one
+    might normally expect a bare 1D numpy array representing a single row of data. Instrad
+    DataRow understands that it came from a DataFile which has a setas attribute and column
+    assignments. This allows the row to be indexed by column name, and also for quick
+    attribute access to work. This makes writing functions to work with a single row of data
+    more attractive.
+    """
+
+    def __new__(cls, input_array, setas=None):
+        # Input array is an already formed ndarray instance
+        # We first cast to be our class type
+        obj = _ma_.asarray(input_array).view(cls)
+        # add the new attribute to the created instance
+        obj._setas = setas
+        # Finally, we must return the newly created object:
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        super(DataRow,self).__array_finalize__(obj)
+        if obj is None: return
+        self._setas = getattr(obj, '_setas', None)
+
+    def __getattr__(self,name):
+        #Overrides __getattr__ to allow access as row.x etc.
+        """Get a column using the setas attribute."""
+        col_check = {
+            "x": "xcol",
+            "d": "xerr",
+            "y": "ycol",
+            "e": "yerr",
+            "z": "zcol",
+            "f": "zerr",
+            "u": "ucol",
+            "v": "vcol",
+            "w": "wcol",
+            "q": "",
+            "p": "",
+            "r": ""
+        }
+        if name not in col_check:
+            return super(DataRow,self).__getattribute__(name)
+        indexer=[slice(0,-1,1) for i in len(self.shape)]
+        col = col_check[name]
+        if col == "" and self._setas.cols and "axes" in self._setas.cols:  # inferred quick access columns for cartesian to polar transforms
+            axes = int(self._setas.cols["axes"])
+            if name == "r":  # r in spherical or cylinderical co-ordinate systems
+                m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
+                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
+                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
+                     lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
+                ret = m[axes](self)
+            elif name == "q":  # theta in clyinderical or spherical co-ordiante systems
+                m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
+                     lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
+                     lambda d: _np_.arctan2(d.u, d.v)]
+                ret = m[axes](self)
+            elif name == "p":  # phi is spherical co-ordinate systems
+                m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
+                     lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
+                ret = m[axes](self)
+
+        elif col.startswith("x"):
+            if self._setas.cols[col] is not None:
+                indexer[-1]=self._setas.cols[col]
+                ret = self[tuple(indexer)]
+            else:
+                ret = None
+        else:
+            ix=len(self._setas.cols[col])
+            if len(ix) > 1:
+                indexer[-1]=ix[0]
+            elif len(ix)==1:
+               indexer[-1]=ix
+            else:
+                return None
+
+            ret = self[tuple(indexer)]
+        return ret
+
+
+    def __getitem__(self,ix):
+        # Override __getitem__ to handle string indexing
+        if isinstance(ix,string_types):
+            ix=self._setas.find_col(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
+            ix=list(ix)
+            ix[-1]=self._setas.find_col(ix[-1])
+            ix=tuple(ix)
+        return super(DataRow,self).__getitem__(ix)
+
+    def __setitem__(self,ix,val):
+        # Override __getitem__ to handle string indexing
+        if isinstance(ix,string_types):
+            ix=self._setas.find_col(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
+            ix=list(ix)
+            ix[-1]=self._setas.find_col(ix[-1])
+            ix=tuple(ix)
+        super(DataRow,self).__setitem__(ix,val)
+
+
 class DataFile(object):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents
     a matrix of data, associated metadata and column headers.
@@ -1473,11 +1578,12 @@ class DataFile(object):
             d = _np_.atleast_2d(d)
             for x in range(1, len(name)):
                 d = _np_.append(d, _np_.atleast_2d(self.data[x,:]), 0)
+                d=DataRow(d,setas=self._setas.clone)
             return d
         elif isinstance(name, int):
-            return self.data[name,:]
+            return DataRow(self.data[name,:],setas=self._setas.clone)
         elif isinstance(name, _np_.ndarray) and len(name.shape) == 1:
-            return self.data[name,:]
+            return DataRow(self.data[name,:],setas=self._setas.clone)
         elif isinstance(name, string_types) or isinstance(name, re._pattern_type):
             return self.__meta__(name)
         elif isinstance(name, tuple) and len(name) == 2:
@@ -1485,12 +1591,11 @@ class DataFile(object):
             if isinstance(x, str):
                 return self[x][y]
             else:
-                d = _np_.atleast_2d(self[x])
-                y = self.find_col(y)
-                r = d[:, y]
-                if len(r) == 1:
-                    r = r[0]
-                return r
+                d = self[x]
+                ret=d[:,y]
+                if len(ret.shape)>1 or len(ret)==self.shape[1]:
+                    ret=DataRow(ret,setas=self._setas.clone)
+                return ret
         else:
             raise TypeError("Key must be either numeric of string")
 
@@ -1850,7 +1955,7 @@ class DataFile(object):
             for v in value:
                 ix = _np_.logical_or(ix, self.__search_index(xcol, v))
         elif callable(value):
-            ix = _np_.array([value(self.column(x)[i], self.data[i]) for i in range(len(self))], dtype=bool)
+            ix = _np_.array([value(r[x],r) for r in self], dtype=bool)
         else:
             raise RuntimeError("Unknown search value type {}".format(value))
         return ix
@@ -2549,11 +2654,12 @@ class DataFile(object):
 
         Yields:
             Returns the next row of data"""
+        setas=self._setas.clone
         for row in self.data:
             if _ma_.is_masked(row) and not_masked:
                 continue
             else:
-                yield row
+                yield DataRow(row,setas=setas)
 
     def save(self, filename=None):
         """Saves a string representation of the current DataFile object into the file 'filename'.
