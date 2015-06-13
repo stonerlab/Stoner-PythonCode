@@ -59,15 +59,14 @@ class Datatest(unittest.TestCase):
 
 
     def test_iterators(self):
-        i=0
-        for c in self.d.columns():
-            self.assertTrue(np.all(self.d.column(i)==c))
-            i+=1
-        j=0
-        for r in self.d.rows():
-            self.assertTrue(np.all(self.d[j]==r))
-            j+=1
-        self.assertEqual(self.d.data.shape,(j,i))
+        for i,c in enumerate(self.d.columns()):
+            self.assertTrue(np.all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
+        for j,r in enumerate(self.d.rows()):
+            self.assertTrue(np.all(self.d[j]==r),"Iteratinf over DataFile.rows not the same as indexed access")
+        for k,r in self.d:
+            pass
+        self.assertEqual(j,k,"Iterating over DataFile not the same as DataFile.rows")
+        self.assertEqual(self.d.data.shape,(j+1,i+1),"Iterating over rows and columns not the same as data.shape")
 
     def test_metadata(self):
         self.d["Test"]="This is a test"
@@ -79,7 +78,7 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
 
     def test_dir(self):
-        self.assertTrue(self.d.dir("U")==["User"],"Dir method failed")
+        self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed")
 
     def test_filter(self):
         self.d._push_mask()
