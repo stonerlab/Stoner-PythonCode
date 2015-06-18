@@ -2131,7 +2131,7 @@ class DataFile(object):
         Yields:
             Returns the next column of data."""
         for ix,col in enumerate(self.data.T):
-            if _ma_.ismasked(col):
+            if _ma_.is_masked(col):
                 continue
             else:
                 yield self.column(col)
