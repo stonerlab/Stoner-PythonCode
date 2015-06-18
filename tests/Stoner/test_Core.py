@@ -34,10 +34,10 @@ class Datatest(unittest.TestCase):
 
         # Check that access by list of strings returns multpiple columns
         self.assertTrue(np.all(self.d.column(self.d.column_headers)==self.d.data),"Failed to access all columns by list of string indices")
-        self.assertTrue(np.all(self.d.column([0,self.d.ccolumn_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
+        self.assertTrue(np.all(self.d.column([0,self.d.column_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
 
         # Check regular expression column access
-        self.assertTrue(self.d.column(re.compile(r"[X].*$"))==self.d.column(0),"Failed to access column by regular expression")
+        self.assertTrue(np.all(self.d.column(re.compile(r"[X].*$"))==self.d.column(0)),"Failed to access column by regular expression")
         # Check attribute column access
         self.asserTrue(self.d.X==self.d.column(0),"Failed to access column by attribute name")
 
@@ -84,8 +84,8 @@ class Datatest(unittest.TestCase):
     def test_filter(self):
         self.d._push_mask()
         self.d.filter(lambda r:r[0]<100)
-        self.assertTrue(np.max(self.d.Temp)<100,"Failure of filter method to set mask")
-        self.assertTrue(np.ma.is_masked(max(self.d.Temp)),"Failed to mask maximum value")
+        self.assertTrue(np.max(self.d.X)<100,"Failure of filter method to set mask")
+        self.assertTrue(np.ma.is_masked(max(self.d.X)),"Failed to mask maximum value")
         self.d._pop_mask()
 
     def test_operators(self):

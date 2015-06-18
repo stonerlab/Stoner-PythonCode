@@ -2134,7 +2134,7 @@ class DataFile(object):
             if _ma_.is_masked(col):
                 continue
             else:
-                yield self.column(col)
+                yield self.column(ix)
 
     def del_column(self, col=None, duplicates=False):
         """Deletes a column from the current :py:class:`DataFile` object.
