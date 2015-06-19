@@ -2230,7 +2230,7 @@ class DataFile(object):
         else:
             if isinstance(col, slice) and val is None:
                 indices = col.indices(len(self))
-                col -= range(*indices)
+                col = list(range(*indices))
             if isinstance(col, list) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:

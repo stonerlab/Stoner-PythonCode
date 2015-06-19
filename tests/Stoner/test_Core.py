@@ -48,6 +48,14 @@ class Datatest(unittest.TestCase):
         # Check that self.column_headers returns the right length
         self.assertEqual(len(self.d.column_headers),self.d.data.shape[1],"Length of column_headers not equal to data.shape[1]")
 
+    def test_attributes(self):
+        """Test various atribute accesses,"""
+        self.assertEqual(self.d.shape,(100,2),"shape attribute not correct.")
+        self.assertTrue(np.all(self.d.T==self.d.data.T),"Transpose attribute not right")
+        self.assertTrue(np.all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
+        self.assertTrue(np.all(self.d.y==self.d.column(1)),"y attribute not right.")
+        self.assertTrue(np.all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
+
     def test_setas(self):
         #Check readback of setas
         self.assertEqual(self.d.setas[:],["x","y"],"setas attribute not set in constructor")
@@ -76,6 +84,8 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d["Float"],1.0)
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
+        self.assertEqual(len(self.d.dir()),4,"Failed meta data directory listing ({})".format(len(self.d.dir())))
+
 
     def test_dir(self):
         self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed")
@@ -83,7 +93,7 @@ class Datatest(unittest.TestCase):
     def test_filter(self):
         self.d._push_mask()
         ix=np.argmax(self.d.x)
-        self.d.filter(lambda r:r.x<50)
+        self.d.filter(lambda r:r[0]<50)
         self.assertTrue(np.max(self.d.x)<50,"Failure of filter method to set mask")
         self.assertTrue(np.ma.is_masked(self.d.x[ix]),"Failed to mask maximum value")
         self.d._pop_mask()
@@ -96,8 +106,20 @@ class Datatest(unittest.TestCase):
         t=[self.d%1,self.d%"Y-Data",(self.d%re.compile(r"Y\-"))]
         for ix,tst in enumerate(["integer","string","regexp"]):
             self.assertTrue(np.all(t[ix].data==np.atleast_2d(self.d.column(0)).T),"Failed % operator with {} index".format(tst))
+        d=self.d&self.d.x
+        self.assertTrue(d.shape[1]==3,"& operator failed.")
+        d&=d.x
+        self.assertTrue(d.shape[1]==4,"Inplace & operator failed")
+        d=self.d+np.array([0,0])
+        self.assertTrue(len(d)==len(self.d)+1,"+ operator failed.")
+        d+=np.array([0,0])
+        self.assertTrue(len(d)==len(self.d)+2,"Inplace + operator failed.")
+        d=d-(-1)
+        self.assertTrue(len(d)==len(self.d)+1,"Delete with integer index failed. {} vs {}".format(len(d),len(self.d)+1))
+        d-=-1
+        self.assertTrue(len(d)==len(self.d),"Inplace delete with integer index failed. {} vs {}".format(len(d),len(self.d)))
+        d-=slice(0,-1,2)
+        self.assertTrue(len(d)==len(self.d)/2,"Inplace delete with slice index failed. {} vs {}".format(len(d),len(self.d)/2))
 
-d=Data("CoreTest.dat",setas="xy")
-d.plot()
 
 
