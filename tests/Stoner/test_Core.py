@@ -37,9 +37,9 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.all(self.d.column([0,self.d.column_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
 
         # Check regular expression column access
-        self.assertTrue(np.all(self.d.column(re.compile(r"[X].*$"))==self.d.column(0)),"Failed to access column by regular expression")
+        self.assertTrue(np.all(self.d.column(re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed to access column by regular expression")
         # Check attribute column access
-        self.asserTrue(self.d.X==self.d.column(0),"Failed to access column by attribute name")
+        self.assertTrue(np.all(self.d.X==self.d.column(0)),"Failed to access column by attribute name")
 
     def test_len(self):
         # Check that length of the column is the same as length of the data
@@ -50,24 +50,23 @@ class Datatest(unittest.TestCase):
 
     def test_setas(self):
         #Check readback of setas
-        self.assertEqual(self.d.setas,["x","y"],"setas attribute not set in constructor")
-        self.assertEqual(self.d.x,self.d.data[:,0])
+        self.assertEqual(self.d.setas[:],["x","y"],"setas attribute not set in constructor")
+        self.assertTrue(np.all(self.d.x==self.d.column(0)),"Attribute setas column axis fails")
         self.d.setas(x="Y-Data")
-        self.assertEqual(self.d.setas,["x","x"],"Failed to set setas by type=column keyword assignment")
+        self.assertEqual(self.d.setas[:],["x","x"],"Failed to set setas by type=column keyword assignment")
         self.d.setas(Y="y")
-        self.assertEqual(self.d.setas,["x","y"],"Failed to set setas by column=type keyword assignment")
+        self.assertEqual(self.d.setas[:],["x","y"],"Failed to set setas by column=type keyword assignment")
 
 
     def test_iterators(self):
-        i=0
-        for c in self.d.columns():
-            self.assertTrue(np.all(self.d.column(i)==c))
-            i+=1
-        j=0
-        for r in self.d.rows():
-            self.assertTrue(np.all(self.d[j]==r))
-            j+=1
-        self.assertEqual(self.d.data.shape,(j,i))
+        for i,c in enumerate(self.d.columns()):
+            self.assertTrue(np.all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
+        for j,r in enumerate(self.d.rows()):
+            self.assertTrue(np.all(self.d[j]==r),"Iteratinf over DataFile.rows not the same as indexed access")
+        for k,r in enumerate(self.d):
+            pass
+        self.assertEqual(j,k,"Iterating over DataFile not the same as DataFile.rows")
+        self.assertEqual(self.d.data.shape,(j+1,i+1),"Iterating over rows and columns not the same as data.shape")
 
     def test_metadata(self):
         self.d["Test"]="This is a test"
@@ -79,18 +78,26 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
 
     def test_dir(self):
-        self.assertTrue(self.d.dir("U")==["User"],"Dir method failed")
+        self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed")
 
     def test_filter(self):
         self.d._push_mask()
-        self.d.filter(lambda r:r[0]<100)
-        self.assertTrue(np.max(self.d.X)<100,"Failure of filter method to set mask")
-        self.assertTrue(np.ma.is_masked(max(self.d.X)),"Failed to mask maximum value")
+        ix=np.argmax(self.d.x)
+        self.d.filter(lambda r:r.x<50)
+        self.assertTrue(np.max(self.d.x)<50,"Failure of filter method to set mask")
+        self.assertTrue(np.ma.is_masked(self.d.x[ix]),"Failed to mask maximum value")
         self.d._pop_mask()
 
     def test_operators(self):
-        self.d2=DataFile()
-        self.d2.column_headers=["C1","C2"]
+        #Test Column Indexer
+        self.assertTrue(np.all(self.d//0==self.d.column(0)),"Failed the // operator with integer")
+        self.assertTrue(np.all(self.d//"X-Data"==self.d.column(0)),"Failed the // operator with string")
+        self.assertTrue(np.all((self.d//re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed the // operator with regexp")
+        t=[self.d%1,self.d%"Y-Data",(self.d%re.compile(r"Y\-"))]
+        for ix,tst in enumerate(["integer","string","regexp"]):
+            self.assertTrue(np.all(t[ix].data==np.atleast_2d(self.d.column(0)).T),"Failed % operator with {} index".format(tst))
 
+d=Data("CoreTest.dat",setas="xy")
+d.plot()
 
 
