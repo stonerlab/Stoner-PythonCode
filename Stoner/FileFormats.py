@@ -135,7 +135,8 @@ class VSMFile(DataFile):
                     if i == 0:
                         self["Timestamp"] = line.strip()
                         check = datetime.strptime(self["Timestamp"], "%a %b %d %H:%M:%S %Y")
-                        assert check is not None
+                        if check is None:
+                            raise StonerLoadError("Not a VSM file ?")
                     elif i == 1:
                         assert line.strip() == ""
                     elif i == 2:
@@ -210,7 +211,9 @@ class BigBlueFile(CSVFile):
         else:
             self.filename = filename
 
-        super(BigBlueFile, self).load(self, self.filename, header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        super(BigBlueFile, self)._load(self.filename, header_line=3, data_line=7, data_delim=' ', header_delim=',')
+        if _np_.all(_np_.isnan(self.data)):
+            raise StonerLoadError("All data was NaN in Big Blue format")
         return self
 
 
@@ -244,6 +247,8 @@ class QDSquidVSMFile(DataFile):
         with open(self.filename, "r") as f:  # Read filename linewise
             for i, line in enumerate(f):
                 line = line.strip()
+                if i == 0 and line != "[Header]":
+                    raise StonerLoadError("Not a Quantum Design File !")
                 if i == 2 and "Quantum Design" not in line:
                     raise StonerLoadError("Not a Quantum Design File !")
                 elif "[Data]" in line:
@@ -310,7 +315,7 @@ class OpenGDAFile(DataFile):
                 key = parts[0]
                 value = parts[1].strip()
                 self.metadata[key] = self.metadata.string_to_type(value)
-            self.column_headers = f.mext().strip().split("\t")
+            self.column_headers = f.next().strip().split("\t")
         self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 1)
         return self
 
@@ -362,7 +367,7 @@ class SPCFile(DataFile):
                     "fresv")
             header = dict(zip(keys, spchdr))
 
-            if header['ftflgs'] > 63 or not (75 <= header['fversn'] <=
+            if header['ftflgs'] &64 == 64 or not (75 <= header['fversn'] <=
                                              77):  # This is the multiple XY curves in file flag.
                 raise StonerLoadError("Filetype not implemented yet ! ftflgs={ftflgs}, fversn={fversn}".format(**header))
             else:  # A single XY curve in the file.
@@ -1022,7 +1027,7 @@ class OVFFile(DataFile):
             line = line.strip()
             if line == "# OOMMF: rectangular mesh v1.0":
                 self["version"] = 1
-            elif line != "# OOMMF: rectangular mesh v2.0":
+            elif line == "# OOMMF: rectangular mesh v2.0":
                 self["version"] = 2
             else:  # bug out oif we don't like the header
                 raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
@@ -1409,9 +1414,9 @@ class PinkLibFile(DataFile):
                 elif any(s in line for s in ('Start time', 'End time', 'Title')):
                     tmp=line.strip('#').split(':')
                     self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
-            self.column_headers = f[header_line].strip('#\t ').split('\t')    
+            self.column_headers = f[header_line].strip('#\t ').split('\t')
             data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
             self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
-            if all(h in self.column_headers for h in ('T (C)', 'R (Ohm)')): 
-                self.setas(x='T (C)', y='R (Ohm)')           
+            if all(h in self.column_headers for h in ('T (C)', 'R (Ohm)')):
+                self.setas(x='T (C)', y='R (Ohm)')
         return self

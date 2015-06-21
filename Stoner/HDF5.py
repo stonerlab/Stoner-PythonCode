@@ -16,7 +16,7 @@ import os.path as path
 
 class HDF5File(DataFile):
     """A sub class of DataFile that sores itself in a HDF5File or group.
-    
+
     Args:
         args (tuple): Supplied arguments, only recognises one though !
         kargs (dict): Dictionary of keyword arguments
@@ -77,6 +77,7 @@ class HDF5File(DataFile):
             raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" not in f.attrs or bytes2str(
             f.attrs["type"]) != "HDF5File":  #Ensure that if we have a type attribute it tells us we're the right type !
+            f.file.close()
             raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data = f["data"]
         if numpy.product(numpy.array(data.shape)) > 0:

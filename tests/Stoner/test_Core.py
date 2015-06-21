@@ -121,5 +121,16 @@ class Datatest(unittest.TestCase):
         d-=slice(0,-1,2)
         self.assertTrue(len(d)==len(self.d)/2,"Inplace delete with slice index failed. {} vs {}".format(len(d),len(self.d)/2))
 
+    def test_methods(self):
+        d=self.d.clone
+        d&=np.where(d.x<50,1.0,0.0)
+        d.rename(2,"Z-Data")
+        d.setas="xyz"
+        self.assertTrue(np.all(d.unique(2)==np.array([0,1])),"Unique values failed: {}".format(d.unique(2)))
+        d=self.d.clone
+        d.insert_rows(10,np.zeros((2,2)))
+        self.assertEqual(len(d),102,"Failed to inert extra rows")
+        self.assertTrue(d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly.")
+
 
 

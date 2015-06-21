@@ -17,7 +17,7 @@ import zipfile as zf
 import zlib
 import itertools
 import numpy as _np_
-from .Core import DataFile
+from .Core import DataFile,StonerLoadError
 from .Folders import DataFolder
 import os.path as path
 
@@ -69,7 +69,7 @@ class ZipFile(DataFile):
                 elif "file" not in kargs:
                     kargs["file"] = other.namelist()[0]
                 if kargs["file"] not in other.namelist():
-                    raise IOError("File {} not found in zip file {}".format(name, other.filename))
+                    raise StonerLoadError("File {} not found in zip file {}".format(name, other.filename))
                 #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZipFile, self).__init__(**kargs)
                 self._extract(other, kargs["file"])
@@ -115,7 +115,7 @@ class ZipFile(DataFile):
                 other = self.filename
                 close_me = False
             member = other.namelist()[0]
-        elif isinstance(self.filename, string_types) and zip_file.is_zipfile(self.filename):
+        elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename):
             other = zf.ZipFile(self.filename, "a")
             member = other.namelist()[0]
             close_me = True
@@ -124,7 +124,7 @@ class ZipFile(DataFile):
             other = zf.ZipFile(other, "r")
             close_me = True
         else:
-            raise IOError("{} does  not appear to be a real zip file".format(self.filename))
+            raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
 
 #Ok we can try reading now
         self._extract(other, member)

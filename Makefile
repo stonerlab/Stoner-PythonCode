@@ -5,8 +5,11 @@ else
 endif
 PYTHON_SETUP	=	python setup.py
 
-egg:
-	$(PYTHON_SETUP) egg_info -brc2 bdist_egg upload
+test:
+	$(PYTHON_SETUP) test
+
+egg: test
+	$(PYTHON_SETUP) egg_info bdist_egg upload
 
 wheel:
 	$(PYTHON_SETUP) bdist_wheel --universal upload
