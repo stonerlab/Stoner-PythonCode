@@ -107,7 +107,9 @@ class StonerLoadError(Exception):
 
 
 class _attribute_store(dict):
-    """A class that provides attributes that refer to columns in a DataFile instance."""
+    """A dictionary=like class that provides attributes that work like indices.
+
+    Used to implement the mapping of column types to indices in the setas attriobutes."""
 
     def __init__(self, *args, **kargs):
         if len(args) == 1 and isinstance(args[0], dict):
@@ -545,7 +547,8 @@ class _setas(object):
 
 
 class _evaluatable(object):
-    """A very simple class that is just a placeholder."""
+    """A very simple class that is just a placeholder to indicate that special action
+    needs to be taken to convert a string representation to a valid Python type."""
     pass
 
 
@@ -935,13 +938,10 @@ class DataArray(_ma_.MaskedArray):
                 ret = None
         else:
             ix=len(self._setas.cols[col])
-            if ix > 1:
-                indexer[-1]=ix[0]
-            elif ix==1:
-               indexer[-1]=ix
+            if ix > 0:
+                indexer[-1]=self._setas.cols[col][0]
             else:
                 return None
-
             ret = self[tuple(indexer)]
         return ret
 
@@ -949,7 +949,7 @@ class DataArray(_ma_.MaskedArray):
     def __getitem__(self,ix):
         # Override __getitem__ to handle string indexing
         if isinstance(ix,string_types):
-            ix=self._setas.find_col(ix)
+            ix=(slice(0,-1,1),self._setas.find_col(ix))
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
@@ -1107,7 +1107,7 @@ class DataFile(object):
                     super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = DataArray(arg.data,setas=arg.setas.clone)
-            self.data._setas = arg._setas
+            self.data.setas = arg.setas.clone
         elif isinstance(arg,Iterable) and all_type(arg,string_types):
             self.column_headers=list(arg)
         elif isinstance(arg,Iterable) and all_type(arg,_np_.ndarray):
@@ -1729,25 +1729,23 @@ class DataFile(object):
             for x in range(1, len(name)):
                 d = _np_.append(d, _np_.atleast_2d(self.data[x,:]), 0)
                 d=DataArray(d,setas=self.data._setas.clone)
-            return d
+            ret = d
         elif isinstance(name, int):
-            return DataArray(self.data[name,:],setas=self.data._setas.clone)
+            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
         elif isinstance(name, _np_.ndarray) and len(name.shape) == 1:
-            return DataArray(self.data[name,:],setas=self.data._setas.clone)
+            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
         elif isinstance(name, string_types) or isinstance(name, re._pattern_type):
-            return self.__meta__(name)
+            ret = self.__meta__(name)
         elif isinstance(name, tuple) and len(name) == 2:
             x, y = name
-            if isinstance(x, str):
-                return self[x][y]
-            else:
-                d = self[x]
-                ret=d[:,y]
-                if len(ret.shape)>1 or len(ret)==self.shape[1]:
-                    ret=DataArray(ret,setas=self.data._setas.clone)
-                return ret
+            if isinstance(x, string_types):# Shortcut to index metadata that is a list
+                ret = self[x][y]
+            else: # Pass through to DataArray to do heavy lifting here
+                ret = self.data.__getitem__(name)
         else:
-            raise TypeError("Key must be either numeric of string")
+            raise TypeError("Key must be either numeric of string, or tuple")
+
+        return ret
 
     def __getstate__(self):
         return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata}
@@ -2054,7 +2052,7 @@ class DataFile(object):
             nv = _ma_.atleast_2d(nv).T
         elif len(nv.shape) > 2:
             raise ValueError("DataFile.data should be no more than 2 dimensional not shaoe {}", format(nv.shape))
-        nv = DataArray(value)
+        nv = DataArray(nv)
         if hasattr(self,"data") and hasattr(self.data,"_setas"):
             nv._setas=self.data._setas.clone
         nv._setas.shape=nv.shape

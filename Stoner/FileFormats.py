@@ -316,7 +316,7 @@ class OpenGDAFile(DataFile):
                 value = parts[1].strip()
                 self.metadata[key] = self.metadata.string_to_type(value)
             self.column_headers = f.next().strip().split("\t")
-        self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 1)
+        self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 2)
         return self
 
 

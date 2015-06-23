@@ -7,7 +7,7 @@ Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
-from Stoner.Core import DataFile, _attribute_store
+from Stoner.Core import DataFile, _attribute_store, copy_into
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_

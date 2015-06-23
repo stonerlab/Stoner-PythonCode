@@ -93,9 +93,9 @@ class Datatest(unittest.TestCase):
     def test_filter(self):
         self.d._push_mask()
         ix=np.argmax(self.d.x)
-        self.d.filter(lambda r:r.x<50)
-        self.assertTrue(np.max(self.d.x)<50,"Failure of filter method to set mask")
-        self.assertTrue(np.ma.is_masked(self.d.x[ix]),"Failed to mask maximum value")
+        self.d.filter(lambda r:r.x<=50)
+        self.assertTrue(np.max(self.d.x)==50,"Failure of filter method to set mask")
+        self.assertTrue(np.isnan(self.d.x[ix]),"Failed to mask maximum value")
         self.d._pop_mask()
 
     def test_operators(self):
