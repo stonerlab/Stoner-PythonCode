@@ -159,7 +159,7 @@ class DataFolder(object):
                 tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
                 if group and  replace_terminal and isinstance (tmp, DataFile):
                     removeGroups.append(g)
-                    tmp.filename=g
+                    tmp.filename="{}-{}".format(g,tmp.filename)
                     self.files.append(tmp)
                     ret.append(tmp)
             for g in removeGroups:
