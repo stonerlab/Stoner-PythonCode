@@ -2454,7 +2454,7 @@ class DataFile(object):
         """
         return self.data._setas.find_col(col, force_list)
 
-    def get(self, item):
+    def get(self, item,default=None):
         """A wrapper around __get_item__ that handles missing keys by returning None.
 
         This is useful for the :py:class:`Stoner.Folder.DataFolder` class.
@@ -2462,12 +2462,15 @@ class DataFile(object):
         Args:
             item (string): A string representing the metadata keyname
 
+        Keyword Arguments:
+            default (any): Default value to return if key not found
+
         Returns:
             self.metadata[item] or None if item not in self.metadata"""
         try:
             return self[item]
         except KeyError:
-            return None
+            return default
 
     def get_filename(self, mode):
         """Forces the user to choose a new filename using a system dialog box.
