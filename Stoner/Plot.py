@@ -956,7 +956,6 @@ class PlotFile(DataFile):
             else:
                 kargs.pop(err,None)
 
-        print kargs
 
         temp_kwords = copy.copy(kargs)
         if isinstance(c.ycol, (index_types)):
