@@ -30,6 +30,22 @@ from collections import Iterable
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
 
+def all_none(iter):
+    """Checks to see if an iterable is all None.
+
+    Args:
+        iter (anything): Thing to check if None
+
+    Returns:
+        True if it iter is None or all items in iter are None or iter has zero length.
+    """
+    if not isinstance(iter,Iterable):
+        return iter is None
+    else:
+        ret=True
+        for i in iter:
+            ret&=i is None
+        return ret
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions.
@@ -879,7 +895,7 @@ class PlotFile(DataFile):
         kargs, nonkargs = self._fix_kargs(None, defaults, otherargs, **kargs)
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if err in kargs and ((kargs[err] is not None) and kargs[err]!=[None]):
+            if err in kargs and not all_none(kargs[err]):
                 if isinstance(kargs[err], index_types):
                     kargs[err] = self.column(kargs[err])
                 elif isinstance(kargs[err], list) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
