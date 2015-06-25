@@ -879,7 +879,7 @@ class PlotFile(DataFile):
         kargs, nonkargs = self._fix_kargs(None, defaults, otherargs, **kargs)
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if err in kargs:
+            if err in kargs and ((kargs[err] is not None) and kargs[err]!=[None]):
                 if isinstance(kargs[err], index_types):
                     kargs[err] = self.column(kargs[err])
                 elif isinstance(kargs[err], list) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
@@ -891,6 +891,10 @@ class PlotFile(DataFile):
                             kargs[err][i] = _np_.zeros(len(self))
                 else:
                     kargs[err] = _np_.zeros(len(self))
+            else:
+                kargs.pop(err,None)
+
+        print kargs
 
         temp_kwords = copy.copy(kargs)
         if isinstance(c.ycol, (index_types)):
