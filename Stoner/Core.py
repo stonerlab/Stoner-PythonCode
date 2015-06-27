@@ -1544,6 +1544,32 @@ class DataFile(object):
 #============================================================================================================================
 
 
+    def __call__(self,*args,**kargs):
+        """Implements an option for DataFile().
+
+        Creates a new clone of self and then passes all the arguments to the clones __init__ method.
+        """
+        new_d=self.clone
+        i = len(args) if len(args) < 2 else 2
+        handler = [None, new_d._init_single, new_d._init_double, new_d._init_many][i]
+        if handler is not None:
+            handler(*args, **kargs)
+        if len(kargs) > 0:  # set public attributes from keywords
+            myattrs = new_d._public_attrs
+            for k in kargs:
+                if k in myattrs:
+                    if isinstance(kargs[k], myattrs[k]):
+                        new_d.__setattr__(k, kargs[k])
+                    else:
+                        if isinstance(myattrs[k], tuple):
+                            typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
+                        else:
+                            typ = "a " + str(str(type(myattr[k])))
+                        raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
+
+        return new_d
+
+
     def __contains__(self, item):
         """Operator function for membertship tests - used to check metadata contents.
 
