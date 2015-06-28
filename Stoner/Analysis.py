@@ -23,6 +23,196 @@ except ImportError:
     ModelFit = None
 import sys
 
+#==========================================================================================================================================
+# Module Private Functions
+#==========================================================================================================================================
+
+
+
+def __lmfit_p0_dict(p0,model):
+    """Works out an initial starting value dictionary for lmfit.
+
+    Args:
+        p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
+
+    Returns:
+        Dictionary of parameter starting points.
+    """
+    if isinstance(p0, (list, tuple, _np_.ndarray)):
+        p0 = {p: pv for p, pv in zip(model.param_names, p0)}
+    elif isinstance(p0,Parameters):
+        p0={k:p0[k].value for k in p0}
+    if not isinstance(p0, dict):
+        raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
+        p0.update(kargs)
+        p0={p0[k] for k in model.param_names}
+    return p0
+
+def __outlier(row, column, window, metric):
+    """Internal function for outlier detector.
+
+    Calculates if the current row is an outlier from the surrounding data by looking
+    at the number of standard deviations away from the average of the window it is."""
+    av = _np_.average(window[:, column])
+    std = _np_.std(window[:, column])  #standard deviation
+    return abs(row[column] - av) > metric * std
+
+
+def __threshold(threshold, data, rising=True, falling=False):
+    """ Internal function that implements the threshold method - also used in peak-finder
+
+    Args:
+        threshold (float): Threshold valuye in data to look for
+        rising (bool): Find points where data is rising up past threshold
+        falling (bool): Find points where data is falling below the threshold
+
+    Returns:
+        A numpy array of fractional indices where the data has crossed the threshold assuming a
+        straight line interpolation between two points.
+    """
+
+
+    # First we find all points where we cross zero in the correct direction
+    current = data
+    previous = _np_.roll(current, 1)
+    index = _np_.arange(len(current))
+    sdat = _np_.column_stack((index, current, previous))
+    if rising == True and falling == False:
+        expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
+    elif rising == True and falling == True:
+        expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
+    elif rising == False and falling == True:
+        expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
+    else:
+        expr = lambda x: False
+
+    # Now we refine the estimate of zero crossing with a cubic interpolation
+    # and use Newton's root finding method to locate the zero in the interpolated data
+
+    intr=interp1d(index,data-threshold,kind="cubic")
+    roots=[]
+    for ix,x in enumerate(sdat):
+        if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
+            try:
+                roots.append(newton(intr,ix))
+            except ValueError: # fell off the end here
+                pass
+    return _np_.array(roots)
+
+def __twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
+    """Calculae an optimal transformation of points :math:`(x_1,y_1)\\rightarrow(x_2,y_2)`.
+
+    Arguments:
+        xy1 ( (n,2) array of float): Set of points to be mapped from.
+        xy2 ( (n,2) array of floats): Set of points to be mapped to.
+
+    Keyword Arguments:
+        xmode ('affine', 'linear', 'scale' 'offset' or 'fixed'): How to manipulate the x-data
+        ymode ('linear', 'scale' 'offset' or 'fixed'): How to manipulate the y-data
+        m0 (3x2 array): Initial and fixed values of the transformation. Defaults to using an identity transformation.
+
+    Returns:
+        opt_trans,trans_err,mapping func
+
+    The most general case is an affine transform which includes rotation, scale, translation and skew. This is represented as a 2 x 3 matrix
+    of coordinates. The *xmode* and *ymode* parameters control the possible operations to align the data in x and y directions, in addition
+    to which the *xmode* parameter can take the value 'affine' which allows a full affine transformation. The returned values are the
+    affine transformation matrix, the uncertainities in this and a function to map co-ordinates with the optimal affine transformation.
+
+    Note:
+        *m0* combines both giving an initial value and fixed values for the transformation. If *m0* is set, then it is used to provide initial
+        balues of the free parameters. Which elelemnts of *m0* that are free parameters and which are fixed is determined by the *xmode*
+        and *ymode* parameters. IF *xmode* and *ymode* are both fixed, however, no scaling is done at all.
+    """
+
+    if xy1.shape!=xy2.shape or xy1.shape[1]!=2:
+        raise RuntimeError("co-ordinate arrays must be equal length with two columns, not {} and {}".format(xy1.shape,xy2.shape))
+    xvarp={"affine":[[0,0],[0,1],[0,2],[1,0],[1,1],[1,2]],
+           "linear":[[0,0],[0,2]],
+           "scale":[[0,0]],
+           "offset":[[0,2]],
+           "fixed":[[]]}
+    yvarp={"linear":[[1,1],[1,2]],
+           "scale":[[1,1]],
+           "offset":[[1,2]],
+           "fixed":[[]]}
+
+    if xmode not in xvarp or ymode not in yvarp:
+        raise RuntimeError("xmode and ymode must be one of 'linear','scale','offset','fixed' not {} and {}".format(xmode,ymode))
+
+    if xmode=="affine":
+        ymode="fixed"
+
+    xunknowns=len(xvarp[xmode])
+    yunknowns=len(yvarp[ymode])
+    if xunknowns+yunknowns==0: # shortcircuit for the trivial case
+        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),funcs["fixed"]
+
+    mapping=xvarp[xmode]+yvarp[ymode]
+    data=_np_.column_stack((xy1,xy2)).T
+
+    if m0 is None:
+         p0s={"affine":[1,0,0,0,1,0],"linear":[1,0],"scale":[1],"offset":[0],"fixed":[]}
+        p0=p0s[xmode]+p0s[ymode]
+        default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
+    elif isinstance(m0,_np_.ndarray) and m0.shape=[3,2]:
+        p0=[0]*len(mapping)
+        for i,(u,v) in enumerate(mapping):
+            p0[i]=m0[u,v]
+            default=m0
+    else:
+        raise RuntimeError("m0 starting matrix should be a numpy array of size (3,2)")
+
+    result=_np_.zeros(len(xy1))
+
+    def transform(xy,*p):#Construct the fitting function
+        xy1=_np_.column_stack((xy[:2,:].T,_np_.ones(xy.shape[1]))).T
+        xy2=xy[2:,:]
+        for pi,(u,v) in zip(p,mapping):
+            default[u,v]=pi
+        xyt=_np_.dot(default, xy1)
+        ret= _np_.sqrt(_np_.sum((xy2-xyt)**2,axis=0))
+        print ret.shape
+        return ret
+
+
+    popt,pcov=curve_fit(transform,data,result,p0=p0)
+    perr=_np_.sqrt(_np_.diag(pcov))
+
+    #Initialise the return values
+    default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
+    for pi,(u,v) in zip(popt,mapping):
+        default[u,v]=pi
+
+    default_err=_np_.zeros((2,3))
+    for pi,(u,v) in zip(perr,mapping):
+        default_err[u,v]=pi
+
+    def transform(xy): # Construct the transformation enclose to return
+        xyt=_np_.dot(default.T, xy)
+        return xyt
+
+    return (default,default_err,transform)
+
+
+def GetAffineTransform(p, pd):
+    """Calculate an affine transofrm from 2 sets of three points.
+
+    Args:
+        p (3x2 array): Coordinates of points to transform from.
+        pd (3x2 array): Cooridinates of points to transform to.
+
+    Returns:
+        2x3 matrix representing the affine transform.
+    """
+    if shape(p)!=(3, 2) and shape(pd)!=(3, 2):
+        raise RuntimeError("Must supply three points")
+
+    p=append(p, array([[1], [1], [1]]), axis=1)
+    transform=la.solve(p, pd)
+    return  transform
+
+
 class AnalyseFile(DataFile):
     """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
 
@@ -100,15 +290,6 @@ class AnalyseFile(DataFile):
             raise RuntimeError("Bad column index: {}".format(col))
         return data, name
 
-    def __outlier(self, row, column, window, metric):
-        """Internal function for outlier detector.
-
-        Calculates if the current row is an outlier from the surrounding data by looking
-        at the number of standard deviations away from the average of the window it is."""
-        av = _np_.average(window[:, column])
-        std = _np_.std(window[:, column])  #standard deviation
-        return abs(row[column] - av) > metric * std
-
     def __poly_outlier(self, row, column, window, metric, xcol=None, order=1):
         """Alternative outlier detection function that fits a polynomial locally over the window.
 
@@ -137,24 +318,6 @@ class AnalyseFile(DataFile):
         perr = _np_.sqrt(_np_.diag(pcov))[-1]
         return abs(row[column] - pval) > metric * perr
 
-    def __lmfit_p0_dict(self,p0,model):
-        """Works out an initial starting value dictionary for lmfit.
-
-        Args:
-            p0 (list,tuple,dict,lmfit.Parameter): Starting poiint to use for fitting.
-
-        Returns:
-            Dictionary of parameter starting points.
-        """
-        if isinstance(p0, (list, tuple, _np_.ndarray)):
-            p0 = {p: pv for p, pv in zip(model.param_names, p0)}
-        elif isinstance(p0,Parameters):
-            p0={k:p0[k].value for k in p0}
-        if not isinstance(p0, dict):
-            raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-            p0.update(kargs)
-            p0={p0[k] for k in model.param_names}
-        return p0
 
     def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
         """Carry out a single fit wioth lmfit.
@@ -207,48 +370,6 @@ class AnalyseFile(DataFile):
         else:
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
-
-
-    def __threshold(self, threshold, data, rising=True, falling=False):
-        """ Internal function that implements the threshold method - also used in peak-finder
-
-        Args:
-            threshold (float): Threshold valuye in data to look for
-            rising (bool): Find points where data is rising up past threshold
-            falling (bool): Find points where data is falling below the threshold
-
-        Returns:
-            A numpy array of fractional indices where the data has crossed the threshold assuming a
-            straight line interpolation between two points.
-        """
-
-
-        # First we find all points where we cross zero in the correct direction
-        current = data
-        previous = _np_.roll(current, 1)
-        index = _np_.arange(len(current))
-        sdat = _np_.column_stack((index, current, previous))
-        if rising == True and falling == False:
-            expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
-        elif rising == True and falling == True:
-            expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
-        elif rising == False and falling == True:
-            expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
-        else:
-            expr = lambda x: False
-
-        # Now we refine the estimate of zero crossing with a cubic interpolation
-        # and use Newton's root finding method to locate the zero in the interpolated data
-
-        intr=interp1d(index,data-threshold,kind="cubic")
-        roots=[]
-        for ix,x in enumerate(sdat):
-            if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
-                try:
-                    roots.append(newton(intr,ix))
-                except ValueError: # fell off the end here
-                    pass
-        return _np_.array(roots)
 
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
@@ -891,12 +1012,12 @@ class AnalyseFile(DataFile):
         if p0 is not None:
             if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
                 if p0.shape[0]==1: # Actually a single fit
-                    p0=self.__lmfit_p0_dict(p0[0],model)
+                    p0=__lmfit_p0_dict(p0[0],model)
                     single_fit=True
                 else: # Is chi^2 mapping
                     single_fit=False
             else:
-                p0=self.__lmfit_p0_dict(p0,model)
+                p0=__lmfit_p0_dict(p0,model)
                 single_fit=True
         else: #Do we already have parameter hints ?
             check=True
@@ -932,7 +1053,7 @@ class AnalyseFile(DataFile):
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
             for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
-                p0=self.__lmfit_p0_dict(p0,model)
+                p0=__lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
                 ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix)
         return ret_val
@@ -1221,7 +1342,7 @@ class AnalyseFile(DataFile):
         """
 
         if func is None:
-            func = self.__outlier
+            func = __outlier
 
         if column is None:
             column = self.setas._get_cols("ycol")
@@ -1310,7 +1431,7 @@ class AnalyseFile(DataFile):
         xdata = interp1d(i, xcol,kind="cubic")
 
 
-        possible_peaks = _np_.array(self.__threshold(0, d1, rising=troughs, falling=peaks))
+        possible_peaks = _np_.array(__threshold(0, d1, rising=troughs, falling=peaks))
         curvature=_np_.abs(d2_interp(possible_peaks))
 
         # Filter just the significant peaks
@@ -1374,6 +1495,115 @@ class AnalyseFile(DataFile):
                                                                      ordinal(polynomial_order))
             self.add_column(_np_.polyval(p, self.column(xcol)), index=result, replace=replace, column_header=header)
         return p
+
+    def scale(self,other,xcol=None,ycol=None,**kargs):
+        """Scale the x and y data in this DataFile to match the x and y data in another DataFile.
+
+        Args:
+            other (DataFile): The other isntance of a datafile to match to
+
+        Keyword Arguments:
+            xcol (column index): Column with x points in it, default to None to use setas attribute value
+            ycol (column index): Column with ypoints in it, default to None to use setas attribute value
+            xmode ('affine', 'linear','scale','offset'): How to manipulate the x-data to match up
+            ymode ('linear','scale','offset'): How to manipulate the y-data to match up.
+            bounds (callable): Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.
+            otherbounds (callable): Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.
+            use_estimate (bool or 3x2 array): Specifies whether to estimate an initial transformation value or to use the provided one, or
+                start with an identity transformation.
+            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalyseFile (true) or to just return
+                the results of the scaling.
+            headers (2-element list or tuple of strings): new column headers to use if replace is True.
+
+        Returns:
+            Either a copy of the AnalyseFile modified so that the x and y columns match *other* if *replace* is True, or
+            *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
+            giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
+
+            """
+
+
+        if xcol is None:  #Sort out the xcolumn and y column indexes
+            xcol = self.setas._get_cols("xcol")
+        else:
+            xcol = self.find_col(xcol)
+        if ycol is None:
+            ycol = self.setas._get_cols("ycol")
+        else:
+            ycol = self.find_col(ycol)
+        #
+        # Sort out keyword srguments
+        #
+        bounds=kargs.pop("bounds",lambda x,r:True)
+        otherbounds=kargs.pop("otherbounds",bounds)
+        replace=kargs.pop("replace",True)
+        headers=kargs.pop("headers")
+        xmode=kargs.pop("xmode","linear")
+        ymode=kargs.pop("ymode","linear")
+        use_estimate=kargs.pop("use_estimate",False)
+
+        # Get our working data from this DataFile and remove masked rows
+
+        working = self.search(xcol, bounds)
+        working = ma.mask_rowcols(working, axis=0)
+        xdat = working[:, self.find_col(xcol)]
+        ydat = working[:, self.find_col(ycol)]
+
+        # Get data from the other. If it is already an ndarray, check size and dimensions
+
+        if isinstance(other,DataFile):
+            working2 = other.search(xcol,otherbounds)
+            working2 = ma.mask_rowcols(working, axis=0)
+            xdat2 = working[:, self.find_col(xcol)]
+            ydat2 = working[:, self.find_col(ycol)]
+            if len(xdat2)!=len(xdat):
+                raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat),len(xdat2)))
+        elif isinstance(other,_np_.ndarray):
+            other=_np_.atleast_2d(other)
+            if other.shape[0]!=len(xdat) or not 1<=other.shape[1]<=2:
+                raise RuntimeError("If other is a numpy array it must be the same length as the number of points to match to and 1 or 2 columns.")
+            if other.shape[1]==1:
+                xdat2=xdat
+                ydat2=other[:,0]
+            else:
+                xdat2=other[:,0]
+                ydat2=other[:,1]
+
+        # Need two nx2 arrays of points now
+
+        xy1=_np_.column_stack((xdat,ydat))
+        xy2=_np_.column_stack((xdat2,ydat2))
+
+        # We're going to use three points to get an estimate for the affine transform to apply
+
+        if instance(use_estimate,bool) and use_estimate:
+            mid=len(xdat)/2
+            try: # may go wrong if three points are co-linear
+                m0=GetAffineTransform(xy1[[0,mid,-1],:],xy2[[0,mid,-1],:])
+            except: # So use an idnetify transformation instead
+                m0=_np_.array([[1.0,0.0m0.0],[0.0,1.0,0.0]])
+        elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
+            m0=use_estimate
+        else: # Don't try to be cleber
+            m0=_np_.array([[1.0,0.0m0.0],[0.0,1.0,0.0]])
+
+        popt,perr,trans=__twoD_fit(xy1,xy2,xmode,ymode,m0)
+        data=self.data[:,[xcol,ycol]]
+        new_data=trans(data)
+        if replace: # In place scaling, replace and return self
+            self["Transform"]=popt
+            self["Transform Err"]=perr
+            self.data[:,xcol]=new_data[:,0]
+            self.data[:,ycol]=new_data[:,1]
+            if headers:
+                self.column_headers[xcol]=headers[0]
+                self.column_headers[ycol]=headers[1
+            ]
+            ret=self
+        else: # Return results but don't change self.
+            ret=popt,perr,new_data
+        return ret
+
 
     def span(self, column=None, bounds=None):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.
@@ -1663,14 +1893,14 @@ class AnalyseFile(DataFile):
         ret = []
         if isinstance(threshold, (list, _np_.ndarray)):
             if all_vals:
-                ret = [self.__threshold(x, current, rising=rising, falling=falling) for x in threshold]
+                ret = [__threshold(x, current, rising=rising, falling=falling) for x in threshold]
             else:
-                ret = [self.__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+                ret = [__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
         else:
             if all_vals:
-                ret = self.__threshold(threshold, current, rising=rising, falling=falling)
+                ret = __threshold(threshold, current, rising=rising, falling=falling)
             else:
-                ret = [self.__threshold(threshold, current, rising=rising, falling=falling)[0]]
+                ret = [__threshold(threshold, current, rising=rising, falling=falling)[0]]
         if xcol is not None:
             ret = [self.interpolate(r, xcol=False)[self.find_col(xcol)] for r in ret]
         if all_vals:
