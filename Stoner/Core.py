@@ -815,7 +815,7 @@ class typeHintedDict(dict):
             key (string): The metadata key to export
         Returns:
             A string of the format : key{type hint} = value"""
-        return "{}{{{}}}={}".format(key, self.type(key), self[key])
+        return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('string_escape'))
 
 
 class DataFile(object):
