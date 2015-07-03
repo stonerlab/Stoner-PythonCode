@@ -8,7 +8,7 @@ Classes include
 """
 from Stoner.compat import *
 import h5py
-import numpy
+import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
 import os.path as path
@@ -80,7 +80,7 @@ class HDF5File(DataFile):
             f.file.close()
             raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data = f["data"]
-        if numpy.product(numpy.array(data.shape)) > 0:
+        if _np_.product(_np_.array(data.shape)) > 0:
             self.data = data[...]
         else:
             self.data = [[]]
@@ -152,6 +152,86 @@ class HDF5File(DataFile):
             f.file.close()
 
         return self
+
+
+class HGXFile(DataFile):
+    """A subclass of DataFile for reading GenX HDF Files.
+
+    These files typically have an extension .hgx. This class has been based on a limited sample
+    of hgx files and so may not be sufficiently general to handle all cases.
+    """
+
+    priority=16
+    pattern=["*.hgx"]
+
+    def _load(self, filename=None, *args, **kargs):
+        """GenX HDF file loader routine.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+            """
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        try:
+            f=h5py.File(filename)
+            f1=f["current"]
+            f2=f1["config"]
+            f.close()
+        except:
+            f.close()
+            raise StonerLoadError("Looks like an unexpected HDF layout!.")
+
+        with h5py.File(self.filename, "r") as f:
+            self.scan_group(f["current"],"")
+            self.main_data(f["current"]["data"])
+
+
+        return self
+
+    def scan_group(self,grp,pth):
+        """Recursively list HDF5 Groups."""
+
+        if not isinstance(grp,h5py.Group):
+            return None
+        for x in grp:
+            if pth=="":
+                new_pth=x
+            else:
+                new_pth=pth+"."+x
+            if pth=="" and x=="data": # Special case for main data
+                continue
+            if isinstance(grp[x],type(grp)):
+                self.scan_group(grp[x],new_pth)
+            elif isinstance(grp[x],h5py.Dataset):
+                self[new_pth]=grp[x].value
+
+    def main_data(self,data_grp):
+        """Work through the main data group and build something that looks like a numpy 2D array."""
+        if not isinstance(data_grp,h5py.Group) or data_grp.name!="/current/data":
+            raise StonerLoadError("HDF5 file not in expected format")
+        datasets=data_grp["_counter"].value
+        root=data_grp["datasets"]
+        for ix in root: # Hack - iterate over all items in root, but actually data is in Groups not DataSets
+            dataset=root[ix]
+            if isinstance(dataset,h5py.Dataset):
+                continue
+            x=dataset["x"].value
+            y=dataset["y"].value
+            e=dataset["error"].value
+            self&=x
+            self&=y
+            self&=e
+            self.column_headers[-3]=dataset["x_command"].value
+            self.column_headers[-2]=dataset["y_command"].value
+            self.column_headers[-1]=dataset["error_command"].value
+
+
 
 
 class HDF5Folder(DataFolder):
@@ -267,7 +347,7 @@ class HDF5Folder(DataFolder):
                     tmp[h] = tmp.column(h)[0]
             else:
                 for h in tmp.column_headers:
-                    tmp[h] = numpy.mean(tmp.column(h))
+                    tmp[h] = _np_.mean(tmp.column(h))
 
         return tmp
 
