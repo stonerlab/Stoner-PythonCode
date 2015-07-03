@@ -945,7 +945,6 @@ class DataArray(_ma_.MaskedArray):
             ret = self[tuple(indexer)]
         return ret
 
-
     def __getitem__(self,ix):
         # Override __getitem__ to handle string indexing
         if isinstance(ix,string_types):
