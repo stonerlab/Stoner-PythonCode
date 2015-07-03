@@ -23,13 +23,14 @@ except ImportError:
     ModelFit = None
 import sys
 
+
 #==========================================================================================================================================
 # Module Private Functions
 #==========================================================================================================================================
 
 
 
-def __lmfit_p0_dict(p0,model):
+def _lmfit_p0_dict(p0,model):
     """Works out an initial starting value dictionary for lmfit.
 
     Args:
@@ -48,7 +49,7 @@ def __lmfit_p0_dict(p0,model):
         p0={p0[k] for k in model.param_names}
     return p0
 
-def __outlier(row, column, window, metric):
+def _outlier(row, column, window, metric):
     """Internal function for outlier detector.
 
     Calculates if the current row is an outlier from the surrounding data by looking
@@ -58,7 +59,7 @@ def __outlier(row, column, window, metric):
     return abs(row[column] - av) > metric * std
 
 
-def __threshold(threshold, data, rising=True, falling=False):
+def _threshold(threshold, data, rising=True, falling=False):
     """ Internal function that implements the threshold method - also used in peak-finder
 
     Args:
@@ -99,7 +100,7 @@ def __threshold(threshold, data, rising=True, falling=False):
                 pass
     return _np_.array(roots)
 
-def __twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
+def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     """Calculae an optimal transformation of points :math:`(x_1,y_1)\\rightarrow(x_2,y_2)`.
 
     Arguments:
@@ -149,19 +150,23 @@ def __twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
         return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),funcs["fixed"]
 
     mapping=xvarp[xmode]+yvarp[ymode]
+    mapping=[m for m in mapping if m!=[]] # remove empty mappings
     data=_np_.column_stack((xy1,xy2)).T
 
+    if isinstance(m0,list):
+        m0=_np_.array(m0)
+
     if m0 is None:
-         p0s={"affine":[1,0,0,0,1,0],"linear":[1,0],"scale":[1],"offset":[0],"fixed":[]}
+        p0s={"affine":[1,0,0,0,1,0],"linear":[1,0],"scale":[1],"offset":[0],"fixed":[]}
         p0=p0s[xmode]+p0s[ymode]
         default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
-    elif isinstance(m0,_np_.ndarray) and m0.shape=[3,2]:
+    elif isinstance(m0,_np_.ndarray) and m0.shape==(2,3):
         p0=[0]*len(mapping)
-        for i,(u,v) in enumerate(mapping):
+        for i,[u,v] in enumerate(mapping):
             p0[i]=m0[u,v]
             default=m0
     else:
-        raise RuntimeError("m0 starting matrix should be a numpy array of size (3,2)")
+        raise RuntimeError("m0 starting matrix should be a numpy array of size (2,3) not".format(m0))
 
     result=_np_.zeros(len(xy1))
 
@@ -172,7 +177,6 @@ def __twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
             default[u,v]=pi
         xyt=_np_.dot(default, xy1)
         ret= _np_.sqrt(_np_.sum((xy2-xyt)**2,axis=0))
-        print ret.shape
         return ret
 
 
@@ -188,11 +192,15 @@ def __twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     for pi,(u,v) in zip(perr,mapping):
         default_err[u,v]=pi
 
-    def transform(xy): # Construct the transformation enclose to return
-        xyt=_np_.dot(default.T, xy)
-        return xyt
+    transform=lambda xy:ApplyAffineTransform(xy,default)
 
     return (default,default_err,transform)
+
+
+def ApplyAffineTransform(xy,transform):
+    xyt=_np_.row_stack((xy.T,_np_.ones(len(xy))))
+    xyt=_np_.dot(transform,xyt)
+    return xyt.T
 
 
 def GetAffineTransform(p, pd):
@@ -205,12 +213,12 @@ def GetAffineTransform(p, pd):
     Returns:
         2x3 matrix representing the affine transform.
     """
-    if shape(p)!=(3, 2) and shape(pd)!=(3, 2):
+    if _np_.shape(p)!=(3, 2) and _np_.shape(pd)!=(3, 2):
         raise RuntimeError("Must supply three points")
 
-    p=append(p, array([[1], [1], [1]]), axis=1)
-    transform=la.solve(p, pd)
-    return  transform
+    p=_np_.append(p,_np_.atleast_2d( _np_.ones(3)).T, axis=1)
+    transform=_np_.linalg.solve(p, pd)
+    return  transform.T
 
 
 class AnalyseFile(DataFile):
@@ -1012,12 +1020,12 @@ class AnalyseFile(DataFile):
         if p0 is not None:
             if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
                 if p0.shape[0]==1: # Actually a single fit
-                    p0=__lmfit_p0_dict(p0[0],model)
+                    p0=_lmfit_p0_dict(p0[0],model)
                     single_fit=True
                 else: # Is chi^2 mapping
                     single_fit=False
             else:
-                p0=__lmfit_p0_dict(p0,model)
+                p0=_lmfit_p0_dict(p0,model)
                 single_fit=True
         else: #Do we already have parameter hints ?
             check=True
@@ -1053,7 +1061,7 @@ class AnalyseFile(DataFile):
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
             for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
-                p0=__lmfit_p0_dict(p0,model)
+                p0=_lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
                 ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix)
         return ret_val
@@ -1342,7 +1350,7 @@ class AnalyseFile(DataFile):
         """
 
         if func is None:
-            func = __outlier
+            func = _outlier
 
         if column is None:
             column = self.setas._get_cols("ycol")
@@ -1431,7 +1439,7 @@ class AnalyseFile(DataFile):
         xdata = interp1d(i, xcol,kind="cubic")
 
 
-        possible_peaks = _np_.array(__threshold(0, d1, rising=troughs, falling=peaks))
+        possible_peaks = _np_.array(_threshold(0, d1, rising=troughs, falling=peaks))
         curvature=_np_.abs(d2_interp(possible_peaks))
 
         # Filter just the significant peaks
@@ -1537,7 +1545,7 @@ class AnalyseFile(DataFile):
         bounds=kargs.pop("bounds",lambda x,r:True)
         otherbounds=kargs.pop("otherbounds",bounds)
         replace=kargs.pop("replace",True)
-        headers=kargs.pop("headers")
+        headers=kargs.pop("headers",None)
         xmode=kargs.pop("xmode","linear")
         ymode=kargs.pop("ymode","linear")
         use_estimate=kargs.pop("use_estimate",False)
@@ -1553,21 +1561,25 @@ class AnalyseFile(DataFile):
 
         if isinstance(other,DataFile):
             working2 = other.search(xcol,otherbounds)
-            working2 = ma.mask_rowcols(working, axis=0)
-            xdat2 = working[:, self.find_col(xcol)]
-            ydat2 = working[:, self.find_col(ycol)]
+            working2 = ma.mask_rowcols(working2, axis=0)
+            xdat2 = working2[:, other.find_col(xcol)]
+            ydat2 = working2[:, other.find_col(ycol)]
             if len(xdat2)!=len(xdat):
                 raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat),len(xdat2)))
         elif isinstance(other,_np_.ndarray):
-            other=_np_.atleast_2d(other)
+            if len(other.shape)==1:
+                other=_np_.atleast_2d(other).T
             if other.shape[0]!=len(xdat) or not 1<=other.shape[1]<=2:
-                raise RuntimeError("If other is a numpy array it must be the same length as the number of points to match to and 1 or 2 columns.")
+                raise RuntimeError("If other is a numpy array it must be the same length as the number of points to match to and 1 or 2 columns. (other shape={})".format(other.shape))
             if other.shape[1]==1:
                 xdat2=xdat
                 ydat2=other[:,0]
             else:
                 xdat2=other[:,0]
                 ydat2=other[:,1]
+        else:
+            raise RuntimeError("other should be either a numpy array or subclass of DataFile, not a {}".format(type(other)))
+
 
         # Need two nx2 arrays of points now
 
@@ -1576,20 +1588,21 @@ class AnalyseFile(DataFile):
 
         # We're going to use three points to get an estimate for the affine transform to apply
 
-        if instance(use_estimate,bool) and use_estimate:
+        if isinstance(use_estimate,bool) and use_estimate:
             mid=len(xdat)/2
             try: # may go wrong if three points are co-linear
                 m0=GetAffineTransform(xy1[[0,mid,-1],:],xy2[[0,mid,-1],:])
-            except: # So use an idnetify transformation instead
-                m0=_np_.array([[1.0,0.0m0.0],[0.0,1.0,0.0]])
+            except Exception as e: # So use an idnetify transformation instead
+                m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
             m0=use_estimate
         else: # Don't try to be cleber
-            m0=_np_.array([[1.0,0.0m0.0],[0.0,1.0,0.0]])
-
-        popt,perr,trans=__twoD_fit(xy1,xy2,xmode,ymode,m0)
+            m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
+        popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
         data=self.data[:,[xcol,ycol]]
         new_data=trans(data)
+        print popt
+        print perr
         if replace: # In place scaling, replace and return self
             self["Transform"]=popt
             self["Transform Err"]=perr
@@ -1893,14 +1906,14 @@ class AnalyseFile(DataFile):
         ret = []
         if isinstance(threshold, (list, _np_.ndarray)):
             if all_vals:
-                ret = [__threshold(x, current, rising=rising, falling=falling) for x in threshold]
+                ret = [_threshold(x, current, rising=rising, falling=falling) for x in threshold]
             else:
-                ret = [__threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+                ret = [_threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
         else:
             if all_vals:
-                ret = __threshold(threshold, current, rising=rising, falling=falling)
+                ret = _threshold(threshold, current, rising=rising, falling=falling)
             else:
-                ret = [__threshold(threshold, current, rising=rising, falling=falling)[0]]
+                ret = [_threshold(threshold, current, rising=rising, falling=falling)[0]]
         if xcol is not None:
             ret = [self.interpolate(r, xcol=False)[self.find_col(xcol)] for r in ret]
         if all_vals:
