@@ -306,6 +306,8 @@ class _setas(object):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
+        elif isinstance(name,Iterable):
+            ret=[self[x] for x  in name]
         else:
             try:
                 name = int(name)
@@ -888,8 +890,10 @@ class DataArray(_ma_.MaskedArray):
     def __array_finalize__(self, obj):
         # see InfoArray.__array_finalize__ for comments
         super(DataArray,self).__array_finalize__(obj)
-        if obj is None: return
-        self._setas = getattr(obj, '_setas', _setas())
+        if obj is None:
+            self._setas=_setas()
+        else:
+            self._setas = getattr(obj, '_setas', _setas())
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
@@ -955,7 +959,10 @@ class DataArray(_ma_.MaskedArray):
             ix=tuple(ix)
         ret=DataArray(super(DataArray,self).__getitem__(ix),setas=self._setas.clone)
         if isinstance(ret,_np_.ndarray) and ret.size==1:
-            ret=ret.dtype.type(ret)
+            return ret.dtype.type(ret)
+        if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
+            ret.setas=self._setas[ix[-1]]
+
         return ret
 
     def __setitem__(self,ix,val):
