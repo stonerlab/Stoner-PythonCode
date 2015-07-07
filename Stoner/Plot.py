@@ -7,7 +7,7 @@ Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
-from Stoner.Core import DataFile, _attribute_store
+from Stoner.Core import DataFile, _attribute_store, copy_into
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_
@@ -74,10 +74,97 @@ class PlotFile(DataFile):
             self.template = DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
         self.__figure = None
-        self._labels = self.column_headers
+        self._labels = copy.deepcopy(self.column_headers)
         self.legend = True
         self._subplots = []
         self.multiple = "common"
+
+#============================================================================================================================
+#Properties of PlotFile
+#============================================================================================================================
+
+    @property
+    def ax(self):
+        return self.axes.index(self.fig.gca())
+
+    @ax.setter
+    def ax(self,value):
+        if isinstance(value, int) and 0 <= value < len(self.axes):
+            self.fig.sca(self.axes[value])
+        else:
+            raise IndexError("Figure doesn't have enough axes")
+
+    @property
+    def axes(self):
+        if isinstance(self.__figure, mplfig.Figure):
+            ret = self.__figure.axes
+        else:
+            ret = None
+        return ret
+
+    @DataFile.clone.getter
+    def clone(self):
+        c = self.__class__()
+        ret = copy_into(self,c)
+        ret.template = copy.deepcopy(self.template)
+        ret.labels=self.labels
+        return ret
+
+    @property
+    def column_headers(self):
+        return DataFile.column_headers.fget(self)
+
+    @column_headers.setter
+    def column_headers(self,value):
+        DataFile.column_headers.fset(self,value)
+        self.labels = value
+
+    @property
+    def fig(self):
+        return self.__figure
+
+    @fig.setter
+    def fig(self,value):
+        self.__figure = value
+        self.__figure, ax = self.template.new_figure(value.number)
+
+    @property
+    def fignum(self):
+        return self.__figure.number
+
+    @property
+    def labels(self):
+        if len(self._labels) < len(self.column_headers):
+            self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
+        return self._labels
+
+    @labels.setter
+    def labels(self,value):
+        self._labels = value
+
+    @property
+    def subplots(self):
+        if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
+            self._subplots = self.__figure.axes
+        return self._subplots
+
+
+    @property
+    def template(self):
+        return self._template
+
+    @template.setter
+    def template(self,value):
+        if isinstance(value, DefaultPlotStyle):
+            self._template = value
+        elif type(value) == type(object) and issubclass(value, DefaultPlotStyle):
+            self._template = value()
+        else:
+            raise ValueError("Template is not of the right class")
+        self._template.apply()
+
+
+
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
@@ -293,32 +380,7 @@ class PlotFile(DataFile):
 
                 All other attrbiutes are passed over to the parent class
                 """
-        if name == "fig" or name == "__figure":
-            ret = self.__figure
-        elif name == "fignum":
-            ret = self.__figure.number
-        elif name == "template":
-            ret = self._template
-        elif name == "ax":
-            return self.axes.index(self.fig.gca())
-        elif name == "labels":
-            if len(self._labels) < len(self.column_headers):
-                self._labels.extend(self.column_headers[len(self._labels):])
-            ret = self._labels
-        elif name == "subplots":
-            if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
-                self._subplots = self.__figure.axes
-            ret = self._subplots
-        elif name == "axes":
-            if isinstance(self.__figure, mplfig.Figure):
-                ret = self.__figure.axes
-            else:
-                ret = None
-        elif name == "clone":
-            ret = super(PlotFile, self).__getattr__("clone")
-            ret.template = copy.deepcopy(self.template)
-            ret.labels=self.labels
-        elif name == "_public_attrs":
+        if name == "_public_attrs":
             ret = super(PlotFile, self).__getattr__(name)
             ret.update({
                 "fig": (int, mplfig.Figure),
@@ -335,7 +397,7 @@ class PlotFile(DataFile):
                 return super(PlotFile, self).__getattr__(name)
             except AttributeError:
                 if not isinstance(self.__figure, mplfig.Figure):
-                    raise AttributeError
+                    raise AttributeError("Unknown attribute {}".format(name))
                 ax = self.__figure.axes
                 if "get_{}".format(name) in dir(ax):
                     func = ax.__getattribute__("get_{}".format(name))
@@ -345,7 +407,7 @@ class PlotFile(DataFile):
                 elif name in dir(ax):  # Sort of a universal pass through to plt
                     ret = ax.__getattribute__(name)
                 else:
-                    raise AttributeError
+                    raise AttributeError("Unknown attribute {}".format(name))
         return ret
 
     def __setattr__(self, name, value):
@@ -364,24 +426,8 @@ class PlotFile(DataFile):
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
     """
-        if name == "fig":
-            self.__figure = value
-            self.__figure, ax = self.template.new_figure(value.number)
-        elif name == "labels":
-            self._labels = value
-        elif name == "template":
-            if isinstance(value, DefaultPlotStyle):
-                self._template = value
-            elif type(value) == type(object) and issubclass(value, DefaultPlotStyle):
-                self._template = value()
-            else:
-                raise ValueError("Template is not of the right class")
-            self._template.apply()
-        elif name == "column_headers":  # Overwrite the labels if we overwrite the column_headers
-            self._labels = value
-            super(PlotFile, self).__setattr__(name, value)
-        elif name == "ax" and isinstance(value, int) and 0 <= value < len(self.axes):
-            self.fig.sca(self.axes[value])
+        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
+            object.__setattr__(self,name, value)
         elif name in dir(super(PlotFile, self)):
             super(PlotFile, self).__setattr__(name, value)
         elif "set_{}".format(name) in dir(plt.Axes):
@@ -945,6 +991,7 @@ class PlotFile(DataFile):
             if "yerr" in kargs and isinstance(kargs["yerr"], list):  # Fix yerr keywords
                 temp_kwords["yerr"] = kargs["yerr"][ix]
             # Call plot
+
             if fmt_t is None:
                 self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
             else:

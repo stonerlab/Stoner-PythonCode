@@ -42,7 +42,7 @@ def copy_into(source,dest):
             continue
         dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
     dest.data = source.data.copy()
-    dest._setas = source.setas.clone
+    dest.data._setas = source.data._setas.clone
     return dest
 
 
@@ -107,7 +107,9 @@ class StonerLoadError(Exception):
 
 
 class _attribute_store(dict):
-    """A class that provides attributes that refer to columns in a DataFile instance."""
+    """A dictionary=like class that provides attributes that work like indices.
+
+    Used to implement the mapping of column types to indices in the setas attriobutes."""
 
     def __init__(self, *args, **kargs):
         if len(args) == 1 and isinstance(args[0], dict):
@@ -147,12 +149,65 @@ class _setas(object):
         """
         self.setas = list()
         self.column_headers = []
-        self.cols = _attribute_store()
+        self._cols = _attribute_store()
+        self._shape=tuple()
 
         if initial_val is not None:
             self(initial_val)
         elif len(kargs) > 0:
             self(**kargs)
+
+    @property
+    def clone(self):
+            new = _setas()
+            for attr in self.__dict__:
+                if not callable(self.__dict__[attr]):
+                    new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+            return new
+
+    @property
+    def cols(self):
+        if len(self._cols)==0:
+            self._cols.update(self._get_cols())
+        return self._cols
+
+    @cols.setter
+    def cols(self,value):
+        if not isinstance(value,dict):
+            raise AttributeError("cols attribute must be a dictionary")
+        self._cols=_attribute_store(value)
+
+    @property
+    def column_headers(self):
+        return self._column_headers
+
+    @column_headers.setter
+    def column_headers(self,value):
+        if isinstance(value,Iterable):
+            self._column_headers=list(value)
+            c=len(self._column_headers)
+            self.setas.extend(["."]*(c-len(self.setas)))
+            object.__setattr__(self,"setas",self.setas[:c])
+        else:
+            raise AttributeError("Column_headers attribute should be a list")
+
+    @property
+    def shape(self):
+        return self._shape
+
+    @shape.setter
+    def shape(self,value):
+        if len(value)==2:  # Force setas annd acolumn_headers to match shape
+            c=value[1]
+            self.setas.extend(["."]*(c-len(self.setas)))
+            object.__setattr__(self,"setas",self.setas[:c])
+            self.column_headers.extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
+            object.__setattr__(self,"column_headers",self.column_headers[:c])
+            self._shape=tuple(value)
+        else:
+            raise AttributeError("shape attribute should be a 2-tuple")
+
+
 
     def __call__(self, *args, **kargs):
         """Treat the current instance as a callable object and assign columns accordingly.
@@ -251,6 +306,8 @@ class _setas(object):
             indices = name.indices(len(self.setas))
             name = range(*indices)
             ret = [self[x] for x in name]
+        elif isinstance(name,Iterable):
+            ret=[self[x] for x  in name]
         else:
             try:
                 name = int(name)
@@ -261,29 +318,13 @@ class _setas(object):
             ret = ret[0]
         return ret
 
-    def __getattr__(self, name):
-        if name == "clone":
-            new = _setas()
-            for attr in self.__dict__:
-                if not callable(self.__dict__[attr]):
-                    new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
-            return new
-        else:
-            return super(_setas, self).__getattribute__(name)
 
     def __setattr__(self, name, value):
         """Wrapper to handle some special linked attributes."""
-        super(_setas, self).__setattr__(name, value)
-        if name == "shape":  # Force setas annd acolumn_headers to match shape
-            c=value[1]
-            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
-            self.__dict__["setas"]=self.setas[:c]
-            self.__dict__["column_headers"].extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
-            self.__dict__["column_headers"] = self.column_headers[:c]
-        elif name=="column_headers":
-            c=len(self.column_headers)
-            self.__dict__["setas"].extend(["."]*(c-len(self.setas)))
-            self.__dict__["setas"]=self.setas[:c]
+        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
+            object.__setattr__(self,name, value)
+        else:
+            object.__setattr__(self,name, value)
 
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
@@ -360,7 +401,7 @@ class _setas(object):
                     try:
                         col = int(col)
                     except ValueError:
-                        raise KeyError('Unable to find any possible column matches for ' + str(col))
+                        raise KeyError('Unable to find any possible column matches for "{} in {}"'.format(col,self.column_headers))
                     if col < 0 or col >= self.data.shape[1]:
                         raise KeyError('Column index out of range')
                 else:
@@ -508,7 +549,8 @@ class _setas(object):
 
 
 class _evaluatable(object):
-    """A very simple class that is just a placeholder."""
+    """A very simple class that is just a placeholder to indicate that special action
+    needs to be taken to convert a string representation to a valid Python type."""
     pass
 
 
@@ -817,6 +859,120 @@ class typeHintedDict(dict):
             A string of the format : key{type hint} = value"""
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('string_escape'))
 
+class DataArray(_ma_.MaskedArray):
+    """A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.
+
+    This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
+    matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to
+    the parent class, DataArray understands that it came from a DataFile which has a setas attribute and column
+    assignments. This allows the row to be indexed by column name, and also for quick
+    attribute access to work. This makes writing functions to work with a single row of data
+    more attractive.
+    """
+
+    def __new__(cls, input_array, *args,**kargs):
+        # Input array is an already formed ndarray instance
+        # We first cast to be our class type
+        setas=kargs.pop("setas",None)
+        mask=kargs.pop("mask",None)
+        obj = _ma_.asarray(input_array,*args,**kargs).view(cls)
+        # add the new attribute to the created instance
+        if setas is not None:
+            obj._setas = setas
+        else:
+            obj._setas=_setas()
+        if mask is not None:
+            obj.mask=mask
+        # Finally, we must return the newly created object:
+        return obj
+
+    def __array_finalize__(self, obj):
+        # see InfoArray.__array_finalize__ for comments
+        super(DataArray,self).__array_finalize__(obj)
+        if obj is None:
+            self._setas=_setas()
+        else:
+            self._setas = getattr(obj, '_setas', _setas())
+
+    def __getattr__(self,name):
+        #Overrides __getattr__ to allow access as row.x etc.
+        """Get a column using the setas attribute."""
+        col_check = {
+            "x": "xcol",
+            "d": "xerr",
+            "y": "ycol",
+            "e": "yerr",
+            "z": "zcol",
+            "f": "zerr",
+            "u": "ucol",
+            "v": "vcol",
+            "w": "wcol",
+            "q": "",
+            "p": "",
+            "r": ""
+        }
+        if name not in col_check:
+            return super(DataArray,self).__getattribute__(name)
+        indexer=[slice(0,dim,1) for ix,dim in enumerate(self.shape)]
+        col = col_check[name]
+        if col == "" and self._setas.cols and "axes" in self._setas.cols:  # inferred quick access columns for cartesian to polar transforms
+            axes = int(self._setas.cols["axes"])
+            if name == "r":  # r in spherical or cylinderical co-ordinate systems
+                m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
+                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
+                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
+                     lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
+                ret = m[axes](self)
+            elif name == "q":  # theta in clyinderical or spherical co-ordiante systems
+                m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
+                     lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
+                     lambda d: _np_.arctan2(d.u, d.v)]
+                ret = m[axes](self)
+            elif name == "p":  # phi is spherical co-ordinate systems
+                m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
+                     lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
+                ret = m[axes](self)
+
+        elif col.startswith("x"):
+            if self._setas.cols[col] is not None:
+                indexer[-1]=self._setas.cols[col]
+                ret = self[tuple(indexer)]
+            else:
+                ret = None
+        else:
+            ix=len(self._setas.cols[col])
+            if ix > 0:
+                indexer[-1]=self._setas.cols[col][0]
+            else:
+                return None
+            ret = self[tuple(indexer)]
+        return ret
+
+    def __getitem__(self,ix):
+        # Override __getitem__ to handle string indexing
+        if isinstance(ix,string_types):
+            ix=(slice(0,-1,1),self._setas.find_col(ix))
+        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
+            ix=list(ix)
+            ix[-1]=self._setas.find_col(ix[-1])
+            ix=tuple(ix)
+        ret=DataArray(super(DataArray,self).__getitem__(ix),setas=self._setas.clone)
+        if isinstance(ret,_np_.ndarray) and ret.size==1:
+            return ret.dtype.type(ret)
+        if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
+            ret.setas=self._setas[ix[-1]]
+
+        return ret
+
+    def __setitem__(self,ix,val):
+        # Override __getitem__ to handle string indexing
+        if isinstance(ix,string_types):
+            ix=self._setas.find_col(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
+            ix=list(ix)
+            ix[-1]=self._setas.find_col(ix[-1])
+            ix=tuple(ix)
+        super(DataArray,self).__setitem__(ix,val)
 
 class DataFile(object):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents
@@ -904,17 +1060,16 @@ class DataFile(object):
             A new instance of the DataFile class.
         """
         # init instance attributes
-        self._setas = _setas()
         self.debug = False
         self._masks = [False]
         self.metadata = typeHintedDict()
-        self.data = _ma_.masked_array([])
+        super(DataFile,self).__setattr__("data",DataArray([]))
         self.filename = None
         self.column_headers = list()
         i = len(args) if len(args) < 2 else 2
         handler = [None, self._init_single, self._init_double, self._init_many][i]
         self.mask = False
-        self._setas._get_cols()
+        self.data._setas._get_cols()
         if handler is not None:
             handler(*args, **kargs)
         self.metadata["Stoner.class"] = self.__class__.__name__
@@ -941,7 +1096,7 @@ class DataFile(object):
             self.load(filename=arg, **kargs)
         elif isinstance(arg, _np_.ndarray):
             # numpy.array - set data
-            self.data = _ma_.masked_array(_np_.atleast_2d(arg))
+            self.data = DataArray(_np_.atleast_2d(arg),setas=self.data._setas)
             self.column_headers = ['Column_{}'.format(x) for x in range(_np_.shape(args[0])[1])]
         elif isinstance(arg, dict):  # Dictionary - use as data or metadata
             if all_type(arg.keys(),string_types) and all_type(arg.values(),_np_.ndarray) and _np_.all(
@@ -955,16 +1110,15 @@ class DataFile(object):
                 if not callable(a):
                     super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
-            self.data = _ma_.masked_array(arg.data)
-            self._setas = arg._setas
-            self._setas.ref = self
+            self.data = DataArray(arg.data,setas=arg.setas.clone)
+            self.data.setas = arg.setas.clone
         elif isinstance(arg,Iterable) and all_type(arg,string_types):
             self.column_headers=list(arg)
         elif isinstance(arg,Iterable) and all_type(arg,_np_.ndarray):
             self._init_many(*arg,**kargs)
         else:
             raise SyntaxError("No constructor for {}".format(type(arg)))
-        self._setas.cols.update(self.setas._get_cols())
+        self.data._setas.cols.update(self.setas._get_cols())
 
     def _init_double(self, *args, **kargs):
         """Two argument constructors handled here. Called form __init__"""
@@ -983,6 +1137,116 @@ class DataFile(object):
                 break
         else:
             self.data=_np_.column_stack(args)
+
+#============================================================================================================================
+# Property Accessor Functions
+#============================================================================================================================
+
+    @property
+    def clone(self):
+        """Gets a deep copy of the current DataFile.
+        """
+        c = self.__class__()
+        return copy_into(self,c)
+
+    @property
+    def column_headers(self):
+        """Pass through to the setas attribute."""
+        return self.data._setas.column_headers
+
+    @column_headers.setter
+    def column_headers(self, value):
+        """Write the column_headers attribute (delagated to the setas object)."""
+        self.data._setas.column_headers = value
+
+    @property
+    def dict_records(self):
+        """Return the data as a dictionary of single columns with column headers for the keys.
+        """
+        return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+
+    @property
+    def dtype(self):
+        """Return the _np_ dtype attribute of the data
+        """
+        return self.data.dtype
+
+    @property
+    def mask(self):
+        """Returns the mask of the data array.
+        """
+        self.data.mask = _ma_.getmaskarray(self.data)
+        return self.data.mask
+
+    @mask.setter
+    def mask(self, value):
+        """Set the mask attribute by setting the data.mask."""
+        if callable(value):
+            self._set_mask(value, invert=False)
+        else:
+            self.data.mask = value
+
+    @property
+    def records(self):
+        """Returns the data as a _np_ structured data array. If columns names are duplicated then they
+        are made unique.
+        """
+        f = self.data.flags
+        if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
+            self.data = self.data.copy()
+        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
+        for i in range(len(ch)):
+            header = ch[i]
+            j = 0
+            while ch[i] in ch[i + 1:] or ch[i] in ch[0:i]:
+                j = j + 1
+                ch[i] = "{}_{}".format(header, j)
+        dtype = [(x, self.dtype) for x in ch]
+        return self.data.view(dtype=dtype).reshape(len(self))
+
+    @property
+    def shape(self):
+        """Pass through the numpy shape attribute of the data.
+        """
+        return self.data.shape
+
+    @property
+    def setas(self):
+        """Get the list of column assignments."""
+        return self.data._setas
+
+    @setas.setter
+    def setas(self, value):
+        """Sets a new setas assignment by calling the setas object."""
+        self.data._setas(value)
+
+    @property
+    def subclasses(self):
+        """Return a list of all in memory subclasses of this DataFile.
+        """
+        subclasses = {x: x.priority for x in itersubclasses(DataFile)}
+        ret = OrderedDict()
+        ret["DataFile"] = DataFile
+        for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
+            ret[cls.__name__] = cls
+        return ret
+
+    @property
+    def T(self):
+        """Gets the current data transposed.
+        """
+        return self.data.T
+
+    @T.setter
+    def T(self, value):
+        """Write directly to the transposed data."""
+        self.data.T = value
+
+
+#============================================================================================================================
+# Operator Functions
+#============================================================================================================================
+
 
     def __add__(self, other):
         """ Implements a + operator to concatenate rows of data.
@@ -1006,6 +1270,30 @@ class DataFile(object):
             array then it is appended if it has the same number of
             columns and @a self.data."""
         newdata = self.clone
+        return self.__add_core__(other, newdata)
+
+    def __iadd__(self, other):
+        """ Implements a += operator to concatenate rows of data inplace.
+
+        Args:
+            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
+
+        Note:
+            * If other is a dictionary then the keys of the dictionary are passed to
+            :py:meth:`find_col` to see if they match a column, in which case the
+            corresponding value will be used for theat column in the new row.
+            Columns which do not have a matching key will be set to NaN. If other has keys
+            that are not found as columns in self, additional columns are added.
+            * If other is a list, then the add method is called recursively for each element
+            of the list.
+            * Returns: A Datafile object with the rows of @a other appended
+            to the rows of the current object.
+            * If other is a 1D numopy array with the same number of
+            elements as their are columns in @a self.data then the numpy
+            array is treated as a new row of data If @a ither is a 2D numpy
+            array then it is appended if it has the same number of
+            columns and @a self.data."""
+        newdata = self
         return self.__add_core__(other, newdata)
 
     def __add_core__(self, other, newdata):
@@ -1108,6 +1396,28 @@ class DataFile(object):
         newdata = self.clone
         return self.__and_core__(other, newdata)
 
+    def __iand__(self, other):
+        """Implements the &= operator to concatenate columns of data in a :py:class:`DataFile` object.
+
+        Args:
+            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
+
+        Returns:
+            A :py:class:`DataFile` object with the columns of other con
+        catenated as new columns at the end of the self object.
+
+        Note:
+            Whether other is a numopy array of :py:class:`DataFile`, it must
+            have the same or fewer rows than the self object.
+            The size of @a other is increased with zeros for the extra rows.
+            If other is a 1D numpy array it is treated as a column vector.
+            The new columns are given blank column headers, but the
+            length of the :py:meth:`column_headers` is
+            increased to match the actual number of columns.
+        """
+        newdata = self
+        return self.__and_core__(other, newdata)
+
     def __and_core__(self, other, newdata):
         """Implements the core of the & operator, returning data in newdata
 
@@ -1167,6 +1477,103 @@ class DataFile(object):
                 newdata.__dict__[attr] = self.__dict__[attr]
         return newdata
 
+    def __mod__(self, other):
+        """Overload the % operator to mean column deletion.
+
+        Args:
+            Other (column index): column(s) to delete.
+
+        Return:
+            A copy of self with a column deleted.
+        """
+        newdata = self.clone
+        return self.__mod_core__(other, newdata)
+
+    def __imod__(self, other):
+        """Overload the % operator to mean column deletion.
+
+        Args:
+            Other (column index): column(s) to delete.
+
+        Return:
+            A copy of self with a column deleted.
+        """
+        newdata = self
+        return self.__mod_core__(other, newdata)
+
+    def __mod_core__(self, other, newdata):
+        """Implements the column deletion method."""
+        if isinstance(other, index_types):
+            newdata.del_column(other)
+        else:
+            newdata = NotImplemented
+        return newdata
+
+    def __sub__(self, other):
+        """Implements what to do when subtraction operator is used.
+
+        Args:
+            other (int,list of integers): Delete row(s) from data.
+
+        Returns:
+            DataFile with rows removed.
+        """
+        newdata = self.clone
+        return self.__sub_core__(other, newdata)
+
+    def __isub__(self, other):
+        """Implements what to do when subtraction operator is used.
+
+        Args:
+            other (int,list of integers): Delete row(s) from data.
+
+        Returns:
+            DataFile with rows removed.
+        """
+        newdata = self
+        return self.__sub_core__(other, newdata)
+
+    def __sub_core__(self, other, newdata):
+        """Actually do the subtraction."""
+        if isinstance(other, (slice, int)):
+            newdata.del_rows(other)
+        elif isinstance(other, list) and _np_.all([isinstance(i, int) for i in other]):
+            newdata.del_rows(other)
+        else:
+            newdata = NotImplemented
+        return newdata
+
+#============================================================================================================================
+# Speical Methods
+#============================================================================================================================
+
+
+    def __call__(self,*args,**kargs):
+        """Implements an option for DataFile().
+
+        Creates a new clone of self and then passes all the arguments to the clones __init__ method.
+        """
+        new_d=self.clone
+        i = len(args) if len(args) < 2 else 2
+        handler = [None, new_d._init_single, new_d._init_double, new_d._init_many][i]
+        if handler is not None:
+            handler(*args, **kargs)
+        if len(kargs) > 0:  # set public attributes from keywords
+            myattrs = new_d._public_attrs
+            for k in kargs:
+                if k in myattrs:
+                    if isinstance(kargs[k], myattrs[k]):
+                        new_d.__setattr__(k, kargs[k])
+                    else:
+                        if isinstance(myattrs[k], tuple):
+                            typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
+                        else:
+                            typ = "a " + str(str(type(myattr[k])))
+                        raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
+
+        return new_d
+
+
     def __contains__(self, item):
         """Operator function for membertship tests - used to check metadata contents.
 
@@ -1198,12 +1605,12 @@ class DataFile(object):
             if "_setas" not in self.__dict__:
                 break
             if k.startswith("x"):
-                if k in self._setas.cols and self._setas.cols[k] is not None:
+                if k in self.data._setas.cols and self.data._setas.cols[k] is not None:
                     attr.append(col_check[k])
             else:
-                if k in self._setas.cols and len(self._setas.cols[k]) > 0:
+                if k in self.data._setas.cols and len(self.data._setas.cols[k]) > 0:
                     attr.append(col_check[k])
-        return sorted(attr)
+        return sorted(set(attr))
 
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b DataFile objects.
@@ -1276,16 +1683,6 @@ class DataFile(object):
        """
 
         easy = {
-            "clone": self._getattr_clone,
-            "dict_records": self._getattr_dict_records,
-            "dtype": self._getattr_dtype,
-            "mask": self._getattr_mask,
-            "T": self._getattr_by_columns,
-            "records": self._getattr_records,
-            "shape": self._getattr_shape,
-            "subclasses": self._getattr_subclasses,
-            "setas": self._getattr_setas,
-            "column_headers": self.__getattr__column_headers,
             "_public_attrs": self.__getattr_writeable
         }
 
@@ -1303,128 +1700,16 @@ class DataFile(object):
             raise KeyError("Tried accessing setas before initialised")
         else:
             try:
-                col = self._setas.find_col(name)
+                col = self.data._setas.find_col(name)
                 return self.column(col)
             except (KeyError, IndexError):
                 pass
         raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
 
-    def _getattr_by_columns(self):
-        """Gets the current data transposed.
-        """
-        return self.data.T
-
-    def _getattr_clone(self):
-        """Gets a deep copy of the current DataFile.
-        """
-        c = self.__class__()
-        return copy_into(self,c)
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
-        col_check = {
-            "x": "xcol",
-            "d": "xerr",
-            "y": "ycol",
-            "e": "yerr",
-            "z": "zcol",
-            "f": "zerr",
-            "u": "ucol",
-            "v": "vcol",
-            "w": "wcol",
-            "q": "",
-            "p": "",
-            "r": ""
-        }
-        col = col_check[name]
-        if col == "" and self._setas.cols and "axes" in self._setas.cols:  # inferred quick access columns for cartesian to polar transforms
-            axes = int(self._setas.cols["axes"])
-            if name == "r":  # r in spherical or cylinderical co-ordinate systems
-                m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
-                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
-                     lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
-                ret = m[axes](self)
-            elif name == "q":  # theta in clyinderical or spherical co-ordiante systems
-                m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
-                     lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
-                     lambda d: _np_.arctan2(d.u, d.v)]
-                ret = m[axes](self)
-            elif name == "p":  # phi is spherical co-ordinate systems
-                m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
-                     lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
-                ret = m[axes](self)
-
-        elif col.startswith("x"):
-            if self._setas.cols[col] is not None:
-                ret = self.column(self._setas.cols[col])
-            else:
-                ret = None
-        else:
-            if len(self._setas.cols[col]) > 0:
-                ret = self.column(self._setas.cols[col])
-                if len(self._setas.cols[col]) == 1:
-                    ret = ret[:, 0]
-            else:
-                ret = None
-        return ret
-
-    def __getattr__column_headers(self):
-        """Pass through to the setas attribute."""
-        return self._setas.column_headers
-
-    def _getattr_dict_records(self):
-        """Return the data as a dictionary of single columns with column headers for the keys.
-        """
-        return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
-
-    def _getattr_dtype(self):
-        """Return the _np_ dtype attribute of the data
-        """
-        return self.data.dtype
-
-    def _getattr_mask(self):
-        """Returns the mask of the data array.
-        """
-        self.data.mask = _ma_.getmaskarray(self.data)
-        return self.data.mask
-
-    def _getattr_records(self):
-        """Returns the data as a _np_ structured data array. If columns names are duplicated then they
-        are made unique.
-        """
-        f = self.data.flags
-        if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
-            self.data = self.data.copy()
-        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
-        for i in range(len(ch)):
-            header = ch[i]
-            j = 0
-            while ch[i] in ch[i + 1:] or ch[i] in ch[0:i]:
-                j = j + 1
-                ch[i] = "{}_{}".format(header, j)
-        dtype = [(x, self.dtype) for x in ch]
-        return self.data.view(dtype=dtype).reshape(len(self))
-
-    def _getattr_shape(self):
-        """Pass through the numpy shape attribute of the data.
-        """
-        return self.data.shape
-
-    def _getattr_setas(self):
-        """Get the list of column assignments."""
-        self._setas.ref = self  #Reset the reference to point to ourselves
-        return self._setas
-
-    def _getattr_subclasses(self):
-        """Return a list of all in memory subclasses of this DataFile.
-        """
-        subclasses = {x: x.priority for x in itersubclasses(DataFile)}
-        ret = OrderedDict()
-        ret["DataFile"] = DataFile
-        for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
-            ret[cls.__name__] = cls
-        return ret
+        return self.data.__getattr__(name)
 
     def __getattr_writeable(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
@@ -1473,99 +1758,28 @@ class DataFile(object):
             d = _np_.atleast_2d(d)
             for x in range(1, len(name)):
                 d = _np_.append(d, _np_.atleast_2d(self.data[x,:]), 0)
-            return d
+                d=DataArray(d,setas=self.data._setas.clone)
+            ret = d
         elif isinstance(name, int):
-            return self.data[name,:]
+            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
         elif isinstance(name, _np_.ndarray) and len(name.shape) == 1:
-            return self.data[name,:]
+            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
         elif isinstance(name, string_types) or isinstance(name, re._pattern_type):
-            return self.__meta__(name)
+            ret = self.__meta__(name)
         elif isinstance(name, tuple) and len(name) == 2:
             x, y = name
-            if isinstance(x, str):
-                return self[x][y]
-            else:
-                d = _np_.atleast_2d(self[x])
-                y = self.find_col(y)
-                r = d[:, y]
-                if len(r) == 1:
-                    r = r[0]
-                return r
+            if isinstance(x, string_types):# Shortcut to index metadata that is a list
+                ret = self[x][y]
+            else: # Pass through to DataArray to do heavy lifting here
+                ret = self.data.__getitem__(name)
         else:
-            raise TypeError("Key must be either numeric of string")
+            raise TypeError("Key must be either numeric of string, or tuple")
+
+        return ret
 
     def __getstate__(self):
         return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata}
 
-    def __iadd__(self, other):
-        """ Implements a += operator to concatenate rows of data inplace.
-
-        Args:
-            other (numpy arra `Stoner.Core.DataFile` or a dictionary or a list):
-
-        Note:
-            * If other is a dictionary then the keys of the dictionary are passed to
-            :py:meth:`find_col` to see if they match a column, in which case the
-            corresponding value will be used for theat column in the new row.
-            Columns which do not have a matching key will be set to NaN. If other has keys
-            that are not found as columns in self, additional columns are added.
-            * If other is a list, then the add method is called recursively for each element
-            of the list.
-            * Returns: A Datafile object with the rows of @a other appended
-            to the rows of the current object.
-            * If other is a 1D numopy array with the same number of
-            elements as their are columns in @a self.data then the numpy
-            array is treated as a new row of data If @a ither is a 2D numpy
-            array then it is appended if it has the same number of
-            columns and @a self.data."""
-        newdata = self
-        return self.__add_core__(other, newdata)
-
-    def __iand__(self, other):
-        """Implements the &= operator to concatenate columns of data in a :py:class:`DataFile` object.
-
-        Args:
-            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
-
-        Returns:
-            A :py:class:`DataFile` object with the columns of other con
-        catenated as new columns at the end of the self object.
-
-        Note:
-            Whether other is a numopy array of :py:class:`DataFile`, it must
-            have the same or fewer rows than the self object.
-            The size of @a other is increased with zeros for the extra rows.
-            If other is a 1D numpy array it is treated as a column vector.
-            The new columns are given blank column headers, but the
-            length of the :py:meth:`column_headers` is
-            increased to match the actual number of columns.
-        """
-        newdata = self
-        return self.__and_core__(other, newdata)
-
-    def __imod__(self, other):
-        """Overload the % operator to mean column deletion.
-
-        Args:
-            Other (column index): column(s) to delete.
-
-        Return:
-            A copy of self with a column deleted.
-        """
-        newdata = self
-        return self.__mod_core__(other, newdata)
-
-    def __isub__(self, other):
-        """Implements what to do when subtraction operator is used.
-
-        Args:
-            other (int,list of integers): Delete row(s) from data.
-
-        Returns:
-            DataFile with rows removed.
-        """
-        newdata = self
-        return self.__sub_core__(other, newdata)
 
     def __iter__(self):
         """Provide agenerator for iterating.
@@ -1596,12 +1810,12 @@ class DataFile(object):
             except:
                 raise StonerLoadError("Not a TDI File")
             col_headers_tmp = [x.strip() for x in row[1:]]
-            datarow = 0
-            metadatarow = 0
+            data_array = 0
+            metaDataArray = 0
             cols = 0
             for row in reader:  # Now read through the metadata columns
                 if len(row) > 1 and row[1].strip() != "":
-                    datarow += 1
+                    data_array += 1
                     still_data = True
                 else:
                     still_data = False
@@ -1609,28 +1823,28 @@ class DataFile(object):
                     break
                 else:
                     cols = max(cols, len(row))
-                    metadatarow += 1
+                    metaDataArray += 1
                     md = row[0].split('=')
                     val = "=".join(md[1:])
                     self.metadata[md[0].strip()] = val.strip()
         #End of metadata reading, close filke and reopen to read data
         if still_data:  # data extends beyond metada - read with genfromtxt
-            self.data = _np_.genfromtxt(self.filename,
+            self.data = DataArray(_np_.genfromtxt(self.filename,
                                         skip_header=1,
                                         usemask=True,
                                         delimiter="\t",
                                         usecols=range(1, cols),
                                         invalid_raise=False,
-                                        comments="\0")
-        elif datarow > 0:  # some data less than metadata
-            footer = metadatarow - datarow
-            self.data = _np_.genfromtxt(self.filename,
+                                        comments="\0"))
+        elif data_array > 0:  # some data less than metadata
+            footer = metaDataArray - data_array
+            self.data = DataArray(_np_.genfromtxt(self.filename,
                                         skip_header=1,
                                         skip_footer=footer,
                                         usemask=True,
                                         delimiter="\t",
                                         comments="\0",
-                                        usecols=range(1, cols))
+                                        usecols=range(1, cols)))
         else:
             self.data = _np_.atleast_2d(_np_.array([]))
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
@@ -1692,27 +1906,6 @@ class DataFile(object):
             raise TypeError("Only strings and regular expressions  are supported as search keys for metadata")
         return ret
 
-    def __mod__(self, other):
-        """Overload the % operator to mean column deletion.
-
-        Args:
-            Other (column index): column(s) to delete.
-
-        Return:
-            A copy of self with a column deleted.
-        """
-        newdata = self.clone
-        return self.__mod_core__(other, newdata)
-
-    def __mod_core__(self, other, newdata):
-        """Implements the column deletion method."""
-        if isinstance(other, index_types):
-            newdata.del_column(other)
-        else:
-            newdata = NotImplemented
-        return newdata
-
-
     def __parse_metadata(self, key, value):
         """Parse the metadata string, removing the type hints into a separate dictionary from the metadata.
 
@@ -1750,8 +1943,8 @@ class DataFile(object):
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
         cols = len(col_headers_tmp)
-        self._setas = _setas("." * cols)
-        self.data = _ma_.masked_array([])
+        self.data._setas = _setas("." * cols)
+        self.data = DataArray([],setas=self.data._setas)
         for r in reader:
             if r.strip() == "":  # Blank line
                 continue
@@ -1816,7 +2009,7 @@ class DataFile(object):
 
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
-        self.data = _ma_.masked_array(_np_.atleast_2d(self.data))
+        self.data = DataArray(_np_.atleast_2d(self.data),setas=self.data._setas)
         r = _np_.shape(self.data)[0]
         md = [self.metadata.export(x) for x in sorted(self.metadata)]
         for x in range(min(r, m)):
@@ -1850,7 +2043,7 @@ class DataFile(object):
             for v in value:
                 ix = _np_.logical_or(ix, self.__search_index(xcol, v))
         elif callable(value):
-            ix = _np_.array([value(self.column(x)[i], self.data[i]) for i in range(len(self))], dtype=bool)
+            ix = _np_.array([value(r[x],r) for r in self], dtype=bool)
         else:
             raise RuntimeError("Unknown search value type {}".format(value))
         return ix
@@ -1865,50 +2058,35 @@ class DataFile(object):
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
 
-        easy = {
-            "mask": self.__setattr_mask,
-            "data": self.__setattr_data,
-            "T": self.__setattr_T,
-            "setas": self.__setattr_setas,
-            "column_headers": self.__setattr_column_headers
-        }
-        if name in easy:
-            easy[name](value)
-        elif len(name) == 1 and name in "xyzuvwdef" and len(self.setas[name]) != 0:
-            self.__setattr_col(name, value)
+        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
+            object.__setattr__(self,name, value)
         else:
-            super(DataFile, self).__setattr__(name, value)
 
-    def __setattr_mask(self, value):
-        """Set the mask attribute by setting the data.mask."""
-        if callable(value):
-            self._set_mask(value, invert=False)
-        else:
-            self.data.mask = value
+            easy = {
+                "data": self.__setattr_data,
+            }
+            if name in easy:
+                easy[name](value)
+            elif len(name) == 1 and name in "xyzuvwdef" and len(self.setas[name]) != 0:
+                self.__setattr_col(name, value)
+            else:
+                super(DataFile, self).__setattr__(name, value)
+
 
     def __setattr_data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
-        nv = _ma_.masked_array(value)
+        nv=value
         if len(nv.shape) == 0:
             nv = _ma_.atleast_2d(nv)
         elif len(nv.shape) == 1:
             nv = _ma_.atleast_2d(nv).T
         elif len(nv.shape) > 2:
             raise ValueError("DataFile.data should be no more than 2 dimensional not shaoe {}", format(nv.shape))
-        self.__dict__["data"] = nv
-        self._setas.shape = nv.shape
-
-    def __setattr_T(self, value):
-        """Write directly to the transposed data."""
-        self.data.T = value
-
-    def __setattr_setas(self, value):
-        """Sets a new setas assignment by calling the setas object."""
-        self._setas(value)
-
-    def __setattr_column_headers(self, value):
-        """Write the column_headers attribute (delagated to the setas object)."""
-        self._setas.column_headers = value
+        nv = DataArray(nv)
+        if hasattr(self,"data") and hasattr(self.data,"_setas"):
+            nv._setas=self.data._setas.clone
+        nv._setas.shape=nv.shape
+        super(DataFile,self).__setattr__("data",nv)
 
     def __setattr_col(self, name, value):
         """Attempts to either assign data columns if set up, or setas setting.
@@ -1946,7 +2124,7 @@ class DataFile(object):
 
     def __setstate__(self, state):
         """Internal function for pickling."""
-        self.data = _ma_.masked_array(state["data"])
+        self.data = DataArray(state["data"],setas=self.data._setas)
         self.column_headers = state["column_headers"]
         self.metadata = state["metadata"]
 
@@ -1983,28 +2161,6 @@ class DataFile(object):
     def __str__(self):
         """Provides an implementation for str(DataFile) that does not shorten the output."""
         return self.__repr_core__(False)
-
-    def __sub__(self, other):
-        """Implements what to do when subtraction operator is used.
-
-        Args:
-            other (int,list of integers): Delete row(s) from data.
-
-        Returns:
-            DataFile with rows removed.
-        """
-        newdata = self.clone
-        return self.__sub_core__(other, newdata)
-
-    def __sub_core__(self, other, newdata):
-        """Actually do the subtraction."""
-        if isinstance(other, (slice, int)):
-            newdata.del_rows(other)
-        elif isinstance(other, list) and _np_.all([isinstance(i, int) for i in other]):
-            newdata.del_rows(other)
-        else:
-            newdata = NotImplemented
-        return newdata
 
     def _push_mask(self, mask=None):
         """Copy the current data mask to a temporary store and replace it with a new mask if supplied.
@@ -2099,9 +2255,9 @@ class DataFile(object):
             self.data[:, index] = _np__data
         else:
             if dc * dr == 0:
-                self.data = _ma_.masked_array(_np_.transpose(_np_.atleast_2d(_np__data)))
+                self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
             else:
-                self.data = _ma_.masked_array(_np_.insert(self.data, index, _np__data, 1))
+                self.data = DataArray(_np_.insert(self.data, index, _np__data, 1),setas=self.data._setas)
         #Finally sort out column headers
         if not replace:
             if len(self.column_headers) == 1:
@@ -2177,14 +2333,14 @@ class DataFile(object):
         else:
             if col is None:
                 self.data = _ma_.mask_cols(self.data)
-                t = _ma_.masked_array(self.column_headers)
+                t = DataArray(self.column_headers)
                 t.mask = self.mask[0]
                 self.column_headers = list(_ma_.compressed(t))
                 self.data = _ma_.compress_cols(self.data)
             else:
                 c = self.find_col(col)
                 ch=self.column_headers
-                self.data = _ma_.masked_array(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
+                self.data = DataArray(_np_.delete(self.data, c, 1), mask=_np_.delete(self.data.mask, c, 1))
                 if isinstance(c, list):
                     c.sort(reverse=True)
                 else:
@@ -2256,7 +2412,7 @@ class DataFile(object):
                     rows = _np_.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
                 else:
                     raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")
-                self.data = _ma_.masked_array(_np_.delete(self.data, rows, 0),
+                self.data = DataArray(_np_.delete(self.data, rows, 0),
                                               mask=_np_.delete(self.data.mask, rows, 0))
         return self
 
@@ -2326,9 +2482,9 @@ class DataFile(object):
         Returns:
             The matching column index as an integer or a KeyError
         """
-        return self._setas.find_col(col, force_list)
+        return self.data._setas.find_col(col, force_list)
 
-    def get(self, item):
+    def get(self, item,default=None):
         """A wrapper around __get_item__ that handles missing keys by returning None.
 
         This is useful for the :py:class:`Stoner.Folder.DataFolder` class.
@@ -2336,12 +2492,15 @@ class DataFile(object):
         Args:
             item (string): A string representing the metadata keyname
 
+        Keyword Arguments:
+            default (any): Default value to return if key not found
+
         Returns:
             self.metadata[item] or None if item not in self.metadata"""
         try:
             return self[item]
         except KeyError:
-            return None
+            return default
 
     def get_filename(self, mode):
         """Forces the user to choose a new filename using a system dialog box.
@@ -2422,9 +2581,10 @@ class DataFile(object):
                     test._load(self.filename,auto_load=False,*args,**kargs)
                     failed=False
                     self["Loaded as"]=cls.__name__
-                    self._setas=test._setas
+                    self.data =test.data
                     for attr in test._public_attrs:
                        self.__setattr__(attr,test.__getattr__(attr))
+                    self.metadata.update(test.metadata)
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:
                     continue
@@ -2435,24 +2595,18 @@ class DataFile(object):
                 test = cls()
                 test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = cls.__name__
-                self._setas = test._setas
-                self._setas.ref = self
+                self.data = test.data
+                self.metadata.update(test.metadata)
                 failed = False
             elif type(filetype).__name__=="type" and issubclass(filetype, DataFile):
                 test = filetype()
                 test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = filetype.__name__
-                self._setas = test._setas
-                self._setas.ref = self
+                self.data = test.data
+                self.metadata.update(test.metadata)
                 failed = False
         if failed:
             raise SyntaxError("Failed to load file")
-        else:
-            self.data = _ma_.masked_array(test.data)
-            self.metadata.update(test.metadata)
-            self.column_headers = test.column_headers
-            self.setas(test.setas)
-            self._setas.ref = self
         return self
 
     def rename(self, old_col, new_col):
@@ -2491,7 +2645,7 @@ class DataFile(object):
         newdata = _np_.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
         for col in cols:
             newdata = _np_.append(newdata, _np_.atleast_2d(self.data[:, self.find_col(col)]), axis=0)
-        self.data = _ma_.masked_array(_np_.transpose(newdata))
+        self.data = DataArray(_np_.transpose(newdata))
         return self
 
     def rolling_window(self, window=7, wrap=True, exclude_centre=False):
@@ -2549,11 +2703,12 @@ class DataFile(object):
 
         Yields:
             Returns the next row of data"""
+        setas=self.data._setas.clone
         for row in self.data:
             if _ma_.is_masked(row) and not_masked:
                 continue
             else:
-                yield row
+                yield DataArray(row,setas=setas)
 
     def save(self, filename=None):
         """Saves a string representation of the current DataFile object into the file 'filename'.
@@ -2702,7 +2857,7 @@ class DataFile(object):
             d = _np_.sort(recs, order=order)
         if reverse:
             d = d[::-1]
-        self.data = _ma_.masked_array(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
+        self.data = DataArray(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
         return self
 
     def swap_column(self, *swp,**kargs):

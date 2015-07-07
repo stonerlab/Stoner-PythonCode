@@ -144,7 +144,7 @@ class VSMFile(DataFile):
                     elif i == 3:
                         unit_string = line.strip()
                         self.column_headers = [
-                            "{} {}".format(h, u)
+                            "{} ({})".format(h.strip(), u.strip())
                             for h, u in zip(header_string.split(header_delim), unit_string.split(header_delim))
                         ]
                     elif i > 3:
@@ -162,6 +162,7 @@ class VSMFile(DataFile):
         self.data = ma.mask_rows(self.data)
         cols = self.data.shape[1]
         self.data = _np_.reshape(self.data.compressed(), (-1, cols))
+        self.setas(x="H_vsm (T)",y="m (emu)")
 
     def _load(self, filename=None, *args, **kargs):
         """VSM file loader routine.
