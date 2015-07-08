@@ -10,7 +10,7 @@ from Stoner.Core import DataFile
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d, InterpolatedUnivariateSpline, UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 from inspect import getargspec,isclass
@@ -888,7 +888,7 @@ class AnalyseFile(DataFile):
         return final
 
     def interpolate(self, newX, kind='linear', xcol=None,replace=False):
-        """AnalyseFile.interpolate(newX, kind='linear",xcol=None).
+        """Interpolate a dataset to get a new set of values for a given set of x data.
 
         Args:
             ewX (1D array): Row indices or X column values to interpolate with
@@ -1531,14 +1531,7 @@ class AnalyseFile(DataFile):
             """
 
 
-        if xcol is None:  #Sort out the xcolumn and y column indexes
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
-        if ycol is None:
-            ycol = self.setas._get_cols("ycol")
-        else:
-            ycol = self.find_col(ycol)
+        _=self._col_args(xcol=xcol,ycol=ycol)
         #
         # Sort out keyword srguments
         #
@@ -1552,18 +1545,18 @@ class AnalyseFile(DataFile):
 
         # Get our working data from this DataFile and remove masked rows
 
-        working = self.search(xcol, bounds)
+        working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
-        xdat = working[:, self.find_col(xcol)]
-        ydat = working[:, self.find_col(ycol)]
+        xdat = working[:, self.find_col(_.xcol)]
+        ydat = working[:, self.find_col(_.ycol)]
 
         # Get data from the other. If it is already an ndarray, check size and dimensions
 
         if isinstance(other,DataFile):
-            working2 = other.search(xcol,otherbounds)
+            working2 = other.search(_.xcol,otherbounds)
             working2 = ma.mask_rowcols(working2, axis=0)
-            xdat2 = working2[:, other.find_col(xcol)]
-            ydat2 = working2[:, other.find_col(ycol)]
+            xdat2 = working2[:, other.find_col(_.xcol)]
+            ydat2 = working2[:, other.find_col(_.ycol)]
             if len(xdat2)!=len(xdat):
                 raise RuntimeError("Data lengths don't match {}!={}".format(len(xdat),len(xdat2)))
         elif isinstance(other,_np_.ndarray):
@@ -1599,18 +1592,18 @@ class AnalyseFile(DataFile):
         else: # Don't try to be cleber
             m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
-        data=self.data[:,[xcol,ycol]]
+        data=self.data[:,[_.xcol,_.ycol]]
         new_data=trans(data)
         print popt
         print perr
         if replace: # In place scaling, replace and return self
             self["Transform"]=popt
             self["Transform Err"]=perr
-            self.data[:,xcol]=new_data[:,0]
-            self.data[:,ycol]=new_data[:,1]
+            self.data[:,_.xcol]=new_data[:,0]
+            self.data[:,_.ycol]=new_data[:,1]
             if headers:
-                self.column_headers[xcol]=headers[0]
-                self.column_headers[ycol]=headers[1
+                self.column_headers[_.xcol]=headers[0]
+                self.column_headers[_.ycol]=headers[1
             ]
             ret=self
         else: # Return results but don't change self.
@@ -1637,6 +1630,67 @@ class AnalyseFile(DataFile):
 
         """
         return (self.min(column, bounds)[0], self.max(column, bounds)[0])
+
+    def spline(self,xcol=None,ycol=None,sigma=None,**kargs):
+        """Construct a spline through x and y data and replace, add new data or return spline function.
+
+        Keyword Arguments:
+            xcol (column index): Column with x data or if None, use setas attribute.
+            ycol (column index): Column with y data or if None, use the setas attribute
+            sigma (column index, or array of data): Column with weights, or if None use the 1/yerr column.
+            replace (Boolean or column index or None): If True then the y-column data is repalced, if a column index then the
+                new data is added after the specified index, if False then the new y-data is returned and if None, then
+                spline object is returned.
+            header (string): If *replace* is True or a column index then use this string as the new column header.
+            order (int): The order of spline to use (1-5)
+            smoothing (float or None): The smoothing factor to use when fitting the spline. A value of zero will create an
+                interpolating spline.
+            bbox (tuple of length 2): Bounding box for the spline - defaults to range of x values
+            ext (int or str): How to extrapolate, default is "extrapolate", but can also be "raise","zeros" or "const".
+
+        Returns:
+            Depending on the value of *replace*, returns a copy of the Analysefile, a 1D numpy array of data or an
+            scipy.interpolate.UniverateSpline object.
+
+        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
+        function."""
+        _=self._col_args(xcol=xcol,ycol=ycol)
+        if sigma is None and len(_.yerr)>0 and _.yerr[0] is not None:
+            sigma=1.0/(self//_.yerr[0])
+        replace=kargs.pop("replace",True)
+        header=kargs.pop("header",None)
+        k=kargs.pop("order",3)
+        s=kargs.pop("smoothing",None)
+        bbox=kargs.pop("bbox",[None]*2)
+        ext=kargs.pop("ext","extrapolate")
+        x=self//_.xcol
+        y=self//(_.ycol)
+        spline=UnivariateSpline(x,y,w=sigma,bbox=bbox,k=k,s=s,ext=ext)
+        new_y=spline(x)
+
+        if header is None:
+            header=self.column_headers[_.ycol]
+
+        if isinstance(replace,bool):
+            if replace:
+                self.data[:,_.ycol]=new_y
+                self.column_headers[_.ycol]=header
+                ret=self
+            else:
+                ret=new_y
+        elif isinstance(replace,index_types):
+            self.add_column(new_y,column_header=header, index=replace,replace=False)
+            ret=self
+        elif replace is None:
+            ret=spline
+        else:
+            raise RuntimeError("replace should be column index, boolean or None")
+
+        return ret
+
+
+
+
 
     def split(self, xcol=None, func=None):
         """Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows
@@ -1734,18 +1788,11 @@ class AnalyseFile(DataFile):
             User Guide section :ref:`stitch_guide`
 
         """
-        if xcol is None:  #Sort out the xcolumn and y column indexes
-            xcol = self.setas._get_cols("xcol")
-        else:
-            xcol = self.find_col(xcol)
-        if ycol is None:
-            ycol = self.setas._get_cols("ycol")
-        else:
-            ycol = self.find_col(ycol)
-        points = self.column([xcol, ycol])
+        _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
+        points = self.column([_.xcol, _.ycol])
         points = points[points[:, 0].argsort()]
         points[:, 0] += min_overlap
-        otherpoints = other.column([xcol, ycol])
+        otherpoints = other.column([_.xcol, _.ycol])
         otherpoints = otherpoints[otherpoints[:, 0].argsort()]
         self_second = _np_.max(points[:, 0]) > _np_.max(otherpoints[:, 0])
         if overlap is None:  # Calculate the overlap
@@ -1819,7 +1866,7 @@ class AnalyseFile(DataFile):
 
         popt, pcov = curve_fit(transform, set1, set2, p0=p0)  # Curve fit for optimal A,B,C
         perr = _np_.sqrt(_np_.diagonal(pcov))
-        self.data[:, xcol], self.data[:, ycol] = func(self.data[:, xcol], self.data[:, ycol], *popt)
+        self.data[:, _.xcol], self.data[:, _.ycol] = func(self.data[:, _.xcol], self.data[:, _.ycol], *popt)
         self["Stitching Coefficients"] = list(popt)
         self["Stitching Coeffient Errors"] = list(perr)
         self["Stitching overlap"] = (lower, upper)

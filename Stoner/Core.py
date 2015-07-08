@@ -2177,6 +2177,27 @@ class DataFile(object):
         else:
             self.mask = mask
 
+    def _col_args(self,scalar=True,**cols):
+        """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
+        ret=copy.deepcopy(self.setas.cols)
+        for c in list(cols.keys()):
+            if cols[c] is None:
+                del cols[c]
+            elif c in ret and isinstance(ret[c],list):
+                if isinstance(cols[c],Iterable):
+                    cols[c]=list(cols[c])
+                else:
+                    cols[c]=[cols[c]]
+        ret.update(cols)
+        if scalar:
+            for c in ret:
+                if isinstance(ret[c],list):
+                    if len(ret[c])>0:
+                        ret[c]=ret[c][0]
+                    else:
+                        ret[c]=None
+        return ret
+
     def _pop_mask(self):
         """Replaces the mask on the data with the last one stored by _push_mask().
 
