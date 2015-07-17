@@ -253,6 +253,10 @@ with a "fill" value of 10^20.
    This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
    chance that you will need the masked data values again later !
 
+.. note::
+    Strictgly speaking, the :py:attr:`DataFile.data` attribute is a sub-class of the numpy masked array, :py:class:`DataArray`.
+    This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.
+
 Working with columns of data
 -----------------------------
 
@@ -381,6 +385,27 @@ Rows don't have labels, so are accessed directly by number::
 The second example uses a slice to pull out more than one row. This syntax also
 supports the full slice syntax which allows one to, for example, decimate the
 rows, or directly pull out the last fews rows in the file.
+
+Special Magic When Working with Subsets of Data
+-----------------------------------------------
+
+As mentioned above, the data in a :py:class:`DataFile` is a sepcial siubclass of numpy's Masked Array - :py:class:`DataArray`.
+A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
+fact, the logic used for the column names and setas attribute in a :py:class:`DataFile` is actually supplied by the
+:py:class:`DataArray`. Whn you index a DataFile or it's data, the resulting data remembers it's column names and assignments
+and these can be used directly::
+
+    r=d[1:4]
+    print r.x,r.y
+
+In addition to the column assignments, :py:class:`DataArray` also keeps a track of the row numbers and makes them available via
+the *i* attribute.::
+
+    d.data.i # [0,1,2,3...,len(d)]
+    r=d[10]
+    r.i # 10
+
+You can reset the row numbers by assiging a value to the *i* attribute.
 
 Manipulating the metadata
 -------------------------
@@ -570,7 +595,16 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method). The
+these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method).
+
+A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used::
+
+    r=d.closest(10.3,xcol="Search Col")
+    r=d.closest(10.3)
+
+If the *xcol* parameter is not supplied, the value from the :py:attr:`DataFile.setas` attribute is used. Since the returned row
+is an instance of the :py:class:`DataArray` that has been taken from the original data, it will know what row number it was and
+will make that available via it's *i* attribute.
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^

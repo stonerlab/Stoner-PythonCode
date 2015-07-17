@@ -45,27 +45,29 @@ def copy_into(source,dest):
     dest.data._setas = source.data._setas.clone
     return dest
 
+def isNone(iterator):
+    """Returns True if input is None or an empty iterator, or an iterator of None.
 
-def all_type(iterator,typ):
-    """Determines if an interable omnly contains a common type.
-
-    Arguments:
-        iterator (Iterable): The object to check if it is all iterable
-        typ (class): The type to check for.
+    Args:
+        iterator (None or Iterable):
 
     Returns:
-        True if all elements are of the type typ, or False if not.
+        True if iterator is None, empty or full of None."""
 
-    Notes:
-        Routine will iterate the *iterator* and break when an element is not of
-        the search type *typ*.
-    """
-    ret=False
-    for i in iterator:
-        if not isinstance(i,typ):
-            break
-    else:
+    if iterator is None:
         ret=True
+    elif isinstance(iterator,Iterable):
+        if len(iterator)==0:
+            ret=True
+        else:
+            for i in iterator:
+                if i is not None:
+                    ret=False
+                    break
+            else:
+                ret=True
+    else:
+        ret=False
     return ret
 
 def all_size(iterator,size=None):
@@ -94,6 +96,30 @@ def all_size(iterator,size=None):
     else:
         ret=True
     return ret
+
+
+def all_type(iterator,typ):
+    """Determines if an interable omnly contains a common type.
+
+    Arguments:
+        iterator (Iterable): The object to check if it is all iterable
+        typ (class): The type to check for.
+
+    Returns:
+        True if all elements are of the type typ, or False if not.
+
+    Notes:
+        Routine will iterate the *iterator* and break when an element is not of
+        the search type *typ*.
+    """
+    ret=False
+    for i in iterator:
+        if not isinstance(i,typ):
+            break
+    else:
+        ret=True
+    return ret
+
 
 class StonerLoadError(Exception):
     """An exception thrown by the file loading routines in the Stoner Package.
@@ -875,6 +901,10 @@ class DataArray(_ma_.MaskedArray):
         # We first cast to be our class type
         setas=kargs.pop("setas",None)
         mask=kargs.pop("mask",None)
+        if isinstance(input_array,DataArray):
+            i=input_array.i
+        else:
+            i=0
         obj = _ma_.asarray(input_array,*args,**kargs).view(cls)
         # add the new attribute to the created instance
         if setas is not None:
@@ -884,15 +914,19 @@ class DataArray(_ma_.MaskedArray):
         if mask is not None:
             obj.mask=mask
         # Finally, we must return the newly created object:
+        obj.i=i
         return obj
 
     def __array_finalize__(self, obj):
         # see InfoArray.__array_finalize__ for comments
         super(DataArray,self).__array_finalize__(obj)
+        self.i=0
         if obj is None:
             self._setas=_setas()
         else:
             self._setas = getattr(obj, '_setas', _setas())
+            if isinstance(obj,DataArray):
+                self.i=obj.i
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
@@ -961,7 +995,15 @@ class DataArray(_ma_.MaskedArray):
             return ret.dtype.type(ret)
         if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
             ret.setas=self._setas[ix[-1]]
-
+            if isinstance(self.i,_np_.ndarray):
+                ret.i=self.i[ix[0]]
+            else:
+                ret.i=self.i
+        else:
+            if isinstance(self.i,_np_.ndarray):
+                ret.i=self.i[ix]
+            else:
+                ret.i=self.i
         return ret
 
     def __setitem__(self,ix,val):
@@ -973,6 +1015,21 @@ class DataArray(_ma_.MaskedArray):
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
         super(DataArray,self).__setitem__(ix,val)
+
+    @property
+    def i(self):
+        if len(self.shape)==1 or (len(self.shape)>1 and self.shape[0]==1):
+            ret=self._ibase
+        else:
+            ret=_np_.array(range(self._ibase,len(self)+self._ibase))
+        return ret
+
+    @i.setter
+    def i(self,value):
+        if isinstance(value,Iterable):
+            value=min(value)
+        value=int(value)
+        self._ibase=value
 
 class DataFile(object):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents
@@ -2291,6 +2348,28 @@ class DataFile(object):
             self.column_headers[index] = column_header
 
         return self
+
+    def closest(self,value,xcol=None):
+        """Return the row in a data file which has an x-column value closest to the given value.
+
+        Args:
+            value (float): Value to search for.
+
+        Keyword Arguments:
+            xcol (index or None): Column in which to look for value, or None to use setas.
+
+        Returns:
+            A single row of data as a :py:class:`Stoner.Core.DataArray`.
+
+        Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.
+        """
+
+        _=self._col_args(xcol=xcol)
+        xdata=_np_.abs(self//_.xcol-value)
+        i=int(xdata.argmin())
+        return self[i]
+
+
 
     def column(self, col):
         """Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.

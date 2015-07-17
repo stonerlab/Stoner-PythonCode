@@ -6,7 +6,7 @@ Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
 __all__ = ["AnalyseFile"]
 
 from Stoner.compat import *
-from Stoner.Core import DataFile
+from Stoner.Core import DataFile,isNone
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -578,7 +578,9 @@ class AnalyseFile(DataFile):
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
             xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
-            ycol (index or array): The index of the y-column data to fit. If an array, then should be 1D and the same length as the data.
+            ycol (index. ;ist of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
+                the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring
+                for each one. In this case the return value is a list of what would be returned for a single column fit.
 
         Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try
@@ -643,15 +645,17 @@ class AnalyseFile(DataFile):
             if xcol is None:
                 xcol = cols["xcol"]
             if ycol is None:
-                ycol = cols["ycol"][0]
+                ycol = cols["ycol"]
             if sigma is None:
                 if len(cols["yerr"]) > 0:
-                    sigma = cols["yerr"][0]
+                    sigma = cols["yerr"]
 
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
-        if sigma is not None:
+        if not isNone(sigma):
             sigma = working[:, self.find_col(sigma)]
+        else:
+            sigma=None
         if isinstance(xcol,Iterable):
             xdat=()
             for c in xcol:
@@ -659,50 +663,58 @@ class AnalyseFile(DataFile):
         else:
             xdat = working[:, self.find_col(xcol)]
 
-        if isinstance(ycol,index_types):
-            ydat = working[:, self.find_col(ycol)]
-        elif isinstance(ycol,_np_.ndarray) and len(ycol.shape)==1 and len(ycol)==len(self):
-            ydat=ycol
-        else:
-            raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
-        ret=()
-        if output == "full":
-            popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
-            ret = (popt,pcov,infodict,mesg,ier)
-        else:
-            popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
-        perr=_np_.sqrt(_np_.diag(pcov))
-        if result is not None:
-            args = getargspec(func)[0]
-            for val,err,name in zip(popt,perr,args[1:]):
-                self['{}:{}'.format(func.__name__,name)] = val
-                self['{}:{} err'.format(func.__name__,name)] = err
-                self['{}:{} label'.format(func.__name__,name)]=name
-            xc = self.find_col(xcol)
-            if not isinstance(header, string_types):
-                header = 'Fitted with ' + func.__name__
+        if not isinstance(ycol,list):
+            ycol=[ycol,]
+        retvals=[]
+        for i,yc in enumerate(ycol):
 
-            # Store our current mask, calculate new column's mask and turn off mask
-            tmp_mask=self.mask
-            col_mask=_np_.any(tmp_mask,axis=1)
-            self.mask=False
+            if isinstance(yc,index_types):
+                ydat = working[:, self.find_col(yc)]
+            elif isinstance(yc,_np_.ndarray) and len(ycol.shape)==1 and len(ycol)==len(self):
+                ydat=yc
+            else:
+                raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
+            ret=()
+            if output == "full":
+                popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+                ret = (popt,pcov,infodict,mesg,ier)
+            else:
+                popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+            perr=_np_.sqrt(_np_.diag(pcov))
+            if result is not None:
+                args = getargspec(func)[0]
+                for val,err,name in zip(popt,perr,args[1:]):
+                    self['{}:{}'.format(func.__name__,name)] = val
+                    self['{}:{} err'.format(func.__name__,name)] = err
+                    self['{}:{} label'.format(func.__name__,name)]=name
+                xc = self.find_col(xcol)
+                if not isinstance(header, string_types):
+                    header = 'Fitted with ' + func.__name__
 
-            if isinstance(result, bool) and result:#Appending data to end of data
-                result = None
-                tmp_mask=_np_.column_stack((tmp_mask,col_mask))
-            else: # Inserting data
-                tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-            new_col=func(xdat,*popt)
-            self.add_column(new_col,index=result, replace=replace, column_header=header)
-            self.mask=tmp_mask
-        row = _np_.array([])
-        for val,err in zip(popt,perr):
-            row = _np_.append(row, [val,err])
-        ret = (pcov,popt,row)
-        retval = {"fit": (popt, pcov), "row": row, "full": ret}
-        if output not in retval:
-            raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
-        return retval[output]
+                # Store our current mask, calculate new column's mask and turn off mask
+                tmp_mask=self.mask
+                col_mask=_np_.any(tmp_mask,axis=1)
+                self.mask=False
+
+                if isinstance(result, bool) and result:#Appending data to end of data
+                    result = None
+                    tmp_mask=_np_.column_stack((tmp_mask,col_mask))
+                else: # Inserting data
+                    tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
+                new_col=func(xdat,*popt)
+                self.add_column(new_col,index=result, replace=replace, column_header=header)
+                self.mask=tmp_mask
+            row = _np_.array([])
+            for val,err in zip(popt,perr):
+                row = _np_.append(row, [val,err])
+            ret = (pcov,popt,row)
+            retval = {"fit": (popt, pcov), "row": row, "full": ret}
+            if output not in retval:
+                raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
+            retvals.append(retval[output])
+        if i==0:
+            retvals=retvals[0]
+        return retvals
 
     def decompose(self, xcol=None, ycol=None, sym=None, asym=None, replace=True, **kwords):
         """Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.
@@ -834,6 +846,76 @@ class AnalyseFile(DataFile):
         if err_calc is not None:
             self.add_column(err_data, err_header, a + 1, replace=False)
         return self
+
+    def extrapolate(self,new_x,xcol=None,ycol=None,yerr=None,overlap=20,kind='linear'):
+        """Extrapolate data based on local fit to x,y data.
+
+        Args:
+            new_x (float or array): New values of x data.
+
+        Keyword Arguments:
+            xcol (column index, None): column containing x-data or None to use setas attribute
+            ycol (column index(es) or None): column(s) containing the y-data or None to use setas attribute.
+            yerr (column index(es) or None): y error data column or None to use setas attribute
+            overlap (float or int): range of x-data used for the local fit for extrapolating. If int then overlap number of
+                points is used, if float then that range x-axis space is used.
+            kind (str or callable): Determines local fitting function. If string should be "linear" or "cubic" if
+                callable, then represents a function to be fitted to the data.
+
+        Returns:
+            Array of extrapolated values.
+
+        Note:
+            If the new_x values lie outside the span of the x-data, then the nearest *overlap* portion of the data is used
+            to estimate the values. If the new_x values are within the span of the x-data then the portion of the data
+            centred about the point and overlap points long will be used to interpolate a value.
+
+            If *kind* is callable, it should take x values in the first parameter and free fitting parameters as the other
+            parameters (i.e. as with :py:meth:`AnalyseFile.curve_fit`).
+        """
+
+        _=self._col_args(xcol=xcol,ycol=ycol,yerr=yerr,scalar=False)
+        xl,xh=self.span(_.xcol)
+        if callable(kind):
+            pass
+        elif kind=="linear":
+            kind=lambda x,m,c:m*x+c
+        elif kind=="cubic":
+            kind=lambda x,a,b,c,d:a*x**3+b*x**2+c*x+d
+        else:
+            raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
+        results=_np_.zeros((len(new_x),len(_.ycol)))
+        for ix,x in enumerate(new_x):
+            r=self.closest(x,xcol=_.xcol)
+            if isinstance(overlap,int):
+                if (r.i-overlap/2)<0:
+                    ll=0
+                    hl=overlap
+                elif (r.i+overlap/2)>len(self):
+                    hl=len(self)
+                    ll=hl-overlap
+                else:
+                    ll=r.i-overlap/2
+                    hl=r.i+overlap/2
+                bounds=lambda xv,rv:ll<=rv.i<hl
+            elif isinstance(overlap,float):
+                if (r[_.xcol]-overlap/2)<self.min(_.xcol)[0]:
+                    ll=self.min(_.xcol)[0]
+                    hl=ll+overlap
+                elif (r[_.xcol]+overlap/2)>self.max(_.xcol)[0]:
+                    hl=self.max(_.xcol)[0]
+                    ll-hl-overlap
+                else:
+                    ll=r[_.xcol]-overlap/2
+                    hl=r[_.xcol]+overlap/2
+                bounds=lambda xv,rv:ll<=xv<=hl
+            ret=self.curve_fit(kind,_.xcol,_.ycol,sigma=_.yerr,bounds=bounds)
+            if isinstance(ret,tuple):
+                ret=[ret]
+            for iy,rt in enumerate(ret):
+                pcov,popt=rt
+                results[ix,iy]=kind(x,*pcov)
+        return results
 
     def integrate(self, xcol=None, ycol=None, result=None, result_name=None, bounds=lambda x, y: True, **kargs):
         """Inegrate a column of data, optionally returning the cumulative integral.
