@@ -11,6 +11,8 @@ d.plot(fmt="ro") # plot our data
 
 #Do the fitting and plot the result
 fit = d.lmfit(lambda x,A,B,C:A+B*exp(-x/C),result=True,header="Fit",A=1,B=1,C=1)
+d.setas="x.y"
+d.labels=[]
 d.plot(fmt="b-")
 
 # Make nice label of the parameters

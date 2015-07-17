@@ -8,7 +8,7 @@
     
     <title>MDAASCIIFile.get &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,11 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.FileFormats.MDAASCIIFile" href="Stoner.FileFormats.MDAASCIIFile.html" />
-    <link rel="next" title="MDAASCIIFile.get_filename" href="Stoner.FileFormats.MDAASCIIFile.get_filename.html" />
-    <link rel="prev" title="MDAASCIIFile.find_col" href="Stoner.FileFormats.MDAASCIIFile.find_col.html" /> 
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,30 +36,22 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.get_filename.html" title="MDAASCIIFile.get_filename"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.find_col.html" title="MDAASCIIFile.find_col"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.MDAASCIIFile.html" accesskey="U">Stoner.FileFormats.MDAASCIIFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="mdaasciifile-get">
 <h1>MDAASCIIFile.get<a class="headerlink" href="#mdaasciifile-get" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.MDAASCIIFile.get">
-<tt class="descclassname">MDAASCIIFile.</tt><tt class="descname">get</tt><big>(</big><em>item</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.MDAASCIIFile.get" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MDAASCIIFile.</code><code class="descname">get</code><span class="sig-paren">(</span><em>item</em>, <em>default=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.MDAASCIIFile.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper around __get_item__ that handles missing keys by returning None.</p>
-<p>This is useful for the <tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></tt> class.</p>
+<p>This is useful for the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></code> class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -70,7 +59,11 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> (<em>string</em>) &#8211;
 A string representing the metadata keyname</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">self.metadata[item] or None if item not in self.metadata</td>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>default</strong> (<em>any</em>) &#8211;
+Default value to return if key not found</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self.metadata[item] or None if item not in self.metadata</td>
 </tr>
 </tbody>
 </table>
@@ -82,23 +75,19 @@ A string representing the metadata keyname</td>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.find_col.html"
-                        title="previous chapter">MDAASCIIFile.find_col</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.get_filename.html"
-                        title="next chapter">MDAASCIIFile.get_filename</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.FileFormats.MDAASCIIFile.get.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.MDAASCIIFile.get.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -115,7 +104,7 @@ A string representing the metadata keyname</td>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -124,21 +113,13 @@ A string representing the metadata keyname</td>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.get_filename.html" title="MDAASCIIFile.get_filename"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.find_col.html" title="MDAASCIIFile.find_col"
-             >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.MDAASCIIFile.html" >Stoner.FileFormats.MDAASCIIFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 24, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

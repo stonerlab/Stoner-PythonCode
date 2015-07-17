@@ -8,7 +8,7 @@
     
     <title>Stoner.HDF5.HDF5Folder &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="HDF5Folder.__init__" href="Stoner.HDF5.HDF5Folder.__init__.html" />
     <link rel="prev" title="HDF5File.save" href="Stoner.HDF5.HDF5File.save.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,24 +45,24 @@
         <li class="right" >
           <a href="Stoner.HDF5.HDF5File.save.html" title="HDF5File.save"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="stoner-hdf5-hdf5folder">
 <h1>Stoner.HDF5.HDF5Folder<a class="headerlink" href="#stoner-hdf5-hdf5folder" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.HDF5.HDF5Folder">
-<em class="property">class </em><tt class="descclassname">Stoner.HDF5.</tt><tt class="descname">HDF5Folder</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5Folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5Folder" title="Permalink to this definition">¶</a></dt>
-<dd><p>A sub class of <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> that provides a
+<em class="property">class </em><code class="descclassname">Stoner.HDF5.</code><code class="descname">HDF5Folder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/HDF5.html#HDF5Folder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.HDF5.HDF5Folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sub class of <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> that provides a
 method to load and save data from a single HDF5 file with groups.</p>
-<p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> for documentation on constructor.</p>
+<p>See <a class="reference internal" href="Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> for documentation on constructor.</p>
 <p>Datalayout consistns of sub-groups that are either instances of HDF5Files (i.e. have a type attribute that contains &#8216;HDF5File&#8217;)
 or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;HDF5Folder&#8217;).</p>
 <p class="rubric">Methods</p>
@@ -72,13 +72,13 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.__init__.html#Stoner.HDF5.HDF5Folder.__init__" title="Stoner.HDF5.HDF5Folder.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.__init__.html#Stoner.HDF5.HDF5Folder.__init__" title="Stoner.HDF5.HDF5Folder.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor for the HDF5Folder Class.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><tt class="xref py py-obj docutils literal"><span class="pre">getlist</span></tt></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.getlist.html#Stoner.HDF5.HDF5Folder.getlist" title="Stoner.HDF5.HDF5Folder.getlist"><code class="xref py py-obj docutils literal"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
 <td>Reads the HDF5 File to construct a list of file HDF5File objects</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save" title="Stoner.HDF5.HDF5Folder.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([root])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.HDF5.HDF5Folder.save.html#Stoner.HDF5.HDF5Folder.save" title="Stoner.HDF5.HDF5Folder.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([root])</td>
 <td>Saves a load of files to a single HDF5 file, creating groups as it goes.</td>
 </tr>
 </tbody>
@@ -91,7 +91,7 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -102,12 +102,14 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.HDF5.HDF5Folder.__init__.html"
                         title="next chapter">HDF5Folder.__init__</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.HDF5.HDF5Folder.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.HDF5.HDF5Folder.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -124,7 +126,7 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -139,14 +141,14 @@ or are themsleves HDF5Folder instances (with a type attribute that reads &#8216;
         <li class="right" >
           <a href="Stoner.HDF5.HDF5File.save.html" title="HDF5File.save"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

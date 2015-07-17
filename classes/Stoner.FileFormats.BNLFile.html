@@ -8,7 +8,7 @@
     
     <title>Stoner.FileFormats.BNLFile &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="BNLFile.__init__" href="Stoner.FileFormats.BNLFile.__init__.html" />
     <link rel="prev" title="LSTemperatureFile.save" href="Stoner.FileFormats.LSTemperatureFile.save.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,21 +45,21 @@
         <li class="right" >
           <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="stoner-fileformats-bnlfile">
 <h1>Stoner.FileFormats.BNLFile<a class="headerlink" href="#stoner-fileformats-bnlfile" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.FileFormats.BNLFile">
-<em class="property">class </em><tt class="descclassname">Stoner.FileFormats.</tt><tt class="descname">BNLFile</tt><big>(</big><em>*params</em><big>)</big><a class="reference internal" href="../_modules/Stoner/FileFormats.html#BNLFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.BNLFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Stoner.FileFormats.</code><code class="descname">BNLFile</code><span class="sig-paren">(</span><em>*params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/FileFormats.html#BNLFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.BNLFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates BNLFile a subclass of DataFile that caters for files in the SPEC format given
 by BNL (specifically u4b beamline but hopefully generalisable).</p>
 <p>Author Rowan 12/2011</p>
@@ -73,7 +73,7 @@ in data/Python/PythonCode/scripts.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.__init__.html#Stoner.FileFormats.BNLFile.__init__" title="Stoner.FileFormats.BNLFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*params)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.__init__.html#Stoner.FileFormats.BNLFile.__init__" title="Stoner.FileFormats.BNLFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*params)</td>
 <td>Constructor modification BNLFile(&#8216;filename&#8217;) Do a normal initiation using the parent class &#8216;self&#8217; followed by adding an extra attribute line_numbers, line_numbers is a list of important line numbers in the file.</td>
 </tr>
 </tbody>
@@ -85,10 +85,10 @@ in data/Python/PythonCode/scripts.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
 <td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
 <td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 </tbody>
@@ -101,7 +101,7 @@ in data/Python/PythonCode/scripts.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -112,12 +112,14 @@ in data/Python/PythonCode/scripts.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.BNLFile.__init__.html"
                         title="next chapter">BNLFile.__init__</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.FileFormats.BNLFile.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.BNLFile.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -134,7 +136,7 @@ in data/Python/PythonCode/scripts.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -149,14 +151,14 @@ in data/Python/PythonCode/scripts.</p>
         <li class="right" >
           <a href="Stoner.FileFormats.LSTemperatureFile.save.html" title="LSTemperatureFile.save"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

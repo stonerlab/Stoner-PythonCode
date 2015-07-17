@@ -13,7 +13,30 @@ Stoner.FileFormats.CSVFile
    .. autosummary::
     :toctree:
    
+      ~CSVFile.__init__
+      ~CSVFile.add_column
+      ~CSVFile.column
+      ~CSVFile.columns
+      ~CSVFile.del_column
+      ~CSVFile.del_rows
+      ~CSVFile.dir
+      ~CSVFile.filter
+      ~CSVFile.find_col
+      ~CSVFile.get
+      ~CSVFile.get_filename
+      ~CSVFile.insert_rows
+      ~CSVFile.keys
+      ~CSVFile.load
+      ~CSVFile.rename
+      ~CSVFile.reorder_columns
+      ~CSVFile.rolling_window
+      ~CSVFile.rows
       ~CSVFile.save
+      ~CSVFile.search
+      ~CSVFile.section
+      ~CSVFile.sort
+      ~CSVFile.swap_column
+      ~CSVFile.unique
 
    
    

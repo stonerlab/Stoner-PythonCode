@@ -8,7 +8,7 @@
     
     <title>Developer’s Guide &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
     <link rel="next" title="Contributors and Credits" href="credits.html" />
     <link rel="prev" title="Cookbook" href="cookbook.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,15 +45,15 @@
         <li class="right" >
           <a href="cookbook.html" title="Cookbook"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="developer-s-guide">
 <h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
@@ -61,7 +61,7 @@
 <div class="section" id="adding-new-data-file-types">
 <h2>Adding New Data File Types<a class="headerlink" href="#adding-new-data-file-types" title="Permalink to this headline">¶</a></h2>
 <p>The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using. If so, then the best thing would be to include it in the textbf{fileFormats} module in the package, otherwise you should just write the class in your own script files. In either case, develop the class in your own script files first.</p>
-<p>The best way to implement handling a new data format is to write a new subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a>:</p>
+<p>The best way to implement handling a new data format is to write a new subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre>class NewInstrumentFile(DataFile):
     &quot;&quot;&quot;Extends DataFile to load files from somewhere else
 
@@ -84,7 +84,7 @@ much of the meta data as possible. The function terminates by returning a copy o
 </pre></div>
 </div>
 <p>One useful function for reading metadata from files is textit{self.metadata.string_to_type()} which will try to convert a string representation of data into a sensible Python type.</p>
-<p>There is one class attribute, <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.priority</span></tt> that can be used to tweak the automatic file
+<p>There is one class attribute, <code class="xref py py-attr docutils literal"><span class="pre">DataFile.priority</span></code> that can be used to tweak the automatic file
 importing code.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">priority</span><span class="o">=</span><span class="mi">32</span>
 </pre></div>
@@ -96,8 +96,8 @@ exception if it tries loading an incorrect file, then you can give it a lower pr
 force it to run earlier. Conversely if your only way of identifying your own files is seeing they make
 sense when you try to load them and that you might partially succeed with a file from another system (as
 can happen if you have a tab or comma separated text file), then you should raise the priority number.
-Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></tt></a> and
-<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></tt></a> have values of 128 and 64 respectively.</p>
+Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a> and
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> have values of 128 and 64 respectively.</p>
 <p>If you need to write any additional methods please make sure that they have Google code-style document
 strings so that the API documentation is picked up correctly.</p>
 </div>
@@ -107,7 +107,7 @@ strings so that the API documentation is picked up correctly.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -126,12 +126,14 @@ strings so that the API documentation is picked up correctly.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="credits.html"
                         title="next chapter">Contributors and Credits</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/UserGuide/developer.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/developer.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -148,7 +150,7 @@ strings so that the API documentation is picked up correctly.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -163,14 +165,14 @@ strings so that the API documentation is picked up correctly.</p>
         <li class="right" >
           <a href="cookbook.html" title="Cookbook"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

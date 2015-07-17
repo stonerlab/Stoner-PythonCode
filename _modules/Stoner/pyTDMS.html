@@ -8,7 +8,7 @@
     
     <title>Stoner.pyTDMS &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,15 +37,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for Stoner.pyTDMS</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;pyTDMS: Standalone Python TDMS reader,</span>
@@ -59,6 +59,7 @@
 
 <span class="sd">Updated with Python3 tweaks by Gavin Burnell</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -417,7 +418,7 @@
         <span class="p">(</span><span class="n">objectpath</span><span class="p">,</span> <span class="n">rawdataindex</span><span class="p">,</span> <span class="n">rawdata</span><span class="p">,</span> <span class="n">properties</span><span class="p">)</span> <span class="o">=</span> <span class="n">obj</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Read object&quot;</span><span class="p">,</span> <span class="n">objectpath</span><span class="p">)</span>
+            <span class="k">print</span><span class="p">((</span><span class="s">&quot;Read object&quot;</span><span class="p">,</span> <span class="n">objectpath</span><span class="p">))</span>
 
 <span class="c"># Add this object, or, if an object with the same objectpath</span>
 <span class="c"># exists already, make it update that one.</span>
@@ -498,7 +499,7 @@
     <span class="n">n_chunks</span> <span class="o">=</span> <span class="n">total_chunks</span> <span class="o">/</span> <span class="n">chunk_size</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Ready for reading&quot;</span><span class="p">,</span> <span class="n">total_chunks</span><span class="p">,</span> <span class="s">&quot;bytes (&quot;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="s">&quot;) in&quot;</span><span class="p">,</span> <span class="n">n_chunks</span><span class="p">,</span> <span class="s">&quot;chunks&quot;</span><span class="p">,</span> <span class="p">)</span>
+        <span class="k">print</span><span class="p">((</span><span class="s">&quot;Ready for reading&quot;</span><span class="p">,</span> <span class="n">total_chunks</span><span class="p">,</span> <span class="s">&quot;bytes (&quot;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">,</span> <span class="s">&quot;) in&quot;</span><span class="p">,</span> <span class="n">n_chunks</span><span class="p">,</span> <span class="s">&quot;chunks&quot;</span><span class="p">,</span> <span class="p">))</span>
 
     <span class="k">if</span> <span class="n">interleaved</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
@@ -709,12 +710,12 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
@@ -731,7 +732,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -740,14 +741,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

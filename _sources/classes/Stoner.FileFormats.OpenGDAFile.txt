@@ -8,6 +8,37 @@ Stoner.FileFormats.OpenGDAFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~OpenGDAFile.__init__
+      ~OpenGDAFile.add_column
+      ~OpenGDAFile.column
+      ~OpenGDAFile.columns
+      ~OpenGDAFile.del_column
+      ~OpenGDAFile.del_rows
+      ~OpenGDAFile.dir
+      ~OpenGDAFile.filter
+      ~OpenGDAFile.find_col
+      ~OpenGDAFile.get
+      ~OpenGDAFile.get_filename
+      ~OpenGDAFile.insert_rows
+      ~OpenGDAFile.keys
+      ~OpenGDAFile.load
+      ~OpenGDAFile.rename
+      ~OpenGDAFile.reorder_columns
+      ~OpenGDAFile.rolling_window
+      ~OpenGDAFile.rows
+      ~OpenGDAFile.save
+      ~OpenGDAFile.search
+      ~OpenGDAFile.section
+      ~OpenGDAFile.sort
+      ~OpenGDAFile.swap_column
+      ~OpenGDAFile.unique
+
+   
    
 
    

@@ -8,8 +8,46 @@ Stoner.FileFormats.RasorFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~RasorFile.__init__
+      ~RasorFile.add_column
+      ~RasorFile.column
+      ~RasorFile.columns
+      ~RasorFile.del_column
+      ~RasorFile.del_rows
+      ~RasorFile.dir
+      ~RasorFile.filter
+      ~RasorFile.find_col
+      ~RasorFile.get
+      ~RasorFile.get_filename
+      ~RasorFile.insert_rows
+      ~RasorFile.keys
+      ~RasorFile.load
+      ~RasorFile.rename
+      ~RasorFile.reorder_columns
+      ~RasorFile.rolling_window
+      ~RasorFile.rows
+      ~RasorFile.save
+      ~RasorFile.search
+      ~RasorFile.section
+      ~RasorFile.sort
+      ~RasorFile.swap_column
+      ~RasorFile.unique
+
+   
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RasorFile.patterns
+      ~RasorFile.priority
    
    

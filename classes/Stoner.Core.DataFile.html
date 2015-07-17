@@ -8,7 +8,7 @@
     
     <title>Stoner.Core.DataFile &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="DataFile.__init__" href="Stoner.Core.DataFile.__init__.html" />
     <link rel="prev" title="Stoner.Core.StonerLoadError" href="Stoner.Core.StonerLoadError.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,31 +45,31 @@
         <li class="right" >
           <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="stoner-core-datafile">
 <h1>Stoner.Core.DataFile<a class="headerlink" href="#stoner-core-datafile" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Core.DataFile">
-<em class="property">class </em><tt class="descclassname">Stoner.Core.</tt><tt class="descname">DataFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></tt></a> is the base class object that represents
+<em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">DataFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents
 a matrix of data, associated metadata and column headers.</p>
 <dl class="attribute">
 <dt>
-<tt class="descname">data (2D Array) A numpy masked array of data (usually floats).</tt></dt>
+<code class="descname">data (2D Array) A numpy masked array of data (usually floats).</code></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.metadata">
-<tt class="descname">metadata</tt><a class="headerlink" href="#Stoner.Core.DataFile.metadata" title="Permalink to this definition">¶</a></dt>
+<code class="descname">metadata</code><a class="headerlink" href="#Stoner.Core.DataFile.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>typeHintedDict</em></p>
 <p>of key-value metadata pairs. The dictionary
 tries to retain information about the type of
@@ -78,65 +78,65 @@ data so as to aid import and export from CM group LabVIEw code.</p>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.column_headers">
-<tt class="descname">column_headers</tt><a class="headerlink" href="#Stoner.Core.DataFile.column_headers" title="Permalink to this definition">¶</a></dt>
+<code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataFile.column_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list</em></p>
 <p>of strings of the column names of the data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.title">
-<tt class="descname">title</tt><a class="headerlink" href="#Stoner.Core.DataFile.title" title="Permalink to this definition">¶</a></dt>
+<code class="descname">title</code><a class="headerlink" href="#Stoner.Core.DataFile.title" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>string</em></p>
 <p>The title of the measurement.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.filename">
-<tt class="descname">filename</tt><a class="headerlink" href="#Stoner.Core.DataFile.filename" title="Permalink to this definition">¶</a></dt>
+<code class="descname">filename</code><a class="headerlink" href="#Stoner.Core.DataFile.filename" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>string</em></p>
 <p>The current filename of the data if loaded from or
-already saved to disc. This is the default filename used by the <a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.load()</span></tt></a>
-and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.save()</span></tt></a>.</p>
+already saved to disc. This is the default filename used by the <a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.load()</span></code></a>
+and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.save()</span></code></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.mask">
-<tt class="descname">mask</tt><a class="headerlink" href="#Stoner.Core.DataFile.mask" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mask</code><a class="headerlink" href="#Stoner.Core.DataFile.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>array of booleans</em></p>
 <p>Returns the current mask applied to the numerical data equivalent to self.data.mask.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.setas">
-<tt class="descname">setas</tt><a class="headerlink" href="#Stoner.Core.DataFile.setas" title="Permalink to this definition">¶</a></dt>
+<code class="descname">setas</code><a class="headerlink" href="#Stoner.Core.DataFile.setas" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list or string</em></p>
 <p>Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.shape">
-<tt class="descname">shape</tt><a class="headerlink" href="#Stoner.Core.DataFile.shape" title="Permalink to this definition">¶</a></dt>
+<code class="descname">shape</code><a class="headerlink" href="#Stoner.Core.DataFile.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>tuple of integers</em></p>
 <p>Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.records">
-<tt class="descname">records</tt><a class="headerlink" href="#Stoner.Core.DataFile.records" title="Permalink to this definition">¶</a></dt>
+<code class="descname">records</code><a class="headerlink" href="#Stoner.Core.DataFile.records" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>numpoy record array</em></p>
 <p>Returns the data in the form of a list of dictionaries.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.clone">
-<tt class="descname">clone</tt><a class="headerlink" href="#Stoner.Core.DataFile.clone" title="Permalink to this definition">¶</a></dt>
+<code class="descname">clone</code><a class="headerlink" href="#Stoner.Core.DataFile.clone" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>DataFile</em></p>
 <p>Creates a deep copy of the :py:class`DataFile` object.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.subclasses">
-<tt class="descname">subclasses</tt><a class="headerlink" href="#Stoner.Core.DataFile.subclasses" title="Permalink to this definition">¶</a></dt>
+<code class="descname">subclasses</code><a class="headerlink" href="#Stoner.Core.DataFile.subclasses" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list</em></p>
 <p>Returns a list of all the subclasses of DataFile currently in memory, sorted by
 their py:attr:<a href="#id1"><span class="problematic" id="id2">`</span></a>Stoner.Core.DataFile.priority. Each entry in the list consists of the
@@ -150,76 +150,76 @@ string name of the subclass and the class object.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
-<td>Constructor method for <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a>.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;column_header,&nbsp;...])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></a>(col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
 <td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><tt class="xref py py-obj docutils literal"><span class="pre">columns</span></tt></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over the columns of data int he datafile.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.del_column.html#Stoner.Core.DataFile.del_column" title="Stoner.Core.DataFile.del_column"><tt class="xref py py-obj docutils literal"><span class="pre">del_column</span></tt></a>([col,&nbsp;duplicates])</td>
-<td>Deletes a column from the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> object.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.del_column.html#Stoner.Core.DataFile.del_column" title="Stoner.Core.DataFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><tt class="xref py py-obj docutils literal"><span class="pre">del_rows</span></tt></a>([col,&nbsp;val,&nbsp;invert])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
 <td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><tt class="xref py py-obj docutils literal"><span class="pre">dir</span></tt></a>([pattern])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
 <td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><tt class="xref py py-obj docutils literal"><span class="pre">filter</span></tt></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
 <td>Sets the mask on rows of data by evaluating a function for each row.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><tt class="xref py py-obj docutils literal"><span class="pre">find_col</span></tt></a>(col[,&nbsp;force_list])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
 <td>Indexes the column headers in order to locate a column of data.shape.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.get.html#Stoner.Core.DataFile.get" title="Stoner.Core.DataFile.get"><tt class="xref py py-obj docutils literal"><span class="pre">get</span></tt></a>(item)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.get.html#Stoner.Core.DataFile.get" title="Stoner.Core.DataFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
 <td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.get_filename.html#Stoner.Core.DataFile.get_filename" title="Stoner.Core.DataFile.get_filename"><tt class="xref py py-obj docutils literal"><span class="pre">get_filename</span></tt></a>(mode)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.get_filename.html#Stoner.Core.DataFile.get_filename" title="Stoner.Core.DataFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
 <td>Forces the user to choose a new filename using a system dialog box.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.insert_rows.html#Stoner.Core.DataFile.insert_rows" title="Stoner.Core.DataFile.insert_rows"><tt class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></tt></a>(row,&nbsp;new_data)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.insert_rows.html#Stoner.Core.DataFile.insert_rows" title="Stoner.Core.DataFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
 <td>Insert new_data into the data array at position row.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
-<td>An alias for <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></tt> .</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<td>An alias for <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></code> .</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><tt class="xref py py-obj docutils literal"><span class="pre">load</span></tt></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
-<td>Loads the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt></a> in from disc guessing a better subclass if necessary.</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> in from disc guessing a better subclass if necessary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.rename.html#Stoner.Core.DataFile.rename" title="Stoner.Core.DataFile.rename"><tt class="xref py py-obj docutils literal"><span class="pre">rename</span></tt></a>(old_col,&nbsp;new_col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.rename.html#Stoner.Core.DataFile.rename" title="Stoner.Core.DataFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
 <td>Renames columns without changing the underlying data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><tt class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></tt></a>(cols[,&nbsp;headers_too])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
 <td>Construct a new data array from the original data by assembling the columns in the order given.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.rolling_window.html#Stoner.Core.DataFile.rolling_window" title="Stoner.Core.DataFile.rolling_window"><tt class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></tt></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.rolling_window.html#Stoner.Core.DataFile.rolling_window" title="Stoner.Core.DataFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><tt class="xref py py-obj docutils literal"><span class="pre">rows</span></tt></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><tt class="xref py py-obj docutils literal"><span class="pre">save</span></tt></a>([filename])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
 <td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-obj docutils literal"><span class="pre">search</span></tt></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><tt class="xref py py-obj docutils literal"><span class="pre">section</span></tt></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>([order,&nbsp;reverse])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>([order,&nbsp;reverse])</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><tt class="xref py py-obj docutils literal"><span class="pre">swap_column</span></tt></a>(swp[,&nbsp;headers_too])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><tt class="xref py py-obj docutils literal"><span class="pre">unique</span></tt></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
@@ -231,10 +231,10 @@ string name of the subclass and the class object.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">patterns</span></tt></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
 <td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">priority</span></tt></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
 <td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 </tbody>
@@ -247,7 +247,7 @@ string name of the subclass and the class object.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -258,12 +258,14 @@ string name of the subclass and the class object.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Core.DataFile.__init__.html"
                         title="next chapter">DataFile.__init__</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Core.DataFile.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Core.DataFile.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -280,7 +282,7 @@ string name of the subclass and the class object.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -295,14 +297,14 @@ string name of the subclass and the class object.</p>
         <li class="right" >
           <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

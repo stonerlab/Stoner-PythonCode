@@ -8,7 +8,7 @@
     
     <title>DataFile.get &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Core.DataFile" href="Stoner.Core.DataFile.html" />
     <link rel="next" title="DataFile.get_filename" href="Stoner.Core.DataFile.get_filename.html" />
     <link rel="prev" title="DataFile.find_col" href="Stoner.Core.DataFile.find_col.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,24 +45,24 @@
         <li class="right" >
           <a href="Stoner.Core.DataFile.find_col.html" title="DataFile.find_col"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.Core.DataFile.html" accesskey="U">Stoner.Core.DataFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Core.DataFile.html" accesskey="U">Stoner.Core.DataFile</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="datafile-get">
 <h1>DataFile.get<a class="headerlink" href="#datafile-get" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Core.DataFile.get">
-<tt class="descclassname">DataFile.</tt><tt class="descname">get</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.get" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DataFile.</code><code class="descname">get</code><span class="sig-paren">(</span><em>item</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper around __get_item__ that handles missing keys by returning None.</p>
-<p>This is useful for the <tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></tt> class.</p>
+<p>This is useful for the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Folder.DataFolder</span></code> class.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -70,7 +70,11 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>item</strong> (<em>string</em>) &#8211;
 A string representing the metadata keyname</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">self.metadata[item] or None if item not in self.metadata</td>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><strong>default</strong> (<em>any</em>) &#8211;
+Default value to return if key not found</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self.metadata[item] or None if item not in self.metadata</td>
 </tr>
 </tbody>
 </table>
@@ -82,7 +86,7 @@ A string representing the metadata keyname</td>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -93,12 +97,14 @@ A string representing the metadata keyname</td>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Core.DataFile.get_filename.html"
                         title="next chapter">DataFile.get_filename</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Core.DataFile.get.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Core.DataFile.get.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -115,7 +121,7 @@ A string representing the metadata keyname</td>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -130,15 +136,15 @@ A string representing the metadata keyname</td>
         <li class="right" >
           <a href="Stoner.Core.DataFile.find_col.html" title="DataFile.find_col"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.Core.DataFile.html" >Stoner.Core.DataFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Core.DataFile.html" >Stoner.Core.DataFile</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

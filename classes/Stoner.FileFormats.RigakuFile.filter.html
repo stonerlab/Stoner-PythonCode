@@ -8,7 +8,7 @@
     
     <title>RigakuFile.filter &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,11 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.FileFormats.RigakuFile" href="Stoner.FileFormats.RigakuFile.html" />
-    <link rel="next" title="RigakuFile.find_col" href="Stoner.FileFormats.RigakuFile.find_col.html" />
-    <link rel="prev" title="RigakuFile.dir" href="Stoner.FileFormats.RigakuFile.dir.html" /> 
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,28 +36,20 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.RigakuFile.find_col.html" title="RigakuFile.find_col"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.RigakuFile.dir.html" title="RigakuFile.dir"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.RigakuFile.html" accesskey="U">Stoner.FileFormats.RigakuFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="rigakufile-filter">
 <h1>RigakuFile.filter<a class="headerlink" href="#rigakufile-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.RigakuFile.filter">
-<tt class="descclassname">RigakuFile.</tt><tt class="descname">filter</tt><big>(</big><em>func=None</em>, <em>cols=None</em>, <em>reset=True</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.RigakuFile.filter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">RigakuFile.</code><code class="descname">filter</code><span class="sig-paren">(</span><em>func=None</em>, <em>cols=None</em>, <em>reset=True</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.RigakuFile.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the mask on rows of data by evaluating a function for each row.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -72,7 +61,8 @@ is a callable object that should take a single list as a p[arameter representing
 <li><strong>cols</strong> (<em>list</em>) &#8211;
 a list of column indices that are used to form the list of values passed to func.</li>
 <li><strong>reset</strong> (<em>bool</em>) &#8211;
-determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored in the filter (so the filter is logically or&#8217;d)) The default value of None results in a complete row being passed into func.</li>
+determines whether the mask is reset before doing the filter (otherwise rows already masked out will be ignored
+in the filter (so the filter is logically or&#8217;d)) The default value of None results in a complete row being passed into func.</li>
 </ul>
 </td>
 </tr>
@@ -89,23 +79,19 @@ determines whether the mask is reset before doing the filter (otherwise rows alr
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.RigakuFile.dir.html"
-                        title="previous chapter">RigakuFile.dir</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.RigakuFile.find_col.html"
-                        title="next chapter">RigakuFile.find_col</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.FileFormats.RigakuFile.filter.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.RigakuFile.filter.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -122,7 +108,7 @@ determines whether the mask is reset before doing the filter (otherwise rows alr
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -131,21 +117,13 @@ determines whether the mask is reset before doing the filter (otherwise rows alr
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.RigakuFile.find_col.html" title="RigakuFile.find_col"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.RigakuFile.dir.html" title="RigakuFile.dir"
-             >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.RigakuFile.html" >Stoner.FileFormats.RigakuFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 24, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

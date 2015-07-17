@@ -13,6 +13,7 @@ Stoner.Util.Data
    .. autosummary::
     :toctree:
    
+      ~Data.annotate_fit
       ~Data.format
 
    

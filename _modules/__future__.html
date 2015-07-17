@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>__future__ &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for __future__</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Record of phased-in incompatible language changes.</span>
+
+<span class="sd">Each line is of the form:</span>
+
+<span class="sd">    FeatureName = &quot;_Feature(&quot; OptionalRelease &quot;,&quot; MandatoryRelease &quot;,&quot;</span>
+<span class="sd">                              CompilerFlag &quot;)&quot;</span>
+
+<span class="sd">where, normally, OptionalRelease &lt; MandatoryRelease, and both are 5-tuples</span>
+<span class="sd">of the same form as sys.version_info:</span>
+
+<span class="sd">    (PY_MAJOR_VERSION, # the 2 in 2.1.0a3; an int</span>
+<span class="sd">     PY_MINOR_VERSION, # the 1; an int</span>
+<span class="sd">     PY_MICRO_VERSION, # the 0; an int</span>
+<span class="sd">     PY_RELEASE_LEVEL, # &quot;alpha&quot;, &quot;beta&quot;, &quot;candidate&quot; or &quot;final&quot;; string</span>
+<span class="sd">     PY_RELEASE_SERIAL # the 3; an int</span>
+<span class="sd">    )</span>
+
+<span class="sd">OptionalRelease records the first release in which</span>
+
+<span class="sd">    from __future__ import FeatureName</span>
+
+<span class="sd">was accepted.</span>
+
+<span class="sd">In the case of MandatoryReleases that have not yet occurred,</span>
+<span class="sd">MandatoryRelease predicts the release in which the feature will become part</span>
+<span class="sd">of the language.</span>
+
+<span class="sd">Else MandatoryRelease records when the feature became part of the language;</span>
+<span class="sd">in releases at or after that, modules no longer need</span>
+
+<span class="sd">    from __future__ import FeatureName</span>
+
+<span class="sd">to use the feature in question, but may continue to use such imports.</span>
+
+<span class="sd">MandatoryRelease may also be None, meaning that a planned feature got</span>
+<span class="sd">dropped.</span>
+
+<span class="sd">Instances of class _Feature have two corresponding methods,</span>
+<span class="sd">.getOptionalRelease() and .getMandatoryRelease().</span>
+
+<span class="sd">CompilerFlag is the (bitfield) flag that should be passed in the fourth</span>
+<span class="sd">argument to the builtin function compile() to enable the feature in</span>
+<span class="sd">dynamically compiled code.  This flag is stored in the .compiler_flag</span>
+<span class="sd">attribute on _Future instances.  These values must match the appropriate</span>
+<span class="sd">#defines of CO_xxx flags in Include/compile.h.</span>
+
+<span class="sd">No feature line is ever to be deleted from this file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">all_feature_names</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">&quot;nested_scopes&quot;</span><span class="p">,</span>
+    <span class="s">&quot;generators&quot;</span><span class="p">,</span>
+    <span class="s">&quot;division&quot;</span><span class="p">,</span>
+    <span class="s">&quot;absolute_import&quot;</span><span class="p">,</span>
+    <span class="s">&quot;with_statement&quot;</span><span class="p">,</span>
+    <span class="s">&quot;print_function&quot;</span><span class="p">,</span>
+    <span class="s">&quot;unicode_literals&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;all_feature_names&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">all_feature_names</span>
+
+<span class="c"># The CO_xxx symbols are defined here under the same names used by</span>
+<span class="c"># compile.h, so that an editor search will find them here.  However,</span>
+<span class="c"># they&#39;re not exported in __all__, because they don&#39;t really belong to</span>
+<span class="c"># this module.</span>
+<span class="n">CO_NESTED</span>            <span class="o">=</span> <span class="mh">0x0010</span>   <span class="c"># nested_scopes</span>
+<span class="n">CO_GENERATOR_ALLOWED</span> <span class="o">=</span> <span class="mi">0</span>        <span class="c"># generators (obsolete, was 0x1000)</span>
+<span class="n">CO_FUTURE_DIVISION</span>   <span class="o">=</span> <span class="mh">0x2000</span>   <span class="c"># division</span>
+<span class="n">CO_FUTURE_ABSOLUTE_IMPORT</span> <span class="o">=</span> <span class="mh">0x4000</span> <span class="c"># perform absolute imports by default</span>
+<span class="n">CO_FUTURE_WITH_STATEMENT</span>  <span class="o">=</span> <span class="mh">0x8000</span>   <span class="c"># with statement</span>
+<span class="n">CO_FUTURE_PRINT_FUNCTION</span>  <span class="o">=</span> <span class="mh">0x10000</span>   <span class="c"># print function</span>
+<span class="n">CO_FUTURE_UNICODE_LITERALS</span> <span class="o">=</span> <span class="mh">0x20000</span> <span class="c"># unicode string literals</span>
+
+<span class="k">class</span> <span class="nc">_Feature</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optionalRelease</span><span class="p">,</span> <span class="n">mandatoryRelease</span><span class="p">,</span> <span class="n">compiler_flag</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optional</span> <span class="o">=</span> <span class="n">optionalRelease</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span> <span class="o">=</span> <span class="n">mandatoryRelease</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compiler_flag</span> <span class="o">=</span> <span class="n">compiler_flag</span>
+
+    <span class="k">def</span> <span class="nf">getOptionalRelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return first release in which this feature was recognized.</span>
+
+<span class="sd">        This is a 5-tuple, of the same form as sys.version_info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional</span>
+
+    <span class="k">def</span> <span class="nf">getMandatoryRelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return release in which this feature will become mandatory.</span>
+
+<span class="sd">        This is a 5-tuple, of the same form as sys.version_info, or, if</span>
+<span class="sd">        the feature was dropped, is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;_Feature&quot;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">mandatory</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">compiler_flag</span><span class="p">))</span>
+
+<span class="n">nested_scopes</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;beta&quot;</span><span class="p">,</span>  <span class="mi">1</span><span class="p">),</span>
+                         <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                         <span class="n">CO_NESTED</span><span class="p">)</span>
+
+<span class="n">generators</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                      <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;final&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                      <span class="n">CO_GENERATOR_ALLOWED</span><span class="p">)</span>
+
+<span class="n">division</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="n">CO_FUTURE_DIVISION</span><span class="p">)</span>
+
+<span class="n">absolute_import</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                           <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                           <span class="n">CO_FUTURE_ABSOLUTE_IMPORT</span><span class="p">)</span>
+
+<span class="n">with_statement</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                          <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                          <span class="n">CO_FUTURE_WITH_STATEMENT</span><span class="p">)</span>
+
+<span class="n">print_function</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                          <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                          <span class="n">CO_FUTURE_PRINT_FUNCTION</span><span class="p">)</span>
+
+<span class="n">unicode_literals</span> <span class="o">=</span> <span class="n">_Feature</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                            <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;alpha&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                            <span class="n">CO_FUTURE_UNICODE_LITERALS</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gavin Burnell et al.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

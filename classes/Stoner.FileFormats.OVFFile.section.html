@@ -8,7 +8,7 @@
     
     <title>OVFFile.section &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,11 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.FileFormats.OVFFile" href="Stoner.FileFormats.OVFFile.html" />
-    <link rel="next" title="OVFFile.sort" href="Stoner.FileFormats.OVFFile.sort.html" />
-    <link rel="prev" title="OVFFile.search" href="Stoner.FileFormats.OVFFile.search.html" /> 
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,28 +36,20 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile.sort.html" title="OVFFile.sort"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile.search.html" title="OVFFile.search"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.OVFFile.html" accesskey="U">Stoner.FileFormats.OVFFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="ovffile-section">
 <h1>OVFFile.section<a class="headerlink" href="#ovffile-section" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.OVFFile.section">
-<tt class="descclassname">OVFFile.</tt><tt class="descname">section</tt><big>(</big><em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.OVFFile.section" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">OVFFile.</code><code class="descname">section</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.OVFFile.section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -84,7 +73,7 @@ a function that takes a tuple (x,y,z) and returns True if the line is to be incl
 </tr>
 </tbody>
 </table>
-<p>Internally this function is calling <tt class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></tt> to pull out matching sections of the data array.
+<p>Internally this function is calling <code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> to pull out matching sections of the data array.
 To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
 conditions on two axes will return a line of points along the third axis. The final keyword parameter allows you to select
 data points that lie in an arbitary plane or line. eg:</p>
@@ -101,23 +90,19 @@ the z-co-ordinate is 2.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.OVFFile.search.html"
-                        title="previous chapter">OVFFile.search</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.OVFFile.sort.html"
-                        title="next chapter">OVFFile.sort</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.FileFormats.OVFFile.section.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.OVFFile.section.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -134,7 +119,7 @@ the z-co-ordinate is 2.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -143,21 +128,13 @@ the z-co-ordinate is 2.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile.sort.html" title="OVFFile.sort"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.OVFFile.search.html" title="OVFFile.search"
-             >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.OVFFile.html" >Stoner.FileFormats.OVFFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 24, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

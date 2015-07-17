@@ -8,7 +8,7 @@
     
     <title>Stoner.Plot.PlotFile &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="PlotFile.__init__" href="Stoner.Plot.PlotFile.__init__.html" />
-    <link rel="prev" title="DefaultPlotStyle.update" href="Stoner.Plot.DefaultPlotStyle.update.html" /> 
+    <link rel="prev" title="AnalyseFile.threshold" href="Stoner.Analysis.AnalyseFile.threshold.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -43,23 +43,23 @@
           <a href="Stoner.Plot.PlotFile.__init__.html" title="PlotFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+          <a href="Stoner.Analysis.AnalyseFile.threshold.html" title="AnalyseFile.threshold"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="stoner-plot-plotfile">
 <h1>Stoner.Plot.PlotFile<a class="headerlink" href="#stoner-plot-plotfile" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Plot.PlotFile">
-<em class="property">class </em><tt class="descclassname">Stoner.Plot.</tt><tt class="descname">PlotFile</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Stoner.Plot.</code><code class="descname">PlotFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends DataFile with plotting functions.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -67,7 +67,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>args</strong> (<em>tuple</em>) &#8211;
-Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></tt></a></li>
+Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></a></li>
 <li><strong>kargs</strong> (<em>dict</em>) &#8211;
 keyword arguments to pass to  DataFile.__init__</li>
 </ul>
@@ -77,14 +77,14 @@ keyword arguments to pass to  DataFile.__init__</li>
 </table>
 <dl class="attribute">
 <dt id="Stoner.Plot.PlotFile.fig">
-<tt class="descname">fig</tt><a class="headerlink" href="#Stoner.Plot.PlotFile.fig" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fig</code><a class="headerlink" href="#Stoner.Plot.PlotFile.fig" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>matplotlib.figure</em></p>
 <p>The current figure object being worked with</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Plot.PlotFile.labels">
-<tt class="descname">labels</tt><a class="headerlink" href="#Stoner.Plot.PlotFile.labels" title="Permalink to this definition">¶</a></dt>
+<code class="descname">labels</code><a class="headerlink" href="#Stoner.Plot.PlotFile.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list of string</em></p>
 <p>List of axis labels as aternates to the column_headers</p>
 </dd></dl>
@@ -96,55 +96,55 @@ keyword arguments to pass to  DataFile.__init__</li>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.__init__.html#Stoner.Plot.PlotFile.__init__" title="Stoner.Plot.PlotFile.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.__init__.html#Stoner.Plot.PlotFile.__init__" title="Stoner.Plot.PlotFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Constructor of  PlotFile class.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.colormap_xyz.html#Stoner.Plot.PlotFile.colormap_xyz" title="Stoner.Plot.PlotFile.colormap_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">colormap_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.colormap_xyz.html#Stoner.Plot.PlotFile.colormap_xyz" title="Stoner.Plot.PlotFile.colormap_xyz"><code class="xref py py-obj docutils literal"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;...])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><code class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
 <td>An xyz plot that forces the use of plt.contour.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.figure.html#Stoner.Plot.PlotFile.figure" title="Stoner.Plot.PlotFile.figure"><tt class="xref py py-obj docutils literal"><span class="pre">figure</span></tt></a>([figure])</td>
-<td>Set the figure used by <a class="reference internal" href="#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></tt></a>.</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.figure.html#Stoner.Plot.PlotFile.figure" title="Stoner.Plot.PlotFile.figure"><code class="xref py py-obj docutils literal"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
+<td>Set the figure used by <a class="reference internal" href="#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata" title="Stoner.Plot.PlotFile.griddata"><tt class="xref py py-obj docutils literal"><span class="pre">griddata</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata" title="Stoner.Plot.PlotFile.griddata"><code class="xref py py-obj docutils literal"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
 <td>Function to convert xyz data onto a regular grid.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.image_plot.html#Stoner.Plot.PlotFile.image_plot" title="Stoner.Plot.PlotFile.image_plot"><tt class="xref py py-obj docutils literal"><span class="pre">image_plot</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.image_plot.html#Stoner.Plot.PlotFile.image_plot" title="Stoner.Plot.PlotFile.image_plot"><code class="xref py py-obj docutils literal"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
 <td>Grid up the three columns of data and plot.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.inset.html#Stoner.Plot.PlotFile.inset" title="Stoner.Plot.PlotFile.inset"><tt class="xref py py-obj docutils literal"><span class="pre">inset</span></tt></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.inset.html#Stoner.Plot.PlotFile.inset" title="Stoner.Plot.PlotFile.inset"><code class="xref py py-obj docutils literal"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
 <td>Add a new set of axes as an inset to the current plot.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><tt class="xref py py-obj docutils literal"><span class="pre">plot</span></tt></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Try to make an appropriate plot based on the defined column assignments.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><tt class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></tt></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><code class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;...])</td>
 <td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></tt></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr,&nbsp;multiple])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><code class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr,&nbsp;multiple])</td>
 <td>Makes a simple X-Y plot of the specified data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyuv.html#Stoner.Plot.PlotFile.plot_xyuv" title="Stoner.Plot.PlotFile.plot_xyuv"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></tt></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyuv.html#Stoner.Plot.PlotFile.plot_xyuv" title="Stoner.Plot.PlotFile.plot_xyuv"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Makes an overlaid image and quiver plot.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
 <td>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw" title="Stoner.Plot.PlotFile.plot_xyzuvw"><tt class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></tt></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw" title="Stoner.Plot.PlotFile.plot_xyzuvw"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
 <td>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.quiver_plot.html#Stoner.Plot.PlotFile.quiver_plot" title="Stoner.Plot.PlotFile.quiver_plot"><tt class="xref py py-obj docutils literal"><span class="pre">quiver_plot</span></tt></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.quiver_plot.html#Stoner.Plot.PlotFile.quiver_plot" title="Stoner.Plot.PlotFile.quiver_plot"><code class="xref py py-obj docutils literal"><span class="pre">quiver_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
 <td>Make a 2D Quiver plot from the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.subplot.html#Stoner.Plot.PlotFile.subplot" title="Stoner.Plot.PlotFile.subplot"><tt class="xref py py-obj docutils literal"><span class="pre">subplot</span></tt></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.subplot.html#Stoner.Plot.PlotFile.subplot" title="Stoner.Plot.PlotFile.subplot"><code class="xref py py-obj docutils literal"><span class="pre">subplot</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Pass throuygh for plt.subplot().</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.x2.html#Stoner.Plot.PlotFile.x2" title="Stoner.Plot.PlotFile.x2"><tt class="xref py py-obj docutils literal"><span class="pre">x2</span></tt></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotFile.x2.html#Stoner.Plot.PlotFile.x2" title="Stoner.Plot.PlotFile.x2"><code class="xref py py-obj docutils literal"><span class="pre">x2</span></code></a>()</td>
 <td>Generate a new set of axes with a second x-scale.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.y2.html#Stoner.Plot.PlotFile.y2" title="Stoner.Plot.PlotFile.y2"><tt class="xref py py-obj docutils literal"><span class="pre">y2</span></tt></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotFile.y2.html#Stoner.Plot.PlotFile.y2" title="Stoner.Plot.PlotFile.y2"><code class="xref py py-obj docutils literal"><span class="pre">y2</span></code></a>()</td>
 <td>Generate a new set of axes with a second y-scale.</td>
 </tr>
 </tbody>
@@ -156,10 +156,10 @@ keyword arguments to pass to  DataFile.__init__</li>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">no_fmt</span></tt></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">no_fmt</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">positional_fmt</span></tt></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">positional_fmt</span></code></td>
 <td></td>
 </tr>
 </tbody>
@@ -172,23 +172,25 @@ keyword arguments to pass to  DataFile.__init__</li>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Plot.DefaultPlotStyle.update.html"
-                        title="previous chapter">DefaultPlotStyle.update</a></p>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.threshold.html"
+                        title="previous chapter">AnalyseFile.threshold</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Plot.PlotFile.__init__.html"
                         title="next chapter">PlotFile.__init__</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Plot.PlotFile.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Plot.PlotFile.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -205,7 +207,7 @@ keyword arguments to pass to  DataFile.__init__</li>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -218,16 +220,16 @@ keyword arguments to pass to  DataFile.__init__</li>
           <a href="Stoner.Plot.PlotFile.__init__.html" title="PlotFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Plot.DefaultPlotStyle.update.html" title="DefaultPlotStyle.update"
+          <a href="Stoner.Analysis.AnalyseFile.threshold.html" title="AnalyseFile.threshold"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

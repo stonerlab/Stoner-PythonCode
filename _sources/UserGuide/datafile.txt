@@ -144,6 +144,57 @@ from disk::
 
    data=Stoner.Core.DataFile()<<open("File on Disk.txt")
 
+Constructing :py:class:`DataFile`s from Scratch
+-----------------------------------------------
+
+The constructor :py:class:`DataFile`, :py:meth:`DataFile.__init__` will try its best to guess what your intention
+was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
+arguments were passed:
+
+Single Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A single argument passed to :py:meth:`DataFile.__init__` is interpreted as follows:
+
+-   A string is assumed to be a filename, and therefore a DataFile is created by loading a file.
+-   A 2 numpy array is taken as the numeric data for the new DataFile
+-   A list or other iterable of strings is assumed to represent the column headers
+-   A list or other iterable of numpy arrays is assumed to represent a sequence of columns
+-   A dictionary with string keys and numpy array values of equal length is taken as a set of columns whose
+    header labels are the keys of the dictionaries.
+-   Otherwise a dictionary is treated as the metadata for the new DataFile instance.
+
+Two Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+If the second argument is a dictionary or a list or other iterables of strings, then the first argument interpreted as for
+the sibgle argument constructors above, and then the second argument is interpreted in the same way. (Internally this done by calling the
+single argument constructor function twice, once for each argument.)
+
+Many Argument Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If there are more than two arguments and they are numpy arrays, then they are used as the columns of the new DataFile.
+
+Keyword Arguments in Constructor
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+After the positional arguments are dealt with, any keywords that match attriobutes of the DataFile are used to set the corresponding
+attribute.
+
+Examples
+^^^^^^^^
+
+.. code::
+
+    # Load a file from disc, set the setas attribute and column headers
+    d=DataFile("filename.txt",setas="xy", column_headers=["X-Data","Y-Data"])
+    # Create a DataFile from a dictionary:
+    d=DataFile({"Temperature":temp_array,"Resistance":res_data})
+    # The same, but set metadata too
+    d=DataFile({"Temperature":temp_array,"Resistance":res_data},{"User":"Fred","Sample":"X234_a","Field":2.4})
+
+
 Examining and Basic Manipulations of Data
 =========================================
 
@@ -201,6 +252,10 @@ with a "fill" value of 10^20.
 .. warning::
    This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
    chance that you will need the masked data values again later !
+
+.. note::
+    Strictgly speaking, the :py:attr:`DataFile.data` attribute is a sub-class of the numpy masked array, :py:class:`DataArray`.
+    This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.
 
 Working with columns of data
 -----------------------------
@@ -331,6 +386,27 @@ The second example uses a slice to pull out more than one row. This syntax also
 supports the full slice syntax which allows one to, for example, decimate the
 rows, or directly pull out the last fews rows in the file.
 
+Special Magic When Working with Subsets of Data
+-----------------------------------------------
+
+As mentioned above, the data in a :py:class:`DataFile` is a sepcial siubclass of numpy's Masked Array - :py:class:`DataArray`.
+A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
+fact, the logic used for the column names and setas attribute in a :py:class:`DataFile` is actually supplied by the
+:py:class:`DataArray`. Whn you index a DataFile or it's data, the resulting data remembers it's column names and assignments
+and these can be used directly::
+
+    r=d[1:4]
+    print r.x,r.y
+
+In addition to the column assignments, :py:class:`DataArray` also keeps a track of the row numbers and makes them available via
+the *i* attribute.::
+
+    d.data.i # [0,1,2,3...,len(d)]
+    r=d[10]
+    r.i # 10
+
+You can reset the row numbers by assiging a value to the *i* attribute.
+
 Manipulating the metadata
 -------------------------
 
@@ -443,11 +519,17 @@ This can be done quite easily::
   	print column
   ......
 
-The first example could also have been written more compactly as::
+If there is no mask set, then the first example could also have been written more compactly as::
 
   for row in d:
   	print row
   ......
+
+.. note::
+
+    :py:meth:`DataFile.rows` and :py:meth:`DataFile.columns` both take an optional parameter *not_masked*. If this is True then these iterator
+    methods will skip over any rows/columns with masked out data values. When iterating over the :py:class:`DataFile` instance directly the
+    masked rows are skipped over.
 
 Searching, sectioning and filtering the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -513,7 +595,16 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method). The
+these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method).
+
+A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used::
+
+    r=d.closest(10.3,xcol="Search Col")
+    r=d.closest(10.3)
+
+If the *xcol* parameter is not supplied, the value from the :py:attr:`DataFile.setas` attribute is used. Since the returned row
+is an instance of the :py:class:`DataArray` that has been taken from the original data, it will know what row number it was and
+will make that available via it's *i* attribute.
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -642,20 +733,19 @@ Rearranging Columns of Data
 
 Sometimes it is useful to rearrange columns of data. :py:class:`DataFile` offers a couple of methods to help with this.::
 
-   d.swap_column(('Resistance','Temperature'))
-   d.swap_column(('Resistance','Temperature'),headers_too=False)
+   d.swap_column('Resistance','Temperature')
+   d.swap_column('Resistance','Temperature',headers_too=False,setas_too=False)
    d.swap_column([(0,1),('Temp','Volt'),(2,'Curr')])
    d.reorder_columns([1,3,'Volt','Temp'])
-   d.reorder_columns([1,3,'Volt','Temp'],header_too=False)
+   d.reorder_columns([1,3,'Volt','Temp'],header_too=False,setas_too=False)
 
-The :py:meth:`DataFile.swap_column` method takes either a tuple of column names, indices or a list of such
+The :py:meth:`DataFile.swap_column` method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
 tuples and swaps the columns accordingly, whilst the :py:meth:`DataFile.reorder_columns` method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The ``headers_too=False`` options, as the name suggests, cause the column headers not be rearranged.
 
 .. note::
-    The :py:meth:`DataFile.swap_column` and :py:meth:`DataFile.reorder_columns` do not (at present) reorder the
-    assignments in the :py:attr:`DataFile.setas` attribute.
+    The addition of the setas_too keyword to swap the column assignments around as well is new in 0.5rc1
 
 Renaming Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -722,7 +812,11 @@ The final two variants above, use a tuple to select the data. The final example 
 use of the *invert* keyword argument to reverse the sense used to selkect tows. In both cases
 rows are deleted(kept for *invert* = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
-for specifying the bounds.
+for specifying the bounds. Fianlly, if you call :py:meth:`DataFile.del_rows` with no arguments at all, then
+it removes all rows where at least one column of data is masked out.::
+
+    d.filter(lambda r:r[0]>50) # Mask all rows where the first column is greater than 50
+    d.del_rows() # Then delete them.
 
 For simple caases where the row to be delted can be expressed as an integer or list of integers,
 the subtration operator can be used.::

@@ -8,7 +8,7 @@
     
     <title>Stoner.Util &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,12 +23,12 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -37,15 +37,15 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <h1>Source code for Stoner.Util</h1><div class="highlight"><pre>
 <span class="c"># -*- coding: utf-8 -*-</span>
@@ -66,6 +66,8 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">argmax</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">trapz</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">float_info</span>
+<span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isclass</span>
 
 
 <div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.html#Stoner.Util.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">_AF_</span><span class="p">,</span> <span class="n">_PF_</span><span class="p">):</span>
@@ -114,24 +116,37 @@
                 <span class="n">units</span><span class="o">=</span><span class="s">&quot;&quot;</span>
         <span class="k">return</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">,</span><span class="n">latex</span><span class="p">,</span><span class="n">mode</span><span class="p">,</span><span class="n">units</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
 </div>
-    <span class="k">def</span> <span class="nf">annotate_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Data.annotate_fit"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.annotate_fit.html#Stoner.Util.Data.annotate_fit">[docs]</a>    <span class="k">def</span> <span class="nf">annotate_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Annotate a plot with some information about a fit.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            mode (lmfit/Model): The model used to describe the fit to be annotated.</span>
+<span class="sd">            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.</span>
 
 <span class="sd">        Keyword Parameters:</span>
 <span class="sd">            x (float): x co-ordinate of the label</span>
-<span class="sd">            y (float)L y co-ordinate of the label</span>
+<span class="sd">            y (float): y co-ordinate of the label</span>
+<span class="sd">            z (float): z co-ordinbate of the label if the current axes are 3D</span>
 <span class="sd">            prefix (str): The prefix placed ahead of the model parameters in the metadata.</span>
+<span class="sd">            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,</span>
+<span class="sd">                return just the text and don&#39;t add to a plot.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the current Data instance</span>
+<span class="sd">            A copy of the current Data instance if text_only is False, otherwise returns the text.</span>
 
 <span class="sd">        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,</span>
 <span class="sd">        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they</span>
 <span class="sd">        are set to be 0.75 * maximum x and y limit of the plot.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">Model</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="nb">callable</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;model should be either an lmfit.Model or a callable function, not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)))</span>
+
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="n">prefix</span><span class="o">+</span><span class="s">&quot;:&quot;</span>
         <span class="k">elif</span> <span class="s">&quot;lmfit.prefix&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
@@ -146,15 +161,27 @@
             <span class="n">yb</span><span class="p">,</span><span class="n">yt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
             <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">yt</span><span class="o">-</span><span class="n">yb</span><span class="p">)</span><span class="o">+</span><span class="n">yb</span>
 
+
         <span class="n">text</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text_only</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s">&quot;zlim&quot;</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">():</span>
+                <span class="c">#3D plot then</span>
+                <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">zb</span><span class="p">,</span><span class="n">zt</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">()[</span><span class="s">&quot;zlim&quot;</span><span class="p">]</span>
+                    <span class="n">z</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">zt</span><span class="o">-</span><span class="n">zb</span><span class="p">)</span><span class="o">+</span><span class="n">zb</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">text</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
-        <span class="k">return</span> <span class="bp">self</span>
 
 
 
-
-</div>
+</div></div>
 <div class="viewcode-block" id="split_up_down"><a class="viewcode-back" href="../../functions/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down">[docs]</a><span class="k">def</span> <span class="nf">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column \b col is either rising or falling</span>
 
@@ -396,12 +423,12 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../index.html">
               <img class="logo" src="../../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-<div id="searchbox" style="display: none">
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
@@ -418,7 +445,7 @@
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -427,14 +454,14 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

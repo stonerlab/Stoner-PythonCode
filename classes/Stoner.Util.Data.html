@@ -8,7 +8,7 @@
     
     <title>Stoner.Util.Data &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="Data.format" href="Stoner.Util.Data.format.html" />
+    <link rel="next" title="Data.annotate_fit" href="Stoner.Util.Data.annotate_fit.html" />
     <link rel="prev" title="test_is_zip" href="../functions/Stoner.Zip.test_is_zip.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -40,26 +40,26 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Util.Data.format.html" title="Data.format"
+          <a href="Stoner.Util.Data.annotate_fit.html" title="Data.annotate_fit"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../functions/Stoner.Zip.test_is_zip.html" title="test_is_zip"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="stoner-util-data">
 <h1>Stoner.Util.Data<a class="headerlink" href="#stoner-util-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Util.Data">
-<em class="property">class </em><tt class="descclassname">Stoner.Util.</tt><tt class="descname">Data</tt><big>(</big><em>*args</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Util.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Util.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Stoner.Util.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Util.html#Data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Util.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
 This &#8216;kitchen-sink&#8217; class is intended as a convenience for writing scripts that carry out both plotting and
 analysis on data files.</p>
@@ -70,8 +70,11 @@ analysis on data files.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.format.html#Stoner.Util.Data.format" title="Stoner.Util.Data.format"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a>(key[,&nbsp;latex,&nbsp;mode,&nbsp;units,&nbsp;prefix])</td>
-<td>Return the contents of key pretty formatted using <a class="reference internal" href="../functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><tt class="xref py py-func docutils literal"><span class="pre">format_error()</span></tt></a>.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Util.Data.annotate_fit.html#Stoner.Util.Data.annotate_fit" title="Stoner.Util.Data.annotate_fit"><code class="xref py py-obj docutils literal"><span class="pre">annotate_fit</span></code></a>(model[,&nbsp;x,&nbsp;y,&nbsp;z,&nbsp;prefix,&nbsp;text_only])</td>
+<td>Annotate a plot with some information about a fit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Util.Data.format.html#Stoner.Util.Data.format" title="Stoner.Util.Data.format"><code class="xref py py-obj docutils literal"><span class="pre">format</span></code></a>(key[,&nbsp;latex,&nbsp;mode,&nbsp;units,&nbsp;prefix])</td>
+<td>Return the contents of key pretty formatted using <a class="reference internal" href="../functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><code class="xref py py-func docutils literal"><span class="pre">format_error()</span></code></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -83,7 +86,7 @@ analysis on data files.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -92,14 +95,16 @@ analysis on data files.</p>
   <p class="topless"><a href="../functions/Stoner.Zip.test_is_zip.html"
                         title="previous chapter">test_is_zip</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Util.Data.format.html"
-                        title="next chapter">Data.format</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Util.Data.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <p class="topless"><a href="Stoner.Util.Data.annotate_fit.html"
+                        title="next chapter">Data.annotate_fit</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Util.Data.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -116,7 +121,7 @@ analysis on data files.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -126,19 +131,19 @@ analysis on data files.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Util.Data.format.html" title="Data.format"
+          <a href="Stoner.Util.Data.annotate_fit.html" title="Data.annotate_fit"
              >next</a> |</li>
         <li class="right" >
           <a href="../functions/Stoner.Zip.test_is_zip.html" title="test_is_zip"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

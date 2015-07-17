@@ -8,7 +8,7 @@
     
     <title>QDSquidVSMFile.load &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,11 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.FileFormats.QDSquidVSMFile" href="Stoner.FileFormats.QDSquidVSMFile.html" />
-    <link rel="next" title="QDSquidVSMFile.rename" href="Stoner.FileFormats.QDSquidVSMFile.rename.html" />
-    <link rel="prev" title="QDSquidVSMFile.keys" href="Stoner.FileFormats.QDSquidVSMFile.keys.html" /> 
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -39,29 +36,21 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.QDSquidVSMFile.rename.html" title="QDSquidVSMFile.rename"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.QDSquidVSMFile.keys.html" title="QDSquidVSMFile.keys"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.QDSquidVSMFile.html" accesskey="U">Stoner.FileFormats.QDSquidVSMFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="qdsquidvsmfile-load">
 <h1>QDSquidVSMFile.load<a class="headerlink" href="#qdsquidvsmfile-load" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.QDSquidVSMFile.load">
-<tt class="descclassname">QDSquidVSMFile.</tt><tt class="descname">load</tt><big>(</big><em>filename=None</em>, <em>auto_load=True</em>, <em>filetype=None</em>, <em>*args</em>, <em>**kargs</em><big>)</big><a class="headerlink" href="#Stoner.FileFormats.QDSquidVSMFile.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loads the <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in from disc guessing a better subclass if necessary.</p>
+<code class="descclassname">QDSquidVSMFile.</code><code class="descname">load</code><span class="sig-paren">(</span><em>filename=None</em>, <em>auto_load=True</em>, <em>filetype=None</em>, <em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.QDSquidVSMFile.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -73,8 +62,8 @@ path to file to load</p>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
 <li><strong>auto_load</strong> (<em>bool</em>) &#8211;
-If True (default) then the load routine tries all the subclasses of <tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt> in turn to load the file</li>
-<li><strong>filetype</strong> (<tt class="xref py py-class docutils literal"><span class="pre">DataFile</span></tt>) &#8211;
+If True (default) then the load routine tries all the subclasses of <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in turn to load the file</li>
+<li><strong>filetype</strong> (<code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>) &#8211;
 If not none then tries using filetype as the loader</li>
 </ul>
 </td>
@@ -86,8 +75,8 @@ If not none then tries using filetype as the loader</li>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>Possible subclasses to try and load from are identified at run time using the speciall <tt class="xref py py-attr docutils literal"><span class="pre">DataFile.subclasses</span></tt> attribute.</p>
-<p>Some subclasses can be found in the <a class="reference internal" href="../Stoner.html#module-Stoner.FileFormats" title="Stoner.FileFormats"><tt class="xref py py-mod docutils literal"><span class="pre">Stoner.FileFormats</span></tt></a> module.</p>
+<p>Possible subclasses to try and load from are identified at run time using the speciall <code class="xref py py-attr docutils literal"><span class="pre">DataFile.subclasses</span></code> attribute.</p>
+<p>Some subclasses can be found in the <a class="reference internal" href="../Stoner.html#module-Stoner.FileFormats" title="Stoner.FileFormats"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.FileFormats</span></code></a> module.</p>
 <p>Each subclass is scanned in turn for a class attribute priority which governs the order in which they are tried. Subclasses which can
 make an early positive determination that a file has the correct format can have higher priority levels. Classes should return
 a suitable expcetion if they fail to load the file.</p>
@@ -101,23 +90,19 @@ a suitable expcetion if they fail to load the file.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.QDSquidVSMFile.keys.html"
-                        title="previous chapter">QDSquidVSMFile.keys</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.QDSquidVSMFile.rename.html"
-                        title="next chapter">QDSquidVSMFile.rename</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.FileFormats.QDSquidVSMFile.load.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.QDSquidVSMFile.load.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -134,7 +119,7 @@ a suitable expcetion if they fail to load the file.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -143,21 +128,13 @@ a suitable expcetion if they fail to load the file.</p>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.QDSquidVSMFile.rename.html" title="QDSquidVSMFile.rename"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.FileFormats.QDSquidVSMFile.keys.html" title="QDSquidVSMFile.keys"
-             >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.FileFormats.QDSquidVSMFile.html" >Stoner.FileFormats.QDSquidVSMFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Mar 24, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

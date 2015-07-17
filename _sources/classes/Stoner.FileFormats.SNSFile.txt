@@ -8,6 +8,37 @@ Stoner.FileFormats.SNSFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~SNSFile.__init__
+      ~SNSFile.add_column
+      ~SNSFile.column
+      ~SNSFile.columns
+      ~SNSFile.del_column
+      ~SNSFile.del_rows
+      ~SNSFile.dir
+      ~SNSFile.filter
+      ~SNSFile.find_col
+      ~SNSFile.get
+      ~SNSFile.get_filename
+      ~SNSFile.insert_rows
+      ~SNSFile.keys
+      ~SNSFile.load
+      ~SNSFile.rename
+      ~SNSFile.reorder_columns
+      ~SNSFile.rolling_window
+      ~SNSFile.rows
+      ~SNSFile.save
+      ~SNSFile.search
+      ~SNSFile.section
+      ~SNSFile.sort
+      ~SNSFile.swap_column
+      ~SNSFile.unique
+
+   
    
 
    

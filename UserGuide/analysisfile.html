@@ -8,7 +8,7 @@
     
     <title>Analysing Data Files &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
     <link rel="next" title="Working with Lots of Files" href="datafolder.html" />
     <link rel="prev" title="Plotting Data" href="plotfile.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,15 +45,15 @@
         <li class="right" >
           <a href="plotfile.html" title="Plotting Data"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="analysing-data-files">
 <h1>Analysing Data Files<a class="headerlink" href="#analysing-data-files" title="Permalink to this headline">¶</a></h1>
@@ -67,7 +67,7 @@ adding and subtracting columns.:</p>
 <span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> method simply divides the data column by the reference column. By default the normalise method
+<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></code></a> method simply divides the data column by the reference column. By default the normalise method
 replaces the data column with the new (normalised) data and appends &#8216;(norm)&#8217; to the column header. The keyword arguments
 <em>header</em> and <em>replace</em> can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
@@ -79,11 +79,11 @@ a.subtract(0,3.141592654)
 a.subtract(0,a2.column(0))
 </pre></div>
 </div>
-<p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></tt></a> method subtracts the second column form the first.
-Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> the first data column will not be replaced but a new column inserted and a new header
+<p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></code></a> method subtracts the second column form the first.
+Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></code></a> the first data column will not be replaced but a new column inserted and a new header
 (defaulting to &#8216;column header 1 - column header 2&#8217;) will be created. This can be overridden with the <em>header</em> and <em>replace</em>
-keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></tt></a> method work in an analogous manner to the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></tt></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.add()</span></tt></a> method allows one to add two columns in a
+keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></code></a> method work in an analogous manner to the
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></code></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.add()</span></code></a> method allows one to add two columns in a
 similar fashion:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;A plus B&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -99,26 +99,26 @@ similar fashion:</p>
 <p>with variants that take either a 1D array of data or a constant instead of the B column index.</p>
 <p>One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
-each row belongs in. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split" title="Stoner.Analysis.AnalyseFile.split"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.split()</span></tt></a> method is useful for this case.:</p>
+each row belongs in. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split" title="Stoner.Analysis.AnalyseFile.split"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.split()</span></code></a> method is useful for this case.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;Polarisation&#39;</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Polarisation&#39;</span><span class="p">],[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">,</span><span class="bp">None</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>In these examples we assume the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> has a data column &#8216;Polarisation&#8217; that takes two (or more) discrete values
+<p>In these examples we assume the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> has a data column &#8216;Polarisation&#8217; that takes two (or more) discrete values
 and a column &#8216;Temperature&#8217; that contains numbers above and below 100.</p>
-<p>The first example would return a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object  containing two separate isntances of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>  which
+<p>The first example would return a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object  containing two separate isntances of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
-produce a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object containing two <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects for the rows with temperature above and below 100.
-The final example will result in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><tt class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></tt></a> object that has two groups each of which contains
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> objects for each polarisation value.</p>
+produce a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object containing two <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> objects for the rows with temperature above and below 100.
+The final example will result in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> object that has two groups each of which contains
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> objects for each polarisation value.</p>
 </div>
 <div class="section" id="curve-fitting">
-<h2>Curve Fitting<a class="headerlink" href="#curve-fitting" title="Permalink to this headline">¶</a></h2>
+<span id="curve-fit-guide"></span><h2>Curve Fitting<a class="headerlink" href="#curve-fitting" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="simple-polynomial-fits">
 <h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
 <p>Simple least squares fitting of polynomial functions is handled by the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.polyfit()</span></tt></a> method:</p>
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.polyfit()</span></code></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -128,7 +128,7 @@ the Stoner package. The routine will fit multiple columns if <em>column_y</em>
 is a list or slice. The <em>polynomial_order</em> parameter should be a simple integer
 greater or equal to 1 to define the degree of polynomial to fit. The <em>bounds</em>
 function follows the same rules as the <em>bounds</em> function in
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></tt></a> to restrict the fitting to a limited range of rows. The
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.search()</span></code></a> to restrict the fitting to a limited range of rows. The
 method returns a list of coefficients with the highest power first. If
 <em>column_y</em> was a list, then a 2D array of coefficients is returned.</p>
 <p>If <em>result</em> is specified then a new column with the header given by the <em>result</em> parameter will be
@@ -136,14 +136,14 @@ created and the fitted polynomial evaluated at each point.</p>
 </div>
 <div class="section" id="simple-function-fitting">
 <h3>Simple function fitting<a class="headerlink" href="#simple-function-fitting" title="Permalink to this headline">¶</a></h3>
-<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a>
+<p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>The first parameter is the fitting function. This should have prototype
-<tt class="docutils literal"><span class="pre">y=func(x,p[0],p[1],p[2]...)</span></tt>: where <em>p</em> is a list of fitting parameters.
+<code class="docutils literal"><span class="pre">y=func(x,p[0],p[1],p[2]...)</span></code>: where <em>p</em> is a list of fitting parameters.
 The <em>p0</em> parameter contains the initial guesses at the fitting
 parameters, the default value is 1. <em>xcol</em> and <em>ycol</em> are the x
 and y columns to fit. This method cannot handle multiple y columns.
@@ -151,30 +151,53 @@ and y columns to fit. This method cannot handle multiple y columns.
 should also be an array of the same length as the x and y data. Fianlly, the
 <em>bounds</em> function can be used to restrict the fitting to only a subset of the rows
 of data.</p>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a> returns a list of two arrays <tt class="docutils literal"><span class="pre">[popt,pcov]</span></tt>:
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a> returns a list of two arrays <code class="docutils literal"><span class="pre">[popt,pcov]</span></code>:
 where <em>popt</em> is an array of the optimal fitting parameters and
 <em>pcov</em> is a 2D array of the co-variances between the parameters.</p>
-<p>If <em>result</em> is not <strong>None</strong> then the fitted data is added to the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>
+<p>If <em>result</em> is not <strong>None</strong> then the fitted data is added to the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>
 object. Where it is added depends on the combination of the <em>result</em>, <em>replace</em>
 and <em>header</em> parameters. If <em>result</em> is a string or integer it is interpreted as a column
 index at which the fitted data will be inserted (<em>replace</em> <strong>False</strong>) or overwritten over the existing data (<em>replace</em> <strong>True</strong>).
 The fitted data will be given the column header <em>header</em> unless <em>header</em> is not a string, in which ase the column
 will be called &#8216;Fitted with &#8216; and the name of the function <em>func</em>.</p>
+<p>The utility method of the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>, <a class="reference internal" href="../classes/Stoner.Util.Data.annotate_fit.html#Stoner.Util.Data.annotate_fit" title="Stoner.Util.Data.annotate_fit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code></a> is useful
+for adding appropriately formatted details of the fit to the plot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+
+<span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">c</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;curve_fit_data.dat&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xye&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
+<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
+</div>
+<p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span>Fitting Tricks</span></a></p>
 </div>
 <div class="section" id="fitting-with-limits">
-<h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
+<span id="id1"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></tt> function. New in version 0.2 onwards of the Package is an interface to the
+<code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
 <p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> method is used to interact with lmfit.</p>
-<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a>, one requires a c instance. This describes a function
-and its independent and fittable parameters, whether they have limits and what the limits are. The <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></tt> module contains
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> method is used to interact with lmfit.</p>
+<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a>, one requires a c instance. This describes a function
+and its independent and fittable parameters, whether they have limits and what the limits are. The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> module contains
 a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.</p>
-<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></tt></a>:</p>
+<p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">Arrehenius</span>
 <span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 <span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">)</span>
@@ -183,45 +206,71 @@ a series of :py:class:lmfit.model.Model` subclasses that represent various model
 </pre></div>
 </div>
 <p>In this example we would be fitting an Arrehenius model to data contained inthe &#8216;Temp&#8217; and &#8216;Cond&#8217; columns. The resulting
-fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>.</p>
-<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> is controlled by the <em>output</em> keyword parameter. By default it is the <tt class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></tt>
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>.</p>
+<p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> is controlled by the <em>output</em> keyword parameter. By default it is the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code>
 instance. This contains all the information about the fit and fitting process.</p>
 <p>You can pass the model as a subclass of model, if you don&#8217;t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model&#8217;s
-<em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.guess.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></tt></a>) to determine parameters fromt he data. For example:</p>
+<em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.guess.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></code></a>) to determine parameters fromt he data. For example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">StretchedExp</span>
 
 <span class="c">#Load dat and plot</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;lmfit_data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)</span>
 
 <span class="c"># Do the fit</span>
-<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+<span class="c"># plot</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span>
 
-<span class="c"># plot again</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;+&quot;</span><span class="p">,</span><span class="s">&quot;-&quot;</span><span class="p">])</span>
 <span class="c"># Make apretty label using Stoner.Util methods</span>
 <span class="n">text</span><span class="o">=</span><span class="s">&quot;$y=A</span><span class="se">\\</span><span class="s">exp</span><span class="se">\\</span><span class="s">left[</span><span class="se">\\</span><span class="s">left(-</span><span class="se">\\</span><span class="s">frac{x}{x_0}</span><span class="se">\\</span><span class="s">right)^</span><span class="se">\\</span><span class="s">beta</span><span class="se">\\</span><span class="s">right]$</span><span class="se">\n</span><span class="s">&quot;</span>
-<span class="n">text</span><span class="o">+=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">StretchedExp</span><span class="p">()</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
+<span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
 <span class="c">#Adjust layout NB pass-through method to pyplot used here</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>, <a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
+</div>
 </div>
 <div class="section" id="non-linear-curve-fitting-with-initialisation-file">
 <h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
 <p>For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
-edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a> and <tt class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></tt> provide some mechanisms to enable this.</p>
+edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> and <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> provide some mechanisms to enable this.</p>
 <p>Firstly, the initialisation file should take the form like so.</p>
-<p>This initialisation file can be passed to <a class="reference internal" href="../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><tt class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></tt></a> which will use the information in the [Data]
+<p>This initialisation file can be passed to <a class="reference internal" href="../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
 section to read in the data file and identify the x and y columns.</p>
-<p>The initialisation file can then be passed to <tt class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_mode_from_ini()</span></tt> which will use the configuration file to
+<p>The initialisation file can then be passed to <code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_mode_from_ini()</span></code> which will use the configuration file to
 setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
-returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></tt></a>. Depending
+returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a>. Depending
 on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 <span class="math">\(\\chi^2\)</span> goodeness of fit.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
+<span class="sd">Created on Thu Oct 02 21:17:41 2014</span>
+
+<span class="sd">@author: phygbu</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span><span class="n">cfg_model_from_ini</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="s">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="s">&quot;../sample-data/PCAR Co Data.csv&quot;</span><span class="p">)</span>
+
+<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="s">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
+<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;lmfit&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s">&quot;r-&quot;</span><span class="p">,</span><span class="s">&quot;bo&quot;</span><span class="p">])</span> <span class="c"># plot the data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">xycoords</span><span class="o">=</span><span class="s">&quot;axes fraction&quot;</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
+</pre></div>
+</div>
 <p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>, <a class="reference external" href="../../scripts/lmfit-demo.png">png</a>, <a class="reference external" href="../../scripts/lmfit-demo.hires.png">hires.png</a>, <a class="reference external" href="../../scripts/lmfit-demo.pdf">pdf</a>)</p>
 <div class="figure">
 <img alt="../_images/lmfit-demo.png" src="../_images/lmfit-demo.png" />
@@ -233,7 +282,7 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <h2>More AnalyseFile Functions<a class="headerlink" href="#more-analysefile-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="applying-an-arbitary-function-through-the-data">
 <h3>Applying an arbitary function through the data<a class="headerlink" href="#applying-an-arbitary-function-through-the-data" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply" title="Stoner.Analysis.AnalyseFile.apply"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.apply()</span></tt></a>:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply" title="Stoner.Analysis.AnalyseFile.apply"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.apply()</span></code></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -243,7 +292,7 @@ existing data (depending on the values of <em>replace</em> and <em>header</em>).
 </div>
 <div class="section" id="basic-data-inspection">
 <h3>Basic Data Inspection<a class="headerlink" href="#basic-data-inspection" title="Permalink to this headline">¶</a></h3>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></tt></a>:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></code></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre>a.max(column)
 a.min(column)
 a.max(column,bounds=labda x,y:y[2]&gt;1 and y[2]&lt;10)
@@ -261,11 +310,11 @@ a.clip(column,(max_v,min_v)
 a.clip(column,b.span(column))
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.span()</span></tt></a> method simply returns a tuple of minimum and maximum values within either the whole column or
-bounded data. Internally this is just calling the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></tt></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></tt></a> methods.
-The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.clip.html#Stoner.Analysis.AnalyseFile.clip" title="Stoner.Analysis.AnalyseFile.clip"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.clip()</span></tt></a> method deletes rows for which the specified column as a value that is either larger or
+<p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.span()</span></code></a> method simply returns a tuple of minimum and maximum values within either the whole column or
+bounded data. Internally this is just calling the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></code></a> methods.
+The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.clip.html#Stoner.Analysis.AnalyseFile.clip" title="Stoner.Analysis.AnalyseFile.clip"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.clip()</span></code></a> method deletes rows for which the specified column as a value that is either larger or
 smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple &#8211;
-eg the result of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.span()</span></tt></a> method, or a complete list as in the last example above. Specifying a single
+eg the result of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.span()</span></code></a> method, or a complete list as in the last example above. Specifying a single
 float would have the effect of removing all rows where the column didn&#8217;t equal the float value. This is probably not a good idea...</p>
 <p>It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set,
 in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around,
@@ -278,12 +327,12 @@ bounds function:</p>
 </div>
 <div class="section" id="data-reduction-methods">
 <h2>Data Reduction Methods<a class="headerlink" href="#data-reduction-methods" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> offers a number of methods to assist in data reduction and data processing.</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> offers a number of methods to assist in data reduction and data processing.</p>
 <div class="section" id="re-binning-data">
-<h3>(Re)Binning Data<a class="headerlink" href="#re-binning-data" title="Permalink to this headline">¶</a></h3>
+<span id="binning-guide"></span><h3>(Re)Binning Data<a class="headerlink" href="#re-binning-data" title="Permalink to this headline">¶</a></h3>
 <p>Data binning is the process of taking approximately continuous (x,y) data and grouping them into &#8220;bins&#8221; of specified x, and average y. Since
 this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.</p>
-<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> provides a simple <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></tt></a> method that can re-bin data:</p>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> provides a simple <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></code></a> method that can re-bin data:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
 <span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="s">&quot;dCounts&quot;</span><span class="p">)</span>
 <span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">bin_start</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">bin_stop</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
@@ -297,10 +346,10 @@ then the bin boundaries are set from equal logspace boundaries.</p>
 <p>If the keyword <strong>yerr</strong> is supplied then the y values in each bin are weighted by their respective error bars when calculating the mean. In this case the
 error bar on the bin bceomes the quadrature sum of the individual error bars on each point included in the bin. If <strong>yerr</strong> is nopt specified, then the error bar
 is the standard error in the y points in the bin and the y value is the simple mean of the data.</p>
-<p>If <strong>xcol</strong> and/or <strong>ycol</strong> are not specified, then they are looked up from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute. In this case, the <strong>yerr</strong>
+<p>If <strong>xcol</strong> and/or <strong>ycol</strong> are not specified, then they are looked up from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute. In this case, the <strong>yerr</strong>
 is also taken from this attribute if not specified spearately.</p>
 <p>IF the keyword <em>clone</em> is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
-points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></tt></a> returns a clone of the current data file with its data
+points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></code></a> returns a clone of the current data file with its data
 (and column headers) replaced with the newly binned data.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.plotutils</span> <span class="kn">import</span> <span class="n">errorfill</span>
@@ -331,14 +380,14 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 </div>
 </div>
 <div class="section" id="stitching-datasets-together">
-<h3>Stitching Datasets together<a class="headerlink" href="#stitching-datasets-together" title="Permalink to this headline">¶</a></h3>
+<span id="stitch-guide"></span><h3>Stitching Datasets together<a class="headerlink" href="#stitching-datasets-together" title="Permalink to this headline">¶</a></h3>
 <p>Sometimes a data set is obtained by joing together several separate sets of data,
 for example, joinging several scans over different angular or energy ranges to make a single
 combinaed scan. In the ideal world, these scans could simple be joing together (e.g. by using the +
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
-best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> provides
-a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></tt></a> method to facilitate this.</p>
+best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> provides
+a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></code></a> method to facilitate this.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">format_error</span>
@@ -379,7 +428,7 @@ region to use or even a custom stiching transofmration function:</p>
 </div>
 <p>In these examples, the x and y columns of <em>scan2</em> are modified to give the best
 possible match to <em>scan1</em>. If <em>xcol</em> or <em>ycol</em> are not given then the default x and y columns as set py the
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute.</p>
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.</p>
 <p>The <em>mode</em> keyword can be used to specify the types of scaling operations that are
 to be allowed. Teh defaults are to shoft both x and y by an offset value and to rescale
 the y data by some factor. If even more control of the transformation is needed,
@@ -391,29 +440,29 @@ function should be:</p>
     <span class="k">return</span> <span class="p">(</span><span class="n">mapped_x</span><span class="p">,</span><span class="n">mapped_y</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In addition to changing the X and Y data in the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a>
+<p>In addition to changing the X and Y data in the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>
 instance, two new metadata keys, <em>Stitching Coefficient</em> and <em>Stitching Coeffient Errors</em>,
 with the co-efficients used to modify the scan data.</p>
 </div>
 <div class="section" id="thresholding-and-interpolating-data">
 <h3>Thresholding and Interpolating Data<a class="headerlink" href="#thresholding-and-interpolating-data" title="Permalink to this headline">¶</a></h3>
 <p>Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
-<span class="math">\(y=f(x)-y_{threshold}\)</span>). This is carried out by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.threshold()</span></tt></a> method:</p>
+<span class="math">\(y=f(x)-y_{threshold}\)</span>). This is carried out by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.threshold()</span></code></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;Y-data&quot;</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X-data&quot;</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If the parameters <strong>col</strong> and <strong>xcol</strong> are not given, they are determined by the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute. The <strong>rising</strong> and <strong>falling</strong>
+<p>If the parameters <strong>col</strong> and <strong>xcol</strong> are not given, they are determined by the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute. The <strong>rising</strong> and <strong>falling</strong>
 parameters control whether the y values are rising or falling with row number as they pass the threshold and <strong>all_vals</strong> determines whether the method returns
 just the first threshold or all thresholds it can find. The values returned are mapped to the x-column data if it is specified. The thresholding uses just a simple
 two point linear fit to find the thresholds.</p>
-<p>Interpolating data finds values of y for points x that lie between data points. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.interpolate()</span></tt></a> provides a simple pass-through to the
-scipy routine <tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.interp1d()</span></tt>:</p>
+<p>Interpolating data finds values of y for points x that lie between data points. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.interpolate()</span></code></a> provides a simple pass-through to the
+scipy routine <code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.interp1d()</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X-Data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The new values of X are set from the mandetory first argument. <strong>kind</strong> can be either &#8220;linear&#8221; or &#8220;cubic&#8221; whilst the xcol data can be omitted in which case the
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><tt class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></tt></a> attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.</p>
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.</p>
 </div>
 <div class="section" id="smoothing-and-differentiating-data">
 <h3>Smoothing and Differentiating Data<a class="headerlink" href="#smoothing-and-differentiating-data" title="Permalink to this headline">¶</a></h3>
@@ -427,14 +476,14 @@ indexed by col is differentiated with repsect to the row. <em>order</em> specifi
 means simply smoothing the data. The algorithm works by locally fitting a polynomial over a certain window of points.
 The parameters for this fitting are controlled by the <em>points</em> and <em>poly</em> parameters. <em>points</em>&gt;*poly*&gt;*order* for
 the algorithm to work. <em>resul;t</em>, <em>replace</em> and <em>header</em> specify that the calculated data should also be added to
-the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><tt class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></tt></a> instance, optionally replacing an existing column indexed by <em>result</em> and given a new header
+the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> instance, optionally replacing an existing column indexed by <em>result</em> and given a new header
 <em>header</em>. The nature of the local fitting means that the first and last <em>poly</em>/2 points are not valid.</p>
 </div>
 <div class="section" id="peak-finding">
-<h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
+<span id="id2"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
 <p>Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
-The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><tt class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></tt></a> provides a relatively simple and effective method for doing this:</p>
+The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">()</span>
 <span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Y Data&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X Data&quot;</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">sort</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
@@ -445,10 +494,26 @@ If <em>ycol</em> is not provided then both x and y data is taken from the <em>se
 Zero crossing values in the derivative are located and then the second derivative is found for these points and are used to identify
 peaks and troughs in the data. The <em>width</em> and <em>poly</em> keywords are used to control the order of polynomial and the width of the window
 used for calculating the derivative - a lower order of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
-Only peaks and troughs whose second derivatives are larger than <em>significance</em> are returned, and if <em>sort</em> is True, the peaks are returned
-in order of their significance. <em>peaks</em> and <em>troughs</em> select whether to return peaks or troughs.</p>
+The <em>significance</em> parameter controls which peaks and troughs are returned. If <em>signficance</em> is a float, then only peaks and troughs whose
+second derivatives are larger than <em>significance</em> are returned. If <em>significance</em> is an integer, then maxmium snd derivative in the data is divided
+by the supplied significance and used as the threshold on which peaks and troughs to return. If <em>significance</em> is not provided then a value of 20 is used.
+Finally, if <em>sort</em> is True, the peaks are returned in order of their significance. <em>peaks</em> and <em>troughs</em> select whether to return peaks or troughs.</p>
 <p>The default values of width and saignificance are set on the assumption that a data set will have less than about 10 peaks of more or
 less equal significance. By default, only peaks are returned in order of x position.</p>
+<p>The example below shows how to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></code></a> to filter out just the peak positions in a set of data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../../sample-data/New-XRay-Data.dql&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">poly</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">significance</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;Peaks&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>, <a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/peaks_example.png" src="../_images/peaks_example.png" />
+</div>
 </div>
 </div>
 </div>
@@ -457,7 +522,7 @@ less equal significance. By default, only peaks are returned in order of x posit
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -499,12 +564,14 @@ less equal significance. By default, only peaks are returned in order of x posit
   <h4>Next topic</h4>
   <p class="topless"><a href="datafolder.html"
                         title="next chapter">Working with Lots of Files</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/UserGuide/analysisfile.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/analysisfile.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -521,7 +588,7 @@ less equal significance. By default, only peaks are returned in order of x posit
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -536,14 +603,14 @@ less equal significance. By default, only peaks are returned in order of x posit
         <li class="right" >
           <a href="plotfile.html" title="Plotting Data"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

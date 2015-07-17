@@ -14,6 +14,29 @@ Stoner.FileFormats.BNLFile
     :toctree:
    
       ~BNLFile.__init__
+      ~BNLFile.add_column
+      ~BNLFile.column
+      ~BNLFile.columns
+      ~BNLFile.del_column
+      ~BNLFile.del_rows
+      ~BNLFile.dir
+      ~BNLFile.filter
+      ~BNLFile.find_col
+      ~BNLFile.get
+      ~BNLFile.get_filename
+      ~BNLFile.insert_rows
+      ~BNLFile.keys
+      ~BNLFile.load
+      ~BNLFile.rename
+      ~BNLFile.reorder_columns
+      ~BNLFile.rolling_window
+      ~BNLFile.rows
+      ~BNLFile.save
+      ~BNLFile.search
+      ~BNLFile.section
+      ~BNLFile.sort
+      ~BNLFile.swap_column
+      ~BNLFile.unique
 
    
    

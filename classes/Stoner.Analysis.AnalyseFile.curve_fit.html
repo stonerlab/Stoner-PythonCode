@@ -8,7 +8,7 @@
     
     <title>AnalyseFile.curve_fit &mdash; Stoner Pacakge API Documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -23,14 +23,14 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
     <link rel="next" title="AnalyseFile.decompose" href="Stoner.Analysis.AnalyseFile.decompose.html" />
     <link rel="prev" title="AnalyseFile.clip" href="Stoner.Analysis.AnalyseFile.clip.html" /> 
   </head>
-  <body>
-    <div class="related">
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -45,22 +45,22 @@
         <li class="right" >
           <a href="Stoner.Analysis.AnalyseFile.clip.html" title="AnalyseFile.clip"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
       </ul>
     </div>  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          <div class="body" role="main">
             
   <div class="section" id="analysefile-curve-fit">
 <h1>AnalyseFile.curve_fit<a class="headerlink" href="#analysefile-curve-fit" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Analysis.AnalyseFile.curve_fit">
-<tt class="descclassname">AnalyseFile.</tt><tt class="descname">curve_fit</tt><big>(</big><em>func</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kargs</em><big>)</big><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.curve_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.curve_fit" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">AnalyseFile.</code><code class="descname">curve_fit</code><span class="sig-paren">(</span><em>func</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>p0=None</em>, <em>sigma=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.curve_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.curve_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>General curve fitting function passed through from scipy.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -69,10 +69,12 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>func</strong> (<em>callable</em>) &#8211;
 The fitting function with the form def f(x,*p) where p is a list of fitting parameters</li>
-<li><strong>xcol</strong> (<em>index</em>) &#8211;
-The index of the x-column data to fit</li>
-<li><strong>ycol</strong> (<em>index</em>) &#8211;
-The index of the y-column data to fit</li>
+<li><strong>xcol</strong> (<em>index, Iterable</em>) &#8211;
+The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.</li>
+<li><strong>ycol</strong> (<em>index. ;ist of indices or array</em>) &#8211;
+The index of the y-column data to fit. If an array, then should be 1D and
+the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring
+for each one. In this case the return value is a list of what would be returned for a single column fit.</li>
 </ul>
 </td>
 </tr>
@@ -116,9 +118,9 @@ pcov (2d array): The variance-co-variance matrix for the fitting parameters.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>If the columns are not specified (or set to None) then the X and Y data are taken using the
-<tt class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></tt> attribute.</p>
+<code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute.</p>
 <p>The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
-The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></tt></a> can use as an index
+The x-column and y-column can be anything that <a class="reference internal" href="Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.find_col()</span></code></a> can use as an index
 but typucally either strings to be matched against column headings or integers.
 The initial parameter values and weightings default to None which corresponds to all parameters starting
 at 1 and all points equally weighted. The bounds function has format b(x, y-vec) and rewturns true if the
@@ -131,7 +133,8 @@ based on these values.</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><tt class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalyseFile.lmfit()</span></tt></a></p>
+<p class="last"><a class="reference internal" href="Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalyseFile.lmfit()</span></code></a>
+User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#curve-fit-guide"><span>Curve Fitting</span></a></p>
 </div>
 </dd></dl>
 
@@ -141,7 +144,7 @@ based on these values.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
@@ -152,12 +155,14 @@ based on these values.</p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Analysis.AnalyseFile.decompose.html"
                         title="next chapter">AnalyseFile.decompose</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.curve_fit.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.curve_fit.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
@@ -174,7 +179,7 @@ based on these values.</p>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
+    <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -189,15 +194,15 @@ based on these values.</p>
         <li class="right" >
           <a href="Stoner.Analysis.AnalyseFile.clip.html" title="AnalyseFile.clip"
              >previous</a> |</li>
-        <li><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
       </ul>
     </div>
-    <div class="footer">
+    <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on May 05, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+      Last updated on Jul 17, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
 </html>

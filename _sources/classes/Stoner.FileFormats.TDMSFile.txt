@@ -8,6 +8,37 @@ Stoner.FileFormats.TDMSFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~TDMSFile.__init__
+      ~TDMSFile.add_column
+      ~TDMSFile.column
+      ~TDMSFile.columns
+      ~TDMSFile.del_column
+      ~TDMSFile.del_rows
+      ~TDMSFile.dir
+      ~TDMSFile.filter
+      ~TDMSFile.find_col
+      ~TDMSFile.get
+      ~TDMSFile.get_filename
+      ~TDMSFile.insert_rows
+      ~TDMSFile.keys
+      ~TDMSFile.load
+      ~TDMSFile.rename
+      ~TDMSFile.reorder_columns
+      ~TDMSFile.rolling_window
+      ~TDMSFile.rows
+      ~TDMSFile.save
+      ~TDMSFile.search
+      ~TDMSFile.section
+      ~TDMSFile.sort
+      ~TDMSFile.swap_column
+      ~TDMSFile.unique
+
+   
    
 
    
