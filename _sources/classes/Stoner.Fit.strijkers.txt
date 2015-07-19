@@ -13,8 +13,8 @@ Stoner.Fit.Strijkers
    .. autosummary::
     :toctree:
    
-      ~Strijkers.__init__
-      ~Strijkers.guess
+      ~Stoner.Fit.Strijkers.__init__
+      ~Stoner.Fit.Strijkers.guess
 
    
    

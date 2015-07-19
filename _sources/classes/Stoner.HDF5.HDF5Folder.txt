@@ -13,9 +13,9 @@ Stoner.HDF5.HDF5Folder
    .. autosummary::
     :toctree:
    
-      ~HDF5Folder.__init__
-      ~HDF5Folder.getlist
-      ~HDF5Folder.save
+      ~Stoner.HDF5.HDF5Folder.__init__
+      ~Stoner.HDF5.HDF5Folder.getlist
+      ~Stoner.HDF5.HDF5Folder.save
 
    
    

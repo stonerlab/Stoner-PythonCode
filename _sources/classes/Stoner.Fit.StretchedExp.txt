@@ -13,8 +13,8 @@ Stoner.Fit.StretchedExp
    .. autosummary::
     :toctree:
    
-      ~StretchedExp.__init__
-      ~StretchedExp.guess
+      ~Stoner.Fit.StretchedExp.__init__
+      ~Stoner.Fit.StretchedExp.guess
 
    
    

@@ -13,8 +13,8 @@ Stoner.Zip.ZipFile
    .. autosummary::
     :toctree:
    
-      ~ZipFile.__init__
-      ~ZipFile.save
+      ~Stoner.Zip.ZipFile.__init__
+      ~Stoner.Zip.ZipFile.save
 
    
    
@@ -25,7 +25,7 @@ Stoner.Zip.ZipFile
 
    .. autosummary::
    
-      ~ZipFile.patterns
-      ~ZipFile.priority
+      ~Stoner.Zip.ZipFile.patterns
+      ~Stoner.Zip.ZipFile.priority
    
    

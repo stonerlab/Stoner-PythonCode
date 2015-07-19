@@ -16,7 +16,7 @@ Stoner.PlotFormats.ThesisPlotStyle
 
    .. autosummary::
    
-      ~ThesisPlotStyle.show_title
-      ~ThesisPlotStyle.stylename
+      ~Stoner.PlotFormats.ThesisPlotStyle.show_title
+      ~Stoner.PlotFormats.ThesisPlotStyle.stylename
    
    

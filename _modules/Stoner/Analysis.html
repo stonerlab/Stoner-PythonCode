@@ -897,7 +897,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">err_header</span><span class="p">,</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_x</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyseFile.extrapolate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.extrapolate.html#Stoner.Analysis.AnalyseFile.extrapolate">[docs]</a>    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_x</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extrapolate data based on local fit to x,y data.</span>
 
 <span class="sd">        Args:</span>
@@ -966,7 +966,7 @@
                 <span class="n">pcov</span><span class="p">,</span><span class="n">popt</span><span class="o">=</span><span class="n">rt</span>
                 <span class="n">results</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">kind</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">pcov</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">results</span>
-
+</div>
 <div class="viewcode-block" id="AnalyseFile.integrate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.integrate.html#Stoner.Analysis.AnalyseFile.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">result_name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inegrate a column of data, optionally returning the cumulative integral.</span>
 
@@ -1636,7 +1636,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">column_header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span>
 </div>
-    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyseFile.scale"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.scale.html#Stoner.Analysis.AnalyseFile.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scale the x and y data in this DataFile to match the x and y data in another DataFile.</span>
 
 <span class="sd">        Args:</span>
@@ -1742,7 +1742,7 @@
             <span class="n">ret</span><span class="o">=</span><span class="n">popt</span><span class="p">,</span><span class="n">perr</span><span class="p">,</span><span class="n">new_data</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-
+</div>
 <div class="viewcode-block" id="AnalyseFile.span"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span">[docs]</a>    <span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.</span>
 
@@ -1763,7 +1763,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 </div>
-    <span class="k">def</span> <span class="nf">spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyseFile.spline"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline">[docs]</a>    <span class="k">def</span> <span class="nf">spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Construct a spline through x and y data and replace, add new data or return spline function.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1823,7 +1823,7 @@
 
 
 
-
+</div>
 <div class="viewcode-block" id="AnalyseFile.split"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows</span>
 <span class="sd">        from the original object which had the same value of a given column.</span>
@@ -2141,7 +2141,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 17, 2015.
+      Last updated on Jul 19, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

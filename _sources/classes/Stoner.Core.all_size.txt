@@ -1,0 +1,15 @@
+Stoner.Core.all_size
+====================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: all_size
+
+   
+
+   
+   
+
+   
+   
+   

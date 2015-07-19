@@ -13,8 +13,8 @@ Stoner.PlotFormats.SketchPlot
    .. autosummary::
     :toctree:
    
-      ~SketchPlot.customise
-      ~SketchPlot.customise_axes
+      ~Stoner.PlotFormats.SketchPlot.customise
+      ~Stoner.PlotFormats.SketchPlot.customise_axes
 
    
    
@@ -25,6 +25,6 @@ Stoner.PlotFormats.SketchPlot
 
    .. autosummary::
    
-      ~SketchPlot.stylename
+      ~Stoner.PlotFormats.SketchPlot.stylename
    
    

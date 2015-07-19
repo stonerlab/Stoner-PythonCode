@@ -13,9 +13,9 @@ Stoner.PlotFormats.TexEngFormatter
    .. autosummary::
     :toctree:
    
-      ~TexEngFormatter.__call__
-      ~TexEngFormatter.format_data
-      ~TexEngFormatter.format_data_short
+      ~Stoner.PlotFormats.TexEngFormatter.__call__
+      ~Stoner.PlotFormats.TexEngFormatter.format_data
+      ~Stoner.PlotFormats.TexEngFormatter.format_data_short
 
    
    
@@ -26,6 +26,6 @@ Stoner.PlotFormats.TexEngFormatter
 
    .. autosummary::
    
-      ~TexEngFormatter.prefix
+      ~Stoner.PlotFormats.TexEngFormatter.prefix
    
    

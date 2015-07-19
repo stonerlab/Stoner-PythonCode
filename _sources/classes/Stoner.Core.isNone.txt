@@ -1,0 +1,15 @@
+Stoner.Core.isNone
+==================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: isNone
+
+   
+
+   
+   
+
+   
+   
+   

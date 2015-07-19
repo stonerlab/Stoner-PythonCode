@@ -8,37 +8,6 @@ Stoner.FileFormats.FmokeFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~FmokeFile.__init__
-      ~FmokeFile.add_column
-      ~FmokeFile.column
-      ~FmokeFile.columns
-      ~FmokeFile.del_column
-      ~FmokeFile.del_rows
-      ~FmokeFile.dir
-      ~FmokeFile.filter
-      ~FmokeFile.find_col
-      ~FmokeFile.get
-      ~FmokeFile.get_filename
-      ~FmokeFile.insert_rows
-      ~FmokeFile.keys
-      ~FmokeFile.load
-      ~FmokeFile.rename
-      ~FmokeFile.reorder_columns
-      ~FmokeFile.rolling_window
-      ~FmokeFile.rows
-      ~FmokeFile.save
-      ~FmokeFile.search
-      ~FmokeFile.section
-      ~FmokeFile.sort
-      ~FmokeFile.swap_column
-      ~FmokeFile.unique
-
-   
    
 
    
@@ -47,7 +16,7 @@ Stoner.FileFormats.FmokeFile
 
    .. autosummary::
    
-      ~FmokeFile.patterns
-      ~FmokeFile.priority
+      ~Stoner.FileFormats.FmokeFile.patterns
+      ~Stoner.FileFormats.FmokeFile.priority
    
    

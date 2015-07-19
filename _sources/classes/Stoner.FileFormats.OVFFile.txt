@@ -8,37 +8,6 @@ Stoner.FileFormats.OVFFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~OVFFile.__init__
-      ~OVFFile.add_column
-      ~OVFFile.column
-      ~OVFFile.columns
-      ~OVFFile.del_column
-      ~OVFFile.del_rows
-      ~OVFFile.dir
-      ~OVFFile.filter
-      ~OVFFile.find_col
-      ~OVFFile.get
-      ~OVFFile.get_filename
-      ~OVFFile.insert_rows
-      ~OVFFile.keys
-      ~OVFFile.load
-      ~OVFFile.rename
-      ~OVFFile.reorder_columns
-      ~OVFFile.rolling_window
-      ~OVFFile.rows
-      ~OVFFile.save
-      ~OVFFile.search
-      ~OVFFile.section
-      ~OVFFile.sort
-      ~OVFFile.swap_column
-      ~OVFFile.unique
-
-   
    
 
    
@@ -47,7 +16,7 @@ Stoner.FileFormats.OVFFile
 
    .. autosummary::
    
-      ~OVFFile.patterns
-      ~OVFFile.priority
+      ~Stoner.FileFormats.OVFFile.patterns
+      ~Stoner.FileFormats.OVFFile.priority
    
    

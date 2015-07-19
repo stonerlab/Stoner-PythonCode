@@ -13,8 +13,8 @@ Stoner.Fit.VFTEquation
    .. autosummary::
     :toctree:
    
-      ~VFTEquation.__init__
-      ~VFTEquation.guess
+      ~Stoner.Fit.VFTEquation.__init__
+      ~Stoner.Fit.VFTEquation.guess
 
    
    

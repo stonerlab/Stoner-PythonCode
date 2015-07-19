@@ -8,37 +8,6 @@ Stoner.FileFormats.SPCFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~SPCFile.__init__
-      ~SPCFile.add_column
-      ~SPCFile.column
-      ~SPCFile.columns
-      ~SPCFile.del_column
-      ~SPCFile.del_rows
-      ~SPCFile.dir
-      ~SPCFile.filter
-      ~SPCFile.find_col
-      ~SPCFile.get
-      ~SPCFile.get_filename
-      ~SPCFile.insert_rows
-      ~SPCFile.keys
-      ~SPCFile.load
-      ~SPCFile.rename
-      ~SPCFile.reorder_columns
-      ~SPCFile.rolling_window
-      ~SPCFile.rows
-      ~SPCFile.save
-      ~SPCFile.search
-      ~SPCFile.section
-      ~SPCFile.sort
-      ~SPCFile.swap_column
-      ~SPCFile.unique
-
-   
    
 
    
@@ -47,7 +16,7 @@ Stoner.FileFormats.SPCFile
 
    .. autosummary::
    
-      ~SPCFile.patterns
-      ~SPCFile.priority
+      ~Stoner.FileFormats.SPCFile.patterns
+      ~Stoner.FileFormats.SPCFile.priority
    
    

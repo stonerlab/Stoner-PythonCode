@@ -13,30 +13,32 @@ Stoner.Core.DataFile
    .. autosummary::
     :toctree:
    
-      ~DataFile.__init__
-      ~DataFile.add_column
-      ~DataFile.column
-      ~DataFile.columns
-      ~DataFile.del_column
-      ~DataFile.del_rows
-      ~DataFile.dir
-      ~DataFile.filter
-      ~DataFile.find_col
-      ~DataFile.get
-      ~DataFile.get_filename
-      ~DataFile.insert_rows
-      ~DataFile.keys
-      ~DataFile.load
-      ~DataFile.rename
-      ~DataFile.reorder_columns
-      ~DataFile.rolling_window
-      ~DataFile.rows
-      ~DataFile.save
-      ~DataFile.search
-      ~DataFile.section
-      ~DataFile.sort
-      ~DataFile.swap_column
-      ~DataFile.unique
+      ~Stoner.Core.DataFile.__call__
+      ~Stoner.Core.DataFile.__init__
+      ~Stoner.Core.DataFile.add_column
+      ~Stoner.Core.DataFile.closest
+      ~Stoner.Core.DataFile.column
+      ~Stoner.Core.DataFile.columns
+      ~Stoner.Core.DataFile.del_column
+      ~Stoner.Core.DataFile.del_rows
+      ~Stoner.Core.DataFile.dir
+      ~Stoner.Core.DataFile.filter
+      ~Stoner.Core.DataFile.find_col
+      ~Stoner.Core.DataFile.get
+      ~Stoner.Core.DataFile.get_filename
+      ~Stoner.Core.DataFile.insert_rows
+      ~Stoner.Core.DataFile.keys
+      ~Stoner.Core.DataFile.load
+      ~Stoner.Core.DataFile.rename
+      ~Stoner.Core.DataFile.reorder_columns
+      ~Stoner.Core.DataFile.rolling_window
+      ~Stoner.Core.DataFile.rows
+      ~Stoner.Core.DataFile.save
+      ~Stoner.Core.DataFile.search
+      ~Stoner.Core.DataFile.section
+      ~Stoner.Core.DataFile.sort
+      ~Stoner.Core.DataFile.swap_column
+      ~Stoner.Core.DataFile.unique
 
    
    
@@ -47,7 +49,17 @@ Stoner.Core.DataFile
 
    .. autosummary::
    
-      ~DataFile.patterns
-      ~DataFile.priority
+      ~Stoner.Core.DataFile.T
+      ~Stoner.Core.DataFile.clone
+      ~Stoner.Core.DataFile.column_headers
+      ~Stoner.Core.DataFile.dict_records
+      ~Stoner.Core.DataFile.dtype
+      ~Stoner.Core.DataFile.mask
+      ~Stoner.Core.DataFile.patterns
+      ~Stoner.Core.DataFile.priority
+      ~Stoner.Core.DataFile.records
+      ~Stoner.Core.DataFile.setas
+      ~Stoner.Core.DataFile.shape
+      ~Stoner.Core.DataFile.subclasses
    
    

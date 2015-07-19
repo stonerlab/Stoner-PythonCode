@@ -4,9 +4,20 @@ Stoner Package
 :mod:`Core` Module
 ==================
 
+Classes
+-------
+
 .. automodsumm:: Stoner.Core
-    :toctree: classes
-    :template: classdocs.rst
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.Core
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`Analysis` Module
 =======================

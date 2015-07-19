@@ -13,7 +13,7 @@ Stoner.PlotFormats.JTBPlotStyle
    .. autosummary::
     :toctree:
    
-      ~JTBPlotStyle.customise_axes
+      ~Stoner.PlotFormats.JTBPlotStyle.customise_axes
 
    
    
@@ -24,7 +24,7 @@ Stoner.PlotFormats.JTBPlotStyle
 
    .. autosummary::
    
-      ~JTBPlotStyle.show_title
-      ~JTBPlotStyle.stylename
+      ~Stoner.PlotFormats.JTBPlotStyle.show_title
+      ~Stoner.PlotFormats.JTBPlotStyle.stylename
    
    

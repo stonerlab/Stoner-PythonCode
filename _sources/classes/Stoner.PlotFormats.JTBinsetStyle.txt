@@ -13,7 +13,7 @@ Stoner.PlotFormats.JTBinsetStyle
    .. autosummary::
     :toctree:
    
-      ~JTBinsetStyle.customise_axes
+      ~Stoner.PlotFormats.JTBinsetStyle.customise_axes
 
    
    
@@ -24,7 +24,7 @@ Stoner.PlotFormats.JTBinsetStyle
 
    .. autosummary::
    
-      ~JTBinsetStyle.show_title
-      ~JTBinsetStyle.stylename
+      ~Stoner.PlotFormats.JTBinsetStyle.show_title
+      ~Stoner.PlotFormats.JTBinsetStyle.stylename
    
    

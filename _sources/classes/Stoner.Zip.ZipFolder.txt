@@ -13,9 +13,9 @@ Stoner.Zip.ZipFolder
    .. autosummary::
     :toctree:
    
-      ~ZipFolder.__init__
-      ~ZipFolder.getlist
-      ~ZipFolder.save
+      ~Stoner.Zip.ZipFolder.__init__
+      ~Stoner.Zip.ZipFolder.getlist
+      ~Stoner.Zip.ZipFolder.save
 
    
    

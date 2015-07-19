@@ -13,8 +13,8 @@ Stoner.Fit.BlochGrueneisen
    .. autosummary::
     :toctree:
    
-      ~BlochGrueneisen.__init__
-      ~BlochGrueneisen.guess
+      ~Stoner.Fit.BlochGrueneisen.__init__
+      ~Stoner.Fit.BlochGrueneisen.guess
 
    
    

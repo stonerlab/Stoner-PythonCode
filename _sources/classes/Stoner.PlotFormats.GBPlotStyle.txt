@@ -13,7 +13,7 @@ Stoner.PlotFormats.GBPlotStyle
    .. autosummary::
     :toctree:
    
-      ~GBPlotStyle.customise_axes
+      ~Stoner.PlotFormats.GBPlotStyle.customise_axes
 
    
    
@@ -24,6 +24,6 @@ Stoner.PlotFormats.GBPlotStyle
 
    .. autosummary::
    
-      ~GBPlotStyle.stylename
+      ~Stoner.PlotFormats.GBPlotStyle.stylename
    
    

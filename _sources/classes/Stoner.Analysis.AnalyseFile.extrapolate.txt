@@ -1,0 +1,8 @@
+
+
+AnalyseFile.extrapolate
+=======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.extrapolate

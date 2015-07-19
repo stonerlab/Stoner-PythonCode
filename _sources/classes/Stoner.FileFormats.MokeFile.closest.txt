@@ -1,0 +1,8 @@
+
+
+MokeFile.closest
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.closest

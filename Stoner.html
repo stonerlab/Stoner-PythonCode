@@ -57,6 +57,8 @@
 <h1>Stoner Package<a class="headerlink" href="#stoner-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="core-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">Core</span></code> Module<a class="headerlink" href="#core-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -69,8 +71,32 @@
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>(*args,&nbsp;**kargs)</td>
 <td><a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.DataArray</span></code></a></td>
+<td>A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.</td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Core.isNone.html#Stoner.Core.isNone" title="Stoner.Core.isNone"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.isNone</span></code></a>(iterator)</td>
+<td>Returns True if input is None or an empty iterator, or an iterator of None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.Core.all_size.html#Stoner.Core.all_size" title="Stoner.Core.all_size"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.all_size</span></code></a>(iterator[,&nbsp;size])</td>
+<td>Check whether each element if uterator is the same length/shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Core.all_type.html#Stoner.Core.all_type" title="Stoner.Core.all_type"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.all_type</span></code></a>(iterator,&nbsp;typ)</td>
+<td>Determines if an interable omnly contains a common type.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="analysis-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">Analysis</span></code> Module<a class="headerlink" href="#analysis-module" title="Permalink to this headline">¶</a></h2>
@@ -97,7 +123,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Extends DataFile with plotting functions.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.all_none</span></code>(iter)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.all_none.html#Stoner.Plot.all_none" title="Stoner.Plot.all_none"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.all_none</span></code></a>(iter)</td>
 <td>Checks to see if an iterable is all None.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.hsl2rgb.html#Stoner.Plot.hsl2rgb" title="Stoner.Plot.hsl2rgb"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.hsl2rgb</span></code></a>(h,&nbsp;s,&nbsp;l)</td>
@@ -212,8 +238,8 @@
 </div>
 <div class="section" id="plotformats-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">PlotFormats</span></code> Module<a class="headerlink" href="#plotformats-module" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -250,8 +276,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="functions">
-<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -265,8 +291,8 @@
 </div>
 <div class="section" id="plotutils-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">plotutils</span></code> Module<a class="headerlink" href="#plotutils-module" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Classes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -276,8 +302,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id2">
-<h3>Functions<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3>Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -436,7 +462,7 @@
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.HDF5Folder.html#Stoner.HDF5.HDF5Folder" title="Stoner.HDF5.HDF5Folder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.HDF5Folder</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A sub class of <a class="reference internal" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> that provides a method to load and save data from a single HDF5 file with groups.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.HGXFile</span></code>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.HGXFile.html#Stoner.HDF5.HGXFile" title="Stoner.HDF5.HGXFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.HGXFile</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A subclass of DataFile for reading GenX HDF Files.</td>
 </tr>
 </tbody>
@@ -444,8 +470,8 @@
 </div>
 <div class="section" id="zip-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">Zip</span></code> Module<a class="headerlink" href="#zip-module" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id3">
-<h3>Classes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Classes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -461,8 +487,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id4">
-<h3>Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Functions<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -478,8 +504,8 @@
 </div>
 <div class="section" id="util-module">
 <h2><code class="xref py py-mod docutils literal"><span class="pre">Util</span></code> Module<a class="headerlink" href="#util-module" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id5">
-<h3>Classes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Classes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -492,8 +518,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id6">
-<h3>Functions<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Functions<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -521,8 +547,8 @@
 <div class="section" id="pytdms-module">
 <h3><code class="xref py py-mod docutils literal"><span class="pre">pyTDMS</span></code> Module<a class="headerlink" href="#pytdms-module" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="id7">
-<h3>Classes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Classes<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -532,8 +558,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id8">
-<h3>Functions<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id10">
+<h3>Functions<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -627,7 +653,11 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Stoner Package</a><ul>
-<li><a class="reference internal" href="#core-module"><code class="docutils literal"><span class="pre">Core</span></code> Module</a></li>
+<li><a class="reference internal" href="#core-module"><code class="docutils literal"><span class="pre">Core</span></code> Module</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#analysis-module"><code class="docutils literal"><span class="pre">Analysis</span></code> Module</a></li>
 <li><a class="reference internal" href="#plot-module"><code class="docutils literal"><span class="pre">Plot</span></code> Module</a></li>
 <li><a class="reference internal" href="#folders-module"><code class="docutils literal"><span class="pre">Folders</span></code> Module</a></li>
@@ -638,13 +668,13 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#plotformats-module"><code class="docutils literal"><span class="pre">PlotFormats</span></code> Module</a><ul>
-<li><a class="reference internal" href="#classes">Classes</a></li>
-<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#id1">Classes</a></li>
+<li><a class="reference internal" href="#id2">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#plotutils-module"><code class="docutils literal"><span class="pre">plotutils</span></code> Module</a><ul>
-<li><a class="reference internal" href="#id1">Classes</a></li>
-<li><a class="reference internal" href="#id2">Functions</a></li>
+<li><a class="reference internal" href="#id3">Classes</a></li>
+<li><a class="reference internal" href="#id4">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#fit-module"><code class="docutils literal"><span class="pre">Fit</span></code> Module</a><ul>
@@ -654,16 +684,16 @@
 </li>
 <li><a class="reference internal" href="#hdf5-module"><code class="docutils literal"><span class="pre">HDF5</span></code> Module</a></li>
 <li><a class="reference internal" href="#zip-module"><code class="docutils literal"><span class="pre">Zip</span></code> Module</a><ul>
-<li><a class="reference internal" href="#id3">Classes</a></li>
-<li><a class="reference internal" href="#id4">Functions</a></li>
+<li><a class="reference internal" href="#id5">Classes</a></li>
+<li><a class="reference internal" href="#id6">Functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#util-module"><code class="docutils literal"><span class="pre">Util</span></code> Module</a><ul>
-<li><a class="reference internal" href="#id5">Classes</a></li>
-<li><a class="reference internal" href="#id6">Functions</a></li>
-<li><a class="reference internal" href="#pytdms-module"><code class="docutils literal"><span class="pre">pyTDMS</span></code> Module</a></li>
 <li><a class="reference internal" href="#id7">Classes</a></li>
 <li><a class="reference internal" href="#id8">Functions</a></li>
+<li><a class="reference internal" href="#pytdms-module"><code class="docutils literal"><span class="pre">pyTDMS</span></code> Module</a></li>
+<li><a class="reference internal" href="#id9">Classes</a></li>
+<li><a class="reference internal" href="#id10">Functions</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 </ul>
 </li>
@@ -721,7 +751,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 17, 2015.
+      Last updated on Jul 19, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

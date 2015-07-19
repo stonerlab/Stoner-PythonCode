@@ -58,7 +58,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;StonerLoadError&quot;</span><span class="p">,</span> <span class="s">&quot;DataFile&quot;</span><span class="p">]</span>  <span class="c"># Don&#39;t import too muhc with from Stoner.Core import *</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;StonerLoadError&quot;</span><span class="p">,</span> <span class="s">&quot;DataFile&quot;</span><span class="p">,</span><span class="s">&quot;DataArray&quot;</span><span class="p">,</span><span class="s">&quot;isNone&quot;</span><span class="p">,</span><span class="s">&quot;all_size&quot;</span><span class="p">,</span><span class="s">&quot;all_type&quot;</span><span class="p">]</span>  <span class="c"># Don&#39;t import too muhc with from Stoner.Core import *</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -95,7 +95,7 @@
     <span class="n">dest</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span>
     <span class="k">return</span> <span class="n">dest</span>
 
-<span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../functions/Stoner.Core.isNone.html#Stoner.Core.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
 
 <span class="sd">    Args:</span>
@@ -119,8 +119,8 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ret</span><span class="o">=</span><span class="bp">False</span>
     <span class="k">return</span> <span class="n">ret</span>
-
-<span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../functions/Stoner.Core.all_size.html#Stoner.Core.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check whether each element if uterator is the same length/shape.</span>
 
 <span class="sd">    Arguments:</span>
@@ -147,8 +147,8 @@
         <span class="n">ret</span><span class="o">=</span><span class="bp">True</span>
     <span class="k">return</span> <span class="n">ret</span>
 
-
-<span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../functions/Stoner.Core.all_type.html#Stoner.Core.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
 
 <span class="sd">    Arguments:</span>
@@ -170,7 +170,7 @@
         <span class="n">ret</span><span class="o">=</span><span class="bp">True</span>
     <span class="k">return</span> <span class="n">ret</span>
 
-
+</div>
 <div class="viewcode-block" id="StonerLoadError"><a class="viewcode-back" href="../../classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError">[docs]</a><span class="k">class</span> <span class="nc">StonerLoadError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An exception thrown by the file loading routines in the Stoner Package.</span>
 
@@ -935,8 +935,23 @@
 <span class="sd">            A string of the format : key{type hint} = value&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s">&quot;{}{{{}}}={}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;string_escape&#39;</span><span class="p">))</span>
 
-<span class="k">class</span> <span class="nc">DataArray</span><span class="p">(</span><span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+<div class="viewcode-block" id="DataArray"><a class="viewcode-back" href="../../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray">[docs]</a><span class="k">class</span> <span class="nc">DataArray</span><span class="p">(</span><span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the</span>
+<span class="sd">            base row index. The base row index is preserved when a DataArray is indexed.</span>
+<span class="sd">        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access</span>
+<span class="sd">            the corresponding columns. When written to, the attributes overwrite the existing column&#39;s data.</span>
+<span class="sd">        d,e,f (1D DataArray): Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these</span>
+<span class="sd">            attributes provide a quick access to them. When written to, the attributes overwrite the existing column&#39;s data.</span>
+<span class="sd">        u,v,w (1D DataArray): Columns may be identieid as containing vectgor field information. These attributes provide quick</span>
+<span class="sd">            access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes</span>
+<span class="sd">            overwrite the existing column&#39;s data.</span>
+<span class="sd">        p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`</span>
+<span class="sd">            into :math:`(\\phi,\\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar</span>
+<span class="sd">            co-ordinates are returned for *q* and *r*.</span>
+
 
 <span class="sd">    This array type is used to represent numeric data in the Stoner Package - primarily as a 2D</span>
 <span class="sd">    matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to</span>
@@ -1080,13 +1095,13 @@
             <span class="n">value</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="n">value</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="o">=</span><span class="n">value</span>
-
+</div>
 <div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Core.DataFile` is the base class object that represents</span>
 <span class="sd">    a matrix of data, associated metadata and column headers.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        data (2D Array) A numpy masked array of data (usually floats).</span>
+<span class="sd">        data (2D :py:class:`DataArray`) A numpy masked array of data (usually floats).</span>
 <span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary</span>
 <span class="sd">                                   tries to retain information about the type of</span>
 <span class="sd">                                   data so as to aid import and export from CM group LabVIEw code.</span>
@@ -1100,6 +1115,10 @@
 <span class="sd">        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</span>
 <span class="sd">        records (numpoy record array): Returns the data in the form of a list of dictionaries.</span>
 <span class="sd">        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.</span>
+<span class="sd">        dict_record (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one</span>
+<span class="sd">            row with keys dervied from column headers.</span>
+<span class="sd">        dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.</span>
+<span class="sd">        T (:py:class:`DataArray`): Transposed version of the data.</span>
 <span class="sd">        subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by</span>
 <span class="sd">                           their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the</span>
 <span class="sd">                           string name of the subclass and the class object.</span>
@@ -1655,7 +1674,7 @@
 <span class="c">#============================================================================================================================</span>
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.__call__"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.__call__.html#Stoner.Core.DataFile.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements an option for DataFile().</span>
 
 <span class="sd">        Creates a new clone of self and then passes all the arguments to the clones __init__ method.</span>
@@ -1680,7 +1699,7 @@
 
         <span class="k">return</span> <span class="n">new_d</span>
 
-
+</div>
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Operator function for membertship tests - used to check metadata contents.</span>
 
@@ -2399,7 +2418,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.closest"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.closest.html#Stoner.Core.DataFile.closest">[docs]</a>    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the row in a data file which has an x-column value closest to the given value.</span>
 
 <span class="sd">        Args:</span>
@@ -2420,7 +2439,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
 
-
+</div>
 <div class="viewcode-block" id="DataFile.column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column">[docs]</a>    <span class="k">def</span> <span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</span>
 
@@ -3147,7 +3166,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 17, 2015.
+      Last updated on Jul 19, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

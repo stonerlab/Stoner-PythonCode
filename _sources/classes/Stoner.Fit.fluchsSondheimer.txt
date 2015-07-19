@@ -13,8 +13,8 @@ Stoner.Fit.FluchsSondheimer
    .. autosummary::
     :toctree:
    
-      ~FluchsSondheimer.__init__
-      ~FluchsSondheimer.guess
+      ~Stoner.Fit.FluchsSondheimer.__init__
+      ~Stoner.Fit.FluchsSondheimer.guess
 
    
    

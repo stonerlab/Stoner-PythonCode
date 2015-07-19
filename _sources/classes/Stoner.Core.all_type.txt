@@ -1,0 +1,15 @@
+Stoner.Core.all_type
+====================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: all_type
+
+   
+
+   
+   
+
+   
+   
+   

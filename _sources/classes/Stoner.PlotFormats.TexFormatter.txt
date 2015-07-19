@@ -13,9 +13,9 @@ Stoner.PlotFormats.TexFormatter
    .. autosummary::
     :toctree:
    
-      ~TexFormatter.__call__
-      ~TexFormatter.format_data
-      ~TexFormatter.format_data_short
+      ~Stoner.PlotFormats.TexFormatter.__call__
+      ~Stoner.PlotFormats.TexFormatter.format_data
+      ~Stoner.PlotFormats.TexFormatter.format_data_short
 
    
    

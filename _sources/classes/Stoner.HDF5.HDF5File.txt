@@ -13,7 +13,7 @@ Stoner.HDF5.HDF5File
    .. autosummary::
     :toctree:
    
-      ~HDF5File.save
+      ~Stoner.HDF5.HDF5File.save
 
    
    
@@ -24,9 +24,9 @@ Stoner.HDF5.HDF5File
 
    .. autosummary::
    
-      ~HDF5File.compression
-      ~HDF5File.compression_opts
-      ~HDF5File.patterns
-      ~HDF5File.priority
+      ~Stoner.HDF5.HDF5File.compression
+      ~Stoner.HDF5.HDF5File.compression_opts
+      ~Stoner.HDF5.HDF5File.patterns
+      ~Stoner.HDF5.HDF5File.priority
    
    

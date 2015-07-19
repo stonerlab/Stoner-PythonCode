@@ -13,8 +13,8 @@ Stoner.Fit.KittelEquation
    .. autosummary::
     :toctree:
    
-      ~KittelEquation.__init__
-      ~KittelEquation.guess
+      ~Stoner.Fit.KittelEquation.__init__
+      ~Stoner.Fit.KittelEquation.guess
 
    
    

@@ -1,0 +1,21 @@
+Stoner.Core.DataArray
+=====================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: DataArray
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Core.DataArray.i
+   
+   

@@ -13,8 +13,8 @@ Stoner.Fit.TersoffHammann
    .. autosummary::
     :toctree:
    
-      ~TersoffHammann.__init__
-      ~TersoffHammann.guess
+      ~Stoner.Fit.TersoffHammann.__init__
+      ~Stoner.Fit.TersoffHammann.guess
 
    
    

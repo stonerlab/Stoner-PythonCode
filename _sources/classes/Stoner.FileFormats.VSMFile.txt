@@ -8,37 +8,6 @@ Stoner.FileFormats.VSMFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~VSMFile.__init__
-      ~VSMFile.add_column
-      ~VSMFile.column
-      ~VSMFile.columns
-      ~VSMFile.del_column
-      ~VSMFile.del_rows
-      ~VSMFile.dir
-      ~VSMFile.filter
-      ~VSMFile.find_col
-      ~VSMFile.get
-      ~VSMFile.get_filename
-      ~VSMFile.insert_rows
-      ~VSMFile.keys
-      ~VSMFile.load
-      ~VSMFile.rename
-      ~VSMFile.reorder_columns
-      ~VSMFile.rolling_window
-      ~VSMFile.rows
-      ~VSMFile.save
-      ~VSMFile.search
-      ~VSMFile.section
-      ~VSMFile.sort
-      ~VSMFile.swap_column
-      ~VSMFile.unique
-
-   
    
 
    
@@ -47,7 +16,7 @@ Stoner.FileFormats.VSMFile
 
    .. autosummary::
    
-      ~VSMFile.patterns
-      ~VSMFile.priority
+      ~Stoner.FileFormats.VSMFile.patterns
+      ~Stoner.FileFormats.VSMFile.priority
    
    

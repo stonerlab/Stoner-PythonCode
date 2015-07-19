@@ -13,7 +13,7 @@ Stoner.PlotFormats.PRBPlotStyle
    .. autosummary::
     :toctree:
    
-      ~PRBPlotStyle.customise_axes
+      ~Stoner.PlotFormats.PRBPlotStyle.customise_axes
 
    
    
@@ -24,7 +24,7 @@ Stoner.PlotFormats.PRBPlotStyle
 
    .. autosummary::
    
-      ~PRBPlotStyle.show_title
-      ~PRBPlotStyle.stylename
+      ~Stoner.PlotFormats.PRBPlotStyle.show_title
+      ~Stoner.PlotFormats.PRBPlotStyle.stylename
    
    

@@ -13,31 +13,7 @@ Stoner.FileFormats.XRDFile
    .. autosummary::
     :toctree:
    
-      ~XRDFile.__init__
-      ~XRDFile.add_column
-      ~XRDFile.column
-      ~XRDFile.columns
-      ~XRDFile.del_column
-      ~XRDFile.del_rows
-      ~XRDFile.dir
-      ~XRDFile.filter
-      ~XRDFile.find_col
-      ~XRDFile.get
-      ~XRDFile.get_filename
-      ~XRDFile.insert_rows
-      ~XRDFile.keys
-      ~XRDFile.load
-      ~XRDFile.rename
-      ~XRDFile.reorder_columns
-      ~XRDFile.rolling_window
-      ~XRDFile.rows
-      ~XRDFile.save
-      ~XRDFile.search
-      ~XRDFile.section
-      ~XRDFile.sort
-      ~XRDFile.swap_column
-      ~XRDFile.to_Q
-      ~XRDFile.unique
+      ~Stoner.FileFormats.XRDFile.to_Q
 
    
    
@@ -48,7 +24,7 @@ Stoner.FileFormats.XRDFile
 
    .. autosummary::
    
-      ~XRDFile.patterns
-      ~XRDFile.priority
+      ~Stoner.FileFormats.XRDFile.patterns
+      ~Stoner.FileFormats.XRDFile.priority
    
    

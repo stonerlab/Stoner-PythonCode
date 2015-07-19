@@ -85,8 +85,8 @@ argument - otherwise the current duirectory will be used.:</p>
 display a dialog box to let you choose a directory. If you add a &#8216;multifile=True&#8217; keyword argument
 then you can use the dialog box to select multiple individual files.</p>
 <p>Any other keyword arguments that are not attributes of <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> are instead passed to the
-constructor for the individual <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> instances as they are loaded from disc. This,
-for example, can allow one to set the default <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute for each file.</p>
+constructor for the individual <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> instances as they are loaded from disc. This,
+for example, can allow one to set the default <code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code> attribute for each file.</p>
 <p>By default the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> constructor will perform a recursive drectory listing of
 the working folder. Each sub-directory is given a separate <em>group</em> within the structure.
 This allows the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to logically represent the on-disc layout of the files.</p>
@@ -103,14 +103,14 @@ This allows the <a class="reference internal" href="../classes/Stoner.Folders.Da
 </dd>
 </dl>
 <p>If you don&#8217;t want to create groups for each sub-directory, then set the keyword parameter
-<em>flatten</em> <strong>True</strong>, or call the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.flatten.html#Stoner.Folders.DataFolder.flatten" title="Stoner.Folders.DataFolder.flatten"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.flatten()</span></code></a> method. You can also use the
+<em>flatten</em> <strong>True</strong>, or call the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.flatten()</span></code> method. You can also use the
 <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.prune()</span></code> method to remove groups (including nested groups) that have
 no data files in them.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">prune</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>If you need to combine multiple <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> objects or add <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
+<p>If you need to combine multiple <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> objects or add <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code>
 objects to an existing <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> then the arithmetic addition operator can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre>f2=DataFolder(&#39;/data/test1&#39;)
 f3=DataFolder(&#39;/data/test2&#39;)
@@ -123,7 +123,7 @@ f=f2+f3
 <div class="section" id="getting-a-list-of-files">
 <h2>Getting a List of Files<a class="headerlink" href="#getting-a-list-of-files" title="Permalink to this headline">¶</a></h2>
 <p>The resulting list of files can be accessed via the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.files" title="Stoner.Folders.DataFolder.files"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.files</span></code></a> attribute
-and sub groups with the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.group</span></code></a> attribute (see <a class="reference internal" href="#groups"><span>Sorting, Filtering and Grouping Data Files</span></a>:</p>
+and sub groups with the <code class="xref py py-attr docutils literal"><span class="pre">DataFolder.group</span></code> attribute (see <a class="reference internal" href="#groups"><span>Sorting, Filtering and Grouping Data Files</span></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">files</span>
 <span class="n">f</span><span class="o">.</span><span class="n">groups</span>
 </pre></div>
@@ -131,14 +131,14 @@ and sub groups with the <a class="reference internal" href="../classes/Stoner.Fo
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">In some circumstances entries in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.files" title="Stoner.Folders.DataFolder.files"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.files</span></code></a> attribute can be
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> objects rather than strings. If you want to ensure
+<code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> objects rather than strings. If you want to ensure
 that you get a list of strings representing the filenames, use <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.ls" title="Stoner.Folders.DataFolder.ls"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.ls</span></code></a> instead.</p>
 </div>
 </div>
 <div class="section" id="controlling-the-gathering-of-the-list-of-files">
 <h2>Controlling the Gathering of the List of Files<a class="headerlink" href="#controlling-the-gathering-of-the-list-of-files" title="Permalink to this headline">¶</a></h2>
 <p>The current root directory and pattern are stored in the <em>directory</em> and <em>pattern</em> keywords and the
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></code></a> method can be used to force a new listing of files.:</p>
+<code class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></code> method can be used to force a new listing of files.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">dirctory</span><span class="o">=</span><span class="s">&#39;/home/phygbu/Data&#39;</span>
 <span class="n">f</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.txt&#39;</span>
 <span class="n">f</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
@@ -170,7 +170,7 @@ then additional metadata is set for each file that contains the mean value of ea
 </div>
 <div class="section" id="doing-something-with-each-file">
 <h2>Doing Something With Each File<a class="headerlink" href="#doing-something-with-each-file" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is an object that you can iterate over, lading the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
+<p>A <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is an object that you can iterate over, lading the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code>
 type object for each of the files in turn. This probides an easy way to run through a set of files,
 performing the same operation on each:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">folder</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span>
@@ -188,7 +188,7 @@ performing the same operation on each:</p>
 </pre></div>
 </div>
 <p>This last example illustrates a special ability of a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to use the methods of the
-type of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> inside the DataFolder. When you access a method on DataFolder that
+type of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> inside the DataFolder. When you access a method on DataFolder that
 is actually a method of the DataFile, the call a method that wraps a call to each DataFile in turn. If the method
 on the DataFile returns the DataFile back, then this is sotred in the DataFolder. In this case the result back
 to the user is the revised DataFolder. If, on the otherhand, the method when executed on the DataFile returns some other
@@ -224,7 +224,7 @@ of the filename whilst <a class="reference internal" href="../classes/Stoner.Fol
 <div class="section" id="sorting-filtering-and-grouping-data-files">
 <span id="groups"></span><h2>Sorting, Filtering and Grouping Data Files<a class="headerlink" href="#sorting-filtering-and-grouping-data-files" title="Permalink to this headline">¶</a></h2>
 <p>The order of the files in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is arbitrary. If it is important to process
-them in a given order then the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.sort()</span></code></a> method can be used:</p>
+them in a given order then the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.sort()</span></code> method can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;tmperature&#39;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -236,7 +236,7 @@ look at the &#8216;&#8217;temperature&#8217;&#8217; metadata in each file and us
 third variant, the <em>revers</em> keyword is used to reverse the order of the sort. In the final
 variant, each file is loaded in turn and the supplied function is called and evaluated to find a
 sort key.</p>
-<p>The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.filter.html#Stoner.Folders.DataFolder.filter" title="Stoner.Folders.DataFolder.filter"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.filter()</span></code></a> method can be used to prune the list of files to be used by the
+<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.filter()</span></code> method can be used to prune the list of files to be used by the
 <code class="xref py py-class docutils literal"><span class="pre">DataFoler</span></code>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s">&#39;[ab]*.dat&#39;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -247,16 +247,16 @@ sort key.</p>
 </div>
 <p>The first form performs the filter on the filenames (using the standard python fnmatch module).
 One can also use a regular expression as illustrated int he second example &#8211; although unlike using
-the <em>pattern</em> keyword in <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></code></a>, there is no option to capture metadata
+the <em>pattern</em> keyword in <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></code>, there is no option to capture metadata
 (although one could then subsequently set the pattern to achieve this). The third variant calls the
-supplied function, passing the current file as a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> object in each time.
+supplied function, passing the current file as a <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> object in each time.
 If the function evaluates to be <strong>True</strong> then the file is kept. The <em>invert</em> keyword is used to invert
 the sense of the filter (a particularly silly example here, since the greater than sign could simply
 be replaced with a less than or equals sign !).</p>
 <p>One of the more common tasks is to group a long list of data files into separate groups
 according to some logical test &#8211;  for example gathering files with magnetic field sweeps in a positive
 direction together and those with magnetic field in a negative direction together. The
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> method provides a powerful way to do this. Suppose we have a series of
+<code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code> method provides a powerful way to do this. Suppose we have a series of
 data curves taken at a variety of temperatures and with three different magnetic fields:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;temperature&#39;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="s">&quot;positive&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;B-Field&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s">&quot;negative&quot;</span><span class="p">)</span>
@@ -264,18 +264,18 @@ data curves taken at a variety of temperatures and with three different magnetic
 <span class="n">f</span><span class="o">.</span><span class="n">groups</span>
 </pre></div>
 </div>
-<p>The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> method splits the files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> into several
-groups each of which share a common value of the arguement supplied to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a>
+<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code> method splits the files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> into several
+groups each of which share a common value of the arguement supplied to the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code>
 method. A group is itself another instance of the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> class. Each
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> object maintains a dictionary called <code class="xref py py-attr docutils literal"><span class="pre">DataFolder.groups</span></code> whose keys
-are the distinct values of the argument of the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> methods and whose values are
+are the distinct values of the argument of the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code> methods and whose values are
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> objects. So, if our <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> <em>f</em> contained files measured at
 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and
 300 each one of which would be a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> object congaing the files measured at those
 temperatures. The second variant would produce 2 groups &#8211; &#8216;&#8217;positive&#8217;&#8217; containing the files measured with
 magnetic field of 1T and &#8216;&#8217;negative&#8217;&#8217; containing the files measured at -1T. The third variant then goes
 one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed
-via the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.group</span></code></a> attribute:</p>
+via the <code class="xref py py-attr docutils literal"><span class="pre">DataFolder.group</span></code> attribute:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s">&quot;positive&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span>
 </pre></div>
 </div>
@@ -289,7 +289,7 @@ corresponding group. This allows a more compact navigation through an extended g
 </pre></div>
 </div>
 <p>If you just ant to create a new empty group in your <code class="xref py py-class docutils literal"><span class="pre">DataFoler</span></code>, you can use
-the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.add_group.html#Stoner.Folders.DataFolder.add_group" title="Stoner.Folders.DataFolder.add_group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.add_group()</span></code></a> method.:</p>
+the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.add_group()</span></code> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre>`f.add_group(&quot;key_value&quot;)
 </pre></div>
 </div>
@@ -299,30 +299,30 @@ the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.add
 <p>An important driver for the development of the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> class has been to aid
 data reduction tasks. The simplest form of data reduction would be to gather one or more
 columns from each of a folder of files and return it as a single large table or matrix. This task is
-easily accomplished by the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code></a> method:</p>
+easily accomplished by the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s">&quot;X Data&quot;</span><span class="p">,</span><span class="s">&quot;Y Data&quot;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s">&quot;X Data&quot;</span><span class="p">,[</span><span class="s">&quot;Ydata 1&quot;</span><span class="p">,</span><span class="s">&quot;Y Data 2&quot;</span><span class="p">])</span>
 <span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>In the first two forms you specify the x column and one or more y columns. In the third form, the
-x and y columns are determined by the values from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
+x and y columns are determined by the values from the <code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code> attribute.
 (you can set the value of this attribute for all files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> by setting the
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.setas" title="Stoner.Folders.DataFolder.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.setas</span></code></a> attribute.)</p>
-<p>A similar operation to <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code></a> is to build a new set of data where each row corresponds
+<p>A similar operation to <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code> is to build a new set of data where each row corresponds
 to a set of metadata values from each file in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>. This can be achieved with the
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code></a> method.:</p>
+<code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s">&quot;Temperature&quot;</span><span class="p">,</span><span class="s">&quot;Angle&quot;</span><span class="p">,</span><span class="s">&quot;Other_metadata&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The argument to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code></a> method is a list of metadata values to be extracted from each file. The
+<p>The argument to the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code> method is a list of metadata values to be extracted from each file. The
 metadata should be convertable to an array type so that it can be included in the final result matrix. Any metadata that doesn&#8217;t
 appear to be so convertible in the first file in the ;py:class:<cite>DataFolder</cite> is ignored. The column headings of the final results
 table are the names of the metadata that were used in the extraction.</p>
 <p>One task you might want to do would be to work through all the groups in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>
 and run some function either with each file in the group or on the whole group. This is further
 complicated if you want to iterate over all the sub-groups within a group. The
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.walk_groups()</span></code></a> method is useful here.:</p>
+<code class="xref py py-meth docutils literal"><span class="pre">DataFolder.walk_groups()</span></code> method is useful here.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;arg1&quot;</span><span class="p">:</span><span class="s">&quot;value1&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
@@ -332,25 +332,25 @@ then it will execute <em>func</em> once for each file. The function <em>fun</em>
 <div class="highlight-python"><div class="highlight"><pre>def func(group,list_of-group_keys,arg1,arg2...)
 </pre></div>
 </div>
-<p>The first parameter should expect and instance of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> if
+<p>The first parameter should expect and instance of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> if
 <em>group</em> is <strong>False</strong> or an instance of <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> if <em>group</em> is <strong>True</strong>.
 The second parameter will be given a list of of strings representing the group key values from
 the topmost group to the lowest (terminal) group.</p>
 <p>The <em>replace_terminal</em> parameter applies when <em>group</em> is <strong>True</strong> and the function returns a
 <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core,DataFile</span></code> object. This indicates that the group on which the function was
-called should be removed from the list fo groups and the returned <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
+called should be removed from the list fo groups and the returned <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code>
 object should be added to the list of files in the folder. This operation is useful when one is
 processing a group of files to combined them into a single dataset. Combining a multi-level grouping
-operation and successive calls to <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.walk_groups()</span></code></a> can rapidly reduce a large set of
+operation and successive calls to <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.walk_groups()</span></code> can rapidly reduce a large set of
 data files representing a multi-dimensional data set into a single file with minimal coding.</p>
 <p>In some cases you will want to work with sets of files coming from different groups in order.
 For example, if above we had a sequence of 10 data files for each field and temperature and we wanted
 to process the positive and negative field curves together for a given temperature in turn.
-In this case the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups" title="Stoner.Folders.DataFolder.zip_groups"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.zip_groups()</span></code></a> method can be useful.:</p>
+In this case the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.zip_groups()</span></code> method can be useful.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">zip_groups</span><span class="p">([</span><span class="s">&#39;positive&#39;</span><span class="p">,</span><span class="s">&#39;negative&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>This would return a list of tuples of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> objects where the tuples
+<p>This would return a list of tuples of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code> objects where the tuples
 would be the first positive and first negative field files, then the second of each, then third of
 each and so. This presupposes that the files started of sorted by some suitable parameter
 (eg a gate voltage).</p>
@@ -434,7 +434,7 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 17, 2015.
+      Last updated on Jul 19, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
