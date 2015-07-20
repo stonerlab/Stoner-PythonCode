@@ -16,9 +16,9 @@ wheel:
 
 doc: docbuild
 	$(PYTHON_SETUP) upload_docs --upload-dir=doc/_build/html
-	cp -ar doc/_build/html/* ../gh-pages/
 
 docbuild: FORCE
-	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html
+	$(MAKE) -C doc html
+	cp -ar doc/_build/html/* ../gh-pages/
 
 FORCE:

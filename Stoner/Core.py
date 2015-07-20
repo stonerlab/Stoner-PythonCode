@@ -8,7 +8,7 @@ Classes:
 
 """
 from __future__ import print_function
-__all__ = ["StonerLoadError", "DataFile"]  # Don't import too muhc with from Stoner.Core import *
+__all__ = ["StonerLoadError", "DataFile","DataArray","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
 
 from Stoner.compat import *
 import re
@@ -888,6 +888,21 @@ class typeHintedDict(dict):
 class DataArray(_ma_.MaskedArray):
     """A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.
 
+    Attributes:
+        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the
+            base row index. The base row index is preserved when a DataArray is indexed.
+        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access
+            the corresponding columns. When written to, the attributes overwrite the existing column's data.
+        d,e,f (1D DataArray): Where a column is identified as containing uncertainities for *x*, *y* or *z* data, then these
+            attributes provide a quick access to them. When written to, the attributes overwrite the existing column's data.
+        u,v,w (1D DataArray): Columns may be identieid as containing vectgor field information. These attributes provide quick
+            access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
+            overwrite the existing column's data.
+        p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
+            into :math:`(\\phi,\\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
+            co-ordinates are returned for *q* and *r*.
+
+
     This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
     matrix in :py:class:`Stoner.Core.DataFile` but also when a 1D row is required. In con trast to
     the parent class, DataArray understands that it came from a DataFile which has a setas attribute and column
@@ -1036,7 +1051,7 @@ class DataFile(object):
     a matrix of data, associated metadata and column headers.
 
     Attributes:
-        data (2D Array) A numpy masked array of data (usually floats).
+        data (2D :py:class:`DataArray`) A numpy masked array of data (usually floats).
         metadata (typeHintedDict): of key-value metadata pairs. The dictionary
                                    tries to retain information about the type of
                                    data so as to aid import and export from CM group LabVIEw code.
@@ -1050,6 +1065,10 @@ class DataFile(object):
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
         records (numpoy record array): Returns the data in the form of a list of dictionaries.
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
+        dict_record (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
+            row with keys dervied from column headers.
+        dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
+        T (:py:class:`DataArray`): Transposed version of the data.
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
                            their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the
                            string name of the subclass and the class object.
