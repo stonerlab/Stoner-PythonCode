@@ -668,6 +668,11 @@ class AnalyseFile(DataFile):
         retvals=[]
         for i,yc in enumerate(ycol):
 
+            if isinstance(sigma,_np_.ndarray) and sigma.shape>1:
+                s=sigma[i]
+            else:
+                s=sigma
+
             if isinstance(yc,index_types):
                 ydat = working[:, self.find_col(yc)]
             elif isinstance(yc,_np_.ndarray) and len(ycol.shape)==1 and len(ycol)==len(self):
@@ -676,10 +681,10 @@ class AnalyseFile(DataFile):
                 raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
             ret=()
             if output == "full":
-                popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+                popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
                 ret = (popt,pcov,infodict,mesg,ier)
             else:
-                popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=sigma, absolute_sigma=absolute_sigma, **kargs)
+                popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
             perr=_np_.sqrt(_np_.diag(pcov))
             if result is not None:
                 args = getargspec(func)[0]
@@ -859,7 +864,7 @@ class AnalyseFile(DataFile):
             yerr (column index(es) or None): y error data column or None to use setas attribute
             overlap (float or int): range of x-data used for the local fit for extrapolating. If int then overlap number of
                 points is used, if float then that range x-axis space is used.
-            kind (str or callable): Determines local fitting function. If string should be "linear" or "cubic" if
+            kind (str or callable): Determines local fitting function. If string should be "linear", "quadratic" or "cubic" if
                 callable, then represents a function to be fitted to the data.
 
         Returns:
@@ -876,14 +881,18 @@ class AnalyseFile(DataFile):
 
         _=self._col_args(xcol=xcol,ycol=ycol,yerr=yerr,scalar=False)
         xl,xh=self.span(_.xcol)
+        kinds={"linear":lambda x,m,c:m*x+c,
+               "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
+               "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
         if callable(kind):
             pass
-        elif kind=="linear":
-            kind=lambda x,m,c:m*x+c
-        elif kind=="cubic":
-            kind=lambda x,a,b,c,d:a*x**3+b*x**2+c*x+d
+        elif kind in kinds:
+            kind=kinds[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
+        scalar_x=not isinstance(new_x,Iterable)
+        if scalar_x:
+            new_x=[new_x]
         results=_np_.zeros((len(new_x),len(_.ycol)))
         for ix,x in enumerate(new_x):
             r=self.closest(x,xcol=_.xcol)
@@ -904,7 +913,7 @@ class AnalyseFile(DataFile):
                     hl=ll+overlap
                 elif (r[_.xcol]+overlap/2)>self.max(_.xcol)[0]:
                     hl=self.max(_.xcol)[0]
-                    ll-hl-overlap
+                    ll=hl-overlap
                 else:
                     ll=r[_.xcol]-overlap/2
                     hl=r[_.xcol]+overlap/2
@@ -915,6 +924,8 @@ class AnalyseFile(DataFile):
             for iy,rt in enumerate(ret):
                 pcov,popt=rt
                 results[ix,iy]=kind(x,*pcov)
+        if scalar_x:
+            results=results[0]
         return results
 
     def integrate(self, xcol=None, ycol=None, result=None, result_name=None, bounds=lambda x, y: True, **kargs):
@@ -1087,18 +1098,14 @@ class AnalyseFile(DataFile):
         prefix = str(kargs.pop("prefix",  model.__class__.__name__))+":"
 
 
-        if xcol is None or ycol is None:
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"][0]
-        working = self.search(xcol, bounds)
+
+        _=self._col_args(xcol=xcol,ycol=ycol)
+        working = self.search(_.xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
 
 
-        xdata = working[:, self.find_col(xcol)]
-        ydata = working[:, self.find_col(ycol)]
+        xdata = working[:, self.find_col(_.xcol)]
+        ydata = working[:, self.find_col(_.ycol)]
         if p0 is not None:
             if isinstance(p0,_np_.ndarray) and len(p0.shape)==2: # 2D p0 might be chi^2 mapping
                 if p0.shape[0]==1: # Actually a single fit
@@ -1128,6 +1135,8 @@ class AnalyseFile(DataFile):
                 pass
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
+        elif not isNone(_.yerr):
+            sigma=self.find_col(_.yerr)
         else:
             sigma = _np_.ones(len(xdata))
             scale_covar = True
@@ -1870,7 +1879,7 @@ class AnalyseFile(DataFile):
             User Guide section :ref:`stitch_guide`
 
         """
-        _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
+        _=self._col_args(xcol=xcol,ycol=ycol,scalar=True)
         points = self.column([_.xcol, _.ycol])
         points = points[points[:, 0].argsort()]
         points[:, 0] += min_overlap

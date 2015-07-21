@@ -118,6 +118,7 @@ def cfg_data_from_ini(inifile,filename=None):
             if filename in ["False","True"]:
                 filename=bool(filename)
     data.load(filename,auto_load=False,filetype=typ)
+    print filename,typ
     cols={"x":0,"y":1,"e":None} # Defaults
 
     for c in ["x","y","e"]:

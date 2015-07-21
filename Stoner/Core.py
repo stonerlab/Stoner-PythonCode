@@ -71,10 +71,10 @@ def isNone(iterator):
     return ret
 
 def all_size(iterator,size=None):
-    """Check whether each element if uterator is the same length/shape.
+    """Check whether each element of *iterator* is the same length/shape.
 
     Arguments:
-        iterator (Iterable) list or other iterable of things with a length or shape
+        iterator (Iterable): list or other iterable of things with a length or shape
 
     Keyword Arguments:
         size(int, tuple or None): Required size of each item in iterator.
@@ -964,25 +964,7 @@ class DataArray(_ma_.MaskedArray):
             return super(DataArray,self).__getattribute__(name)
         indexer=[slice(0,dim,1) for ix,dim in enumerate(self.shape)]
         col = col_check[name]
-        if col == "" and self._setas.cols and "axes" in self._setas.cols:  # inferred quick access columns for cartesian to polar transforms
-            axes = int(self._setas.cols["axes"])
-            if name == "r":  # r in spherical or cylinderical co-ordinate systems
-                m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
-                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
-                     lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
-                     lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
-                ret = m[axes](self)
-            elif name == "q":  # theta in clyinderical or spherical co-ordiante systems
-                m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
-                     lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
-                     lambda d: _np_.arctan2(d.u, d.v)]
-                ret = m[axes](self)
-            elif name == "p":  # phi is spherical co-ordinate systems
-                m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
-                     lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
-                ret = m[axes](self)
-
-        elif col.startswith("x"):
+        if col.startswith("x"):
             if self._setas.cols[col] is not None:
                 indexer[-1]=self._setas.cols[col]
                 ret = self[tuple(indexer)]
@@ -1032,7 +1014,35 @@ class DataArray(_ma_.MaskedArray):
         super(DataArray,self).__setitem__(ix,val)
 
     @property
+    def r(self):
+        """Calculate the radius :math:`\\rho` co-ordinate if using spherical or polar co-ordinate systems."""
+        axes = int(self._setas.cols["axes"])
+        m = [lambda d: None, lambda d: None, lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2),
+             lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
+             lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
+             lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
+        return m[axes](self)
+
+    @property
+    def q(self):
+        """Calculate the azimuthal :math:`\\theta` co-ordinate if using spherical or polar co-ordinates."""
+        axes = int(self._setas.cols["axes"])
+        m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
+             lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
+             lambda d: _np_.arctan2(d.u, d.v)]
+        return m[axes](self)
+
+    @property
+    def p(self):
+        """Calculate the inclination :math:`\\phi` co-ordinate for spherical co-ordinate systems."""
+        axes = int(self._setas.cols["axes"])
+        m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
+             lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
+        return m[axes](self)
+
+    @property
     def i(self):
+        """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
         if len(self.shape)==1 or (len(self.shape)>1 and self.shape[0]==1):
             ret=self._ibase
         else:
@@ -2723,6 +2733,7 @@ class DataFile(object):
                 self["Loaded as"] = filetype.__name__
                 self.data = test.data
                 self.metadata.update(test.metadata)
+                self.column_headers=test.column_headers
                 failed = False
         if failed:
             raise SyntaxError("Failed to load file")
