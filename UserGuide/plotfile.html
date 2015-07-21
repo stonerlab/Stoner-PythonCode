@@ -57,7 +57,7 @@
             
   <div class="section" id="plotting-data">
 <h1>Plotting Data<a class="headerlink" href="#plotting-data" title="Permalink to this headline">¶</a></h1>
-<p>Data plotting and visualisation is handled by the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code></a> sub-class of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code>.
+<p>Data plotting and visualisation is handled by the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code></a> sub-class of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>.
 The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing
 publication ready figures.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner.Plot</span> <span class="kn">as</span> <span class="nn">plot</span>
@@ -313,7 +313,7 @@ default in this function.</p>
 <div class="section" id="very-quick-plotting">
 <h2>Very Quick Plotting<a class="headerlink" href="#very-quick-plotting" title="Permalink to this headline">¶</a></h2>
 <p>For convenience, a <code class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot()</span></code> method is defined that will try to work out the necessary details. In combination
-with the <code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code> attribute it allows very quick plots to be constructed.</p>
+with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute it allows very quick plots to be constructed.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
 <span class="c"># Quick plot</span>
@@ -636,7 +636,7 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 19, 2015.
+      Last updated on Jul 21, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

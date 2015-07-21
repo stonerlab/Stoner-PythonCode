@@ -61,9 +61,8 @@
 the Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple
 programs to do things like fitting functions to data, extract curve parameters and churn through large numbers of
 small text data files.</p>
-<p>For a general introduction, users are referred to the Users Guide, which is part of the <cite>online documentation
-&lt;http://pythonhosted.org/Stoner/&gt;</cite> along with the API Reference guide. The <a href="#id1"><span class="problematic" id="id2">`</span></a>github repository
-&lt;<a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">http://www.github.com/gb119/Stoner-PythonCode/</a>&gt; also contains some example scripts.</p>
+<p>For a general introduction, users are referred to the Users Guide, which is part of the <a class="reference external" href="http://pythonhosted.org/Stoner/">online documentation</a> along with the
+API Reference guide. The <a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">github repository</a> also contains some example scripts.</p>
 </div>
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
@@ -126,40 +125,29 @@ brutal to your computer&#8217;s OS than having directory trees with millions of 
 </div>
 <div class="section" id="resources">
 <h2>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h2>
-<p>Included in the <cite>github repository &lt;http://www.github.com/gb119/Stoner-PythonCode/&gt; are a (small) collection of sample scripts
+<p>Included in the <a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">github repository</a>  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-:doc:`user guide &lt;UserGuide/ugindex&gt;</cite> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><em>complete API reference</em></a></p>
+<code class="xref doc docutils literal"><span class="pre">user</span> <span class="pre">guide</span></code> &lt;UserGuide/ugindex&gt;` as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><em>complete API reference</em></a></p>
 </div>
 <div class="section" id="contact-and-licensing">
 <h2>Contact and Licensing<a class="headerlink" href="#contact-and-licensing" title="Permalink to this headline">¶</a></h2>
-<p>The lead developer for this code is Dr Gavin Burnell &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt; <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">http://www.stoner.leeds.ac.uk/people/gb</a>.
+<p>The lead developer for this code is <a class="reference external" href="http://www.stoner.leeds.ac.uk/people/gb">Dr Gavin Burnell</a> &lt;<a class="reference external" href="mailto:g&#46;burnell&#37;&#52;&#48;leeds&#46;ac&#46;uk">g<span>&#46;</span>burnell<span>&#64;</span>leeds<span>&#46;</span>ac<span>&#46;</span>uk</a>&gt; .
 The User Guide gives the current list of other contributors to the project.</p>
 <p>This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file.
 The contents of this package are licensed under the terms of the GNU Public License v3</p>
 </div>
 <div class="section" id="recent-changes">
 <h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="version-0-4-x">
-<h3>Version 0.4.x<a class="headerlink" href="#version-0-4-x" title="Permalink to this headline">¶</a></h3>
-<p>Refactored the PlotFormats sub module to use Matplotlib 1.4 stylesheets. Additional features in Plot
-and new outlier detection routines in AnalyseFile. New operators added to DataFile to make some column and row
-operations more compact. Number of bugs squashed.</p>
+<div class="section" id="development-version">
+<h3>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h3>
+<p>The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
+as the main data store with a custom sub-class that contains most of the logic for indexing data by column name and designation.</p>
+<p>0.6 also adds some extra methods to AnalyseFile for extrapolation.</p>
+<p>Online documentation for the development version can be found on the <a class="reference external" href="http://gb119.github.io/Stoner-PythonCode">githib repository pages</a></p>
 </div>
-<div class="section" id="version-0-3-0">
-<h3>Version 0.3.0<a class="headerlink" href="#version-0-3-0" title="Permalink to this headline">¶</a></h3>
-<p>Refactorise the setas attribute again to remove circular references. Get writing to the setas column attributes working.</p>
-</div>
-<div class="section" id="version-0-2-5">
-<h3>Version 0.2.5<a class="headerlink" href="#version-0-2-5" title="Permalink to this headline">¶</a></h3>
-<p>Add a MokeFile class for loading Leeds MOKE system files.</p>
-</div>
-<div class="section" id="version-0-2-4">
-<h3>Version 0.2.4<a class="headerlink" href="#version-0-2-4" title="Permalink to this headline">¶</a></h3>
-<p>Refactored the setas attribute, improvments to loading some file formats, new Engineering formatting for plots (optional)</p>
-</div>
-<div class="section" id="version-0-2-0">
-<h3>Version 0.2.0<a class="headerlink" href="#version-0-2-0" title="Permalink to this headline">¶</a></h3>
-<p>Added the dependency on lmfit and depricated mpfit for doing bounded least-squares fitting of complex data functions.</p>
+<div class="section" id="stable-version">
+<h3>Stable Version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h3>
+<p>The current stable version is 0.5. This version was primarily stablising and bug-fixing the code.</p>
 </div>
 </div>
 <div class="section" id="user-guide">
@@ -225,11 +213,8 @@ operations more compact. Number of bugs squashed.</p>
 <li><a class="reference internal" href="#resources">Resources</a></li>
 <li><a class="reference internal" href="#contact-and-licensing">Contact and Licensing</a></li>
 <li><a class="reference internal" href="#recent-changes">Recent Changes</a><ul>
-<li><a class="reference internal" href="#version-0-4-x">Version 0.4.x</a></li>
-<li><a class="reference internal" href="#version-0-3-0">Version 0.3.0</a></li>
-<li><a class="reference internal" href="#version-0-2-5">Version 0.2.5</a></li>
-<li><a class="reference internal" href="#version-0-2-4">Version 0.2.4</a></li>
-<li><a class="reference internal" href="#version-0-2-0">Version 0.2.0</a></li>
+<li><a class="reference internal" href="#development-version">Development Version</a></li>
+<li><a class="reference internal" href="#stable-version">Stable Version</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#user-guide">User Guide</a></li>
@@ -282,7 +267,7 @@ operations more compact. Number of bugs squashed.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 19, 2015.
+      Last updated on Jul 21, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

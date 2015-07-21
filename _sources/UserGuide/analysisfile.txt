@@ -322,8 +322,8 @@ In addition to changing the X and Y data in the current :py:class:`AnalyseFile`
 instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
 with the co-efficients used to modify the scan data.
 
-Thresholding and Interpolating Data
------------------------------------
+Thresholding, Interpolating and Extrapolation of Data
+-----------------------------------------------------
 
 Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
 :math:`y=f(x)-y_{threshold}`). This is carried out by the :py:meth:`AnalyseFile.threshold` method::
@@ -343,6 +343,42 @@ scipy routine :py:func:`scipy.optimize.interp1d`::
 
 The new values of X are set from the mandetory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the
 :py:attr:`Stoner.Core.DataFile.setas` attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.
+
+The :py:meth:`AnalyseFile.interpolate` method will return values that are obtained from 'joining the dots' - which is
+appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
+use some locally fitted spline function to interpolate with. The :py:meth:`AnalyseFile.spline` function can be used for this.::
+
+    d.spline("X-Data","Y-Data",header="Spline Data",order=3,smoothing=2.0,replace=True)
+    d.spline("X-Data","Y-Data",header="Spline Data",order=2,smoothing=2.0,replace="Extra")
+    new_y=d.spline("X-Data","Y-Data",order=2,smoothing=2.0,replace=False)
+    spline=d.spline("X-Data","Y-Data",order=2,smoothing=2.0,replace=None)
+
+The *order* keyword gives the polynomial order of the spline function being fitted. The *smoothing* factor determines how
+closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *repalce* argument
+controls what the return value from the :py:meth:`AnalyseFile.spline` method reutrns. IF *replace* is True or a column
+index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
+the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
+:py:meth:`AnalyseFile.spline` method returns a :py:class:`scipy.interpoalte.UnivararateSpline` object that can be used to
+evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.
+
+Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalyseFile.extrpoalte`
+method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
+data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
+a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
+the new x-data point  approaches and passes the limits of the exisiting data, the window used to provide the fit function
+runs up to and stops at the limit of the supplied data. Thus when extrapolating, the new values of data are increasingly less certain
+as one moves further from the end of the data.
+
+.. plot:: samples/extrapolate-demo.py
+    :include-source:
+
+
+Extrapolation is of course most succesful if one has a physical model that should describe the data.
+To allow for this, you can pass an arbitary fitting function as the *kind* parameter.
+
+
+Whilst interpolation will tell you the
 
 Smoothing and Differentiating Data
 -----------------------------------
@@ -378,7 +414,7 @@ If *ycol* is not provided then both x and y data is taken from the *setas* attri
 The algorithm used is to differentiate the data with a Savitsky-Golay filter - which in effect fits a polynomial locally over the data.
 Zero crossing values in the derivative are located and then the second derivative is found for these points and are used to identify
 peaks and troughs in the data. The *width* and *poly* keywords are used to control the order of polynomial and the width of the window
-used for calculating the derivative - a lower order of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
+used for calculating the derivative - a lower order  of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
 The *significance* parameter controls which peaks and troughs are returned. If *signficance* is a float, then only peaks and troughs whose
 second derivatives are larger than *significance* are returned. If *significance* is an integer, then maxmium snd derivative in the data is divided
 by the supplied significance and used as the threshold on which peaks and troughs to return. If *significance* is not provided then a value of 20 is used.
