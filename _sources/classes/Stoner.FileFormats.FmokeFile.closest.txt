@@ -1,8 +1,0 @@
-
-
-FmokeFile.closest
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.closest

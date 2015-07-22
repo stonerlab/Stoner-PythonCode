@@ -1,8 +1,0 @@
-
-
-HGXFile._load
-=========================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HGXFile._load

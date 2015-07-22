@@ -1,8 +1,0 @@
-
-
-VSMFile.rolling_window
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.rolling_window

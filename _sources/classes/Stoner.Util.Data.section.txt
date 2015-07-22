@@ -1,8 +1,0 @@
-
-
-Data.section
-========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.section

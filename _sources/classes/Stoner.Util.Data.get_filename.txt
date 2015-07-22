@@ -1,8 +1,0 @@
-
-
-Data.get_filename
-=============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.get_filename

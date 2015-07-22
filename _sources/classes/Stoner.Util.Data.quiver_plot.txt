@@ -1,8 +1,0 @@
-
-
-Data.quiver_plot
-============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.quiver_plot

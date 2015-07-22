@@ -1,8 +1,0 @@
-
-
-ZipFile.del_column
-=============================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.del_column

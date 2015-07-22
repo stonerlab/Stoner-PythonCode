@@ -1,8 +1,0 @@
-
-
-RasorFile.rename
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.rename

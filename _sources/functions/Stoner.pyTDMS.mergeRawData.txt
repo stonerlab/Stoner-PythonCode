@@ -1,8 +1,0 @@
-
-
-mergeRawData
-==========================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: mergeRawData

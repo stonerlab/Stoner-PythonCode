@@ -1,8 +1,0 @@
-
-
-SPCFile.save
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.save

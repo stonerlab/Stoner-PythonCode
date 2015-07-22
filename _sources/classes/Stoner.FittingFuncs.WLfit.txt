@@ -1,8 +1,0 @@
-
-
-WLfit
-=========================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: WLfit

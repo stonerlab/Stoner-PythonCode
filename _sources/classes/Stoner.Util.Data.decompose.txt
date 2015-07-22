@@ -1,8 +1,0 @@
-
-
-Data.decompose
-==========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.decompose

@@ -1,8 +1,0 @@
-
-
-Simmons.guess
-========================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: Simmons.guess

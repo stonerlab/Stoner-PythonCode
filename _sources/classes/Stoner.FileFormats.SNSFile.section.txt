@@ -1,8 +1,0 @@
-
-
-SNSFile.section
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.section

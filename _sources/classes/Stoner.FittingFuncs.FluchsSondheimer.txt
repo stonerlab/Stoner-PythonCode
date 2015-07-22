@@ -1,8 +1,0 @@
-
-
-FluchsSondheimer
-====================================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: FluchsSondheimer

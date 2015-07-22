@@ -1,8 +1,0 @@
-
-
-EasyPlotFile._load
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile._load

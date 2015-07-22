@@ -1,8 +1,0 @@
-
-
-AnalyseFile.spline
-==================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.spline

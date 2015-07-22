@@ -1,8 +1,0 @@
-
-
-Data.search
-=======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.search

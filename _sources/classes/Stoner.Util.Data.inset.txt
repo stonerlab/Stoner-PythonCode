@@ -1,8 +1,0 @@
-
-
-Data.inset
-======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.inset

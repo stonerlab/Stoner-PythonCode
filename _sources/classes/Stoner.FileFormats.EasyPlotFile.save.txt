@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.save
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.save

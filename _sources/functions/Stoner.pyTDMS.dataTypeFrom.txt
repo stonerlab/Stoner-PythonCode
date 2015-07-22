@@ -1,8 +1,0 @@
-
-
-dataTypeFrom
-==========================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: dataTypeFrom

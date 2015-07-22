@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.find_col
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.find_col

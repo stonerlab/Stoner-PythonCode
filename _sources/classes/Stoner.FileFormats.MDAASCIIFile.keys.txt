@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.keys
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.keys

@@ -1,8 +1,0 @@
-
-
-ZipFile.filter
-=========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.filter

@@ -1,8 +1,0 @@
-
-
-Quadratic
-=============================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: Quadratic

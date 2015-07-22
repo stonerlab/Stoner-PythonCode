@@ -1,8 +1,0 @@
-
-
-Data.swap_column
-============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.swap_column

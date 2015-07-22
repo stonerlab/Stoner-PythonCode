@@ -1,8 +1,0 @@
-
-
-ZipFolder.sort
-=========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFolder.sort

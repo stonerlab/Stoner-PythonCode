@@ -1,8 +1,0 @@
-
-
-AnalyseFile.add_column
-======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.add_column

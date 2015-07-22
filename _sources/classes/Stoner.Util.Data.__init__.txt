@@ -1,8 +1,0 @@
-
-
-Data.__init__
-=========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.__init__

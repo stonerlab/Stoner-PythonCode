@@ -1,8 +1,0 @@
-
-
-HDF5File.swap_column
-================================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HDF5File.swap_column

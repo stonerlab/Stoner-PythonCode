@@ -1,8 +1,0 @@
-
-
-BDR
-=======================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: BDR

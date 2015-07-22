@@ -1,8 +1,0 @@
-
-
-typeHintedDict.values
-=================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.values

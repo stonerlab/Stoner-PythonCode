@@ -1,8 +1,0 @@
-
-
-Data.plot_xy
-========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.plot_xy

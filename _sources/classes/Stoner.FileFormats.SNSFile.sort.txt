@@ -1,8 +1,0 @@
-
-
-SNSFile.sort
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.sort

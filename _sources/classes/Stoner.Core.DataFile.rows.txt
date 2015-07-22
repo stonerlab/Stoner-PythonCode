@@ -1,8 +1,0 @@
-
-
-DataFile.rows
-=========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.rows

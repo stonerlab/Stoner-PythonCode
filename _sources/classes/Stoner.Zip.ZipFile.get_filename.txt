@@ -1,8 +1,0 @@
-
-
-ZipFile.get_filename
-===============================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.get_filename

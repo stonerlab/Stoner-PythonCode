@@ -1,8 +1,0 @@
-
-
-TDMSFile.get_filename
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.get_filename

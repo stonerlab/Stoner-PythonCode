@@ -1,8 +1,0 @@
-
-
-Data.save
-=====================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.save

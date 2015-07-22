@@ -1,8 +1,0 @@
-
-
-Data.rolling_window
-===============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.rolling_window

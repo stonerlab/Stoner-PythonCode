@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.del_column
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.del_column

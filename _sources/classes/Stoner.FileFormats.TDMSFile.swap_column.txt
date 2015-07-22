@@ -1,8 +1,0 @@
-
-
-TDMSFile.swap_column
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.swap_column

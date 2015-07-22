@@ -1,8 +1,0 @@
-
-
-Data.span
-=====================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.span

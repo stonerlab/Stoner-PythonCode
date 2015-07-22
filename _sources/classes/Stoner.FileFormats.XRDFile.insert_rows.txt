@@ -1,8 +1,0 @@
-
-
-XRDFile.insert_rows
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.insert_rows

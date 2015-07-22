@@ -1,8 +1,0 @@
-
-
-Data.contour_xyz
-============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.contour_xyz

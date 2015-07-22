@@ -1,8 +1,0 @@
-
-
-Data.lmfit
-======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.lmfit

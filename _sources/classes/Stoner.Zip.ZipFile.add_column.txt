@@ -1,8 +1,0 @@
-
-
-ZipFile.add_column
-=============================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.add_column

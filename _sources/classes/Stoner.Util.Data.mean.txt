@@ -1,8 +1,0 @@
-
-
-Data.mean
-=====================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.mean

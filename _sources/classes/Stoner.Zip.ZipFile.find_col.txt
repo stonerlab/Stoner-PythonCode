@@ -1,8 +1,0 @@
-
-
-ZipFile.find_col
-===========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.find_col

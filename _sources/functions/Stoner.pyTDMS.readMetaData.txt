@@ -1,8 +1,0 @@
-
-
-readMetaData
-==========================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: readMetaData

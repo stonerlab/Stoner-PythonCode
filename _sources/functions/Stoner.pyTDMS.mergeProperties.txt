@@ -1,8 +1,0 @@
-
-
-mergeProperties
-=============================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: mergeProperties

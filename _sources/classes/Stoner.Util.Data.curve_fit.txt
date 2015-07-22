@@ -1,8 +1,0 @@
-
-
-Data.curve_fit
-==========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.curve_fit

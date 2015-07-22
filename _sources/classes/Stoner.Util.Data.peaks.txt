@@ -1,8 +1,0 @@
-
-
-Data.peaks
-======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.peaks

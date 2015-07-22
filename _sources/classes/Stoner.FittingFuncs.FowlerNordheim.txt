@@ -1,8 +1,0 @@
-
-
-FowlerNordheim
-==================================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: FowlerNordheim

@@ -1,8 +1,0 @@
-
-
-Data.SG_Filter
-==========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.SG_Filter

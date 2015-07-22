@@ -1,8 +1,0 @@
-
-
-SNSFile.meta
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.meta

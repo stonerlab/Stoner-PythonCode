@@ -1,8 +1,0 @@
-
-
-Data.max
-====================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.max

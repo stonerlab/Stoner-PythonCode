@@ -1,8 +1,0 @@
-
-
-VFTEquation.guess
-============================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: VFTEquation.guess

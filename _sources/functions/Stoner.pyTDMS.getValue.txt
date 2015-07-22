@@ -1,8 +1,0 @@
-
-
-getValue
-======================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: getValue

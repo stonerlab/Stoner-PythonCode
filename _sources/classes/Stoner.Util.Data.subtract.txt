@@ -1,8 +1,0 @@
-
-
-Data.subtract
-=========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.subtract

@@ -1,8 +1,0 @@
-
-
-PlotFile.keys
-=========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.keys

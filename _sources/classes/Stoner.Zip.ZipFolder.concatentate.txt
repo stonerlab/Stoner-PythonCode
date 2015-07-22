@@ -1,8 +1,0 @@
-
-
-ZipFolder.concatentate
-=================================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFolder.concatentate

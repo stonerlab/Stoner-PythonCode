@@ -1,8 +1,0 @@
-
-
-AnalyseFile.load
-================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.load

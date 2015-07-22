@@ -1,8 +1,0 @@
-
-
-HDF5Folder.zip_groups
-=================================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HDF5Folder.zip_groups

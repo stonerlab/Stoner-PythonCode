@@ -1,8 +1,0 @@
-
-
-Data.griddata
-=========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.griddata

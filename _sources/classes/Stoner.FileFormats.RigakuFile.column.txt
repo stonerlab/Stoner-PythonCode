@@ -1,8 +1,0 @@
-
-
-RigakuFile.column
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.column

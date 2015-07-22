@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.rows
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.rows

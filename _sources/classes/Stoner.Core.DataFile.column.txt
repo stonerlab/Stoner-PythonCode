@@ -1,8 +1,0 @@
-
-
-DataFile.column
-===========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.column

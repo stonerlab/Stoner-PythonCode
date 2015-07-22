@@ -1,8 +1,0 @@
-
-
-BNLFile.save
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.save

@@ -1,8 +1,0 @@
-
-
-Data.figure
-=======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.figure

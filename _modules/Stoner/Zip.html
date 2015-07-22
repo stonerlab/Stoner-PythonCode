@@ -108,7 +108,7 @@
     <span class="n">priority</span> <span class="o">=</span> <span class="mi">32</span>
     <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;*.zip&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="ZipFile.__init__"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFile.__init__.html#Stoner.Zip.ZipFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor to catch initialising with an h5py.File or h5py.Group</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -132,7 +132,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">(</span><span class="n">ZipFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">archive</span><span class="p">,</span> <span class="n">member</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Responsible for actually reading the zip file archive.</span>
 
@@ -150,7 +150,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archive</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">member</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="ZipFile._load"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFile._load.html#Stoner.Zip.ZipFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ZipFile._load"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFile.html#Stoner.Zip.ZipFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load a file from the zip file, openining it as necessary&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
@@ -182,7 +182,7 @@
             <span class="n">other</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
-<div class="viewcode-block" id="ZipFile.save"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFile.save.html#Stoner.Zip.ZipFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ZipFile.save"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFile.html#Stoner.Zip.ZipFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Overrides the save method to allow ZipFile to be written out to disc (as a mininmalist output)</span>
 
 <span class="sd">        Args:</span>
@@ -240,7 +240,7 @@
 <span class="sd">    See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ZipFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFolder.__init__.html#Stoner.Zip.ZipFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor for the HDF5Folder Class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="bp">None</span>
@@ -256,7 +256,7 @@
                     <span class="n">this</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">zf</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">ZipFolder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Select Folder&quot;</span><span class="p">,</span> <span class="n">new_directory</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;r&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a file dialog box for working with</span>
 
@@ -288,7 +288,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
 
-<div class="viewcode-block" id="ZipFolder.getlist"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFolder.getlist.html#Stoner.Zip.ZipFolder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reads the Zip File to construct a list of ZipFile objects&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">recursive</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -327,7 +327,7 @@
         <span class="k">if</span> <span class="n">close_me</span><span class="p">:</span>
             <span class="n">directory</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
-</div>
+
     <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the _-read method to handle pulling files from the zip file&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>  <span class="c"># This is an already loaded DataFile</span>
@@ -357,7 +357,7 @@
 
         <span class="k">return</span> <span class="n">tmp</span>
 
-<div class="viewcode-block" id="ZipFolder.save"><a class="viewcode-back" href="../../classes/Stoner.Zip.ZipFolder.save.html#Stoner.Zip.ZipFolder.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a load of files to a single Zip file, creating members as it goes.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -376,7 +376,7 @@
         <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">tmp</span>
-</div>
+
     <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">trail</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a virtual path of groups in the Zip file and save data.</span>
 

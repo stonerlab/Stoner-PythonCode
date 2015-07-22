@@ -1,8 +1,0 @@
-
-
-Data.rows
-=====================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.rows

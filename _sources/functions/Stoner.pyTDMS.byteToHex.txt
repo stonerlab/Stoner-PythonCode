@@ -1,8 +1,0 @@
-
-
-byteToHex
-=======================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: byteToHex

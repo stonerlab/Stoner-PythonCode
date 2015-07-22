@@ -1,8 +1,0 @@
-
-
-DataFolder.zip_groups
-====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.zip_groups

@@ -1,8 +1,0 @@
-
-
-BNLFile.del_rows
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.del_rows

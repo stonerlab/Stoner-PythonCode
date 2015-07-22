@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.column
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.column

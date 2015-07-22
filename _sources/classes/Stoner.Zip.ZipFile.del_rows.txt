@@ -1,8 +1,0 @@
-
-
-ZipFile.del_rows
-===========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.del_rows

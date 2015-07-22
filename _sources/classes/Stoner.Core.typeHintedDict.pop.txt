@@ -1,8 +1,0 @@
-
-
-typeHintedDict.pop
-==============================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.pop

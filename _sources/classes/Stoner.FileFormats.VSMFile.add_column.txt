@@ -1,8 +1,0 @@
-
-
-VSMFile.add_column
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.add_column

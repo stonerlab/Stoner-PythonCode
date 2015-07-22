@@ -1,8 +1,0 @@
-
-
-readLeadIn
-========================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: readLeadIn

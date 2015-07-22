@@ -1,8 +1,0 @@
-
-
-ModArrhenius
-================================
-
-.. currentmodule:: Stoner.FittingFuncs
-
-.. autofunction:: ModArrhenius

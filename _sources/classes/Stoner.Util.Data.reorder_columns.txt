@@ -1,8 +1,0 @@
-
-
-Data.reorder_columns
-================================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.reorder_columns

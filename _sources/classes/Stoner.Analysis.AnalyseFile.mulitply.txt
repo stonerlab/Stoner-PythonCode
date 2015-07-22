@@ -1,8 +1,0 @@
-
-
-AnalyseFile.mulitply
-====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.mulitply

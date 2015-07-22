@@ -1,8 +1,0 @@
-
-
-typeHintedDict.has_key
-==================================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: typeHintedDict.has_key

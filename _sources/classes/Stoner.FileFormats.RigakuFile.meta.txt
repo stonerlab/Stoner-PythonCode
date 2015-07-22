@@ -1,8 +1,0 @@
-
-
-RigakuFile.meta
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.meta

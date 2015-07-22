@@ -1,8 +1,0 @@
-
-
-TDMSFile.insert_rows
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.insert_rows

@@ -1,8 +1,0 @@
-
-
-ZipFile.reorder_columns
-==================================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.reorder_columns

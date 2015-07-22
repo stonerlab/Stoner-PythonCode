@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.closest
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.closest

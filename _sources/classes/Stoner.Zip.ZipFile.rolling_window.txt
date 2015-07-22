@@ -1,8 +1,0 @@
-
-
-ZipFile.rolling_window
-=================================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.rolling_window

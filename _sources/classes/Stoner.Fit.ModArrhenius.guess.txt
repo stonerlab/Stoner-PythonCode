@@ -1,8 +1,0 @@
-
-
-ModArrhenius.guess
-=============================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: ModArrhenius.guess

@@ -1,8 +1,0 @@
-
-
-ZipFile.rename
-=========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.rename

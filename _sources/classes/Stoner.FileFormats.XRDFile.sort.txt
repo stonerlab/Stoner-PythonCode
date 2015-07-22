@@ -1,8 +1,0 @@
-
-
-XRDFile.sort
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.sort

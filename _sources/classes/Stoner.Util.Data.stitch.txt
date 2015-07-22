@@ -1,8 +1,0 @@
-
-
-Data.stitch
-=======================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.stitch

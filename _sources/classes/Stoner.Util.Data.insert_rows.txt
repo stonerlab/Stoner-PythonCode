@@ -1,8 +1,0 @@
-
-
-Data.insert_rows
-============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.insert_rows

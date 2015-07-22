@@ -1,8 +1,0 @@
-
-
-AnalyseFile.mpfit
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.mpfit

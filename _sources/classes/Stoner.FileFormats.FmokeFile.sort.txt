@@ -1,8 +1,0 @@
-
-
-FmokeFile.sort
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.sort

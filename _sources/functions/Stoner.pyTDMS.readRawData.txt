@@ -1,8 +1,0 @@
-
-
-readRawData
-=========================
-
-.. currentmodule:: Stoner.pyTDMS
-
-.. autofunction:: readRawData

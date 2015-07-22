@@ -1,8 +1,0 @@
-
-
-Data.del_column
-===========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.del_column

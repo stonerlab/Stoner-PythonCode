@@ -541,88 +541,6 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="pytdms-module">
-<h3><code class="xref py py-mod docutils literal"><span class="pre">pyTDMS</span></code> Module<a class="headerlink" href="#pytdms-module" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="id9">
-<h3>Classes<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-</tbody>
-</table>
-</div>
-<div class="section" id="id10">
-<h3>Functions<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.addTimeTrack.html#Stoner.pyTDMS.addTimeTrack" title="Stoner.pyTDMS.addTimeTrack"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.addTimeTrack</span></code></a>(obj,&nbsp;channel)</td>
-<td>Ok, so we&#8217;ve read the data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.byteToHex.html#Stoner.pyTDMS.byteToHex" title="Stoner.pyTDMS.byteToHex"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.byteToHex</span></code></a>(byteStr)</td>
-<td>Convert a byte string to it&#8217;s hex string representation e.g.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.csvDump.html#Stoner.pyTDMS.csvDump" title="Stoner.pyTDMS.csvDump"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.csvDump</span></code></a>(args)</td>
-<td>Dump the (objects,rawdata) that we read from a TDMS file straight into a CSV file.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.dataTypeFrom.html#Stoner.pyTDMS.dataTypeFrom" title="Stoner.pyTDMS.dataTypeFrom"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.dataTypeFrom</span></code></a>(s)</td>
-<td>Find back the data type from raw input data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.dataTypeLength.html#Stoner.pyTDMS.dataTypeLength" title="Stoner.pyTDMS.dataTypeLength"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.dataTypeLength</span></code></a>(datatype)</td>
-<td>How many bytes we need to read to read in an object of the given datatype</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.dataTypeTranscription.html#Stoner.pyTDMS.dataTypeTranscription" title="Stoner.pyTDMS.dataTypeTranscription"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.dataTypeTranscription</span></code></a>(datatype)</td>
-<td>Returns the identifier for the given datatype hat we need to feed into struct.unpack to get the right thing out.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.dumpProperties.html#Stoner.pyTDMS.dumpProperties" title="Stoner.pyTDMS.dumpProperties"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.dumpProperties</span></code></a>(props)</td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.getValue.html#Stoner.pyTDMS.getValue" title="Stoner.pyTDMS.getValue"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.getValue</span></code></a>(s,&nbsp;endianness,&nbsp;datatype)</td>
-<td>We just read s from the file, and now we need to unpack it.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.isChannel.html#Stoner.pyTDMS.isChannel" title="Stoner.pyTDMS.isChannel"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.isChannel</span></code></a>(obj)</td>
-<td>Tell us whether the given object is a channel (in the current segment) and if so, returns the meta information about the raw data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.mergeObject.html#Stoner.pyTDMS.mergeObject" title="Stoner.pyTDMS.mergeObject"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.mergeObject</span></code></a>(obj,&nbsp;newobj)</td>
-<td>Ok, we are given two objects: obj and alt.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.mergeObjects.html#Stoner.pyTDMS.mergeObjects" title="Stoner.pyTDMS.mergeObjects"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.mergeObjects</span></code></a>(objects,&nbsp;newobjects)</td>
-<td>Return the objects (metadata), but add the stuff that is in newobjects.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.mergeProperties.html#Stoner.pyTDMS.mergeProperties" title="Stoner.pyTDMS.mergeProperties"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.mergeProperties</span></code></a>(prop,&nbsp;newprop)</td>
-<td>Merge the two property lists, using the newprop list to overwrite if conflicts arise.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.mergeRawData.html#Stoner.pyTDMS.mergeRawData" title="Stoner.pyTDMS.mergeRawData"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.mergeRawData</span></code></a>(rawdata,&nbsp;newrawdata)</td>
-<td>Return the raw data, appended the new raw data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.read.html#Stoner.pyTDMS.read" title="Stoner.pyTDMS.read"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.read</span></code></a>(filename)</td>
-<td>Reads TDMS file with the given filename.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.readLeadIn.html#Stoner.pyTDMS.readLeadIn" title="Stoner.pyTDMS.readLeadIn"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.readLeadIn</span></code></a>(f)</td>
-<td>Read the lead-in of a segment</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.readMetaData.html#Stoner.pyTDMS.readMetaData" title="Stoner.pyTDMS.readMetaData"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.readMetaData</span></code></a>(f)</td>
-<td>Read meta data from file f.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.readObject.html#Stoner.pyTDMS.readObject" title="Stoner.pyTDMS.readObject"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.readObject</span></code></a>(f)</td>
-<td>Read object in the metadata array</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.pyTDMS.readRawData.html#Stoner.pyTDMS.readRawData" title="Stoner.pyTDMS.readRawData"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.readRawData</span></code></a>(f,&nbsp;leadin,&nbsp;...)</td>
-<td>Read raw data from file f, given the previously read leadin.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.pyTDMS.readSegment.html#Stoner.pyTDMS.readSegment" title="Stoner.pyTDMS.readSegment"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.pyTDMS.readSegment</span></code></a>(f,&nbsp;filesize,&nbsp;data)</td>
-<td>Read a segment from file f, whose filesize is given, and data is what we have read already</td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="section" id="subpackages">
 <h3>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h3>
 <div class="toctree-wrapper compound">
@@ -688,9 +606,6 @@
 <li><a class="reference internal" href="#util-module"><code class="docutils literal"><span class="pre">Util</span></code> Module</a><ul>
 <li><a class="reference internal" href="#id7">Classes</a></li>
 <li><a class="reference internal" href="#id8">Functions</a></li>
-<li><a class="reference internal" href="#pytdms-module"><code class="docutils literal"><span class="pre">pyTDMS</span></code> Module</a></li>
-<li><a class="reference internal" href="#id9">Classes</a></li>
-<li><a class="reference internal" href="#id10">Functions</a></li>
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 </ul>
 </li>

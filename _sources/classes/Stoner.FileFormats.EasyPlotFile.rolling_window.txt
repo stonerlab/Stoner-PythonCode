@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.rolling_window
-==============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.rolling_window

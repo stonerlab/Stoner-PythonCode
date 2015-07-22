@@ -1,8 +1,0 @@
-
-
-JTBinsetStyle.customise_axes
-===============================================
-
-.. currentmodule:: Stoner.PlotFormats
-
-.. automethod:: JTBinsetStyle.customise_axes

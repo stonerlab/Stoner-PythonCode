@@ -1,8 +1,0 @@
-
-
-RigakuFile.del_rows
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.del_rows

@@ -1,8 +1,0 @@
-
-
-Data.chi2mapping
-============================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.chi2mapping

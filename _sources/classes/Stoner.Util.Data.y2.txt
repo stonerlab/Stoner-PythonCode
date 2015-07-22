@@ -1,8 +1,0 @@
-
-
-Data.y2
-===================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.y2

@@ -1,8 +1,0 @@
-
-
-BNLFile.swap_column
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.swap_column

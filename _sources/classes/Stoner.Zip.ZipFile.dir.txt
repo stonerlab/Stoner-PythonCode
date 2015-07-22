@@ -1,8 +1,0 @@
-
-
-ZipFile.dir
-======================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFile.dir

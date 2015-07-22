@@ -1,8 +1,0 @@
-
-
-OVFFile.meta
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.meta

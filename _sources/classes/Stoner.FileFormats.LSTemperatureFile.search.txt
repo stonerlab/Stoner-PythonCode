@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.search
-===========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.search

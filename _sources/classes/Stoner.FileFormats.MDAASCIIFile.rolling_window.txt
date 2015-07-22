@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.rolling_window
-==============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.rolling_window

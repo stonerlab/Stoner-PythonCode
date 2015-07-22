@@ -1,8 +1,0 @@
-
-
-SNSFile.closest
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.closest

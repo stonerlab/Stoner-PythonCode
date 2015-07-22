@@ -1,8 +1,0 @@
-
-
-RasorFile.dir
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.dir

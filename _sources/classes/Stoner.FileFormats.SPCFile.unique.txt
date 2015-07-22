@@ -1,8 +1,0 @@
-
-
-SPCFile.unique
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.unique

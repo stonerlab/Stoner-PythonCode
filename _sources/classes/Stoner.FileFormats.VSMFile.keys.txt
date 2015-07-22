@@ -1,8 +1,0 @@
-
-
-VSMFile.keys
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.keys

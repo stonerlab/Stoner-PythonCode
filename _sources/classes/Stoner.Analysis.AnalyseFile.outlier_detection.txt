@@ -1,8 +1,0 @@
-
-
-AnalyseFile.outlier_detection
-=============================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.outlier_detection

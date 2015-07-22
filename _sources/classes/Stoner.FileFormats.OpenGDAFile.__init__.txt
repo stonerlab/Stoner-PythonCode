@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.__init__
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.__init__

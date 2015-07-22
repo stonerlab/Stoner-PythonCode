@@ -1,8 +1,0 @@
-
-
-MDAASCIIFile.sort
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MDAASCIIFile.sort

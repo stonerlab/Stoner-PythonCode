@@ -1,8 +1,0 @@
-
-
-RasorFile.reorder_columns
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.reorder_columns

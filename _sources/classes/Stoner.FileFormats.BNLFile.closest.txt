@@ -1,8 +1,0 @@
-
-
-BNLFile.closest
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.closest

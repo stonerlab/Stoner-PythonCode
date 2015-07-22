@@ -1,8 +1,0 @@
-
-
-Data.multiply
-=========================
-
-.. currentmodule:: Stoner.Util
-
-.. automethod:: Data.multiply

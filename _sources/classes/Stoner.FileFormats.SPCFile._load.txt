@@ -1,8 +1,0 @@
-
-
-SPCFile._load
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile._load

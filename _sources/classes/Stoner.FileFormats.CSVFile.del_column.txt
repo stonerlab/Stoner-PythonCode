@@ -1,8 +1,0 @@
-
-
-CSVFile.del_column
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: CSVFile.del_column

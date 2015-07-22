@@ -1,8 +1,0 @@
-
-
-Langevin.__init__
-============================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: Langevin.__init__

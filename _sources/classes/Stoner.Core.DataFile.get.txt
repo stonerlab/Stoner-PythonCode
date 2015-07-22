@@ -1,8 +1,0 @@
-
-
-DataFile.get
-========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.get

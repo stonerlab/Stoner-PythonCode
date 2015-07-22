@@ -1,8 +1,0 @@
-
-
-PlotFile.swap_column
-================================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.swap_column

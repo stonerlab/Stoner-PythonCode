@@ -1,8 +1,0 @@
-
-
-BlochGrueneisen.__init__
-===================================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: BlochGrueneisen.__init__

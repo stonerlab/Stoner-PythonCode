@@ -1,8 +1,0 @@
-
-
-MokeFile.insert_rows
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.insert_rows

@@ -1,8 +1,0 @@
-
-
-FmokeFile.insert_rows
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.insert_rows

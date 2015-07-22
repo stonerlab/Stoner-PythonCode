@@ -1,8 +1,0 @@
-
-
-HDF5Folder.select
-=============================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HDF5Folder.select

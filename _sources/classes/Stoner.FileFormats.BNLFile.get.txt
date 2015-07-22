@@ -1,8 +1,0 @@
-
-
-BNLFile.get
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.get

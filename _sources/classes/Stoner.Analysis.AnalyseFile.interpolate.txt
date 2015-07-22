@@ -1,8 +1,0 @@
-
-
-AnalyseFile.interpolate
-=======================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.interpolate

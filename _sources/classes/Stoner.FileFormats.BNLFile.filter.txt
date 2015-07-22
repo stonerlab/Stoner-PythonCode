@@ -1,8 +1,0 @@
-
-
-BNLFile.filter
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.filter

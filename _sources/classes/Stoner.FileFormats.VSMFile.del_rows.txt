@@ -1,8 +1,0 @@
-
-
-VSMFile.del_rows
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: VSMFile.del_rows
