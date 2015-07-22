@@ -45,7 +45,7 @@ clean:
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
-	pandoc -f rst -t markdown -o readme.md readme.rst
+	pandoc -f rst -t markdown -o ../readme.md readme.rst
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:

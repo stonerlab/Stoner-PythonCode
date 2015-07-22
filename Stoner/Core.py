@@ -1141,9 +1141,6 @@ class DataFile(object):
                 definitions above
             kargs (keyword Arguments): All keyword arguments that match public attributes are
                 used to set those public attributes.
-
-        Returns:
-            A new instance of the DataFile class.
         """
         # init instance attributes
         self.debug = False
@@ -1390,7 +1387,7 @@ class DataFile(object):
             newdata(DataFile): The instance to be modified
 
         Returns:
-            A modified newdata
+            newdata: A modified newdata
             """
         if isinstance(other, _np_.ndarray):
             if len(self.data) == 0:
@@ -1466,7 +1463,7 @@ class DataFile(object):
             other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
 
         Returns:
-            A :py:class:`DataFile` object with the columns of other con
+            newdata: A :py:class:`DataFile` object with the columns of other con
         catenated as new columns at the end of the self object.
 
         Note:
@@ -1489,7 +1486,7 @@ class DataFile(object):
             other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance
 
         Returns:
-            A :py:class:`DataFile` object with the columns of other con
+            self: A :py:class:`DataFile` object with the columns of other con
         catenated as new columns at the end of the self object.
 
         Note:
@@ -1570,19 +1567,19 @@ class DataFile(object):
             Other (column index): column(s) to delete.
 
         Return:
-            A copy of self with a column deleted.
+            self: A copy of self with a column deleted.
         """
         newdata = self.clone
         return self.__mod_core__(other, newdata)
 
     def __imod__(self, other):
-        """Overload the % operator to mean column deletion.
+        """Overload the % operator to mean in-place column deletion.
 
         Args:
             Other (column index): column(s) to delete.
 
         Return:
-            A copy of self with a column deleted.
+            self: A copy of self with a column deleted.
         """
         newdata = self
         return self.__mod_core__(other, newdata)
@@ -1602,7 +1599,7 @@ class DataFile(object):
             other (int,list of integers): Delete row(s) from data.
 
         Returns:
-            DataFile with rows removed.
+            newdata: A :py:data:`DataFile` with rows removed.
         """
         newdata = self.clone
         return self.__sub_core__(other, newdata)
@@ -1614,7 +1611,7 @@ class DataFile(object):
             other (int,list of integers): Delete row(s) from data.
 
         Returns:
-            DataFile with rows removed.
+            self: The :py:data:`DataFile` with rows removed.
         """
         newdata = self
         return self.__sub_core__(other, newdata)
@@ -1635,9 +1632,9 @@ class DataFile(object):
 
 
     def __call__(self,*args,**kargs):
-        """Implements an option for DataFile().
+        """Clone the DataFile, but allowing additional arguments to modify the new clone.
 
-        Creates a new clone of self and then passes all the arguments to the clones __init__ method.
+        Creates a new clone of self and then passes all the arguments to the clones' __init__ method.
         """
         new_d=self.clone
         i = len(args) if len(args) < 2 else 2
@@ -1667,7 +1664,7 @@ class DataFile(object):
             item(string): name of metadata key
 
         Returns:
-            iem in self.metadata"""
+            bool: True if item in self.metadata"""
         return item in self.metadata
 
     def __delitem__(self, item):
@@ -1755,7 +1752,7 @@ class DataFile(object):
             name (string): The name of the attribute to be returned.
 
         Returns:
-            the DataFile object in various forms
+            Various: the DataFile object in various forms
 
         Supported attributes:
         - records - return the DataFile data as a numpy structured
@@ -1817,7 +1814,7 @@ class DataFile(object):
             :py:class:`DataFile` to be returned.
 
         Returns:
-            an item of metadata or row(s) of data.
+            mixed: an item of metadata or row(s) of data.
 
         - If name is an integer then the corresponding single row will be returned
         - if name is a slice, then the corresponding rows of data will be returned.
@@ -1878,7 +1875,23 @@ class DataFile(object):
             yield r
 
     def _load(self, filename, *args, **kargs):
-        """Replace __parse_data with method that is more compatible with subclasses."""
+        """Actually load the data from disc assuming a .tdi file format.
+
+        Args:
+            filename (str): Path to filename to be loaded. If None or False, a dialog bax is raised to
+                ask for the filename.
+
+        Returns:
+            DataFile: A copy of the newly loaded :py:class`DataFile` object.
+
+        Exceptions:
+            StonerLoadError: Raised if the first row does not start with 'TDI Format 1.5' or 'TDI Format=1.0'.
+
+        Note:
+            The *_load* methods shouldbe overidden in each child class to handle the process of loading data from
+                disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
+                the loading class can try a different sub-class instead.
+        """
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -1952,7 +1965,7 @@ class DataFile(object):
             other (string or iterable object): Used to source the DataFile object
 
         Returns:
-            A new DataFile object
+            DataFile: A new :py:class:`DataFile` object
 
         TODO:
             Make code work better with streams
@@ -1974,7 +1987,7 @@ class DataFile(object):
             ky (string): The name of the metadata item to be returned.
 
         Returns:
-            Returns the item of metadata.
+            mixed or None: Returns the item of metadata.
 
         Note:
            If key is not an exact match for an item of metadata,
@@ -1999,9 +2012,6 @@ class DataFile(object):
             key (string): The name of the metadata parameter to be written,
         possibly including a type hinting string.
             value (any): The value of the item of metadata.
-
-        Returns:
-            Nothing, but the current instance's metadata is changed.
 
         Note:
             Uses the typehint to set the type correctly in the dictionary
@@ -2305,13 +2315,13 @@ class DataFile(object):
         Keyword Arguments:
             column_header (string): The text to set the column header to,
                 if not supplied then defaults to 'col#'
-            index (int or string): The  index (numeric or string) to insert (or replace) the data
+            index (index type): The  index (numeric or string) to insert (or replace) the data
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
 
         Returns:
-            A :py:class:`DataFile` instance with the additonal column inserted.
+            self: The :py:class:`DataFile` instance with the additonal column inserted.
 
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
@@ -2388,7 +2398,7 @@ class DataFile(object):
             xcol (index or None): Column in which to look for value, or None to use setas.
 
         Returns:
-            A single row of data as a :py:class:`Stoner.Core.DataArray`.
+            ndarray: A single row of data as a :py:class:`Stoner.Core.DataArray`.
 
         Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.
         """
@@ -2407,14 +2417,14 @@ class DataFile(object):
             col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`
 
         Returns:
-            one or more columns of data as a :py:class:`numpy.ndarray`."""
+            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`."""
         return self.data[:, self.find_col(col)]
 
     def columns(self,not_masked=False):
         """Generator method that will iterate over the columns of data int he datafile.
 
         Yields:
-            Returns the next column of data."""
+            1D array: Returns the next column of data."""
         for ix,col in enumerate(self.data.T):
             if _ma_.is_masked(col):
                 continue
@@ -2431,7 +2441,7 @@ class DataFile(object):
             duplicates (bool): (default False) look for duplicated columns
 
         Returns:
-            The :py:class:`DataFile` object with the column deleted.
+            self: The :py:class:`DataFile` object with the column deleted.
 
         Note:
             - If duplicates is True and col is None then all duplicate columns are removed,
@@ -2497,7 +2507,7 @@ class DataFile(object):
                 that would have been deleted otherwise.
 
         Returns:
-            The current object
+            self: The current :py:class:`DataFile` object
 
         Note:
             If col is None, then all rows with masked data are deleted
@@ -2552,7 +2562,7 @@ class DataFile(object):
             pattern (string or re): is a regular expression or None to list all keys
 
         Returns:
-            Returns a list of metadata keys."""
+            list: A list of metadata keys."""
         if pattern is None:
             return list(self.metadata.keys())
         else:
@@ -2573,7 +2583,7 @@ class DataFile(object):
                 in the filter (so the filter is logically or'd)) The default value of None results in a complete row being passed into func.
 
         Returns:
-            The current object with the mask set
+            self: The current :py:class:`DataFile` object with the mask set
         """
         if cols is None:
             cols = range(self.data.shape[1])
@@ -2609,7 +2619,7 @@ class DataFile(object):
             force_list (bool): Force the output always to be a list. Mainly for internal use only
 
         Returns:
-            The matching column index as an integer or a KeyError
+            int, list of ints: The matching column index as an integer or a KeyError
         """
         return self.data._setas.find_col(col, force_list)
 
@@ -2625,7 +2635,7 @@ class DataFile(object):
             default (any): Default value to return if key not found
 
         Returns:
-            self.metadata[item] or None if item not in self.metadata"""
+            mixed: self.metadata[item] or None if item not in self.metadata"""
         try:
             return self[item]
         except KeyError:
@@ -2638,7 +2648,7 @@ class DataFile(object):
             mode (string): The mode of file operation to be used when calling the dialog box
 
         Returns:
-            The new filename
+            str: The new filename
 
         Note:
             The filename attribute of the current instance is updated by this method as well.
@@ -2655,7 +2665,7 @@ class DataFile(object):
             new_data (numpy array): An array with an equal number of columns as the main data array containing the new row(s) of data to insert
 
         Returns:
-            A copy of the modified DataFile object"""
+            self: A copy of the modified :py:class:`DataFile` object"""
         self.data = _np_.insert(self.data, row, new_data, 0)
         return self
 
@@ -2677,7 +2687,7 @@ class DataFile(object):
             filetype (:py:class:`DataFile`): If not none then tries using filetype as the loader
 
         Returns:
-            A copy of the loaded instance
+            DataFile: A copy of the loaded :py:data:`DataFile` instance
 
         Note:
             Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.
@@ -2747,7 +2757,7 @@ class DataFile(object):
             new_col (string): New name of column
 
         Returns:
-            A copy of self
+            self: A copy of the modified :py:class:`DataFile` instance
         """
 
         old_col = self.find_col(old_col)
@@ -2766,7 +2776,7 @@ class DataFile(object):
                 way as the data (defaults to True)
 
         Returns:
-            A copy of the modified DataFile object"""
+            self: A copy of the modified :py:class:`DataFile` object"""
         if headers_too:
             self.column_headers = [self.column_headers[self.find_col(x)] for x in cols]
         if setas_too:
@@ -2786,8 +2796,8 @@ class DataFile(object):
             wrap (bool): Whether to use data from the other end of the array when at one end or the other.
             exclude_centre (odd int or bool): Exclude the ciurrent row from the rolling window (defaults to False)
 
-        Returns:
-            Yields with a section of data that is window rows long, each iteration moves the marker
+        Yields:
+            ndarray: Yields with a section of data that is window rows long, each iteration moves the marker
             one row further on.
         """
 
@@ -2832,7 +2842,7 @@ class DataFile(object):
             not_masked(bool): If a row is masked and this is true, then don't return this row.
 
         Yields:
-            Returns the next row of data"""
+            1D array: Returns the next row of data"""
         setas=self.data._setas.clone
         for row in self.data:
             if _ma_.is_masked(row) and not_masked:
@@ -2850,7 +2860,7 @@ class DataFile(object):
                 ilename is False then a file dialog is forced.
 
         Returns:
-            The current object
+            self: The current :py:class:`DataFile` object
                 """
         if filename is None:
             filename = self.filename
@@ -2891,7 +2901,7 @@ class DataFile(object):
             accuracy (float): Uncertainty to accept when testing equalities
 
         Returns:
-            numpy array of matching rows or column values depending on the arguements.
+            ndarray: numpy array of matching rows or column values depending on the arguements.
 
         Note:
             The value is interpreted as follows:
@@ -2927,7 +2937,7 @@ class DataFile(object):
             r (callable): a function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section
 
         Returns:
-            A DataFile like object that includes only those lines from the original that match the section specification
+            DataFile: A :py:class:`DataFile` like object that includes only those lines from the original that match the section specification
 
         Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.
         To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying
@@ -2971,7 +2981,7 @@ class DataFile(object):
             reverse (boolean): If true, the sorted array isreversed.
 
         Returns:
-            A copy of the sorted object
+            self: A copy of the :py:class:`DataFile` sorted object
         """
 
         if order is None:
@@ -3004,7 +3014,7 @@ class DataFile(object):
                 are swapped as well
 
         Returns:
-            A copy of the modified DataFile objects
+            self: A copy of the modified :py:class:`DataFile` objects
 
         Note:
             If swp is a list, then the function is called recursively on each

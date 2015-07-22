@@ -585,13 +585,14 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try
             sigma (index): The index of the column with the y-error bars
-            bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
             replace (bool): Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)
             header (string or None): If this is a string then it is used as the name of the fitted data. (default None)
-            absolute_sigma (bool, defaults to True) If False, `sigma` denotes relative weights of the data points.
+            absolute_sigma (bool): If False, `sigma` denotes relative weights of the data points. The default True means that
+                the sigma parameter is the reciprocal of the absoluate standard deviation.
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
@@ -675,7 +676,7 @@ class AnalyseFile(DataFile):
 
             if isinstance(yc,index_types):
                 ydat = working[:, self.find_col(yc)]
-            elif isinstance(yc,_np_.ndarray) and len(ycol.shape)==1 and len(ycol)==len(self):
+            elif isinstance(yc,_np_.ndarray) and len(yc.shape)==1 and len(yc)==len(self):
                 ydat=yc
             else:
                 raise RuntimeError("Y-data for fitting not defined - should either be an index or a 1D numpy array of the same length as the dataset")
