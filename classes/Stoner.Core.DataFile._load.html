@@ -61,7 +61,32 @@
 <dl class="method">
 <dt id="Stoner.Core.DataFile._load">
 <code class="descclassname">DataFile.</code><code class="descname">_load</code><span class="sig-paren">(</span><em>filename</em>, <em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#DataFile._load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataFile._load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Replace __parse_data with method that is more compatible with subclasses.</p>
+<dd><p>Actually load the data from disc assuming a .tdi file format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>str</em>) &#8211;
+Path to filename to be loaded. If None or False, a dialog bax is raised to
+ask for the filename.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>DataFile</em> &#8211;
+A copy of the newly loaded :py:class`DataFile` object.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Exceptions:</dt>
+<dd>StonerLoadError: Raised if the first row does not start with &#8216;TDI Format 1.5&#8217; or &#8216;TDI Format=1.0&#8217;.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>The <em>_load</em> methods shouldbe overidden in each child class to handle the process of loading data from</dt>
+<dd>disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that
+the loading class can try a different sub-class instead.</dd>
+</dl>
+</div>
 </dd></dl>
 
 </div>
@@ -127,7 +152,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 21, 2015.
+      Last updated on Jul 22, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

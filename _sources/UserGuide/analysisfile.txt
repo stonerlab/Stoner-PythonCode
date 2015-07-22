@@ -124,8 +124,21 @@ for adding appropriately formatted details of the fit to the plot.
 .. plot:: samples/curve_fit_line.py
     :include-source:
 
+:py:meth:`AnalyseFile.curve_fit` can also be used to fit more complex problems. In the example below, a set of
+points in x,y,z space are fitted to a plane.
+
+.. plot:: samples/curve_fit_plane.py
+    :include-source:
+
+Finally, by you can sepcify the *y-data* to fit to as a numpy array. This can be used to fit functions that
+don't themseleves return values that can be matched up to existing data. An example of doing this is fitting a
+sphere to a set of :math:`(x,y,z) data points.
+
+.. plot:: samples/sphere_fit.py
+    :include-source:
 
 See also :ref:`Fitting_tricks`
+
 
 .. _fitting_with_limits:
 
@@ -175,7 +188,7 @@ edit the source code. :py:meth:`AnalyseFile.lmfit` and :py:mod:`Stoner.Fit` prov
 
 Firstly, the initialisation file should take the form like so.
 
-.. include:: ../scripts/PCAR-New.ini
+.. include:: ../../scripts/PCAR-New.ini
    :literal:
 
 This initialisation file can be passed to :py:func:`Stoner.Fit.cfg_data_from_ini` which will use the information in the [Data]

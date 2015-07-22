@@ -182,10 +182,111 @@ for adding appropriately formatted details of the fit to the plot.</p>
 <div class="figure">
 <img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
 </div>
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
+points in x,y,z space are fitted to a plane.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span> <span class="nn">matplotlib.cm</span> <span class="kn">as</span> <span class="nn">cmap</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+
+
+<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span> <span class="c"># Function to define a plane</span>
+    <span class="k">return</span> <span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
+
+<span class="n">coeefs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">col</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
+<span class="n">Z</span><span class="o">=</span><span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span><span class="o">*</span><span class="n">coeefs</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">7.0</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.z&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
+
+<span class="n">txt</span><span class="o">=</span><span class="s">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="n">txt</span><span class="o">+=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;c&quot;</span><span class="p">]])</span>
+
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_plane.png">png</a>, <a class="reference external" href="../samples/curve_fit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_plane.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_plane.png" src="../_images/curve_fit_plane.png" />
+</div>
+<p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
+don&#8217;t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
+sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>(x,y,z) data points.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">sqrt</span><span class="p">,</span><span class="n">diag</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span><span class="n">uniform</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts from spherical to cartesian co-ordinates.&quot;&quot;&quot;</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">z</span><span class="o">=</span><span class="n">r</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span>
+
+<span class="k">def</span> <span class="nf">sphere</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">),</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="c"># Create some points approximately spherical distribution</span>
+<span class="n">p</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<span class="n">q</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<span class="n">r</span><span class="o">=</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">transform</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+
+<span class="n">x</span><span class="o">+=</span><span class="mf">3.0</span>
+<span class="n">y</span><span class="o">-=</span><span class="mf">4.0</span>
+<span class="n">z</span><span class="o">+=</span><span class="mf">2.0</span>
+
+<span class="c"># Construct the  DataFile object</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Best fit sphere&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mf">5.2</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c"># Square aspect ratio</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">)</span>
+
+<span class="c">#curve_fit does the hard work</span>
+<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">sphere</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
+
+<span class="c"># This manually constructs the best fit sphere</span>
+<span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="n">popt</span>
+<span class="n">p</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">q</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span>
+<span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+<span class="n">R</span><span class="o">=</span><span class="n">ones_like</span><span class="p">(</span><span class="n">P</span><span class="p">)</span><span class="o">*</span><span class="n">r</span>
+<span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="n">transform</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">P</span><span class="p">)</span>
+<span class="n">x</span><span class="o">+=</span><span class="n">a</span>
+<span class="n">y</span><span class="o">+=</span><span class="n">b</span>
+<span class="n">z</span><span class="o">+=</span><span class="n">c</span>
+
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/sphere_fit.py">Source code</a>, <a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
+</div>
 <p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span>Fitting Tricks</span></a></p>
 </div>
 <div class="section" id="fitting-with-limits">
-<span id="id1"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
+<span id="id3"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
 <code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
@@ -241,6 +342,95 @@ instance. This contains all the information about the fit and fitting process.</
 <p>For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
 edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> and <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> provide some mechanisms to enable this.</p>
 <p>Firstly, the initialisation file should take the form like so.</p>
+<div class="highlight-python"><div class="highlight"><pre>[Options]
+model: Stoner.Fit.Strijkers
+# Controls whether the data and fit are plotted or not.
+show_plot: True
+# Sets whether to print a nice report to the console
+print_report: True
+# Save the final result ?
+save_fit: False
+#
+# These are optional options that turn on various (experimental) bits of code
+#
+#This turns on the normalisation
+normalise: False
+# This turns on the fitting a quadratic to the outer 10% to determine the normalisation
+# Don&#39;t use it unless you know why this might be sensible for your data !
+fancy_normaliser: False
+# Turns on rescaling the V axis into mV
+# Only use if data not already correctly scaled.
+rescale_v: False
+# Tries to find and remove an offset in V by looking for peaks within 5 Delta
+# Warning, this may go badly wrong with certain DC waveforms
+remove_offset: False
+# Be clever about annotating the result on the plots
+fancy_result: True
+
+
+# These settings will read old style files directly
+[Data]
+x: V
+y: G
+# This will load from a csv file, comment out to have it guess the file type
+type: Stoner.FileFormats.CSVFile
+header_line:1
+start_line:2
+separator: ,
+# Only need v_scale if rescale_v is true
+v_scale:1000
+# Only need this if normalise is True and fancy_normaliser is False
+Normal_conductance: 0.0
+# Set true to discard data at high bias
+discard: False
+# Bias limit to discard at
+v_limit: 10.0
+
+
+# The next four sections set the parameters up
+[omega]
+#starting value
+value:0.55
+# Allow this parameter to vary in the fix
+vary: True
+#Lower bound is set
+min: 0.0
+# Would give upper limit if it were constrained
+# Just comment out limits which are not set
+#max: None
+# Symbol for plot annotations
+label: \omega
+# Default step size 0 . Use in conjunction with vary,min and max when mapping a parameter
+step: 0.0
+# Defines the units label for the plots
+units: meV
+
+[delta]
+value: 1.5
+vary: True
+min: 0.5
+max: 2.0
+label: \Delta
+step: 0.0
+units: meV
+
+[P]
+value: 0.5
+vary: True
+min: 0.2
+max: 0.7
+label: P
+step: 0.05
+
+[Z]
+value: 0.17
+vary: True
+min: 0.0
+#max: None
+label: Z
+step: 0.0
+</pre></div>
+</div>
 <p>This initialisation file can be passed to <a class="reference internal" href="../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
 section to read in the data file and identify the x and y columns.</p>
 <p>The initialisation file can then be passed to <code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_mode_from_ini()</span></code> which will use the configuration file to
@@ -534,7 +724,7 @@ the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.h
 <em>header</em>. The nature of the local fitting means that the first and last <em>poly</em>/2 points are not valid.</p>
 </div>
 <div class="section" id="peak-finding">
-<span id="id2"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
+<span id="id4"></span><h3>Peak Finding<a class="headerlink" href="#peak-finding" title="Permalink to this headline">¶</a></h3>
 <p>Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
 The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
@@ -663,7 +853,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 21, 2015.
+      Last updated on Jul 22, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

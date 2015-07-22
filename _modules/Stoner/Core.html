@@ -1191,9 +1191,6 @@
 <span class="sd">                definitions above</span>
 <span class="sd">            kargs (keyword Arguments): All keyword arguments that match public attributes are</span>
 <span class="sd">                used to set those public attributes.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A new instance of the DataFile class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># init instance attributes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span>
@@ -1440,7 +1437,7 @@
 <span class="sd">            newdata(DataFile): The instance to be modified</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A modified newdata</span>
+<span class="sd">            newdata: A modified newdata</span>
 <span class="sd">            &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1516,7 +1513,7 @@
 <span class="sd">            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A :py:class:`DataFile` object with the columns of other con</span>
+<span class="sd">            newdata: A :py:class:`DataFile` object with the columns of other con</span>
 <span class="sd">        catenated as new columns at the end of the self object.</span>
 
 <span class="sd">        Note:</span>
@@ -1539,7 +1536,7 @@
 <span class="sd">            other  (numpy array or :py:class:`DataFile`): Data to be added to this DataFile instance</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A :py:class:`DataFile` object with the columns of other con</span>
+<span class="sd">            self: A :py:class:`DataFile` object with the columns of other con</span>
 <span class="sd">        catenated as new columns at the end of the self object.</span>
 
 <span class="sd">        Note:</span>
@@ -1620,19 +1617,19 @@
 <span class="sd">            Other (column index): column(s) to delete.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            A copy of self with a column deleted.</span>
+<span class="sd">            self: A copy of self with a column deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mod_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__imod__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Overload the % operator to mean column deletion.</span>
+        <span class="sd">&quot;&quot;&quot;Overload the % operator to mean in-place column deletion.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            Other (column index): column(s) to delete.</span>
 
 <span class="sd">        Return:</span>
-<span class="sd">            A copy of self with a column deleted.</span>
+<span class="sd">            self: A copy of self with a column deleted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newdata</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mod_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">)</span>
@@ -1652,7 +1649,7 @@
 <span class="sd">            other (int,list of integers): Delete row(s) from data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            DataFile with rows removed.</span>
+<span class="sd">            newdata: A :py:data:`DataFile` with rows removed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">)</span>
@@ -1664,7 +1661,7 @@
 <span class="sd">            other (int,list of integers): Delete row(s) from data.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            DataFile with rows removed.</span>
+<span class="sd">            self: The :py:data:`DataFile` with rows removed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">newdata</span> <span class="o">=</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">)</span>
@@ -1685,9 +1682,9 @@
 
 
 <div class="viewcode-block" id="DataFile.__call__"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.__call__.html#Stoner.Core.DataFile.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implements an option for DataFile().</span>
+        <span class="sd">&quot;&quot;&quot;Clone the DataFile, but allowing additional arguments to modify the new clone.</span>
 
-<span class="sd">        Creates a new clone of self and then passes all the arguments to the clones __init__ method.</span>
+<span class="sd">        Creates a new clone of self and then passes all the arguments to the clones&#39; __init__ method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">new_d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">2</span>
@@ -1717,7 +1714,7 @@
 <span class="sd">            item(string): name of metadata key</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            iem in self.metadata&quot;&quot;&quot;</span>
+<span class="sd">            bool: True if item in self.metadata&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span>
 
     <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -1805,7 +1802,7 @@
 <span class="sd">            name (string): The name of the attribute to be returned.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            the DataFile object in various forms</span>
+<span class="sd">            Various: the DataFile object in various forms</span>
 
 <span class="sd">        Supported attributes:</span>
 <span class="sd">        - records - return the DataFile data as a numpy structured</span>
@@ -1867,7 +1864,7 @@
 <span class="sd">            :py:class:`DataFile` to be returned.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            an item of metadata or row(s) of data.</span>
+<span class="sd">            mixed: an item of metadata or row(s) of data.</span>
 
 <span class="sd">        - If name is an integer then the corresponding single row will be returned</span>
 <span class="sd">        - if name is a slice, then the corresponding rows of data will be returned.</span>
@@ -1928,7 +1925,23 @@
             <span class="k">yield</span> <span class="n">r</span>
 
 <div class="viewcode-block" id="DataFile._load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Replace __parse_data with method that is more compatible with subclasses.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Actually load the data from disc assuming a .tdi file format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): Path to filename to be loaded. If None or False, a dialog bax is raised to</span>
+<span class="sd">                ask for the filename.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFile: A copy of the newly loaded :py:class`DataFile` object.</span>
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            StonerLoadError: Raised if the first row does not start with &#39;TDI Format 1.5&#39; or &#39;TDI Format=1.0&#39;.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The *_load* methods shouldbe overidden in each child class to handle the process of loading data from</span>
+<span class="sd">                disc. If they encounter unexpected data, then they should raise StonerLoadError to signal this, so that</span>
+<span class="sd">                the loading class can try a different sub-class instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2002,7 +2015,7 @@
 <span class="sd">            other (string or iterable object): Used to source the DataFile object</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A new DataFile object</span>
+<span class="sd">            DataFile: A new :py:class:`DataFile` object</span>
 
 <span class="sd">        TODO:</span>
 <span class="sd">            Make code work better with streams</span>
@@ -2024,7 +2037,7 @@
 <span class="sd">            ky (string): The name of the metadata item to be returned.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Returns the item of metadata.</span>
+<span class="sd">            mixed or None: Returns the item of metadata.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">           If key is not an exact match for an item of metadata,</span>
@@ -2049,9 +2062,6 @@
 <span class="sd">            key (string): The name of the metadata parameter to be written,</span>
 <span class="sd">        possibly including a type hinting string.</span>
 <span class="sd">            value (any): The value of the item of metadata.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Nothing, but the current instance&#39;s metadata is changed.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Uses the typehint to set the type correctly in the dictionary</span>
@@ -2355,13 +2365,13 @@
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            column_header (string): The text to set the column header to,</span>
 <span class="sd">                if not supplied then defaults to &#39;col#&#39;</span>
-<span class="sd">            index (int or string): The  index (numeric or string) to insert (or replace) the data</span>
+<span class="sd">            index (index type): The  index (numeric or string) to insert (or replace) the data</span>
 <span class="sd">            func_args (dict): If column_data is a callable object, then this argument</span>
 <span class="sd">                can be used to supply a dictionary of function arguments to the callable object.</span>
 <span class="sd">            replace (bool): Replace the data or insert the data (default)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A :py:class:`DataFile` instance with the additonal column inserted.</span>
+<span class="sd">            self: The :py:class:`DataFile` instance with the additonal column inserted.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies</span>
@@ -2438,7 +2448,7 @@
 <span class="sd">            xcol (index or None): Column in which to look for value, or None to use setas.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A single row of data as a :py:class:`Stoner.Core.DataArray`.</span>
+<span class="sd">            ndarray: A single row of data as a :py:class:`Stoner.Core.DataArray`.</span>
 
 <span class="sd">        Notes: To find which row it is that has been returned, use the :py:attr:`Stoner.Core.DataArray.i` index attribute.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2457,14 +2467,14 @@
 <span class="sd">            col (int, string, list or re): is the column index as defined for :py:meth:`DataFile.find_col`</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            one or more columns of data as a :py:class:`numpy.ndarray`.&quot;&quot;&quot;</span>
+<span class="sd">            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
 </div>
 <div class="viewcode-block" id="DataFile.columns"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns">[docs]</a>    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">not_masked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generator method that will iterate over the columns of data int he datafile.</span>
 
 <span class="sd">        Yields:</span>
-<span class="sd">            Returns the next column of data.&quot;&quot;&quot;</span>
+<span class="sd">            1D array: Returns the next column of data.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
                 <span class="k">continue</span>
@@ -2481,7 +2491,7 @@
 <span class="sd">            duplicates (bool): (default False) look for duplicated columns</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The :py:class:`DataFile` object with the column deleted.</span>
+<span class="sd">            self: The :py:class:`DataFile` object with the column deleted.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            - If duplicates is True and col is None then all duplicate columns are removed,</span>
@@ -2547,7 +2557,7 @@
 <span class="sd">                that would have been deleted otherwise.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The current object</span>
+<span class="sd">            self: The current :py:class:`DataFile` object</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            If col is None, then all rows with masked data are deleted</span>
@@ -2602,7 +2612,7 @@
 <span class="sd">            pattern (string or re): is a regular expression or None to list all keys</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Returns a list of metadata keys.&quot;&quot;&quot;</span>
+<span class="sd">            list: A list of metadata keys.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pattern</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
@@ -2623,7 +2633,7 @@
 <span class="sd">                in the filter (so the filter is logically or&#39;d)) The default value of None results in a complete row being passed into func.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The current object with the mask set</span>
+<span class="sd">            self: The current :py:class:`DataFile` object with the mask set</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">cols</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -2659,7 +2669,7 @@
 <span class="sd">            force_list (bool): Force the output always to be a list. Mainly for internal use only</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The matching column index as an integer or a KeyError</span>
+<span class="sd">            int, list of ints: The matching column index as an integer or a KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="p">)</span>
 </div>
@@ -2675,7 +2685,7 @@
 <span class="sd">            default (any): Default value to return if key not found</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self.metadata[item] or None if item not in self.metadata&quot;&quot;&quot;</span>
+<span class="sd">            mixed: self.metadata[item] or None if item not in self.metadata&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -2688,7 +2698,7 @@
 <span class="sd">            mode (string): The mode of file operation to be used when calling the dialog box</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The new filename</span>
+<span class="sd">            str: The new filename</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The filename attribute of the current instance is updated by this method as well.</span>
@@ -2705,7 +2715,7 @@
 <span class="sd">            new_data (numpy array): An array with an equal number of columns as the main data array containing the new row(s) of data to insert</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the modified DataFile object&quot;&quot;&quot;</span>
+<span class="sd">            self: A copy of the modified :py:class:`DataFile` object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">new_data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
@@ -2727,7 +2737,7 @@
 <span class="sd">            filetype (:py:class:`DataFile`): If not none then tries using filetype as the loader</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the loaded instance</span>
+<span class="sd">            DataFile: A copy of the loaded :py:data:`DataFile` instance</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Possible subclasses to try and load from are identified at run time using the speciall :py:attr:`DataFile.subclasses` attribute.</span>
@@ -2797,7 +2807,7 @@
 <span class="sd">            new_col (string): New name of column</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of self</span>
+<span class="sd">            self: A copy of the modified :py:class:`DataFile` instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">old_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">old_col</span><span class="p">)</span>
@@ -2816,7 +2826,7 @@
 <span class="sd">                way as the data (defaults to True)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the modified DataFile object&quot;&quot;&quot;</span>
+<span class="sd">            self: A copy of the modified :py:class:`DataFile` object&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">headers_too</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">setas_too</span><span class="p">:</span>
@@ -2836,8 +2846,8 @@
 <span class="sd">            wrap (bool): Whether to use data from the other end of the array when at one end or the other.</span>
 <span class="sd">            exclude_centre (odd int or bool): Exclude the ciurrent row from the rolling window (defaults to False)</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            Yields with a section of data that is window rows long, each iteration moves the marker</span>
+<span class="sd">        Yields:</span>
+<span class="sd">            ndarray: Yields with a section of data that is window rows long, each iteration moves the marker</span>
 <span class="sd">            one row further on.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -2882,7 +2892,7 @@
 <span class="sd">            not_masked(bool): If a row is masked and this is true, then don&#39;t return this row.</span>
 
 <span class="sd">        Yields:</span>
-<span class="sd">            Returns the next row of data&quot;&quot;&quot;</span>
+<span class="sd">            1D array: Returns the next row of data&quot;&quot;&quot;</span>
         <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="ow">and</span> <span class="n">not_masked</span><span class="p">:</span>
@@ -2900,7 +2910,7 @@
 <span class="sd">                ilename is False then a file dialog is forced.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The current object</span>
+<span class="sd">            self: The current :py:class:`DataFile` object</span>
 <span class="sd">                &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
@@ -2941,7 +2951,7 @@
 <span class="sd">            accuracy (float): Uncertainty to accept when testing equalities</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            numpy array of matching rows or column values depending on the arguements.</span>
+<span class="sd">            ndarray: numpy array of matching rows or column values depending on the arguements.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The value is interpreted as follows:</span>
@@ -2977,7 +2987,7 @@
 <span class="sd">            r (callable): a function that takes a tuple (x,y,z) and returns True if the line is to be incluided in section</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A DataFile like object that includes only those lines from the original that match the section specification</span>
+<span class="sd">            DataFile: A :py:class:`DataFile` like object that includes only those lines from the original that match the section specification</span>
 
 <span class="sd">        Internally this function is calling :py:meth:`DataFile.search` to pull out matching sections of the data array.</span>
 <span class="sd">        To extract a 2D section of the parameter space orthogonal to one axis you just specify a condition on that axis. Specifying</span>
@@ -3021,7 +3031,7 @@
 <span class="sd">            reverse (boolean): If true, the sorted array isreversed.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the sorted object</span>
+<span class="sd">            self: A copy of the :py:class:`DataFile` sorted object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
@@ -3054,7 +3064,7 @@
 <span class="sd">                are swapped as well</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A copy of the modified DataFile objects</span>
+<span class="sd">            self: A copy of the modified :py:class:`DataFile` objects</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            If swp is a list, then the function is called recursively on each</span>
@@ -3177,7 +3187,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 21, 2015.
+      Last updated on Jul 22, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
