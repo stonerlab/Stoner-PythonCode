@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.customise
+=============================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. automethod:: DefaultPlotStyle.customise

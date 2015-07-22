@@ -1,0 +1,8 @@
+
+
+FluchsSondheimer.guess
+=================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: FluchsSondheimer.guess

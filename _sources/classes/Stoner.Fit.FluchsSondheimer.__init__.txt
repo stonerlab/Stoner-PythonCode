@@ -1,0 +1,8 @@
+
+
+FluchsSondheimer.__init__
+====================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: FluchsSondheimer.__init__

@@ -1,0 +1,8 @@
+
+
+TexEngFormatter.__call__
+===========================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. automethod:: TexEngFormatter.__call__

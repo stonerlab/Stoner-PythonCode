@@ -1,0 +1,8 @@
+
+
+KittelEquation.__init__
+==================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: KittelEquation.__init__

@@ -1,0 +1,8 @@
+
+
+StretchedExp.guess
+=============================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: StretchedExp.guess

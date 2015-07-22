@@ -1,0 +1,8 @@
+
+
+DataFolder.prune
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.prune

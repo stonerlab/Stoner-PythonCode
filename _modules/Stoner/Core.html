@@ -1148,7 +1148,7 @@
     <span class="n">_conv_string</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="n">_conv_float</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.__init__"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor method for :py:class:`DataFile`.</span>
 
 <span class="sd">        various forms are recognised</span>
@@ -1220,7 +1220,7 @@
                         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;{} should be {} not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
 
 <span class="c"># Special Methods</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_init_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles constructor with 1 arguement - called from __init__.&quot;&quot;&quot;</span>
         <span class="n">arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1681,7 +1681,7 @@
 <span class="c">#============================================================================================================================</span>
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.__call__"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.__call__.html#Stoner.Core.DataFile.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clone the DataFile, but allowing additional arguments to modify the new clone.</span>
 
 <span class="sd">        Creates a new clone of self and then passes all the arguments to the clones&#39; __init__ method.</span>
@@ -1706,7 +1706,7 @@
 
         <span class="k">return</span> <span class="n">new_d</span>
 
-
+</div>
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Operator function for membertship tests - used to check metadata contents.</span>
 
@@ -1924,7 +1924,7 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">r</span>
 
-    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile._load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actually load the data from disc assuming a .tdi file format.</span>
 
 <span class="sd">        Args:</span>
@@ -2000,7 +2000,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Column &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_headers_tmp</span><span class="p">))):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_headers_tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
+</div>
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the length of the data.</span>
 
@@ -2356,7 +2356,7 @@
 
 <span class="c">#   PUBLIC METHODS</span>
 
-    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">column_header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.add_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">column_header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Appends a column of data or inserts a column to a datafile instance.</span>
 
 <span class="sd">        Args:</span>
@@ -2437,8 +2437,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_header</span>
 
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.closest"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.closest.html#Stoner.Core.DataFile.closest">[docs]</a>    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the row in a data file which has an x-column value closest to the given value.</span>
 
 <span class="sd">        Args:</span>
@@ -2459,8 +2459,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
 
-
-    <span class="k">def</span> <span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column">[docs]</a>    <span class="k">def</span> <span class="nf">column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</span>
 
 <span class="sd">        Args:</span>
@@ -2469,8 +2469,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            ndarray: One or more columns of data as a :py:class:`numpy.ndarray`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
-
-    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">not_masked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.columns"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns">[docs]</a>    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">not_masked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generator method that will iterate over the columns of data int he datafile.</span>
 
 <span class="sd">        Yields:</span>
@@ -2480,8 +2480,8 @@
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">del_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.del_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.del_column.html#Stoner.Core.DataFile.del_column">[docs]</a>    <span class="k">def</span> <span class="nf">del_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deletes a column from the current :py:class:`DataFile` object.</span>
 
 <span class="sd">        Args:</span>
@@ -2538,8 +2538,8 @@
                     <span class="k">del</span> <span class="n">ch</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">ch</span>
             <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">del_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.del_rows"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows">[docs]</a>    <span class="k">def</span> <span class="nf">del_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Searchs in the numerica data for the lines that match and deletes the corresponding rows.</span>
 
 <span class="sd">        Args:</span>
@@ -2604,8 +2604,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                                               <span class="n">mask</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.dir"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir">[docs]</a>    <span class="k">def</span> <span class="nf">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2622,8 +2622,8 @@
                 <span class="n">test</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
             <span class="n">possible</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">test</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span>
             <span class="k">return</span> <span class="n">possible</span>
-
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.filter"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the mask on rows of data by evaluating a function for each row.</span>
 
 <span class="sd">        Args:</span>
@@ -2645,8 +2645,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">cols</span><span class="p">])</span>
             <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.find_col"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col">[docs]</a>    <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Indexes the column headers in order to locate a column of data.shape.</span>
 
 <span class="sd">        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</span>
@@ -2672,8 +2672,8 @@
 <span class="sd">            int, list of ints: The matching column index as an integer or a KeyError</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.get"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.get.html#Stoner.Core.DataFile.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A wrapper around __get_item__ that handles missing keys by returning None.</span>
 
 <span class="sd">        This is useful for the :py:class:`Stoner.Folder.DataFolder` class.</span>
@@ -2690,8 +2690,8 @@
             <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
-
-    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.get_filename"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.get_filename.html#Stoner.Core.DataFile.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Forces the user to choose a new filename using a system dialog box.</span>
 
 <span class="sd">        Args:</span>
@@ -2706,8 +2706,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-
-    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">new_data</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.insert_rows"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.insert_rows.html#Stoner.Core.DataFile.insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">new_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Insert new_data into the data array at position row. This is a wrapper for numpy.insert.</span>
 
 <span class="sd">        Args:</span>
@@ -2718,15 +2718,15 @@
 <span class="sd">            self: A copy of the modified :py:class:`DataFile` object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">new_data</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.keys"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An alias for :py:meth:`DataFile.dir(None)` .</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            a list of all the keys in the metadata dictionary&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">auto_load</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">auto_load</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads the :py:class:`DataFile` in from disc guessing a better subclass if necessary.</span>
 
 <span class="sd">        Args:</span>
@@ -2798,8 +2798,8 @@
         <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s">&quot;Failed to load file&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_col</span><span class="p">,</span> <span class="n">new_col</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.rename"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.rename.html#Stoner.Core.DataFile.rename">[docs]</a>    <span class="k">def</span> <span class="nf">rename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">old_col</span><span class="p">,</span> <span class="n">new_col</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Renames columns without changing the underlying data.</span>
 
 <span class="sd">        Args:</span>
@@ -2813,8 +2813,8 @@
         <span class="n">old_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">old_col</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">old_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_col</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">reorder_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">headers_too</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.reorder_columns"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns">[docs]</a>    <span class="k">def</span> <span class="nf">reorder_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">headers_too</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Construct a new data array from the original data by assembling the columns in the order given.</span>
 
 <span class="sd">        Args:</span>
@@ -2837,8 +2837,8 @@
             <span class="n">newdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">newdata</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">rolling_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">exclude_centre</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.rolling_window"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.rolling_window.html#Stoner.Core.DataFile.rolling_window">[docs]</a>    <span class="k">def</span> <span class="nf">rolling_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">exclude_centre</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterator that return a rolling window section of the data.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2884,8 +2884,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">data</span>
             <span class="k">yield</span> <span class="n">ret</span>
-
-    <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">not_masked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.rows"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows">[docs]</a>    <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">not_masked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generator method that will iterate over rows of data</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -2899,8 +2899,8 @@
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.save"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a string representation of the current DataFile object into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Args:</span>
@@ -2938,8 +2938,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.search"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</span>
 
 <span class="sd">        Args:</span>
@@ -2976,8 +2976,8 @@
                 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                     <span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span> <span class="n">c</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.section"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section">[docs]</a>    <span class="k">def</span> <span class="nf">section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -3020,8 +3020,8 @@
             <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&quot;r&quot;</span><span class="p">](</span><span class="n">r</span><span class="p">[</span><span class="n">xcol</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">ycol</span><span class="p">],</span> <span class="n">r</span><span class="p">[</span><span class="n">zcol</span><span class="p">])</span>
             <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tmp</span>
-
-    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.sort"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -3049,8 +3049,8 @@
             <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)))</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.swap_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Swaps pairs of columns in the data.</span>
 
 <span class="sd">        Useful for reordering data for idiot programs that expect columns in a fixed order.</span>
@@ -3092,8 +3092,8 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Swap parameter must be either a tuple or a </span><span class="se">\</span>
 <span class="s">            list of tuples&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFile.unique"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique">[docs]</a>    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the unique values from the specified column - pass through for numpy.unique.</span>
 
 <span class="sd">        Args:</span>
@@ -3106,7 +3106,7 @@
 
 <span class="c"># Module level functions</span>
 
-</div>
+</div></div>
 <span class="k">def</span> <span class="nf">itersubclasses</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">_seen</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    itersubclasses(cls).</span>
@@ -3187,7 +3187,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 22, 2015.
+      Last updated on Jul 23, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

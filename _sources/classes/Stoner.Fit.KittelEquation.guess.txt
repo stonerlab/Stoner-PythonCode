@@ -1,0 +1,8 @@
+
+
+KittelEquation.guess
+===============================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: KittelEquation.guess

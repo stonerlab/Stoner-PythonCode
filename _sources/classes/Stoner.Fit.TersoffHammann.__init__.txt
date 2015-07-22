@@ -1,0 +1,8 @@
+
+
+TersoffHammann.__init__
+==================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: TersoffHammann.__init__

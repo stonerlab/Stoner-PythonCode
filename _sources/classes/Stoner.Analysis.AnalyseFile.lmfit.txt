@@ -1,0 +1,8 @@
+
+
+AnalyseFile.lmfit
+=================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.lmfit

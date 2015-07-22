@@ -1,0 +1,8 @@
+
+
+PRBPlotStyle.customise_axes
+==============================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. automethod:: PRBPlotStyle.customise_axes

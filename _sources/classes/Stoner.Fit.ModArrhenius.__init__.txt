@@ -1,0 +1,8 @@
+
+
+ModArrhenius.__init__
+================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: ModArrhenius.__init__

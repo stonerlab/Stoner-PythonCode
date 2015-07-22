@@ -1,0 +1,8 @@
+
+
+PlotFile.griddata
+=============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.griddata

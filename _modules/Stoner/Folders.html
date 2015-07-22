@@ -111,7 +111,7 @@
 <span class="sd">        Handle :py:meth:`__init__(DataFolder)` with subclasses</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.__init__.html#Stoner.Folders.DataFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">=</span><span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">=</span><span class="bp">False</span>
@@ -179,7 +179,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nolist</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
 
-
+</div>
     <span class="k">def</span> <span class="nf">__walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{},</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;&quot;Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we&#39;ve already visited.</span>
 
@@ -413,10 +413,10 @@
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)):</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="n">elf</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.next"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.next.html#Stoner.Folders.DataFolder.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="n">elf</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)):</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_pruner_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grp</span><span class="p">,</span><span class="n">breadcrumb</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes any empty groups fromthe DataFolder tree.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">grp</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
@@ -626,7 +626,7 @@
         <span class="k">return</span> <span class="n">grp</span><span class="o">.</span><span class="n">filename</span>
 
 
-    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.add_group"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.add_group.html#Stoner.Folders.DataFolder.add_group">[docs]</a>    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new group to the current Folder with the given key.</span>
 
 <span class="sd">        Args:</span>
@@ -650,8 +650,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="o">=</span><span class="n">key</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-
-    <span class="k">def</span> <span class="nf">concatentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.concatentate"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.concatentate.html#Stoner.Folders.DataFolder.concatentate">[docs]</a>    <span class="k">def</span> <span class="nf">concatentate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sort</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Concatentates all the files in a DataFolder into a single DataFile like object.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -674,8 +674,8 @@
             <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">sort</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">metadata</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.extract"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract">[docs]</a>    <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">metadata</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.</span>
 
 <span class="sd">        Args:</span>
@@ -709,8 +709,8 @@
             <span class="k">return</span> <span class="n">results</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">_extractor</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;metadata&quot;</span><span class="p">:</span><span class="n">metadata</span><span class="p">})</span>
-
-    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="n">invert</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.filter"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.filter.html#Stoner.Folders.DataFolder.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>  <span class="n">invert</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Filter the current set of files by some criterion</span>
 
 <span class="sd">        Args:</span>
@@ -738,8 +738,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="n">files</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-
-    <span class="k">def</span> <span class="nf">filterout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.filterout"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.filterout.html#Stoner.Folders.DataFolder.filterout">[docs]</a>    <span class="k">def</span> <span class="nf">filterout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Synonym for self.filter(filter,invert=True)</span>
 
 <span class="sd">        Args:</span>
@@ -749,8 +749,8 @@
 <span class="sd">            The current DataFolder object with the files in the file list filtered.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-
-    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.flatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.flatten.html#Stoner.Folders.DataFolder.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compresses all the groups and sub-groups iunto a single flat file list.</span>
 
 <span class="sd">        Returns:</span>
@@ -761,8 +761,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">=</span><span class="p">{}</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-
-    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.gather"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather">[docs]</a>    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.DataFile`</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -848,8 +848,8 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">_gatherer</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;xcol&quot;</span><span class="p">:</span><span class="n">xcol</span><span class="p">,</span><span class="s">&quot;ycol&quot;</span><span class="p">:</span><span class="n">ycol</span><span class="p">})</span>
 
-
-    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">flatten</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.getlist"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist">[docs]</a>    <span class="k">def</span> <span class="nf">getlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">flatten</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scans the current directory, optionally recursively to build a list of filenames</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -915,8 +915,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-
-    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.group"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group">[docs]</a>    <span class="k">def</span> <span class="nf">group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Take the files and sort them into a series of separate DataFolder objects according to the value of the key</span>
 
 <span class="sd">        Args:</span>
@@ -947,8 +947,8 @@
             <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">next_keys</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.prune"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.prune.html#Stoner.Folders.DataFolder.prune">[docs]</a>    <span class="k">def</span> <span class="nf">prune</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Remove any groups from the DataFolder (and subgroups).</span>
 
 <span class="sd">        Returns:</span>
@@ -970,8 +970,8 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 
-
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.save"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.save.html#Stoner.Folders.DataFolder.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">root</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the entire data folder out to disc using the groups as a directory tree,</span>
 <span class="sd">        calling the save method for each file in turn.</span>
 
@@ -983,8 +983,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;root&quot;</span><span class="p">,</span><span class="n">root</span><span class="p">})</span>
 
-
-    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.select"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.select.html#Stoner.Folders.DataFolder.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A generator that can be used to select particular data files from the DataFolder</span>
 
 <span class="sd">        Args:</span>
@@ -1038,8 +1038,8 @@
             <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">f</span>
 
-
-    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.sort"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sort the files by some key</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1065,8 +1065,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">,</span><span class="nb">cmp</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="nb">cmp</span><span class="p">(</span><span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">]),</span> <span class="n">key</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">y</span><span class="p">])),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.unflatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.unflatten.html#Stoner.Folders.DataFolder.unflatten">[docs]</a>    <span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Takes a file list an unflattens them according to the file paths.</span>
 
 <span class="sd">        Returns:</span>
@@ -1087,8 +1087,8 @@
             <span class="k">del</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">unflatten</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">replace_terminal</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{}):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.walk_groups"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups">[docs]</a>    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">replace_terminal</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;Walks through a heirarchy of groups and calls walker for each file.</span>
 
 <span class="sd">        Args:</span>
@@ -1107,8 +1107,8 @@
 <span class="sd">                where f is either a DataFolder or DataFile.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__walk_groups</span><span class="p">(</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="n">replace_terminal</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="n">walker_args</span><span class="p">,</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[])</span>
 
-
-    <span class="k">def</span> <span class="nf">zip_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="DataFolder.zip_groups"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups">[docs]</a>    <span class="k">def</span> <span class="nf">zip_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of tuples of DataFiles drawn from the specified groups</span>
 
 <span class="sd">        Args:</span>
@@ -1120,7 +1120,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s">&quot;groups must be a list of groups&quot;</span><span class="p">)</span>
         <span class="n">grps</span><span class="o">=</span><span class="p">[[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -1163,7 +1163,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 22, 2015.
+      Last updated on Jul 23, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

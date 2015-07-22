@@ -1,0 +1,8 @@
+
+
+AnalyseFile.subtract
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.subtract

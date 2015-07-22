@@ -1,0 +1,8 @@
+
+
+Data.format
+=======================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.format

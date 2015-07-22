@@ -1,0 +1,8 @@
+
+
+BDR.__init__
+=======================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: BDR.__init__

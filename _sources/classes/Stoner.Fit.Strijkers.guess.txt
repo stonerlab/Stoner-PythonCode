@@ -1,0 +1,8 @@
+
+
+Strijkers.guess
+==========================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: Strijkers.guess
