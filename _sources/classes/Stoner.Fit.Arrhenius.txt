@@ -13,8 +13,8 @@ Stoner.Fit.Arrhenius
    .. autosummary::
     :toctree:
    
-      ~Arrhenius.__init__
-      ~Arrhenius.guess
+      ~Stoner.Fit.Arrhenius.__init__
+      ~Stoner.Fit.Arrhenius.guess
 
    
    

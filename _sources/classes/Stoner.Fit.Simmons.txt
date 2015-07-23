@@ -13,8 +13,8 @@ Stoner.Fit.Simmons
    .. autosummary::
     :toctree:
    
-      ~Simmons.__init__
-      ~Simmons.guess
+      ~Stoner.Fit.Simmons.__init__
+      ~Stoner.Fit.Simmons.guess
 
    
    

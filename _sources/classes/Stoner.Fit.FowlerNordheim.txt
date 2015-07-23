@@ -13,8 +13,8 @@ Stoner.Fit.FowlerNordheim
    .. autosummary::
     :toctree:
    
-      ~FowlerNordheim.__init__
-      ~FowlerNordheim.guess
+      ~Stoner.Fit.FowlerNordheim.__init__
+      ~Stoner.Fit.FowlerNordheim.guess
 
    
    

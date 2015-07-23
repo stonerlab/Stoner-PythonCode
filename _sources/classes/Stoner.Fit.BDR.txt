@@ -13,8 +13,8 @@ Stoner.Fit.BDR
    .. autosummary::
     :toctree:
    
-      ~BDR.__init__
-      ~BDR.guess
+      ~Stoner.Fit.BDR.__init__
+      ~Stoner.Fit.BDR.guess
 
    
    

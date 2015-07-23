@@ -13,8 +13,8 @@ Stoner.Fit.WLfit
    .. autosummary::
     :toctree:
    
-      ~WLfit.__init__
-      ~WLfit.guess
+      ~Stoner.Fit.WLfit.__init__
+      ~Stoner.Fit.WLfit.guess
 
    
    

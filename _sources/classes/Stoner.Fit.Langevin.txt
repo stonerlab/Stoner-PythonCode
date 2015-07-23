@@ -13,8 +13,8 @@ Stoner.Fit.Langevin
    .. autosummary::
     :toctree:
    
-      ~Langevin.__init__
-      ~Langevin.guess
+      ~Stoner.Fit.Langevin.__init__
+      ~Stoner.Fit.Langevin.guess
 
    
    
