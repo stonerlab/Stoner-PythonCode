@@ -233,27 +233,40 @@ class AnalyseFile(DataFile):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
         Args:
-            col (index): Column of Data to be filtered
+            col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.
             prints (int): Number of data points to use in the filtering window. Should be an odd number > poly+1 (default 15)
 
         Keyword Arguments:
             poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)
             order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.
+            result (None,True, or column_index): If not None, column index to insert new data, or True to append as last column
+            header (string or None): Header for new column if result is not None. If header is Nne, a suitable column header is generated.
 
         Returns:
-            A numpy array representing the smoothed or differentiated data.
+            (numpoy array or self): If result is None, a numpy array representing the smoothed or differentiated data is returned.
+            Otherwise, a copy of the modified AnalyseFile object is returned.
 
         Notes:
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
             to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
             for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`
+
+        See Also:
+            User guide section :ref:`smoothing_guide`
         """
         from Stoner.Util import ordinal
         if points % 2 == 0:  #Ensure window length is odd
             points += 1
         if col is None:
             cols = self.setas._get_cols()
-            col = (cols["xcol"], cols["ycols"][0])
+            if order>0:
+                col = (cols["xcol"], cols["ycol"][0])
+            else:
+                col = cols["ycol"][0]
+        if isinstance(col,tuple):
+            ycol=col[1]
+        else:
+            ycol=col
         if isinstance(col, (list, tuple)):
             data = self.column(list(col)).T
             ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
@@ -263,13 +276,18 @@ class AnalyseFile(DataFile):
             r = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if result is not None:
             if not isinstance(header, string_types):
-                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],
-                                                                          ordinal(order))
-            if isinstance(result, bool) and result:
-                result = self.shape[1] - 1
-            self.add_column(r, header, index=result, replace=replace)
+                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(ycol)],
+                                                                      ordinal(order))
 
-        return r
+            if isinstance(result, bool) and result:
+                if replace:
+                    result=col
+            print self.column_headers
+            self.add_column(r, header, index=result, replace=replace)
+            print self.column_headers
+            return self
+        else:
+            return r
 
     def __get_math_val(self, col):
         """Utility routine to interpret col as either a column index or value or an array of values.
@@ -597,7 +615,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             popt, pcov (array, 2D array): Optimal values of the fitting parameters p, and the variance-co-variance matrix
-                for the fitting parameters.
+            for the fitting parameters.
 
         The return value is determined by the *output* parameter. Options are:
             * "fit"    (tuple of popt,pcov)
@@ -1173,7 +1191,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
-                boundaries and centres for each bin.
+            boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
         if mode not in ["lin","log"]:
@@ -1747,8 +1765,11 @@ class AnalyseFile(DataFile):
         This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
         function."""
         _=self._col_args(xcol=xcol,ycol=ycol)
-        if sigma is None and len(_.yerr)>0 and _.yerr[0] is not None:
-            sigma=1.0/(self//_.yerr[0])
+        if sigma is None and (isNone(_.yerr) or len(_.yerr)>0):
+            if not isNone(_.yerr) and _.yerr[0] is not None:
+                sigma=1.0/(self//_.yerr[0])
+            else:
+                sigma=_np_.ones(len(self))
         replace=kargs.pop("replace",True)
         header=kargs.pop("header",None)
         k=kargs.pop("order",3)
@@ -1765,8 +1786,7 @@ class AnalyseFile(DataFile):
 
         if isinstance(replace,bool):
             if replace:
-                self.data[:,_.ycol]=new_y
-                self.column_headers[_.ycol]=header
+                self.add_column(new_y,column_header=header, index=_.ycol,replace=True)
                 ret=self
             else:
                 ret=new_y
@@ -1798,7 +1818,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-                :py:class:`AnalyseFile` objects
+            :py:class:`AnalyseFile` objects
 
         Note:
             The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing

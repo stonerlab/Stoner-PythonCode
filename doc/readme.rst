@@ -81,7 +81,7 @@ Resources
 
 Included in the `github repository`_  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-:doc:`user guide` <UserGuide/ugindex>` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
+:ref:`User_Guide` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
 
 Contact and Licensing
 =====================

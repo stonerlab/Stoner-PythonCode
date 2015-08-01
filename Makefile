@@ -19,6 +19,6 @@ doc: docbuild
 
 docbuild: FORCE
 	$(MAKE) -C doc html
-	rsync -rm --delete  --filter="P .git" doc/_build/html/ ../gh-pages/
+	rsync -rm --perms --chmod=ugo=rwX --delete  --filter="P .git" doc/_build/html/ ../gh-pages/
 
 FORCE:

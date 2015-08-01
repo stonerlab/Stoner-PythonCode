@@ -293,6 +293,39 @@ points averaged into each bin.. If *clone* is True or not provided, :py:meth:`An
 .. plot:: samples/bins.py
    :include-source:
 
+
+.. _smoothing_guide:
+
+Smoothing and Filtering Data
+----------------------------
+
+As experimental data normally includes noise in some form, it is useful to be able to filter and smooth data to better see
+underlying trends. The Stoner package offers a  number of approaches to filtering data.
+
+    - Savitzky-Golay filtering
+
+        This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
+        and widths. In essence it is equivalent to least-squares fitting a low order polynomial to a window of the data and using
+        the co-effienicents of the fitting polynomail to determine the smoothed (or differentiated) data. This is impletemented as
+        :py:meth:`AnalyseFile.SG_Filter` method.
+
+    - Spline
+
+        An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
+        this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
+        Golay fitlering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainities. It is
+        implemented as the :py:meth:`AnalyseFile.spline` method.
+
+    - Rebinning
+
+        As ullustrated above, rebinning the data is a common way fof reducing noise by combining several data points. This is simple
+        and effective, but does reduce the length of the data !
+
+All three approaches are illustrated in the excample below:
+
+.. plot:: samples/Smoothing_Data.py
+    :include-source:
+
 .. _stitch_guide:
 
 Stitching Datasets together

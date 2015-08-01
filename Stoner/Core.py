@@ -411,7 +411,7 @@ class _setas(object):
         Returns:
             The matching column index as an integer or a KeyError
         """
-        if isinstance(col, int):  # col is an int so pass on
+        if isinstance(col, (int,long)):  # col is an int so pass on
             if col >= len(self.column_headers):
                 raise IndexError('Attempting to index a non - existant column ' + str(col))
             if col < 0:
@@ -2326,7 +2326,7 @@ class DataFile(object):
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it."""
-        if index is None:
+        if index is None or isinstance(index,bool) and index:
             index = len(self.column_headers)
             replace = False
             if column_header is None:
@@ -2365,9 +2365,9 @@ class DataFile(object):
             self.data = _np_.array([[]])
             (dr, dc) = (0, 0)
         if cl > dr and dc * dr > 0:
-            self.data = _np_.append(self.data, _np_.zeros((cl - dr, dc)), 0)
+            self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.data._setas)
         elif cl < dr:
-            _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
+            _np__data = DataArray(_np_.append(_np__data, _np_.zeros(dr - cl)),setas=self.data._setas)
         if replace:
             self.data[:, index] = _np__data
         else:
@@ -2376,14 +2376,6 @@ class DataFile(object):
             else:
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1),setas=self.data._setas)
         #Finally sort out column headers
-        if not replace:
-            if len(self.column_headers) == 1:
-                index=0
-                self.column_headers[index] = column_header
-            else:
-                self.column_headers.pop()
-                self.column_headers.insert(index, column_header)
-        else:
             self.column_headers[index] = column_header
 
         return self

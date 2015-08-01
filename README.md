@@ -106,8 +106,8 @@ Included in the [github
 repository](http://www.github.com/gb119/Stoner-PythonCode/) are a
 (small) collection of sample scripts for carrying out various operations
 and some sample data files for testing the loading and processing of
-data. There is also a user guide \<UserGuide/ugindex\>\` as part of this
-documentation, along with a complete API reference \<Stoner\>
+data. There is also a User\_Guide as part of this documentation, along
+with a complete API reference \<Stoner\>
 
 Contact and Licensing
 =====================
