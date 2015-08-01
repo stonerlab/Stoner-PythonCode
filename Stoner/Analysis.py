@@ -399,7 +399,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -441,7 +441,7 @@ class AnalyseFile(DataFile):
             header (string or None): The new column header (defaults to the name of the function func
 
         Returns:
-            A copy of the current instance
+            self: The newly modified :py:class:`AnalyseFile`.
         """
 
         if col is None:
@@ -558,7 +558,7 @@ class AnalyseFile(DataFile):
                 in which case the max and min values in that array will be
                 used as the clip limits
         Returns:
-            This instance."
+            self: The newly modified :py:class:`AnalyseFile`.
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -596,11 +596,11 @@ class AnalyseFile(DataFile):
             output (str, default "fit"): Specifiy what to return.
 
         Returns:
-            popt (array): Optimal values of the fitting parameters p
-            pcov (2d array): The variance-co-variance matrix for the fitting parameters.
+            popt, pcov (array, 2D array): Optimal values of the fitting parameters p, and the variance-co-variance matrix
+                for the fitting parameters.
 
         The return value is determined by the *output* parameter. Options are:
-            * "ffit"    (tuple of popt,pcov)
+            * "fit"    (tuple of popt,pcov)
             * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
 
@@ -733,7 +733,7 @@ class AnalyseFile(DataFile):
             replace (bool): Overwrite data with output (true)
 
         Returns:
-            A copy of the newly modified AnalyseFile.
+            self: The newly modified :py:class:`AnalyseFile`.
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -768,7 +768,7 @@ class AnalyseFile(DataFile):
         return self
 
     def diffsum(self, a, b, replace=False, header=None):
-        """Subtract one column, number or array (b) from another column (a) and divbdatae by their sums.
+        """Calculate :math:`\\frac{a-b}{a+b}` for the two columns *a* and *b*.
 
         Args:
             a (index): First column to work with
@@ -779,7 +779,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -823,7 +823,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -995,7 +995,7 @@ class AnalyseFile(DataFile):
 
 
         Returns:
-            2D numpy array representing a section of the current object's data if replace is False(default) or the modofied AnalyseFile if replace is true.
+            2D numpy array: representing a section of the current object's data if replace is False(default) or the modofied AnalyseFile if replace is true.
 
         Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
@@ -1173,7 +1173,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin
-            boundaries and centres for each bin.
+                boundaries and centres for each bin.
         """
         (xmin, xmax) = self.span(xcol)
         if mode not in ["lin","log"]:
@@ -1239,7 +1239,7 @@ class AnalyseFile(DataFile):
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            (maximum value,row index of max value)
+            (float,int): (maximum value,row index of max value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1268,7 +1268,7 @@ class AnalyseFile(DataFile):
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            The mean of the data.
+            float: The mean of the data.
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1300,7 +1300,7 @@ class AnalyseFile(DataFile):
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            (minimum value,row index of min value)
+            (float,int): (minimum value,row index of min value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1331,7 +1331,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1374,7 +1374,7 @@ class AnalyseFile(DataFile):
             header (string or None): The new column header - default is target name(norm)
 
         Returns:
-            A copy of the current object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1411,7 +1411,7 @@ class AnalyseFile(DataFile):
             func (callable): A function that determines if the current row is an outlier.
 
         Returns:
-            A copy of the current AnalysisFile
+            self: The newly modified :py:class:`AnalyseFile`.
 
         outlier_detection will add row numbers of detected outliers to the metadata
         of d, also will perform action depending on request eg 'mask', 'delete'
@@ -1571,7 +1571,7 @@ class AnalyseFile(DataFile):
                 header (string or None): Name of column_header of replacement data. Default is construct a string from the y column headser and polynomial order.
 
             Returns:
-                The best fit polynomial as a numpy.poly object.
+                numpy.poly: The best fit polynomial as a numpy.poly object.
 
             Note:
                 If the x or y columns are not specified (or are None) the the setas attribute is used instead.
@@ -1714,7 +1714,7 @@ class AnalyseFile(DataFile):
                 numbers representing one row, and returns True for all rows to search in.
 
         Returns:
-            A tuple of (min value, max value)
+            (float,float): A tuple of (min value, max value)
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -1797,7 +1797,8 @@ class AnalyseFile(DataFile):
                 to a string and that is used.
 
         Returns:
-            A :py:class:`Stoner.Folders.DataFolder` object containing the individual :py:class:`AnalyseFile` objects
+            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
+                :py:class:`AnalyseFile` objects
 
         Note:
             The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing
@@ -1861,7 +1862,7 @@ class AnalyseFile(DataFile):
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
-            A copy of the current AnalyseFile with the x and y data columns adjusted to stitch
+            self: A copy of the current :py:class:`AnalyseFile` with the x and y data columns adjusted to stitch
 
         To stitch the data together, the x and y data in the current data file is transforms so that
         :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
@@ -1978,7 +1979,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            A copy of the new data object
+            self: The newly modified :py:class:`AnalyseFile`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -2027,7 +2028,7 @@ class AnalyseFile(DataFile):
             all_vals (bool): Return all values that match the criteria, or just the first in the file.
 
         Returns:
-            Either a sing;le fractional row index, or an in terpolated x value
+            float: Either a sing;le fractional row index, or an in terpolated x value
 
         Note:
             If you don't sepcify a col value or set it to None, then the assigned columns via the

@@ -194,25 +194,6 @@ Functions
    :template: funcdocs.rst
    :functions-only:
 
-:mod:`pyTDMS` Module
---------------------
-
-
-Classes
--------
-
-.. automodsumm:: Stoner.pyTDMS
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-Functions
----------
-.. automodsumm:: Stoner.pyTDMS
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
-
 
 Subpackages
 -----------

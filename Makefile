@@ -19,6 +19,6 @@ doc: docbuild
 
 docbuild: FORCE
 	$(MAKE) -C doc html
-	cp -ar doc/_build/html/* ../gh-pages/
+	rsync -rm --delete  --filter="P .git" doc/_build/html/ ../gh-pages/
 
 FORCE:
