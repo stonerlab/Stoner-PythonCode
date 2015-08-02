@@ -1,0 +1,15 @@
+Stoner.Plot.division
+====================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: division
+
+   
+
+   
+   
+
+   
+   
+   

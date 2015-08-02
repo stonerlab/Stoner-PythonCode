@@ -24,10 +24,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
-    <link rel="next" title="AnalyseFile.add" href="Stoner.Analysis.AnalyseFile.add.html" />
-    <link rel="prev" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" /> 
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -39,15 +36,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.add.html" title="AnalyseFile.add"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.html" title="Stoner.Analysis.AnalyseFile"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -68,7 +57,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>col</strong> (<em>index</em>) &#8211;
-Column of Data to be filtered</li>
+Column of Data to be filtered. if None, first y-column in setas is filtered.</li>
 <li><strong>prints</strong> (<em>int</em>) &#8211;
 Number of data points to use in the filtering window. Should be an odd number &gt; poly+1 (default 15)</li>
 </ul>
@@ -80,10 +69,16 @@ Number of data points to use in the filtering window. Should be an odd number &g
 Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</li>
 <li><strong>order</strong> (<em>int</em>) &#8211;
 Order of differentiation to carry out. Default=0 meaning smooth the data only.</li>
+<li><strong>result</strong> (<em>None,True, or column_index</em>) &#8211;
+If not None, column index to insert new data, or True to append as last column</li>
+<li><strong>header</strong> (<em>string or None</em>) &#8211;
+Header for new column if result is not None. If header is Nne, a suitable column header is generated.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A numpy array representing the smoothed or differentiated data.</p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(numpoy array or self)</em> &#8211;
+If result is None, a numpy array representing the smoothed or differentiated data is returned.
+Otherwise, a copy of the modified AnalyseFile object is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -92,6 +87,10 @@ Order of differentiation to carry out. Default=0 meaning smooth the data only.</
 <p>If col is not specified or is None then the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> column assignments are used
 to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column
 for differentiating data. This is now a pass through to <code class="xref py py-func docutils literal"><span class="pre">scipy.signal.savgol_filter()</span></code></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#smoothing-guide"><span>Smoothing and Filtering Data</span></a></p>
+</div>
 </dd></dl>
 
 </div>
@@ -105,12 +104,6 @@ for differentiating data. This is now a pass through to <code class="xref py py-
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.html"
-                        title="previous chapter">Stoner.Analysis.AnalyseFile</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.add.html"
-                        title="next chapter">AnalyseFile.add</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -144,20 +137,12 @@ for differentiating data. This is now a pass through to <code class="xref py py-
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.add.html" title="AnalyseFile.add"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Stoner.Analysis.AnalyseFile.html" title="Stoner.Analysis.AnalyseFile"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
-          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 23, 2015.
+      Last updated on Aug 02, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

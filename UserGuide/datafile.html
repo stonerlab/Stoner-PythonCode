@@ -116,7 +116,7 @@ but has not been extensively tested.</dd>
 <dd>The text files produced by the group&#8217;s Oxford Instruments VSM</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a></dt>
 <dd>Datafiles produced by VB Code running on the Big Blue cryostat. The
-<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> version of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> constructors takes
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> constructors takes
 two additional parameters that specify the row on which the column headers will
 be found and the row on which the data starts.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile" title="Stoner.FileFormats.XRDFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.XRDFile</span></code></a></dt>
@@ -167,7 +167,7 @@ advantage of this is that it is then possible to chain several methods into one
 command</p>
 </div>
 <p>Sometimes you won&#8217;t know exactly which subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is the one
-to use. Unfortunately, there is no sure fire way of telling, but <code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code> will try to do
+to use. Unfortunately, there is no sure fire way of telling, but <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code></a> will try to do
 the best it can and will try all of the subclasses in memory in turn to see if one will
 load the file without throwing an error. If this succeeds then the actual type of file that
 worked is stored in the metadata of the loaded file.</p>
@@ -201,12 +201,12 @@ from disk:</p>
 </div>
 <div class="section" id="constructing-py-class-datafile-s-from-scratch">
 <h3>Constructing :py:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>DataFile`s from Scratch<a class="headerlink" href="#constructing-py-class-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
-<p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>, <code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code> will try its best to guess what your intention
+<p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code></a> will try its best to guess what your intention
 was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
 arguments were passed:</p>
 <div class="section" id="single-argument-constructor">
 <h4>Single Argument Constructor<a class="headerlink" href="#single-argument-constructor" title="Permalink to this headline">¶</a></h4>
-<p>A single argument passed to <code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code> is interpreted as follows:</p>
+<p>A single argument passed to <a class="reference internal" href="../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code></a> is interpreted as follows:</p>
 <ul class="simple">
 <li>A string is assumed to be a filename, and therefore a DataFile is created by loading a file.</li>
 <li>A 2 numpy array is taken as the numeric data for the new DataFile</li>
@@ -318,10 +318,10 @@ searched using <em>Temperature</em> as a regular expression. This would then
 match <em>Temperature (K)</em> or <em>Sample Temperature</em>.  The third
 example results in a 2 dimensional numpy array containing two columns in the
 order that they appear in the list (ie not the order that they are in the data
-file). For completeness, the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method also allows one to
+file). For completeness, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method also allows one to
 pass slices to select columns and should do the expected thing.</p>
 <p>There are a couple of convenient short cuts/ Firstly the <em>floormod</em> operator //
-is an alias for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method and secondly for working
+is an alias for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method and secondly for working
 with cases where the column headers are not the same as the names of any of the attributes
 of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s">&quot;Temperature&quot;</span>
@@ -471,8 +471,8 @@ To get a list of possible keys in the metadata, you can do:</p>
 </div>
 <p>In the first case, all of the keys will be returned in a list. In the second,
 only keys matching the pattern will be returned &#8211; all keys containing
-<em>Option:</em>. For compatibility with normal opython semantics: <code class="xref py py-meth docutils literal"><span class="pre">DataFile.keys()</span></code> is
-synonymous with <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir()</span></code>.</p>
+<em>Option:</em>. For compatibility with normal opython semantics: <a class="reference internal" href="../classes/Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.keys()</span></code></a> is
+synonymous with <a class="reference internal" href="../classes/Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir()</span></code></a>.</p>
 <p>If the string you supply to get the metadata item does not exactly match an item of
 metadata, then it is interpreted as a regular expression to try and match against all the
 items of metadata. In this case, rather than returning a single item, all of the
@@ -521,7 +521,7 @@ view of the same data.:</p>
 <h4>Selecting Individual rows and columns of data<a class="headerlink" href="#selecting-individual-rows-and-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Many of the function in the Stoner module index columns by searching the column
 headings. If one wishes to find the numeric index of a column then the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> method can be used:</p>
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> method can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre>index=d.find_col(1)
 index=d.find_col(&#39;Temperature&#39;)
 index=d.find_col(&#39;Temp.*&#39;)
@@ -531,7 +531,7 @@ index=d.find_col([&#39;Temperature&#39;,2,&#39;Resistance&#39;])
 index=d.find_col(re.compile(r&quot;^[A-Z]&quot;))
 </pre></div>
 </div>
-<p><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> takes a number of different forms. If the argument
+<p><a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> takes a number of different forms. If the argument
 is an integer then it returns (trivially) the same integer, a string argument is
 first checked to see if it exactly matches one of the column headers in which
 case the number of the matching column heading is returned. If no exact match is
@@ -547,8 +547,8 @@ passing a compiled regular expression will return a list of all columns that
 match. This distinction allows you to use a unique partial string to match just
 one column - but if you really want all possible columns that would match the
 pattern, then you can compile the regular expression and pass that instead.</p>
-<p>This is the function that is used internally by <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code>,
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> etc and for this reason the trivial integer and slice
+<p>This is the function that is used internally by <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a>,
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> etc and for this reason the trivial integer and slice
 forms are implemented to allow these other functions to work with multiple
 columns.</p>
 <p>Sometimes you may want to iterate over all of the rows or columns in a data set.
@@ -569,7 +569,7 @@ This can be done quite easily:</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.rows()</span></code> and <code class="xref py py-meth docutils literal"><span class="pre">DataFile.columns()</span></code> both take an optional parameter <em>not_masked</em>. If this is True then these iterator
+<p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.rows()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.columns()</span></code></a> both take an optional parameter <em>not_masked</em>. If this is True then these iterator
 methods will skip over any rows/columns with masked out data values. When iterating over the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> instance directly the
 masked rows are skipped over.</p>
 </div>
@@ -602,14 +602,14 @@ first parameter while the second parameter contains a list of all of the values
 in the row to be returned. If the search function returns True, then the row is
 returned, otherwise it isn&#8217;t. In thr last example, the final parameter can
 either be a list of columns or a single column. The rules for indexing columns
-are the same as used for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code> method.</p>
+are the same as used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> method.</p>
 <p>The &#8216;accuracy&#8217; keyword parameter sets the level of accuracy to accept when testing
 equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.</p>
 <p>Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see &#8216;<a class="reference internal" href="#maskeddata"><span>Masked Data and Why You Care</span></a>) comes into its own.
-To select which rows of data have been masked off, use the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></code> method.:</p>
+To select which rows of data have been masked off, use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></code></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
 </pre></div>
@@ -629,9 +629,9 @@ points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be u
 <span class="n">arbitary</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="o">-</span><span class="mi">4</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>After the x, y, z data columns are identified, the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.section()</span></code> method works with
+<p>After the x, y, z data columns are identified, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.section()</span></code></a> method works with
 &#8216;x&#8217;, &#8216;y&#8217; and &#8216;z&#8217; keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> method).</p>
+these keyword arguments follow the same rules as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> method).</p>
 <p>A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Search Col&quot;</span><span class="p">)</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">)</span>
@@ -653,7 +653,7 @@ from the DataFile object for this:</p>
 </div>
 <p>The two optional keywords cause the numpy routine to return the
 indices of the unique and all non-unique values in the array. The
-column is specified in the same way as the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code>
+column is specified in the same way as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a>
 method does.</p>
 </div>
 <div class="section" id="copying-data">
@@ -764,8 +764,8 @@ On the otherhand you can do an efficient conversion to polar co-ordinates with:<
 <span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></code> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
-tuples and swaps the columns accordingly, whilst the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></code> method takes a
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></code></a> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the <a class="reference internal" href="../classes/Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></code></a> method takes a
 list of column labels or indices and constructs a new data matrix out of those columns in the new order.
 The <code class="docutils literal"><span class="pre">headers_too=False</span></code> options, as the name suggests, cause the column headers not be rearranged.</p>
 <div class="admonition note">
@@ -786,7 +786,7 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 <h4>Inserting Columns of Data<a class="headerlink" href="#inserting-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>The append columns operator <strong>&amp;</strong> will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
-you should use the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code> method.:</p>
+you should use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">Index</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
@@ -795,18 +795,18 @@ you should use the <code class="xref py py-meth docutils literal"><span class="p
 <p>The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before
 column <em>Index</em>. <em>Index</em> follows the same rules as for the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method. In the third example, the new column data is
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method. In the third example, the new column data is
 generated by applying the specified function. The function is passed s dingle
 row as a 1D numpy array and any of the keyword, argument pairs passed in a
 dictionary to the optional <em>func_args</em> argument.</p>
-<p>The <code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code> method returns a copy of the DataFile object
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method returns a copy of the DataFile object
 itself as well as modifying the object. This is to allow the metod to be chained
 up with other methods for more compact code writing.</p>
 </div>
 </div>
 <div class="section" id="deleting-rows-of-data">
 <h3>Deleting Rows of Data<a class="headerlink" href="#deleting-rows-of-data" title="Permalink to this headline">¶</a></h3>
-<p>Removing complete rows of data is achieved using the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code>
+<p>Removing complete rows of data is achieved using the <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a>
 method.:</p>
 <div class="highlight-python"><div class="highlight"><pre>d.del_rows(10)
 d.del_rows(1:100:2)
@@ -818,13 +818,13 @@ d.del_rows(;X Col&#39;,(100,200),invert=True)
 </div>
 <p>The first variant will delete row 10 from the data set (where the first row will
 be row 0). You can also supply a list or slice (as in the second example) to
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code> to delete multiple rows.</p>
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a> to delete multiple rows.</p>
 <p>If you do not know in advance which row to delete, then the remiaining
 variants provide more advanced options. The third variant searches for and
 deletes all rows in which the specified column contains <em>value</em>. The
 fourth variant selects which ros to delete by calling a user supplied function
 for each row. The user supplied function is the same in form and definitition as
-that used for the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code> method:</p>
+that used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> method:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">user_func</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span><span class="n">row_as_array</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">True</span> <span class="ow">or</span> <span class="bp">False</span>
 </pre></div>
@@ -833,7 +833,7 @@ that used for the <code class="xref py py-meth docutils literal"><span class="pr
 use of the <em>invert</em> keyword argument to reverse the sense used to selkect tows. In both cases
 rows are deleted(kept for <em>invert</em> = True) if the specified column lies between the maximum and minimum
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
-for specifying the bounds. Fianlly, if you call <code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code> with no arguments at all, then
+for specifying the bounds. Fianlly, if you call <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a> with no arguments at all, then
 it removes all rows where at least one column of data is masked out.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c"># Mask all rows where the first column is greater than 50</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">()</span> <span class="c"># Then delete them.</span>
@@ -852,7 +852,7 @@ the subtration operator can be used.:</p>
 <h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Deleting whole columns of data can be done by referring to a column by index or
 column header - the indexing rules are the same as used for the
-<code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code> method.:</p>
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
@@ -890,7 +890,7 @@ columns. Currently only ascending sorts are supported.:</p>
 filename attribute of the DataFile object. This will have been set when the
 filewas loaded from disc.</p>
 <p>If the filename attribute has not been set eg if the DataFile object was
-created from scratch, then the <code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code> method will cause a dialogue
+created from scratch, then the <a class="reference internal" href="../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code></a> method will cause a dialogue
 box to be raised so that the user can supply a filename.</p>
 <p>In the second variant, the supplied filename is used and the filename attribute
 is changed to match this ie <code class="docutils literal"><span class="pre">d.filename</span></code> will always return the last
@@ -1023,7 +1023,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 22, 2015.
+      Last updated on Aug 02, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

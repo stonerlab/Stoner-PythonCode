@@ -283,27 +283,40 @@
         <span class="sd">&quot;&quot;&quot; Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            col (index): Column of Data to be filtered</span>
+<span class="sd">            col (index): Column of Data to be filtered. if None, first y-column in setas is filtered.</span>
 <span class="sd">            prints (int): Number of data points to use in the filtering window. Should be an odd number &gt; poly+1 (default 15)</span>
 
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            poly (int): Order of polynomial to fit to the data. Must be equal or greater than order (default 1)</span>
 <span class="sd">            order (int): Order of differentiation to carry out. Default=0 meaning smooth the data only.</span>
+<span class="sd">            result (None,True, or column_index): If not None, column index to insert new data, or True to append as last column</span>
+<span class="sd">            header (string or None): Header for new column if result is not None. If header is Nne, a suitable column header is generated.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A numpy array representing the smoothed or differentiated data.</span>
+<span class="sd">            (numpoy array or self): If result is None, a numpy array representing the smoothed or differentiated data is returned.</span>
+<span class="sd">            Otherwise, a copy of the modified AnalyseFile object is returned.</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used</span>
 <span class="sd">            to set an x and y column. If col is a tuple, then it is assumed to secify and x-column and y-column</span>
 <span class="sd">            for differentiating data. This is now a pass through to :py:func:`scipy.signal.savgol_filter`</span>
+
+<span class="sd">        See Also:</span>
+<span class="sd">            User guide section :ref:`smoothing_guide`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">ordinal</span>
         <span class="k">if</span> <span class="n">points</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c">#Ensure window length is odd</span>
             <span class="n">points</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">()</span>
-            <span class="n">col</span> <span class="o">=</span> <span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;xcol&quot;</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="s">&quot;ycols&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">order</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;xcol&quot;</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="s">&quot;ycol&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="s">&quot;ycol&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">ycol</span><span class="o">=</span><span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ycol</span><span class="o">=</span><span class="n">col</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">col</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
             <span class="n">ddata</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;interp&quot;</span><span class="p">)</span>
@@ -313,13 +326,18 @@
             <span class="n">r</span> <span class="o">=</span> <span class="n">savgol_filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">points</span><span class="p">,</span> <span class="n">polyorder</span><span class="o">=</span><span class="n">poly</span><span class="p">,</span> <span class="n">deriv</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;interp&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-                <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;{} after {} order Savitsky-Golay Filter&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)],</span>
-                                                                          <span class="n">ordinal</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+                <span class="n">header</span> <span class="o">=</span> <span class="s">&#39;{} after {} order Savitsky-Golay Filter&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ycol</span><span class="p">)],</span>
+                                                                      <span class="n">ordinal</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">r</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">result</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">=</span><span class="n">col</span>
+            <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+            <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span>
 </div>
     <span class="k">def</span> <span class="nf">__get_math_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Utility routine to interpret col as either a column index or value or an array of values.</span>
@@ -647,7 +665,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            popt, pcov (array, 2D array): Optimal values of the fitting parameters p, and the variance-co-variance matrix</span>
-<span class="sd">                for the fitting parameters.</span>
+<span class="sd">            for the fitting parameters.</span>
 
 <span class="sd">        The return value is determined by the *output* parameter. Options are:</span>
 <span class="sd">            * &quot;fit&quot;    (tuple of popt,pcov)</span>
@@ -1223,7 +1241,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bin_start,bin_stop,bin_centres (1D arrays): The locations of the bin</span>
-<span class="sd">                boundaries and centres for each bin.</span>
+<span class="sd">            boundaries and centres for each bin.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;lin&quot;</span><span class="p">,</span><span class="s">&quot;log&quot;</span><span class="p">]:</span>
@@ -1797,8 +1815,11 @@
 <span class="sd">        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate</span>
 <span class="sd">        function.&quot;&quot;&quot;</span>
         <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">sigma</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">//</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">sigma</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">isNone</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">isNone</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span> <span class="ow">and</span> <span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">//</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sigma</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">replace</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;replace&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">header</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;header&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="n">k</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;order&quot;</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
@@ -1815,8 +1836,7 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">replace</span><span class="p">,</span><span class="nb">bool</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span><span class="o">=</span><span class="n">new_y</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">]</span><span class="o">=</span><span class="n">header</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">new_y</span><span class="p">,</span><span class="n">column_header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                 <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">=</span><span class="n">new_y</span>
@@ -1848,7 +1868,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual</span>
-<span class="sd">                :py:class:`AnalyseFile` objects</span>
+<span class="sd">            :py:class:`AnalyseFile` objects</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing</span>
@@ -2152,7 +2172,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Jul 23, 2015.
+      Last updated on Aug 02, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -1,0 +1,15 @@
+Stoner.Folders.absolute_import
+==============================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: absolute_import
+
+   
+
+   
+   
+
+   
+   
+   

@@ -6,7 +6,6 @@ Stoner Package
 
 Classes
 -------
-
 .. automodsumm:: Stoner.Core
    :toctree: classes
    :template: classdocs.rst
@@ -22,21 +21,29 @@ Functions
 :mod:`Analysis` Module
 =======================
 
+Classes
+-------
 .. automodsumm:: Stoner.Analysis
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.Analysis
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 
 :mod:`Plot` Module
 ==================
-
 .. automodsumm:: Stoner.Plot
    :toctree: classes
    :template: classdocs.rst
 
 :mod:`Folders` Module
 ======================
-
 .. automodsumm:: Stoner.Folders
    :toctree: classes
    :template: classdocs.rst
@@ -94,7 +101,6 @@ Facility Outputs
 
 Classes
 -------
-
 .. automodsumm:: Stoner.PlotFormats
    :toctree: classes
    :template: classdocs.rst
@@ -115,7 +121,6 @@ See also the stylesheets available in the stylelib directory.
 
 Classes
 -------
-
 .. automodsumm:: Stoner.plotutils
    :toctree: classes
    :template: classdocs.rst
@@ -133,7 +138,6 @@ Functions
 
 lmfit Model Classes
 -------------------
-
 .. automodsumm:: Stoner.Fit
    :toctree: classes
    :template: classdocs.rst
@@ -141,7 +145,6 @@ lmfit Model Classes
 
 Bare functions
 --------------
-
 .. automodsumm:: Stoner.Fit
    :toctree: functions
    :template: funcdocs.rst
@@ -152,7 +155,6 @@ The following modules offer specialised file and foler formats.
 
 :mod:`HDF5` Module
 =========================
-
 .. automodsumm:: Stoner.HDF5
    :toctree: classes
    :template: classdocs.rst
@@ -163,7 +165,6 @@ The following modules offer specialised file and foler formats.
 
 Classes
 -------
-
 .. automodsumm:: Stoner.Zip
    :toctree: classes
    :template: classdocs.rst
@@ -181,7 +182,6 @@ Functions
 
 Classes
 -------
-
 .. automodsumm:: Stoner.Util
    :toctree: classes
    :template: classdocs.rst
