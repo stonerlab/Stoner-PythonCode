@@ -18,6 +18,9 @@ doc: docbuild
 	$(PYTHON_SETUP) upload_docs --upload-dir=doc/_build/html
 
 docbuild: FORCE
+	$(MAKE) -C doc clean
+	$(MAKE) -C doc html
+	rm -rfr doc/_build
 	$(MAKE) -C doc html
 	rsync -rm --perms --chmod=ugo=rwX --delete  --filter="P .git" doc/_build/html/ ../gh-pages/
 
