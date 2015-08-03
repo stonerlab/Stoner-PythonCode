@@ -13,6 +13,7 @@ Stoner.HDF5.HGXFile
    .. autosummary::
     :toctree:
    
+      ~Stoner.HDF5.HGXFile._load
       ~Stoner.HDF5.HGXFile.main_data
       ~Stoner.HDF5.HGXFile.scan_group
 

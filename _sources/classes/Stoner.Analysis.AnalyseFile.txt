@@ -36,6 +36,7 @@ Stoner.Analysis.AnalyseFile
       ~Stoner.Analysis.AnalyseFile.peaks
       ~Stoner.Analysis.AnalyseFile.polyfit
       ~Stoner.Analysis.AnalyseFile.scale
+      ~Stoner.Analysis.AnalyseFile.smooth
       ~Stoner.Analysis.AnalyseFile.span
       ~Stoner.Analysis.AnalyseFile.spline
       ~Stoner.Analysis.AnalyseFile.split

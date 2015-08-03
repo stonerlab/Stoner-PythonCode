@@ -575,6 +575,30 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 underlying trends. The Stoner package offers a  number of approaches to filtering data.</p>
 <blockquote>
 <div><ul>
+<li><p class="first">Smoothing by convoluting with a window</p>
+<blockquote>
+<div><p>This is a powerful method of smoothing data by constructing an appropriate length and shape of &#8216;window function&#8217; that
+is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
+defined by the window function. This is handled by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.smooth.html#Stoner.Analysis.AnalyseFile.smooth" title="Stoner.Analysis.AnalyseFile.smooth"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.smooth()</span></code></a> method.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">((</span><span class="s">&quot;gaussian&quot;</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Smoothed data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
+The first argument is passed to <code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code> to define the window function. The <em>size</em> argument
+can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
+terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
+and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
+the data is evenly spaced to start with.</p>
+</div>
+<p>The <em>result</em> and <em>replace</em> arguments are passed through to <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.add_column()</span></code></a> unless <em>replace</em>
+is <strong>False</strong> in which case, the smoothed data is passed back as the return value and the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>
+is left unmodified.</p>
+</div></blockquote>
+</li>
 <li><p class="first">Savitzky-Golay filtering</p>
 <blockquote>
 <div><p>This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
@@ -601,21 +625,29 @@ and effective, but does reduce the length of the data !</p>
 </div></blockquote>
 <p>All three approaches are illustrated in the excample below:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
 
+<span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">)</span>
 <span class="c"># Filter with Savitsky-Golay filter, linear over 7 ppoints</span>
-<span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;S-G Filtered&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;SG Filter&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
 <span class="c">#Filter with cubic splines</span>
-<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Spline&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Spline&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
 <span class="c"># Rebin data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s">&quot;hamming&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Smoothed&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x...y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Smoooth&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
 <span class="n">d2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Re-binned&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
@@ -813,10 +845,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>, <a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/peaks_example.png" src="../_images/peaks_example.png" />
-</div>
+<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>)</p>
 </div>
 </div>
 </div>
@@ -912,8 +941,8 @@ less equal significance. By default, only peaks are returned in order of x posit
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2013, Gavin Burnell et al.
-      Last updated on Aug 02, 2015.
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Aug 03, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
