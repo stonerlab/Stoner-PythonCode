@@ -515,7 +515,7 @@ class PlotFile(DataFile):
         kargs["plotter"] = plotter
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
-    def figure(self, figure=None,projection="rectilinear"):
+    def figure(self, figure=None,projection="rectilinear",**kargs):
         """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
 
         Args:
@@ -524,11 +524,11 @@ class PlotFile(DataFile):
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
-            figure, ax = self.template.new_figure(None,projection=projection)
+            figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure,projection=projection)
+            figure, ax = self.template.new_figure(figure,projection=projection,**kargs)
         elif isinstance(figure, mplfig.Figure):
-            figure, ax = self.template.new_figure(figure.number,projection=projection)
+            figure, ax = self.template.new_figure(figure.number,projection=projection,**kargs)
         self.__figure = figure
         return self
 

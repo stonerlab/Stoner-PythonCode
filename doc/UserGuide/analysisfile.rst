@@ -302,6 +302,30 @@ Smoothing and Filtering Data
 As experimental data normally includes noise in some form, it is useful to be able to filter and smooth data to better see
 underlying trends. The Stoner package offers a  number of approaches to filtering data.
 
+    - Smoothing by convoluting with a window
+
+        This is a powerful method of smoothing data by constructing an appropriate length and shape of 'window function' that
+        is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
+        defined by the window function. This is handled by the :py:meth:`AnalyseFile.smooth` method.::
+
+            d.smooth("boxcar",size=10)
+            d.smooth(("gaussian",1.5),size=0.4,result=True,replace=False,header="Smoothed data")
+
+        In both these examples, the data to be smoothed is determined from the :py:attr:`Stoner.Core.DataFile.setas` attribute.
+        The first argument is passed to :py:func:`scipy.signal.get_window` to define the window function. The *size* argument
+        can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
+        terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
+        and then smoothed and then reinterpolated back to the original x data co-ordinates.
+
+        .. warning::
+
+            This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
+            the data is evenly spaced to start with.
+
+        The *result* and *replace* arguments are passed through to :py:meth:`Stoner.Core.DataFile.add_column` unless *replace*
+        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalyseFile`
+        is left unmodified.
+
     - Savitzky-Golay filtering
 
         This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations

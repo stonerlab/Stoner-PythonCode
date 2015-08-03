@@ -10,6 +10,7 @@ from Stoner.Core import DataFile,isNone
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
+from scipy.signal import get_window,convolve
 from scipy.interpolate import interp1d, InterpolatedUnivariateSpline, UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
@@ -22,6 +23,7 @@ except ImportError:
     Model = None
     ModelFit = None
 import sys
+from copy import deepcopy as copy
 
 
 #==========================================================================================================================================
@@ -282,9 +284,7 @@ class AnalyseFile(DataFile):
             if isinstance(result, bool) and result:
                 if replace:
                     result=col
-            print self.column_headers
             self.add_column(r, header, index=result, replace=replace)
-            print self.column_headers
             return self
         else:
             return r
@@ -1704,8 +1704,6 @@ class AnalyseFile(DataFile):
         popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
         data=self.data[:,[_.xcol,_.ycol]]
         new_data=trans(data)
-        print popt
-        print perr
         if replace: # In place scaling, replace and return self
             self["Transform"]=popt
             self["Transform Err"]=perr
@@ -1720,6 +1718,73 @@ class AnalyseFile(DataFile):
             ret=popt,perr,new_data
         return ret
 
+    def smooth(self,window="boxcar",xcol=None,ycol=None,size=None,**kargs):
+        """Smooth data by convoluting with a window.
+
+        Args:
+            window (string or tuple): Defines the window type to use by passing to :py:func:`scipy.signal.get_window`.
+
+        Keyword Arguments:
+            xcol(column index or None): Data to use as x data if needed to define a window. If None, use :py:attr:`Stoner.Core.DataFile.setas`
+            ycvol (column index or None): Data to be smoothed
+            size (int or float): If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.
+            result (bool or column index): Whether to add the smoothed data to the dataset and if so where.
+            replace (bool): Replace the exiting data or insert as a new column.
+            header (string): New column header for the new data.
+
+        Returns:
+            (self or array): If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
+            is a copy of the AnalyseFile object with the smoothed data added,
+
+        Notes:
+            If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data is evenly spaced in x.
+            To do this, the number of rows in the window is found by dividing the span in x by the size and multiplying by the total
+            lenfth. Then the data is interpolated to a new set of evenly space X over the same range, smoothed and then interpoalted back
+            to the original x values.
+        """
+        _=self._col_args(xcol=xcol,ycol=ycol)
+        replace=kargs.pop("replace",True)
+        result=kargs.pop("result",True) # overwirte existing y column data
+        header=kargs.pop("header",self.column_headers[_.ycol])
+
+
+        #Sort out window size
+        if isinstance(size,float):
+            interp_data=True
+            xl,xh=self.span(_.xcol)
+            size=_np_.ceil((size/(xh-xl))*len(self))
+            nx=_np_.linspace(xl,xh,len(self))
+            data=self.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
+            self["Smoothing window size"]=size
+        elif isinstance(size,(int,long)):
+            data=copy(self.data)
+            interp_data=False
+        else:
+            raise ValueError("size should either be a float or integer, not a {}".format(type(size)))
+
+        window=get_window(window,size)
+        # Handle multiple or single y columns
+        if not isinstance(_.ycol,Iterable):
+            _.ycol=[_.ycol]
+
+        #Do the convolution itself
+        for yc in _.ycol:
+            data[:,yc]=convolve(data[:,yc],window,mode="same")/size
+
+
+        # Reinterpolate the smoothed data back if necessary
+        if interp_data:
+            nx=self.data[:,_.xcol]
+            tmp=self.clone
+            tmp.data=data
+            data=tmp.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
+
+        #Fix return value
+        if isinstance(result,bool) and not result:
+            return data[:,_.ycol]
+        for yc in _.ycol:
+            self.add_column(data[:,yc],column_header=header,index=result,replace=replace)
+        return self
 
     def span(self, column=None, bounds=None):
         """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.
