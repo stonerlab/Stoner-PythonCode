@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="DataFile.__call__" href="Stoner.Core.DataFile.__call__.html" />
-    <link rel="prev" title="Stoner.Core.StonerLoadError" href="Stoner.Core.StonerLoadError.html" /> 
+    <link rel="prev" title="setas.find_col" href="Stoner.Core.setas.find_col.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -43,7 +43,7 @@
           <a href="Stoner.Core.DataFile.__call__.html" title="DataFile.__call__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
+          <a href="Stoner.Core.setas.find_col.html" title="setas.find_col"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -108,10 +108,26 @@ and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Co
 </dd></dl>
 
 <dl class="attribute">
+<dt id="Stoner.Core.DataFile.patterns">
+<code class="descname">patterns</code><a class="headerlink" href="#Stoner.Core.DataFile.patterns" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of str</em></p>
+<p>USed when constructing a dialog box to give the filename extensions of files that this class
+can read.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Core.DataFile.priority">
+<code class="descname">priority</code><a class="headerlink" href="#Stoner.Core.DataFile.priority" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Used to contropl the order in which subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> are tried when loading files
+from disc. A smaller priority number will be tried before subclasses with larger priority numbers.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="Stoner.Core.DataFile.setas">
 <code class="descname">setas</code><a class="headerlink" href="#Stoner.Core.DataFile.setas" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list or string</em></p>
-<p>Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</p>
+<p>Defines certain columns to contain X, Y, Z or errors in X,Y,Z data. See <a class="reference internal" href="Stoner.Core.setas.html#Stoner.Core.setas" title="Stoner.Core.setas"><code class="xref py py-class docutils literal"><span class="pre">setas</span></code></a></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -281,10 +297,10 @@ string name of the subclass and the class object.</p>
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></a></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></a></td>
 <td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></a></td>
 <td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></a></td>
@@ -315,8 +331,8 @@ string name of the subclass and the class object.</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Core.StonerLoadError.html"
-                        title="previous chapter">Stoner.Core.StonerLoadError</a></p>
+  <p class="topless"><a href="Stoner.Core.setas.find_col.html"
+                        title="previous chapter">setas.find_col</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Core.DataFile.__call__.html"
                         title="next chapter">DataFile.__call__</a></p>
@@ -357,7 +373,7 @@ string name of the subclass and the class object.</p>
           <a href="Stoner.Core.DataFile.__call__.html" title="DataFile.__call__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
+          <a href="Stoner.Core.setas.find_col.html" title="setas.find_col"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -365,7 +381,7 @@ string name of the subclass and the class object.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 03, 2015.
+      Last updated on Aug 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -79,14 +79,49 @@ keyword arguments to pass to  DataFile.__init__</li>
 <dt id="Stoner.Plot.PlotFile.fig">
 <code class="descname">fig</code><a class="headerlink" href="#Stoner.Plot.PlotFile.fig" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>matplotlib.figure</em></p>
-<p>The current figure object being worked with</p>
+<p>The current figure object being worked with.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Plot.PlotFile.labels">
 <code class="descname">labels</code><a class="headerlink" href="#Stoner.Plot.PlotFile.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list of string</em></p>
-<p>List of axis labels as aternates to the column_headers</p>
+<p>List of axis labels as aternates to the column_headers.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotFile.xlabel">
+<code class="descname">xlabel</code><a class="headerlink" href="#Stoner.Plot.PlotFile.xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>Wrapper for <code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.set_xlabel()</span></code> to label x-axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotFile.ylabel">
+<code class="descname">ylabel</code><a class="headerlink" href="#Stoner.Plot.PlotFile.ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>Wrapper for <code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.set_ylabel()</span></code> to label y-axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotFile.title">
+<code class="descname">title</code><a class="headerlink" href="#Stoner.Plot.PlotFile.title" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>Wrapper for <code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.set_title()</span></code> to set the plot title.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotFile.xlim">
+<code class="descname">xlim</code><a class="headerlink" href="#Stoner.Plot.PlotFile.xlim" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>2-tuple</em></p>
+<p>Sets the limits of the x-axis (wrapping <code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.set_xlim()</span></code>)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotFile.ylim">
+<code class="descname">ylim</code><a class="headerlink" href="#Stoner.Plot.PlotFile.ylim" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>2-tuple</em></p>
+<p>Sets the limits of the x-axis (wrapping <code class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.set_ylim()</span></code>)</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -258,7 +293,7 @@ keyword arguments to pass to  DataFile.__init__</li>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 03, 2015.
+      Last updated on Aug 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -58,7 +58,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;StonerLoadError&quot;</span><span class="p">,</span> <span class="s">&quot;DataFile&quot;</span><span class="p">,</span><span class="s">&quot;DataArray&quot;</span><span class="p">,</span><span class="s">&quot;isNone&quot;</span><span class="p">,</span><span class="s">&quot;all_size&quot;</span><span class="p">,</span><span class="s">&quot;all_type&quot;</span><span class="p">]</span>  <span class="c"># Don&#39;t import too muhc with from Stoner.Core import *</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;StonerLoadError&quot;</span><span class="p">,</span> <span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="s">&quot;DataFile&quot;</span><span class="p">,</span><span class="s">&quot;DataArray&quot;</span><span class="p">,</span><span class="s">&quot;isNone&quot;</span><span class="p">,</span><span class="s">&quot;all_size&quot;</span><span class="p">,</span><span class="s">&quot;all_type&quot;</span><span class="p">]</span>  <span class="c"># Don&#39;t import too muhc with from Stoner.Core import *</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -211,10 +211,55 @@
     <span class="n">lineterminator</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">_setas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Class that provides a mechanism for managing the column assignments in a DataFile like object.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="setas"><a class="viewcode-back" href="../../classes/Stoner.Core.setas.html#Stoner.Core.setas">[docs]</a><span class="k">class</span> <span class="nc">setas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class that provides a mechanism for managing the column assignments in a DataArray like object.</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_val</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        setas (list of char): THe backing store for the column assignments.</span>
+<span class="sd">        column_headers (list of str): The individual names of the columns</span>
+<span class="sd">        _cols (_attribute_store): A dict like object that tracks the column assignments</span>
+<span class="sd">        _shape (tuple): Defines the expected size of data to which this is linked.</span>
+<span class="sd">        clone (setas): Creates a copy of the current setas object.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        For the applications at which the Stoner Package is targetted, it is common to copnsider</span>
+<span class="sd">        columns of data to represent particular types of data - either a co-ordinate for data to be</span>
+<span class="sd">        plotted (e.g. in x-y or x-y-z cartesian space), or to contain an uncertainity in a co-ordinate</span>
+<span class="sd">        position. To facilitate this, the :py:class:`setas` class woprks with the :py:class:`DataArray` to</span>
+<span class="sd">        allow columns of data to be assigned as containing such data.</span>
+
+<span class="sd">        Assignments of column meanings can be done by calling the ;py:class:`setas` instance with a variety</span>
+<span class="sd">        of different patterns of arguments.</span>
+
+<span class="sd">        .. py:function:: setas(list of char)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Each column is assigned a meaning as specified by the characters in the list. The possible characters are:</span>
+<span class="sd">            &#39;x&#39;,&#39;y&#39;,&#39;z&#39;,&#39;d&#39;,&#39;e&#39;,&#39;f&#39;,&#39;.&#39; for the three cartesian co-ordinates, their resepective uncertainities and as a blank.</span>
+<span class="sd">            Any columns beyond the length of the list are left unassigned, whilst any elements beyond the length of the list</span>
+<span class="sd">            are dropped.</span>
+
+<span class="sd">        .. py:function:: setas(str)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Similarly to the list of chars, each character in the string is interpreted as a column assignment. The main</span>
+<span class="sd">            difference is that a single digit number preeceding a letter is interpreted to mean that many of</span>
+<span class="sd">            the following letter. e.g.&quot;x6y&quot; is equivalent to &quot;xyyyyyy&quot;.</span>
+
+<span class="sd">        .. py:function:: setas(arg1=&quot;x&quot;,arg2=&quot;y&quot;,arg3=&quot;z&quot;)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            In this form, the keyword arguments are interpreted as column indices. If the argument name doesn&#39;t match exactly</span>
+<span class="sd">            then it is tried as a partial match to a column name. The corresponding column is set by the single letter value</span>
+<span class="sd">            of the keyword argument.</span>
+
+<span class="sd">        .. py:function:: setas(x=&quot;Column name&quot;,y=5,z=re.compile(&#39;/column/&#39;))</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            In this form, the keyword arguments are x,y,z,d,e,f and are used to set the assignments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="setas.__init__"><a class="viewcode-back" href="../../classes/Stoner.Core.setas.__init__.html#Stoner.Core.setas.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_val</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructs the setas instance and sets an initial value.</span>
 
 <span class="sd">        Args:</span>
@@ -232,33 +277,39 @@
             <span class="bp">self</span><span class="p">(</span><span class="n">initial_val</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
+</div>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">new</span> <span class="o">=</span> <span class="n">_setas</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
-                    <span class="n">new</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
-            <span class="k">return</span> <span class="n">new</span>
+        <span class="sd">&quot;&quot;&quot;Returns a copy of the current :py:class:`setas` object.&quot;&quot;&quot;</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="n">setas</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]):</span>
+                <span class="n">new</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">new</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a dictionary like object that provides information on the number of axes and the assignments of the</span>
+<span class="sd">        columns represented by the current :Lpy:class:`setas` object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span>
 
     <span class="nd">@cols.setter</span>
     <span class="k">def</span> <span class="nf">cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the columns assignments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;cols attribute must be a dictionary&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cols</span><span class="o">=</span><span class="n">_attribute_store</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stores the column names as a list.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span>
 
     <span class="nd">@column_headers.setter</span>
     <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the current column names.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="n">c</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_headers</span><span class="p">)</span>
@@ -269,10 +320,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the shape of the data that this instance of :py:class:`setas` is managing.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span>
 
     <span class="nd">@shape.setter</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensures the shape attribute is consistent with the number of column headers and assignments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>  <span class="c"># Force setas annd acolumn_headers to match shape</span>
             <span class="n">c</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&quot;.&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)))</span>
@@ -285,7 +338,7 @@
 
 
 
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="setas.__call__"><a class="viewcode-back" href="../../classes/Stoner.Core.setas.__call__.html#Stoner.Core.setas.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Treat the current instance as a callable object and assign columns accordingly.</span>
 
 <span class="sd">         Variois forms of this method are accepted::</span>
@@ -297,7 +350,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">_setas</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">setas</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
@@ -320,7 +373,7 @@
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
                     <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">total</span><span class="p">,</span> <span class="n">code</span> <span class="o">*</span> <span class="n">count</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_setas</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">setas</span><span class="p">):</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">setas</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">kargs</span>
@@ -359,7 +412,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Set as column string ended with a number&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
-
+</div>
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Permit the setas attribute to be treated like either a list or a dictionary.</span>
 
@@ -436,7 +489,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s">&quot;.&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">))))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="setas.find_col"><a class="viewcode-back" href="../../classes/Stoner.Core.setas.find_col.html#Stoner.Core.setas.find_col">[docs]</a>    <span class="k">def</span> <span class="nf">find_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">force_list</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Indexes the column headers in order to locate a column of data.shape.</span>
 
 <span class="sd">        Indexing can be by supplying an integer, a string, a regular experssion, a slice or a list of any of the above.</span>
@@ -500,7 +553,7 @@
         <span class="k">if</span> <span class="n">force_list</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">col</span>
-
+</div>
     <span class="k">def</span> <span class="nf">_get_cols</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">startx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Uses the setas attribute to work out which columns to use for x,y,z etc.</span>
 
@@ -623,7 +676,7 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="n">what</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-
+</div>
 <span class="k">class</span> <span class="nc">_evaluatable</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A very simple class that is just a placeholder to indicate that special action</span>
 <span class="sd">    needs to be taken to convert a string representation to a valid Python type.&quot;&quot;&quot;</span>
@@ -939,6 +992,8 @@
     <span class="sd">&quot;&quot;&quot;A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.</span>
 
 <span class="sd">    Attributes:</span>
+<span class="sd">        clone (DataArray): Creates a copy of the current DataArray object with a new copy of the</span>
+<span class="sd">            :py:class:`setas` column assignment object.</span>
 <span class="sd">        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the</span>
 <span class="sd">            base row index. The base row index is preserved when a DataArray is indexed.</span>
 <span class="sd">        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access</span>
@@ -964,7 +1019,7 @@
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="c"># Input array is an already formed ndarray instance</span>
         <span class="c"># We first cast to be our class type</span>
-        <span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">setas_arg</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="n">mask</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;mask&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
             <span class="n">i</span><span class="o">=</span><span class="n">input_array</span><span class="o">.</span><span class="n">i</span>
@@ -972,10 +1027,10 @@
             <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
         <span class="c"># add the new attribute to the created instance</span>
-        <span class="k">if</span> <span class="n">setas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span>
+        <span class="k">if</span> <span class="n">setas_arg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas_arg</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">setas</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span>
         <span class="c"># Finally, we must return the newly created object:</span>
@@ -987,9 +1042,9 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_finalize__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">setas</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_setas&#39;</span><span class="p">,</span> <span class="n">_setas</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_setas&#39;</span><span class="p">,</span> <span class="n">setas</span><span class="p">())</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">i</span>
 
@@ -1064,6 +1119,18 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="n">val</span><span class="p">)</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clone the DataArray and all its attributes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (DataArray): A deep copy of the current DataArray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">ret</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the radius :math:`\\rho` co-ordinate if using spherical or polar co-ordinate systems.&quot;&quot;&quot;</span>
         <span class="n">axes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;axes&quot;</span><span class="p">])</span>
@@ -1121,7 +1188,11 @@
 <span class="sd">                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`</span>
 <span class="sd">                           and :py:meth:`Stoner.Core.DataFile.save`.</span>
 <span class="sd">        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.</span>
-<span class="sd">        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</span>
+<span class="sd">        patterns (list of str): USed when constructing a dialog box to give the filename extensions of files that this class</span>
+<span class="sd">            can read.</span>
+<span class="sd">        priority (int): Used to contropl the order in which subclasses of :py:class:`DataFile` are tried when loading files</span>
+<span class="sd">            from disc. A smaller priority number will be tried before subclasses with larger priority numbers.</span>
+<span class="sd">        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data. See :py:class:`setas`</span>
 <span class="sd">        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</span>
 <span class="sd">        records (numpoy record array): Returns the data in the form of a list of dictionaries.</span>
 <span class="sd">        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.</span>
@@ -2089,7 +2160,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Not a TDI File&quot;</span><span class="p">)</span>
         <span class="n">col_headers_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
         <span class="n">cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_headers_tmp</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">_setas</span><span class="p">(</span><span class="s">&quot;.&quot;</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span><span class="p">(</span><span class="s">&quot;.&quot;</span> <span class="o">*</span> <span class="n">cols</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">([],</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">reader</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="p">:</span>  <span class="c"># Blank line</span>
@@ -3179,7 +3250,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 03, 2015.
+      Last updated on Aug 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

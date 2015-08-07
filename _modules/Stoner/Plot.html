@@ -88,8 +88,13 @@
 <span class="sd">        kargs (dict):  keyword arguments to pass to \b DataFile.__init__</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        fig (matplotlib.figure): The current figure object being worked with</span>
-<span class="sd">        labels (list of string): List of axis labels as aternates to the column_headers</span>
+<span class="sd">        fig (matplotlib.figure): The current figure object being worked with.</span>
+<span class="sd">        labels (list of string): List of axis labels as aternates to the column_headers.</span>
+<span class="sd">        xlabel (str): Wrapper for :py:func:`matplotlib.pyplot.set_xlabel` to label x-axis.</span>
+<span class="sd">        ylabel (str): Wrapper for :py:func:`matplotlib.pyplot.set_ylabel` to label y-axis.</span>
+<span class="sd">        title (str): Wrapper for :py:func:`matplotlib.pyplot.set_title` to set the plot title.</span>
+<span class="sd">        xlim (2-tuple): Sets the limits of the x-axis (wrapping :py:func:`matplotlib.pyplot.set_xlim`)</span>
+<span class="sd">        ylim (2-tuple): Sets the limits of the x-axis (wrapping :py:func:`matplotlib.pyplot.set_ylim`)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1386,7 +1391,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 03, 2015.
+      Last updated on Aug 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

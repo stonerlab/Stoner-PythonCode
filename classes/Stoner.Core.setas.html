@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Core.setas &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="setas.__call__" href="Stoner.Core.setas.__call__.html" />
+    <link rel="prev" title="Stoner.Core.StonerLoadError" href="Stoner.Core.StonerLoadError.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.setas.__call__.html" title="setas.__call__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-core-setas">
+<h1>Stoner.Core.setas<a class="headerlink" href="#stoner-core-setas" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Core.setas">
+<em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">setas</code><span class="sig-paren">(</span><em>initial_val=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Core.html#setas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.setas" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that provides a mechanism for managing the column assignments in a DataArray like object.</p>
+<dl class="attribute">
+<dt id="Stoner.Core.setas.setas">
+<code class="descname">setas</code><a class="headerlink" href="#Stoner.Core.setas.setas" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of char</em></p>
+<p>THe backing store for the column assignments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Core.setas.column_headers">
+<code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.setas.column_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of str</em></p>
+<p>The individual names of the columns</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Core.setas._cols">
+<code class="descname">_cols</code><a class="headerlink" href="#Stoner.Core.setas._cols" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>_attribute_store</em></p>
+<p>A dict like object that tracks the column assignments</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Core.setas._shape">
+<code class="descname">_shape</code><a class="headerlink" href="#Stoner.Core.setas._shape" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>tuple</em></p>
+<p>Defines the expected size of data to which this is linked.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Core.setas.clone">
+<code class="descname">clone</code><a class="headerlink" href="#Stoner.Core.setas.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>setas</em></p>
+<p>Creates a copy of the current setas object.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>For the applications at which the Stoner Package is targetted, it is common to copnsider
+columns of data to represent particular types of data - either a co-ordinate for data to be
+plotted (e.g. in x-y or x-y-z cartesian space), or to contain an uncertainity in a co-ordinate
+position. To facilitate this, the <a class="reference internal" href="#Stoner.Core.setas" title="Stoner.Core.setas"><code class="xref py py-class docutils literal"><span class="pre">setas</span></code></a> class woprks with the <a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> to
+allow columns of data to be assigned as containing such data.</p>
+<p>Assignments of column meanings can be done by calling the ;py:class:<cite>setas</cite> instance with a variety
+of different patterns of arguments.</p>
+<dl class="function">
+<dt>
+<code class="descname">setas</code><span class="sig-paren">(</span><em>list of char</em><span class="sig-paren">)</span></dt>
+<dd><p>Each column is assigned a meaning as specified by the characters in the list. The possible characters are:
+&#8216;x&#8217;,&#8217;y&#8217;,&#8217;z&#8217;,&#8217;d&#8217;,&#8217;e&#8217;,&#8217;f&#8217;,&#8217;.&#8217; for the three cartesian co-ordinates, their resepective uncertainities and as a blank.
+Any columns beyond the length of the list are left unassigned, whilst any elements beyond the length of the list
+are dropped.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">setas</code><span class="sig-paren">(</span><em>str</em><span class="sig-paren">)</span></dt>
+<dd><p>Similarly to the list of chars, each character in the string is interpreted as a column assignment. The main
+difference is that a single digit number preeceding a letter is interpreted to mean that many of
+the following letter. e.g.&#8221;x6y&#8221; is equivalent to &#8220;xyyyyyy&#8221;.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">setas</code><span class="sig-paren">(</span><em>arg1=&quot;x&quot;</em>, <em>arg2=&quot;y&quot;</em>, <em>arg3=&quot;z&quot;</em><span class="sig-paren">)</span></dt>
+<dd><p>In this form, the keyword arguments are interpreted as column indices. If the argument name doesn&#8217;t match exactly
+then it is tried as a partial match to a column name. The corresponding column is set by the single letter value
+of the keyword argument.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">setas</code><span class="sig-paren">(</span><em>x=&quot;Column name&quot;</em>, <em>y=5</em>, <em>z=re.compile('/column/')</em><span class="sig-paren">)</span></dt>
+<dd><p>In this form, the keyword arguments are x,y,z,d,e,f and are used to set the assignments.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.setas.__call__.html#Stoner.Core.setas.__call__" title="Stoner.Core.setas.__call__"><code class="xref py py-obj docutils literal"><span class="pre">__call__</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Treat the current instance as a callable object and assign columns accordingly.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.setas.__init__.html#Stoner.Core.setas.__init__" title="Stoner.Core.setas.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([initial_val])</td>
+<td>Constructs the setas instance and sets an initial value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.setas.find_col.html#Stoner.Core.setas.find_col" title="Stoner.Core.setas.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.setas.clone" title="Stoner.Core.setas.clone"><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></a></td>
+<td>Returns a copy of the current <a class="reference internal" href="#Stoner.Core.setas" title="Stoner.Core.setas"><code class="xref py py-class docutils literal"><span class="pre">setas</span></code></a> object.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">cols</span></code></td>
+<td>Returns a dictionary like object that provides information on the number of axes and the assignments of the columns represented by the current <a href="#id1"><span class="problematic" id="id2">:Lpy:class:`setas`</span></a> object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.setas.column_headers" title="Stoner.Core.setas.column_headers"><code class="xref py py-obj docutils literal"><span class="pre">column_headers</span></code></a></td>
+<td>Stores the column names as a list.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
+<td>Returns the shape of the data that this instance of <a class="reference internal" href="#Stoner.Core.setas" title="Stoner.Core.setas"><code class="xref py py-class docutils literal"><span class="pre">setas</span></code></a> is managing.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Core.StonerLoadError.html"
+                        title="previous chapter">Stoner.Core.StonerLoadError</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Core.setas.__call__.html"
+                        title="next chapter">setas.__call__</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Core.setas.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.setas.__call__.html" title="setas.__call__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Core.StonerLoadError.html" title="Stoner.Core.StonerLoadError"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Aug 07, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

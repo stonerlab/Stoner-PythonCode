@@ -1,0 +1,34 @@
+Stoner.Core.setas
+=================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: setas
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Core.setas.__call__
+      ~Stoner.Core.setas.__init__
+      ~Stoner.Core.setas.find_col
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Core.setas.clone
+      ~Stoner.Core.setas.cols
+      ~Stoner.Core.setas.column_headers
+      ~Stoner.Core.setas.shape
+   
+   

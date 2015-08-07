@@ -1,0 +1,8 @@
+
+
+setas.find_col
+==========================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: setas.find_col
