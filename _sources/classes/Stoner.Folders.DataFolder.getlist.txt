@@ -1,0 +1,8 @@
+
+
+DataFolder.getlist
+=================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.getlist

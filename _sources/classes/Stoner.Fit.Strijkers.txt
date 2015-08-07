@@ -1,0 +1,24 @@
+Stoner.Fit.Strijkers
+====================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: Strijkers
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.Strijkers.__init__
+      ~Stoner.Fit.Strijkers.guess
+
+   
+   
+
+   
+   
+   

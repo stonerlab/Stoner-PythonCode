@@ -1,0 +1,8 @@
+
+
+DataFile.__call__
+=============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.__call__

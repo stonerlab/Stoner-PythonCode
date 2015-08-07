@@ -1,0 +1,22 @@
+Stoner.FileFormats.OpenGDAFile
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: OpenGDAFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.OpenGDAFile.patterns
+      ~Stoner.FileFormats.OpenGDAFile.priority
+   
+   

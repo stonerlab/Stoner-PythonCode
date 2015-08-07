@@ -1,0 +1,30 @@
+Stoner.PlotFormats.JTBPlotStyle
+===============================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autoclass:: JTBPlotStyle
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.PlotFormats.JTBPlotStyle.customise_axes
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.PlotFormats.JTBPlotStyle.show_title
+      ~Stoner.PlotFormats.JTBPlotStyle.stylename
+   
+   

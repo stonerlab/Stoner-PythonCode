@@ -1,0 +1,24 @@
+Stoner.Fit.BlochGrueneisen
+==========================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: BlochGrueneisen
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.BlochGrueneisen.__init__
+      ~Stoner.Fit.BlochGrueneisen.guess
+
+   
+   
+
+   
+   
+   

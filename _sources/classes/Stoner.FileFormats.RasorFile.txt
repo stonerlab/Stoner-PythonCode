@@ -1,0 +1,15 @@
+Stoner.FileFormats.RasorFile
+============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: RasorFile
+
+   
+
+   
+   
+
+   
+   
+   

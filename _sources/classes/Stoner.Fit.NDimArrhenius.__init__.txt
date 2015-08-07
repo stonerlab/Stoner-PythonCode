@@ -1,0 +1,8 @@
+
+
+NDimArrhenius.__init__
+=================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: NDimArrhenius.__init__

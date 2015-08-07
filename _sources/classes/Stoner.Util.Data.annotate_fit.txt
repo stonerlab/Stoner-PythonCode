@@ -1,0 +1,8 @@
+
+
+Data.annotate_fit
+=============================
+
+.. currentmodule:: Stoner.Util
+
+.. automethod:: Data.annotate_fit

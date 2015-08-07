@@ -1,0 +1,8 @@
+
+
+PlotFile.inset
+==========================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotFile.inset

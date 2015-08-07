@@ -1,0 +1,30 @@
+Stoner.FileFormats.RigakuFile
+=============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: RigakuFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.RigakuFile.to_Q
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.RigakuFile.patterns
+      ~Stoner.FileFormats.RigakuFile.priority
+   
+   

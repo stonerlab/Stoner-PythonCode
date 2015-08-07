@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyseFile.scale &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
+    <link rel="next" title="AnalyseFile.smooth" href="Stoner.Analysis.AnalyseFile.smooth.html" />
+    <link rel="prev" title="AnalyseFile.polyfit" href="Stoner.Analysis.AnalyseFile.polyfit.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.smooth.html" title="AnalyseFile.smooth"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.polyfit.html" title="AnalyseFile.polyfit"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="analysefile-scale">
+<h1>AnalyseFile.scale<a class="headerlink" href="#analysefile-scale" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.scale">
+<code class="descclassname">AnalyseFile.</code><code class="descname">scale</code><span class="sig-paren">(</span><em>other</em>, <em>xcol=None</em>, <em>ycol=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.scale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scale the x and y data in this DataFile to match the x and y data in another DataFile.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> (<em>DataFile</em>) &#8211;
+The other isntance of a datafile to match to</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>xcol</strong> (<em>column index</em>) &#8211;
+Column with x points in it, default to None to use setas attribute value</li>
+<li><strong>ycol</strong> (<em>column index</em>) &#8211;
+Column with ypoints in it, default to None to use setas attribute value</li>
+<li><strong>xmode</strong> (<em>&#8216;affine&#8217;, &#8216;linear&#8217;,&#8217;scale&#8217;,&#8217;offset&#8217;</em>) &#8211;
+How to manipulate the x-data to match up</li>
+<li><strong>ymode</strong> (<em>&#8216;linear&#8217;,&#8217;scale&#8217;,&#8217;offset&#8217;</em>) &#8211;
+How to manipulate the y-data to match up.</li>
+<li><strong>bounds</strong> (<em>callable</em>) &#8211;
+Used to identiyf the set of (x,y) points to be used for scaling. Defaults to the whole data set if not speicifed.</li>
+<li><strong>otherbounds</strong> (<em>callable</em>) &#8211;
+Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</li>
+<li><strong>use_estimate</strong> (<em>bool or 3x2 array</em>) &#8211;
+Specifies whether to estimate an initial transformation value or to use the provided one, or
+start with an identity transformation.</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211;
+Whether to map the x,y data to the new co-ordinates and return a copy of this AnalyseFile (true) or to just return
+the results of the scaling.</li>
+<li><strong>headers</strong> (<em>2-element list or tuple of strings</em>) &#8211;
+new column headers to use if replace is True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Either a copy of the AnalyseFile modified so that the x and y columns match <em>other</em> if <em>replace</em> is True, or
+<em>opt_trans</em>,*trans_err*,*new_xy_data*. Where <em>opt_trans</em> is the optimum affine transformation, <em>trans_err</em> is a matrix
+giving the standard error in the transformation matrix components and  <em>new_xy_data</em> is an (n x 2) array of the transformed data.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.polyfit.html"
+                        title="previous chapter">AnalyseFile.polyfit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.smooth.html"
+                        title="next chapter">AnalyseFile.smooth</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.scale.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.smooth.html" title="AnalyseFile.smooth"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.polyfit.html" title="AnalyseFile.polyfit"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Aug 03, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

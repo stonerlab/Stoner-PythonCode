@@ -1,0 +1,8 @@
+
+
+AnalyseFile.apply
+=================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.apply

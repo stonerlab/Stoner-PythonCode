@@ -1,0 +1,8 @@
+
+
+BDR.guess
+====================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: BDR.guess

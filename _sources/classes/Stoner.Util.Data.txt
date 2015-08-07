@@ -1,0 +1,24 @@
+Stoner.Util.Data
+================
+
+.. currentmodule:: Stoner.Util
+
+.. autoclass:: Data
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Util.Data.annotate_fit
+      ~Stoner.Util.Data.format
+
+   
+   
+
+   
+   
+   

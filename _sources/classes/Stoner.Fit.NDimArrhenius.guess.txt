@@ -1,0 +1,8 @@
+
+
+NDimArrhenius.guess
+==============================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: NDimArrhenius.guess

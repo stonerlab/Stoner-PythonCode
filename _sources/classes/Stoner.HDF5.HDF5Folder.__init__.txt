@@ -1,0 +1,8 @@
+
+
+HDF5Folder.__init__
+===============================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: HDF5Folder.__init__

@@ -1,0 +1,8 @@
+
+
+Simmons.__init__
+===========================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: Simmons.__init__

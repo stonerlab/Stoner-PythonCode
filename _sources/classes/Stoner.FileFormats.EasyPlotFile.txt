@@ -1,0 +1,21 @@
+Stoner.FileFormats.EasyPlotFile
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: EasyPlotFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.EasyPlotFile.priority
+   
+   

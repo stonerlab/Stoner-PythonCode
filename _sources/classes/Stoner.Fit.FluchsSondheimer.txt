@@ -1,0 +1,24 @@
+Stoner.Fit.FluchsSondheimer
+===========================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: FluchsSondheimer
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.FluchsSondheimer.__init__
+      ~Stoner.Fit.FluchsSondheimer.guess
+
+   
+   
+
+   
+   
+   

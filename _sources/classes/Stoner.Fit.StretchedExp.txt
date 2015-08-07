@@ -1,0 +1,24 @@
+Stoner.Fit.StretchedExp
+=======================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: StretchedExp
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.StretchedExp.__init__
+      ~Stoner.Fit.StretchedExp.guess
+
+   
+   
+
+   
+   
+   

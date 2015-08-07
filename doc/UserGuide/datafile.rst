@@ -889,3 +889,17 @@ filename used for a load or save operation.
 
 The third is similar but convert the file to ``cvs`` format while the fourth also
 specifies that the eliminator is a tab character.
+
+Loading, Manipulating and Saving Data
+-------------------------------------
+
+One common pattern is to load some data, manipulate it in some way and then save it again. To make this more convenient, the
+:py:class:`DataFile` provides a context-manager interface that allows it to work with a **with** statement.::
+
+    with DataFile("My_Data.txt") as data:
+        data["Do Something"]=True
+        data&=np.ones(len(data))
+
+This will load the data file *My_Data.txt*, change some meta-data, add a column of ones and then, if no exceptions happened,
+save it back. The :py:meth:`DataFile.save` method is called, so if you make any change to the :py:attr:`DataFile.filename`
+then the file will be renamed on disc.

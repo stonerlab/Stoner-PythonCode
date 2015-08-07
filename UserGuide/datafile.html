@@ -1,0 +1,1030 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Loading and Examining Data &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="next" title="Plotting Data" href="plotfile.html" />
+    <link rel="prev" title="Installation of Stoner Package" href="install.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plotfile.html" title="Plotting Data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of Stoner Package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="loading-and-examining-data">
+<h1>Loading and Examining Data<a class="headerlink" href="#loading-and-examining-data" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-a-data-file">
+<h2>Loading a data file<a class="headerlink" href="#loading-a-data-file" title="Permalink to this headline">¶</a></h2>
+<p>The first step in using the Stoner module is to load some data from a
+measurement.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example we have loaded data from <code class="docutils literal"><span class="pre">my_data.txt</span></code> which should be in the
+current directory</p>
+<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>
+class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
+detect the format of many of the measurement files that we use in our research.</p>
+<p>The native file format for the Stoner package is known as the <em>TDI 1.5</em> format - a tab delimited text file
+that stores arbitary metadata and a single 2D data set. It closely matches the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class of the
+<code class="xref py py-mod docutils literal"><span class="pre">Stoner.Core</span></code> module.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will also read a related text format where the first column of the first line contains the string <em>TDI Fromat=Text 1.0</em>
+which are produced by some of the LabVIEW rigs used by the Device Materials Group in Cambridge.</p>
+</div>
+<div class="section" id="the-various-flavours-of-the-datafile-class">
+<h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
+<p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load" title="Stoner.Core.DataFile._load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code></a> method that
+understands how to reqad the relevant file.</p>
+<div class="section" id="base-classes-and-generic-formats">
+<h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><dl class="docutils">
+<dt><a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a></dt>
+<dd>Tagged Data Interchange Format 1.5 &#8211; the default format produced by the LabVIEW measurement rigs in the CM Physics group in Leeds</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a></dt>
+<dd>Reads a generic comma separated value file. The <code class="xref py py-meth docutils literal"><span class="pre">Stoner.FileFormats.CSVFile.load()</span></code>
+routine takes four additional parameters to the constructor and load methods. In
+addition to the two extra arguments used for the <em>BigBlue&amp; variant, a
+further two parameters specify the deliminators for the data and header rows. :py:class:`Stoner.FileFormats.CSVFile`
+also offers a **save*</em> method to allow data to be saved in a simple deliminated text way (see Section <a class="reference internal" href="#save"><span>Saving Data</span></a> for details).</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile" title="Stoner.FileFormats.SPCFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.SPCFile</span></code></a></dt>
+<dd>Loads a Raman scan file (.spc format) produced by the Rensihaw and Horiba
+Raman spectrometers. This may also work for other instruments that produce spc files,
+but has not been extensively tested.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile" title="Stoner.FileFormats.TDMSFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.TDMSFile</span></code></a></dt>
+<dd>Loads a file saved in the National Instruments TDMS format</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.QDSquidVSMFile.html#Stoner.FileFormats.QDSquidVSMFile" title="Stoner.FileFormats.QDSquidVSMFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.QDSquidVSMFile</span></code></a></dt>
+<dd>Loads data from a Quantum Design SQUID VSM as used on the I10 Beamline in Diamond and in our labs.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile" title="Stoner.FileFormats.OVFFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.OVFFile</span></code></a></dt>
+<dd>OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="classes-for-specifc-instruments-mainly-ones-owned-by-the-cm-physics-group-in-leeds">
+<h4>Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)<a class="headerlink" href="#classes-for-specifc-instruments-mainly-ones-owned-by-the-cm-physics-group-in-leeds" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><dl class="docutils">
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.VSMFile.html#Stoner.FileFormats.VSMFile" title="Stoner.FileFormats.VSMFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.VSMFile</span></code></a></dt>
+<dd>The text files produced by the group&#8217;s Oxford Instruments VSM</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a></dt>
+<dd>Datafiles produced by VB Code running on the Big Blue cryostat. The
+<a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> constructors takes
+two additional parameters that specify the row on which the column headers will
+be found and the row on which the data starts.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile" title="Stoner.FileFormats.XRDFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.XRDFile</span></code></a></dt>
+<dd>Loads a scan file produced by Arkengarthdale - the group&#8217;s Brucker D8
+XRD Machine.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile" title="Stoner.FileFormats.MokeFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.MokeFile</span></code></a></dt>
+<dd>Loads a file from Leeds Condensed Matter Physics MOKE system.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile" title="Stoner.FileFormats.FmokeFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.FmokeFile</span></code></a></dt>
+<dd>Loads a file from Dan Allwood&#8217;s Focussed MOKE System in Sheffield.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile" title="Stoner.FileFormats.LSTemperatureFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.LSTemperatureFile</span></code></a></dt>
+<dd>Loads and saves data from Lakeshore inc&#8217;s .340 Temperature Calibration file format.</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="classes-for-instruments-at-major-facilities">
+<h4>Classes for Instruments at Major Facilities<a class="headerlink" href="#classes-for-instruments-at-major-facilities" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><dl class="docutils">
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.BNLFile.html#Stoner.FileFormats.BNLFile" title="Stoner.FileFormats.BNLFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BNLFile</span></code></a></dt>
+<dd>Loads a SPEC file from Brookhaven (so far only tested on u4b files but may well work with
+other synchrotron data). Produces metadata Snumber: Scan number, Stype: Type of scan, Sdatetime: date time stamp for the measurement, Smotor: z motor position.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.OpenGDAFile.html#Stoner.FileFormats.OpenGDAFile" title="Stoner.FileFormats.OpenGDAFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.OpenGDAFile</span></code></a> Reads an ascii  scan file generated by OpenGDA &#8211; a software</dt>
+<dd>suite used for synchrotron such as Diamond.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.RasorFile.html#Stoner.FileFormats.RasorFile" title="Stoner.FileFormats.RasorFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.RasorFile</span></code></a></dt>
+<dd>Simply an alias for OpenGDAFile used for the RASOR instrument on I10 at Diamond.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.SNSFile.html#Stoner.FileFormats.SNSFile" title="Stoner.FileFormats.SNSFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.SNSFile</span></code></a></dt>
+<dd>Reads the ascii export file format from <a class="reference external" href="http://sourceforge.net/projects/quicknxs/">QuickNXS</a>
+the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.MDAASCIIFile.html#Stoner.FileFormats.MDAASCIIFile" title="Stoner.FileFormats.MDAASCIIFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.MDAASCIIFile</span></code></a></dt>
+<dd>This class will read some variants of the output of mda2ascii as used at the APS in Argonne.</dd>
+</dl>
+</div></blockquote>
+<p>These classes can be used directly to load data from the appropriate format.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner</span>
+<span class="kn">import</span> <span class="nn">stoner.FileFormats</span> <span class="kn">as</span> <span class="nn">SFF</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
+<span class="n">v</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">VSMFIle</span><span class="p">()</span>
+<span class="n">v</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_VSM_data.fld&#39;</span><span class="p">)</span>
+<span class="n">c</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s">&#39;data.csv&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The load method, like many of the DataFile methods returns a copy of
+the Datafile object <strong>as well as</strong> modifying the object itself. The
+advantage of this is that it is then possible to chain several methods into one
+command</p>
+</div>
+<p>Sometimes you won&#8217;t know exactly which subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is the one
+to use. Unfortunately, there is no sure fire way of telling, but <a class="reference internal" href="../classes/Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.load()</span></code></a> will try to do
+the best it can and will try all of the subclasses in memory in turn to see if one will
+load the file without throwing an error. If this succeeds then the actual type of file that
+worked is stored in the metadata of the loaded file.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The automatic loading assumes that each load routine does sufficient sanity checking that it will
+throw and error if it gets bad data. Whilst one might wish this was always true it relies on
+whoever writes the load method to make sure of this ! If you want to stop the automatic guessing
+from happening use the <code class="docutils literal"><span class="pre">auto_load=False</span></code> keyword in the <em>load()</em> method.</p>
+</div>
+</div>
+</div>
+<div class="section" id="loading-data-from-a-string-or-iterable-object">
+<h3>Loading Data from a string or iterable object<a class="headerlink" href="#loading-data-from-a-string-or-iterable-object" title="Permalink to this headline">¶</a></h3>
+<p>In some circumstances you may have a string representation of a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object and want to
+transform this into a proper <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object. This might be, for example, from transmitting
+the data over a network connection or receiving it from another program. In these situations the
+<em>left shift operator</em> <code class="docutils literal"><span class="pre">&lt;&lt;</span></code> can be used.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">string_of_data</span>
+<span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">iterable_object</span>
+</pre></div>
+</div>
+<p>The second example would allow any object that can be iterated (i.e. has a <em>next()</em> method that returns lines
+of the data file, to be used as the source of the data. The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-meth docutils literal"><span class="pre">DataFile()</span></code></a> creates an empty object so
+that the left shift operator calls the method in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> to read the data in. It also
+determines the type of the object <code class="docutils literal"><span class="pre">data</span></code>. This also provides an alternative syntax for reading a file
+from disk:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;File on Disk.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constructing-py-class-datafile-s-from-scratch">
+<h3>Constructing :py:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>DataFile`s from Scratch<a class="headerlink" href="#constructing-py-class-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
+<p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code></a> will try its best to guess what your intention
+was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
+arguments were passed:</p>
+<div class="section" id="single-argument-constructor">
+<h4>Single Argument Constructor<a class="headerlink" href="#single-argument-constructor" title="Permalink to this headline">¶</a></h4>
+<p>A single argument passed to <a class="reference internal" href="../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code></a> is interpreted as follows:</p>
+<ul class="simple">
+<li>A string is assumed to be a filename, and therefore a DataFile is created by loading a file.</li>
+<li>A 2 numpy array is taken as the numeric data for the new DataFile</li>
+<li>A list or other iterable of strings is assumed to represent the column headers</li>
+<li>A list or other iterable of numpy arrays is assumed to represent a sequence of columns</li>
+<li>A dictionary with string keys and numpy array values of equal length is taken as a set of columns whose
+header labels are the keys of the dictionaries.</li>
+<li>Otherwise a dictionary is treated as the metadata for the new DataFile instance.</li>
+</ul>
+</div>
+<div class="section" id="two-argument-constructor">
+<h4>Two Argument Constructor<a class="headerlink" href="#two-argument-constructor" title="Permalink to this headline">¶</a></h4>
+<p>If the second argument is a dictionary or a list or other iterables of strings, then the first argument interpreted as for
+the sibgle argument constructors above, and then the second argument is interpreted in the same way. (Internally this done by calling the
+single argument constructor function twice, once for each argument.)</p>
+</div>
+<div class="section" id="many-argument-constructor">
+<h4>Many Argument Constructor<a class="headerlink" href="#many-argument-constructor" title="Permalink to this headline">¶</a></h4>
+<p>If there are more than two arguments and they are numpy arrays, then they are used as the columns of the new DataFile.</p>
+</div>
+<div class="section" id="keyword-arguments-in-constructor">
+<h4>Keyword Arguments in Constructor<a class="headerlink" href="#keyword-arguments-in-constructor" title="Permalink to this headline">¶</a></h4>
+<p>After the positional arguments are dealt with, any keywords that match attriobutes of the DataFile are used to set the corresponding
+attribute.</p>
+</div>
+<div class="section" id="examples">
+<h4>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
+<div class="code highlight-python"><div class="highlight"><pre><span class="c"># Load a file from disc, set the setas attribute and column headers</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">])</span>
+<span class="c"># Create a DataFile from a dictionary:</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">})</span>
+<span class="c"># The same, but set metadata too</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">},{</span><span class="s">&quot;User&quot;</span><span class="p">:</span><span class="s">&quot;Fred&quot;</span><span class="p">,</span><span class="s">&quot;Sample&quot;</span><span class="p">:</span><span class="s">&quot;X234_a&quot;</span><span class="p">,</span><span class="s">&quot;Field&quot;</span><span class="p">:</span><span class="mf">2.4</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="examining-and-basic-manipulations-of-data">
+<h2>Examining and Basic Manipulations of Data<a class="headerlink" href="#examining-and-basic-manipulations-of-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="data-structure">
+<h3>Data Structure<a class="headerlink" href="#data-structure" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="data-column-headers-and-metadata">
+<h4>Data, Column headers and metadata<a class="headerlink" href="#data-column-headers-and-metadata" title="Permalink to this headline">¶</a></h4>
+<p>Having loaded some data, the next stage might be to take a look at it.
+Internally, data is represented as a 2D numpy masked array of floating point numbers,
+along with a list of column headers and a dictionary that keeps the metadata and
+also keeps track of the expected type of the metadata (ie the meta-metadata).
+These can be accessed like so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span>
+<span class="n">d</span><span class="o">.</span><span class="n">metadata</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="masked-data-and-why-you-care">
+<span id="maskeddata"></span><h4>Masked Data and Why You Care<a class="headerlink" href="#masked-data-and-why-you-care" title="Permalink to this headline">¶</a></h4>
+<p>Masked data arrays differ from normal data arrays in that they include an option to mask or hide individual data elements.
+This can be useful to temporarily discount parts of your data when, for example, fitting a curve or calculating a mean
+value or plotting some data. One could, of course, simply ignore the masking option and use the data as is,
+however, masking does have a number of practical uses.</p>
+<p>The data mask can be accessed via the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.mask</span></code></a> attribute of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="kn">as</span> <span class="nn">ma</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">mask</span>
+<span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="bp">False</span>
+<span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">ma</span><span class="o">.</span><span class="n">nomask</span>
+<span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">Fale</span><span class="p">,</span><span class="o">...</span><span class="n">False</span><span class="p">],</span><span class="o">...</span><span class="p">,[</span><span class="bp">False</span><span class="p">,</span><span class="bp">True</span><span class="p">,</span><span class="o">...</span><span class="n">True</span><span class="p">]])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">50</span>
+<span class="n">d</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:[</span><span class="n">y</span><span class="o">&lt;</span><span class="mi">50</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The first line is simply the import statement for the numpy masked arrays in order to get the <em>nomask</em>
+symbol. The second line will simply print the current mask. The next two examples will unmask all the data
+i.e. make the values visible and usable. The next example illustrates using a numpy array of booleans to
+set the mask - every element in the mask array that evaluates as a boolean True will be masked and every
+False value unmasked. So far the semantics here are the same as if one had accessed the mask directly on
+the data via <code class="docutils literal"><span class="pre">d.data.mask</span></code> but the final two examples illustrate an extension that setting the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> mask attribute allows. If you pass a callable object to the mask attribute it will
+be executed, passing each row of the data array to the user supplied function as a numpy array. The user
+supplied function can then either return a single boolean value &#8211; in which case it will be used to mask
+the entire row &#8211; or a list of boolean values to mask individual cells in the current row.</p>
+<p>By default when the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object is printed or saved, data values that have been masked are replaced
+with a &#8220;fill&#8221; value of 10^20.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
+chance that you will need the masked data values again later !</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Strictgly speaking, the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code> attribute is a sub-class of the numpy masked array, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
+This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.</p>
+</div>
+</div>
+</div>
+<div class="section" id="working-with-columns-of-data">
+<h3>Working with columns of data<a class="headerlink" href="#working-with-columns-of-data" title="Permalink to this headline">¶</a></h3>
+<p>This is all very well, but often you want to examine a particular column of data
+or a particular row:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>In the first example, the first column of numeric data will be returned. In the
+second example, the column headers will first be checked for one labeled exactly
+<em>Temperature</em> and then if no column is found, the column headers will be
+searched using <em>Temperature</em> as a regular expression. This would then
+match <em>Temperature (K)</em> or <em>Sample Temperature</em>.  The third
+example results in a 2 dimensional numpy array containing two columns in the
+order that they appear in the list (ie not the order that they are in the data
+file). For completeness, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method also allows one to
+pass slices to select columns and should do the expected thing.</p>
+<p>There are a couple of convenient short cuts/ Firstly the <em>floormod</em> operator //
+is an alias for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
+of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s">&quot;Temperature&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>all return the same data.</p>
+<p>Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">As an integer where the first column on the left is index 0</p>
+</li>
+<li><dl class="first docutils">
+<dt>As a string. if the string matches a column header exactly then the index of that column is returned.</dt>
+<dd><p class="first last">If the string fails to match any column header it is compiled as a regular expression and then that
+is tried as a match. If multiple columns match then only the first is returned.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular</dt>
+<dd><p class="first last">expression in directly with any extra options (like case insensitivity flags) set.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">As a slice object (ee.g. <code class="docutils literal"><span class="pre">0:10:2</span></code>) this is expanded to a list of integers.</p>
+</li>
+<li><dl class="first docutils">
+<dt>As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and</dt>
+<dd><p class="first last">the final result would be to use a list of column indices.</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<dl class="docutils">
+<dt>For example::</dt>
+<dd>import re
+col=re.compile(&#8216;^temp&#8217;,re.IGNORECASE)
+d.column(col)</dd>
+</dl>
+<div class="section" id="other-ways-to-identify-columns-of-data">
+<span id="setas"></span><h4>Other ways to Identify Columns of Data<a class="headerlink" href="#other-ways-to-identify-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>Often in a calculation with some data you will be using one column for &#8216;x&#8217; values and one or more &#8216;y&#8217; columns
+or indeed having &#8216;z&#8217; column data and uncertainties in all of these (conventionally we call these &#8216;d&#8217;, &#8216;e&#8217; and &#8216;f&#8217; columns
+so that &#8216;e&#8217; data is the error in the y data). DataFile has a concept of marking a column as containing such data and
+will then use these by default in many methods when appropriate to have &#8216;x&#8217; and &#8216;y&#8217; data.</p>
+<p>For data that describes a vector field, you can mark the columns as containing &#8216;u&#8217;, &#8216;v&#8217;, &#8216;w&#8217; data where (u,v,w) is the vector value at the point (x,y,z). There&#8217;s no
+support at present for uncertainities in (u,v,w) being marked.</p>
+<p>To set which columns contain &#8216;x&#8217;,&#8217;y&#8217; etc data use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute. This attribute can take
+a list of single character strings from the set &#8216;x&#8217;,&#8217;y&#8217;,&#8217;z&#8217;,&#8217;d&#8217;,&#8217;e&#8217;, &#8216;f&#8217;, &#8216;u&#8217;, &#8216;v&#8217;, &#8216;w&#8217; or &#8216;.&#8217; where each element of the list refers to
+the columns of data in order. To specify that a column has unmarked data use the &#8216;.&#8217; string. The string &#8216;-&#8216; can also be used - this
+indicats that the current assignment is to be left as is.</p>
+<p>Alternately, you can pass <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> a string. In the simplest case, the string is just read in the same way that
+the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
+non-numeric character will be interpreted that many times, so:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;3.xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;...xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>There are still more ways of setting column types with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;x&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">3</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="s">&quot;3.xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">([</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All achieve the same effect of setting the same columns as containing x and y data.</p>
+<p>Once you have identified columns for the various types, you also have access to utility attributes to access those columns:</p>
+<div class="highlight-python"><div class="highlight"><pre>d.setas=&quot;3.xye&#39;
+d.x == d.column(3)
+d.y == d.column(4)
+d.e == d.column(5)
+</pre></div>
+</div>
+<p>Note that if <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> is not set then attempting to use the quick access column attributes will
+result in an exception. Once the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is set, a further set of <em>virtual</em> or <em>derived</em> column attributes
+become available.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c"># The magnitude of the point x,y,z</span>
+<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c"># The angle in the x-y plane relative to the x axis</span>
+<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c"># The angle relative to the z axis</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz..uvw&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c"># the magnitude of (u,v,w)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c"># The angle in the x-y plane of (u,v) relative to +x</span>
+<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c"># The angle of (u,v,w) relatiuve to +z</span>
+</pre></div>
+</div>
+<p>Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
+reduced number dimensions.</p>
+<p>There are some more convenience ways to set which columns to use as x,y,z etc.:</p>
+<div class="highlight-python"><div class="highlight"><pre> d.setas={&quot;x&quot;:0,&quot;y&quot;:&quot;Y Column title&quot;}
+ d.x=0
+ d.y=&quot;Y Column title&quot;
+d.setas[&quot;Temperature&quot;]=&quot;y&quot;
+</pre></div>
+</div>
+<p>In each of these cases, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will try to work out what you intended to achieve for maximum flexibility
+and convenience when writing code. However it can be fooled if one of your columns is called &#8216;x&#8217; or &#8216;y&#8217; !</p>
+</div>
+</div>
+<div class="section" id="working-with-complete-rows-of-data">
+<h3>Working with complete rows of data<a class="headerlink" href="#working-with-complete-rows-of-data" title="Permalink to this headline">¶</a></h3>
+<p>Rows don&#8217;t have labels, so are accessed directly by number:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The second example uses a slice to pull out more than one row. This syntax also
+supports the full slice syntax which allows one to, for example, decimate the
+rows, or directly pull out the last fews rows in the file.</p>
+</div>
+<div class="section" id="special-magic-when-working-with-subsets-of-data">
+<h3>Special Magic When Working with Subsets of Data<a class="headerlink" href="#special-magic-when-working-with-subsets-of-data" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned above, the data in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is a sepcial siubclass of numpy&#8217;s Masked Array - <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
+A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
+fact, the logic used for the column names and setas attribute in a <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> is actually supplied by the
+<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>. Whn you index a DataFile or it&#8217;s data, the resulting data remembers it&#8217;s column names and assignments
+and these can be used directly:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+<span class="k">print</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="o">.</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>In addition to the column assignments, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> also keeps a track of the row numbers and makes them available via
+the <em>i</em> attribute.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c"># [0,1,2,3...,len(d)]</span>
+<span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="c"># 10</span>
+</pre></div>
+</div>
+<p>You can reset the row numbers by assiging a value to the <em>i</em> attribute.</p>
+</div>
+<div class="section" id="manipulating-the-metadata">
+<h3>Manipulating the metadata<a class="headerlink" href="#manipulating-the-metadata" title="Permalink to this headline">¶</a></h3>
+<p>What happens if you use a string and not a number in the above examples ?:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="p">[</span><span class="s">&#39;User&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>in this case, it is assumed that you meant the metadata with key <em>User</em>.
+To get a list of possible keys in the metadata, you can do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(</span><span class="s">&#39;Option\:.*&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the first case, all of the keys will be returned in a list. In the second,
+only keys matching the pattern will be returned &#8211; all keys containing
+<em>Option:</em>. For compatibility with normal opython semantics: <a class="reference internal" href="../classes/Stoner.Core.DataFile.keys.html#Stoner.Core.DataFile.keys" title="Stoner.Core.DataFile.keys"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.keys()</span></code></a> is
+synonymous with <a class="reference internal" href="../classes/Stoner.Core.DataFile.dir.html#Stoner.Core.DataFile.dir" title="Stoner.Core.DataFile.dir"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir()</span></code></a>.</p>
+<p>If the string you supply to get the metadata item does not exactly match an item of
+metadata, then it is interpreted as a regular expression to try and match against all the
+items of metadata. In this case, rather than returning a single item, all of the
+matching metadata is returned as a dictionary. PAssing a compiled regular epxression
+as the item name also has the same effect - this is useful if the regular expression
+you want to match is also an exact match to one particular metadata name.</p>
+<p>We mentioned above that the metadata also keeps a note of the expected type of
+the data. You can get at the metadata type for a particular key like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s">&#39;User&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to get a dictionary of all of the types associated with each key you could do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(),</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">())))</span>
+</pre></div>
+</div>
+<p>but an easier way would be to use the <code class="xref py py-attr docutils literal"><span class="pre">typeHintedDict.types</span></code> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">types</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-on-indexing-the-data">
+<h3>More on Indexing the data<a class="headerlink" href="#more-on-indexing-the-data" title="Permalink to this headline">¶</a></h3>
+<p>There are a number o other forms of indexing supported for <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>
+objects.:</p>
+<div class="highlight-python"><div class="highlight"><pre>d[10,0]
+d[0:10,0]
+d[10,&#39;Temp&#39;]
+d[0:10,[&#39;Voltage&#39;,&#39;Temp&#39;]
+</pre></div>
+</div>
+<p>The first variant just returns the data in the 11th row, first column (remember
+indexing starts at 0). The second variant returns the first 10 values in the
+first column. The third variant demonstrates that columns can be indexed by
+string as well as number, and the last variant demonstrates indexing
+multiplerows and columns &#8211; in this case the first 10 values of the Voltage and
+Temp columns.</p>
+<p>You might think of the data as being a list of records, where each column is a
+field in the record. Numpy supports this type of structured record view of data
+and the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object provides the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.records</span></code></a>
+attribute to d this. This read-only attribute is just providing an alternative
+view of the same data.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">records</span>
+</pre></div>
+</div>
+<div class="section" id="selecting-individual-rows-and-columns-of-data">
+<h4>Selecting Individual rows and columns of data<a class="headerlink" href="#selecting-individual-rows-and-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>Many of the function in the Stoner module index columns by searching the column
+headings. If one wishes to find the numeric index of a column then the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> method can be used:</p>
+<div class="highlight-python"><div class="highlight"><pre>index=d.find_col(1)
+index=d.find_col(&#39;Temperature&#39;)
+index=d.find_col(&#39;Temp.*&#39;)
+index=d.find_col(&#39;1&#39;)
+index=d.find_col(1:10:2)
+index=d.find_col([&#39;Temperature&#39;,2,&#39;Resistance&#39;])
+index=d.find_col(re.compile(r&quot;^[A-Z]&quot;))
+</pre></div>
+</div>
+<p><a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> takes a number of different forms. If the argument
+is an integer then it returns (trivially) the same integer, a string argument is
+first checked to see if it exactly matches one of the column headers in which
+case the number of the matching column heading is returned. If no exact match is
+found then a regular expression search is carried out on the column headings. In
+both cases, only the first match is returned. If the string still doesn&#8217;t match, then
+the string is checked to see if it can be cast to an integer, in which case the integer value is used.</p>
+<p>The final three examples given above
+both return a list of indices, firstly using a slice construct - in this case
+the result is trivially the same as the slice itself, and in the second example by
+passing a list of column headers to look for. The final example uses a compiled
+regular expression. Unlike passing a string which contains a regular expression,
+passing a compiled regular expression will return a list of all columns that
+match. This distinction allows you to use a unique partial string to match just
+one column - but if you really want all possible columns that would match the
+pattern, then you can compile the regular expression and pass that instead.</p>
+<p>This is the function that is used internally by <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a>,
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> etc and for this reason the trivial integer and slice
+forms are implemented to allow these other functions to work with multiple
+columns.</p>
+<p>Sometimes you may want to iterate over all of the rows or columns in a data set.
+This can be done quite easily:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+      <span class="k">print</span> <span class="n">row</span>
+
+<span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">columns</span><span class="p">():</span>
+      <span class="k">print</span> <span class="n">column</span>
+<span class="o">......</span>
+</pre></div>
+</div>
+<p>If there is no mask set, then the first example could also have been written more compactly as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
+      <span class="k">print</span> <span class="n">row</span>
+<span class="o">......</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="../classes/Stoner.Core.DataFile.rows.html#Stoner.Core.DataFile.rows" title="Stoner.Core.DataFile.rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.rows()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Core.DataFile.columns.html#Stoner.Core.DataFile.columns" title="Stoner.Core.DataFile.columns"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.columns()</span></code></a> both take an optional parameter <em>not_masked</em>. If this is True then these iterator
+methods will skip over any rows/columns with masked out data values. When iterating over the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> instance directly the
+masked rows are skipped over.</p>
+</div>
+</div>
+<div class="section" id="searching-sectioning-and-filtering-the-data">
+<h4>Searching, sectioning and filtering the data<a class="headerlink" href="#searching-sectioning-and-filtering-the-data" title="Permalink to this headline">¶</a></h4>
+<p>In many cases you do not know which rows in the data file are of interest - in
+this case you want to search the data.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,[</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Resistance&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span>
+              <span class="n">x</span><span class="o">&lt;</span><span class="mi">1000</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">,[</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Resistance&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The general form is <code class="docutils literal"><span class="pre">DataFile.search(&lt;search</span> <span class="pre">column&gt;,&lt;search</span> <span class="pre">term&gt;[,&lt;listof</span> <span class="pre">return</span> <span class="pre">columns&gt;])</span></code></p>
+<p>The first example will return all the rows where the value of the
+<em>Tenperature</em> column is 4.2. The second example is the same, but only
+returns the values from the <em>Temperature</em>, and <em>Resistance</em>
+columns. The rules for selecting the columns are the same as for the
+DataFile.column method above &#8211; strings are matched against column headers and
+integers select column by number.</p>
+<p>The third and fourth examples above demonstrate the use of a function as the
+search value. This allows quite complex search criteria to be used. The function
+passed to the search routine should take two parameters &#8211; a floating point
+number and a numpy array of floating point numbers and should return either
+<strong>True</strong> or <strong>False</strong>. The function is evaluated for each row in the
+data file and is passed the value corresponding to the search column as the
+first parameter while the second parameter contains a list of all of the values
+in the row to be returned. If the search function returns True, then the row is
+returned, otherwise it isn&#8217;t. In thr last example, the final parameter can
+either be a list of columns or a single column. The rules for indexing columns
+are the same as used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.find_col.html#Stoner.Core.DataFile.find_col" title="Stoner.Core.DataFile.find_col"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.find_col()</span></code></a> method.</p>
+<p>The &#8216;accuracy&#8217; keyword parameter sets the level of accuracy to accept when testing
+equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
+the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.</p>
+<p>Sometimes you may want not to get the rows of data that you are looking for as a
+separate array, but merely mark them for inclusion (or exclusion) from subsequent
+operations. This is where the masked array (see &#8216;<a class="reference internal" href="#maskeddata"><span>Masked Data and Why You Care</span></a>) comes into its own.
+To select which rows of data have been masked off, use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></code></a> method.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>With just a single argument, the filter method takes a complete row at a time and passes it
+to the first argument, expecting to get a boolean response (or list olf booleans equal in length
+to the number of columns). With a second argument as in the second example, you can sepcify which
+columns are passed to the filtering function in what order. The second argument must be a list
+of things which can be used to index a column (ie strings, integers, regular expressions).</p>
+<p>Another option is to construct a new <cite>DataFile</cite> object from a section of the data - this is
+particularly useful where the <cite>DataFile</cite> represents data correspondi ng to a set of (x,y,z)
+points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y.z.&quot;</span>
+<span class="n">slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">5.2</span><span class="p">)</span>
+<span class="n">line</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">4.7</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">thick_slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">6.0</span><span class="p">))</span>
+<span class="n">arbitary</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">:</span><span class="mi">3</span><span class="o">*</span><span class="n">x</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">y</span><span class="o">+</span><span class="n">z</span><span class="o">-</span><span class="mi">4</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After the x, y, z data columns are identified, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.section()</span></code></a> method works with
+&#8216;x&#8217;, &#8216;y&#8217; and &#8216;z&#8217; keyword arguments which ar then used to search for matching data rows (the arguments to
+these keyword arguments follow the same rules as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> method).</p>
+<p>A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Search Col&quot;</span><span class="p">)</span>
+<span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the <em>xcol</em> parameter is not supplied, the value from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is used. Since the returned row
+is an instance of the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> that has been taken from the original data, it will know what row number it was and
+will make that available via it&#8217;s <em>i</em> attribute.</p>
+</div>
+<div class="section" id="find-out-more-about-the-data">
+<h4>Find out more about the data<a class="headerlink" href="#find-out-more-about-the-data" title="Permalink to this headline">¶</a></h4>
+<p>Another question you might want to ask is, what are all the unique
+values of data in a given column (or set of columns). The Python numpy
+package has a function to do this and we have a direct pass through
+from the DataFile object for this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Temp&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">return_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The two optional keywords cause the numpy routine to return the
+indices of the unique and all non-unique values in the array. The
+column is specified in the same way as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a>
+method does.</p>
+</div>
+<div class="section" id="copying-data">
+<h4>Copying Data<a class="headerlink" href="#copying-data" title="Permalink to this headline">¶</a></h4>
+<p>One of the characteristics of Python that can confuse those used to other
+programming languages is that assignments and argument passing is by reference
+and not by value. This can lead to unexpected results as you can end up modifying variables
+you were not expecting ! To help with creating genuine copies of data Python provides the copy module.
+Whilst this works with DataFile objects, for convenience, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.clone" title="Stoner.Core.DataFile.clone"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.clone</span></code></a> atribute is
+provided to make a deep copy of a DataFile object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is an attribute not a method, so there are no brackets here !</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">t</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">clone</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="modifying-data">
+<h2>Modifying Data<a class="headerlink" href="#modifying-data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="appending-data">
+<h3>Appending data<a class="headerlink" href="#appending-data" title="Permalink to this headline">¶</a></h3>
+<p>The simplest way to modify some data might be to append some columns or rows.
+The Stoner module redefines two standard operators, <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">&amp;</span></code> to
+have special meanings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&#39;some_new_data.txt&#39;</span><span class="p">)</span>
+<span class="n">add_rows</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="n">a</span>
+<span class="n">add_columns</span><span class="o">=</span><span class="n">d</span><span class="o">&amp;</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>In these example, <em>a</em> is a second DataFile object that contains some
+data. In the first example, a new DataFile object is created where the contents
+of <em>a</em> are added as new rows after the data in <em>d</em>. Any metadata
+that is in <em>a</em> and not in <em>d</em> are added to the metadata as well.
+There is a requirement, however, that the column headers of <em>d</em> and
+<em>a</em> are the same &#8211; ie that the two DataFile objects appear to represent
+similar data.</p>
+<p>In the second example, the data in <em>a</em> is added as new columns after the
+data from <em>d</em>. In this case, there is a requirement that the two DataFile
+objects have the same number of rows.</p>
+<p>These operators are not limited just to DataFile objects, you can also add numpy
+arrays to the DataFile object to append additional data.:</p>
+<div class="highlight-python"><div class="highlight"><pre>import numpy as np
+x=np.array([1,2,3])
+new_data=d+x
+y=np.array([1,2,3],[11,12,13],[21,22,23],[31,32,33]])
+new_data=d+y
+z={&quot;X&quot;:1.0,&quot;Y&quot;:2.1,&quot;Z&quot;:7.5}
+new_data=d+z
+new_data=d+[x,y,z]
+column=d.column[0]
+new_data=d&amp;column
+</pre></div>
+</div>
+<p>In the first example above, we add a single row of data to <em>d</em>. This
+assumes that the number of elements in the array matches the number of columns
+in the data file. The second example is similar but this time appends a 2
+dimensional numpy array to the data. The third example demonstrates adding data from a dictioary.
+In this case the keys of the dictionary are used to determine which column the values are added
+to. If their columns that don&#8217;t match one of the dictionary keys, then a <code class="docutils literal"><span class="pre">NaN</span></code> is inserted. If there
+are keys that don&#8217;t match columns labels, then new columns are added to the data set, filled with <code class="docutils literal"><span class="pre">NaN</span></code>.
+In the fourth example, each element in the list is added in turn to <em>d</em>. A similar effect would be achieved by doing
+<code class="docutils literal"><span class="pre">new_data=d+x+y+z</span></code>.</p>
+<p>The last example appends a numpy array as
+a column to <em>d</em>. In this case the requirement is that the numpy array has
+the same or fewer rows of data as <em>d</em>.</p>
+</div>
+<div class="section" id="id3">
+<h3>Working with Columns of Data<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="changing-individual-columns-of-data">
+<h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code> attribute is simply a 2D numpy array, so can be directly modified like any other
+numpy array might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has been used to identify columns as
+containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
+modify the data without having to keep track any further of which column(s) is indexed. This the following will work:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y..z&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="mf">5.0</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">z</span>
+<span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>When writing to the column attriobutes you must supply a numpy array with the correct number of elements (although DataFile will
+try to spot and correct if the array needs to be transposed first). If you specify more than one column has a particular type
+then you should supply a 2D array with the corresponding number of columns of data setting the attribute.</p>
+<p>In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> checks to see if you are setting something that might be a column index or a numpy array. Thus the following
+also works:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span> <span class="c"># Set the Temp column to be x data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="c"># And set the column to contain a linear array of values from 0 to 300.</span>
+</pre></div>
+</div>
+<p>You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
+On the otherhand you can do an efficient conversion to polar co-ordinates with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+<span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rearranging-columns-of-data">
+<h4>Rearranging Columns of Data<a class="headerlink" href="#rearranging-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>Sometimes it is useful to rearrange columns of data. <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> offers a couple of methods to help with this.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">headers_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="s">&#39;Temp&#39;</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Curr&#39;</span><span class="p">)])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></code></a> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
+tuples and swaps the columns accordingly, whilst the <a class="reference internal" href="../classes/Stoner.Core.DataFile.reorder_columns.html#Stoner.Core.DataFile.reorder_columns" title="Stoner.Core.DataFile.reorder_columns"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.reorder_columns()</span></code></a> method takes a
+list of column labels or indices and constructs a new data matrix out of those columns in the new order.
+The <code class="docutils literal"><span class="pre">headers_too=False</span></code> options, as the name suggests, cause the column headers not be rearranged.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The addition of the setas_too keyword to swap the column assignments around as well is new in 0.5rc1</p>
+</div>
+</div>
+<div class="section" id="renaming-columns-of-data">
+<h4>Renaming Columns of Data<a class="headerlink" href="#renaming-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>As a convenience, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> also offers a useful method to rename data columns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s">&#39;old_name&#39;</span><span class="p">,</span><span class="s">&#39;new_name&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;new_name&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively,of course, one could just edit the column_headers attribute.</p>
+</div>
+<div class="section" id="inserting-columns-of-data">
+<h4>Inserting Columns of Data<a class="headerlink" href="#inserting-columns-of-data" title="Permalink to this headline">¶</a></h4>
+<p>The append columns operator <strong>&amp;</strong> will only add columns to the end of a
+dataset. If you want to add a column of data in the middle of the data set then
+you should use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">Index</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first example simply adds a column of data to the end of the dataset and
+sets the new column headers. The second variant  inserts the new column before
+column <em>Index</em>. <em>Index</em> follows the same rules as for the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method. In the third example, the new column data is
+generated by applying the specified function. The function is passed s dingle
+row as a 1D numpy array and any of the keyword, argument pairs passed in a
+dictionary to the optional <em>func_args</em> argument.</p>
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method returns a copy of the DataFile object
+itself as well as modifying the object. This is to allow the metod to be chained
+up with other methods for more compact code writing.</p>
+</div>
+</div>
+<div class="section" id="deleting-rows-of-data">
+<h3>Deleting Rows of Data<a class="headerlink" href="#deleting-rows-of-data" title="Permalink to this headline">¶</a></h3>
+<p>Removing complete rows of data is achieved using the <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a>
+method.:</p>
+<div class="highlight-python"><div class="highlight"><pre>d.del_rows(10)
+d.del_rows(1:100:2)
+d.del_rows(&#39;X Col&#39;,value)
+d.del_rows(&#39;X Col&#39;,lambda x,y:x&gt;300)
+d.del_rows(&#39;X Col&#39;,(100,200))
+d.del_rows(;X Col&#39;,(100,200),invert=True)
+</pre></div>
+</div>
+<p>The first variant will delete row 10 from the data set (where the first row will
+be row 0). You can also supply a list or slice (as in the second example) to
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a> to delete multiple rows.</p>
+<p>If you do not know in advance which row to delete, then the remiaining
+variants provide more advanced options. The third variant searches for and
+deletes all rows in which the specified column contains <em>value</em>. The
+fourth variant selects which ros to delete by calling a user supplied function
+for each row. The user supplied function is the same in form and definitition as
+that used for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">user_func</span><span class="p">(</span><span class="n">x_val</span><span class="p">,</span><span class="n">row_as_array</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">True</span> <span class="ow">or</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>The final two variants above, use a tuple to select the data. The final example makes
+use of the <em>invert</em> keyword argument to reverse the sense used to selkect tows. In both cases
+rows are deleted(kept for <em>invert</em> = True) if the specified column lies between the maximum and minimum
+values of the tuple. The test is done inclusively. Any length two iterable object can be used
+for specifying the bounds. Fianlly, if you call <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a> with no arguments at all, then
+it removes all rows where at least one column of data is masked out.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c"># Mask all rows where the first column is greater than 50</span>
+<span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">()</span> <span class="c"># Then delete them.</span>
+</pre></div>
+</div>
+<p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
+the subtration operator can be used.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="mi">2</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">-</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">d</span><span class="o">-=-</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>The final form looks stranger than it is - it simply deletes the last row of data in place.</p>
+</div>
+<div class="section" id="deleting-columns-of-data">
+<h3>Deleting Columns of Data<a class="headerlink" href="#deleting-columns-of-data" title="Permalink to this headline">¶</a></h3>
+<p>Deleting whole columns of data can be done by referring to a column by index or
+column header - the indexing rules are the same as used for the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, there is an operator that can be used to achieve the same effect, in this
+case the modulus operator %.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s">&quot;temperature&quot;</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="mi">1</span>
+<span class="n">d</span><span class="o">%=-</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sorting-data">
+<h3>Sorting Data<a class="headerlink" href="#sorting-data" title="Permalink to this headline">¶</a></h3>
+<p>Data can be sorted by one or more columns, specifying the columns as a number or
+string for single columns or a list or tuple of strings or numbers for multiple
+columns. Currently only ascending sorts are supported.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;Temp&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&#39;Temp&#39;</span><span class="p">,</span><span class="s">&#39;Gate&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="saving-data">
+<span id="save"></span><h3>Saving Data<a class="headerlink" href="#saving-data" title="Permalink to this headline">¶</a></h3>
+<p>Only saving data in the <em>TDI format</em> and as comma or tab deliminated formats is supported.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the first case, the filename used tosave the data is determined from the
+filename attribute of the DataFile object. This will have been set when the
+filewas loaded from disc.</p>
+<p>If the filename attribute has not been set eg if the DataFile object was
+created from scratch, then the <a class="reference internal" href="../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code></a> method will cause a dialogue
+box to be raised so that the user can supply a filename.</p>
+<p>In the second variant, the supplied filename is used and the filename attribute
+is changed to match this ie <code class="docutils literal"><span class="pre">d.filename</span></code> will always return the last
+filename used for a load or save operation.</p>
+<p>The third is similar but convert the file to <code class="docutils literal"><span class="pre">cvs</span></code> format while the fourth also
+specifies that the eliminator is a tab character.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Loading and Examining Data</a><ul>
+<li><a class="reference internal" href="#loading-a-data-file">Loading a data file</a><ul>
+<li><a class="reference internal" href="#the-various-flavours-of-the-datafile-class">The Various Flavours of the <code class="docutils literal"><span class="pre">DataFile</span></code> Class</a><ul>
+<li><a class="reference internal" href="#base-classes-and-generic-formats">Base Classes and Generic Formats</a></li>
+<li><a class="reference internal" href="#classes-for-specifc-instruments-mainly-ones-owned-by-the-cm-physics-group-in-leeds">Classes for Specifc Instruments (Mainly ones owned by the CM Physics Group in Leeds)</a></li>
+<li><a class="reference internal" href="#classes-for-instruments-at-major-facilities">Classes for Instruments at Major Facilities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#loading-data-from-a-string-or-iterable-object">Loading Data from a string or iterable object</a></li>
+<li><a class="reference internal" href="#constructing-py-class-datafile-s-from-scratch">Constructing :py:class:`DataFile`s from Scratch</a><ul>
+<li><a class="reference internal" href="#single-argument-constructor">Single Argument Constructor</a></li>
+<li><a class="reference internal" href="#two-argument-constructor">Two Argument Constructor</a></li>
+<li><a class="reference internal" href="#many-argument-constructor">Many Argument Constructor</a></li>
+<li><a class="reference internal" href="#keyword-arguments-in-constructor">Keyword Arguments in Constructor</a></li>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#examining-and-basic-manipulations-of-data">Examining and Basic Manipulations of Data</a><ul>
+<li><a class="reference internal" href="#data-structure">Data Structure</a><ul>
+<li><a class="reference internal" href="#data-column-headers-and-metadata">Data, Column headers and metadata</a></li>
+<li><a class="reference internal" href="#masked-data-and-why-you-care">Masked Data and Why You Care</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#working-with-columns-of-data">Working with columns of data</a><ul>
+<li><a class="reference internal" href="#other-ways-to-identify-columns-of-data">Other ways to Identify Columns of Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#working-with-complete-rows-of-data">Working with complete rows of data</a></li>
+<li><a class="reference internal" href="#special-magic-when-working-with-subsets-of-data">Special Magic When Working with Subsets of Data</a></li>
+<li><a class="reference internal" href="#manipulating-the-metadata">Manipulating the metadata</a></li>
+<li><a class="reference internal" href="#more-on-indexing-the-data">More on Indexing the data</a><ul>
+<li><a class="reference internal" href="#selecting-individual-rows-and-columns-of-data">Selecting Individual rows and columns of data</a></li>
+<li><a class="reference internal" href="#searching-sectioning-and-filtering-the-data">Searching, sectioning and filtering the data</a></li>
+<li><a class="reference internal" href="#find-out-more-about-the-data">Find out more about the data</a></li>
+<li><a class="reference internal" href="#copying-data">Copying Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modifying-data">Modifying Data</a><ul>
+<li><a class="reference internal" href="#appending-data">Appending data</a></li>
+<li><a class="reference internal" href="#id3">Working with Columns of Data</a><ul>
+<li><a class="reference internal" href="#changing-individual-columns-of-data">Changing Individual Columns of Data</a></li>
+<li><a class="reference internal" href="#rearranging-columns-of-data">Rearranging Columns of Data</a></li>
+<li><a class="reference internal" href="#renaming-columns-of-data">Renaming Columns of Data</a></li>
+<li><a class="reference internal" href="#inserting-columns-of-data">Inserting Columns of Data</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deleting-rows-of-data">Deleting Rows of Data</a></li>
+<li><a class="reference internal" href="#deleting-columns-of-data">Deleting Columns of Data</a></li>
+<li><a class="reference internal" href="#sorting-data">Sorting Data</a></li>
+<li><a class="reference internal" href="#saving-data">Saving Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="previous chapter">Installation of Stoner Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="plotfile.html"
+                        title="next chapter">Plotting Data</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/datafile.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="plotfile.html" title="Plotting Data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation of Stoner Package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" >The Stoner Python Package User Guide</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Aug 03, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

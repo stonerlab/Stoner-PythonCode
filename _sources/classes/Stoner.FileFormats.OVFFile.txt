@@ -1,0 +1,22 @@
+Stoner.FileFormats.OVFFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: OVFFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.OVFFile.patterns
+      ~Stoner.FileFormats.OVFFile.priority
+   
+   

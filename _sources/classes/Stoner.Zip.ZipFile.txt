@@ -1,0 +1,32 @@
+Stoner.Zip.ZipFile
+==================
+
+.. currentmodule:: Stoner.Zip
+
+.. autoclass:: ZipFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Zip.ZipFile.__init__
+      ~Stoner.Zip.ZipFile._load
+      ~Stoner.Zip.ZipFile.save
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Zip.ZipFile.patterns
+      ~Stoner.Zip.ZipFile.priority
+   
+   

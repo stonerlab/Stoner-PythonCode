@@ -105,9 +105,9 @@ autosummary_generate = True
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
 intersphinx_mapping = {
+    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
    'python': ('http://docs.python.org/', None),
     'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
     'matplotlib': ('http://matplotlib.org/', None),
     'astropy': ('http://docs.astropy.org/en/stable/', None),
     'h5py': ('http://docs.h5py.org/en/latest/', None)
@@ -280,8 +280,6 @@ napoleon_use_ivar = False
 napoleon_use_param = False
 napoleon_use_rtype = False
 
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
 
 automodapi_toctreedirnm='classes'
 

@@ -1,0 +1,30 @@
+Stoner.FileFormats.BNLFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: BNLFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.BNLFile.__init__
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.BNLFile.patterns
+      ~Stoner.FileFormats.BNLFile.priority
+   
+   

@@ -1,0 +1,8 @@
+
+
+DataFile.get_filename
+=================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.get_filename

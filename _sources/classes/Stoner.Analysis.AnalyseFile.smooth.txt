@@ -1,0 +1,8 @@
+
+
+AnalyseFile.smooth
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.smooth

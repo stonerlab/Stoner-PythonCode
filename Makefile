@@ -22,6 +22,7 @@ docbuild: FORCE
 	$(MAKE) -C doc html
 	rm -rfr doc/_build
 	$(MAKE) -C doc html
-	rsync -rm --perms --chmod=ugo=rwX --delete  --filter="P .git" doc/_build/html/ ../gh-pages/
+	( cd ../gh-pages; git pull )
+	rsync -rcm --perms --chmod=ugo=rwX --delete  --filter="P .git" --filter="P .nojekyll" doc/_build/html/ ../gh-pages/
 
 FORCE:

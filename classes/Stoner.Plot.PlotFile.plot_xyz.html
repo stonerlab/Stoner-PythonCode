@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PlotFile.plot_xyz &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Plot.PlotFile" href="Stoner.Plot.PlotFile.html" />
+    <link rel="next" title="PlotFile.plot_xyzuvw" href="Stoner.Plot.PlotFile.plot_xyzuvw.html" />
+    <link rel="prev" title="PlotFile.plot_xyuv" href="Stoner.Plot.PlotFile.plot_xyuv.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.plot_xyzuvw.html" title="PlotFile.plot_xyzuvw"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.plot_xyuv.html" title="PlotFile.plot_xyuv"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Plot.PlotFile.html" accesskey="U">Stoner.Plot.PlotFile</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plotfile-plot-xyz">
+<h1>PlotFile.plot_xyz<a class="headerlink" href="#plotfile-plot-xyz" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Plot.PlotFile.plot_xyz">
+<code class="descclassname">PlotFile.</code><code class="descname">plot_xyz</code><span class="sig-paren">(</span><em>xcol=None</em>, <em>ycol=None</em>, <em>zcol=None</em>, <em>shape=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>projection='3d'</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotFile.plot_xyz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotFile.plot_xyz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xcol</strong> (<em>index</em>) &#8211;
+Xcolumn index or label</li>
+<li><strong>ycol</strong> (<em>index</em>) &#8211;
+Y column index or label</li>
+<li><strong>zcol</strong> (<em>index</em>) &#8211;
+Z column index or label</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<em>tuple</em>) &#8211;
+Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided</li>
+<li><strong>xlim</strong> (<em>tuple</em>) &#8211;
+Defines the x-axis limits and grid of the data to be plotted</li>
+<li><strong>ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted</strong></li>
+<li><strong>cmap</strong> (<em>matplotlib colour map</em>) &#8211;
+Surface colour map - defaults to the jet colour map</li>
+<li><strong>show_plot</strong> (<em>bool</em>) &#8211;
+True Turns on interactive plot control</li>
+<li><strong>title</strong> (<em>string</em>) &#8211;
+Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>save_filename</strong> (<em>string</em>) &#8211;
+Filename used to save the plot</li>
+<li><strong>figure</strong> (<em>matplotlib figure</em>) &#8211;
+Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.</li>
+<li><strong>plotter</strong> (<em>callable</em>) &#8211;
+Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.</li>
+<li><strong>projection</strong> (<em>string or None</em>) &#8211;
+Whether to use a 3D projection or regular 2D axes (deault is 3D)</li>
+<li><strong>**kargs</strong> (<em>dict</em>) &#8211;
+A dictionary of other keyword arguments to pass into the plot function.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matplotlib.figure isntance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.plot_xyuv.html"
+                        title="previous chapter">PlotFile.plot_xyuv</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.plot_xyzuvw.html"
+                        title="next chapter">PlotFile.plot_xyzuvw</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Plot.PlotFile.plot_xyz.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.plot_xyzuvw.html" title="PlotFile.plot_xyzuvw"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.plot_xyuv.html" title="PlotFile.plot_xyuv"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Plot.PlotFile.html" >Stoner.Plot.PlotFile</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Aug 03, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

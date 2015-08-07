@@ -1,0 +1,24 @@
+Stoner.Fit.TersoffHammann
+=========================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: TersoffHammann
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.TersoffHammann.__init__
+      ~Stoner.Fit.TersoffHammann.guess
+
+   
+   
+
+   
+   
+   

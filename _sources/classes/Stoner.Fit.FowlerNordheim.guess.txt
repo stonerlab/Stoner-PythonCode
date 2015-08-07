@@ -1,0 +1,8 @@
+
+
+FowlerNordheim.guess
+===============================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: FowlerNordheim.guess

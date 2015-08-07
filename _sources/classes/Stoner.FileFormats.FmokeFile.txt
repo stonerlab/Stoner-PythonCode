@@ -1,0 +1,22 @@
+Stoner.FileFormats.FmokeFile
+============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: FmokeFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.FmokeFile.patterns
+      ~Stoner.FileFormats.FmokeFile.priority
+   
+   

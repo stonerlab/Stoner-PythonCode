@@ -1,0 +1,15 @@
+Stoner.Plot.hsl2rgb
+===================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: hsl2rgb
+
+   
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,8 @@
+
+
+DataFile.closest
+============================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataFile.closest

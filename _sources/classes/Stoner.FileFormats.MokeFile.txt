@@ -1,0 +1,22 @@
+Stoner.FileFormats.MokeFile
+===========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: MokeFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.MokeFile.patterns
+      ~Stoner.FileFormats.MokeFile.priotity
+   
+   

@@ -1,0 +1,22 @@
+Stoner.PlotFormats.ThesisPlotStyle
+==================================
+
+.. currentmodule:: Stoner.PlotFormats
+
+.. autoclass:: ThesisPlotStyle
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.PlotFormats.ThesisPlotStyle.show_title
+      ~Stoner.PlotFormats.ThesisPlotStyle.stylename
+   
+   

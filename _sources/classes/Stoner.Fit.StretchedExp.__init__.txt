@@ -1,0 +1,8 @@
+
+
+StretchedExp.__init__
+================================
+
+.. currentmodule:: Stoner.Fit
+
+.. automethod:: StretchedExp.__init__

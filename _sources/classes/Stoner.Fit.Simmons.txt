@@ -1,0 +1,24 @@
+Stoner.Fit.Simmons
+==================
+
+.. currentmodule:: Stoner.Fit
+
+.. autoclass:: Simmons
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Fit.Simmons.__init__
+      ~Stoner.Fit.Simmons.guess
+
+   
+   
+
+   
+   
+   

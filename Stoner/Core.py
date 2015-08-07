@@ -8,7 +8,7 @@ Classes:
 
 """
 from __future__ import print_function
-__all__ = ["StonerLoadError", "DataFile","DataArray","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
+__all__ = ["StonerLoadError", "setas","DataFile","DataArray","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
 
 from Stoner.compat import *
 import re
@@ -161,8 +161,53 @@ class _tab_delimited(csv.Dialect):
     lineterminator = "\r\n"
 
 
-class _setas(object):
-    """A Class that provides a mechanism for managing the column assignments in a DataFile like object."""
+class setas(object):
+    """A class that provides a mechanism for managing the column assignments in a DataArray like object.
+
+    Attributes:
+        setas (list of char): THe backing store for the column assignments.
+        column_headers (list of str): The individual names of the columns
+        _cols (_attribute_store): A dict like object that tracks the column assignments
+        _shape (tuple): Defines the expected size of data to which this is linked.
+        clone (setas): Creates a copy of the current setas object.
+
+    Notes:
+        For the applications at which the Stoner Package is targetted, it is common to copnsider
+        columns of data to represent particular types of data - either a co-ordinate for data to be
+        plotted (e.g. in x-y or x-y-z cartesian space), or to contain an uncertainity in a co-ordinate
+        position. To facilitate this, the :py:class:`setas` class woprks with the :py:class:`DataArray` to
+        allow columns of data to be assigned as containing such data.
+
+        Assignments of column meanings can be done by calling the ;py:class:`setas` instance with a variety
+        of different patterns of arguments.
+
+        .. py:function:: setas(list of char)
+            :noindex:
+
+            Each column is assigned a meaning as specified by the characters in the list. The possible characters are:
+            'x','y','z','d','e','f','.' for the three cartesian co-ordinates, their resepective uncertainities and as a blank.
+            Any columns beyond the length of the list are left unassigned, whilst any elements beyond the length of the list
+            are dropped.
+
+        .. py:function:: setas(str)
+            :noindex:
+
+            Similarly to the list of chars, each character in the string is interpreted as a column assignment. The main
+            difference is that a single digit number preeceding a letter is interpreted to mean that many of
+            the following letter. e.g."x6y" is equivalent to "xyyyyyy".
+
+        .. py:function:: setas(arg1="x",arg2="y",arg3="z")
+            :noindex:
+
+            In this form, the keyword arguments are interpreted as column indices. If the argument name doesn't match exactly
+            then it is tried as a partial match to a column name. The corresponding column is set by the single letter value
+            of the keyword argument.
+
+        .. py:function:: setas(x="Column name",y=5,z=re.compile('/column/'))
+            :noindex:
+
+            In this form, the keyword arguments are x,y,z,d,e,f and are used to set the assignments.
+    """
 
     def __init__(self, initial_val=None, **kargs):
         """Constructs the setas instance and sets an initial value.
@@ -185,30 +230,36 @@ class _setas(object):
 
     @property
     def clone(self):
-            new = _setas()
-            for attr in self.__dict__:
-                if not callable(self.__dict__[attr]):
-                    new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
-            return new
+        """Returns a copy of the current :py:class:`setas` object."""
+        new = setas()
+        for attr in self.__dict__:
+            if not callable(self.__dict__[attr]):
+                new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+        return new
 
     @property
     def cols(self):
+        """Returns a dictionary like object that provides information on the number of axes and the assignments of the
+        columns represented by the current :Lpy:class:`setas` object."""
         if len(self._cols)==0:
             self._cols.update(self._get_cols())
         return self._cols
 
     @cols.setter
     def cols(self,value):
+        """Sets the columns assignments."""
         if not isinstance(value,dict):
             raise AttributeError("cols attribute must be a dictionary")
         self._cols=_attribute_store(value)
 
     @property
     def column_headers(self):
+        """Stores the column names as a list."""
         return self._column_headers
 
     @column_headers.setter
     def column_headers(self,value):
+        """Sets the current column names."""
         if isinstance(value,Iterable):
             self._column_headers=list(value)
             c=len(self._column_headers)
@@ -219,10 +270,12 @@ class _setas(object):
 
     @property
     def shape(self):
+        """Returns the shape of the data that this instance of :py:class:`setas` is managing."""
         return self._shape
 
     @shape.setter
     def shape(self,value):
+        """Ensures the shape attribute is consistent with the number of column headers and assignments."""
         if len(value)==2:  # Force setas annd acolumn_headers to match shape
             c=value[1]
             self.setas.extend(["."]*(c-len(self.setas)))
@@ -247,7 +300,7 @@ class _setas(object):
         try:
             assert len(args) == 0 or len(args) == 1
             if len(args) == 1:
-                assert isinstance(args[0], string_types) or isinstance(args[0], Iterable) or isinstance(args[0], _setas)
+                assert isinstance(args[0], string_types) or isinstance(args[0], Iterable) or isinstance(args[0], setas)
             elif len(args) == 1:
                 assert len(kargs) > 0
         except AssertionError:
@@ -270,7 +323,7 @@ class _setas(object):
                     else:
                         count = int(count)
                     value = value.replace(total, code * count, 1)
-            elif isinstance(value, _setas):
+            elif isinstance(value, setas):
                 value = value.setas
         else:
             value = kargs
@@ -889,6 +942,8 @@ class DataArray(_ma_.MaskedArray):
     """A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
+        clone (DataArray): Creates a copy of the current DataArray object with a new copy of the
+            :py:class:`setas` column assignment object.
         i (array of integers): When read, returns the row  umbers of the data. When written to, sets the
             base row index. The base row index is preserved when a DataArray is indexed.
         x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access
@@ -914,7 +969,7 @@ class DataArray(_ma_.MaskedArray):
     def __new__(cls, input_array, *args,**kargs):
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
-        setas=kargs.pop("setas",None)
+        setas_arg=kargs.pop("setas",None)
         mask=kargs.pop("mask",None)
         if isinstance(input_array,DataArray):
             i=input_array.i
@@ -922,10 +977,10 @@ class DataArray(_ma_.MaskedArray):
             i=0
         obj = _ma_.asarray(input_array,*args,**kargs).view(cls)
         # add the new attribute to the created instance
-        if setas is not None:
-            obj._setas = setas
+        if setas_arg is not None:
+            obj._setas = setas_arg
         else:
-            obj._setas=_setas()
+            obj._setas=setas()
         if mask is not None:
             obj.mask=mask
         # Finally, we must return the newly created object:
@@ -937,9 +992,9 @@ class DataArray(_ma_.MaskedArray):
         super(DataArray,self).__array_finalize__(obj)
         self.i=0
         if obj is None:
-            self._setas=_setas()
+            self._setas=setas()
         else:
-            self._setas = getattr(obj, '_setas', _setas())
+            self._setas = getattr(obj, '_setas', setas())
             if isinstance(obj,DataArray):
                 self.i=obj.i
 
@@ -1014,6 +1069,18 @@ class DataArray(_ma_.MaskedArray):
         super(DataArray,self).__setitem__(ix,val)
 
     @property
+    def clone(self):
+        """Clone the DataArray and all its attributes.
+
+        Returns:
+            (DataArray): A deep copy of the current DataArray
+        """
+
+        ret=copy.deepcopy(self)
+        ret._setas=self.setas.clone
+        return ret
+
+    @property
     def r(self):
         """Calculate the radius :math:`\\rho` co-ordinate if using spherical or polar co-ordinate systems."""
         axes = int(self._setas.cols["axes"])
@@ -1071,7 +1138,11 @@ class DataFile(object):
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
-        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
+        patterns (list of str): USed when constructing a dialog box to give the filename extensions of files that this class
+            can read.
+        priority (int): Used to contropl the order in which subclasses of :py:class:`DataFile` are tried when loading files
+            from disc. A smaller priority number will be tried before subclasses with larger priority numbers.
+        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data. See :py:class:`setas`
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
         records (numpoy record array): Returns the data in the form of a list of dictionaries.
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
@@ -1695,6 +1766,19 @@ class DataFile(object):
                     attr.append(col_check[k])
         return sorted(set(attr))
 
+    def __enter__(self):
+        """Provide a simple context manager."""
+        return self
+
+    def __exit__(self,exce_type,exce_val,exce_tb):
+        """Provides the end of the context manager.
+
+        If there are no exceptions then save the file to the default filename, otherwise have the exception raised.
+        """
+        ret=exce_type is None
+        self.save()
+        return ret
+
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b DataFile objects.
 
@@ -2039,7 +2123,7 @@ class DataFile(object):
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
         cols = len(col_headers_tmp)
-        self.data._setas = _setas("." * cols)
+        self.data._setas = setas("." * cols)
         self.data = DataArray([],setas=self.data._setas)
         for r in reader:
             if r.strip() == "":  # Blank line

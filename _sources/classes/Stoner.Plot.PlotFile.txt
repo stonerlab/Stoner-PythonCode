@@ -1,0 +1,56 @@
+Stoner.Plot.PlotFile
+====================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: PlotFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Plot.PlotFile.__init__
+      ~Stoner.Plot.PlotFile.add_column
+      ~Stoner.Plot.PlotFile.colormap_xyz
+      ~Stoner.Plot.PlotFile.contour_xyz
+      ~Stoner.Plot.PlotFile.figure
+      ~Stoner.Plot.PlotFile.griddata
+      ~Stoner.Plot.PlotFile.image_plot
+      ~Stoner.Plot.PlotFile.inset
+      ~Stoner.Plot.PlotFile.plot
+      ~Stoner.Plot.PlotFile.plot_matrix
+      ~Stoner.Plot.PlotFile.plot_xy
+      ~Stoner.Plot.PlotFile.plot_xyuv
+      ~Stoner.Plot.PlotFile.plot_xyz
+      ~Stoner.Plot.PlotFile.plot_xyzuvw
+      ~Stoner.Plot.PlotFile.quiver_plot
+      ~Stoner.Plot.PlotFile.subplot
+      ~Stoner.Plot.PlotFile.x2
+      ~Stoner.Plot.PlotFile.y2
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Plot.PlotFile.ax
+      ~Stoner.Plot.PlotFile.axes
+      ~Stoner.Plot.PlotFile.clone
+      ~Stoner.Plot.PlotFile.column_headers
+      ~Stoner.Plot.PlotFile.fig
+      ~Stoner.Plot.PlotFile.fignum
+      ~Stoner.Plot.PlotFile.labels
+      ~Stoner.Plot.PlotFile.no_fmt
+      ~Stoner.Plot.PlotFile.positional_fmt
+      ~Stoner.Plot.PlotFile.subplots
+      ~Stoner.Plot.PlotFile.template
+   
+   

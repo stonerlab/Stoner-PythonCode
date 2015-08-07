@@ -1,0 +1,8 @@
+
+
+format_error
+========================
+
+.. currentmodule:: Stoner.Util
+
+.. autofunction:: format_error

@@ -1,0 +1,22 @@
+Stoner.FileFormats.SNSFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: SNSFile
+
+   
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.SNSFile.patterns
+      ~Stoner.FileFormats.SNSFile.priority
+   
+   
