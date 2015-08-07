@@ -898,6 +898,19 @@ filename used for a load or save operation.</p>
 <p>The third is similar but convert the file to <code class="docutils literal"><span class="pre">cvs</span></code> format while the fourth also
 specifies that the eliminator is a tab character.</p>
 </div>
+<div class="section" id="loading-manipulating-and-saving-data">
+<h3>Loading, Manipulating and Saving Data<a class="headerlink" href="#loading-manipulating-and-saving-data" title="Permalink to this headline">¶</a></h3>
+<p>One common pattern is to load some data, manipulate it in some way and then save it again. To make this more convenient, the
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> provides a context-manager interface that allows it to work with a <strong>with</strong> statement.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">DataFile</span><span class="p">(</span><span class="s">&quot;My_Data.txt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data</span><span class="p">:</span>
+    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Do Something&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">data</span><span class="o">&amp;=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This will load the data file <em>My_Data.txt</em>, change some meta-data, add a column of ones and then, if no exceptions happened,
+save it back. The <a class="reference internal" href="../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code></a> method is called, so if you make any change to the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.filename" title="Stoner.Core.DataFile.filename"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.filename</span></code></a>
+then the file will be renamed on disc.</p>
+</div>
 </div>
 </div>
 
@@ -966,6 +979,7 @@ specifies that the eliminator is a tab character.</p>
 <li><a class="reference internal" href="#deleting-columns-of-data">Deleting Columns of Data</a></li>
 <li><a class="reference internal" href="#sorting-data">Sorting Data</a></li>
 <li><a class="reference internal" href="#saving-data">Saving Data</a></li>
+<li><a class="reference internal" href="#loading-manipulating-and-saving-data">Loading, Manipulating and Saving Data</a></li>
 </ul>
 </li>
 </ul>
