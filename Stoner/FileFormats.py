@@ -510,7 +510,7 @@ class TDMSFile(DataFile):
         self.column_headers = list()
         for column in data:
             nd = data[column]
-            self.add_column(nd, column)
+            self.add_column(nd, header=column)
         return self
 
 
@@ -612,7 +612,7 @@ class RigakuFile(DataFile):
 
         returns a copy of itself."""
 
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
 
 
 class XRDFile(DataFile):
@@ -693,7 +693,7 @@ class XRDFile(DataFile):
 
         returns a copy of itself."""
 
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
 
 
 class BNLFile(DataFile):

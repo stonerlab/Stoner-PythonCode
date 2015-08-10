@@ -284,7 +284,7 @@ class AnalyseFile(DataFile):
             if isinstance(result, bool) and result:
                 if replace:
                     result=col
-            self.add_column(r, header, index=result, replace=replace)
+            self.add_column(r, header=header, index=result, replace=replace)
             return self
         else:
             return r
@@ -371,10 +371,10 @@ class AnalyseFile(DataFile):
             self.mask=False
 
             if (isinstance(result, bool) and result): # Appending data and mask
-                self.add_column(fit.best_fit, column_header=header, index=None)
+                self.add_column(fit.best_fit, header=header, index=None)
                 tmp_mask=_np_.column_stack((tmp_mask,col_mask))
             elif isinstance(result, index_types): # Inserting data and mask
-                self.add_column(fit.best_fit, column_header=header, index=result, replace=replace)
+                self.add_column(fit.best_fit, header=header, index=result, replace=replace)
                 tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
             elif result is not None: # Oops restore mask and bail
                 self.mask=tmp_mask
@@ -442,9 +442,9 @@ class AnalyseFile(DataFile):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata + bdata), header, a, replace=replace)
+        self.add_column((adata + bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, err_header, a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
     def apply(self, func, col=None, replace=True, header=None, **kargs):
@@ -478,7 +478,7 @@ class AnalyseFile(DataFile):
             nc[i] = ret
         if header == None:
             header = func.__name__
-        self = self.add_column(nc, header, col)
+        self = self.add_column(nc, header=header, index=col)
         return self
 
     def bin(self, xcol=None, ycol=None, bins=0.03, mode="log", clone=True, **kargs):
@@ -726,7 +726,7 @@ class AnalyseFile(DataFile):
                 else: # Inserting data
                     tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
                 new_col=func(xdat,*popt)
-                self.add_column(new_col,index=result, replace=replace, column_header=header)
+                self.add_column(new_col,index=result, replace=replace, header=header)
                 self.mask=tmp_mask
             row = _np_.array([])
             for val,err in zip(popt,perr):
@@ -776,12 +776,12 @@ class AnalyseFile(DataFile):
             self &= symd
             self.column_headers[-1] = "Symmetric Data"
         else:
-            self.add_column(symd, "Symmetric Data", index=sym, replace=replace)
+            self.add_column(symd, header="Symmetric Data", index=sym, replace=replace)
         if asym is None:
             self &= asymd
             self.column_headers[-1] = "Asymmetric Data"
         else:
-            self.add_column(asymd, "Symmetric Data", index=asym, replace=replace)
+            self.add_column(asymd, header="Symmetric Data", index=asym, replace=replace)
 
         return self
 
@@ -824,9 +824,9 @@ class AnalyseFile(DataFile):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata - bdata) / (adata + bdata), header, a, replace=replace)
+        self.add_column((adata - bdata) / (adata + bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, err_header, a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
     def divide(self, a, b, replace=False, header=None):
@@ -866,9 +866,9 @@ class AnalyseFile(DataFile):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata / bdata), header, a, replace=replace)
+        self.add_column((adata / bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, err_header, a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
     def extrapolate(self,new_x,xcol=None,ycol=None,yerr=None,overlap=20,kind='linear'):
@@ -988,10 +988,10 @@ class AnalyseFile(DataFile):
             resultdata = _np_.append(_np_.array([0]), resultdata)
             if result is not None:
                 if isinstance(result, bool) and result:
-                    self.add_column(resultdata, result_name, replace=False)
+                    self.add_column(resultdata, header=result_name, replace=False)
                 else:
                     result_name = self.column_headers[self.find_col(result)]
-                    self.add_column(resultdata, result_name, index=result, replace=(i == 0))
+                    self.add_column(resultdata, header=result_name, index=result, replace=(i == 0))
             final.append(resultdata[-1])
         if len(final) == 1:
             final = final[0]
@@ -1375,9 +1375,9 @@ class AnalyseFile(DataFile):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata * bdata), header, a, replace=replace)
+        self.add_column((adata * bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
-            self.add_column(err_data, err_header, a + 1, replace=False)
+            self.add_column(err_data, header=err_header, index=a + 1, replace=False)
         return self
 
     def normalise(self, target, base, replace=True, header=None):
@@ -1611,7 +1611,7 @@ class AnalyseFile(DataFile):
             if header is None:
                 header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
                                                                      ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, self.column(xcol)), index=result, replace=replace, column_header=header)
+            self.add_column(_np_.polyval(p, header=self.column(xcol)), index=result, replace=replace, column_header=header)
         return p
 
     def scale(self,other,xcol=None,ycol=None,**kargs):
@@ -1783,7 +1783,7 @@ class AnalyseFile(DataFile):
         if isinstance(result,bool) and not result:
             return data[:,_.ycol]
         for yc in _.ycol:
-            self.add_column(data[:,yc],column_header=header,index=result,replace=replace)
+            self.add_column(data[:,yc],header=header,index=result,replace=replace)
         return self
 
     def span(self, column=None, bounds=None):
@@ -1851,12 +1851,12 @@ class AnalyseFile(DataFile):
 
         if isinstance(replace,bool):
             if replace:
-                self.add_column(new_y,column_header=header, index=_.ycol,replace=True)
+                self.add_column(new_y,header=header, index=_.ycol,replace=True)
                 ret=self
             else:
                 ret=new_y
         elif isinstance(replace,index_types):
-            self.add_column(new_y,column_header=header, index=replace,replace=False)
+            self.add_column(new_y,header=header, index=replace,replace=False)
             ret=self
         elif replace is None:
             ret=spline
@@ -2089,10 +2089,10 @@ class AnalyseFile(DataFile):
             err_header = "Error in " + header
         if err_calc is not None:
             err_data = err_calc(adata, bdata, e1data, e2data)
-        self.add_column((adata - bdata), header, a, replace=replace)
+        self.add_column((adata - bdata), header=header, index=a, replace=replace)
         if err_calc is not None:
             a = self.find_col(a)
-            self.add_column(err_data, err_header, a, replace=False)
+            self.add_column(err_data, header=err_header, index=a, replace=False)
         return self
 
     def threshold(self, threshold, col=None, rising=True, falling=False, xcol=None, all_vals=False, transpose=False):

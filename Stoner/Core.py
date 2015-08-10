@@ -2390,14 +2390,14 @@ class DataFile(object):
 
 #   PUBLIC METHODS
 
-    def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
 
         Keyword Arguments:
-            column_header (string): The text to set the column header to,
+            header (string): The text to set the column header to,
                 if not supplied then defaults to 'col#'
             index (index type): The  index (numeric or string) to insert (or replace) the data
             func_args (dict): If column_data is a callable object, then this argument

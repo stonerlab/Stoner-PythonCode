@@ -764,9 +764,9 @@ The append columns operator **&** will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the :py:meth:`DataFile.add_column` method.::
 
-  d.add_column(numpy.array(range(100)),'Column Header')
-  d.add_column(numpy.array(range(100)),'Column Header',Index)
-  d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
+  d.add_column(numpy.array(range(100)),header='Column Header')
+  d.add_column(numpy.array(range(100)),header='Column Header',index=Index)
+  d.add_column(lambda x: x[0]-x[1],header='Column Header',func_args=None)
 
 The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before

@@ -434,7 +434,7 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
-    def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
@@ -456,7 +456,7 @@ class PlotFile(DataFile):
             the original DataFile Instance as well as returning it."""
 
         # Call the parent method and then update this label
-        super(PlotFile,self).add_column(column_data,column_header,index,func_args,replace)
+        super(PlotFile,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
