@@ -15,6 +15,7 @@ Stoner.Core.DataFile
    
       ~Stoner.Core.DataFile.__call__
       ~Stoner.Core.DataFile.__init__
+      ~Stoner.Core.DataFile._load
       ~Stoner.Core.DataFile.add_column
       ~Stoner.Core.DataFile.closest
       ~Stoner.Core.DataFile.column
