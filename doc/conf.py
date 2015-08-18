@@ -280,9 +280,6 @@ napoleon_use_ivar = False
 napoleon_use_param = False
 napoleon_use_rtype = False
 
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
-
 automodapi_toctreedirnm='classes'
 
 [extensions]

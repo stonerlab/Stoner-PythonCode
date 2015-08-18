@@ -428,11 +428,11 @@ closely the spline follows the data points, with a *smoothing*=0.0 being a stric
 controls what the return value from the :py:meth:`AnalyseFile.spline` method reutrns. IF *replace* is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
-:py:meth:`AnalyseFile.spline` method returns a :py:class:`scipy.interpoalte.UnivararateSpline` object that can be used to
+:py:meth:`AnalyseFile.spline` method returns a :py:class:`scipy.interpolate.UnivararateSpline` object that can be used to
 evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.
 
 Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
-Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalyseFile.extrpoalte`
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalyseFile.extrapolate`
 method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As

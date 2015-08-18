@@ -458,7 +458,7 @@ class PlotFile(DataFile):
         else:
             index = self.find_col(index)
 
-        self.labels[index]=column_header
+        self.labels[index]=header
         return self
 
 

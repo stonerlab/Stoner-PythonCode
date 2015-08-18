@@ -2329,12 +2329,12 @@ class DataFile(object):
         if index is None or isinstance(index,bool) and index:
             index = len(self.column_headers)
             replace = False
-            if column_header is None:
-                column_header = "Col" + str(index)
+            if header is None:
+                header = "Col" + str(index)
         else:
             index = self.find_col(index)
-            if column_header is None:
-                column_header = self.column_headers[index]
+            if header is None:
+                header = self.column_headers[index]
 
 # The following 2 lines make the array we are adding a
 # [1, x] array, i.e. a column by first making it 2d and
@@ -2376,7 +2376,7 @@ class DataFile(object):
             else:
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1),setas=self.data._setas)
         #Finally sort out column headers
-            self.column_headers[index] = column_header
+            self.column_headers[index] = header
 
         return self
 
