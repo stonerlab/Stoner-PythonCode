@@ -1,8 +1,0 @@
-
-
-DataFolder.flatten
-=================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.flatten

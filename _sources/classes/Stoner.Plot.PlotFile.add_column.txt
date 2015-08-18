@@ -1,8 +1,0 @@
-
-
-PlotFile.add_column
-===============================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.add_column

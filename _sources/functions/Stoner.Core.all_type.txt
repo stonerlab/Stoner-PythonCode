@@ -1,8 +1,0 @@
-
-
-all_type
-====================
-
-.. currentmodule:: Stoner.Core
-
-.. autofunction:: all_type

@@ -1,8 +1,0 @@
-
-
-WLfit.__init__
-=========================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: WLfit.__init__

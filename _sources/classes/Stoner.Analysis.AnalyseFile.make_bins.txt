@@ -1,8 +1,0 @@
-
-
-AnalyseFile.make_bins
-=====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.make_bins

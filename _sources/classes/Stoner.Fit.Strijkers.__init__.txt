@@ -1,8 +1,0 @@
-
-
-Strijkers.__init__
-=============================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: Strijkers.__init__

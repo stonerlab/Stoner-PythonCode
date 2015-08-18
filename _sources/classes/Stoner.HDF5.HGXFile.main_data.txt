@@ -1,8 +1,0 @@
-
-
-HGXFile.main_data
-=============================
-
-.. currentmodule:: Stoner.HDF5
-
-.. automethod:: HGXFile.main_data

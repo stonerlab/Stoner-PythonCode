@@ -1,8 +1,0 @@
-
-
-cfg_data_from_ini
-============================
-
-.. currentmodule:: Stoner.Fit
-
-.. autofunction:: cfg_data_from_ini

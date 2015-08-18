@@ -1,8 +1,0 @@
-
-
-Langevin.guess
-=========================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: Langevin.guess

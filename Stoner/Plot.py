@@ -38,13 +38,8 @@ class PlotFile(DataFile):
         kargs (dict):  keyword arguments to pass to \b DataFile.__init__
 
     Attributes:
-        fig (matplotlib.figure): The current figure object being worked with.
-        labels (list of string): List of axis labels as aternates to the column_headers.
-        xlabel (str): Wrapper for :py:func:`matplotlib.pyplot.set_xlabel` to label x-axis.
-        ylabel (str): Wrapper for :py:func:`matplotlib.pyplot.set_ylabel` to label y-axis.
-        title (str): Wrapper for :py:func:`matplotlib.pyplot.set_title` to set the plot title.
-        xlim (2-tuple): Sets the limits of the x-axis (wrapping :py:func:`matplotlib.pyplot.set_xlim`)
-        ylim (2-tuple): Sets the limits of the x-axis (wrapping :py:func:`matplotlib.pyplot.set_ylim`)
+        fig (matplotlib.figure): The current figure object being worked with
+        labels (list of string): List of axis labels as aternates to the column_headers
 
     """
 

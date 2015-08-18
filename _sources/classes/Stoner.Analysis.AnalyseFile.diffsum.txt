@@ -1,8 +1,0 @@
-
-
-AnalyseFile.diffsum
-===================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.diffsum

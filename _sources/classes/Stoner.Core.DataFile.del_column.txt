@@ -1,8 +1,0 @@
-
-
-DataFile.del_column
-===============================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: DataFile.del_column

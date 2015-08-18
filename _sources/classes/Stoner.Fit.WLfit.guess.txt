@@ -1,8 +1,0 @@
-
-
-WLfit.guess
-======================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: WLfit.guess

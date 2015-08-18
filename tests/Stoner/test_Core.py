@@ -55,7 +55,6 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
         self.assertTrue(np.all(self.d.y==self.d.column(1)),"y attribute not right.")
         self.assertTrue(np.all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
-        self.assertTrue(len(self.d.dict_records)==len(self.d) and isinstance(self.d.dict_records[0],dict),"Check dict_records returns an array of dicts.")
 
     def test_setas(self):
         #Check readback of setas

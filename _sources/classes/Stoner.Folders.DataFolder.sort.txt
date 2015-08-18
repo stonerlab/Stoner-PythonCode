@@ -1,8 +1,0 @@
-
-
-DataFolder.sort
-==============================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: DataFolder.sort

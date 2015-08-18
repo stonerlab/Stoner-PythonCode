@@ -1,8 +1,0 @@
-
-
-ZipFolder.save
-=========================
-
-.. currentmodule:: Stoner.Zip
-
-.. automethod:: ZipFolder.save

@@ -1,8 +1,0 @@
-
-
-TersoffHammann.guess
-===============================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: TersoffHammann.guess

@@ -1,8 +1,0 @@
-
-
-AnalyseFile.normalise
-=====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.normalise

@@ -1,8 +1,0 @@
-
-
-isNone
-==================
-
-.. currentmodule:: Stoner.Core
-
-.. autofunction:: isNone

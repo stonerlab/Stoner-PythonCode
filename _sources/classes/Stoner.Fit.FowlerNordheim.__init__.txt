@@ -1,8 +1,0 @@
-
-
-FowlerNordheim.__init__
-==================================
-
-.. currentmodule:: Stoner.Fit
-
-.. automethod:: FowlerNordheim.__init__

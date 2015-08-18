@@ -1,8 +1,0 @@
-
-
-AnalyseFile.split
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.split
