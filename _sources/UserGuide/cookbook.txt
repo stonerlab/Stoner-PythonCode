@@ -8,10 +8,10 @@ done with the Stoner python module in just a few lines.
 The Util module
 ===============
 
+.. currentmodule:: Stoner.Util
+
 The **Stoner** package comes with an extra :py:mod:`Stoner.Util` module that includes some handy utility
 functions.
-
-.. currentmodule:: Stoner.Util
 
 The :py:class:`Data` Class
 --------------------------
@@ -36,7 +36,7 @@ rising or falling. This is designed to help deal with analysis problems involvin
 
 In this example *folder* is a :py:class:`Stoner.Folders.DataFolder` instance with two groups, one for rising values of the column
 and one for falling values of the column. The :py:func:`split\_up_down` will take an optional third parameter
-which is an existing :py:class:`Stoner.Folders.DataFolder` instance to which the new groups (if they
+which is an existing :py:class:`Stoner.Core.DataFolder` instance to which the new groups (if they
 don't already exist) and files will be added.
 
 Analysis of Hysteresis Loops

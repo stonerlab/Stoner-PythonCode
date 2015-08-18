@@ -1,0 +1,15 @@
+Stoner.HDF5.absolute_import
+===========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. autoclass:: absolute_import
+
+   
+
+   
+   
+
+   
+   
+   

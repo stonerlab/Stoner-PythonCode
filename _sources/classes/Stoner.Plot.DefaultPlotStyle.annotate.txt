@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.annotate
+=====================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: DefaultPlotStyle.annotate

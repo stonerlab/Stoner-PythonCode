@@ -1,0 +1,15 @@
+Stoner.Plot.index_types
+=======================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: index_types
+
+   
+
+   
+   
+
+   
+   
+   

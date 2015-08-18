@@ -758,10 +758,10 @@ closely the spline follows the data points, with a <em>smoothing*=0.0 being a st
 controls what the return value from the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline" title="Stoner.Analysis.AnalyseFile.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.spline()</span></code></a> method reutrns. IF <em>replace</em> is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If <em>replace</em> is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if <em>replace</em> is None, then the
-<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline" title="Stoner.Analysis.AnalyseFile.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.spline()</span></code></a> method returns a <code class="xref py py-class docutils literal"><span class="pre">scipy.interpoalte.UnivararateSpline</span></code> object that can be used to
+<a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline" title="Stoner.Analysis.AnalyseFile.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.spline()</span></code></a> method returns a <code class="xref py py-class docutils literal"><span class="pre">scipy.interpolate.UnivararateSpline</span></code> object that can be used to
 evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.</p>
 <p>Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially &#8216;inventing&#8217; new data.
-Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the <code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.extrpoalte()</span></code>
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.extrapolate.html#Stoner.Analysis.AnalyseFile.extrapolate" title="Stoner.Analysis.AnalyseFile.extrapolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.extrapolate()</span></code></a>
 method is likely to be more successful. <code class="xref py py-meth docutils literal"><span class="pre">AbnalyseFile.extrapolate()</span></code> works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
@@ -845,10 +845,7 @@ less equal significance. By default, only peaks are returned in order of x posit
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>, <a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/peaks_example.png" src="../_images/peaks_example.png" />
-</div>
+<p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>)</p>
 </div>
 </div>
 </div>
@@ -945,7 +942,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 07, 2015.
+      Last updated on Aug 18, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

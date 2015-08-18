@@ -81,7 +81,7 @@ which are produced by some of the LabVIEW rigs used by the Device Materials Grou
 <div class="section" id="the-various-flavours-of-the-datafile-class">
 <h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
 <p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load" title="Stoner.Core.DataFile._load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code></a> method that
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code> method that
 understands how to reqad the relevant file.</p>
 <div class="section" id="base-classes-and-generic-formats">
 <h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
@@ -787,9 +787,9 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 <p>The append columns operator <strong>&amp;</strong> will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">Index</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first example simply adds a column of data to the end of the dataset and
@@ -898,19 +898,6 @@ filename used for a load or save operation.</p>
 <p>The third is similar but convert the file to <code class="docutils literal"><span class="pre">cvs</span></code> format while the fourth also
 specifies that the eliminator is a tab character.</p>
 </div>
-<div class="section" id="loading-manipulating-and-saving-data">
-<h3>Loading, Manipulating and Saving Data<a class="headerlink" href="#loading-manipulating-and-saving-data" title="Permalink to this headline">¶</a></h3>
-<p>One common pattern is to load some data, manipulate it in some way and then save it again. To make this more convenient, the
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> provides a context-manager interface that allows it to work with a <strong>with</strong> statement.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">DataFile</span><span class="p">(</span><span class="s">&quot;My_Data.txt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">data</span><span class="p">:</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Do Something&quot;</span><span class="p">]</span><span class="o">=</span><span class="bp">True</span>
-    <span class="n">data</span><span class="o">&amp;=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>This will load the data file <em>My_Data.txt</em>, change some meta-data, add a column of ones and then, if no exceptions happened,
-save it back. The <a class="reference internal" href="../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.save()</span></code></a> method is called, so if you make any change to the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.filename" title="Stoner.Core.DataFile.filename"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.filename</span></code></a>
-then the file will be renamed on disc.</p>
-</div>
 </div>
 </div>
 
@@ -979,7 +966,6 @@ then the file will be renamed on disc.</p>
 <li><a class="reference internal" href="#deleting-columns-of-data">Deleting Columns of Data</a></li>
 <li><a class="reference internal" href="#sorting-data">Sorting Data</a></li>
 <li><a class="reference internal" href="#saving-data">Saving Data</a></li>
-<li><a class="reference internal" href="#loading-manipulating-and-saving-data">Loading, Manipulating and Saving Data</a></li>
 </ul>
 </li>
 </ul>
@@ -1037,7 +1023,7 @@ then the file will be renamed on disc.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 07, 2015.
+      Last updated on Aug 18, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

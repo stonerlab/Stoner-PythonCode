@@ -69,12 +69,12 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np_</span>
 
 
-<div class="viewcode-block" id="TexFormatter"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
+<div class="viewcode-block" id="TexFormatter"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.html#Stoner.Plot.TexFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexFormatter</span><span class="p">(</span><span class="n">Formatter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code</span>
 <span class="sd">    so that large numbers are registered as \\times 10^{power}</span>
 <span class="sd">    rather than ysing E notation.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TexFormatter.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.__call__.html#Stoner.PlotFormats.TexFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TexFormatter.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.__call__.html#Stoner.Plot.TexFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">_np_</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
@@ -89,14 +89,14 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="s">&quot;$0.0$&quot;</span>
         <span class="k">return</span> <span class="n">ret</span>
 </div>
-<div class="viewcode-block" id="TexFormatter.format_data"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.format_data.html#Stoner.PlotFormats.TexFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="TexFormatter.format_data"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.format_data.html#Stoner.Plot.TexFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TexFormatter.format_data_short"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.format_data_short.html#Stoner.PlotFormats.TexFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="TexFormatter.format_data_short"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexFormatter.format_data_short.html#Stoner.Plot.TexFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;{:g}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="TexEngFormatter"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexEngFormatter</span><span class="p">(</span><span class="n">EngFormatter</span><span class="p">):</span>
+<div class="viewcode-block" id="TexEngFormatter"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.Plot.TexEngFormatter">[docs]</a><span class="k">class</span> <span class="nc">TexEngFormatter</span><span class="p">(</span><span class="n">EngFormatter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An axis tick label formatter that emits Tex formula mode code</span>
 <span class="sd">    so that large numbers are registered as \\times 10^{power}</span>
 <span class="sd">    rather than ysing E notation.&quot;&quot;&quot;</span>
@@ -112,7 +112,7 @@
         <span class="mi">24</span><span class="p">:</span> <span class="s">&quot;Y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s">&quot;m&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">mu&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s">&quot;n&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s">&quot;p&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s">&quot;f&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s">&quot;y&quot;</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="TexEngFormatter.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.__call__.html#Stoner.PlotFormats.TexEngFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="TexEngFormatter.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.__call__.html#Stoner.Plot.TexEngFormatter.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the value ina  suitable texable format&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">_np_</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
@@ -128,14 +128,14 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="s">&quot;$0.0$&quot;</span>
         <span class="k">return</span> <span class="n">ret</span>
 </div>
-<div class="viewcode-block" id="TexEngFormatter.format_data"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.format_data.html#Stoner.PlotFormats.TexEngFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="TexEngFormatter.format_data"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.format_data.html#Stoner.Plot.TexEngFormatter.format_data">[docs]</a>    <span class="k">def</span> <span class="nf">format_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TexEngFormatter.format_data_short"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.format_data_short.html#Stoner.PlotFormats.TexEngFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="TexEngFormatter.format_data_short"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.TexEngFormatter.format_data_short.html#Stoner.Plot.TexEngFormatter.format_data_short">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_short</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;{:g}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="DefaultPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">DefaultPlotStyle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.Plot.DefaultPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">DefaultPlotStyle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Produces a default plot style.</span>
 
 <span class="sd">    To produce alternative plot styles, create subclasses of this plot. Either override or</span>
@@ -202,7 +202,7 @@
         <span class="p">}</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="DefaultPlotStyle.__init__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.PlotFormats.DefaultPlotStyle.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.__init__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__init__.html#Stoner.Plot.DefaultPlotStyle.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a template instance of this template.</span>
 
 <span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
@@ -210,7 +210,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__call__.html#Stoner.PlotFormats.DefaultPlotStyle.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__call__.html#Stoner.Plot.DefaultPlotStyle.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calling the template object can manipulate the rcParams that will be set.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="n">nk</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;..&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span>
@@ -248,7 +248,7 @@
         <span class="n">levels</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="n">mro</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s">&quot;stylelib&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
 
-<div class="viewcode-block" id="DefaultPlotStyle.update"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.PlotFormats.DefaultPlotStyle.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.update"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.update.html#Stoner.Plot.DefaultPlotStyle.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update the template with new attributes from keyword arguments.</span>
 <span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
 <span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
@@ -257,7 +257,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&quot;template_&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.new_figure"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.PlotFormats.DefaultPlotStyle.new_figure">[docs]</a>    <span class="k">def</span> <span class="nf">new_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.new_figure"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.new_figure.html#Stoner.Plot.DefaultPlotStyle.new_figure">[docs]</a>    <span class="k">def</span> <span class="nf">new_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This is called by PlotFile to setup a new figure before we do anything.&quot;&quot;&quot;</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">rcdefaults</span><span class="p">()</span>  <span class="c"># Start by resetting to our default settings</span>
         <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -305,7 +305,7 @@
                 <span class="n">ret</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_figure_figsize</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span><span class="p">,</span> <span class="n">ax</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.PlotFormats.DefaultPlotStyle.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.apply.html#Stoner.Plot.DefaultPlotStyle.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scan for all attributes that start templtate_ and build them into a dictionary</span>
 <span class="sd">        to update matplotlib settings with.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -313,12 +313,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.customise"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.PlotFormats.DefaultPlotStyle.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.customise"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise.html#Stoner.Plot.DefaultPlotStyle.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This method is supplied for sub classes to override to provide additional</span>
 <span class="sd">        plot customisation after the rc paramaters are updated from the class and</span>
 <span class="sd">        instance attributes.&quot;&quot;&quot;</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.PlotFormats.DefaultPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.Plot.DefaultPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This method is run when we have an axis to manipulate.</span>
 
 <span class="sd">        Args:</span>
@@ -348,7 +348,7 @@
             <span class="n">ax</span><span class="o">.</span><span class="n">set_zticklabels</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_zticks</span><span class="p">(),</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">template_ztick_labelsize</span><span class="p">)</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zformatter</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="DefaultPlotStyle.annotate"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.PlotFormats.DefaultPlotStyle.annotate">[docs]</a>    <span class="k">def</span> <span class="nf">annotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultPlotStyle.annotate"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.annotate.html#Stoner.Plot.DefaultPlotStyle.annotate">[docs]</a>    <span class="k">def</span> <span class="nf">annotate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Call all the routines necessary to annotate the axes etc.</span>
 
 <span class="sd">        Args:</span>
@@ -381,7 +381,7 @@
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">pass</span>
 </div></div>
-<div class="viewcode-block" id="GBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.GBPlotStyle.html#Stoner.PlotFormats.GBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">GBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="GBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.GBPlotStyle.html#Stoner.Plot.GBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">GBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Template developed for Gavin&#39;s plotting.</span>
 <span class="sd">    </span>
 <span class="sd">    This is largely an experimental class for trying things out rather than</span>
@@ -397,7 +397,7 @@
     <span class="n">yformatter</span> <span class="o">=</span> <span class="n">TexEngFormatter</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;GBStyle&quot;</span>
 
-<div class="viewcode-block" id="GBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.GBPlotStyle.customise_axes.html#Stoner.PlotFormats.GBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="GBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.GBPlotStyle.customise_axes.html#Stoner.Plot.GBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the default axis configuration&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">GBPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
@@ -409,7 +409,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">draw</span>
 
 </div></div>
-<div class="viewcode-block" id="JTBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBPlotStyle.html#Stoner.PlotFormats.JTBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">JTBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="JTBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBPlotStyle.html#Stoner.Plot.JTBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">JTBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.</span>
 <span class="sd">    </span>
 <span class="sd">    Example</span>
@@ -421,28 +421,28 @@
     <span class="n">show_title</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;JTB&quot;</span>
 
-<div class="viewcode-block" id="JTBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBPlotStyle.customise_axes.html#Stoner.PlotFormats.JTBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="JTBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBPlotStyle.customise_axes.html#Stoner.Plot.JTBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="k">pass</span>
 
 </div></div>
-<div class="viewcode-block" id="JTBinsetStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBinsetStyle.html#Stoner.PlotFormats.JTBinsetStyle">[docs]</a><span class="k">class</span> <span class="nc">JTBinsetStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="JTBinsetStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBinsetStyle.html#Stoner.Plot.JTBinsetStyle">[docs]</a><span class="k">class</span> <span class="nc">JTBinsetStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.&quot;&quot;&quot;</span>
 
     <span class="n">show_title</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;JTBinset&quot;</span>
 
-<div class="viewcode-block" id="JTBinsetStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBinsetStyle.customise_axes.html#Stoner.PlotFormats.JTBinsetStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="JTBinsetStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.JTBinsetStyle.customise_axes.html#Stoner.Plot.JTBinsetStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="k">pass</span>
 
 </div></div>
-<div class="viewcode-block" id="ThesisPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">ThesisPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="ThesisPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.Plot.ThesisPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">ThesisPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Template class for Joe&#39;s Plot settings.&quot;&quot;&quot;</span>
 
     <span class="n">show_title</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;thesis&quot;</span>
 
 </div>
-<div class="viewcode-block" id="PRBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.PlotFormats.PRBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">PRBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="PRBPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.Plot.PRBPlotStyle">[docs]</a><span class="k">class</span> <span class="nc">PRBPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A figure Style for making figures for Phys Rev * Jounrals.</span>
 <span class="sd">    </span>
 <span class="sd">    Example</span>
@@ -452,11 +452,11 @@
     <span class="n">show_title</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;PRB&quot;</span>
 
-<div class="viewcode-block" id="PRBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.PRBPlotStyle.customise_axes.html#Stoner.PlotFormats.PRBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="PRBPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.PRBPlotStyle.customise_axes.html#Stoner.Plot.PRBPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">locator_params</span><span class="p">(</span><span class="n">tight</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="SketchPlot"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.html#Stoner.PlotFormats.SketchPlot">[docs]</a><span class="k">class</span> <span class="nc">SketchPlot</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="SketchPlot"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.html#Stoner.Plot.SketchPlot">[docs]</a><span class="k">class</span> <span class="nc">SketchPlot</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Turn on xkcd plot style.</span>
 
 <span class="sd">    Implemented as a bit of a joke, but perhaps someone will use this in a real</span>
@@ -470,10 +470,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">stylename</span> <span class="o">=</span> <span class="s">&quot;sketch&quot;</span>
 
-<div class="viewcode-block" id="SketchPlot.customise"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.customise.html#Stoner.PlotFormats.SketchPlot.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SketchPlot.customise"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.customise.html#Stoner.Plot.SketchPlot.customise">[docs]</a>    <span class="k">def</span> <span class="nf">customise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="SketchPlot.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.customise_axes.html#Stoner.PlotFormats.SketchPlot.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
+<div class="viewcode-block" id="SketchPlot.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SketchPlot.customise_axes.html#Stoner.Plot.SketchPlot.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Override the default axis configuration&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SketchPlot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s">&quot;top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
@@ -535,7 +535,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 07, 2015.
+      Last updated on Aug 18, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

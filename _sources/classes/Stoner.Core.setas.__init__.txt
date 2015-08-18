@@ -1,8 +1,0 @@
-
-
-setas.__init__
-==========================
-
-.. currentmodule:: Stoner.Core
-
-.. automethod:: setas.__init__

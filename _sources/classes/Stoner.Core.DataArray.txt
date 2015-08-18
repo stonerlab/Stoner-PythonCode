@@ -16,7 +16,6 @@ Stoner.Core.DataArray
 
    .. autosummary::
    
-      ~Stoner.Core.DataArray.clone
       ~Stoner.Core.DataArray.i
       ~Stoner.Core.DataArray.p
       ~Stoner.Core.DataArray.q
