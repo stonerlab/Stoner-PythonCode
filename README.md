@@ -138,6 +138,8 @@ indexing data by column name and designation.
 Online documentation for the development version can be found on the
 [githib repository pages](http://gb119.github.io/Stoner-PythonCode)
 
+[![image](https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg)](https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode)
+
 Stable Version
 --------------
 
