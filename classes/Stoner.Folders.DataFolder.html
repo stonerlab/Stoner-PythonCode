@@ -216,29 +216,53 @@ Calculate the average value of each column and add it as metadata entries to the
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-obj docutils literal"><span class="pre">group</span></code></a>(key)</td>
 <td>Take the files and sort them into a series of separate DataFolder objects according to the value of the key</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.next.html#Stoner.Folders.DataFolder.next" title="Stoner.Folders.DataFolder.next"><code class="xref py py-obj docutils literal"><span class="pre">next</span></code></a>(elf)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.keys.html#Stoner.Folders.DataFolder.keys" title="Stoner.Folders.DataFolder.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<td>An alias for self.lsgrp as a gwenerator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.next.html#Stoner.Folders.DataFolder.next" title="Stoner.Folders.DataFolder.next"><code class="xref py py-obj docutils literal"><span class="pre">next</span></code></a>(elf)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.prune.html#Stoner.Folders.DataFolder.prune" title="Stoner.Folders.DataFolder.prune"><code class="xref py py-obj docutils literal"><span class="pre">prune</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.prune.html#Stoner.Folders.DataFolder.prune" title="Stoner.Folders.DataFolder.prune"><code class="xref py py-obj docutils literal"><span class="pre">prune</span></code></a>()</td>
 <td>Remove any groups from the DataFolder (and subgroups).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.save.html#Stoner.Folders.DataFolder.save" title="Stoner.Folders.DataFolder.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([root])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.save.html#Stoner.Folders.DataFolder.save" title="Stoner.Folders.DataFolder.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([root])</td>
 <td>Save the entire data folder out to disc using the groups as a directory tree, calling the save method for each file in turn.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.select.html#Stoner.Folders.DataFolder.select" title="Stoner.Folders.DataFolder.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.select.html#Stoner.Folders.DataFolder.select" title="Stoner.Folders.DataFolder.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A generator that can be used to select particular data files from the DataFolder</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
 <td>Sort the files by some key</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.unflatten.html#Stoner.Folders.DataFolder.unflatten" title="Stoner.Folders.DataFolder.unflatten"><code class="xref py py-obj docutils literal"><span class="pre">unflatten</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.unflatten.html#Stoner.Folders.DataFolder.unflatten" title="Stoner.Folders.DataFolder.unflatten"><code class="xref py py-obj docutils literal"><span class="pre">unflatten</span></code></a>()</td>
 <td>Takes a file list an unflattens them according to the file paths.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></code></a>(walker[,&nbsp;group,&nbsp;...])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></code></a>(walker[,&nbsp;group,&nbsp;...])</td>
 <td>Walks through a heirarchy of groups and calls walker for each file.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups" title="Stoner.Folders.DataFolder.zip_groups"><code class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></code></a>(groups)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups" title="Stoner.Folders.DataFolder.zip_groups"><code class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></code></a>(groups)</td>
 <td>Return a list of tuples of DataFiles drawn from the specified groups</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">basenmes</span></code></td>
+<td>Returns a list of just the filename parts of the DataFolder.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">loaded</span></code></td>
+<td>An iterator that indicates wether the contents of the <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> has been loaded into memory.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.ls" title="Stoner.Folders.DataFolder.ls"><code class="xref py py-obj docutils literal"><span class="pre">ls</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">lsgrps</span></code></td>
+<td>Returns a list of the groups as a generator.</td>
 </tr>
 </tbody>
 </table>
@@ -306,7 +330,7 @@ Calculate the average value of each column and add it as metadata entries to the
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Aug 18, 2015.
+      Last updated on Sep 07, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

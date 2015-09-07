@@ -105,6 +105,9 @@ as the main data store with a custom sub-class that contains most of the logic f
 
 Online documentation for the development version can be found on the `githib repository pages`_
 
+.. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
+   :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
+
 
 Stable Version
 --------------

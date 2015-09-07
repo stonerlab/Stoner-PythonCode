@@ -23,6 +23,7 @@ Stoner.Folders.DataFolder
       ~Stoner.Folders.DataFolder.gather
       ~Stoner.Folders.DataFolder.getlist
       ~Stoner.Folders.DataFolder.group
+      ~Stoner.Folders.DataFolder.keys
       ~Stoner.Folders.DataFolder.next
       ~Stoner.Folders.DataFolder.prune
       ~Stoner.Folders.DataFolder.save
@@ -36,5 +37,14 @@ Stoner.Folders.DataFolder
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Folders.DataFolder.basenmes
+      ~Stoner.Folders.DataFolder.loaded
+      ~Stoner.Folders.DataFolder.ls
+      ~Stoner.Folders.DataFolder.lsgrps
    
    
