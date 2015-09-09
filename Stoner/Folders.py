@@ -16,6 +16,7 @@ import unicodedata
 import string
 from collections import Iterable
 from inspect import ismethod
+import matplotlib.pyplot as plt
 
 from .Core import DataFile
 
@@ -23,23 +24,28 @@ class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
     Attributes:
+        basenames (list of str): Returns the list of files after passing through os.path.basename()
+        depth (int): Maximum number of levels of groups below this :py:class:`DataFolder`.
         directory (string): Root directory of the files handled by the DataFolder
+        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`
+           objects.
         files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
         groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
-        read_means (bool): If true, create metadata when reading each file that is the mean of each column
+        ls (list of str): Returns a list of filenames (either the matched filename patterns, or
+            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
+        loaded (list of bool): Inidicates which fiels are loaded in memory for the :py:class:`DataFolder`
+        lsgrp (list of str): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+        mindepth (int): Minimum number of levels of groups from this :py:class:`DataFolder` to a terminal group.
+        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
         pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included.
             If pattern is a compiled reular expression with named groups then the named groups are used to
             generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of
             files included in the py:class:`DataFolder` is the union of files that match any single pattern.
-        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
-        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`
-           objects.
-        basenames (list of string): Returns the list of files after passing through os.path.basename()
-        ls (list of strings): Returns a list of filenames (either the matched filename patterns, or
-            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
-        lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
+        read_means (bool): If true, create metadata when reading each file that is the mean of each column
         setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.DataFile.setas` attribute for each
             :py:class:`Stoner.Core.DataFile` in the folder.
+        type (DataFile): The type of the members of the :py:class:`DataFolder`. Can be either a subclass of 
+            :py:class:`Stoner.Core.DataFile` or an instance of one (in which ase the class of the instance is used).
 
     Args:
         directory (string or :py:class:`DataFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
@@ -61,6 +67,10 @@ class DataFolder(object):
         Handle :py:meth:`__init__(DataFolder)` with subclasses
 
     """
+    
+    _type=DataFile # class attribute to keep things happy  
+    _pattern=None
+    
     def __init__(self, *args, **kargs):
         self.directory=None
         self.files=[]
@@ -71,23 +81,10 @@ class DataFolder(object):
         self._file_attrs=dict()
         if not "type" in kargs:
             self.type=DataFile
-        elif issubclass(kargs["type"], DataFile):
+        else:
             self.type=kargs["type"]
             del kargs["type"]
-        else:
-            raise ValueError("type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance")
-        if not "pattern" in kargs:
-            self.pattern=("*.*",)
-        else:
-            if isinstance(kargs["pattern"],string_types):
-                self.pattern=(kargs["pattern"],)
-            elif isinstance(kargs["pattern"],re._pattern_type):
-                self.pattern=(kargs["pattern"],)
-            elif isinstance(kargs["pattern"],Iterable):
-                self.pattern=[x for x in kargs["pattern"]]
-            else:
-                raise ValueError("pattern should be a string, regular expression or iterable object")
-            del kargs["pattern"]
+        self.pattern=kargs.pop("pattern","*.*")
         if not "nolist" in kargs:
             self.nolist=(len(args)==0)
         else:
@@ -129,12 +126,12 @@ class DataFolder(object):
             if not self.nolist:
                 self.getlist()
 
-        ################################################################################
+    ################################################################################
     ####### Property Methods #######################################################
     ################################################################################
 
     @property
-    def basenmes(self):
+    def basenames(self):
         """Returns a list of just the filename parts of the DataFolder."""
         ret=[]
         for x in self.files:
@@ -143,6 +140,17 @@ class DataFolder(object):
             elif isinstance(x,string_types):
                 ret.append(path.basename(x))
         return ret
+        
+    @property
+    def depth(self):
+        """Gives the maximum number of levels of group below the current DataFolder."""
+        if len(self.groups)==0:
+            r=0
+        else:
+            r=1
+            for g in self.groups:
+                r=max(r,self.groups[g].depth+1)
+        return r
 
     @property
     def loaded(self):
@@ -152,7 +160,7 @@ class DataFolder(object):
             yield isinstance(f,DataFile)
 
     @property    
-    def lsgrps(self):
+    def lsgrp(self):
         """Returns a list of the groups as a generator."""
         for k in self.groups.keys():
             yield k
@@ -166,6 +174,49 @@ class DataFolder(object):
             elif isinstance(f,DataFile):
                 ret.append(f.filename)
         return ret
+
+    @property
+    def mindepth(self):
+        """Gives the minimum number of levels of group below the current DataFolder."""
+        if len(self.groups)==0:
+            r=0
+        else:
+            r=1E6
+            for g in self.groups:
+                r=min(r,self.groups[g].depth+1)
+        return r
+        
+    @property
+    def pattern(self):
+        return self._pattern
+        
+    @pattern.setter
+    def pattern(self,value):
+        """Sets the filename searching pattern(s) for the :py:class:`Stoner.Core.DataFile`s."""
+        if isinstance(value,string_types):
+            self._pattern=(value,)
+        elif isinstance(value,re._pattern_type):
+            self._pattern=(value,)
+        elif isinstance(value,Iterable):
+            self._pattern=[x for x in value]
+        else:
+            raise ValueError("pattern should be a string, regular expression or iterable object not a {}".format(type(value)))
+
+    
+    @property
+    def type(self):
+        """Defines the (sub)class of the :py:class:`Stoner.Core.DataFile` instances."""
+        return self._type
+        
+    @type.setter
+    def type(self,value):
+        """Ensures that type is a subclass of DataFile."""
+        if issubclass(value,DataFile):
+            self._type=value
+        elif isinstance(value,DataFile):
+            self._type=value.__class__
+        else:
+            raise TypeError("{} os neither a subclass nor instance of DataFile".format(type(value)))
 
     #########################################################
     ######## Special Methods ################################
@@ -230,8 +281,8 @@ class DataFolder(object):
 
         """
         if not item.startswith("_"):
-            if hasattr(self.type,item): #Something is in our DataFile type
-                if ismethod(getattr(self.type,item)): # It's a method
+            if item in dir(self._type): #Something is in our DataFile type
+                if ismethod(getattr(self._type,item)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     ret=self.__get_file_attr__(item)
@@ -331,14 +382,25 @@ class DataFolder(object):
 
         Returns:
             A string representation of the current DataFolder object"""
-        return "DataFolder("+str(self.directory)+") with pattern "+str(self.pattern)+" has "+str(len(self.files))+" files in "+str(len(self.groups))+" groups\n"+str(self.groups)
+        s="DataFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self.files),len(self.groups))
+        for g in self.groups: # iterate over groups
+            r=self.groups[g].__repr__()
+            for l in r.split("\n"): # indent each line by one tab
+                s+="\t"+l+"\n"
+        return s.strip()
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name in dir(DataFile()):
+        if name.startswith("_"): # pass ddirectly through for private attributes
+            super(DataFolder,self).__setattr__(name,value)            
+        elif name in self.__dict__ and not callable(self.__getattr__(name)):
+            super(DataFolder,self).__setattr__(name,value)
+        elif name in dir(self._type()):
             self._file_attrs[name]=value
-        super(DataFolder,self).__setattr__(name,value)
-
+        else:
+            super(DataFolder,self).__setattr__(name,value)            
+            
+            
     def __setitem__(self,name,value):
         """Set a DataFile or DataFolder backinto the DataFolder.
 
@@ -701,15 +763,25 @@ class DataFolder(object):
         return self.filter(filter, invert=True)
 
 
-    def flatten(self):
+    def flatten(self, depth=None):
         """Compresses all the groups and sub-groups iunto a single flat file list.
+        
+        Keyword Arguments:
+            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
 
         Returns:
             A copy of the now flattened DatFolder"""
-        for g in self.groups:
-            self.groups[g].flatten()
-            self.files.extend(self.groups[g].files)
-        self.groups={}
+        if isinstance(depth,int):
+            if self.depth<=depth:
+                self.flatten()
+            else:
+                for g in self.groups:
+                    self.groups[g].flatten(depth)
+        else:
+            for g in self.groups:
+                self.groups[g].flatten()
+                self.files.extend(self.groups[g].files)
+            self.groups={}
         return self
 
 
@@ -1078,3 +1150,51 @@ class DataFolder(object):
             raise SyntaxError("groups must be a list of groups")
         grps=[[y for y in self.groups[x]] for x in groups]
         return zip(*grps)
+
+class PlotFolder(DataFolder):
+    """A subclass of :py:class:`DataFolder` with extra methods for plotting lots of files."""
+    
+    def plot(self,*args,**kargs):
+        """Call the plot method for each DataFile, but switching to a subplot each time.
+        
+        Args:
+            args: Positional arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.
+            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.
+            
+        Returns:
+            A list of :py:class:`matplotlib.pyplot.Axes` instances.
+            
+        Notes:
+            If the underlying type of the :py:class:`Stoner.Core.DataFile` instances in the :py:class:`PlotFolder`
+            lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Util.Data`.
+        
+            Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
+            from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.
+        """        
+        plts=len(self)
+        
+        if not hasattr(self.type,"plot"): # switch the objects to being Stoner.Data instances
+            from Stoner import Data
+            for i,d in enumerate(self):
+                self[i]=Data(d)
+        
+        fig_num=kargs.pop("figure",None)
+        fig_args={}
+        for arg in ("figsize", "dpi", "facecolor", "edgecolor", "frameon", "FigureClass"):
+            if arg in kargs:
+                fig_args[arg]=kargs.pop(arg)
+        if fig_num is None:
+            fig=plt.figure(**fig_args)
+        else:
+            fig=plt.figure(fig_num,**fig_args)
+        w,h=fig.get_size_inches()
+        plt_x=_np_.floor(_np_.sqrt(plts*w/h))
+        plt_y=_np_.ceil(plts/plt_x)
+
+        kargs["figure"]=fig
+        ret=[]
+        for i,d in enumerate(self):
+            ax=plt.subplot(plt_y,plt_x,i+1)
+            ret.append(d.plot(*args,**kargs))
+        plt.tight_layout()
+        return ret

@@ -65,6 +65,19 @@ class PlotFile(DataFile):
 #============================================================================================================================
 #Properties of PlotFile
 #============================================================================================================================
+    @property
+    def _public_attrs(self):
+        ret = super(PlotFile, self)._public_attrs
+        ret.update({
+            "fig": (int, mplfig.Figure),
+            "labels": list,
+            "template": DefaultPlotStyle,
+            "xlim": tuple,
+            "ylim": tuple,
+            "title": string_types,
+            "xlabel": string_types,
+            "ylabel": string_types
+        })
 
     @property
     def ax(self):
@@ -363,34 +376,21 @@ class PlotFile(DataFile):
 
                 All other attrbiutes are passed over to the parent class
                 """
-        if name == "_public_attrs":
-            ret = super(PlotFile, self).__getattr__(name)
-            ret.update({
-                "fig": (int, mplfig.Figure),
-                "labels": list,
-                "template": DefaultPlotStyle,
-                "xlim": tuple,
-                "ylim": tuple,
-                "title": string_types,
-                "xlabel": string_types,
-                "ylabel": string_types
-            })
-        else:
-            try:
-                return super(PlotFile, self).__getattr__(name)
-            except AttributeError:
-                if not isinstance(self.__figure, mplfig.Figure):
-                    raise AttributeError("Unknown attribute {}".format(name))
-                ax = self.__figure.axes
-                if "get_{}".format(name) in dir(ax):
-                    func = ax.__getattribute__("get_{}".format(name))
-                    ret = func()
-                elif name in plt.__dict__:  # Sort of a universal pass through to plt
-                    ret = plt.__dict__[name]
-                elif name in dir(ax):  # Sort of a universal pass through to plt
-                    ret = ax.__getattribute__(name)
-                else:
-                    raise AttributeError("Unknown attribute {}".format(name))
+        try:
+            return super(PlotFile, self).__getattr__(name)
+        except AttributeError:
+            if not isinstance(self.__figure, mplfig.Figure):
+                raise AttributeError("Unknown attribute {}".format(name))
+            ax = self.__figure.axes
+            if "get_{}".format(name) in dir(ax):
+                func = ax.__getattribute__("get_{}".format(name))
+                ret = func()
+            elif name in plt.__dict__:  # Sort of a universal pass through to plt
+                ret = plt.__dict__[name]
+            elif name in dir(ax):  # Sort of a universal pass through to plt
+                ret = ax.__getattribute__(name)
+            else:
+                raise AttributeError("Unknown attribute {}".format(name))
         return ret
 
     def __setattr__(self, name, value):

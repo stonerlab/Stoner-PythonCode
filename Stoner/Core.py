@@ -1226,6 +1226,19 @@ class DataFile(object):
 #============================================================================================================================
 
     @property
+    def _public_attrs(self):
+        """Return a dictionary of attributes setable by keyword argument with thier types."""
+        return {
+            "data": _np_.ndarray,
+            "column_headers": list,
+            "setas": (string_types, list),
+            "metadata": dict,
+            "debug": bool,
+            "filename": string_types,
+            "mask": (_np_.ndarray, bool)
+        }
+
+    @property
     def clone(self):
         """Gets a deep copy of the current DataFile.
         """
@@ -1765,13 +1778,7 @@ class DataFile(object):
         AttributeError.
        """
 
-        easy = {
-            "_public_attrs": self.__getattr_writeable
-        }
-
-        if name in easy:
-            return easy[name]()
-        elif name in ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p"):
+        if name in ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p"):
             ret = self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile, self).__getattribute__(name)
@@ -1793,18 +1800,6 @@ class DataFile(object):
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
         return self.data.__getattr__(name)
-
-    def __getattr_writeable(self):
-        """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return {
-            "data": _np_.ndarray,
-            "column_headers": list,
-            "setas": (string_types, list),
-            "metadata": dict,
-            "debug": bool,
-            "filename": string_types,
-            "mask": (_np_.ndarray, bool)
-        }
 
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of metadata.

@@ -179,12 +179,10 @@ class HGXFile(DataFile):
         else:
             self.filename = filename
         try:
-            f=h5py.File(filename)
-            f1=f["current"]
-            f2=f1["config"]
-            f.close()
+            with h5py.File(filename) as f:
+                f1=f["current"]
+                f2=f1["config"]
         except:
-            f.close()
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
 
         with h5py.File(self.filename, "r") as f:
