@@ -60,13 +60,17 @@
 <h1>DataFolder.flatten<a class="headerlink" href="#datafolder-flatten" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Folders.DataFolder.flatten">
-<code class="descclassname">DataFolder.</code><code class="descname">flatten</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DataFolder.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder.flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compresses all the groups and sub-groups iunto a single flat file list.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A copy of the now flattened DatFolder</td>
+<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><strong>depth )</strong> (<em>int or None</em>) &#8211;
+Only flatten ub-=groups that are within (<em>depth</em> of the deepest level.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A copy of the now flattened DatFolder</td>
 </tr>
 </tbody>
 </table>
@@ -135,7 +139,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 07, 2015.
+      Last updated on Sep 09, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

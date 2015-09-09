@@ -42,9 +42,13 @@ Stoner.Folders.DataFolder
 
    .. autosummary::
    
-      ~Stoner.Folders.DataFolder.basenmes
+      ~Stoner.Folders.DataFolder.basenames
+      ~Stoner.Folders.DataFolder.depth
       ~Stoner.Folders.DataFolder.loaded
       ~Stoner.Folders.DataFolder.ls
-      ~Stoner.Folders.DataFolder.lsgrps
+      ~Stoner.Folders.DataFolder.lsgrp
+      ~Stoner.Folders.DataFolder.mindepth
+      ~Stoner.Folders.DataFolder.pattern
+      ~Stoner.Folders.DataFolder.type
    
    

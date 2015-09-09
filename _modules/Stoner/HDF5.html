@@ -229,12 +229,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">=</span><span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="n">f1</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s">&quot;current&quot;</span><span class="p">]</span>
-            <span class="n">f2</span><span class="o">=</span><span class="n">f1</span><span class="p">[</span><span class="s">&quot;config&quot;</span><span class="p">]</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f1</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s">&quot;current&quot;</span><span class="p">]</span>
+                <span class="n">f2</span><span class="o">=</span><span class="n">f1</span><span class="p">[</span><span class="s">&quot;config&quot;</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s">&quot;Looks like an unexpected HDF layout!.&quot;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -493,7 +491,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 07, 2015.
+      Last updated on Sep 09, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -1,0 +1,23 @@
+Stoner.Folders.PlotFolder
+=========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: PlotFolder
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Folders.PlotFolder.plot
+
+   
+   
+
+   
+   
+   

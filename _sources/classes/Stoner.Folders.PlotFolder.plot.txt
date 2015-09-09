@@ -1,0 +1,8 @@
+
+
+PlotFolder.plot
+==============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: PlotFolder.plot

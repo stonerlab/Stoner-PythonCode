@@ -66,6 +66,7 @@
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">ismethod</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
 
@@ -73,23 +74,28 @@
     <span class="sd">&quot;&quot;&quot;Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways</span>
 
 <span class="sd">    Attributes:</span>
+<span class="sd">        basenames (list of str): Returns the list of files after passing through os.path.basename()</span>
+<span class="sd">        depth (int): Maximum number of levels of groups below this :py:class:`DataFolder`.</span>
 <span class="sd">        directory (string): Root directory of the files handled by the DataFolder</span>
+<span class="sd">        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`</span>
+<span class="sd">           objects.</span>
 <span class="sd">        files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances</span>
 <span class="sd">        groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders</span>
-<span class="sd">        read_means (bool): If true, create metadata when reading each file that is the mean of each column</span>
+<span class="sd">        ls (list of str): Returns a list of filenames (either the matched filename patterns, or</span>
+<span class="sd">            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects</span>
+<span class="sd">        loaded (list of bool): Inidicates which fiels are loaded in memory for the :py:class:`DataFolder`</span>
+<span class="sd">        lsgrp (list of str): Returns a list of the group keys (equivalent to DataFolder.groups.keys()</span>
+<span class="sd">        mindepth (int): Minimum number of levels of groups from this :py:class:`DataFolder` to a terminal group.</span>
+<span class="sd">        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder</span>
 <span class="sd">        pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included.</span>
 <span class="sd">            If pattern is a compiled reular expression with named groups then the named groups are used to</span>
 <span class="sd">            generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of</span>
 <span class="sd">            files included in the py:class:`DataFolder` is the union of files that match any single pattern.</span>
-<span class="sd">        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder</span>
-<span class="sd">        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`</span>
-<span class="sd">           objects.</span>
-<span class="sd">        basenames (list of string): Returns the list of files after passing through os.path.basename()</span>
-<span class="sd">        ls (list of strings): Returns a list of filenames (either the matched filename patterns, or</span>
-<span class="sd">            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects</span>
-<span class="sd">        lsgrp (list of string): Returns a list of the group keys (equivalent to DataFolder.groups.keys()</span>
+<span class="sd">        read_means (bool): If true, create metadata when reading each file that is the mean of each column</span>
 <span class="sd">        setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.DataFile.setas` attribute for each</span>
 <span class="sd">            :py:class:`Stoner.Core.DataFile` in the folder.</span>
+<span class="sd">        type (DataFile): The type of the members of the :py:class:`DataFolder`. Can be either a subclass of </span>
+<span class="sd">            :py:class:`Stoner.Core.DataFile` or an instance of one (in which ase the class of the instance is used).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        directory (string or :py:class:`DataFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory</span>
@@ -111,6 +117,10 @@
 <span class="sd">        Handle :py:meth:`__init__(DataFolder)` with subclasses</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">_type</span><span class="o">=</span><span class="n">DataFile</span> <span class="c"># class attribute to keep things happy  </span>
+    <span class="n">_pattern</span><span class="o">=</span><span class="bp">None</span>
+    
 <div class="viewcode-block" id="DataFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.__init__.html#Stoner.Folders.DataFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">=</span><span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="p">[]</span>
@@ -121,23 +131,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_file_attrs</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">=</span><span class="n">DataFile</span>
-        <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">],</span> <span class="n">DataFile</span><span class="p">):</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">=</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;type keyword arguemtn must be an instance of Stoner.Core.DataFile or a subclass instance&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;pattern&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="p">(</span><span class="s">&quot;*.*&quot;</span><span class="p">,)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">],</span><span class="n">string_types</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">],)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">],</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">],)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">],</span><span class="n">Iterable</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">]]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;pattern should be a string, regular expression or iterable object&quot;</span><span class="p">)</span>
-            <span class="k">del</span> <span class="n">kargs</span><span class="p">[</span><span class="s">&quot;pattern&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;pattern&quot;</span><span class="p">,</span><span class="s">&quot;*.*&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;nolist&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">nolist</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -179,12 +176,12 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">nolist</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
 
-        <span class="c">################################################################################</span>
+    <span class="c">################################################################################</span>
     <span class="c">####### Property Methods #######################################################</span>
     <span class="c">################################################################################</span>
 </div>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">basenmes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">basenames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a list of just the filename parts of the DataFolder.&quot;&quot;&quot;</span>
         <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
@@ -193,6 +190,17 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gives the maximum number of levels of group below the current DataFolder.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">=</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="n">r</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">depth</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">loaded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -202,7 +210,7 @@
             <span class="k">yield</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">DataFile</span><span class="p">)</span>
 
     <span class="nd">@property</span>    
-    <span class="k">def</span> <span class="nf">lsgrps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">lsgrp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a list of the groups as a generator.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">k</span>
@@ -216,6 +224,49 @@
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mindepth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gives the minimum number of levels of group below the current DataFolder.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span><span class="o">=</span><span class="mf">1E6</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="n">r</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">depth</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span>
+        
+    <span class="nd">@pattern.setter</span>
+    <span class="k">def</span> <span class="nf">pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the filename searching pattern(s) for the :py:class:`Stoner.Core.DataFile`s.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">,)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="o">=</span><span class="p">(</span><span class="n">value</span><span class="p">,)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pattern</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;pattern should be a string, regular expression or iterable object not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Defines the (sub)class of the :py:class:`Stoner.Core.DataFile` instances.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+        
+    <span class="nd">@type.setter</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensures that type is a subclass of DataFile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="o">=</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">__class__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;{} os neither a subclass nor instance of DataFile&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
     <span class="c">#########################################################</span>
     <span class="c">######## Special Methods ################################</span>
@@ -280,8 +331,8 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span><span class="n">item</span><span class="p">):</span> <span class="c">#Something is in our DataFile type</span>
-                <span class="k">if</span> <span class="n">ismethod</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span><span class="n">item</span><span class="p">)):</span> <span class="c"># It&#39;s a method</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span> <span class="c">#Something is in our DataFile type</span>
+                <span class="k">if</span> <span class="n">ismethod</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">item</span><span class="p">)):</span> <span class="c"># It&#39;s a method</span>
                     <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr_proxy</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span> <span class="c"># It&#39;s a static attribute</span>
                     <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_file_attr__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -381,14 +432,25 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A string representation of the current DataFolder object&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&quot;DataFolder(&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;) with pattern &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; has &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">))</span><span class="o">+</span><span class="s">&quot; files in &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">))</span><span class="o">+</span><span class="s">&quot; groups</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+        <span class="n">s</span><span class="o">=</span><span class="s">&quot;DataFolder({}) with pattern {} has {} files and {} groups</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span> <span class="c"># iterate over groups</span>
+            <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">):</span> <span class="c"># indent each line by one tab</span>
+                <span class="n">s</span><span class="o">+=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="o">+</span><span class="n">l</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pass through to set the sample attributes.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">DataFile</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">):</span> <span class="c"># pass ddirectly through for private attributes</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>            
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_file_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>            
+            
+            
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set a DataFile or DataFolder backinto the DataFolder.</span>
 
@@ -751,15 +813,25 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="DataFolder.flatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.flatten.html#Stoner.Folders.DataFolder.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFolder.flatten"><a class="viewcode-back" href="../../classes/Stoner.Folders.DataFolder.flatten.html#Stoner.Folders.DataFolder.flatten">[docs]</a>    <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Compresses all the groups and sub-groups iunto a single flat file list.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A copy of the now flattened DatFolder&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">=</span><span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="o">&lt;=</span><span class="n">depth</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">g</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">=</span><span class="p">{}</span>
         <span class="k">return</span> <span class="bp">self</span>
 
 </div>
@@ -1127,7 +1199,55 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s">&quot;groups must be a list of groups&quot;</span><span class="p">)</span>
         <span class="n">grps</span><span class="o">=</span><span class="p">[[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">x</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
-        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">grps</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="PlotFolder"><a class="viewcode-back" href="../../classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder">[docs]</a><span class="k">class</span> <span class="nc">PlotFolder</span><span class="p">(</span><span class="n">DataFolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A subclass of :py:class:`DataFolder` with extra methods for plotting lots of files.&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="PlotFolder.plot"><a class="viewcode-back" href="../../classes/Stoner.Folders.PlotFolder.plot.html#Stoner.Folders.PlotFolder.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the plot method for each DataFile, but switching to a subplot each time.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            args: Positional arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.</span>
+<span class="sd">            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of :py:class:`matplotlib.pyplot.Axes` instances.</span>
+<span class="sd">            </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            If the underlying type of the :py:class:`Stoner.Core.DataFile` instances in the :py:class:`PlotFolder`</span>
+<span class="sd">            lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Util.Data`.</span>
+<span class="sd">        </span>
+<span class="sd">            Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed</span>
+<span class="sd">            from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="n">plts</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span><span class="s">&quot;plot&quot;</span><span class="p">):</span> <span class="c"># switch the objects to being Stoner.Data instances</span>
+            <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        
+        <span class="n">fig_num</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;figure&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">fig_args</span><span class="o">=</span><span class="p">{}</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;figsize&quot;</span><span class="p">,</span> <span class="s">&quot;dpi&quot;</span><span class="p">,</span> <span class="s">&quot;facecolor&quot;</span><span class="p">,</span> <span class="s">&quot;edgecolor&quot;</span><span class="p">,</span> <span class="s">&quot;frameon&quot;</span><span class="p">,</span> <span class="s">&quot;FigureClass&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+                <span class="n">fig_args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fig_num</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="o">**</span><span class="n">fig_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">fig_num</span><span class="p">,</span><span class="o">**</span><span class="n">fig_args</span><span class="p">)</span>
+        <span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span>
+        <span class="n">plt_x</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">plts</span><span class="o">*</span><span class="n">w</span><span class="o">/</span><span class="n">h</span><span class="p">))</span>
+        <span class="n">plt_y</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">plts</span><span class="o">/</span><span class="n">plt_x</span><span class="p">)</span>
+
+        <span class="n">kargs</span><span class="p">[</span><span class="s">&quot;figure&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">fig</span>
+        <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">plt_y</span><span class="p">,</span><span class="n">plt_x</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 </pre></div>
 
           </div>
@@ -1170,7 +1290,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 07, 2015.
+      Last updated on Sep 09, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

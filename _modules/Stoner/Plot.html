@@ -114,8 +114,21 @@
 
 <span class="c">#============================================================================================================================</span>
 <span class="c">#Properties of PlotFile</span>
-<span class="c">#============================================================================================================================</span>
-</div>
+<span class="c">#============================================================================================================================</span></div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_public_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_public_attrs</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+            <span class="s">&quot;fig&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
+            <span class="s">&quot;labels&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="s">&quot;template&quot;</span><span class="p">:</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span>
+            <span class="s">&quot;xlim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+            <span class="s">&quot;ylim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+            <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
+            <span class="s">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
+            <span class="s">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span>
+        <span class="p">})</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
@@ -413,34 +426,21 @@
 
 <span class="sd">                All other attrbiutes are passed over to the parent class</span>
 <span class="sd">                &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&quot;_public_attrs&quot;</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-                <span class="s">&quot;fig&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
-                <span class="s">&quot;labels&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-                <span class="s">&quot;template&quot;</span><span class="p">:</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span>
-                <span class="s">&quot;xlim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
-                <span class="s">&quot;ylim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
-                <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-                <span class="s">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-                <span class="s">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span>
-            <span class="p">})</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Unknown attribute {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-                <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
-                <span class="k">if</span> <span class="s">&quot;get_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
-                    <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="s">&quot;get_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-                    <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>
-                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>  <span class="c"># Sort of a universal pass through to plt</span>
-                    <span class="n">ret</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-                <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>  <span class="c"># Sort of a universal pass through to plt</span>
-                    <span class="n">ret</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Unknown attribute {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Unknown attribute {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
+            <span class="k">if</span> <span class="s">&quot;get_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="s">&quot;get_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">func</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>  <span class="c"># Sort of a universal pass through to plt</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>  <span class="c"># Sort of a universal pass through to plt</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Unknown attribute {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -1386,7 +1386,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 07, 2015.
+      Last updated on Sep 09, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
