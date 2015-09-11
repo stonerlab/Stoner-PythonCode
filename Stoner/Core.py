@@ -658,12 +658,10 @@ class typeHintedDict(dict):
             super(typeHintedDict, self).__delitem__(key)
             self[key] = value  #__Setitem__ has the logic to handle embedded type hints correctly
 
-    def __getattr__(self, name):
-        """Handles attribute access"""
-        if name == "types":
-            return self._typehints
-        else:
-            raise AttributeError
+
+    @property
+    def types(self):
+        return self._typehints
 
     def findtype(self, value):
         """Determines the correct string type to return for common python

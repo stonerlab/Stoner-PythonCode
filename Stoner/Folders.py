@@ -286,8 +286,6 @@ class DataFolder(object):
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     ret=self.__get_file_attr__(item)
-            elif item in ("setas",): # Special hidden attrs of our DataFile type
-                ret=self.__get_file_attr__(item)
             else: # Ok, pass back
                 ret=super(DataFolder,self).__getattribute__(item)
         else: # We dpon't intercept private or special methods
