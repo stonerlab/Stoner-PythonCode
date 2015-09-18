@@ -1,0 +1,8 @@
+
+
+typeHintedDict.string_to_type
+=========================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: typeHintedDict.string_to_type

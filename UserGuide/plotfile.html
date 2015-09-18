@@ -176,7 +176,10 @@ these on a surface plot or 3D plot. The <a class="reference internal" href="../c
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Surface plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/3D_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/3D_plot.py">Source code</a>, <a class="reference external" href="../samples/3D_plot.png">png</a>, <a class="reference external" href="../samples/3D_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/3D_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/3D_plot.png" src="../_images/3D_plot.png" />
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -194,7 +197,10 @@ these on a surface plot or 3D plot. The <a class="reference internal" href="../c
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Colourmap plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/colormap_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/colormap_plot.py">Source code</a>, <a class="reference external" href="../samples/colormap_plot.png">png</a>, <a class="reference external" href="../samples/colormap_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/colormap_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/colormap_plot.png" src="../_images/colormap_plot.png" />
+</div>
 <p>By default the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></code></a> will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided <em>matplotlib.cm.jet</em> colour-map. This can be overriden with the <em>cmap</em> keyword
 parameter. If a simple 2D surface plot is required, then the <em>plotter</em> parameter should be set to a suitable function
@@ -220,7 +226,10 @@ method.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Contour plot&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/contour_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/contour_plot.py">Source code</a>, <a class="reference external" href="../samples/contour_plot.png">png</a>, <a class="reference external" href="../samples/contour_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/contour_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/contour_plot.png" src="../_images/contour_plot.png" />
+</div>
 <p>Both <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xyz()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz" title="Stoner.Plot.PlotFile.contour_xyz"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.contour_xyz()</span></code></a> make use of a call to <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata" title="Stoner.Plot.PlotFile.griddata"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.griddata()</span></code></a>
 which is a utility method of the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code></a> &#8211; essentially this is just a pass through method to the underlying
 <em>scipy.interpolate.griddata*</em> function. The shape of the grid is determined through a combination of the <em>xlim</em>, <em>ylim</em>
@@ -250,7 +259,10 @@ number of points.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot_matrix</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Data as Matrix&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/matrix_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/matrix_plot.py">Source code</a>, <a class="reference external" href="../samples/matrix_plot.png">png</a>, <a class="reference external" href="../samples/matrix_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/matrix_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/matrix_plot.png" src="../_images/matrix_plot.png" />
+</div>
 <p>The first example just uses all the default values, in which case the matrix is assumed to run from the 2nd column in the
 file to the last and over all of the rows. The x values for each row are found from the contents of the first column, and
 the y values for each column are found from the column headers interpreted as a floating pint number. The colourmap defaults
@@ -308,7 +320,10 @@ with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.htm
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/single_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/single_plot.py">Source code</a>, <a class="reference external" href="../samples/single_plot.png">png</a>, <a class="reference external" href="../samples/single_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/single_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/single_plot.png" src="../_images/single_plot.png" />
+</div>
 </div>
 <div class="section" id="getting-more-control-on-the-figure">
 <h2>Getting More Control on the Figure<a class="headerlink" href="#getting-more-control-on-the-figure" title="Permalink to this headline">¶</a></h2>
@@ -374,7 +389,10 @@ provided. This produces a second axes object with a common x-axis, but independe
 <span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;r-&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/double_y_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/double_y_plot.py">Source code</a>, <a class="reference external" href="../samples/double_y_plot.png">png</a>, <a class="reference external" href="../samples/double_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/double_y_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/double_y_plot.png" src="../_images/double_y_plot.png" />
+</div>
 <p>There is an equivalent <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.x2.html#Stoner.Plot.PlotFile.x2" title="Stoner.Plot.PlotFile.x2"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.x2()</span></code></a> method to create a second set of axes with a common y scale but different x scales.</p>
 <p>To work out which set of axes you are current working with the <code class="xref py py-attr docutils literal"><span class="pre">PlotFile.ax</span></code> attribute can be read or set.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -400,7 +418,10 @@ executed during the process of plotting a figure.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/template2.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/template2.py">Source code</a>, <a class="reference external" href="../samples/template2.png">png</a>, <a class="reference external" href="../samples/template2.hires.png">hires.png</a>, <a class="reference external" href="../samples/template2.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/template2.png" src="../_images/template2.png" />
+</div>
 <p>The template can either be set by passing a subclass of <a class="reference internal" href="../classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><code class="xref py py-class docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></code></a> or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
 settings defined by the template class with your own choice - or indeed, to add further style attributes. This
@@ -415,7 +436,10 @@ prefix the translated rcParam key with <em>template_</em>.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/template.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/template.py">Source code</a>, <a class="reference external" href="../samples/template.png">png</a>, <a class="reference external" href="../samples/template.hires.png">hires.png</a>, <a class="reference external" href="../samples/template.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/template.png" src="../_images/template.png" />
+</div>
 <p>You can also copy the style template from one plot to the next.</p>
 <blockquote>
 <div>q=SP.PlotFile()
@@ -442,7 +466,10 @@ will be to the inset until a new set of axes are chosen. The <code class="xref p
 <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="c">#Turn off the inset title</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/inset_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/inset_plot.py">Source code</a>, <a class="reference external" href="../samples/inset_plot.png">png</a>, <a class="reference external" href="../samples/inset_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/inset_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/inset_plot.png" src="../_images/inset_plot.png" />
+</div>
 <p>The <em>loc</em> parameter specifies the location of the inset, the width and height the size (either as a percentage or
 fixed units). There is an optional parent keyword that lets you specify an alternative parent set of axes for the
 inset.</p>
@@ -472,7 +499,10 @@ this can result in a less than helpful plot.</p>
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/common_y_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/common_y_plot.py">Source code</a>, <a class="reference external" href="../samples/common_y_plot.png">png</a>, <a class="reference external" href="../samples/common_y_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/common_y_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/common_y_plot.png" src="../_images/common_y_plot.png" />
+</div>
 <p>The <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy" title="Stoner.Plot.PlotFile.plot_xy"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot_xy()</span></code></a> method (and also the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot" title="Stoner.Plot.PlotFile.plot"><code class="xref py py-meth docutils literal"><span class="pre">PlotFile.plot()</span></code></a> method when doing 2D plots) will take
 a keyword argument <em>multiple</em> that can offer a number of alternatives. If you have just two y columns, or the the
 second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.</p>
@@ -482,7 +512,10 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s">&quot;y2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/multiple_y2_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/multiple_y2_plot.py">Source code</a>, <a class="reference external" href="../samples/multiple_y2_plot.png">png</a>, <a class="reference external" href="../samples/multiple_y2_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_y2_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/multiple_y2_plot.png" src="../_images/multiple_y2_plot.png" />
+</div>
 <p>Alternatively, if you want the various y plots to form multiple panels with a common x-axis (a <em>ganged plot</em>) then
 <em>multiple</em> can be set of <em>panels</em>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
@@ -493,7 +526,10 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/multiple_panels_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/multiple_panels_plot.py">Source code</a>, <a class="reference external" href="../samples/multiple_panels_plot.png">png</a>, <a class="reference external" href="../samples/multiple_panels_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/multiple_panels_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/multiple_panels_plot.png" src="../_images/multiple_panels_plot.png" />
+</div>
 <p>Finally, you can also simply plot the y data as a grid of independent subplots.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="n">p</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">)</span>
@@ -503,7 +539,10 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
 <span class="n">p</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/subplot_plot.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/subplot_plot.py">Source code</a>, <a class="reference external" href="../samples/subplot_plot.png">png</a>, <a class="reference external" href="../samples/subplot_plot.hires.png">hires.png</a>, <a class="reference external" href="../samples/subplot_plot.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/subplot_plot.png" src="../_images/subplot_plot.png" />
+</div>
 </div>
 </div>
 </div>
@@ -597,7 +636,7 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 09, 2015.
+      Last updated on Sep 18, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

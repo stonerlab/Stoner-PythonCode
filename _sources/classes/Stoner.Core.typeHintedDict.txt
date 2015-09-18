@@ -1,0 +1,35 @@
+Stoner.Core.typeHintedDict
+==========================
+
+.. currentmodule:: Stoner.Core
+
+.. autoclass:: typeHintedDict
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Core.typeHintedDict.__init__
+      ~Stoner.Core.typeHintedDict.copy
+      ~Stoner.Core.typeHintedDict.export
+      ~Stoner.Core.typeHintedDict.export_all
+      ~Stoner.Core.typeHintedDict.findtype
+      ~Stoner.Core.typeHintedDict.string_to_type
+      ~Stoner.Core.typeHintedDict.type
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Core.typeHintedDict.types
+   
+   
