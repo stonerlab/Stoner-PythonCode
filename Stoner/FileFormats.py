@@ -679,7 +679,7 @@ class XRDFile(DataFile):
                         parts=line.split('=')
                         key=parts[0].strip()
                         data=parts[1].strip()
-                        self[section+":"+key]=data # Keynames in main metadata are section:key - use theDataFile magic to do type determination
+                        self[section+":"+key]=self.metadata.string_to_type(data) # Keynames in main metadata are section:key - use theDataFile magic to do type determination
         self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
         f.close()# Cleanup

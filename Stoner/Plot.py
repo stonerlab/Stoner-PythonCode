@@ -7,7 +7,7 @@ Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
-from Stoner.Core import DataFile, _attribute_store, copy_into,isNone
+from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_
@@ -78,6 +78,7 @@ class PlotFile(DataFile):
             "xlabel": string_types,
             "ylabel": string_types
         })
+        return ret
 
     @property
     def ax(self):
@@ -112,8 +113,11 @@ class PlotFile(DataFile):
 
     @column_headers.setter
     def column_headers(self,value):
-        DataFile.column_headers.fset(self,value)
-        self.labels = value
+        if all_type(value,string_types):
+            DataFile.column_headers.fset(self,value)
+            self.labels = value
+        else:
+            raise NotImplementedError("Column headers should be an iterable of strings.")
 
     @property
     def fig(self):
@@ -121,8 +125,14 @@ class PlotFile(DataFile):
 
     @fig.setter
     def fig(self,value):
-        self.__figure = value
-        self.__figure, ax = self.template.new_figure(value.number)
+        if isinstance(value,plt.Figure):
+            self.__figure = value
+            self.__figure, ax = self.template.new_figure(value.number)
+        elif isinstance(value.int):
+            value=plt.Figure(value)
+            self.fig=value
+        else:
+            raise NotImplementedError("fig should be a number of matplotlib figure")
 
     @property
     def fignum(self):

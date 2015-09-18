@@ -8,7 +8,7 @@ Classes:
 
 """
 from __future__ import print_function
-__all__ = ["StonerLoadError", "DataFile","DataArray","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
+__all__ = ["StonerLoadError", "DataFile","DataArray","typeHintedDict","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
 
 from Stoner.compat import *
 import re
@@ -22,6 +22,7 @@ import os.path as path
 import inspect as _inspect_
 import itertools
 from collections import Iterable, OrderedDict
+from blist import sorteddict
 
 
 def copy_into(source,dest):
@@ -113,11 +114,12 @@ def all_type(iterator,typ):
         the search type *typ*.
     """
     ret=False
-    for i in iterator:
-        if not isinstance(i,typ):
-            break
-    else:
-        ret=True
+    if isinstance(iterator,Iterable):
+        for i in iterator:
+            if not isinstance(i,typ):
+                break
+        else:
+            ret=True
     return ret
 
 
@@ -209,13 +211,13 @@ class _setas(object):
 
     @column_headers.setter
     def column_headers(self,value):
-        if isinstance(value,Iterable):
+        if all_type(value,string_types):
             self._column_headers=list(value)
             c=len(self._column_headers)
             self.setas.extend(["."]*(c-len(self.setas)))
             object.__setattr__(self,"setas",self.setas[:c])
         else:
-            raise AttributeError("Column_headers attribute should be a list")
+            raise AttributeError("Column_headers attribute should be an iterable of strings")
 
     @property
     def shape(self):
@@ -580,8 +582,8 @@ class _evaluatable(object):
     pass
 
 
-class typeHintedDict(dict):
-    """Extends a regular dict to include type hints of what each key contains.
+class typeHintedDict(sorteddict):
+    """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
     the :py:class:`DataFile` data structure. However, it is convenient for this file format
@@ -603,8 +605,12 @@ class typeHintedDict(dict):
         __regexEvaluatable (re): matches the type hint string for a compoind data type
         __types (dict): mapping of type hinted types to actual Python types
         __tests (dict): mapping of the regex patterns to actual python types
+
+    Notes:
+        Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
+        This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
     """
-    _typehints = dict()
+    _typehints = sorteddict()
 
     __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}')
     # Match the contents of the inner most{}
@@ -836,6 +842,10 @@ class typeHintedDict(dict):
         del (self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
+    def __repr__(self):
+        ret=["{}:{}:{}".format(repr(key),self.type(key),repr(self[key])) for key in self]
+        return "\n".join(ret)
+
     def copy(self):
         """Provides a copy method that is aware of the type hinting strings.
 
@@ -883,8 +893,19 @@ class typeHintedDict(dict):
             A string of the format : key{type hint} = value"""
         return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('string_escape'))
 
+    def export_all(self):
+        """Return all the entries in the typeHintedDict as a list of exported lines.
+
+        Returns:
+            (list of str): A list of exported strings
+
+        Notes:
+            The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
+        """
+        return [self.export(x) for x in self]
+
 class DataArray(_ma_.MaskedArray):
-    """A sub class of MaskedArray with a copy of the setas attribute to allow indexing by name.
+    """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
         i (array of integers): When read, returns the row  umbers of the data. When written to, sets the
@@ -1230,7 +1251,7 @@ class DataFile(object):
             "data": _np_.ndarray,
             "column_headers": list,
             "setas": (string_types, list),
-            "metadata": dict,
+            "metadata": typeHintedDict,
             "debug": bool,
             "filename": string_types,
             "mask": (_np_.ndarray, bool)
@@ -2100,7 +2121,7 @@ class DataFile(object):
         m = len(self.metadata)
         self.data = DataArray(_np_.atleast_2d(self.data),setas=self.data._setas)
         r = _np_.shape(self.data)[0]
-        md = [self.metadata.export(x) for x in sorted(self.metadata)]
+        md = self.metadata.export_all()
         for x in range(min(r, m)):
             outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
         if m > r:  # More metadata
