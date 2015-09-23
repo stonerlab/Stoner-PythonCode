@@ -729,7 +729,7 @@
                         <span class="n">parts</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">)</span>
                         <span class="n">key</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                         <span class="n">data</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                        <span class="bp">self</span><span class="p">[</span><span class="n">section</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">data</span> <span class="c"># Keynames in main metadata are section:key - use theDataFile magic to do type determination</span>
+                        <span class="bp">self</span><span class="p">[</span><span class="n">section</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">string_to_type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c"># Keynames in main metadata are section:key - use theDataFile magic to do type determination</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Angle&#39;</span><span class="p">,</span> <span class="s">&#39;Counts&#39;</span><span class="p">]</span> <span class="c"># Assume the columns were Angles and Counts</span>
 
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span><span class="c"># Cleanup</span>
@@ -1513,7 +1513,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 18, 2015.
+      Last updated on Sep 23, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

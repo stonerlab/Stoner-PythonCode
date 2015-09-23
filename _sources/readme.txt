@@ -13,7 +13,7 @@ API Reference guide. The `github repository`_ also contains some example scripts
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  and lmfit. Experimental code also makes use of
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  lmfit and blist. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
@@ -29,7 +29,7 @@ The easiest way to install the Stoner package is via seuptools' easy_install
 
    easy_install Stoner
 
-This will install the Stoner package into your current Python environment. Since the package is under fairly
+This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
@@ -99,7 +99,9 @@ Development Version
 -------------------
 
 The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store with a custom sub-class that contains most of the logic for indexing data by column name and designation.
+as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
+The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+Other underlying changes are a switch to using properties rather than straight attribute access.
 
 0.6 also adds some extra methods to AnalyseFile for extrapolation.
 

@@ -66,7 +66,7 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 </div>
 <div class="section" id="getting-this-code">
 <h2>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h2>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  and lmfit. Experimental code also makes use of
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  lmfit and blist. Experimental code also makes use of
 the Enthought Tools Suite packages.</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
 However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
@@ -77,7 +77,7 @@ However, this can by installed with the usual tools such as <em>easy_install</em
 <div class="highlight-sh"><div class="highlight"><pre>easy_install Stoner
 </pre></div>
 </div>
-<p>This will install the Stoner package into your current Python environment. Since the package is under fairly
+<p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: <a class="reference external" href="https://github.com/gb119/Stoner-PythonCode">https://github.com/gb119/Stoner-PythonCode</a></p>
 <p>The codebase is largely compatible with Python 3.4, with the expception of the 3D vector map plots which make use of
@@ -141,7 +141,9 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <div class="section" id="development-version">
 <h3>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h3>
 <p>The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store with a custom sub-class that contains most of the logic for indexing data by column name and designation.</p>
+as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
+The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+Other underlying changes are a switch to using properties rather than straight attribute access.</p>
 <p>0.6 also adds some extra methods to AnalyseFile for extrapolation.</p>
 <p>Online documentation for the development version can be found on the <a class="reference external" href="http://gb119.github.io/Stoner-PythonCode">githib repository pages</a></p>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
@@ -268,7 +270,7 @@ as the main data store with a custom sub-class that contains most of the logic f
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 18, 2015.
+      Last updated on Sep 23, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
