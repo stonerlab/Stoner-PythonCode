@@ -18,7 +18,7 @@ setup(
     package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
-    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit","numba"],
+    install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit","numba","blist"],
     long_description=read('doc/readme.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
