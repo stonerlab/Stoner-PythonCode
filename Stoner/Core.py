@@ -1009,6 +1009,7 @@ class DataArray(_ma_.MaskedArray):
 
     def __getitem__(self,ix):
         # Override __getitem__ to handle string indexing
+        single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
         if isinstance(ix,string_types):
             ix=(slice(0,-1,1),self._setas.find_col(ix))
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
@@ -1029,6 +1030,7 @@ class DataArray(_ma_.MaskedArray):
                 ret.i=self.i[ix]
             else:
                 ret.i=self.i
+        ret._singlerow=single_row
         return ret
 
     def __setitem__(self,ix,val):
@@ -1071,17 +1073,19 @@ class DataArray(_ma_.MaskedArray):
     @property
     def i(self):
         """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
-        if len(self.shape)==1 or (len(self.shape)>1 and self.shape[0]==1):
-            ret=self._ibase
+        if len(self._ibase)==1 or "_singlerow" in self.__dict__ and self._singlerow:
+            ret=min(self._ibase)
         else:
-            ret=_np_.array(range(self._ibase,len(self)+self._ibase))
+            ret=self._ibase
         return ret
 
     @i.setter
     def i(self,value):
-        if isinstance(value,Iterable):
-            value=min(value)
-        value=int(value)
+        if not isinstance(value,Iterable):
+            value=_np_.array(range(value,len(self)+value))
+        elif len(value)!=len(self) and len(value)>1:
+            value=_np_.array(range(min(value),len(self)+min(value)))
+
         self._ibase=value
 
     @property
@@ -1871,30 +1875,10 @@ class DataFile(object):
             and DataFile[5,3] would return the 6th element of the
             4th column.
         """
-        if isinstance(name, slice):
-            indices = name.indices(len(self))
-            name = range(*indices)
-            d = self.data[name[0],:]
-            d = _np_.atleast_2d(d)
-            for x in range(1, len(name)):
-                d = _np_.append(d, _np_.atleast_2d(self.data[x,:]), 0)
-                d=DataArray(d,setas=self.data._setas.clone)
-            ret = d
-        elif isinstance(name, int):
-            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
-        elif isinstance(name, _np_.ndarray) and len(name.shape) == 1:
-            ret = DataArray(self.data[name,:],setas=self.data._setas.clone)
-        elif isinstance(name, string_types) or isinstance(name, re._pattern_type):
+        if isinstance(name, string_types) or isinstance(name, re._pattern_type):
             ret = self.__meta__(name)
-        elif isinstance(name, tuple) and len(name) == 2:
-            x, y = name
-            if isinstance(x, string_types):# Shortcut to index metadata that is a list
-                ret = self[x][y]
-            else: # Pass through to DataArray to do heavy lifting here
-                ret = self.data.__getitem__(name)
         else:
-            raise TypeError("Key must be either numeric of string, or tuple")
-
+            ret=self.data[name]
         return ret
 
     def __getstate__(self):
@@ -2877,7 +2861,7 @@ class DataFile(object):
             if _ma_.is_masked(row) and not_masked:
                 continue
             else:
-                yield DataArray(row,setas=setas)
+                yield row
 
     def save(self, filename=None):
         """Saves a string representation of the current DataFile object into the file 'filename'.
