@@ -225,15 +225,18 @@ class _setas(object):
 
     @shape.setter
     def shape(self,value):
-        if len(value)==2:  # Force setas annd acolumn_headers to match shape
+        if len(value)>=2:  # Force setas annd acolumn_headers to match shape
             c=value[1]
-            self.setas.extend(["."]*(c-len(self.setas)))
-            object.__setattr__(self,"setas",self.setas[:c])
-            self.column_headers.extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
-            object.__setattr__(self,"column_headers",self.column_headers[:c])
-            self._shape=tuple(value)
+        elif len(value)==1:
+            c=1
         else:
-            raise AttributeError("shape attribute should be a 2-tuple")
+            raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
+
+        self.setas.extend(["."]*(c-len(self.setas)))
+        object.__setattr__(self,"setas",self.setas[:c])
+        self.column_headers.extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
+        object.__setattr__(self,"column_headers",self.column_headers[:c])
+        self._shape=tuple(value)
 
 
 
@@ -945,8 +948,11 @@ class DataArray(_ma_.MaskedArray):
             obj._setas = setas
         else:
             obj._setas=_setas()
+            obj._setas.shape=obj.shape
         if mask is not None:
             obj.mask=mask
+        else:
+            obj.maske=False
         # Finally, we must return the newly created object:
         obj.i=i
         return obj
@@ -954,13 +960,19 @@ class DataArray(_ma_.MaskedArray):
     def __array_finalize__(self, obj):
         # see InfoArray.__array_finalize__ for comments
         super(DataArray,self).__array_finalize__(obj)
-        self.i=0
         if obj is None:
             self._setas=_setas()
+            self.i=0
+            self.mask=False
         else:
             self._setas = getattr(obj, '_setas', _setas())
             if isinstance(obj,DataArray):
                 self.i=obj.i
+                self.mask=obj.mask
+            else:
+                self.i=0
+                self.mask=False
+        self._setas.shape=self.shape
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
@@ -975,9 +987,6 @@ class DataArray(_ma_.MaskedArray):
             "u": "ucol",
             "v": "vcol",
             "w": "wcol",
-            "q": "",
-            "p": "",
-            "r": ""
         }
         if name not in col_check:
             return super(DataArray,self).__getattribute__(name)
@@ -1074,6 +1083,20 @@ class DataArray(_ma_.MaskedArray):
             value=min(value)
         value=int(value)
         self._ibase=value
+
+    @property
+    def setas(self):
+        """Returns an object for setting column assignments."""
+        if "_setas" not in self.__dict__:
+            self._setas=_setas()
+            self._setas.shape=self.shape
+        return self._setas
+
+    @setas.setter
+    def setas(self,value):
+        setas=self.setas
+        setas(value)
+
 
 class DataFile(object):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents

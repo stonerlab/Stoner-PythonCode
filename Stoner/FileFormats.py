@@ -1026,10 +1026,13 @@ class OVFFile(DataFile):
             line = next(data)
             ptr += len(line)
             line = line.strip()
-            if line == "# OOMMF: rectangular mesh v1.0":
-                self["version"] = 1
-            elif line == "# OOMMF: rectangular mesh v2.0":
-                self["version"] = 2
+            if "OOMMF: rectangular mesh" in line:
+                if "v1.0" in line:
+                    self["version"] = 1
+                elif "v2.0" in line:
+                    self["version"] = 2
+                else:
+                    raise StonerLoadError("Cannot determine version of OOMMFF file")
             else:  # bug out oif we don't like the header
                 raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
             pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
@@ -1048,7 +1051,7 @@ class OVFFile(DataFile):
                         self[key] = self.metadata.string_to_type(val)
                     else:
                         raise StonerLoadError("Failed to understand metadata")
-            fmt = re.match(r".*Data\s+(.*)", line).group(1)
+            fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
             assert self["meshtype"] == "rectangular", "Sorry only OVF files with rectnagular meshes are currently supported."
             if self["version"] == 1:
                 if self["meshtype"] == "rectangular":
