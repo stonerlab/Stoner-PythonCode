@@ -225,7 +225,9 @@ class _setas(object):
 
     @shape.setter
     def shape(self,value):
-        if len(value)>=2:  # Force setas annd acolumn_headers to match shape
+        if len(value)==0:
+            c=0
+        elif len(value)>=2:  # Force setas annd acolumn_headers to match shape
             c=value[1]
         elif len(value)==1:
             c=1
@@ -1081,10 +1083,12 @@ class DataArray(_ma_.MaskedArray):
 
     @i.setter
     def i(self,value):
-        if not isinstance(value,Iterable):
-            value=_np_.array(range(value,len(self)+value))
-        elif len(value)!=len(self) and len(value)>1:
-            value=_np_.array(range(min(value),len(self)+min(value)))
+        if len(self.shape)==0:
+            pass
+        elif not isinstance(value,Iterable):
+            value=_np_.array(range(value,self.shape[0]+value))
+        elif len(value)!=self.shape[0] and len(value)>1:
+            value=_np_.array(range(min(value),self.hapse[0]+min(value)))
 
         self._ibase=value
 
