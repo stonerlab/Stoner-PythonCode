@@ -938,7 +938,7 @@ class DataArray(_ma_.MaskedArray):
     def __new__(cls, input_array, *args,**kargs):
         # Input array is an already formed ndarray instance
         # We first cast to be our class type
-        setas=kargs.pop("setas",None)
+        setas=kargs.pop("setas",_setas())
         mask=kargs.pop("mask",None)
         if isinstance(input_array,DataArray):
             i=input_array.i
@@ -946,11 +946,8 @@ class DataArray(_ma_.MaskedArray):
             i=0
         obj = _ma_.asarray(input_array,*args,**kargs).view(cls)
         # add the new attribute to the created instance
-        if setas is not None:
-            obj._setas = setas
-        else:
-            obj._setas=_setas()
-            obj._setas.shape=obj.shape
+        setas.shape=obj.shape        
+        obj._setas = setas
         if mask is not None:
             obj.mask=mask
         else:
@@ -1104,7 +1101,56 @@ class DataArray(_ma_.MaskedArray):
     def setas(self,value):
         setas=self.setas
         setas(value)
+        
+##############################################################################
+####### Other Methods ########################################################
+##############################################################################
+        
+    def keys(self):
+        """Return a list of column headers."""
+        return self._setas.column_headers
+        
+    def swap_column(self, *swp,**kargs):
+        """Swaps pairs of columns in the data.
 
+        Useful for reordering data for idiot programs that expect columns in a fixed order.
+
+        Args:
+            swp  (tuple of list of tuples of two elements): Each
+                element will be iused as a column index (using the normal rules
+                for matching columns).  The two elements represent the two
+                columns that are to be swapped.
+            headers_too (bool): Indicates the column headers
+                are swapped as well
+
+        Returns:
+            self: A copy of the modified :py:class:`DataFile` objects
+
+        Note:
+            If swp is a list, then the function is called recursively on each
+            element of the list. Thus in principle the @swp could contain
+            lists of lists of tuples
+        """
+
+        headers_too=kargs.pop("headers_too",True)
+        setas_too=kargs.pop("setas_too",True)
+
+        if len(swp)==1:
+            swp=swp[0]
+        if isinstance(swp, list) and all_type(swp,tuple) and all_size(swp,2):
+            for item in swp:
+                self.swap_column(item, headers_too=headers_too)
+        elif isinstance(swp, tuple):
+            col1 = self._setas.find_col(swp[0])
+            col2 = self._setas.find_col(swp[1])
+            self[:, [col1, col2]] = self[:, [col2, col1]]
+            if headers_too:
+                self._setas.column_headers[col1], self._setas.column_headers[col2] = self._setas.column_headers[col2], self._setas.column_headers[col1]
+            if setas_too:
+                 self._setas[col1], self._setas[col2] = self._setas[col2], self._setas[col1]
+        else:
+            raise TypeError("Swap parameter must be either a tuple or a \
+            list of tuples")
 
 class DataFile(object):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents
@@ -1177,6 +1223,7 @@ class DataFile(object):
 
             Creates the new DataFile object and does the combination of the
             previous two forms.
+
 
         .. py:function:: DataFile(DataFile)
             :noindex:
@@ -3039,25 +3086,7 @@ class DataFile(object):
             lists of lists of tuples
         """
 
-        headers_too=kargs.pop("headers_too",True)
-        setas_too=kargs.pop("setas_too",True)
-
-        if len(swp)==1:
-            swp=swp[0]
-        if isinstance(swp, list) and all_type(swp,tuple) and all_size(swp,2):
-            for item in swp:
-                self.swap_column(item, headers_too=headers_too)
-        elif isinstance(swp, tuple):
-            col1 = self.find_col(swp[0])
-            col2 = self.find_col(swp[1])
-            self.data[:, [col1, col2]] = self.data[:, [col2, col1]]
-            if headers_too:
-                self.column_headers[col1], self.column_headers[col2] = self.column_headers[col2], self.column_headers[col1]
-            if setas_too:
-                 self.setas[col1], self.setas[col2] = self.setas[col2], self.setas[col1]
-        else:
-            raise TypeError("Swap parameter must be either a tuple or a \
-            list of tuples")
+        self.data.swap_column(*args,**kargs)
         return self
 
     def unique(self, col, return_index=False, return_inverse=False):
