@@ -946,7 +946,7 @@ class DataArray(_ma_.MaskedArray):
             i=0
         obj = _ma_.asarray(input_array,*args,**kargs).view(cls)
         # add the new attribute to the created instance
-        setas.shape=obj.shape        
+        setas.shape=obj.shape
         obj._setas = setas
         if mask is not None:
             obj.mask=mask
@@ -1101,15 +1101,15 @@ class DataArray(_ma_.MaskedArray):
     def setas(self,value):
         setas=self.setas
         setas(value)
-        
-##############################################################################
-####### Other Methods ########################################################
-##############################################################################
-        
+
+#============================================================================================================================
+# Other methods
+#============================================================================================================================
+
     def keys(self):
         """Return a list of column headers."""
         return self._setas.column_headers
-        
+
     def swap_column(self, *swp,**kargs):
         """Swaps pairs of columns in the data.
 
@@ -1531,30 +1531,6 @@ class DataFile(object):
             newdata.metadata = copy.copy(self.metadata)
             newdata.data = _np_.append(self.data, new_data, axis=0)
             ret = newdata
-        elif isinstance(other, dict):  # This is a horrible mess that I'm not sure we ever use
-            """
-            added_row=False
-            for k in other:
-                try:
-                    newdata.find_col(k)
-                except KeyError:
-                    newdata=newdata.clone
-                    if len(newdata)==0:
-                        added_row=True
-                        cl=1
-                    else:
-                        cl=len(newdata)
-                    newdata=newdata&_np_.ones(cl)*_np_.nan
-                    newdata.column_headers[-1]=k
-            new_data=_np_.nan*_np_.ones(len((newdata.column_headers)))
-            for k in other:
-                new_data[newdata.find_col(k)]=other[k]
-            new_data=_np_.atleast_2d(new_data)
-            newdata.data=_np_.append(newdata.data,new_data,0)
-            if added_row:
-                newdata.data=newdata.data[1:,:]
-            ret=newdata"""
-            ret = NotImplemented
         elif isinstance(other, list):
             for o in other:
                 newdata = newdata + o
@@ -1626,13 +1602,13 @@ class DataFile(object):
         if len(newdata.data.shape) < 2:
             newdata.data = _np_.atleast_2d(newdata.data)
 
-#Get other to be a numpy masked array of data
+        #Get other to be a numpy masked array of data
         if isinstance(other, DataFile):
             newdata.metadata.update(other.metadata)
             newdata.column_headers.extend(other.column_headers)
             other = copy.copy(other.data)
         elif isinstance(other, _np_.ndarray):
-            other = _ma_.array(copy.copy(other))
+            other = DataArray(copy.copy(other))
         else:
             newdata = NotImplemented
 
