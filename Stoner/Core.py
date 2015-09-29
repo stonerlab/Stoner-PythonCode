@@ -1085,7 +1085,7 @@ class DataArray(_ma_.MaskedArray):
         elif not isinstance(value,Iterable):
             value=_np_.array(range(value,self.shape[0]+value))
         elif len(value)!=self.shape[0] and len(value)>1:
-            value=_np_.array(range(min(value),self.hapse[0]+min(value)))
+            value=_np_.array(range(min(value),self.shape[0]+min(value)))
 
         self._ibase=value
 
