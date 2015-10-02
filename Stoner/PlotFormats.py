@@ -16,6 +16,12 @@ from os.path import join, dirname, realpath
 from sys import platform as _platform
 from numpy.random import normal
 
+try:
+    import seaborn as sns
+    SEABORN=True
+except ImportError:
+    SEABORN=False
+
 import numpy as _np_
 
 
@@ -204,7 +210,9 @@ class DefaultPlotStyle(object):
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
         for k in kargs:
-            if not k.startswith("_"):
+            if k in dir(self) and not callable(self.__getattr__(k)):
+                self.__setattr__(k,kargs[k])
+            elif not k.startswith("_"):
                 self.__setattr__("template_" + k, kargs[k])
 
     def new_figure(self, figure=False, **kargs):
@@ -333,15 +341,15 @@ class DefaultPlotStyle(object):
 
 class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting.
-    
+
     This is largely an experimental class for trying things out rather than
     for serious plotting.
 
     Example
         .. plot:: samples/plotstyles/GBStyle.py
             :include-source:
-    
-    
+
+
     """
     xformatter = TexEngFormatter
     yformatter = TexEngFormatter
@@ -361,11 +369,11 @@ class GBPlotStyle(DefaultPlotStyle):
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings.
-    
+
     Example
         .. plot:: samples/plotstyles/JTBStyle.py
             :include-source:
-    
+
 """
 
     show_title = False
@@ -394,7 +402,7 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 class PRBPlotStyle(DefaultPlotStyle):
     """A figure Style for making figures for Phys Rev * Jounrals.
-    
+
     Example
         .. plot:: samples/plotstyles/PRBStyle.py
             :include-source:
@@ -410,13 +418,13 @@ class SketchPlot(DefaultPlotStyle):
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
-    presentation one day ?    
-     
+    presentation one day ?
+
     Example
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
-    
-    
+
+
     """
     stylename = "sketch"
 
@@ -443,3 +451,66 @@ class SketchPlot(DefaultPlotStyle):
             l.set_rotation(normal(scale=2))
 
         plt.draw
+
+if SEABORN: # extra classes if we have seaborn available
+
+    class SeabornPlotStyle(DefaultPlotStyle):
+        """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
+
+        Attributes:
+            stylename (str): The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+            context (str): The seaborn plot context for scaling elements - paper,notebook,talk, or poster
+            palette (str): A name of a predefined seaborn palette.
+
+        Example
+            .. plot:: samples/plotstyles/SeabornStyle.py
+                :include-source:
+        """
+
+
+        _stylename=None
+        _context=None
+        _palette=None
+
+        @property
+        def context(self):
+            return self._context
+
+        @context.setter
+        def context(self,name):
+            if name in ["paper", "notebook", "talk", "poster"]:
+                self._context=name
+            else:
+                raise AttributeError("style name should be one of  {paper,notebook,talk,poster}")
+
+        @property
+        def palette(self):
+            return self._palette
+
+        @context.setter
+        def palette(self,name):
+            try:
+                with sns.color_palette(name):
+                    pass
+                self._palette=name
+            except Exception as e:
+                raise e
+
+        @property
+        def stylename(self):
+            return self._stylename
+
+        @stylename.setter
+        def stylename(self,name):
+            if name in ["darkgrid", "whitegrid", "dark", "white", "ticks"]:
+                self._stylename=name
+            else:
+                raise AttributeError("style name should be one of  {darkgrid, whitegrid, dark, white, ticks}")
+
+
+        def apply(self):
+            """Override base method to apply seaborn style sheets."""
+            sns.set_style(style=self.stylename)
+            sns.set_context(context=self.context)
+            sns.set_palette(sns.color_palette(self._palette))
+            self.customise()

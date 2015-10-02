@@ -161,10 +161,10 @@ class PlotFile(DataFile):
 
     @template.setter
     def template(self,value):
+        if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
+            value = value()
         if isinstance(value, DefaultPlotStyle):
             self._template = value
-        elif type(value) == type(object) and issubclass(value, DefaultPlotStyle):
-            self._template = value()
         else:
             raise ValueError("Template is not of the right class")
         self._template.apply()

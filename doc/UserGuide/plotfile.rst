@@ -304,6 +304,10 @@ are replaced with double underscores.
 Further customisation is possible by creating a subclass of :py:class:`Stoner.PlotFornats.DefaultPlotStyle` and overriding the
 :py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise` method and :py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise_axes` method.
 
+The seaborn paclage offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
+The :py:class:`SeabornPlotStyle` template class offers a quick interface to using this. It takes attributes :py:attr:`SeabornPlotStyle.stylename`,
+:py:attr:`SeabornPlotStyle.context` and :py:attr:`SeabornPlotStyle.palette` to set the corresponding seaborn settings.
+
 
 Making Multi-plot Figures
 -------------------------
