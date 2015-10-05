@@ -270,6 +270,8 @@ To work out which set of axes you are current working with the :py:attr:`PlotFil
 Plot Templates
 --------------
 
+.. currentmodule:: Stoner.PlotFormats
+
 Frequently one wishes to create many plots that have a similar set of formatting options - for example
 in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.PlotFormats` in conjunctions with
 the :py:attr:`PlotFile.template` attribute can help here.
@@ -301,12 +303,15 @@ The possible attributes that can be passed over to the template are essentially 
 (see :py:func:`matplotlib.pyplot.rcParams`) except that periods '.' are replced with underscores '_' and single underscores
 are replaced with double underscores.
 
-Further customisation is possible by creating a subclass of :py:class:`Stoner.PlotFornats.DefaultPlotStyle` and overriding the
-:py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise` method and :py:meth:`Stoner.PlotFornats.DefaultPlotStyle.customise_axes` method.
+Further customisation is possible by creating a subclass of :py:class:`DefaultPlotStyle` and overriding the
+:py:meth:`DefaultPlotStyle.customise` method and :py:meth:`DefaultPlotStyle.customise_axes` method.
 
 The seaborn paclage offers many options for producing visually appealing plots with a higher level abstraction of the matplotlib api/
 The :py:class:`SeabornPlotStyle` template class offers a quick interface to using this. It takes attributes :py:attr:`SeabornPlotStyle.stylename`,
 :py:attr:`SeabornPlotStyle.context` and :py:attr:`SeabornPlotStyle.palette` to set the corresponding seaborn settings.
+
+
+.. currentmodule:: Stoner.Plot
 
 
 Making Multi-plot Figures
