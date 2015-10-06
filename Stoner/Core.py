@@ -3011,18 +3011,36 @@ class DataFile(object):
             tmp.data = tmp.search(0, func, accuracy=accuracy)
         return tmp
 
-    def sort(self, order=None, reverse=False):
+    def sort(self, *order,**kargs):
         """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.
 
+        Arguments:
+            *order (column index or list of indices or callable function): One or more sort order keys.
+                If the argument is a callable function then it should take a two tuple arguments and
+                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise 
+                if the argument is interpreted as a column index. If a single argument is supplied, then it may be
+                a list of column indices. If no sort orders are supplied then the data is sorted by the :py:attr:`DataFile.setas` attribute
+                or if that is not set, then order of the columns in the data.
+
         Keyword Arguments:
-            order (column index or list of indices or callable function): Represent the sort order
-                If order is a callable function then it should take a two tuple arguments and
-                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller.
             reverse (boolean): If true, the sorted array isreversed.
 
         Returns:
             self: A copy of the :py:class:`DataFile` sorted object
         """
+
+        reverse=kargs.pop("reverse",False)
+        order=list(order)
+
+        if len(order)==0:
+            if self.setas.cols["xcol"] is not None:
+                order=[self.setas.cols["xcol"]]
+            order.extend(self.setas.cols["ycol"])
+            order.extend(self.setas.cols["zcol"])
+        if len(order)==0: # Ok, no setas here then            
+            order=None
+        elif len(order)==1:
+            order=order[0]
 
         if order is None:
             order = list(range(len(self.column_headers)))
@@ -3037,9 +3055,9 @@ class DataFile(object):
             d = _np_.sort(recs, order=order)
         else:
             raise KeyError("Unable to work out how to sort by a {}".format(type(order)))
-        if reverse:
-            d = d[::-1]
         self.data = DataArray(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
+        if reverse:
+            self.data=self.data[::-1]
         return self
 
     def swap_column(self, *swp,**kargs):
