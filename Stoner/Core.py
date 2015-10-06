@@ -3029,12 +3029,14 @@ class DataFile(object):
         recs = self.records
         if callable(order):
             d = sorted(recs, cmp=order)
+        elif isinstance(order,index_types):
+            order = [recs.dtype.names[self.find_col(order)]]
+            d = _np_.sort(recs, order=order)
         elif isinstance(order, Iterable):
             order = [recs.dtype.names[self.find_col(x)] for x in order]
             d = _np_.sort(recs, order=order)
         else:
-            order = [recs.dtype.names[self.find_col(order)]]
-            d = _np_.sort(recs, order=order)
+            raise KeyError("Unable to work out how to sort by a {}".format(type(order)))
         if reverse:
             d = d[::-1]
         self.data = DataArray(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
