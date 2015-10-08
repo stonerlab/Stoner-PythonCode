@@ -275,15 +275,20 @@
 
     <span class="nd">@shape.setter</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>  <span class="c"># Force setas annd acolumn_headers to match shape</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">:</span>  <span class="c"># Force setas annd acolumn_headers to match shape</span>
             <span class="n">c</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&quot;.&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)))</span>
-            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[:</span><span class="n">c</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&quot;Column {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))])</span>
-            <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;column_headers&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[:</span><span class="n">c</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">c</span><span class="o">=</span><span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;shape attribute should be a 2-tuple&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;shape attribute should be a 2-tuple not a {}-tuple&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&quot;.&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)))</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[:</span><span class="n">c</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&quot;Column {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))])</span>
+        <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;column_headers&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[:</span><span class="n">c</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
 
 
@@ -958,6 +963,7 @@
     <span class="sd">&quot;&quot;&quot;A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.</span>
 
 <span class="sd">    Attributes:</span>
+<span class="sd">        column_headers (list): of strings of the column names of the data.</span>
 <span class="sd">        i (array of integers): When read, returns the row  umbers of the data. When written to, sets the</span>
 <span class="sd">            base row index. The base row index is preserved when a DataArray is indexed.</span>
 <span class="sd">        x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access</span>
@@ -970,6 +976,9 @@
 <span class="sd">        p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`</span>
 <span class="sd">            into :math:`(\\phi,\\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar</span>
 <span class="sd">            co-ordinates are returned for *q* and *r*.</span>
+<span class="sd">        setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and</span>
+<span class="sd">            also tracks the names of columns (so that columns may be accessed as named items).</span>
+<span class="sd">            </span>
 
 
 <span class="sd">    This array type is used to represent numeric data in the Stoner Package - primarily as a 2D</span>
@@ -983,7 +992,7 @@
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">input_array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="c"># Input array is an already formed ndarray instance</span>
         <span class="c"># We first cast to be our class type</span>
-        <span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas&quot;</span><span class="p">,</span><span class="n">_setas</span><span class="p">())</span>
         <span class="n">mask</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;mask&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
             <span class="n">i</span><span class="o">=</span><span class="n">input_array</span><span class="o">.</span><span class="n">i</span>
@@ -991,12 +1000,12 @@
             <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">input_array</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
         <span class="c"># add the new attribute to the created instance</span>
-        <span class="k">if</span> <span class="n">setas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+        <span class="n">setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">setas</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">maske</span><span class="o">=</span><span class="bp">False</span>
         <span class="c"># Finally, we must return the newly created object:</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="n">i</span>
         <span class="k">return</span> <span class="n">obj</span>
@@ -1004,13 +1013,19 @@
     <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="c"># see InfoArray.__array_finalize__ for comments</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_finalize__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
         <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="bp">False</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;_setas&#39;</span><span class="p">,</span> <span class="n">_setas</span><span class="p">())</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">i</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">mask</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="c">#Overrides __getattr__ to allow access as row.x etc.</span>
@@ -1025,9 +1040,6 @@
             <span class="s">&quot;u&quot;</span><span class="p">:</span> <span class="s">&quot;ucol&quot;</span><span class="p">,</span>
             <span class="s">&quot;v&quot;</span><span class="p">:</span> <span class="s">&quot;vcol&quot;</span><span class="p">,</span>
             <span class="s">&quot;w&quot;</span><span class="p">:</span> <span class="s">&quot;wcol&quot;</span><span class="p">,</span>
-            <span class="s">&quot;q&quot;</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
-            <span class="s">&quot;p&quot;</span><span class="p">:</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
-            <span class="s">&quot;r&quot;</span><span class="p">:</span> <span class="s">&quot;&quot;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col_check</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1050,6 +1062,7 @@
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">):</span>
         <span class="c"># Override __getitem__ to handle string indexing</span>
+        <span class="n">single_row</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="n">ix</span><span class="o">=</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ix</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">string_types</span><span class="p">):</span>
@@ -1070,6 +1083,7 @@
                 <span class="n">ret</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">_singlerow</span><span class="o">=</span><span class="n">single_row</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
@@ -1112,34 +1126,115 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">i</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the row indices of the DataArray or sets the base index - the row number of the first row.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">or</span> <span class="s">&quot;_singlerow&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_singlerow</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="p">))</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="nd">@i.setter</span>
     <span class="k">def</span> <span class="nf">i</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
-            <span class="n">value</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">value</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">value</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">!=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="o">=</span><span class="n">value</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Pass through to the setas attribute.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span>
+
+    <span class="nd">@column_headers.setter</span>
+    <span class="k">def</span> <span class="nf">column_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the column_headers attribute (delagated to the setas object).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an object for setting column assignments.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&quot;_setas&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span>
+
+    <span class="nd">@setas.setter</span>
+    <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
+        <span class="n">setas</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+<span class="c">#============================================================================================================================</span>
+<span class="c"># Other methods</span>
+<span class="c">#============================================================================================================================</span>
+
+<div class="viewcode-block" id="DataArray.keys"><a class="viewcode-back" href="../../classes/Stoner.Core.DataArray.keys.html#Stoner.Core.DataArray.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of column headers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span>
 </div>
+<div class="viewcode-block" id="DataArray.swap_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataArray.swap_column.html#Stoner.Core.DataArray.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Swaps pairs of columns in the data.</span>
+
+<span class="sd">        Useful for reordering data for idiot programs that expect columns in a fixed order.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            swp  (tuple of list of tuples of two elements): Each</span>
+<span class="sd">                element will be iused as a column index (using the normal rules</span>
+<span class="sd">                for matching columns).  The two elements represent the two</span>
+<span class="sd">                columns that are to be swapped.</span>
+<span class="sd">            headers_too (bool): Indicates the column headers</span>
+<span class="sd">                are swapped as well</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            self: A copy of the modified :py:class:`DataFile` objects</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If swp is a list, then the function is called recursively on each</span>
+<span class="sd">            element of the list. Thus in principle the @swp could contain</span>
+<span class="sd">            lists of lists of tuples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">headers_too</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;headers_too&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">setas_too</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas_too&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">swp</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">swp</span><span class="o">=</span><span class="n">swp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_size</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">swp</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">headers_too</span><span class="o">=</span><span class="n">headers_too</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">col1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">swp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">col2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">swp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="p">[:,</span> <span class="p">[</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[:,</span> <span class="p">[</span><span class="n">col2</span><span class="p">,</span> <span class="n">col1</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">headers_too</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">setas_too</span><span class="p">:</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">col2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">col2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="p">[</span><span class="n">col1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Swap parameter must be either a tuple or a </span><span class="se">\</span>
+<span class="s">            list of tuples&quot;</span><span class="p">)</span>
+</div></div>
 <div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Core.DataFile` is the base class object that represents</span>
 <span class="sd">    a matrix of data, associated metadata and column headers.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        data (2D :py:class:`DataArray`) A numpy masked array of data (usually floats).</span>
 <span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary</span>
 <span class="sd">                                   tries to retain information about the type of</span>
 <span class="sd">                                   data so as to aid import and export from CM group LabVIEw code.</span>
 <span class="sd">        column_headers (list): of strings of the column names of the data.</span>
+<span class="sd">        data (2D numpy masked array): The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which</span>
+<span class="sd">            is itself a subclass of :py:class:`numpy.ma.MaskedArray`.</span>
 <span class="sd">        title (string): The title of the measurement.</span>
 <span class="sd">        filename (string): The current filename of the data if loaded from or</span>
 <span class="sd">                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`</span>
 <span class="sd">                           and :py:meth:`Stoner.Core.DataFile.save`.</span>
 <span class="sd">        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.</span>
+<span class="sd">        patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat&quot;)</span>
+<span class="sd">        priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower</span>
+<span class="sd">                            priority (!)</span>
 <span class="sd">        setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</span>
 <span class="sd">        shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</span>
 <span class="sd">        records (numpoy record array): Returns the data in the form of a list of dictionaries.</span>
@@ -1196,6 +1291,7 @@
 
 <span class="sd">            Creates the new DataFile object and does the combination of the</span>
 <span class="sd">            previous two forms.</span>
+
 
 <span class="sd">        .. py:function:: DataFile(DataFile)</span>
 <span class="sd">            :noindex:</span>
@@ -1503,30 +1599,6 @@
             <span class="n">newdata</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">new_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="n">newdata</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c"># This is a horrible mess that I&#39;m not sure we ever use</span>
-            <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">            added_row=False</span>
-<span class="sd">            for k in other:</span>
-<span class="sd">                try:</span>
-<span class="sd">                    newdata.find_col(k)</span>
-<span class="sd">                except KeyError:</span>
-<span class="sd">                    newdata=newdata.clone</span>
-<span class="sd">                    if len(newdata)==0:</span>
-<span class="sd">                        added_row=True</span>
-<span class="sd">                        cl=1</span>
-<span class="sd">                    else:</span>
-<span class="sd">                        cl=len(newdata)</span>
-<span class="sd">                    newdata=newdata&amp;_np_.ones(cl)*_np_.nan</span>
-<span class="sd">                    newdata.column_headers[-1]=k</span>
-<span class="sd">            new_data=_np_.nan*_np_.ones(len((newdata.column_headers)))</span>
-<span class="sd">            for k in other:</span>
-<span class="sd">                new_data[newdata.find_col(k)]=other[k]</span>
-<span class="sd">            new_data=_np_.atleast_2d(new_data)</span>
-<span class="sd">            newdata.data=_np_.append(newdata.data,new_data,0)</span>
-<span class="sd">            if added_row:</span>
-<span class="sd">                newdata.data=newdata.data[1:,:]</span>
-<span class="sd">            ret=newdata&quot;&quot;&quot;</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
                 <span class="n">newdata</span> <span class="o">=</span> <span class="n">newdata</span> <span class="o">+</span> <span class="n">o</span>
@@ -1598,13 +1670,13 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-<span class="c">#Get other to be a numpy masked array of data</span>
+        <span class="c">#Get other to be a numpy masked array of data</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">newdata</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
 
@@ -1898,30 +1970,10 @@
 <span class="sd">            and DataFile[5,3] would return the 6th element of the</span>
 <span class="sd">            4th column.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
-            <span class="n">indices</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">],:]</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
-                <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">x</span><span class="p">,:]),</span> <span class="mi">0</span><span class="p">)</span>
-                <span class="n">d</span><span class="o">=</span><span class="n">DataArray</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">d</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">,:],</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">,:],</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__meta__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">name</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span><span class="c"># Shortcut to index metadata that is a list</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span> <span class="c"># Pass through to DataArray to do heavy lifting here</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Key must be either numeric of string, or tuple&quot;</span><span class="p">)</span>
-
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1938,7 +1990,7 @@
         <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">(</span><span class="bp">True</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">r</span>
 
-<div class="viewcode-block" id="DataFile._load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actually load the data from disc assuming a .tdi file format.</span>
 
 <span class="sd">        Args:</span>
@@ -2014,7 +2066,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Column &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_headers_tmp</span><span class="p">))):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_headers_tmp</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</div>
+
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the length of the data.</span>
 
@@ -2904,7 +2956,7 @@
             <span class="k">if</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">is_masked</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="ow">and</span> <span class="n">not_masked</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">yield</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">row</span>
 </div>
 <div class="viewcode-block" id="DataFile.save"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a string representation of the current DataFile object into the file &#39;filename&#39;.</span>
@@ -3027,33 +3079,53 @@
             <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tmp</span>
 </div>
-<div class="viewcode-block" id="DataFile.sort"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.sort"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">order</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.</span>
 
+<span class="sd">        Arguments:</span>
+<span class="sd">            *order (column index or list of indices or callable function): One or more sort order keys.</span>
+<span class="sd">                If the argument is a callable function then it should take a two tuple arguments and</span>
+<span class="sd">                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise </span>
+<span class="sd">                if the argument is interpreted as a column index. If a single argument is supplied, then it may be</span>
+<span class="sd">                a list of column indices. If no sort orders are supplied then the data is sorted by the :py:attr:`DataFile.setas` attribute</span>
+<span class="sd">                or if that is not set, then order of the columns in the data.</span>
+
 <span class="sd">        Keyword Arguments:</span>
-<span class="sd">            order (column index or list of indices or callable function): Represent the sort order</span>
-<span class="sd">                If order is a callable function then it should take a two tuple arguments and</span>
-<span class="sd">                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller.</span>
 <span class="sd">            reverse (boolean): If true, the sorted array isreversed.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            self: A copy of the :py:class:`DataFile` sorted object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">reverse</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;reverse&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">order</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;xcol&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;xcol&quot;</span><span class="p">]]</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;ycol&quot;</span><span class="p">])</span>
+            <span class="n">order</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s">&quot;zcol&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c"># Ok, no setas here then            </span>
+            <span class="n">order</span><span class="o">=</span><span class="bp">None</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
         <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)))</span>
         <span class="n">recs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">records</span>
         <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">order</span><span class="p">):</span>
             <span class="n">d</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="nb">cmp</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">order</span><span class="p">,</span><span class="n">index_types</span><span class="p">):</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">recs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">order</span><span class="p">)]]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
             <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">recs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">order</span><span class="p">]</span>
             <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">order</span> <span class="o">=</span> <span class="p">[</span><span class="n">recs</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">order</span><span class="p">)]]</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
-            <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Unable to work out how to sort by a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">order</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
 <div class="viewcode-block" id="DataFile.swap_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -3078,25 +3150,7 @@
 <span class="sd">            lists of lists of tuples</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">headers_too</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;headers_too&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">setas_too</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas_too&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">swp</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">swp</span><span class="o">=</span><span class="n">swp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_size</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">swp</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">headers_too</span><span class="o">=</span><span class="n">headers_too</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">swp</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="n">col1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">swp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">col2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">swp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">[</span><span class="n">col2</span><span class="p">,</span> <span class="n">col1</span><span class="p">]]</span>
-            <span class="k">if</span> <span class="n">headers_too</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col1</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">setas_too</span><span class="p">:</span>
-                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col2</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">col1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Swap parameter must be either a tuple or a </span><span class="se">\</span>
-<span class="s">            list of tuples&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 </div>
 <div class="viewcode-block" id="DataFile.unique"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique">[docs]</a>    <span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
@@ -3193,7 +3247,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 23, 2015.
+      Last updated on Oct 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

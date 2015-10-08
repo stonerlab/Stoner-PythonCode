@@ -1,0 +1,15 @@
+Stoner.Folders.string_types
+===========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: string_types
+
+   
+
+   
+   
+
+   
+   
+   

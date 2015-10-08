@@ -1,0 +1,8 @@
+
+
+DataArray.swap_column
+=================================
+
+.. currentmodule:: Stoner.Core
+
+.. automethod:: DataArray.swap_column

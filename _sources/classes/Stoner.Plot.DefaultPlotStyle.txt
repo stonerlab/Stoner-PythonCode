@@ -1,0 +1,42 @@
+Stoner.Plot.DefaultPlotStyle
+============================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: DefaultPlotStyle
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Plot.DefaultPlotStyle.__call__
+      ~Stoner.Plot.DefaultPlotStyle.__init__
+      ~Stoner.Plot.DefaultPlotStyle.annotate
+      ~Stoner.Plot.DefaultPlotStyle.apply
+      ~Stoner.Plot.DefaultPlotStyle.customise
+      ~Stoner.Plot.DefaultPlotStyle.customise_axes
+      ~Stoner.Plot.DefaultPlotStyle.new_figure
+      ~Stoner.Plot.DefaultPlotStyle.update
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Plot.DefaultPlotStyle.show_legend
+      ~Stoner.Plot.DefaultPlotStyle.show_title
+      ~Stoner.Plot.DefaultPlotStyle.show_xlabel
+      ~Stoner.Plot.DefaultPlotStyle.show_ylabel
+      ~Stoner.Plot.DefaultPlotStyle.show_zlabel
+      ~Stoner.Plot.DefaultPlotStyle.stylename
+      ~Stoner.Plot.DefaultPlotStyle.subplot_settings
+   
+   

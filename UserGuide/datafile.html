@@ -81,7 +81,7 @@ which are produced by some of the LabVIEW rigs used by the Device Materials Grou
 <div class="section" id="the-various-flavours-of-the-datafile-class">
 <h3>The Various Flavours of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> Class<a class="headerlink" href="#the-various-flavours-of-the-datafile-class" title="Permalink to this headline">¶</a></h3>
 <p>To support a variety of different input file formats, the Stoner package provides a slew of subclasses of the base
-<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <a class="reference internal" href="../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load" title="Stoner.Core.DataFile._load"><code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code></a> method that
+<a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class. Each subclass typically provides its own version of the <code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code> method that
 understands how to reqad the relevant file.</p>
 <div class="section" id="base-classes-and-generic-formats">
 <h4>Base Classes and Generic Formats<a class="headerlink" href="#base-classes-and-generic-formats" title="Permalink to this headline">¶</a></h4>
@@ -297,7 +297,7 @@ chance that you will need the masked data values again later !</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Strictgly speaking, the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code> attribute is a sub-class of the numpy masked array, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
+<p class="last">Strictgly speaking, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is a sub-class of the numpy masked array, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>.
 This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.</p>
 </div>
 </div>
@@ -727,7 +727,7 @@ the same or fewer rows of data as <em>d</em>.</p>
 <h3>Working with Columns of Data<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>The <code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code> attribute is simply a 2D numpy array, so can be directly modified like any other
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is simply a 2D numpy array, so can be directly modified like any other
 numpy array might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has been used to identify columns as
 containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
 modify the data without having to keep track any further of which column(s) is indexed. This the following will work:</p>
@@ -1023,7 +1023,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 23, 2015.
+      Last updated on Oct 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

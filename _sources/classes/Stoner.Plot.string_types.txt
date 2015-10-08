@@ -1,0 +1,15 @@
+Stoner.Plot.string_types
+========================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: string_types
+
+   
+
+   
+   
+
+   
+   
+   

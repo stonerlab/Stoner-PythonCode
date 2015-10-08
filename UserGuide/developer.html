@@ -58,23 +58,56 @@
   <div class="section" id="developer-s-guide">
 <h1>Developer&#8217;s Guide<a class="headerlink" href="#developer-s-guide" title="Permalink to this headline">¶</a></h1>
 <p>This section provides some notes and guidance on extending the Stoner Package.</p>
+<div class="section" id="understanding-the-class-structure">
+<h2>Understanding the Class Structure<a class="headerlink" href="#understanding-the-class-structure" title="Permalink to this headline">¶</a></h2>
+<p>The Stoner Package makes use of several classes to handle representing experimental data that are hidden away from the casual user of the package.
+From the end-user perspective, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class contains several attributes that behave like data types that the user is familiar with:</p>
+<ul class="simple">
+<li>data
+Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.9)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, with an extra attribute
+<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.setas</span></code></a> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
+<a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
+co-ordinate sustems. <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> also keeps track of the row numbers of the array and can label its rows with the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.i" title="Stoner.Core.DataArray.i"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.i</span></code></a>
+attribute.</li>
+<li>metadata
+In many respects this looks like a standard dictionary, albeit one that sorts its keys in alpahabetical order. Actually it is a subclass of a
+blist.sortedDict that maintains a second dictionary with matching keys that stores information about the data type of the values in the metadata
+in order to support export to non-duck typed environments.</li>
+<li>column_headers
+This appears to be a stadnard list of strings, except that it is kept in sync with the size of the numerical data array, adding extra entries or
+losing them as the data array gains or loses columns. Actually this is proxied through to the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.setas</span></code></a> attribute</li>
+<li>setas
+This is a simple proxy through to the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute&#8217;s <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.setas</span></code></a> attribute. As described above, this provides
+the column labelling and assignment functionality, it also handles the code to index columns by number, name, regular expression pattern. Internally
+this attribute stores a simple list of the column assignments, but supports being called with a variety of arguments and keyword arguments to manipulate
+that list. Attempting to set this attribute results in a translation to the appropriate function call, whilst getting it is converted to expressing it
+as a list. The attribute also supports both dictionary like and list like get and set item calls to access elements by index, or indices by assignment.</li>
+</ul>
+<div class="figure" id="id1">
+<img src="../_images/class_heirarchy.svg" /><p class="caption"><span class="caption-text">The relationships between the various classes that make up the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> structure. The dashed arrows represent proxy attributes, solid
+arrows represent direct attributes. The arrow labels indicate the attribute names, whilst the labels in the boxes are the class names.</span></p>
+</div>
+</div>
 <div class="section" id="adding-new-data-file-types">
 <h2>Adding New Data File Types<a class="headerlink" href="#adding-new-data-file-types" title="Permalink to this headline">¶</a></h2>
-<p>The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using. If so, then the best thing would be to include it in the textbf{fileFormats} module in the package, otherwise you should just write the class in your own script files. In either case, develop the class in your own script files first.</p>
+<p>The first question to ask is whether the data file format that you are working with is one that others in the group will be interested in using.
+If so, then the best thing would be to include it in the <a class="reference internal" href="../Stoner.html#module-Stoner.FileFormats" title="Stoner.FileFormats"><code class="xref py py-mod docutils literal"><span class="pre">Stoner.FileFormats</span></code></a> module in the package, otherwise you should just write
+the class in your own script files. In either case, develop the class in your own script files first.</p>
 <p>The best way to implement handling a new data format is to write a new subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre>class NewInstrumentFile(DataFile):
-    &quot;&quot;&quot;Extends DataFile to load files from somewhere else
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">NewInstrumentFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from somewhere else</span>
 
-    Written by Gavin Burnell 11/3/2012&quot;&quot;&quot;
- \end{lstlisting}
- A document string should be provided that will help the user identify the function of the new class (and avoid using names that might be commonly replicated !). Only one method needs to be implemented: a new \textit{load}method. The \textit{load} method should have the following structure:
-\begin{lstlisting}
-      def load(self,filename=None,*args):
-        &quot;&quot;&quot;Just call the parent class but with the right parameters set&quot;&quot;&quot;
-        if filename is None or not filename:
-            self.get_filename(&#39;r&#39;)
-        else:
-            self.filename = filename
+<span class="sd">    Written by Gavin Burnell 11/3/2012&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>A document string should be provided that will help the user identify the function of the new class (and avoid using names that might be commonly replicated !).
+Only one method needs to be implemented: a new <code class="xref py py-meth docutils literal"><span class="pre">DataFile._load()</span></code> method. Ththis should have the following structure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Just call the parent class but with the right parameters set&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
 </pre></div>
 </div>
 <p>then follows the code to actually read the file. It <strong>must</strong> at the very least provide a column header for
@@ -83,8 +116,9 @@ much of the meta data as possible. The function terminates by returning a copy o
 <div class="highlight-python"><div class="highlight"><pre><span class="k">return</span> <span class="bp">self</span>
 </pre></div>
 </div>
-<p>One useful function for reading metadata from files is textit{self.metadata.string_to_type()} which will try to convert a string representation of data into a sensible Python type.</p>
-<p>There is one class attribute, <code class="xref py py-attr docutils literal"><span class="pre">DataFile.priority</span></code> that can be used to tweak the automatic file
+<p>One useful function for reading metadata from files is <a class="reference internal" href="../classes/Stoner.Core.typeHintedDict.string_to_type.html#Stoner.Core.typeHintedDict.string_to_type" title="Stoner.Core.typeHintedDict.string_to_type"><code class="xref py py-meth docutils literal"><span class="pre">typeHintedDict.string_to_type()</span></code></a> which will try to convert a
+string representation of data into a sensible Python type.</p>
+<p>There are two class attributes, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.priority</span></code></a> that can be used to tweak the automatic file
 importing code.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">priority</span><span class="o">=</span><span class="mi">32</span>
 </pre></div>
@@ -98,6 +132,13 @@ sense when you try to load them and that you might partially succeed with a file
 can happen if you have a tab or comma separated text file), then you should raise the priority number.
 Currently Lpy:class:<cite>DataFile</cite> defaults to 32, <a class="reference internal" href="../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile" title="Stoner.FileFormats.CSVFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.CSVFile</span></code></a> and
 <a class="reference internal" href="../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.BigBlueFile</span></code></a> have values of 128 and 64 respectively.</p>
+<p>THe other attribute one might add is <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.patterns</span></code></a> which is a list of filename extension glob patterns that
+will match the expected filenames for this format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="bp">self</span><span class="o">.</span><span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.txt&quot;</span><span class="p">,</span><span class="s">&quot;*/dat&quot;</span><span class="p">,</span><span class="s">&quot;*/qda&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Any custome data class <strong>should</strong> try to identify if the file is the correct format and if so it <strong>must</strong> raise a
+<a class="reference internal" href="../classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError" title="Stoner.Core.StonerLoadError"><code class="xref py py-class docutils literal"><span class="pre">StonerLoadError</span></code></a> exception in order that the autoloading code will known to try a different subclass of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>.</p>
 <p>If you need to write any additional methods please make sure that they have Google code-style document
 strings so that the API documentation is picked up correctly.</p>
 </div>
@@ -115,6 +156,7 @@ strings so that the API documentation is picked up correctly.</p>
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#understanding-the-class-structure">Understanding the Class Structure</a></li>
 <li><a class="reference internal" href="#adding-new-data-file-types">Adding New Data File Types</a></li>
 </ul>
 </li>
@@ -171,7 +213,7 @@ strings so that the API documentation is picked up correctly.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 23, 2015.
+      Last updated on Oct 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
