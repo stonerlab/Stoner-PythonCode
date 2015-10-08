@@ -913,6 +913,7 @@ class DataArray(_ma_.MaskedArray):
     """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
 
     Attributes:
+        column_headers (list): of strings of the column names of the data.
         i (array of integers): When read, returns the row  umbers of the data. When written to, sets the
             base row index. The base row index is preserved when a DataArray is indexed.
         x,y,z (1D DataArray): When a column is declared to contain *x*, *y*, or *z* data, then these attributes access
@@ -925,6 +926,9 @@ class DataArray(_ma_.MaskedArray):
         p,q,r (1D DataArray): These attributes access calculated columns that convert :math:`(x,y,z)` data or :math:`(u,v,w)`
             into :math:`(\\phi,\\theta,r)` polar co-ordinates. If on *x* and *y* columns are defined, then 2D polar
             co-ordinates are returned for *q* and *r*.
+        setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and
+            also tracks the names of columns (so that columns may be accessed as named items).
+            
 
 
     This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
@@ -1088,6 +1092,16 @@ class DataArray(_ma_.MaskedArray):
             value=_np_.array(range(min(value),self.shape[0]+min(value)))
 
         self._ibase=value
+        
+    @property
+    def column_headers(self):
+        """Pass through to the setas attribute."""
+        return self._setas.column_headers
+
+    @column_headers.setter
+    def column_headers(self, value):
+        """Write the column_headers attribute (delagated to the setas object)."""
+        self._setas.column_headers = value
 
     @property
     def setas(self):
@@ -1157,16 +1171,20 @@ class DataFile(object):
     a matrix of data, associated metadata and column headers.
 
     Attributes:
-        data (2D :py:class:`DataArray`) A numpy masked array of data (usually floats).
         metadata (typeHintedDict): of key-value metadata pairs. The dictionary
                                    tries to retain information about the type of
                                    data so as to aid import and export from CM group LabVIEw code.
         column_headers (list): of strings of the column names of the data.
+        data (2D numpy masked array): The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which
+            is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
         title (string): The title of the measurement.
         filename (string): The current filename of the data if loaded from or
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
+        patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
+        priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
+                            priority (!)
         setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
         records (numpoy record array): Returns the data in the form of a list of dictionaries.
