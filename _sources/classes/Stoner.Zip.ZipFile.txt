@@ -14,6 +14,7 @@ Stoner.Zip.ZipFile
     :toctree:
    
       ~Stoner.Zip.ZipFile.__init__
+      ~Stoner.Zip.ZipFile._load
       ~Stoner.Zip.ZipFile.save
 
    

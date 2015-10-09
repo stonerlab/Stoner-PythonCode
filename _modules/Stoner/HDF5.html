@@ -102,7 +102,7 @@
     <span class="c">#           else:</span>
     <span class="c">#               super(HDF5File,self).__init__(*args,**kargs)</span>
 
-    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HDF5File._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5File._load.html#Stoner.HDF5.HDF5File._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads data from a hdf5 file</span>
 
 <span class="sd">        Args:</span>
@@ -154,7 +154,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">f</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
-
+</div>
 <div class="viewcode-block" id="HDF5File.save"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HDF5File.save.html#Stoner.HDF5.HDF5File.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h5file</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes the current object into  an hdf5 file or group within a file in a</span>
 <span class="sd">        fashion that is compatible with being loaded in again with the same class.</span>
@@ -214,7 +214,7 @@
     <span class="n">priority</span><span class="o">=</span><span class="mi">16</span>
     <span class="n">pattern</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;*.hgx&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="HGXFile._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile._load.html#Stoner.HDF5.HGXFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;GenX HDF file loader routine.</span>
 
 <span class="sd">        Args:</span>
@@ -241,7 +241,7 @@
 
 
         <span class="k">return</span> <span class="bp">self</span>
-
+</div>
 <div class="viewcode-block" id="HGXFile.scan_group"><a class="viewcode-back" href="../../classes/Stoner.HDF5.HGXFile.scan_group.html#Stoner.HDF5.HGXFile.scan_group">[docs]</a>    <span class="k">def</span> <span class="nf">scan_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grp</span><span class="p">,</span><span class="n">pth</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recursively list HDF5 Groups.&quot;&quot;&quot;</span>
 
@@ -491,7 +491,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Oct 08, 2015.
+      Last updated on Oct 09, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

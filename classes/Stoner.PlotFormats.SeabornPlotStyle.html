@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.PlotFormats.SeabornPlotStyle &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="SeabornPlotStyle.apply" href="Stoner.PlotFormats.SeabornPlotStyle.apply.html" />
+    <link rel="prev" title="PRBPlotStyle.customise_axes" href="Stoner.PlotFormats.PRBPlotStyle.customise_axes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SeabornPlotStyle.apply.html" title="SeabornPlotStyle.apply"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.PRBPlotStyle.customise_axes.html" title="PRBPlotStyle.customise_axes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-plotformats-seabornplotstyle">
+<h1>Stoner.PlotFormats.SeabornPlotStyle<a class="headerlink" href="#stoner-plotformats-seabornplotstyle" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.PlotFormats.SeabornPlotStyle">
+<em class="property">class </em><code class="descclassname">Stoner.PlotFormats.</code><code class="descname">SeabornPlotStyle</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#SeabornPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.PlotFormats.SeabornPlotStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</p>
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.SeabornPlotStyle.stylename">
+<code class="descname">stylename</code><a class="headerlink" href="#Stoner.PlotFormats.SeabornPlotStyle.stylename" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.SeabornPlotStyle.context">
+<code class="descname">context</code><a class="headerlink" href="#Stoner.PlotFormats.SeabornPlotStyle.context" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>The seaborn plot context for scaling elements - paper,notebook,talk, or poster</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.PlotFormats.SeabornPlotStyle.palette">
+<code class="descname">palette</code><a class="headerlink" href="#Stoner.PlotFormats.SeabornPlotStyle.palette" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str</em></p>
+<p>A name of a predefined seaborn palette.</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">SeabornPlotStyle</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">SeabornPlotStyle</span><span class="p">(</span><span class="n">stylename</span><span class="o">=</span><span class="s">&quot;dark&quot;</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="s">&quot;talk&quot;</span><span class="p">,</span><span class="n">palette</span><span class="o">=</span><span class="s">&quot;muted&quot;</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s">&quot;y2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/SeabornStyle.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.png">png</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/SeabornStyle.png" src="../_images/SeabornStyle.png" />
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.PlotFormats.SeabornPlotStyle.apply.html#Stoner.PlotFormats.SeabornPlotStyle.apply" title="Stoner.PlotFormats.SeabornPlotStyle.apply"><code class="xref py py-obj docutils literal"><span class="pre">apply</span></code></a>()</td>
+<td>Override base method to apply seaborn style sheets.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.SeabornPlotStyle.context" title="Stoner.PlotFormats.SeabornPlotStyle.context"><code class="xref py py-obj docutils literal"><span class="pre">context</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.PlotFormats.SeabornPlotStyle.palette" title="Stoner.PlotFormats.SeabornPlotStyle.palette"><code class="xref py py-obj docutils literal"><span class="pre">palette</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.PlotFormats.SeabornPlotStyle.stylename" title="Stoner.PlotFormats.SeabornPlotStyle.stylename"><code class="xref py py-obj docutils literal"><span class="pre">stylename</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.PRBPlotStyle.customise_axes.html"
+                        title="previous chapter">PRBPlotStyle.customise_axes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.PlotFormats.SeabornPlotStyle.apply.html"
+                        title="next chapter">SeabornPlotStyle.apply</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.PlotFormats.SeabornPlotStyle.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.SeabornPlotStyle.apply.html" title="SeabornPlotStyle.apply"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.PlotFormats.PRBPlotStyle.customise_axes.html" title="PRBPlotStyle.customise_axes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Oct 09, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>
