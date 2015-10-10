@@ -156,9 +156,9 @@ lmfit provides a flexible way to fit complex models to experimental data in a py
 A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`_. . The
 :py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
 
-In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
+In order to use :py:meth:`AnalyseFile.lmfit`, one requires a :py:class:`lmfit.model.Model` instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The :py:mod:`Stoner.Fit` module contains
-a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
+a series of :py:class:`lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
 
 The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
 
@@ -170,6 +170,10 @@ The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:met
 
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+
+The *model* argument to :py:meth:`AnalyseFile.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
+instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
+a simple call to :py:meth:`AnalyseFile.curve_fit`.
 
 The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
 instance. This contains all the information about the fit and fitting process.

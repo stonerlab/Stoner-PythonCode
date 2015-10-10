@@ -1019,7 +1019,7 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        ret=DataArray(super(DataArray,self).__getitem__(ix),setas=self._setas.clone)
+        ret=super(DataArray,self).__getitem__(ix)
         if isinstance(ret,_np_.ndarray) and ret.size==1:
             return ret.dtype.type(ret)
         if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
@@ -1261,7 +1261,7 @@ class DataFile(object):
         self.debug = False
         self._masks = [False]
         self.metadata = typeHintedDict()
-        super(DataFile,self).__setattr__("data",DataArray([]))
+        super(DataFile,self).__setattr__("_data",DataArray([]))
         self.filename = None
         self.column_headers = list()
         i = len(args) if len(args) < 2 else 2
@@ -1369,6 +1369,27 @@ class DataFile(object):
     def column_headers(self, value):
         """Write the column_headers attribute (delagated to the setas object)."""
         self.data._setas.column_headers = value
+
+    @property
+    def data(self):
+        """Property Accessors for the main numerical data."""
+        return self._data
+        
+    @data.setter
+    def data(self, value):
+        """Set the data attribute, but force it through numpy.ma.masked_array first."""
+        nv=value
+        if len(nv.shape) == 0:
+            nv = _ma_.atleast_2d(nv)
+        elif len(nv.shape) == 1:
+            nv = _ma_.atleast_2d(nv).T
+        elif len(nv.shape) > 2:
+            raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
+        if not isinstance(nv,DataArray):
+            nv = DataArray(nv)
+            nv._setas=self._data._setas.clone
+        nv._setas.shape=nv.shape
+        self._data=nv
 
     @property
     def dict_records(self):
@@ -2171,7 +2192,7 @@ class DataFile(object):
 
         outp = "TDI Format 1.5\t" + "\t".join(self.column_headers) + "\n"
         m = len(self.metadata)
-        self.data = DataArray(_np_.atleast_2d(self.data),setas=self.data._setas)
+        self.data = _np_.atleast_2d(self.data)
         r = _np_.shape(self.data)[0]
         md = self.metadata.export_all()
         for x in range(min(r, m)):
@@ -2222,33 +2243,10 @@ class DataFile(object):
 
         if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
             object.__setattr__(self,name, value)
+        elif len(name) == 1 and name in "xyzuvwdef" and len(self.setas[name]) != 0:
+            self.__setattr_col(name, value)
         else:
-
-            easy = {
-                "data": self.__setattr_data,
-            }
-            if name in easy:
-                easy[name](value)
-            elif len(name) == 1 and name in "xyzuvwdef" and len(self.setas[name]) != 0:
-                self.__setattr_col(name, value)
-            else:
-                super(DataFile, self).__setattr__(name, value)
-
-
-    def __setattr_data(self, value):
-        """Set the data attribute, but force it through numpy.ma.masked_array first."""
-        nv=value
-        if len(nv.shape) == 0:
-            nv = _ma_.atleast_2d(nv)
-        elif len(nv.shape) == 1:
-            nv = _ma_.atleast_2d(nv).T
-        elif len(nv.shape) > 2:
-            raise ValueError("DataFile.data should be no more than 2 dimensional not shaoe {}", format(nv.shape))
-        nv = DataArray(nv)
-        if hasattr(self,"data") and hasattr(self.data,"_setas"):
-            nv._setas=self.data._setas.clone
-        nv._setas.shape=nv.shape
-        super(DataFile,self).__setattr__("data",nv)
+            super(DataFile, self).__setattr__(name, value)
 
     def __setattr_col(self, name, value):
         """Attempts to either assign data columns if set up, or setas setting.

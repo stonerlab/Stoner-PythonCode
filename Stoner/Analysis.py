@@ -466,7 +466,7 @@ class AnalyseFile(DataFile):
             col = self.setas._get_cols()["ycol"][0]
         col = self.find_col(col)
         nc = _np_.zeros(len(self))
-        for i, r in enumerate(self.rows()):
+        for r in self:
             ret = func(r)
             if isinstance(ret, Iterable):
                 if _np_.size(ret) == 1:
@@ -475,7 +475,7 @@ class AnalyseFile(DataFile):
                     ret = ret[col]
                 else:
                     ret = ret[0]
-            nc[i] = ret
+            nc[r.i] = ret
         if header == None:
             header = func.__name__
         self = self.add_column(nc, header=header, index=col)
@@ -624,7 +624,7 @@ class AnalyseFile(DataFile):
 
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
-            :py:attr:`DataFile.setas` attribute.
+            :py:attr:`Stoner.Core.DataFile.setas` attribute.
 
             The fitting function should have prototype y=f(x,p[0],p[1],p[2]...)
             The x-column and y-column can be anything that :py:meth:`Stoner.Core.DataFile.find_col` can use as an index
@@ -1047,7 +1047,7 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             p0 (list, tuple or array): A vector of initial parameter values to try.
             sigma (index): The index of the column with the y-error bars
-            bounds (callable) A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
+            bounds (callable): A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)
             result (bool): Determines whether the fitted data should be added into the DataFile object. If result is True then
                 the last column will be used. If result is a string or an integer then it is used as a column index.
                 Default to None for not adding fitted data
