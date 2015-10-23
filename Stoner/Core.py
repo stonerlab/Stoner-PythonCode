@@ -2440,7 +2440,7 @@ class DataFile(object):
             else:
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1),setas=self.data._setas)
         #Finally sort out column headers
-            self.column_headers[index] = header
+            self.column_headers.insert(index, header)
 
         return self
 
