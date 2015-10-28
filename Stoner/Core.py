@@ -3072,7 +3072,7 @@ class DataFile(object):
             lists of lists of tuples
         """
 
-        self.data.swap_column(*args,**kargs)
+        self.data.swap_column(*swp,**kargs)
         return self
 
     def unique(self, col, return_index=False, return_inverse=False):
