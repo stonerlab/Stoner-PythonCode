@@ -507,8 +507,8 @@ class _setas(object):
             start=startx
             for i,n in enumerate(col):
                 try:
-                    col[i]=self.setas[start:maxcol].index(lett)
-                    start=col[i]
+                    col[i]=self.setas[start:maxcol].index(lett)+start
+                    start=col[i]+1
                 except ValueError:
                     break
 
