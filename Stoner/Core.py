@@ -2318,7 +2318,9 @@ class DataFile(object):
             if cols[c] is None:
                 del cols[c]
             elif c in ret and isinstance(ret[c],list):
-                if isinstance(cols[c],Iterable):
+                if isinstance(cols[c],str):
+                    cols[c]=cols[c]
+                elif isinstance(cols[c],Iterable):
                     cols[c]=list(cols[c])
                 else:
                     cols[c]=[cols[c]]
@@ -2406,6 +2408,7 @@ class DataFile(object):
         if replace:
             self.data[:, index] = _np__data
         else:
+            self.column_headers.insert(index, header)
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
             else:
@@ -2418,6 +2421,7 @@ class DataFile(object):
                 self.column_headers=columns
         #Finally sort out column headers
             self.column_headers[index]= header
+
 
         return self
 
