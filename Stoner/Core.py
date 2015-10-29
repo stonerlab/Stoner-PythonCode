@@ -473,7 +473,7 @@ class _setas(object):
         #y columns
         if len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
-            
+
         if self.setas.count("x")==1:
             xcol=self.setas.index("x")
             maxcol=len(self.setas)+1
@@ -491,7 +491,7 @@ class _setas(object):
             xerr=None
 
 
-        #No longer enforce ordering of yezf - allow them to appear in any order.            
+        #No longer enforce ordering of yezf - allow them to appear in any order.
         ycol = []
         yerr = []
         zcol = []
@@ -543,7 +543,7 @@ class _setas(object):
         ret["has_xerr"] = xerr is not None
         ret["has_yerr"] = len(yerr)>0
         ret["has_zerr"] = len(zerr)>0
-        ret["has_uvw"] = len(ucol) >0 
+        ret["has_uvw"] = len(ucol) >0
         if what == "xcol":
             ret = ret["xcol"]
         elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
@@ -900,7 +900,7 @@ class DataArray(_ma_.MaskedArray):
             co-ordinates are returned for *q* and *r*.
         setas (list or string): Actually a proxy to a magic class that handles the assignment of columns to different axes and
             also tracks the names of columns (so that columns may be accessed as named items).
-            
+
 
 
     This array type is used to represent numeric data in the Stoner Package - primarily as a 2D
@@ -1066,7 +1066,7 @@ class DataArray(_ma_.MaskedArray):
             value=_np_.array(range(min(value),self.shape[0]+min(value)))
 
         self._ibase=value
-        
+
     @property
     def column_headers(self):
         """Pass through to the setas attribute."""
@@ -1348,7 +1348,7 @@ class DataFile(object):
     def data(self):
         """Property Accessors for the main numerical data."""
         return self._data
-        
+
     @data.setter
     def data(self, value):
         """Set the data attribute, but force it through numpy.ma.masked_array first."""
@@ -2374,9 +2374,6 @@ class DataFile(object):
             if header is None:
                 header = self.column_headers[index]
 
-# The following 2 lines make the array we are adding a
-# [1, x] array, i.e. a column by first making it 2d and
-# then transposing it.
         if isinstance(column_data, _np_.ndarray):
             if len(_np_.shape(column_data)) != 1:
                 raise ValueError('Column data must be 1 dimensional')
@@ -2405,16 +2402,22 @@ class DataFile(object):
         if cl > dr and dc * dr > 0:
             self.data = DataArray(_np_.append(self.data, _np_.zeros((cl - dr, dc)), 0),setas=self.data._setas)
         elif cl < dr:
-            _np__data = DataArray(_np_.append(_np__data, _np_.zeros(dr - cl)),setas=self.data._setas)
+            _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
         if replace:
             self.data[:, index] = _np__data
         else:
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
             else:
-                self.data = DataArray(_np_.insert(self.data, index, _np__data, 1),setas=self.data._setas)
+                columns=copy.copy(self.column_headers)
+                columns.insert(index,header)
+                setas=list(self.setas)
+                setas.insert(index,".")
+                self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
+                self.setas(setas)
+                self.column_headers=columns
         #Finally sort out column headers
-            self.column_headers.insert(index, header)
+            self.column_headers[index]= header
 
         return self
 
@@ -3007,7 +3010,7 @@ class DataFile(object):
         Arguments:
             *order (column index or list of indices or callable function): One or more sort order keys.
                 If the argument is a callable function then it should take a two tuple arguments and
-                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise 
+                return +1,0,-1 depending on whether the first argument is bigger, equal or smaller. Otherwise
                 if the argument is interpreted as a column index. If a single argument is supplied, then it may be
                 a list of column indices. If no sort orders are supplied then the data is sorted by the :py:attr:`DataFile.setas` attribute
                 or if that is not set, then order of the columns in the data.
@@ -3027,7 +3030,7 @@ class DataFile(object):
                 order=[self.setas.cols["xcol"]]
             order.extend(self.setas.cols["ycol"])
             order.extend(self.setas.cols["zcol"])
-        if len(order)==0: # Ok, no setas here then            
+        if len(order)==0: # Ok, no setas here then
             order=None
         elif len(order)==1:
             order=order[0]
