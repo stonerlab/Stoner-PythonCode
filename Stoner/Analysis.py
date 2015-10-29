@@ -345,11 +345,12 @@ class AnalyseFile(DataFile):
         return abs(row[column] - pval) > metric * perr
 
 
-    def __lmfit_one(self,model,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
+    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
         """Carry out a single fit wioth lmfit.
 
         Args:
             model (lmfit.Model): Configured model
+            xcol (int,str): index for x data
             ydata (array): y data to fit
             scale_covat (bool): Whether sigmas are absolute or relative.
             sigma (array): Uncertainties of ydata.
@@ -371,10 +372,10 @@ class AnalyseFile(DataFile):
             self.mask=False
 
             if (isinstance(result, bool) and result): # Appending data and mask
-                self.add_column(fit.best_fit, header=header, index=None)
+                self.add_column(model.func(self.column(xcol), **fit.best_values), header=header, index=None)
                 tmp_mask=_np_.column_stack((tmp_mask,col_mask))
             elif isinstance(result, index_types): # Inserting data and mask
-                self.add_column(fit.best_fit, header=header, index=result, replace=replace)
+                self.add_column(model.func(self.column(xcol), **fit.best_values), header=header, index=result, replace=replace)
                 tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
             elif result is not None: # Oops restore mask and bail
                 self.mask=tmp_mask
@@ -1166,7 +1167,7 @@ class AnalyseFile(DataFile):
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
+            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
