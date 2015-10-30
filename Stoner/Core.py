@@ -3052,7 +3052,9 @@ class DataFile(object):
             d = _np_.sort(recs, order=order)
         else:
             raise KeyError("Unable to work out how to sort by a {}".format(type(order)))
-        self.data = DataArray(d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers)))
+        setas=self.setas.clone
+        self.data = d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers))
+        self.data._setas=setas
         if reverse:
             self.data=self.data[::-1]
         return self
