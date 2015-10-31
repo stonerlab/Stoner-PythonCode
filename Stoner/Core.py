@@ -420,7 +420,7 @@ class _setas(object):
         """
         if isinstance(col, (int,long)):  # col is an int so pass on
             if col >= len(self.column_headers):
-                raise IndexError('Attempting to index a non - existant column ' + str(col))
+                raise IndexError('Attempting to index a non - existant column {}'.format(col))
             if col < 0:
                 col = col % len(self.column_headers)
         elif isinstance(col, string_types):  # Ok we have a string
@@ -443,7 +443,7 @@ class _setas(object):
             test = col
             possible = [x for x in self.column_headers if test.search(x)]
             if len(possible) == 0:
-                raise KeyError('Unable to find any possible column matches for ' + str(col.pattern))
+                raise KeyError('Unable to find any possible column matches for {}'.format(col.pattern))
             else:
                 col = self.find_col(possible)
         elif isinstance(col, slice):
@@ -672,7 +672,7 @@ class typeHintedDict(sorteddict):
                     typ = 'Cluster (' + tt + ')'
                 elif t == 'Array':
                     z = _np_.zeros(1, dtype=value.dtype)
-                    typ = (str(len(_np_.shape(value))) + "D Array (" + self.findtype(z[0]) + ")")
+                    typ = "{}D Array ({})".format(len(_np_.shape(value)),self.findtype(z[0]))
                 else:
                     typ = t
                 break
@@ -728,7 +728,7 @@ class typeHintedDict(sorteddict):
             A python object of the natural type for value"""
         ret = None
         if not isinstance(value, string_types):
-            raise TypeError("Value must be a string not a " + str(type(value)))
+            raise TypeError("Value must be a string not a {}".format(type(value)))
         value = value.strip()
         if len(value) != 0:
             tests = ['list(' + value + ')', 'dict(' + value + ')']
@@ -848,7 +848,7 @@ class typeHintedDict(sorteddict):
                 keys
         Returns:
             The string type hint (or a list of string type hints)"""
-        if isinstance(key, str):
+        if isinstance(key, string_types):
             return self._typehints[key]
         else:
             try:
@@ -1265,7 +1265,7 @@ class DataFile(object):
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
-                            typ = "a " + str(str(type(myattr[k])))
+                            typ = "a {}".format(type(myattr[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
 
 # Special Methods
@@ -1662,7 +1662,7 @@ class DataFile(object):
             newdata.data = _np_.append(self.data, other, 1)
             newdata.mask = new_mask
         if len(newdata.column_headers) < newdata.shape[1]:
-            newdata.column_headers.extend(["Column " + str(i + len(newdata.column_headers))
+            newdata.column_headers.extend(["Column {}".format(i + len(newdata.column_headers))
                                            for i in range(other.shape[1])])
         for attr in self.__dict__:
             if attr not in ("metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
@@ -1760,7 +1760,7 @@ class DataFile(object):
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
-                            typ = "a " + str(str(type(myattr[k])))
+                            typ = "a {}".format(type(myattr[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
 
         return new_d
@@ -1781,7 +1781,7 @@ class DataFile(object):
 
         Args:
             item (ingteger or string):  row index or name of metadata to delete"""
-        if isinstance(item, str):
+        if isinstance(item, string_types):
             del (self.metadata[item])
         else:
             self.del_rows(item)
@@ -2024,7 +2024,7 @@ class DataFile(object):
         else:
             self.data = _np_.atleast_2d(_np_.array([]))
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
-            self.column_headers = ["Column " + str(i) for i in range(self.data.shape[1])]
+            self.column_headers = ["Column {}".format(i) for i in range(self.data.shape[1])]
             for i in range(min(len(self.column_headers), len(col_headers_tmp))):
                 self.column_headers[i] = col_headers_tmp[i]
 
@@ -2048,7 +2048,7 @@ class DataFile(object):
             Make code work better with streams
         """
         newdata = DataFile()
-        if isinstance(other, str):
+        if isinstance(other, string_types):
             lines = itertools.imap(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
         elif isinstance(other, Iterable):
@@ -2138,7 +2138,7 @@ class DataFile(object):
                 continue
             self.data = _np_.append(self.data, self._conv_float(row[1:]))
         self.data = _np_.reshape(self.data, (-1, cols))
-        self.column_headers = ["Column " + str(i) for i in range(cols)]
+        self.column_headers = ["Column {}".format(i) for i in range(cols)]
         for i in range(len(col_headers_tmp)):
             self.column_headers[i] = col_headers_tmp[i]
 
@@ -2334,7 +2334,7 @@ class DataFile(object):
             if cols[c] is None:
                 del cols[c]
             elif c in ret and isinstance(ret[c],list):
-                if isinstance(cols[c],str):
+                if isinstance(cols[c],string_types):
                     cols[c]=cols[c]
                 elif isinstance(cols[c],Iterable):
                     cols[c]=list(cols[c])
@@ -2386,7 +2386,7 @@ class DataFile(object):
             index = len(self.column_headers)
             replace = False
             if header is None:
-                header = "Col" + str(index)
+                header = "Col{}".format(index)
         else:
             index = self.find_col(index)
             if header is None:
