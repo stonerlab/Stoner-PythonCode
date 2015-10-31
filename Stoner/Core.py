@@ -984,30 +984,40 @@ class DataArray(_ma_.MaskedArray):
 
     def __getitem__(self,ix):
         # Override __getitem__ to handle string indexing
+        
+        #Is this goign to be a single row ?
         single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
+        #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
             ix=(slice(0,-1,1),self._setas.find_col(ix))
-        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types):
+        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
+            
+        # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
-        if isinstance(ret,_np_.ndarray) and ret.size==1: # 1 elenebt array returned as scalr
+        if isinstance(ret,_np_.ndarray) and ret.size==1: # 1 element array returned as scalr
             return ret.dtype.type(ret)
         elif not isinstance(ret,_np_.ndarray): #bugout for scalar resturns
             return ret
+            
+        # If we have one or more columns of data, then this can have a setas attribute
         if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
             ret.setas=self._setas[ix[-1]]
+            # Sort out whether we need an array of row labels
             if isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix[0]]
             else:
                 ret.i=self.i
-        else:
+        else:# This looks like a row
             if isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix]
-            else:
+            else: #This is a single element?
                 ret.i=self.i
         ret._singlerow=single_row
+        if len(self._setas[ix[-1]])==1: # Adda name attribute for single columns for mpl 1.5
+            ret.name=self.column_headers[ix[-1]]
         return ret
 
     def __setitem__(self,ix,val):
@@ -1916,7 +1926,13 @@ class DataFile(object):
             4th column.
         """
         if isinstance(name, string_types) or isinstance(name, re._pattern_type):
-            ret = self.__meta__(name)
+            try:
+                ret = self.__meta__(name)
+            except KeyError:
+                try:
+                    ret=self.data[name]
+                except KeyError:
+                    raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
         else:
             ret=self.data[name]
         return ret
@@ -2140,7 +2156,7 @@ class DataFile(object):
         """
         possible = [x for x in self.metadata if test.search(x)]
         if len(possible) == 0:
-            raise KeyError("No metadata with keyname: " + str(test))
+            raise KeyError("No metadata with keyname: {}".format(test))
         elif len(possible) == 1:
             ret = self.metadata[possible[0]]
         else:
