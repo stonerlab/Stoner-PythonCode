@@ -990,6 +990,8 @@ class DataArray(_ma_.MaskedArray):
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
             ix=(slice(0,-1,1),self._setas.find_col(ix))
+        if isinstance(ix,int):
+            ix=(ix,slice(0,-1,1))
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
@@ -1004,7 +1006,7 @@ class DataArray(_ma_.MaskedArray):
             
         # If we have one or more columns of data, then this can have a setas attribute
         if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
-            ret.setas=self._setas[ix[-1]]
+            ret.setas=list(self.setas)[ix[-1]]
             # Sort out whether we need an array of row labels
             if isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix[0]]
@@ -2588,7 +2590,11 @@ class DataFile(object):
                     if i not in col:
                         self.del_rows(i)
             elif isinstance(col, int) and val is None and not invert:
+                tmp_mask=self.mask
+                tmp_setas=self.data._setas.clone
                 self.data = _np_.delete(self.data, col, 0)
+                self.data.mask=_np_.delete(tmp_mask, col, 0)
+                self.data._setas=tmp_setas                
             elif isinstance(col, int) and val is None and invert:
                 self.del_rows([c], invert=invert)
             else:
@@ -2604,8 +2610,11 @@ class DataFile(object):
                     rows = _np_.nonzero([bool(lower <= x <= upper) != invert for x in d])[0]
                 else:
                     raise SyntaxError("If val is specified it must be a float,callable, or iterable object of length 2")
-                self.data = DataArray(_np_.delete(self.data, rows, 0),
-                                              mask=_np_.delete(self.data.mask, rows, 0))
+                tmp_mask=self.mask
+                tmp_setas=self.data._setas.clone
+                self.data = _np_.delete(self.data, rows, 0)
+                self.data.mask=_np_.delete(tmp_mask, rows, 0)
+                self.data._setas=tmp_setas
         return self
 
     def dir(self, pattern=None):
