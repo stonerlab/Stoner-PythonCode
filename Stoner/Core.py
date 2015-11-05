@@ -175,15 +175,31 @@ class _setas(object):
         Keyword Arguments:
             initial_val (string or list or dict): Initial values to set
         """
-        self.setas = list()
-        self.column_headers = []
+        self._row=kargs.pop("_row",False)
         self._cols = _attribute_store()
         self._shape=tuple()
+        self._setas = list()
+        self._column_headers = []
+
 
         if initial_val is not None:
             self(initial_val)
         elif len(kargs) > 0:
             self(**kargs)
+
+    @property
+    def _size(self):
+        """Calculate a size of the setas attribute."""
+        if len(self._shape)==1 and self._row:
+            c=self._shape[0]
+        elif len(self._shape)==1:
+            c=1
+        elif len(self._shape)>1:
+            c=self.shape[1]
+        else:
+            c=len(self._column_headers)
+        return c
+
 
     @property
     def clone(self):
@@ -207,17 +223,33 @@ class _setas(object):
 
     @property
     def column_headers(self):
-        return self._column_headers
+        c=self._size
+        l=len(self._column_headers)
+        if l<c: # Extend the column headers if necessary
+            self._column_headers.extend(["Column {}".format(i+l) for i in range(c-l)])
+        return self._column_headers[:c]
 
     @column_headers.setter
     def column_headers(self,value):
         if all_type(value,string_types):
             self._column_headers=list(value)
-            c=len(self._column_headers)
-            self.setas.extend(["."]*(c-len(self.setas)))
-            object.__setattr__(self,"setas",self.setas[:c])
         else:
             raise AttributeError("Column_headers attribute should be an iterable of strings")
+
+    @property
+    def setas(self):
+        """Guard the setas attribute."""
+        c=self._size
+        l=len(self._setas)
+        if c>l:
+            self._setas.extend(["."]*(c-l))
+        self._setas=self._setas[:c]
+        return self._setas
+        
+    @setas.setter
+    def setas(self,value):
+        """Minimal attribute setter."""
+        self._setas=value
 
     @property
     def shape(self):
@@ -225,20 +257,18 @@ class _setas(object):
 
     @shape.setter
     def shape(self,value):
+        self._shape=tuple(value)
         if len(value)==0:
             c=0
         elif len(value)>=2:  # Force setas annd acolumn_headers to match shape
             c=value[1]
         elif len(value)==1:
-            c=1
+            if self._row:
+                c=value[0]
+            else:
+                c=1
         else:
             raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
-
-        self.setas.extend(["."]*(c-len(self.setas)))
-        object.__setattr__(self,"setas",self.setas[:c])
-        self.column_headers.extend(["Column {}".format(i+len(self.column_headers)) for i in range(c-len(self.column_headers))])
-        object.__setattr__(self,"column_headers",self.column_headers[:c])
-        self._shape=tuple(value)
 
 
 
@@ -303,11 +333,13 @@ class _setas(object):
                     except KeyError:
                         pass
         elif isinstance(value, Iterable):
-            if len(value) > len(self.column_headers):
+            if len(value) > self._size:
                 value = value[:len(self.column_headers)]
             elif len(value) < len(self.column_headers):
                 value = [v for v in value]  # Ensure value is now a list
                 value.extend(list("." * (len(self.column_headers) - len(value))))
+            if len(self.setas)<self._size:
+                self.setas.extend("."*(self._size-len(self.setas)))
             for i, v in enumerate(list(value)):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
@@ -916,6 +948,7 @@ class DataArray(_ma_.MaskedArray):
         # We first cast to be our class type
         setas=kargs.pop("setas",_setas())
         mask=kargs.pop("mask",None)
+        _row=kargs.pop("isrow",False)
         if isinstance(input_array,DataArray):
             i=input_array.i
         else:
@@ -930,6 +963,7 @@ class DataArray(_ma_.MaskedArray):
             obj.maske=False
         # Finally, we must return the newly created object:
         obj.i=i
+        obj.setas._row=_row and len(self.shape)==1
         return obj
 
     def __array_finalize__(self, obj):
@@ -939,15 +973,20 @@ class DataArray(_ma_.MaskedArray):
             self._setas=_setas()
             self.i=0
             self.mask=False
+            self._setas._row=False
+            self._setas.shape=(0,)
         else:
             self._setas = getattr(obj, '_setas', _setas())
             if isinstance(obj,DataArray):
                 self.i=obj.i
                 self.mask=obj.mask
+                self._setas._row=getattr(obj._setas,'_row',False)
             else:
                 self.i=0
                 self.mask=False
-        self._setas.shape=self.shape
+                self._setas._row=False
+            self._setas.shape=getattr(self,'shape',(0,))
+            
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
@@ -989,9 +1028,11 @@ class DataArray(_ma_.MaskedArray):
         single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
-            ix=(slice(0,-1,1),self._setas.find_col(ix))
+            last=self.shape[0]
+            ix=(slice(0,last,1),self._setas.find_col(ix))
         if isinstance(ix,int):
-            ix=(ix,slice(0,-1,1))
+            last=self.shape[-1]
+            ix=(ix,slice(0,last,1))
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
@@ -1006,7 +1047,11 @@ class DataArray(_ma_.MaskedArray):
             
         # If we have one or more columns of data, then this can have a setas attribute
         if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
-            ret.setas=list(self.setas)[ix[-1]]
+            ret.isrow=single_row
+            tmp=list(self.setas)[ix[-1]]
+            tmpcol=list(self.column_headers)[ix[-1]]
+            ret.setas(tmp)
+            ret.column_headers=tmpcol
             # Sort out whether we need an array of row labels
             if isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix[0]]
@@ -1031,6 +1076,16 @@ class DataArray(_ma_.MaskedArray):
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
         super(DataArray,self).__setitem__(ix,val)
+
+    @property
+    def isrow(self):
+        """Defines whether this is a single row or a column if 1D."""
+        return self._setas._row
+        
+    @isrow.setter
+    def isrow(self,value):
+        """Set whether this object is a single row or not."""
+        self._setas._row = len(self.shape)==1 and value
 
     @property
     def r(self):
@@ -2026,9 +2081,7 @@ class DataFile(object):
         else:
             self.data = _np_.atleast_2d(_np_.array([]))
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
-            self.column_headers = ["Column {}".format(i) for i in range(self.data.shape[1])]
-            for i in range(min(len(self.column_headers), len(col_headers_tmp))):
-                self.column_headers[i] = col_headers_tmp[i]
+            self.column_headers=col_headers_tmp
 
     def __len__(self):
         """Return the length of the data.
