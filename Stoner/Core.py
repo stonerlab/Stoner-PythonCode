@@ -1022,49 +1022,82 @@ class DataArray(_ma_.MaskedArray):
         return ret
 
     def __getitem__(self,ix):
-        # Override __getitem__ to handle string indexing
+        """Indexing function for DataArray.
+        
+        Args:
+            ix (various): Index to find.
+            
+        Returns:
+            An indexed part of the DataArray object with extra attributes.
+            
+        Notes:
+            This tries to support all of the indexing operations of a regular numpy array,
+            plus the special operations where one columns are named.
+            
+        Warning:
+            Teh code almost certainly makes some assumptiuons that DataArray is one or 2D and
+            may blow up with 3D arrays ! On the other hand it has a special case exception for where
+            you give a string as the first index element and assumes that you've forgotten that we're
+            row major and tries to do the right thing.
+        """
         
         #Is this goign to be a single row ?
         single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
-            last=self.shape[0]
-            ix=(slice(0,last,1),self._setas.find_col(ix))
-        if isinstance(ix,int):
-            last=self.shape[-1]
-            ix=(ix,slice(0,last,1))
+            if self.ndim>1:
+                ix=(slice(None,None,None),self._setas.find_col(ix))
+            else:
+                ix=(self._setas.find_col(ix),)
+        if isinstance(ix,(int,slice)):
+                ix=(ix,)
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[0],string_types): # oops! backwards indexing
+            c=ix[0]            
+            ix=list(ix[1:])
+            ix.append(self._setas.find_col(c))
+            ix=tuple(ix)
             
         # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
-        if isinstance(ret,_np_.ndarray) and ret.size==1: # 1 element array returned as scalr
-            return ret.dtype.type(ret)
+        if ret.ndim==0 or isinstance(ret,_np_.ndarray) and ret.size==1:
+            return ret.dtype.type(ret)   
         elif not isinstance(ret,_np_.ndarray): #bugout for scalar resturns
             return ret
-            
-        # If we have one or more columns of data, then this can have a setas attribute
-        if isinstance(ix,tuple) and len(ix)>=2 and ix[-1] is not None:
+        elif ret.ndim>=2: # Potentially 2D array here
+            if ix[-1] is None: # Special case for increasing an array dimension
+                if self.ndim==1: # Going from 1 D to 2D
+                    ret.setas=self.setas.clone
+                    ret.i=self.i
+                    ret.name=getattr(self,"name","Column")
+                return ret
+            else: # A regular 2D array
+                ret.isrow=single_row
+                tmp=list(self.setas)[ix[-1]]
+                tmpcol=list(self.column_headers)[ix[-1]]
+                ret.setas(tmp)
+                ret.column_headers=tmpcol
+                # Sort out whether we need an array of row labels
+                if isinstance(self.i,_np_.ndarray):
+                    ret.i=self.i[ix[0]]
+                else:
+                    ret.i=self.i
+        elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
             tmp=list(self.setas)[ix[-1]]
             tmpcol=list(self.column_headers)[ix[-1]]
             ret.setas(tmp)
             ret.column_headers=tmpcol
             # Sort out whether we need an array of row labels
-            if isinstance(self.i,_np_.ndarray):
+            if single_row and isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix[0]]
-            else:
-                ret.i=self.i
-        else:# This looks like a row
-            if isinstance(self.i,_np_.ndarray):
-                ret.i=self.i[ix]
             else: #This is a single element?
                 ret.i=self.i
-        ret._singlerow=single_row
-        if len(self._setas[ix[-1]])==1: # Adda name attribute for single columns for mpl 1.5
-            ret.name=self.column_headers[ix[-1]]
+            if not single_row:
+                ret.name=self.column_headers[ix[-1]]
         return ret
 
     def __setitem__(self,ix,val):
@@ -1075,6 +1108,12 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[0],string_types):
+            c=ix[0]            
+            ix=list(ix[1:])
+            ix.append(self._setas.find_col(c))
+            ix=tuple(ix)
+
         super(DataArray,self).__setitem__(ix,val)
 
     @property
@@ -1117,7 +1156,7 @@ class DataArray(_ma_.MaskedArray):
     @property
     def i(self):
         """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
-        if len(self._ibase)==1 or "_singlerow" in self.__dict__ and self._singlerow:
+        if len(self._ibase)==1 and self.isrow:
             ret=min(self._ibase)
         else:
             ret=self._ibase
@@ -1125,14 +1164,21 @@ class DataArray(_ma_.MaskedArray):
 
     @i.setter
     def i(self,value):
-        if len(self.shape)==0:
+        if self.ndim==0:
             pass
-        elif not isinstance(value,Iterable):
-            value=_np_.array(range(value,self.shape[0]+value))
-        elif len(value)!=self.shape[0] and len(value)>1:
-            value=_np_.array(range(min(value),self.shape[0]+min(value)))
-
-        self._ibase=value
+        elif self.ndim==1 and self.isrow:
+            if isinstance(value,Iterable):
+                self._ibase=_np_.array([min(value)])
+            else:
+                self._ibase=_np_.array([value])
+        elif self.ndim>=1:
+            r=self.shape[0]
+            if isinstance(value,Iterable) and len(value)==r: #Iterable and the correct length - assing straight
+                self._ibase=_np_.array(value)
+            elif isinstance(value,Iterable): # Iterable but not the correct length - count from min of value
+                self._ibase=_np_.arange(min(Value),min(value)+r)
+            else: # No iterable
+                self._ibase=_np_.arange(value,value+r)
 
     @property
     def column_headers(self):
