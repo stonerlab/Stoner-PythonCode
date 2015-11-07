@@ -1060,7 +1060,7 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
-            
+
         # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
         if ret.ndim==0 or isinstance(ret,_np_.ndarray) and ret.size==1:
@@ -1076,8 +1076,8 @@ class DataArray(_ma_.MaskedArray):
                 return ret
             else: # A regular 2D array
                 ret.isrow=single_row
-                tmp=list(self.setas)[ix[-1]]
-                tmpcol=list(self.column_headers)[ix[-1]]
+                tmp=_np_.array(self.setas)[ix[-1]]
+                tmpcol=_np_.array(self.column_headers)[ix[-1]]
                 ret.setas(tmp)
                 ret.column_headers=tmpcol
                 # Sort out whether we need an array of row labels
@@ -1087,10 +1087,14 @@ class DataArray(_ma_.MaskedArray):
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
-            tmp=list(self.setas)[ix[-1]]
-            tmpcol=list(self.column_headers)[ix[-1]]
-            ret.setas(tmp)
-            ret.column_headers=tmpcol
+            if len(ix)>1:
+                tmp=_np_.array(self.setas)[ix[-1]]
+                tmpcol=_np_.array(self.column_headers)[ix[-1]]
+                ret.setas(tmp)
+                ret.column_headers=tmpcol
+            else:
+                ret.setas=self.setas.clone
+                ret.column_headers=copy.copy(self.column_headers)
             # Sort out whether we need an array of row labels
             if single_row and isinstance(self.i,_np_.ndarray):
                 ret.i=self.i[ix[0]]
@@ -1176,7 +1180,7 @@ class DataArray(_ma_.MaskedArray):
             if isinstance(value,Iterable) and len(value)==r: #Iterable and the correct length - assing straight
                 self._ibase=_np_.array(value)
             elif isinstance(value,Iterable): # Iterable but not the correct length - count from min of value
-                self._ibase=_np_.arange(min(Value),min(value)+r)
+                self._ibase=_np_.arange(min(value),min(value)+r)
             else: # No iterable
                 self._ibase=_np_.arange(value,value+r)
 
@@ -1460,7 +1464,7 @@ class DataFile(object):
     @property
     def data(self):
         """Property Accessors for the main numerical data."""
-        return self._data
+        return _np_.atleast_2d(self._data)
 
     @data.setter
     def data(self, value):
@@ -1733,6 +1737,8 @@ class DataFile(object):
             newdata.metadata.update(other.metadata)
             newdata.column_headers.extend(other.column_headers)
             other = copy.copy(other.data)
+        elif isinstance(other,DataArray):
+            other=copy.copy(other)
         elif isinstance(other, _np_.ndarray):
             other = DataArray(copy.copy(other))
         else:
@@ -1765,10 +1771,13 @@ class DataFile(object):
             newdata.data = _np_.append(self.data, other, 1)
             newdata.mask = new_mask
         if len(newdata.column_headers) < newdata.shape[1]:
-            newdata.column_headers.extend(["Column {}".format(i + len(newdata.column_headers))
+            newdata.column_headers.extend(["Column {}".format(i + newdata.shape[1])
                                            for i in range(other.shape[1])])
+        setas=self.setas.clone
+        setas.column_headers=newdata.column_headers
+        newdata.data._setas=setas
         for attr in self.__dict__:
-            if attr not in ("metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
+            if attr not in ("setas","metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
                 newdata.__dict__[attr] = self.__dict__[attr]
         return newdata
 
@@ -2746,15 +2755,14 @@ class DataFile(object):
         Returns:
             self: The current :py:class:`DataFile` object with the mask set
         """
-        if cols is None:
-            cols = range(self.data.shape[1])
-        cols = [self.find_col(c) for c in cols]
-        self.data.mask = _ma_.getmaskarray(self.data)
-        i = 0
+        if cols is not None:
+            cols = [self.find_col(c) for c in cols]
         if reset: self.data.mask = False
         for r in self.rows():
-            self.data.mask[i,:] = not func(r[cols])
-            i = i + 1
+            if cols is None:
+                self.mask[r.i,:]= not func(r)
+            else:
+                self.mask[r.i,:] = not func(r[cols])
         return self
 
     def find_col(self, col, force_list=False):
@@ -3004,7 +3012,6 @@ class DataFile(object):
 
         Yields:
             1D array: Returns the next row of data"""
-        setas=self.data._setas.clone
         for row in self.data:
             if _ma_.is_masked(row) and not_masked:
                 continue

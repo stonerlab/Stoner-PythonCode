@@ -1355,6 +1355,7 @@ class EasyPlotFile(DataFile):
         """Ensure the column headers are at least i long."""
         if len(self.column_headers) < i:
             l = len(self.column_headers)
+            self.data=_np_.append(self.data,_np_.zeros((self.shape[0],i-l)),axis=1) # Need to expand the array first
             self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
 
     def _et_cmd(self, parts):

@@ -131,3 +131,8 @@ class Datatest(unittest.TestCase):
         d.insert_rows(10,np.zeros((2,2)))
         self.assertEqual(len(d),102,"Failed to inert extra rows")
         self.assertTrue(d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly.")
+
+if __name__=="__main__": # Run some tests manually to allow debugging
+    test=Datatest("test_operators")
+    test.setUp()
+    test.test_operators()
