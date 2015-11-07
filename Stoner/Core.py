@@ -1839,9 +1839,9 @@ class DataFile(object):
 
     def __sub_core__(self, other, newdata):
         """Actually do the subtraction."""
-        if isinstance(other, (slice, int)):
+        if isinstance(other, (slice, int)) or callable(other):
             newdata.del_rows(other)
-        elif isinstance(other, list) and _np_.all([isinstance(i, int) for i in other]):
+        elif isinstance(other, list) and (all_type(other,int) or all_type(bool)):
             newdata.del_rows(other)
         else:
             newdata = NotImplemented
@@ -2656,7 +2656,7 @@ class DataFile(object):
         """Searchs in the numerica data for the lines that match and deletes the corresponding rows.
 
         Args:
-            col (list,slice,int,string, re or None): Column containg values to search for.
+            col (list,slice,int,string, re, callable or None): Column containg values to search for.
             val (float or callable): Specifies rows to delete. Maybe:
 
                 - None - in which case the *col* argument is used to identify rows to be deleted,
@@ -2674,8 +2674,11 @@ class DataFile(object):
 
         Note:
             If col is None, then all rows with masked data are deleted
+            
+            if *col* is callable then it is passed each row as a :py:class:`DataArray` and if it returns
+            True, then the row will be deleted or kept depending on the value of *invert*.
 
-            If val is a function it should take two arguments - a float and a
+            If *val* is a callable it should take two arguments - a float and a
             list. The float is the value of the current row that corresponds to column col abd the second
             argument is the current row.
 
@@ -2686,14 +2689,20 @@ class DataFile(object):
             self.data = _ma_.mask_rows(self.data)
             self.data = _ma_.compress_rows(self.data)
         else:
-            if isinstance(col, slice) and val is None:
+            if isinstance(col, slice) and val is None: #delete rows with a slice to make a list of indices
                 indices = col.indices(len(self))
                 col = list(range(*indices))
-            if isinstance(col, list) and val is None and not invert:
+            elif callable(col) and val is None: # Delete rows usinga callalble taking the whole row
+                indices=[r.i for r in self.rows() if col(r)]
+            elif isinstance(col,Iterable) and all_type(col,bool): # Delete rows by a list of booleans
+                if len(col)<len(self):
+                    col.extend([False]*(len(self)-len(col)))
+                col=[i for i in range(len(self)) if col[i]]
+            if isinstance(col, Iterable) and all_type(col,int) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
-            elif isinstance(col, list) and val is None and invert:
+            elif isinstance(col, list) and all_type(col,int) and val is None and invert:
                 for i in range(len(self) - 1, -1, -1):
                     if i not in col:
                         self.del_rows(i)
@@ -2704,7 +2713,7 @@ class DataFile(object):
                 self.data.mask=_np_.delete(tmp_mask, col, 0)
                 self.data._setas=tmp_setas                
             elif isinstance(col, int) and val is None and invert:
-                self.del_rows([c], invert=invert)
+                self.del_rows([c], invert=invert)                
             else:
                 col = self.find_col(col)
                 d = self.column(col)
