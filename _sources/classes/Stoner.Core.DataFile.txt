@@ -53,6 +53,7 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.T
       ~Stoner.Core.DataFile.clone
       ~Stoner.Core.DataFile.column_headers
+      ~Stoner.Core.DataFile.data
       ~Stoner.Core.DataFile.dict_records
       ~Stoner.Core.DataFile.dtype
       ~Stoner.Core.DataFile.mask

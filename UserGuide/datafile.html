@@ -424,6 +424,17 @@ d.setas[&quot;Temperature&quot;]=&quot;y&quot;
 </div>
 <p>In each of these cases, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called &#8216;x&#8217; or &#8216;y&#8217; !</p>
+<p>Finally, if the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has been set with <em>x</em>, <em>y</em> (and <em>z</em>) columns then these assingments can be
+swapped around by the <strong>invert</strong> operator <strong>~</strong>. This either swaps <em>x</em> and <em>y</em> with eir associated errorbars for 2-D datasets, or rotates
+<em>x</em> to <em>y</em>, <em>y</em> to <em>z</em> and <em>z</em> to <em>x</em> )again with their associated errors bars.:</p>
+<div class="highlight-python"><div class="highlight"><pre>d.setas=&quot;xye&quot;
+print d.setas
+&gt;&gt;&gt; [&#39;x&#39;,&#39;y&#39;,&#39;e&#39;]
+e=~d
+print e.setas
+&gt;&gt;&gt; [&#39;y&#39;,&#39;x&#39;,&#39;d&#39;]
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="working-with-complete-rows-of-data">
@@ -453,9 +464,15 @@ the <em>i</em> attribute.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c"># [0,1,2,3...,len(d)]</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
 <span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="c"># 10</span>
+<span class="n">r</span><span class="o">.</span><span class="n">column_headers</span>
 </pre></div>
 </div>
 <p>You can reset the row numbers by assiging a value to the <em>i</em> attribute.</p>
+<p>A single column of data also gains a <em>.name</em> attribute that matches its column_header:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">c</span><span class="o">=</span><span class="n">d</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c">#True</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="manipulating-the-metadata">
 <h3>Manipulating the metadata<a class="headerlink" href="#manipulating-the-metadata" title="Permalink to this headline">¶</a></h3>
@@ -517,6 +534,8 @@ view of the same data.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">records</span>
 </pre></div>
 </div>
+<p>Finally the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.dict_records" title="Stoner.Core.DataFile.dict_records"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.dict_records</span></code></a> atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
+keys are the column names and each dictionary represents a single row.</p>
 <div class="section" id="selecting-individual-rows-and-columns-of-data">
 <h4>Selecting Individual rows and columns of data<a class="headerlink" href="#selecting-individual-rows-and-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Many of the function in the Stoner module index columns by searching the column
@@ -727,10 +746,11 @@ the same or fewer rows of data as <em>d</em>.</p>
 <h3>Working with Columns of Data<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
-<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is simply a 2D numpy array, so can be directly modified like any other
-numpy array might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has been used to identify columns as
-containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
-modify the data without having to keep track any further of which column(s) is indexed. This the following will work:</p>
+<p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is not simply a 2D numpy array, but a special subclass <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, but still
+can be directly modified like any other numpy array like class might be. If, however, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute has
+been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written
+to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
+Thus the following will work:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y..z&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="mf">5.0</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">z</span>
 <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span>
@@ -1023,7 +1043,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Oct 09, 2015.
+      Last updated on Nov 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

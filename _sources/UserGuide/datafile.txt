@@ -374,6 +374,17 @@ There are some more convenience ways to set which columns to use as x,y,z etc.::
 In each of these cases, the :py:class:`DataFile` will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
 
+Finally, if the :py:attr:`DataFile.setas` attribute has been set with *x*, *y* (and *z*) columns then these assingments can be
+swapped around by the **invert** operator **~**. This either swaps *x* and *y* with eir associated errorbars for 2-D datasets, or rotates
+*x* to *y*, *y* to *z* and *z* to *x* )again with their associated errors bars.::
+
+    d.setas="xye"
+    print d.setas
+    >>> ['x','y','e']
+    e=~d
+    print e.setas
+    >>> ['y','x','d']
+
 Working with complete rows of data
 ----------------------------------
 
@@ -404,8 +415,14 @@ the *i* attribute.::
     d.data.i # [0,1,2,3...,len(d)]
     r=d[10]
     r.i # 10
+    r.column_headers
 
 You can reset the row numbers by assiging a value to the *i* attribute.
+
+A single column of data also gains a *.name* attribute that matches its column_header::
+
+    c=d[:,0]
+    c.name == c.column_headers[0] #True
 
 Manipulating the metadata
 -------------------------
@@ -470,6 +487,9 @@ attribute to d this. This read-only attribute is just providing an alternative
 view of the same data.::
 
    d.records
+
+Finally the :py:attr:`DataFile.dict_records` atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
+keys are the column names and each dictionary represents a single row.
 
 Selecting Individual rows and columns of data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -701,10 +721,11 @@ Working with Columns of Data
 Changing Individual Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :py:attr:`DataFile.data` attribute is simply a 2D numpy array, so can be directly modified like any other
-numpy array might be. If, however, the :py:attr:`DataFile.setas` attribute has been used to identify columns as
-containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
-modify the data without having to keep track any further of which column(s) is indexed. This the following will work::
+The :py:attr:`DataFile.data` attribute is not simply a 2D numpy array, but a special subclass :py:class:`DataArray`, but still
+can be directly modified like any other numpy array like class might be. If, however, the :py:attr:`DataFile.setas` attribute has
+been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written
+to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
+Thus the following will work::
 
     d.setas="x..y..z"
     d.x=d.x-5.0*d.y/d.z

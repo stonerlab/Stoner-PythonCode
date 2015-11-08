@@ -1,0 +1,15 @@
+Stoner.HDF5.string_types
+========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. autoclass:: string_types
+
+   
+
+   
+   
+
+   
+   
+   

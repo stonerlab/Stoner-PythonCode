@@ -27,6 +27,7 @@ Stoner.Core.DataArray
    
       ~Stoner.Core.DataArray.column_headers
       ~Stoner.Core.DataArray.i
+      ~Stoner.Core.DataArray.isrow
       ~Stoner.Core.DataArray.p
       ~Stoner.Core.DataArray.q
       ~Stoner.Core.DataArray.r

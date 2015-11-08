@@ -72,7 +72,7 @@
 <td><a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.DataArray</span></code></a></td>
-<td>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.9)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</td>
+<td>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.10)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" title="Stoner.Core.typeHintedDict"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.typeHintedDict</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Extends a <code class="xref py py-class docutils literal"><span class="pre">blist.sorteddict</span></code> to include type hints of what each key contains.</td>
@@ -137,11 +137,35 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.DefaultPlotStyle.html#Stoner.PlotFormats.DefaultPlotStyle" title="Stoner.PlotFormats.DefaultPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.DefaultPlotStyle</span></code></a>(**kargs)</td>
+<td>Produces a default plot style.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Extends DataFile with plotting functions.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.hsl2rgb.html#Stoner.Plot.hsl2rgb" title="Stoner.Plot.hsl2rgb"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.hsl2rgb</span></code></a>(h,&nbsp;s,&nbsp;l)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.absolute_import.html#Stoner.Plot.absolute_import" title="Stoner.Plot.absolute_import"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.absolute_import</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.division.html#Stoner.Plot.division" title="Stoner.Plot.division"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.division</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.hsl2rgb.html#Stoner.Plot.hsl2rgb" title="Stoner.Plot.hsl2rgb"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.hsl2rgb</span></code></a>(h,&nbsp;s,&nbsp;l)</td>
 <td>Converts from hsl colourspace to rgb colour space with numpy arrays for speed.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.index_types.html#Stoner.Plot.index_types" title="Stoner.Plot.index_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.index_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.print_function.html#Stoner.Plot.print_function" title="Stoner.Plot.print_function"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.print_function</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.python_v3.html#Stoner.Plot.python_v3" title="Stoner.Plot.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.python_v3</span></code></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Plot.string_types.html#Stoner.Plot.string_types" title="Stoner.Plot.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.string_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Plot.unicode_literals.html#Stoner.Plot.unicode_literals" title="Stoner.Plot.unicode_literals"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Plot.unicode_literals</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -159,6 +183,27 @@
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder" title="Stoner.Folders.PlotFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.PlotFolder</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A subclass of <code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code> with extra methods for plotting lots of files.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.absolute_import.html#Stoner.Folders.absolute_import" title="Stoner.Folders.absolute_import"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.absolute_import</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.division.html#Stoner.Folders.division" title="Stoner.Folders.division"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.division</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.index_types.html#Stoner.Folders.index_types" title="Stoner.Folders.index_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.index_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.print_function.html#Stoner.Folders.print_function" title="Stoner.Folders.print_function"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.print_function</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.python_v3.html#Stoner.Folders.python_v3" title="Stoner.Folders.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.python_v3</span></code></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.string_types.html#Stoner.Folders.string_types" title="Stoner.Folders.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.string_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.unicode_literals.html#Stoner.Folders.unicode_literals" title="Stoner.Folders.unicode_literals"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.unicode_literals</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -278,19 +323,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.PlotFormats.PRBPlotStyle" title="Stoner.PlotFormats.PRBPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.PRBPlotStyle</span></code></a>(**kargs)</td>
 <td>A figure Style for making figures for Phys Rev * Jounrals.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SeabornPlotStyle.html#Stoner.PlotFormats.SeabornPlotStyle" title="Stoner.PlotFormats.SeabornPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SeabornPlotStyle</span></code></a>(**kargs)</td>
-<td>A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SketchPlot.html#Stoner.PlotFormats.SketchPlot" title="Stoner.PlotFormats.SketchPlot"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SketchPlot</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SketchPlot.html#Stoner.PlotFormats.SketchPlot" title="Stoner.PlotFormats.SketchPlot"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SketchPlot</span></code></a>(**kargs)</td>
 <td>Turn on xkcd plot style.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexEngFormatter</span></code></a>([unit,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexEngFormatter</span></code></a>([unit,&nbsp;...])</td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexFormatter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexFormatter</span></code></a></td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.ThesisPlotStyle</span></code></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.ThesisPlotStyle</span></code></a>(**kargs)</td>
 <td>Template class for Joe&#8217;s Plot settings.</td>
 </tr>
 </tbody>
@@ -304,6 +346,9 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.PlotFormats.normal.html#Stoner.PlotFormats.normal" title="Stoner.PlotFormats.normal"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.normal</span></code></a>([loc,&nbsp;scale,&nbsp;size])</td>
+<td>Draw random samples from a normal (Gaussian) distribution.</td>
+</tr>
 </tbody>
 </table>
 <p>See also the stylesheets available in the stylelib directory.</p>
@@ -484,6 +529,27 @@
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.HGXFile.html#Stoner.HDF5.HGXFile" title="Stoner.HDF5.HGXFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.HGXFile</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>A subclass of DataFile for reading GenX HDF Files.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.absolute_import.html#Stoner.HDF5.absolute_import" title="Stoner.HDF5.absolute_import"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.absolute_import</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.division.html#Stoner.HDF5.division" title="Stoner.HDF5.division"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.division</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.index_types.html#Stoner.HDF5.index_types" title="Stoner.HDF5.index_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.index_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.print_function.html#Stoner.HDF5.print_function" title="Stoner.HDF5.print_function"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.print_function</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.python_v3.html#Stoner.HDF5.python_v3" title="Stoner.HDF5.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.python_v3</span></code></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.string_types.html#Stoner.HDF5.string_types" title="Stoner.HDF5.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.string_types</span></code></a></td>
+<td>tuple() -&gt; empty tuple</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.unicode_literals.html#Stoner.HDF5.unicode_literals" title="Stoner.HDF5.unicode_literals"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.unicode_literals</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -690,7 +756,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Oct 09, 2015.
+      Last updated on Nov 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Plot.DefaultPlotStyle &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-plot-defaultplotstyle">
+<h1>Stoner.Plot.DefaultPlotStyle<a class="headerlink" href="#stoner-plot-defaultplotstyle" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Plot.DefaultPlotStyle">
+<em class="property">class </em><code class="descclassname">Stoner.Plot.</code><code class="descname">DefaultPlotStyle</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/PlotFormats.html#DefaultPlotStyle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a default plot style.</p>
+<p>To produce alternative plot styles, create subclasses of this plot. Either override or
+create additional attributes to define rc Parameters (see Matplotlib documentation for
+available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`
+method to carry out additional plot formatting.</p>
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.fig_width_pt">
+<code class="descname">fig_width_pt</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.fig_width_pt" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>float</em></p>
+<p>Preferred width of plot in points</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.show_xlabel">
+<code class="descname">show_xlabel</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.show_xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>Show the title in the plot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.show_ylabel">
+<code class="descname">show_ylabel</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.show_ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>Show the x-axis Labels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.show_zlabel">
+<code class="descname">show_zlabel</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.show_zlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the y-xaxis labels</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.show_title">
+<code class="descname">show_title</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.show_title" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the title</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.show_legend">
+<code class="descname">show_legend</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.show_legend" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool</em></p>
+<p>show the legend</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.stylename">
+<code class="descname">stylename</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.stylename" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>string</em></p>
+<p>Name of the matplotlib style to use</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.DefaultPlotStyle.stylesheet">
+<code class="descname">stylesheet</code><a class="headerlink" href="#Stoner.Plot.DefaultPlotStyle.stylesheet" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em></p>
+<p>Calculated list of stylesheets found by traversing the class heirarchy</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/default.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/default.png">png</a>, <a class="reference external" href="../samples/plotstyles/default.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/default.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/default.png" src="../_images/default.png" />
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.show_legend" title="Stoner.Plot.DefaultPlotStyle.show_legend"><code class="xref py py-obj docutils literal"><span class="pre">show_legend</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.show_title" title="Stoner.Plot.DefaultPlotStyle.show_title"><code class="xref py py-obj docutils literal"><span class="pre">show_title</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.show_xlabel" title="Stoner.Plot.DefaultPlotStyle.show_xlabel"><code class="xref py py-obj docutils literal"><span class="pre">show_xlabel</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.show_ylabel" title="Stoner.Plot.DefaultPlotStyle.show_ylabel"><code class="xref py py-obj docutils literal"><span class="pre">show_ylabel</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.show_zlabel" title="Stoner.Plot.DefaultPlotStyle.show_zlabel"><code class="xref py py-obj docutils literal"><span class="pre">show_zlabel</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.stylename" title="Stoner.Plot.DefaultPlotStyle.stylename"><code class="xref py py-obj docutils literal"><span class="pre">stylename</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Plot.DefaultPlotStyle.stylesheet" title="Stoner.Plot.DefaultPlotStyle.stylesheet"><code class="xref py py-obj docutils literal"><span class="pre">stylesheet</span></code></a></td>
+<td>Horribly hacky method to traverse over the class heirarchy for style sheet names.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subplot_settings</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Plot.DefaultPlotStyle.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Nov 08, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

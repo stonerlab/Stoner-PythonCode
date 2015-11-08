@@ -288,16 +288,16 @@ sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</sp
 <div class="section" id="fitting-with-limits">
 <span id="id3"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v0.16.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v0.16.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
 <p>lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the <a class="reference external" href="href=http://lmfit.github.io/lmfit-py/">lmffit documentation</a>. . The
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> method is used to interact with lmfit.</p>
-<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a>, one requires a c instance. This describes a function
+<p>In order to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a>, one requires a <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> module contains
-a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.</p>
+a series of <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> subclasses that represent various models used in condensed matter physics.</p>
 <p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">Arrehenius</span>
 <span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
@@ -308,6 +308,9 @@ a series of :py:class:lmfit.model.Model` subclasses that represent various model
 </div>
 <p>In this example we would be fitting an Arrehenius model to data contained inthe &#8216;Temp&#8217; and &#8216;Cond&#8217; columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>.</p>
+<p>The <em>model</em> argument to <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> can be either an instance of the model class, or just the class itself (in which case it will be
+instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
+a simple call to <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>.</p>
 <p>The return value from <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> is controlled by the <em>output</em> keyword parameter. By default it is the <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.ModelFit</span></code>
 instance. This contains all the information about the fit and fitting process.</p>
 <p>You can pass the model as a subclass of model, if you don&#8217;t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model&#8217;s
@@ -564,10 +567,7 @@ points averaged into each bin.. If <em>clone</em> is True or not provided, <a cl
 <span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Bin demo&quot;</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/bins.py">Source code</a>, <a class="reference external" href="../samples/bins.png">png</a>, <a class="reference external" href="../samples/bins.hires.png">hires.png</a>, <a class="reference external" href="../samples/bins.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/bins.png" src="../_images/bins.png" />
-</div>
+<p>(<a class="reference external" href="../samples/bins.py">Source code</a>)</p>
 </div>
 <div class="section" id="smoothing-and-filtering-data">
 <span id="smoothing-guide"></span><h3>Smoothing and Filtering Data<a class="headerlink" href="#smoothing-and-filtering-data" title="Permalink to this headline">¶</a></h3>
@@ -585,7 +585,7 @@ defined by the window function. This is handled by the <a class="reference inter
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.16.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.16.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -696,10 +696,7 @@ a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.sti
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>, <a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
-<div class="figure">
-<img alt="../_images/stitch.png" src="../_images/stitch.png" />
-</div>
+<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>)</p>
 <p>The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
 region to use or even a custom stiching transofmration function:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;shift x&quot;</span><span class="p">)</span>
@@ -945,7 +942,7 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Oct 09, 2015.
+      Last updated on Nov 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

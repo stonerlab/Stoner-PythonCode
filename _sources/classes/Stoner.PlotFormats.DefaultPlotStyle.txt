@@ -37,6 +37,7 @@ Stoner.PlotFormats.DefaultPlotStyle
       ~Stoner.PlotFormats.DefaultPlotStyle.show_ylabel
       ~Stoner.PlotFormats.DefaultPlotStyle.show_zlabel
       ~Stoner.PlotFormats.DefaultPlotStyle.stylename
+      ~Stoner.PlotFormats.DefaultPlotStyle.stylesheet
       ~Stoner.PlotFormats.DefaultPlotStyle.subplot_settings
    
    

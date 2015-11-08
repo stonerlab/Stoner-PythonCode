@@ -60,7 +60,7 @@
 <dl class="class">
 <dt id="Stoner.Core.DataArray">
 <em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">DataArray</code><a class="reference internal" href="../_modules/Stoner/Core.html#DataArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.9)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
+<dd><p>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.10)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataArray.column_headers">
 <code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataArray.column_headers" title="Permalink to this definition">¶</a></dt>
@@ -152,16 +152,19 @@ more attractive.</p>
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataArray.i" title="Stoner.Core.DataArray.i"><code class="xref py py-obj docutils literal"><span class="pre">i</span></code></a></td>
 <td>Return the row indices of the DataArray or sets the base index - the row number of the first row.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">p</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">isrow</span></code></td>
+<td>Defines whether this is a single row or a column if 1D.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">p</span></code></td>
 <td>Calculate the inclination <span class="math">\(\phi\)</span> co-ordinate for spherical co-ordinate systems.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">q</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">q</span></code></td>
 <td>Calculate the azimuthal <span class="math">\(\theta\)</span> co-ordinate if using spherical or polar co-ordinates.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">r</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">r</span></code></td>
 <td>Calculate the radius <span class="math">\(\rho\)</span> co-ordinate if using spherical or polar co-ordinate systems.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></a></td>
 <td>Returns an object for setting column assignments.</td>
 </tr>
 </tbody>
@@ -230,7 +233,7 @@ more attractive.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Oct 09, 2015.
+      Last updated on Nov 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
