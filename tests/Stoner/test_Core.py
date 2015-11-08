@@ -11,6 +11,7 @@ import sys
 import os.path as path
 import numpy as np
 import re
+from numpy import any,all
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
@@ -28,18 +29,36 @@ class Datatest(unittest.TestCase):
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):
             # Column function checks
-            self.assertTrue(np.all(self.d.data[:,i]==self.d.column(i)),"Failed to Access column {} by index".format(i))
-            self.assertTrue(np.all(self.d.data[:,i]==self.d.column(c)),"Failed to Access column {} by name".format(i))
-            self.assertTrue(np.all(self.d.data[:,i]==self.d.column(c[0:3])),"Failed to Access column {} by partial name".format(i))
+            self.assertTrue(all(self.d.data[:,i]==self.d.column(i)),"Failed to Access column {} by index".format(i))
+            self.assertTrue(all(self.d.data[:,i]==self.d.column(c)),"Failed to Access column {} by name".format(i))
+            self.assertTrue(all(self.d.data[:,i]==self.d.column(c[0:3])),"Failed to Access column {} by partial name".format(i))
 
         # Check that access by list of strings returns multpiple columns
-        self.assertTrue(np.all(self.d.column(self.d.column_headers)==self.d.data),"Failed to access all columns by list of string indices")
-        self.assertTrue(np.all(self.d.column([0,self.d.column_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
+        self.assertTrue(all(self.d.column(self.d.column_headers)==self.d.data),"Failed to access all columns by list of string indices")
+        self.assertTrue(all(self.d.column([0,self.d.column_headers[1]])==self.d.data),"Failed to access all columns by mixed list of indices")
 
         # Check regular expression column access
-        self.assertTrue(np.all(self.d.column(re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed to access column by regular expression")
+        self.assertTrue(all(self.d.column(re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed to access column by regular expression")
         # Check attribute column access
-        self.assertTrue(np.all(self.d.X==self.d.column(0)),"Failed to access column by attribute name")
+        self.assertTrue(all(self.d.X==self.d.column(0)),"Failed to access column by attribute name")
+
+    def test_indexing(self):
+        #Check all the indexing possibilities
+        data=np.array(self.d.data)
+        colname=self.d.column_headers[0]
+        self.assertTrue(all(self.d.column(colname)==self.d[:,0]),"Failed direct indexing versus column method")
+        self.assertTrue(all(self.d[:,0]==data[:,0]),"Failed direct idnexing versusus direct array index")
+        self.assertTrue(all(self.d[:,[0,1]]==data),"Failed direct list indexing")
+        self.assertTrue(all(self.d[::2,:]==data[::2]),"Failed slice indexing rows")
+        self.assertTrue(all(self.d[colname]==data[:,0]),"Failed direct indexing by column name")
+        self.assertTrue(all(self.d[:,colname]==data[:,0]),"Failed fallback indexing by column name")
+        self.assertEqual(self.d[25,1],645.0,"Failed direct single cell index")
+        self.assertEqual(self.d[25,"Y-Data"],645.0,"Failoed single cell index direct")
+        self.assertEqual(self.d["Y-Data",25],645.0,"Failoed single cell fallback index order")
+        self.d["X-Dat"]=[11,12,13,14,15]
+        self.assertEqual(self.d["X-Dat",2],13,"Failed indexing of metadata lists with tuple")
+        self.assertEqual(self.d["X-Dat"][2],13,"Failed indexing of metadata lists with double indices")
+
 
     def test_len(self):
         # Check that length of the column is the same as length of the data
@@ -51,15 +70,15 @@ class Datatest(unittest.TestCase):
     def test_attributes(self):
         """Test various atribute accesses,"""
         self.assertEqual(self.d.shape,(100,2),"shape attribute not correct.")
-        self.assertTrue(np.all(self.d.T==self.d.data.T),"Transpose attribute not right")
-        self.assertTrue(np.all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
-        self.assertTrue(np.all(self.d.y==self.d.column(1)),"y attribute not right.")
-        self.assertTrue(np.all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
+        self.assertTrue(all(self.d.T==self.d.data.T),"Transpose attribute not right")
+        self.assertTrue(all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
+        self.assertTrue(all(self.d.y==self.d.column(1)),"y attribute not right.")
+        self.assertTrue(all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
 
     def test_setas(self):
         #Check readback of setas
         self.assertEqual(self.d.setas[:],["x","y"],"setas attribute not set in constructor")
-        self.assertTrue(np.all(self.d.x==self.d.column(0)),"Attribute setas column axis fails")
+        self.assertTrue(all(self.d.x==self.d.column(0)),"Attribute setas column axis fails")
         self.d.setas(x="Y-Data")
         self.assertEqual(self.d.setas[:],["x","x"],"Failed to set setas by type=column keyword assignment")
         self.d.setas(Y="y")
@@ -68,9 +87,9 @@ class Datatest(unittest.TestCase):
 
     def test_iterators(self):
         for i,c in enumerate(self.d.columns()):
-            self.assertTrue(np.all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
+            self.assertTrue(all(self.d.column(i)==c),"Iterating over DataFile.columns not the same as direct indexing column")
         for j,r in enumerate(self.d.rows()):
-            self.assertTrue(np.all(self.d[j]==r),"Iteratinf over DataFile.rows not the same as indexed access")
+            self.assertTrue(all(self.d[j]==r),"Iteratinf over DataFile.rows not the same as indexed access")
         for k,r in enumerate(self.d):
             pass
         self.assertEqual(j,k,"Iterating over DataFile not the same as DataFile.rows")
@@ -100,14 +119,16 @@ class Datatest(unittest.TestCase):
 
     def test_operators(self):
         #Test Column Indexer
-        self.assertTrue(np.all(self.d//0==self.d.column(0)),"Failed the // operator with integer")
-        self.assertTrue(np.all(self.d//"X-Data"==self.d.column(0)),"Failed the // operator with string")
-        self.assertTrue(np.all((self.d//re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed the // operator with regexp")
+        self.assertTrue(all(self.d//0==self.d.column(0)),"Failed the // operator with integer")
+        self.assertTrue(all(self.d//"X-Data"==self.d.column(0)),"Failed the // operator with string")
+        self.assertTrue(all((self.d//re.compile(r"^X\-"))[:,0]==self.d.column(0)),"Failed the // operator with regexp")
         t=[self.d%1,self.d%"Y-Data",(self.d%re.compile(r"Y\-"))]
         for ix,tst in enumerate(["integer","string","regexp"]):
-            self.assertTrue(np.all(t[ix].data==np.atleast_2d(self.d.column(0)).T),"Failed % operator with {} index".format(tst))
+            self.assertTrue(all(t[ix].data==np.atleast_2d(self.d.column(0)).T),"Failed % operator with {} index".format(tst))
         d=self.d&self.d.x
         self.assertTrue(d.shape[1]==3,"& operator failed.")
+        self.assertTrue(len(d.setas)==3,"& messed up setas")
+        self.assertTrue(len(d.column_headers)==3,"& messed up setas")
         d&=d.x
         self.assertTrue(d.shape[1]==4,"Inplace & operator failed")
         d=self.d+np.array([0,0])
@@ -120,13 +141,17 @@ class Datatest(unittest.TestCase):
         self.assertTrue(len(d)==len(self.d),"Inplace delete with integer index failed. {} vs {}".format(len(d),len(self.d)))
         d-=slice(0,-1,2)
         self.assertTrue(len(d)==len(self.d)/2,"Inplace delete with slice index failed. {} vs {}".format(len(d),len(self.d)/2))
+        d=d%1
+        self.assertTrue(d.shape[1]==1,"Column division failed")
+        self.assertTrue(len(d.setas)==d.shape[1],"Column removal messed up setas")
+        self.assertTrue(len(d.column_headers)==d.shape[1],"Column removal messed up column headers")
 
     def test_methods(self):
         d=self.d.clone
         d&=np.where(d.x<50,1.0,0.0)
         d.rename(2,"Z-Data")
         d.setas="xyz"
-        self.assertTrue(np.all(d.unique(2)==np.array([0,1])),"Unique values failed: {}".format(d.unique(2)))
+        self.assertTrue(all(d.unique(2)==np.array([0,1])),"Unique values failed: {}".format(d.unique(2)))
         d=self.d.clone
         d.insert_rows(10,np.zeros((2,2)))
         self.assertEqual(len(d),102,"Failed to inert extra rows")

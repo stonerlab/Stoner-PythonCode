@@ -245,7 +245,7 @@ class _setas(object):
             self._setas.extend(["."]*(c-l))
         self._setas=self._setas[:c]
         return self._setas
-        
+
     @setas.setter
     def setas(self,value):
         """Minimal attribute setter."""
@@ -986,7 +986,7 @@ class DataArray(_ma_.MaskedArray):
                 self.mask=False
                 self._setas._row=False
             self._setas.shape=getattr(self,'shape',(0,))
-            
+
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
@@ -1023,24 +1023,24 @@ class DataArray(_ma_.MaskedArray):
 
     def __getitem__(self,ix):
         """Indexing function for DataArray.
-        
+
         Args:
             ix (various): Index to find.
-            
+
         Returns:
             An indexed part of the DataArray object with extra attributes.
-            
+
         Notes:
             This tries to support all of the indexing operations of a regular numpy array,
             plus the special operations where one columns are named.
-            
+
         Warning:
             Teh code almost certainly makes some assumptiuons that DataArray is one or 2D and
             may blow up with 3D arrays ! On the other hand it has a special case exception for where
             you give a string as the first index element and assumes that you've forgotten that we're
             row major and tries to do the right thing.
         """
-        
+
         #Is this goign to be a single row ?
         single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
         #If the index is a single string type, then build a column accessing index
@@ -1056,7 +1056,7 @@ class DataArray(_ma_.MaskedArray):
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
         elif isinstance(ix,tuple) and isinstance(ix[0],string_types): # oops! backwards indexing
-            c=ix[0]            
+            c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
@@ -1064,7 +1064,7 @@ class DataArray(_ma_.MaskedArray):
         # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
         if ret.ndim==0 or isinstance(ret,_np_.ndarray) and ret.size==1:
-            return ret.dtype.type(ret)   
+            return ret.dtype.type(ret)
         elif not isinstance(ret,_np_.ndarray): #bugout for scalar resturns
             return ret
         elif ret.ndim>=2: # Potentially 2D array here
@@ -1113,7 +1113,7 @@ class DataArray(_ma_.MaskedArray):
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
         elif isinstance(ix,tuple) and isinstance(ix[0],string_types):
-            c=ix[0]            
+            c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
@@ -1124,7 +1124,7 @@ class DataArray(_ma_.MaskedArray):
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
-        
+
     @isrow.setter
     def isrow(self,value):
         """Set whether this object is a single row or not."""
@@ -1278,9 +1278,9 @@ class DataFile(object):
                             priority (!)
         setas (list or string): Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.
         shape (tuple of integers): Returns the shape of the data (rows,columns) - equivalent to self.data.shape.
-        records (numpoy record array): Returns the data in the form of a list of dictionaries.
+        records (numpoy record array): Returns the data in the form of a list of yuples where each tuple maps to the columsn names.
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
-        dict_record (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
+        dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
             row with keys dervied from column headers.
         dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
         T (:py:class:`DataArray`): Transposed version of the data.
@@ -1536,12 +1536,12 @@ class DataFile(object):
     @property
     def setas(self):
         """Get the list of column assignments."""
-        return self.data._setas
+        return self._data._setas
 
     @setas.setter
     def setas(self, value):
         """Sets a new setas assignment by calling the setas object."""
-        self.data._setas(value)
+        self._data._setas(value)
 
     @property
     def subclasses(self):
@@ -1667,8 +1667,9 @@ class DataFile(object):
             ret = newdata
         else:
             ret = NotImplemented
+        ret._data._setas.shape=ret.shape
         for attr in self.__dict__:
-            if attr not in ("metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
+            if attr not in ("setas","metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
                 ret.__dict__[attr] = self.__dict__[attr]
         return ret
 
@@ -1775,7 +1776,8 @@ class DataFile(object):
                                            for i in range(other.shape[1])])
         setas=self.setas.clone
         setas.column_headers=newdata.column_headers
-        newdata.data._setas=setas
+        newdata._data._setas=setas
+        newdata._data._setas.shape=newdata.shape
         for attr in self.__dict__:
             if attr not in ("setas","metadata", "data", "column_headers", "mask") and not attr.startswith("_"):
                 newdata.__dict__[attr] = self.__dict__[attr]
@@ -1811,6 +1813,7 @@ class DataFile(object):
             newdata.del_column(other)
         else:
             newdata = NotImplemented
+        newdata._data._setas.shape=newdata.shape
         return newdata
 
     def __sub__(self, other):
@@ -1845,7 +1848,30 @@ class DataFile(object):
             newdata.del_rows(other)
         else:
             newdata = NotImplemented
+        newdata._data._setas.shape=newdata.shape
         return newdata
+
+    def __invert__(self):
+        """The invert method will swap x and y column assignments around."""
+        ret=self.clone
+        setas=list(self.setas)
+        cols=self.setas._cols
+        if cols["axes"]==2:
+            swaps=zip(["ycol","yerr"],["x","d"])
+        elif cols["axes"]>=3:
+            awaps=zip(["ycol","zcol","yerr","zerr"],["z","x","f","d"])
+        setas[cols["xcol"]]="y"
+        if cols["has_xerr"]:
+            setas[cols["xerr"]]="e"
+        for cname,nlet in swaps:
+            for c in cols[cname]:
+                setas[c]=nlet
+        ret.setas=setas
+        return ret
+
+
+
+
 
 #============================================================================================================================
 # Speical Methods
@@ -1909,10 +1935,10 @@ class DataFile(object):
             if "_setas" not in self.__dict__:
                 break
             if k.startswith("x"):
-                if k in self.data._setas.cols and self.data._setas.cols[k] is not None:
+                if k in self._data._setas.cols and self._data._setas.cols[k] is not None:
                     attr.append(col_check[k])
             else:
-                if k in self.data._setas.cols and len(self.data._setas.cols[k]) > 0:
+                if k in self._data._setas.cols and len(self._data._setas.cols[k]) > 0:
                     attr.append(col_check[k])
         return sorted(set(attr))
 
@@ -1998,7 +2024,7 @@ class DataFile(object):
             raise KeyError("Tried accessing setas before initialised")
         else:
             try:
-                col = self.data._setas.find_col(name)
+                col = self._data._setas.find_col(name)
                 return self.column(col)
             except (KeyError, IndexError):
                 pass
@@ -2007,7 +2033,7 @@ class DataFile(object):
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
-        return self.data.__getattr__(name)
+        return self._data.__getattr__(name)
 
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of metadata.
@@ -2045,6 +2071,17 @@ class DataFile(object):
                     ret=self.data[name]
                 except KeyError:
                     raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
+        elif isinstance(name,tuple) and isinstance(name[0],string_types):
+            try:
+                rest=name[1:]
+                ret=self.__meta__(name[0])
+                ret=ret.__getitem__(*rest)
+            except KeyError:
+                try:
+                    ret=self.data[name]
+                except KeyError:
+                    raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
+
         else:
             ret=self.data[name]
         return ret
@@ -2226,8 +2263,8 @@ class DataFile(object):
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
         cols = len(col_headers_tmp)
-        self.data._setas = _setas("." * cols)
-        self.data = DataArray([],setas=self.data._setas)
+        self._data._setas = _setas("." * cols)
+        self.data = DataArray([],setas=self._data._setas)
         for r in reader:
             if r.strip() == "":  # Blank line
                 continue
@@ -2384,7 +2421,7 @@ class DataFile(object):
 
     def __setstate__(self, state):
         """Internal function for pickling."""
-        self.data = DataArray(state["data"],setas=self.data._setas)
+        self.data = DataArray(state["data"],setas=self._data._setas)
         self.column_headers = state["column_headers"]
         self.metadata = state["metadata"]
 
@@ -2410,7 +2447,7 @@ class DataFile(object):
                 if t ^ invert:
                     self.data[i] = _ma_.masked
                 elif not cumulative:
-                    self.data[i] = self.data.data[i]
+                    self.data[i] = self._data.data[i]
             else:
                 for j in range(min(len(t), _np_.shape(self.data)[1])):
                     if t[j] ^ invert:
@@ -2674,7 +2711,7 @@ class DataFile(object):
 
         Note:
             If col is None, then all rows with masked data are deleted
-            
+
             if *col* is callable then it is passed each row as a :py:class:`DataArray` and if it returns
             True, then the row will be deleted or kept depending on the value of *invert*.
 
@@ -2693,7 +2730,7 @@ class DataFile(object):
                 indices = col.indices(len(self))
                 col = list(range(*indices))
             elif callable(col) and val is None: # Delete rows usinga callalble taking the whole row
-                indices=[r.i for r in self.rows() if col(r)]
+                col=[r.i for r in self.rows() if col(r)]
             elif isinstance(col,Iterable) and all_type(col,bool): # Delete rows by a list of booleans
                 if len(col)<len(self):
                     col.extend([False]*(len(self)-len(col)))
@@ -2711,9 +2748,9 @@ class DataFile(object):
                 tmp_setas=self.data._setas.clone
                 self.data = _np_.delete(self.data, col, 0)
                 self.data.mask=_np_.delete(tmp_mask, col, 0)
-                self.data._setas=tmp_setas                
+                self.data._setas=tmp_setas
             elif isinstance(col, int) and val is None and invert:
-                self.del_rows([c], invert=invert)                
+                self.del_rows([c], invert=invert)
             else:
                 col = self.find_col(col)
                 d = self.column(col)

@@ -175,9 +175,7 @@ class DefaultPlotStyle(object):
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
-        if name == "stylesheet":
-            return self._stylesheet()
-        elif name.startswith("template_"):  #Magic conversion to rcParams
+        if name.startswith("template_"):  #Magic conversion to rcParams
             attrname = name[9:].replace("_", ".").replace("..", "_")
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
@@ -190,19 +188,24 @@ class DefaultPlotStyle(object):
 
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
-        if name == "stylesheet":
-            raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
-        elif name.startswith("template_"):
+        if name.startswith("template_"):
             attrname = name[9:].replace("_", ".").replace("..", "_")
             plt.rcParams[attrname] = value
             super(DefaultPlotStyle, self).__setattr__(name, value)
         else:
             super(DefaultPlotStyle, self).__setattr__(name, value)
 
-    def _stylesheet(self):
+
+    @property
+    def stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
         levels = type.mro(type(self))[:-1]
         return [join(dirname(realpath(__file__)), "stylelib", c.stylename + ".mplstyle") for c in levels[::-1]]
+
+    @stylesheet.setter
+    def stylesheet(self,value):
+        raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+
 
     def update(self, **kargs):
         """Update the template with new attributes from keyword arguments.

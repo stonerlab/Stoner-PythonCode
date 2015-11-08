@@ -43,3 +43,8 @@ class FileFormats_test(unittest.TestCase):
                 except Exception as e:
                     self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),e.message))
                 self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
+
+if __name__=="__main__": # Run some tests manually to allow debugging
+    test=FileFormats_test("test_loaders")
+    test.setUp()
+    test.test_loaders()
