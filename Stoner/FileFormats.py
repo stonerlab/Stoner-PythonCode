@@ -274,8 +274,8 @@ class QDSquidVSMFile(DataFile):
                 self.metadata[key] = self.metadata.string_to_type(value)
             column_headers = f.next().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
-        self.setas(x="Magnetic Field", y="Moment")
         self.column_headers=column_headers
+        self.setas(x="Magnetic Field", y="Moment")
         return self
 
 

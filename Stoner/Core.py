@@ -638,6 +638,7 @@ class typeHintedDict(sorteddict):
         'I32': int,
         'Double Float': float,
         'Cluster': dict,
+        'AnonCluster':tuple,
         'Array': _np_.ndarray,
         'List': list,
         'String': str
@@ -695,10 +696,14 @@ class typeHintedDict(sorteddict):
         typ = "String"
         for t in self.__types:
             if isinstance(value, self.__types[t]):
-                if t == "Cluster":
+                if t == "Cluster" or t=="AnonCluster":
                     elements = []
-                    for k in value:
-                        elements.append(self.findtype(value[k]))
+                    if isinstance(value,dict):
+                        for k in value:
+                            elements.append(self.findtype(value[k]))
+                    else:
+                        for i,v in enumerate(value):
+                            elements.append(self.findtype(v))                            
                     tt = ','
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
@@ -1171,7 +1176,7 @@ class DataArray(_ma_.MaskedArray):
         if self.ndim==0:
             pass
         elif self.ndim==1 and self.isrow:
-            if isinstance(value,Iterable):
+            if isinstance(value,Iterable) and len(value)>0:
                 self._ibase=_np_.array([min(value)])
             else:
                 self._ibase=_np_.array([value])
