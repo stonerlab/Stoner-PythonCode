@@ -55,7 +55,7 @@ class AnalyseFile(DataFile):
             points += 1
         if col is None:
             cols = self.setas._get_cols()
-            col = (cols["xcol"], cols["ycols"][0])
+            col = (cols["xcol"], cols["ycol"][0])
         if isinstance(col, (list, tuple)):
             data = self.column(list(col)).T
             ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
@@ -69,7 +69,7 @@ class AnalyseFile(DataFile):
                                                                           ordinal(order))
             if isinstance(result, bool) and result:
                 result = self.shape[1] - 1
-            self.add_column(r, header, index=result, replace=replace)
+            self.add_column(r.ravel(), header, index=result, replace=replace)
 
         return r
 
@@ -225,6 +225,7 @@ class AnalyseFile(DataFile):
 
         # First we find all points where we cross zero in the correct direction
         current = data
+        mask=ma.getmaskarray(data)
         previous = _np_.roll(current, 1)
         index = _np_.arange(len(current))
         sdat = _np_.column_stack((index, current, previous))
@@ -237,6 +238,8 @@ class AnalyseFile(DataFile):
         else:
             expr = lambda x: False
 
+        current=ma.masked_array(current)
+        current.mask=mask
         # Now we refine the estimate of zero crossing with a cubic interpolation
         # and use Newton's root finding method to locate the zero in the interpolated data
 

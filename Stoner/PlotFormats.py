@@ -333,15 +333,15 @@ class DefaultPlotStyle(object):
 
 class GBPlotStyle(DefaultPlotStyle):
     """Template developed for Gavin's plotting.
-    
+
     This is largely an experimental class for trying things out rather than
     for serious plotting.
 
     Example
         .. plot:: samples/plotstyles/GBStyle.py
             :include-source:
-    
-    
+
+
     """
     xformatter = TexEngFormatter
     yformatter = TexEngFormatter
@@ -361,11 +361,11 @@ class GBPlotStyle(DefaultPlotStyle):
 
 class JTBPlotStyle(DefaultPlotStyle):
     """Template class for Joe's Plot settings.
-    
+
     Example
         .. plot:: samples/plotstyles/JTBStyle.py
             :include-source:
-    
+
 """
 
     show_title = False
@@ -394,7 +394,7 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 class PRBPlotStyle(DefaultPlotStyle):
     """A figure Style for making figures for Phys Rev * Jounrals.
-    
+
     Example
         .. plot:: samples/plotstyles/PRBStyle.py
             :include-source:
@@ -410,13 +410,13 @@ class SketchPlot(DefaultPlotStyle):
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
-    presentation one day ?    
-     
+    presentation one day ?
+
     Example
         .. plot:: samples/plotstyles/SketchStyle.py
             :include-source:
-    
-    
+
+
     """
     stylename = "sketch"
 
