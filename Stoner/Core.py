@@ -395,76 +395,48 @@ class _setas(object):
             A single integer, a list of integers or a dictionary of all columns.
         """
 
+        #Do the xcolumn and xerror first. If only one x column then special case to reset startx to get any
+        #y columns
         if len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
-        try:
-            xcol = self.setas[startx:].index("x") + startx
-            maxcol = self.setas[xcol + 1:].index("x") + xcol + 1
-        except ValueError:
-            if "x" not in self.setas:
-                xcol = None
-                maxcol = startx
-            else:
-                maxcol = len(self.column_headers) + 1
-        try:
-            xerr = self.setas[startx:maxcol].index("d") + startx
-        except ValueError:
-            xerr = None
-        ycol = list()
-        yerr = list()
-        starty = xcol
-        has_yerr = False
-        while "y" in self.setas:
-            try:
-                ycol.append(self.setas[starty:maxcol].index("y") + starty)
-            except ValueError:
-                break
-            try:
-                yerr.append(self.setas[starty:maxcol].index("e") + starty)
-                has_yerr = True
-            except ValueError:
-                yerr.append(None)
-            starty = ycol[-1] + 1
-        zcol = list()
-        zerr = list()
-        startz = xcol
-        has_zerr = False
-        while "z" in self.setas:
-            try:
-                zcol.append(self.setas[startz:maxcol].index("z") + startz)
-            except ValueError:
-                break
-            startz = zcol[-1] + 1
-            try:
-                zerr.append(self.setas[startz:maxcol].index("g") + startz)
-                has_zerr = True
-            except ValueError:
-                zerr.append(None)
 
-        ucol = list()
-        startu = xcol
-        while "u" in self.setas:
-            try:
-                ucol.append(self.setas[startu:maxcol].index("u") + startu)
-            except ValueError:
-                break
-            startu = ucol[-1] + 1
-        vcol = list()
-        startv = xcol
-        while "v" in self.setas:
-            try:
-                vcol.append(self.setas[startv:maxcol].index("v") + startv)
-            except ValueError:
-                break
-            startv = vcol[-1] + 1
-        wcol = list()
-        startw = xcol
-        while "w" in self.setas:
-            try:
-                wcol.append(self.setas[startw:maxcol].index("w") + startw)
-            except ValueError:
-                break
-            startw = wcol[-1] + 1
+        if self.setas.count("x")==1:
+            xcol=self.setas.index("x")
+            maxcol=len(self.setas)+1
+            startx=0
+            xerr=self.setas.index("d") if "d" in self.setas else None
+        elif self.setas.count("x")>1:
+            xcol = self.setas[startx:].index("x") + startx
+            startx=xcol
+            maxcol = self.setas[xcol + 1:].index("x") + xcol + 1
+            xerr=self.setas[startx:maxcol].index("d") if "d" in self.setas[startx:maxcol] else None
+        else:
+            xcol = None
+            maxcol = len(self.setas)+1
+            startx=0
+            xerr=None
+
+
+        #No longer enforce ordering of yezf - allow them to appear in any order.
+        ycol = []
+        yerr = []
+        zcol = []
+        zerr = []
+        ucol = []
+        vcol = []
+        wcol =  []
+
+        columns=[ycol,yerr,zcol,zerr,ucol,vcol,wcol]
+        letters="yezfuvw"
+        for col,lett in zip(columns,letters):
+            col.extend([None] * self.setas[startx:maxcol].count(lett))
+            start=startx
+            for i,n in enumerate(col):
+                try:
+                    col[i]=self.setas[start:maxcol].index(lett)+start
+                    start=col[i]+1
+                except ValueError:
+                    break
 
         if xcol is None:
             axes = 0
@@ -495,9 +467,9 @@ class _setas(object):
             "axes": axes
         })
         ret["has_xerr"] = xerr is not None
-        ret["has_yerr"] = has_yerr
-        ret["has_zerr"] = has_zerr
-        ret["has_uvw"] = len(ucol) != 0
+        ret["has_yerr"] = len(yerr)>0
+        ret["has_zerr"] = len(zerr)>0
+        ret["has_uvw"] = len(ucol) >0
         if what == "xcol":
             ret = ret["xcol"]
         elif what in ("ycol", "zcol", "ucol", "vcol", "wcol", "yerr", "zerr"):
@@ -505,7 +477,6 @@ class _setas(object):
         elif what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
             ret = ret[what[0:-1]]
         return ret
-
 
 class _evaluatable(object):
     """A very simple class that is just a placeholder."""

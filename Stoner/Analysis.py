@@ -1307,6 +1307,10 @@ class AnalyseFile(DataFile):
         if xcol == None:
             full_data=True
             xcol = i
+
+        elif isinstance(xcol,bool) and not xcol:
+            full_data=False
+            xcol = i
         else:
             full_data=False
             xcol = self.column(xcol)
@@ -1326,7 +1330,7 @@ class AnalyseFile(DataFile):
             self.data=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
             ret=self
         elif full_data:
-            ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
+            ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic",xcol=False)
         else:
             ret=xdata(possible_peaks+index_offset)
 
