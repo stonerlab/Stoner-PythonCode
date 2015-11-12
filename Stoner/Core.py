@@ -584,7 +584,6 @@ class _setas(object):
             ret = ret[what[0:-1]]
         return ret
 
-
 class _evaluatable(object):
     """A very simple class that is just a placeholder to indicate that special action
     needs to be taken to convert a string representation to a valid Python type."""

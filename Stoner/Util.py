@@ -150,8 +150,9 @@ def split_up_down(data, col=None, folder=None):
     width = len(a) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1
-    peaks = list(a.peaks(col, width, peaks=True, troughs=False))
-    troughs = list(a.peaks(col, width, peaks=False, troughs=True))
+    peaks = list(a.peaks(col, width,xcol=False, peaks=True, troughs=False))
+    troughs = list(a.peaks(col, width, xcol=False, peaks=False, troughs=True))
+    print peaks,troughs
     if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
         order = peaks[0] < troughs[0]
     elif len(peaks) > 0:  #Rise then fall
@@ -364,7 +365,8 @@ def hysteresis_correct(data, correct_background=True, correct_H=True, saturation
     data["Remenance"] = abs((mr2 - mr1) / 2)
 
     h_sat_data = data.search(data.setas["y"], lambda x, r: low_m <= x <= high_m)[:, xc]
-    data["H_sat"] = (min(h_sat_data), max(h_sat_data))
+    if len(h_sat_data)>0:
+        data["H_sat"] = (min(h_sat_data), max(h_sat_data))
 
     data["Area"] = data.integrate()
     return cls(data)
