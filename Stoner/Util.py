@@ -13,11 +13,31 @@ from Stoner.Plot import PlotFile as _PF_
 import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
 from Stoner.Fit import linear
-from numpy import log10, floor, max, abs, sqrt, diag, argmax
+from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
 from scipy.integrate import trapz
+from scipy.stats import sem
 from sys import float_info
 from lmfit import Model
 from inspect import isclass
+
+def _up_down(data):
+    """Split data d into rising and falling sections and then add and sort the two sets.
+
+    Args:
+        data (Data): DataFile like object with x and y columns set
+
+    Returns:
+        (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
+    """
+    f=split_up_down(data)
+
+    ret=[None,None]
+    for i,grp in enumerate(["rising","falling"]):
+        ret[i]=f[grp][0]
+        for d in f[grp][1:]:
+            ret[i]=ret[i]+d
+        ret[i].sort(data.setas._get_cols('xcol'))
+    return ret
 
 
 class Data(_AF_, _PF_):
@@ -152,7 +172,6 @@ def split_up_down(data, col=None, folder=None):
         width += 1
     peaks = list(a.peaks(col, width,xcol=False, peaks=True, troughs=False))
     troughs = list(a.peaks(col, width, xcol=False, peaks=False, troughs=True))
-    print peaks,troughs
     if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
         order = peaks[0] < troughs[0]
     elif len(peaks) > 0:  #Rise then fall
@@ -294,7 +313,7 @@ def ordinal(value):
     return "{}{}".format(value, suffix)
 
 
-def hysteresis_correct(data, correct_background=True, correct_H=True, saturation_fraction=0.2):
+def hysteresis_correct(data, **kargs):
     """Peform corrections to a hysteresis loop.
 
     Args:
@@ -308,6 +327,9 @@ def hysteresis_correct(data, correct_background=True, correct_H=True, saturation
             this will remove any offset in filed due to trapped flux
         saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be
             fully saturated.
+        xcol (column index): Column with the x data in it
+        ycol (column_index): Column with the y data in it
+        setas (string or iterable): Column assignments.
 
     Returns:
         The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
@@ -318,55 +340,105 @@ def hysteresis_correct(data, correct_background=True, correct_H=True, saturation
         cls = data.__class__
     else:
         cls = Data
-    data = Data(data)
+    data = cls(data)
 
-    xc = data.find_col(data.setas["x"])
-    yc = data.find_col(data.setas["y"])
+    if "setas" in kargs: # Allow us to override the setas variable
+        d.setas=kargs.pop("setas")
 
-    mx = max(data.x) * (1 - saturation_fraction)
-    mix = min(data.x) * (1 - saturation_fraction)
-    p1, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
-    perr1 = diag(pcov)
-    p2, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
-    perr2 = diag(pcov)
+    #Get xcol and ycols from kargs if specified
+    xc = kargs.pop("xcol",data.find_col(data.setas["x"]))
+    yc = kargs.pop("ycol",data.find_col(data.setas["y"]))
+    setas=data.setas
+    setas[xc]="x"
+    setas[yc]="y"
+    data.setas=setas
+
+    #Split into two sets of data:
+
+    #Get other keyword arguments
+    correct_background=kargs.pop("correct_background",True)
+    correct_H=kargs.pop("correct_H",True)
+    saturation_fraction=kargs.pop("saturation_fraction",0.2)
+
+    while True:
+        up,down=_up_down(data)
+        mx = max(data.x) * (1 - saturation_fraction)
+        mix = min(data.x) * (1 - saturation_fraction)
+
+
+        #Find upper branch saturated moment slope and offset
+        p1, pcov = up.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
+        perr1 = diag(pcov)
+
+        #Find lower branch saturated moment and offset
+        p2, pcov = down.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
+        perr2 = diag(pcov)
+        if p1[0]>p2[0]:
+            print "Inverting loop"
+            data.y=-data.y
+        else:
+            break
+
+
+    #Find mean slope and offset
     pm = (p1 + p2) / 2
     perr = sqrt(perr1 + perr2)
-    data["Ms"] = (abs(p1[0]) + abs(p2[0])) / 2
-    low_m = p2[0] + perr[0]
-    high_m = p1[0] - perr[0]
-    data["Ms Error"] = perr[0]
+    Ms=array([p1[0],p2[0]])
+    Ms=list(Ms-mean(Ms))
+
+    data["Ms"] = Ms #mean(Ms)
+    data["Ms Error"] = perr[0]/2
     data["Offset Moment"] = pm[0]
-    data["Offset Moment Error"] = perr[0]
+    data["Offset Moment Error"] = perr[0]/2
     data["Background susceptibility"] = pm[1]
-    data["Background Susceptibility Error"] = perr[1]
+    data["Background Susceptibility Error"] = perr[1]/2
+
+    p1=p1-pm
+    p2=p2-pm
 
     if correct_background:
-        new_y = data.y - linear(data.x, *pm)
-        data.data[:, yc] = new_y
+        for d in [data,up,down]:
+            d.y = d.y - linear(d.x, *pm)
 
-    hc1 = data.threshold(0.0, rising=True, falling=False)
-    hc2 = data.threshold(0.0, rising=False, falling=True)
+    Hc=[None,None]
+    Hc_err=[None,None]
+    Hsat=[None,None]
+    Hsat_err=[None,None]
+    m_sat=[p1[0]+perr[0],p2[0]-perr[0]]
+    Mr=[None,None]
+    Mr_err=[None,None]
+    for i,(d,sat) in enumerate(zip([up,down],m_sat)):
+        hc=d.threshold(0.,all_vals=True,rising=True,falling=True) # Get the Hc value
+        Hc[i]=mean(hc)
+        if len(hc)>1:
+            Hc_err[i]=sem(hc)
+        hs=d.threshold(sat,all_vals=True,rising=True,falling=True) # Get the Hc value
+        Hsat[1-i]=mean(hs) # Get the H_sat value
+        if len(hs)>1:
+            Hsat_err[1-i]=sem(hs)
+        mr=d.threshold(0.0,col=xc,xcol=yc,all_vals=True,rising=True,falling=True)
+        Mr[i]=mean(mr)
+        if len(mr)>1:
+            Mr_err[i]=sem(mr)
+
 
     if correct_H:
-        hc_mean = (hc1 + hc2) / 2
-        data["Field Offset"] = hc_mean
-        data.data[:, xc] = data.x - hc_mean
+        Hc_mean=mean(Hc)
+        for d in [data,up,down]:
+            d.x = d.x - Hc_mean
+        data["Exchange Bias offset"]=Hc_mean
     else:
-        hc_mean = 0.0
-    data["Hc"] = (hc1 - hc_mean, hc2 - hc_mean)
+        Hc_mean=0.0
+
+    data["Hc"] = (Hc[1] - Hc_mean, Hc[0] - Hc_mean)
+    data["Hsat"] = (Hsat[1] - Hc_mean, Hsat[0] - Hc_mean)
+    data["Remenance"] = Mr
+
 
     bh = (-data.x) * data.y
     i = argmax(bh)
     data["BH_Max"] = max(bh)
     data["BH_Max_H"] = data.x[i]
-    mr1 = data.threshold(0.0, col=xc, xcol=yc, rising=True, falling=False)
-    mr2 = data.threshold(0.0, col=xc, xcol=yc, rising=False, falling=True)
-
-    data["Remenance"] = abs((mr2 - mr1) / 2)
-
-    h_sat_data = data.search(data.setas["y"], lambda x, r: low_m <= x <= high_m)[:, xc]
-    if len(h_sat_data)>0:
-        data["H_sat"] = (min(h_sat_data), max(h_sat_data))
 
     data["Area"] = data.integrate()
     return cls(data)
