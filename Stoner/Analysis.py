@@ -261,7 +261,6 @@ class AnalyseFile(DataFile):
             points += 1
         if col is None:
             cols = self.setas._get_cols()
-<<<<<<< HEAD
             if order>0:
                 col = (cols["xcol"], cols["ycol"][0])
             else:
@@ -270,9 +269,6 @@ class AnalyseFile(DataFile):
             ycol=col[1]
         else:
             ycol=col
-=======
-            col = (cols["xcol"], cols["ycol"][0])
->>>>>>> 5899cd3... Couple of minor big fixes
         if isinstance(col, (list, tuple)):
             data = self.column(list(col)).T
             ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
@@ -282,21 +278,10 @@ class AnalyseFile(DataFile):
             r = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
         if result is not None:
             if not isinstance(header, string_types):
-<<<<<<< HEAD
-                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(ycol)],
-                                                                      ordinal(order))
-=======
-                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],
-                                                                          ordinal(order))
+                header = '{} after {} order Savitsky-Golay Filter'.format(self.column_headers[self.find_col(col)],                                                                          ordinal(order))
             if isinstance(result, bool) and result:
                 result = self.shape[1] - 1
             self.add_column(r.ravel(), header, index=result, replace=replace)
->>>>>>> 5899cd3... Couple of minor big fixes
-
-            if isinstance(result, bool) and result:
-                if replace:
-                    result=col
-            self.add_column(r, header=header, index=result, replace=replace)
             return self
         else:
             return r
@@ -410,9 +395,6 @@ class AnalyseFile(DataFile):
             raise RuntimeError("Failed to complete fit. Error was:\n{}\n{}".format(fit.lmdif_message, fit.message))
 
 
-<<<<<<< HEAD
-=======
-
     def __threshold(self, threshold, data, rising=True, falling=False):
         """ Internal function that implements the threshold method - also used in peak-finder
 
@@ -457,7 +439,6 @@ class AnalyseFile(DataFile):
                     pass
         return _np_.array(roots)
 
->>>>>>> 5899cd3... Couple of minor big fixes
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
         attr = dir(type(self))
