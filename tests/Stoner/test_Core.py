@@ -86,6 +86,8 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d.setas[:],["x","y"],"Failed to set setas by column=type keyword assignment")
         self.assertEqual(self.d.setas["x"],"X-Data","Failed to return column name from setas dict reading")
         self.assertEqual(self.d.setas["#x"],0,"Failed to return column index from setas dict reading")
+        e=~self.d
+        self.assertEqual(str(e.setas),"yx","Failed the invert xy columns operator ~")
 
 
 
