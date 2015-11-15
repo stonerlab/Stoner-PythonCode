@@ -6,7 +6,7 @@ Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
 __all__ = ["AnalyseFile"]
 
 from Stoner.compat import *
-from Stoner.Core import DataFile,isNone
+from Stoner.Core import DataFile,isNone,DataArray
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
@@ -92,7 +92,7 @@ def _threshold(threshold, data, rising=True, falling=False):
     # Now we refine the estimate of zero crossing with a cubic interpolation
     # and use Newton's root finding method to locate the zero in the interpolated data
 
-    intr=interp1d(index,data-threshold,kind="cubic")
+    intr=interp1d(index,data.ravel()-threshold,kind="cubic")
     roots=[]
     for ix,x in enumerate(sdat):
         if expr(x) and ix>0 and ix<len(data)-1: # There's a root somewhere here !
@@ -1075,7 +1075,8 @@ class AnalyseFile(DataFile):
             self.data=inter(newX)
             ret=self
         else:
-            ret=inter(newX)
+            ret=DataArray(inter(newX),isrow=True)
+            ret.setas=self.setas.clone
         return ret
 
     def lmfit(self, model, xcol=None, ycol=None, p0=None, sigma=None,**kargs):
@@ -2141,7 +2142,7 @@ class AnalyseFile(DataFile):
             self.add_column(err_data, header=err_header, index=a, replace=False)
         return self
 
-    def threshold(self, threshold, col=None, rising=True, falling=False, xcol=None, all_vals=False, transpose=False):
+    def threshold(self, threshold, **kargs):
         """Finds partial indices where the data in column passes the threshold, rising or falling.
 
         Args:
@@ -2151,8 +2152,8 @@ class AnalyseFile(DataFile):
         Keyword Arguments:
             rising (bool):  look for case where the data is increasing in value (defaukt True)
             falling (bool): look for case where data is fallinh in value (default False)
-            xcol (index or None): rather than returning a fractional row index, return the
-                interpolated value in column xcol
+            xcol (index, bool or None): rather than returning a fractional row index, return the
+                interpolated value in column xcol. If xcol is False, then return a complete row
                 all_vals (bool): return all crossing points of the threshold or just the first. (default False)
             transpose (bbool): Swap the x and y columns around - this is most useful when the column assignments
                 have been done via the setas attribute
@@ -2169,25 +2170,71 @@ class AnalyseFile(DataFile):
             There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
             argument list. In order to support the use of assigned columns, this has been swapped to the present order.
             """
+
+
+        col=kargs.pop("col",None)
         if col is None:
             col = self.setas._get_cols("ycol")
-            xcol = self.setas._get_cols("xcol")
+            xcol = kargs.pop("xcol",self.setas._get_cols("xcol"))
+        else:
+            xcol = kargs.pop("xcol",None)
+
+        rising=kargs.pop("rising",True)
+        falling=kargs.pop("falling",False)
+        all_vals=kargs.pop("all_vals",False)
 
         current = self.column(col)
-        ret = []
-        if isinstance(threshold, (list, _np_.ndarray)):
-            if all_vals:
-                ret = [_threshold(x, current, rising=rising, falling=falling) for x in threshold]
-            else:
-                ret = [_threshold(x, current, rising=rising, falling=falling)[0] for x in threshold]
+
+        #Recursively call if we've got an iterable threshold
+        if isinstance(threshold, Iterable):
+            ret = []
+            for th in threshold:
+                ret.append(self.threshold(th,col=col,xcol=xcol,rising=rising,falling=falling,all_vals=all_vals))
+            #Now we have to clean up the  retujrn list into a DataArray
+            retval=DataArray(ret)
+            if isinstance(ret[0],DataArray): # if xcol was False we got a complete row back
+                setas=ret[0].setas.clone
+                ch=ret[0].column_headers
+                retval.setas=setas
+                retval.column_headers=ch
+                retval.i=ri
+            else: #Either xcol was None so we got indices or we got a specified column back
+                if xcol is not None: # Specific column
+                    retval.column_headers=[self.column_headers[self.find_col(xcol)]]
+                    retval.i=[r.i for r in ret]
+                    retval.setas="x"
+                    retval.isrow=False
+                else:
+                    retval.column_headers=["Index"]
+                    retval.isrow=False
+            return retval
         else:
-            if all_vals:
-                ret = _threshold(threshold, current, rising=rising, falling=falling)
-            else:
-                ret = [_threshold(threshold, current, rising=rising, falling=falling)[0]]
-        if xcol is not None:
-            ret = [self.interpolate(r, xcol=False)[self.find_col(xcol)] for r in ret]
-        if all_vals:
-            return ret
+            ret = _threshold(threshold, current, rising=rising, falling=falling)
+            if not all_vals:
+                ret=[ret[0]] if len(ret)>0 else []
+
+        if isinstance(xcol,bool) and not xcol:
+            retval = self.interpolate(ret, xcol=False)
+            retval.setas=self.setas.clone
+            retval.setas.shape=retval.shape
+            retval.i=ret
+            ret=retval
+        elif xcol is not None:
+            retval = self.interpolate(ret, xcol=False)[:,self.find_col(xcol)]
+            if retval.ndim>0:
+                retval.setas=self.setas.clone
+                retval.setas.shape=retval.shape
+                retval.i=ret
+            ret=retval
         else:
-            return ret[0]
+            ret=DataArray(ret)
+        if not all_vals:
+            if ret.size==1:
+                pass
+            elif ret.size>1:
+                ret=ret[0]
+            else:
+                ret=[]
+        if isinstance(ret,DataArray):
+            ret.isrow=True
+        return ret

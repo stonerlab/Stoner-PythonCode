@@ -410,15 +410,15 @@ def hysteresis_correct(data, **kargs):
     for i,(d,sat) in enumerate(zip([up,down],m_sat)):
         hc=d.threshold(0.,all_vals=True,rising=True,falling=True) # Get the Hc value
         Hc[i]=mean(hc)
-        if len(hc)>1:
+        if hc.size>1:
             Hc_err[i]=sem(hc)
         hs=d.threshold(sat,all_vals=True,rising=True,falling=True) # Get the Hc value
         Hsat[1-i]=mean(hs) # Get the H_sat value
-        if len(hs)>1:
+        if hs.size>1:
             Hsat_err[1-i]=sem(hs)
         mr=d.threshold(0.0,col=xc,xcol=yc,all_vals=True,rising=True,falling=True)
         Mr[i]=mean(mr)
-        if len(mr)>1:
+        if mr.size>1:
             Mr_err[i]=sem(mr)
 
 
