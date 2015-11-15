@@ -1288,17 +1288,17 @@ class LSTemperatureFile(DataFile):
                     vstr = str(len(self))
                 else:
                     vstr = str(v)
-                f.write("{}{}\n".format(kstr, vstr))
-            f.write("\n")
+                f.write("{}{}\r\n".format(kstr, vstr))
+            f.write("\r\n")
             f.write("No.   ")
             for h in self.column_headers:
                 f.write("{:11s}".format(h))
-            f.write("\n\n")
+            f.write("\r\n\r\n")
             for i in range(
                 len(self.data)):  # This is a slow way to write the data, but there should only ever be 200 lines
                 line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
-                f.write("{}\n".format(line))
+                f.write("{}\r\n".format(line))
         return self
 
 
