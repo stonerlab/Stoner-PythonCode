@@ -257,66 +257,21 @@ with a "fill" value of 10^20.
     Strictgly speaking, the :py:attr:`DataFile.data` attribute is a sub-class of the numpy masked array, :py:class:`DataArray`.
     This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.
 
-Working with columns of data
------------------------------
-
-This is all very well, but often you want to examine a particular column of data
-or a particular row::
-
-  d.column(0)
-  d.column('Temperature')
-  d.column(['Temperature',0])
-
-In the first example, the first column of numeric data will be returned. In the
-second example, the column headers will first be checked for one labeled exactly
-*Temperature* and then if no column is found, the column headers will be
-searched using *Temperature* as a regular expression. This would then
-match *Temperature (K)* or *Sample Temperature*.  The third
-example results in a 2 dimensional numpy array containing two columns in the
-order that they appear in the list (ie not the order that they are in the data
-file). For completeness, the :py:meth:`DataFile.column` method also allows one to
-pass slices to select columns and should do the expected thing.
-
-There are a couple of convenient short cuts/ Firstly the *floormod* operator //
-is an alias for the :py:meth:`DataFile.column` method and secondly for working
-with cases where the column headers are not the same as the names of any of the attributes
-of the :py:class:`DataFile` object::
-
-  d//"Temperature"
-  d.Temperature
-  d.column('Temperature')
-
-all return the same data.
-
-Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
-
- 1) As an integer where the first column on the left is index 0
- 2) As a string. if the string matches a column header exactly then the index of that column is returned.
-      If the string fails to match any column header it is compiled as a regular expression and then that
-      is tried as a match. If multiple columns match then only the first is returned.
- 3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
-      expression in directly with any extra options (like case insensitivity flags) set.
- 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
- 5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
-      the final result would be to use a list of column indices.
-
-For example::
-    import re
-    col=re.compile('^temp',re.IGNORECASE)
-    d.column(col)
-
 .. _setas:
 
-Other ways to Identify Columns of Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Marking Columns as Dimensions: the magic *setas* attribute
+----------------------------------------------------------
 
 Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
 or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
-so that 'e' data is the error in the y data). DataFile has a concept of marking a column as containing such data and
+so that 'e' data is the error in the y data). :py:class:`DataFile` has a concept of marking a column as containing such data and
 will then use these by default in many methods when appropriate to have 'x' and 'y' data.
 
-For data that describes a vector field, you can mark the columns as containing 'u', 'v', 'w' data where (u,v,w) is the vector value at the point (x,y,z). There's no
-support at present for uncertainities in (u,v,w) being marked.
+In addition to identifying columns as 'x','y', or 'z', for data that describes a vector field, you can mark the columns as containing
+'u', 'v', 'w' data where (u,v,w) is the vector value at  the point (x,y,z). There's no support at present for uncertainities in (u,v,w) being marked.
+
+Setting Column Types
+^^^^^^^^^^^^^^^^^^^^
 
 To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
 a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
@@ -374,6 +329,26 @@ There are some more convenience ways to set which columns to use as x,y,z etc.::
 In each of these cases, the :py:class:`DataFile` will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
 
+Reading Column Types
+^^^^^^^^^^^^^^^^^^^^
+
+The normal representation of :py:attr:`DataFile.setas` is as a list, but it also has a string conversion available. You can also find which column
+has been assigned as 'x', 'y' etc. by treating the :py:attr:`DataFile.setas` as a dictionary::
+
+    d.column_headers=["One","Two","three","Four"]
+    d.setas="xy.z"
+
+    print list(d.setas) #['x','y','.','z']
+    print d.setas #'xy.z'
+    print d.setas['x'] # "One"
+    print d.setas["#x"] # 0
+
+Note that the :py:attr:`DataFile.setas` attribute supports reading keys that are either the single letter t get the name of the column or the letter
+preceded by a # character to get the number of the column.
+
+Swapping and Rotating Column Assignments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 Finally, if the :py:attr:`DataFile.setas` attribute has been set with *x*, *y* (and *z*) columns then these assingments can be
 swapped around by the **invert** operator **~**. This either swaps *x* and *y* with eir associated errorbars for 2-D datasets, or rotates
 *x* to *y*, *y* to *z* and *z* to *x* )again with their associated errors bars.::
@@ -384,6 +359,55 @@ swapped around by the **invert** operator **~**. This either swaps *x* and *y* w
     e=~d
     print e.setas
     >>> ['y','x','d']
+
+Working with columns of data
+-----------------------------
+
+This is all very well, but often you want to examine a particular column of data
+or a particular row::
+
+  d.column(0)
+  d.column('Temperature')
+  d.column(['Temperature',0])
+
+In the first example, the first column of numeric data will be returned. In the
+second example, the column headers will first be checked for one labeled exactly
+*Temperature* and then if no column is found, the column headers will be
+searched using *Temperature* as a regular expression. This would then
+match *Temperature (K)* or *Sample Temperature*.  The third
+example results in a 2 dimensional numpy array containing two columns in the
+order that they appear in the list (ie not the order that they are in the data
+file). For completeness, the :py:meth:`DataFile.column` method also allows one to
+pass slices to select columns and should do the expected thing.
+
+There are a couple of convenient short cuts/ Firstly the *floormod* operator //
+is an alias for the :py:meth:`DataFile.column` method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
+of the :py:class:`DataFile` object::
+
+  d//"Temperature"
+  d.Temperature
+  d.column('Temperature')
+
+all return the same data.
+
+Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
+
+ 1) As an integer where the first column on the left is index 0
+ 2) As a string. if the string matches a column header exactly then the index of that column is returned.
+      If the string fails to match any column header it is compiled as a regular expression and then that
+      is tried as a match. If multiple columns match then only the first is returned.
+ 3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
+      expression in directly with any extra options (like case insensitivity flags) set.
+ 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
+ 5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
+      the final result would be to use a list of column indices.
+
+For example::
+    import re
+    col=re.compile('^temp',re.IGNORECASE)
+    d.column(col)
+
 
 Working with complete rows of data
 ----------------------------------

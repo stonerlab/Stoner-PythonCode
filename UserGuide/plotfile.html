@@ -73,7 +73,7 @@ for plotting.</p>
 <h2>Quick Plots<a class="headerlink" href="#quick-plots" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code></a> is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for &#8216;x&#8217;, &#8216;y&#8217; axes and
-for containing error bars. This is done with the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute (see <a class="reference internal" href="datafile.html#setas"><span>Other ways to Identify Columns of Data</span></a> for full details). Once this is done, the plotting
+for containing error bars. This is done with the <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute (see <a class="reference internal" href="datafile.html#setas"><span>Marking Columns as Dimensions: the magic setas attribute</span></a> for full details). Once this is done, the plotting
 methods will use these to try to make a sensible plot.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xye&quot;</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="s">&quot;y&quot;</span><span class="p">,</span><span class="s">&quot;e&quot;</span><span class="p">]</span>
@@ -636,7 +636,7 @@ second and subsequent ones can fit on a common scale, then a double-y axis plot 
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Nov 08, 2015.
+      Last updated on Nov 15, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
