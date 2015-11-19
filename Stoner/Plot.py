@@ -724,6 +724,9 @@ class PlotFile(DataFile):
                 kargs["_startx"] = x
                 axes = cols["axes"]
 
+        if "template" in kargs:
+            self.template=kargs.pop("template")
+
         plotters = [None, None, self.plot_xy, self.plot_xyz, self.plot_xyuv, self.plot_xyuv, self.plot_xyzuvw]
         if 2 <= axes <= 6:
             plotter = plotters[axes]
@@ -897,6 +900,10 @@ class PlotFile(DataFile):
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, multi_y=True, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "plotter": plt.plot,
             "show_plot": True,
@@ -1023,6 +1030,10 @@ class PlotFile(DataFile):
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, multi_y=False, **kargs)
         xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "plotter": self.__SurfPlotter,
             "show_plot": True,
@@ -1074,6 +1085,10 @@ class PlotFile(DataFile):
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
                 """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         if isinstance(c.wcol, index_types):
             wdata = self.column(c.wcol)
             phidata = (wdata - _np_.min(wdata)) / (_np_.max(wdata) - _np_.min(wdata))
@@ -1124,6 +1139,10 @@ class PlotFile(DataFile):
         except ImportError:
             return None
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, multi_y=False, **kargs)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "figure": self.__figure,
             "plotter": self._VectorFieldPlot,
@@ -1214,6 +1233,10 @@ class PlotFile(DataFile):
         }
         otherkargs = ["units", "angles", "scale", "scale_units", "width", "headwidth", "headlength", "headaxislength",
                       "minshaft", "minlength", "pivot", "color"]
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"])

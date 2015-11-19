@@ -169,9 +169,12 @@ class DefaultPlotStyle(object):
     def __call__(self, **kargs):
         """Calling the template object can manipulate the rcParams that will be set."""
         for k in kargs:
+            ok=k
+            if k.startswith("template_"):
+                k=k[9:]
             nk = k.replace("_", ".").replace("..", "_")
             if nk in plt.rcParams:
-                super(DefaultPlotStyle, self).__setattr__("template_" + k, kargs[k])
+                super(DefaultPlotStyle, self).__setattr__("template_{}".format(k), kargs[ok])
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
@@ -278,6 +281,7 @@ class DefaultPlotStyle(object):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
+        pass
 
     def customise_axes(self, ax, plot):
         """This method is run when we have an axis to manipulate.
