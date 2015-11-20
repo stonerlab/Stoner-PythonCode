@@ -367,6 +367,12 @@ class _setas(object):
             for i, v in enumerate(self.setas):
                 if v == name:
                     ret.append(self.column_headers[i])
+        elif isinstance(name, string_types) and len(name) == 2 and name[0]=="#" and name[1] in "xyzuvwdef.-":
+            ret = list()
+            for i, v in enumerate(self.setas):
+                if v == name[1]:
+                    ret.append(i)
+
         elif isinstance(name, slice):
             indices = name.indices(len(self.setas))
             name = range(*indices)
@@ -424,6 +430,10 @@ class _setas(object):
         elif len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
         return self.setas.__repr__()
+
+    def __str__(self):
+        #Quick string conversion routine
+        return "".join(self.setas)
 
     def find_col(self, col, force_list=False):
         """Indexes the column headers in order to locate a column of data.shape.
@@ -583,7 +593,6 @@ class _setas(object):
         elif what in ("ycols", "zcols", "ucols", "vcols", "wcols", "yerrs", "zerrs"):
             ret = ret[what[0:-1]]
         return ret
-
 
 class _evaluatable(object):
     """A very simple class that is just a placeholder to indicate that special action
@@ -968,7 +977,7 @@ class DataArray(_ma_.MaskedArray):
             obj.maske=False
         # Finally, we must return the newly created object:
         obj.i=i
-        obj.setas._row=_row and len(self.shape)==1
+        obj.setas._row=_row and len(obj.shape)==1
         return obj
 
     def __array_finalize__(self, obj):
@@ -1165,6 +1174,9 @@ class DataArray(_ma_.MaskedArray):
     @property
     def i(self):
         """Return the row indices of the DataArray or sets the base index - the row number of the first row."""
+
+        if not hasattr(self,"_ibase"):
+            self._ibase=[]
         if len(self._ibase)==1 and self.isrow:
             ret=min(self._ibase)
         else:
