@@ -12,9 +12,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
-from os.path import join, dirname, realpath
+from os.path import join, dirname, realpath,exists
 from sys import platform as _platform
 from numpy.random import normal
+from inspect import getfile
 
 try:
     import seaborn as sns
@@ -164,6 +165,7 @@ class DefaultPlotStyle(object):
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
+        self._stylesheet=None
         self.update(**kargs)
 
     def __call__(self, **kargs):
@@ -202,8 +204,34 @@ class DefaultPlotStyle(object):
     @property
     def stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        if self._stylesheet is not None and self._stylesheet[0]==self.stylename: # Have we cached a copy of our stylesheets ?
+            return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
-        return [join(dirname(realpath(__file__)), "stylelib", c.stylename + ".mplstyle") for c in levels[::-1]]
+        sheets=[]
+        for c in levels[:-1]: # Iterate through all possible parent classes and build a list of stylesheets
+            for f in [join(dirname(getfile(c)), c.stylename + ".mplstyle"),
+                      join(dirname(getfile(c)), "stylelib",c.stylename + ".mplstyle"),
+                      join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
+                ]: # Look in first of all the same directory as the class file and then in a stylib folder
+                if exists(f):
+                    sheets.append(f)
+                    break
+            else: # Fallback, does the parent class define a builtin stylesheet ?
+                if c.stylename in plt.style.available:
+                    sheets.append(c.stylename)
+        #Now do the same for this class, but allow the stylename to be an instance variable as well
+        for f in [join(dirname(getfile(self.__class__)), self.stylename + ".mplstyle"),
+                  join(dirname(getfile(self.__class__)), "stylelib",self.stylename + ".mplstyle"),
+            ]:
+            if exists(f):
+                sheets.append(f)
+                break
+        else:
+            if self.stylename in plt.style.available:
+                sheets.append(self.stylename)
+
+        self._stylesheet=self.stylename,sheets
+        return sheets
 
     @stylesheet.setter
     def stylesheet(self,value):
