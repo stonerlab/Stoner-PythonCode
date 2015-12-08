@@ -303,6 +303,20 @@ The possible attributes that can be passed over to the template are essentially 
 (see :py:func:`matplotlib.pyplot.rcParams`) except that periods '.' are replced with underscores '_' and single underscores
 are replaced with double underscores.
 
+Matplotlib makes use of stylesheets - essentially separate files of matplotlibrc entries. The template classes have a stylename
+parameter that controls which stylesheet is used. This can be either one of the built in styles (see :py:attr:`matplotlib.pyplot.styles.available`)
+or refer to a file on disc. The template will search for the file (named *<stylename>*.mplstyle) in.
+
+    #. the same directory as the template class file is,
+    #. a subdirectory called *stylelib* of the directory where the template class file is or,
+    #. the stylelib subfolder of the Stoner package directory.
+
+Where a template class is a subclass of the  :py:class:`DefaultPlotStyle`, the stylesheets are inherited in the same order as the
+class heirarchy.
+
+Changing the value of Lpy:attr:`DefaultPlotStyle.stylename` will force the tempalte to recalculate the stylesheet heirarchy, refidning
+the paths to the stylesheets. You can also do any in-place modifications to the template stylesheet list (e.g. appending or extending it).
+
 Further customisation is possible by creating a subclass of :py:class:`DefaultPlotStyle` and overriding the
 :py:meth:`DefaultPlotStyle.customise` method and :py:meth:`DefaultPlotStyle.customise_axes` method.
 
