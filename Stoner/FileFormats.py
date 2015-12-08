@@ -155,9 +155,8 @@ class VSMFile(DataFile):
         self.data = _np_.genfromtxt(self.filename,
                                     dtype='float',
                                     usemask=True,
-                                    delimiter=data_delim,
                                     skip_header=data_line - 1,
-                                    missing_values=['         6:0', '         ---'],
+                                    missing_values=['6:0', '---'],
                                     invalid_raise=False)
 
         self.data = ma.mask_rows(self.data)
