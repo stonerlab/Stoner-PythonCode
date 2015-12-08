@@ -697,6 +697,7 @@
         <span class="s">&#39;I32&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="s">&#39;Double Float&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="s">&#39;Cluster&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="s">&#39;AnonCluster&#39;</span><span class="p">:</span><span class="nb">tuple</span><span class="p">,</span>
         <span class="s">&#39;Array&#39;</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="s">&#39;List&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
         <span class="s">&#39;String&#39;</span><span class="p">:</span> <span class="nb">str</span>
@@ -754,10 +755,14 @@
         <span class="n">typ</span> <span class="o">=</span> <span class="s">&quot;String&quot;</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__types</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__types</span><span class="p">[</span><span class="n">t</span><span class="p">]):</span>
-                <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&quot;Cluster&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s">&quot;Cluster&quot;</span> <span class="ow">or</span> <span class="n">t</span><span class="o">==</span><span class="s">&quot;AnonCluster&quot;</span><span class="p">:</span>
                     <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
-                        <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>                            
                     <span class="n">tt</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span>
                     <span class="n">tt</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
                     <span class="n">typ</span> <span class="o">=</span> <span class="s">&#39;Cluster (&#39;</span> <span class="o">+</span> <span class="n">tt</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
@@ -1233,7 +1238,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">isrow</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">)])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ibase</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">value</span><span class="p">])</span>
@@ -3417,7 +3422,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Nov 15, 2015.
+      Last updated on Dec 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

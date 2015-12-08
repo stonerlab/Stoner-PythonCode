@@ -62,9 +62,10 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">EngFormatter</span><span class="p">,</span> <span class="n">Formatter</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">AutoLocator</span>
-<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">realpath</span><span class="p">,</span><span class="n">exists</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">platform</span> <span class="k">as</span> <span class="n">_platform</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getfile</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
@@ -214,14 +215,18 @@
 <span class="sd">        Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter</span>
 <span class="sd">        may be specified, with .&#39;s replaced with _ and )_ replaced with __.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="o">=</span><span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="DefaultPlotStyle.__call__"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.__call__.html#Stoner.Plot.DefaultPlotStyle.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calling the template object can manipulate the rcParams that will be set.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">ok</span><span class="o">=</span><span class="n">k</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;template_&quot;</span><span class="p">):</span>
+                <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
             <span class="n">nk</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">,</span> <span class="s">&quot;.&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;..&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">nk</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">:</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&quot;template_&quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&quot;template_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">kargs</span><span class="p">[</span><span class="n">ok</span><span class="p">])</span>
 </div>
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provide magic to read certain attributes of the template.&quot;&quot;&quot;</span>
@@ -249,8 +254,37 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Horribly hacky method to traverse over the class heirarchy for style sheet names.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">:</span> <span class="c"># Have we cached a copy of our stylesheets ?</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="n">mro</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s">&quot;stylelib&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">print</span> <span class="n">levels</span>
+        <span class="n">sheets</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span> <span class="c"># Iterate through all possible parent classes and build a list of stylesheets</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">)),</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                      <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="n">c</span><span class="p">)),</span> <span class="s">&quot;stylelib&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                      <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s">&quot;stylelib&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                <span class="p">]:</span> <span class="c"># Look in first of all the same directory as the class file and then in a stylib folder</span>
+                <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                    <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c"># Fallback, does the parent class define a builtin stylesheet ?</span>
+                <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">stylename</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">available</span><span class="p">:</span>
+                    <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
+        <span class="c">#Now do the same for this class, but allow the stylename to be an instance variable as well</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">[</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">),</span>
+                  <span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">getfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)),</span> <span class="s">&quot;stylelib&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="o">+</span> <span class="s">&quot;.mplstyle&quot;</span><span class="p">),</span>
+            <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stylename</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">available</span><span class="p">:</span>
+                <span class="n">sheets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">,</span><span class="n">sheets</span>
+        <span class="k">return</span> <span class="n">sheets</span>
 
     <span class="nd">@stylesheet.setter</span>
     <span class="k">def</span> <span class="nf">stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
@@ -328,6 +362,7 @@
         <span class="sd">&quot;&quot;&quot;This method is supplied for sub classes to override to provide additional</span>
 <span class="sd">        plot customisation after the rc paramaters are updated from the class and</span>
 <span class="sd">        instance attributes.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
 </div>
 <div class="viewcode-block" id="DefaultPlotStyle.customise_axes"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.DefaultPlotStyle.customise_axes.html#Stoner.Plot.DefaultPlotStyle.customise_axes">[docs]</a>    <span class="k">def</span> <span class="nf">customise_axes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">plot</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This method is run when we have an axis to manipulate.</span>
@@ -507,7 +542,7 @@
 </div></div>
 <span class="k">if</span> <span class="n">SEABORN</span><span class="p">:</span> <span class="c"># extra classes if we have seaborn available</span>
 
-    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.html#Stoner.Plot.SeabornPlotStyle">[docs]</a>    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</span>
 
 <span class="sd">        Attributes:</span>
@@ -561,12 +596,12 @@
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;style name should be one of  {darkgrid, whitegrid, dark, white, ticks}&quot;</span><span class="p">)</span>
 
 
-        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SeabornPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.apply.html#Stoner.Plot.SeabornPlotStyle.apply">[docs]</a>        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Override base method to apply seaborn style sheets.&quot;&quot;&quot;</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_palette</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span></div></div>
 </pre></div>
 
           </div>
@@ -609,7 +644,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Nov 15, 2015.
+      Last updated on Dec 08, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>
