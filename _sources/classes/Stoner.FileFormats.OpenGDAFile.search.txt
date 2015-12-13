@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.search
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.search

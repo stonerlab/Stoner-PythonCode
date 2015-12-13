@@ -1,0 +1,8 @@
+
+
+SNSFile.find_col
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.find_col

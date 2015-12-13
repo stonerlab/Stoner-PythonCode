@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.del_rows
+=============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.del_rows

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.closest
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.closest

@@ -1,0 +1,8 @@
+
+
+CSVFile.insert_rows
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.insert_rows

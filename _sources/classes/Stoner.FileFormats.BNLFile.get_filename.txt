@@ -1,0 +1,8 @@
+
+
+BNLFile.get_filename
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BNLFile.get_filename

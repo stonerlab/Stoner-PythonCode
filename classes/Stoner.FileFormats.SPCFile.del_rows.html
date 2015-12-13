@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SPCFile.del_rows &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="spcfile-del-rows">
+<h1>SPCFile.del_rows<a class="headerlink" href="#spcfile-del-rows" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.FileFormats.SPCFile.del_rows">
+<code class="descclassname">SPCFile.</code><code class="descname">del_rows</code><span class="sig-paren">(</span><em>col=None</em>, <em>val=None</em>, <em>invert=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.SPCFile.del_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>col</strong> (<em>list,slice,int,string, re, callable or None</em>) &#8211;
+Column containg values to search for.</li>
+<li><strong>val</strong> (<em>float or callable</em>) &#8211;
+Specifies rows to delete. Maybe:<ul>
+<li>None - in which case the <em>col</em> argument is used to identify rows to be deleted,</li>
+<li>a float in which case rows whose columncol = val are deleted</li>
+<li>or a function - in which case rows where the function evaluates to be true are deleted.</li>
+<li>a tuple, in which case rows where column col takes value between the minium and maximum of the tuple
+are deleted.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>invert</strong> (<em>bool</em>) &#8211;
+Specifies whether to invert the logic of the test to delete a row. If True, keep the rows
+that would have been deleted otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> &#8211;
+The current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If col is None, then all rows with masked data are deleted</p>
+<p>if <em>col</em> is callable then it is passed each row as a <code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code> and if it returns
+True, then the row will be deleted or kept depending on the value of <em>invert</em>.</p>
+<p class="last">If <em>val</em> is a callable it should take two arguments - a float and a
+list. The float is the value of the current row that corresponds to column col abd the second
+argument is the current row.</p>
+</div>
+<dl class="docutils">
+<dt>TODO:</dt>
+<dd>Implement val is a tuple for deletinging in a range of values.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.SPCFile.del_rows.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Dec 12, 2015.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

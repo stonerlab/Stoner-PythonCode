@@ -13,7 +13,31 @@ Stoner.FileFormats.CSVFile
    .. autosummary::
     :toctree:
    
+      ~Stoner.FileFormats.CSVFile.__init__
+      ~Stoner.FileFormats.CSVFile.add_column
+      ~Stoner.FileFormats.CSVFile.closest
+      ~Stoner.FileFormats.CSVFile.column
+      ~Stoner.FileFormats.CSVFile.columns
+      ~Stoner.FileFormats.CSVFile.del_column
+      ~Stoner.FileFormats.CSVFile.del_rows
+      ~Stoner.FileFormats.CSVFile.dir
+      ~Stoner.FileFormats.CSVFile.filter
+      ~Stoner.FileFormats.CSVFile.find_col
+      ~Stoner.FileFormats.CSVFile.get
+      ~Stoner.FileFormats.CSVFile.get_filename
+      ~Stoner.FileFormats.CSVFile.insert_rows
+      ~Stoner.FileFormats.CSVFile.keys
+      ~Stoner.FileFormats.CSVFile.load
+      ~Stoner.FileFormats.CSVFile.rename
+      ~Stoner.FileFormats.CSVFile.reorder_columns
+      ~Stoner.FileFormats.CSVFile.rolling_window
+      ~Stoner.FileFormats.CSVFile.rows
       ~Stoner.FileFormats.CSVFile.save
+      ~Stoner.FileFormats.CSVFile.search
+      ~Stoner.FileFormats.CSVFile.section
+      ~Stoner.FileFormats.CSVFile.sort
+      ~Stoner.FileFormats.CSVFile.swap_column
+      ~Stoner.FileFormats.CSVFile.unique
 
    
    
@@ -24,7 +48,18 @@ Stoner.FileFormats.CSVFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.CSVFile.T
+      ~Stoner.FileFormats.CSVFile.clone
+      ~Stoner.FileFormats.CSVFile.column_headers
+      ~Stoner.FileFormats.CSVFile.data
+      ~Stoner.FileFormats.CSVFile.dict_records
+      ~Stoner.FileFormats.CSVFile.dtype
+      ~Stoner.FileFormats.CSVFile.mask
       ~Stoner.FileFormats.CSVFile.patterns
       ~Stoner.FileFormats.CSVFile.priority
+      ~Stoner.FileFormats.CSVFile.records
+      ~Stoner.FileFormats.CSVFile.setas
+      ~Stoner.FileFormats.CSVFile.shape
+      ~Stoner.FileFormats.CSVFile.subclasses
    
    

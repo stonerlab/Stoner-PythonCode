@@ -1,0 +1,8 @@
+
+
+TDMSFile.find_col
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.find_col

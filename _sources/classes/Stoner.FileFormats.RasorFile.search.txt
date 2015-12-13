@@ -1,0 +1,8 @@
+
+
+RasorFile.search
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.search

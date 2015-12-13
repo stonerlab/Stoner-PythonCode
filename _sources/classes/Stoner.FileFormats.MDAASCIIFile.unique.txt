@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.unique
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.unique

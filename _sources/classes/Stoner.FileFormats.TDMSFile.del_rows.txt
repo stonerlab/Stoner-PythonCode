@@ -1,0 +1,8 @@
+
+
+TDMSFile.del_rows
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.del_rows

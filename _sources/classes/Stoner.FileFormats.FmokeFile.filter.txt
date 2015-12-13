@@ -1,0 +1,8 @@
+
+
+FmokeFile.filter
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.filter

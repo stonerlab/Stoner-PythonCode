@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.unique
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.unique

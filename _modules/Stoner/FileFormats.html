@@ -205,9 +205,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
                                     <span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float&#39;</span><span class="p">,</span>
                                     <span class="n">usemask</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                                    <span class="n">delimiter</span><span class="o">=</span><span class="n">data_delim</span><span class="p">,</span>
                                     <span class="n">skip_header</span><span class="o">=</span><span class="n">data_line</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
-                                    <span class="n">missing_values</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;         6:0&#39;</span><span class="p">,</span> <span class="s">&#39;         ---&#39;</span><span class="p">],</span>
+                                    <span class="n">missing_values</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;6:0&#39;</span><span class="p">,</span> <span class="s">&#39;---&#39;</span><span class="p">],</span>
                                     <span class="n">invalid_raise</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">mask_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
@@ -1531,7 +1530,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 08, 2015.
+      Last updated on Dec 12, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

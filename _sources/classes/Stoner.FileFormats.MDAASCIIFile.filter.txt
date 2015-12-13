@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.filter
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.filter

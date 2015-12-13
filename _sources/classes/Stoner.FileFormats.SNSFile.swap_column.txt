@@ -1,0 +1,8 @@
+
+
+SNSFile.swap_column
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.swap_column

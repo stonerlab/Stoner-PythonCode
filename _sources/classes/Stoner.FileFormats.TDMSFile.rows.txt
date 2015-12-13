@@ -1,0 +1,8 @@
+
+
+TDMSFile.rows
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.rows

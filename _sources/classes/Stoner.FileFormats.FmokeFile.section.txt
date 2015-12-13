@@ -1,0 +1,8 @@
+
+
+FmokeFile.section
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.section

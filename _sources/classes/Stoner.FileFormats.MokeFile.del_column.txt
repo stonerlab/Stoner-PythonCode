@@ -1,0 +1,8 @@
+
+
+MokeFile.del_column
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.del_column

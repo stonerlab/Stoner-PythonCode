@@ -1,0 +1,8 @@
+
+
+TDMSFile.__init__
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.__init__

@@ -8,6 +8,38 @@ Stoner.FileFormats.BigBlueFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.BigBlueFile.__init__
+      ~Stoner.FileFormats.BigBlueFile.add_column
+      ~Stoner.FileFormats.BigBlueFile.closest
+      ~Stoner.FileFormats.BigBlueFile.column
+      ~Stoner.FileFormats.BigBlueFile.columns
+      ~Stoner.FileFormats.BigBlueFile.del_column
+      ~Stoner.FileFormats.BigBlueFile.del_rows
+      ~Stoner.FileFormats.BigBlueFile.dir
+      ~Stoner.FileFormats.BigBlueFile.filter
+      ~Stoner.FileFormats.BigBlueFile.find_col
+      ~Stoner.FileFormats.BigBlueFile.get
+      ~Stoner.FileFormats.BigBlueFile.get_filename
+      ~Stoner.FileFormats.BigBlueFile.insert_rows
+      ~Stoner.FileFormats.BigBlueFile.keys
+      ~Stoner.FileFormats.BigBlueFile.load
+      ~Stoner.FileFormats.BigBlueFile.rename
+      ~Stoner.FileFormats.BigBlueFile.reorder_columns
+      ~Stoner.FileFormats.BigBlueFile.rolling_window
+      ~Stoner.FileFormats.BigBlueFile.rows
+      ~Stoner.FileFormats.BigBlueFile.save
+      ~Stoner.FileFormats.BigBlueFile.search
+      ~Stoner.FileFormats.BigBlueFile.section
+      ~Stoner.FileFormats.BigBlueFile.sort
+      ~Stoner.FileFormats.BigBlueFile.swap_column
+      ~Stoner.FileFormats.BigBlueFile.unique
+
+   
    
 
    
@@ -16,7 +48,18 @@ Stoner.FileFormats.BigBlueFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.BigBlueFile.T
+      ~Stoner.FileFormats.BigBlueFile.clone
+      ~Stoner.FileFormats.BigBlueFile.column_headers
+      ~Stoner.FileFormats.BigBlueFile.data
+      ~Stoner.FileFormats.BigBlueFile.dict_records
+      ~Stoner.FileFormats.BigBlueFile.dtype
+      ~Stoner.FileFormats.BigBlueFile.mask
       ~Stoner.FileFormats.BigBlueFile.patterns
       ~Stoner.FileFormats.BigBlueFile.priority
+      ~Stoner.FileFormats.BigBlueFile.records
+      ~Stoner.FileFormats.BigBlueFile.setas
+      ~Stoner.FileFormats.BigBlueFile.shape
+      ~Stoner.FileFormats.BigBlueFile.subclasses
    
    

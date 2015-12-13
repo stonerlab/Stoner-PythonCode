@@ -1,0 +1,8 @@
+
+
+MokeFile.get
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.get

@@ -1,0 +1,8 @@
+
+
+MokeFile.rename
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.rename

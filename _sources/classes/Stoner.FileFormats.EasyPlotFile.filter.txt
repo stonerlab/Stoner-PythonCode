@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.filter
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.filter

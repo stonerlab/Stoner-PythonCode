@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.del_rows
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.del_rows

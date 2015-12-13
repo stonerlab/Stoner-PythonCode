@@ -13,7 +13,32 @@ Stoner.FileFormats.RigakuFile
    .. autosummary::
     :toctree:
    
+      ~Stoner.FileFormats.RigakuFile.__init__
+      ~Stoner.FileFormats.RigakuFile.add_column
+      ~Stoner.FileFormats.RigakuFile.closest
+      ~Stoner.FileFormats.RigakuFile.column
+      ~Stoner.FileFormats.RigakuFile.columns
+      ~Stoner.FileFormats.RigakuFile.del_column
+      ~Stoner.FileFormats.RigakuFile.del_rows
+      ~Stoner.FileFormats.RigakuFile.dir
+      ~Stoner.FileFormats.RigakuFile.filter
+      ~Stoner.FileFormats.RigakuFile.find_col
+      ~Stoner.FileFormats.RigakuFile.get
+      ~Stoner.FileFormats.RigakuFile.get_filename
+      ~Stoner.FileFormats.RigakuFile.insert_rows
+      ~Stoner.FileFormats.RigakuFile.keys
+      ~Stoner.FileFormats.RigakuFile.load
+      ~Stoner.FileFormats.RigakuFile.rename
+      ~Stoner.FileFormats.RigakuFile.reorder_columns
+      ~Stoner.FileFormats.RigakuFile.rolling_window
+      ~Stoner.FileFormats.RigakuFile.rows
+      ~Stoner.FileFormats.RigakuFile.save
+      ~Stoner.FileFormats.RigakuFile.search
+      ~Stoner.FileFormats.RigakuFile.section
+      ~Stoner.FileFormats.RigakuFile.sort
+      ~Stoner.FileFormats.RigakuFile.swap_column
       ~Stoner.FileFormats.RigakuFile.to_Q
+      ~Stoner.FileFormats.RigakuFile.unique
 
    
    
@@ -24,7 +49,18 @@ Stoner.FileFormats.RigakuFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.RigakuFile.T
+      ~Stoner.FileFormats.RigakuFile.clone
+      ~Stoner.FileFormats.RigakuFile.column_headers
+      ~Stoner.FileFormats.RigakuFile.data
+      ~Stoner.FileFormats.RigakuFile.dict_records
+      ~Stoner.FileFormats.RigakuFile.dtype
+      ~Stoner.FileFormats.RigakuFile.mask
       ~Stoner.FileFormats.RigakuFile.patterns
       ~Stoner.FileFormats.RigakuFile.priority
+      ~Stoner.FileFormats.RigakuFile.records
+      ~Stoner.FileFormats.RigakuFile.setas
+      ~Stoner.FileFormats.RigakuFile.shape
+      ~Stoner.FileFormats.RigakuFile.subclasses
    
    

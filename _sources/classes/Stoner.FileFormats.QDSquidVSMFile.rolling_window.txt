@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.rolling_window
+================================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.rolling_window

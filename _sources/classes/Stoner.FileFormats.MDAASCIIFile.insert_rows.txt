@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.insert_rows
+===========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.insert_rows

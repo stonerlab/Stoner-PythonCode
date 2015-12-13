@@ -1,0 +1,8 @@
+
+
+XRDFile.section
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.section

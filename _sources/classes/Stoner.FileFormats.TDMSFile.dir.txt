@@ -1,0 +1,8 @@
+
+
+TDMSFile.dir
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.dir

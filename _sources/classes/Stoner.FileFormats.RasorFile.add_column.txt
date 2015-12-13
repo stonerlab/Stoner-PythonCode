@@ -1,0 +1,8 @@
+
+
+RasorFile.add_column
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.add_column

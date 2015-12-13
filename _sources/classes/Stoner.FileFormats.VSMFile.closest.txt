@@ -1,0 +1,8 @@
+
+
+VSMFile.closest
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.closest

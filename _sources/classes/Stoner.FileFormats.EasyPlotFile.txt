@@ -8,6 +8,38 @@ Stoner.FileFormats.EasyPlotFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.EasyPlotFile.__init__
+      ~Stoner.FileFormats.EasyPlotFile.add_column
+      ~Stoner.FileFormats.EasyPlotFile.closest
+      ~Stoner.FileFormats.EasyPlotFile.column
+      ~Stoner.FileFormats.EasyPlotFile.columns
+      ~Stoner.FileFormats.EasyPlotFile.del_column
+      ~Stoner.FileFormats.EasyPlotFile.del_rows
+      ~Stoner.FileFormats.EasyPlotFile.dir
+      ~Stoner.FileFormats.EasyPlotFile.filter
+      ~Stoner.FileFormats.EasyPlotFile.find_col
+      ~Stoner.FileFormats.EasyPlotFile.get
+      ~Stoner.FileFormats.EasyPlotFile.get_filename
+      ~Stoner.FileFormats.EasyPlotFile.insert_rows
+      ~Stoner.FileFormats.EasyPlotFile.keys
+      ~Stoner.FileFormats.EasyPlotFile.load
+      ~Stoner.FileFormats.EasyPlotFile.rename
+      ~Stoner.FileFormats.EasyPlotFile.reorder_columns
+      ~Stoner.FileFormats.EasyPlotFile.rolling_window
+      ~Stoner.FileFormats.EasyPlotFile.rows
+      ~Stoner.FileFormats.EasyPlotFile.save
+      ~Stoner.FileFormats.EasyPlotFile.search
+      ~Stoner.FileFormats.EasyPlotFile.section
+      ~Stoner.FileFormats.EasyPlotFile.sort
+      ~Stoner.FileFormats.EasyPlotFile.swap_column
+      ~Stoner.FileFormats.EasyPlotFile.unique
+
+   
    
 
    
@@ -16,6 +48,18 @@ Stoner.FileFormats.EasyPlotFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.EasyPlotFile.T
+      ~Stoner.FileFormats.EasyPlotFile.clone
+      ~Stoner.FileFormats.EasyPlotFile.column_headers
+      ~Stoner.FileFormats.EasyPlotFile.data
+      ~Stoner.FileFormats.EasyPlotFile.dict_records
+      ~Stoner.FileFormats.EasyPlotFile.dtype
+      ~Stoner.FileFormats.EasyPlotFile.mask
+      ~Stoner.FileFormats.EasyPlotFile.patterns
       ~Stoner.FileFormats.EasyPlotFile.priority
+      ~Stoner.FileFormats.EasyPlotFile.records
+      ~Stoner.FileFormats.EasyPlotFile.setas
+      ~Stoner.FileFormats.EasyPlotFile.shape
+      ~Stoner.FileFormats.EasyPlotFile.subclasses
    
    
