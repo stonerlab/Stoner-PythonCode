@@ -977,7 +977,11 @@ class PlotFile(DataFile):
             if ix > 0:
                 if multiple == "y2" and ix == 1:
                     self.y2()
-                    cc = plt.gca()._get_lines.color_cycle
+                    lines=plt.gca()._get_lines
+                    if hasattr(lines,"color_cylce"): #mpl<1.5
+                        cc=lines.color_cycle
+                    else: #MPL >=1.5
+                        cc=lines.prop_cycler
                     for i in range(ix):
                         next(cc)
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
