@@ -1,8 +1,0 @@
-
-
-XRDFile.reorder_columns
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.reorder_columns

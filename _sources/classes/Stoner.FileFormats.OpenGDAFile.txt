@@ -8,38 +8,6 @@ Stoner.FileFormats.OpenGDAFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.FileFormats.OpenGDAFile.__init__
-      ~Stoner.FileFormats.OpenGDAFile.add_column
-      ~Stoner.FileFormats.OpenGDAFile.closest
-      ~Stoner.FileFormats.OpenGDAFile.column
-      ~Stoner.FileFormats.OpenGDAFile.columns
-      ~Stoner.FileFormats.OpenGDAFile.del_column
-      ~Stoner.FileFormats.OpenGDAFile.del_rows
-      ~Stoner.FileFormats.OpenGDAFile.dir
-      ~Stoner.FileFormats.OpenGDAFile.filter
-      ~Stoner.FileFormats.OpenGDAFile.find_col
-      ~Stoner.FileFormats.OpenGDAFile.get
-      ~Stoner.FileFormats.OpenGDAFile.get_filename
-      ~Stoner.FileFormats.OpenGDAFile.insert_rows
-      ~Stoner.FileFormats.OpenGDAFile.keys
-      ~Stoner.FileFormats.OpenGDAFile.load
-      ~Stoner.FileFormats.OpenGDAFile.rename
-      ~Stoner.FileFormats.OpenGDAFile.reorder_columns
-      ~Stoner.FileFormats.OpenGDAFile.rolling_window
-      ~Stoner.FileFormats.OpenGDAFile.rows
-      ~Stoner.FileFormats.OpenGDAFile.save
-      ~Stoner.FileFormats.OpenGDAFile.search
-      ~Stoner.FileFormats.OpenGDAFile.section
-      ~Stoner.FileFormats.OpenGDAFile.sort
-      ~Stoner.FileFormats.OpenGDAFile.swap_column
-      ~Stoner.FileFormats.OpenGDAFile.unique
-
-   
    
 
    
@@ -48,18 +16,7 @@ Stoner.FileFormats.OpenGDAFile
 
    .. autosummary::
    
-      ~Stoner.FileFormats.OpenGDAFile.T
-      ~Stoner.FileFormats.OpenGDAFile.clone
-      ~Stoner.FileFormats.OpenGDAFile.column_headers
-      ~Stoner.FileFormats.OpenGDAFile.data
-      ~Stoner.FileFormats.OpenGDAFile.dict_records
-      ~Stoner.FileFormats.OpenGDAFile.dtype
-      ~Stoner.FileFormats.OpenGDAFile.mask
       ~Stoner.FileFormats.OpenGDAFile.patterns
       ~Stoner.FileFormats.OpenGDAFile.priority
-      ~Stoner.FileFormats.OpenGDAFile.records
-      ~Stoner.FileFormats.OpenGDAFile.setas
-      ~Stoner.FileFormats.OpenGDAFile.shape
-      ~Stoner.FileFormats.OpenGDAFile.subclasses
    
    

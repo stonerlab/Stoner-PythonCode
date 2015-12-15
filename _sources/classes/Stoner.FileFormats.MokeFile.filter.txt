@@ -1,8 +1,0 @@
-
-
-MokeFile.filter
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.filter

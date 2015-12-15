@@ -1,8 +1,0 @@
-
-
-RigakuFile.get_filename
-==========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.get_filename

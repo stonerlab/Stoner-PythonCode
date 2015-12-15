@@ -1,8 +1,0 @@
-
-
-FmokeFile.unique
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.unique

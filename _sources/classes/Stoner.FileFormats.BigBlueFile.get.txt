@@ -1,8 +1,0 @@
-
-
-BigBlueFile.get
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.get

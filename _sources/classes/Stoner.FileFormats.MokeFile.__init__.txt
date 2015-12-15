@@ -1,8 +1,0 @@
-
-
-MokeFile.__init__
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.__init__

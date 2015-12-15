@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.find_col
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.find_col

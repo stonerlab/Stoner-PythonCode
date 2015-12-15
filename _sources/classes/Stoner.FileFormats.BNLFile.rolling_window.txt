@@ -1,8 +1,0 @@
-
-
-BNLFile.rolling_window
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.rolling_window

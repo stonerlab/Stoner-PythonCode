@@ -1,8 +1,0 @@
-
-
-OVFFile.unique
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.unique

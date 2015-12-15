@@ -1,8 +1,0 @@
-
-
-XRDFile.rename
-=================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.rename

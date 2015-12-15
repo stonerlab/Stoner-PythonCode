@@ -1,8 +1,0 @@
-
-
-TDMSFile.add_column
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: TDMSFile.add_column

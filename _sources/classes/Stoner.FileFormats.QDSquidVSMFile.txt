@@ -8,38 +8,6 @@ Stoner.FileFormats.QDSquidVSMFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.FileFormats.QDSquidVSMFile.__init__
-      ~Stoner.FileFormats.QDSquidVSMFile.add_column
-      ~Stoner.FileFormats.QDSquidVSMFile.closest
-      ~Stoner.FileFormats.QDSquidVSMFile.column
-      ~Stoner.FileFormats.QDSquidVSMFile.columns
-      ~Stoner.FileFormats.QDSquidVSMFile.del_column
-      ~Stoner.FileFormats.QDSquidVSMFile.del_rows
-      ~Stoner.FileFormats.QDSquidVSMFile.dir
-      ~Stoner.FileFormats.QDSquidVSMFile.filter
-      ~Stoner.FileFormats.QDSquidVSMFile.find_col
-      ~Stoner.FileFormats.QDSquidVSMFile.get
-      ~Stoner.FileFormats.QDSquidVSMFile.get_filename
-      ~Stoner.FileFormats.QDSquidVSMFile.insert_rows
-      ~Stoner.FileFormats.QDSquidVSMFile.keys
-      ~Stoner.FileFormats.QDSquidVSMFile.load
-      ~Stoner.FileFormats.QDSquidVSMFile.rename
-      ~Stoner.FileFormats.QDSquidVSMFile.reorder_columns
-      ~Stoner.FileFormats.QDSquidVSMFile.rolling_window
-      ~Stoner.FileFormats.QDSquidVSMFile.rows
-      ~Stoner.FileFormats.QDSquidVSMFile.save
-      ~Stoner.FileFormats.QDSquidVSMFile.search
-      ~Stoner.FileFormats.QDSquidVSMFile.section
-      ~Stoner.FileFormats.QDSquidVSMFile.sort
-      ~Stoner.FileFormats.QDSquidVSMFile.swap_column
-      ~Stoner.FileFormats.QDSquidVSMFile.unique
-
-   
    
 
    
@@ -48,18 +16,7 @@ Stoner.FileFormats.QDSquidVSMFile
 
    .. autosummary::
    
-      ~Stoner.FileFormats.QDSquidVSMFile.T
-      ~Stoner.FileFormats.QDSquidVSMFile.clone
-      ~Stoner.FileFormats.QDSquidVSMFile.column_headers
-      ~Stoner.FileFormats.QDSquidVSMFile.data
-      ~Stoner.FileFormats.QDSquidVSMFile.dict_records
-      ~Stoner.FileFormats.QDSquidVSMFile.dtype
-      ~Stoner.FileFormats.QDSquidVSMFile.mask
       ~Stoner.FileFormats.QDSquidVSMFile.patterns
       ~Stoner.FileFormats.QDSquidVSMFile.priority
-      ~Stoner.FileFormats.QDSquidVSMFile.records
-      ~Stoner.FileFormats.QDSquidVSMFile.setas
-      ~Stoner.FileFormats.QDSquidVSMFile.shape
-      ~Stoner.FileFormats.QDSquidVSMFile.subclasses
    
    

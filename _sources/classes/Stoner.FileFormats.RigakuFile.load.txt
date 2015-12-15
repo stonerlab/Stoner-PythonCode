@@ -1,8 +1,0 @@
-
-
-RigakuFile.load
-==================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.load

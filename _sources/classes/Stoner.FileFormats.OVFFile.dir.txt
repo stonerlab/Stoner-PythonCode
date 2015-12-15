@@ -1,8 +1,0 @@
-
-
-OVFFile.dir
-==============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.dir

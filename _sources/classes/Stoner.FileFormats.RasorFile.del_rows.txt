@@ -1,8 +1,0 @@
-
-
-RasorFile.del_rows
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RasorFile.del_rows

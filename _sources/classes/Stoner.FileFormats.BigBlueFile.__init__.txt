@@ -1,8 +1,0 @@
-
-
-BigBlueFile.__init__
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.__init__

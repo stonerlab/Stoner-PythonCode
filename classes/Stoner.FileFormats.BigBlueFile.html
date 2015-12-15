@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="BigBlueFile.save" href="Stoner.FileFormats.BigBlueFile.save.html" />
+    <link rel="next" title="Stoner.FileFormats.FmokeFile" href="Stoner.FileFormats.FmokeFile.html" />
     <link rel="prev" title="Stoner.FileFormats.EasyPlotFile" href="Stoner.FileFormats.EasyPlotFile.html" /> 
   </head>
   <body role="document">
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BigBlueFile.save.html" title="BigBlueFile.save"
+          <a href="Stoner.FileFormats.FmokeFile.html" title="Stoner.FileFormats.FmokeFile"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.FileFormats.EasyPlotFile.html" title="Stoner.FileFormats.EasyPlotFile"
@@ -61,18 +61,6 @@
 <dt id="Stoner.FileFormats.BigBlueFile">
 <em class="property">class </em><code class="descclassname">Stoner.FileFormats.</code><code class="descname">BigBlueFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/FileFormats.html#BigBlueFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.BigBlueFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends CSVFile to load files from BigBlue</p>
-<p class="rubric">Methods</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BigBlueFile.save.html#Stoner.FileFormats.BigBlueFile.save" title="Stoner.FileFormats.BigBlueFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(filename[,&nbsp;deliminator])</td>
-<td>Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</td>
-</tr>
-</tbody>
-</table>
 <p class="rubric">Attributes</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -80,44 +68,11 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">T</span></code></td>
-<td>Gets the current data transposed.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">clone</span></code></td>
-<td>Gets a deep copy of the current DataFile.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">column_headers</span></code></td>
-<td>Pass through to the setas attribute.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></td>
-<td>Property Accessors for the main numerical data.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">dict_records</span></code></td>
-<td>Return the data as a dictionary of single columns with column headers for the keys.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></td>
-<td>Return the _np_ dtype attribute of the data</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
-<td>Returns the mask of the data array.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
 <td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
 <td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
-<td>Returns the data as a _np_ structured data array.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
-<td>Get the list of column assignments.</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
-<td>Pass through the numpy shape attribute of the data.</td>
-</tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
-<td>Return a list of all in memory subclasses of this DataFile.</td>
 </tr>
 </tbody>
 </table>
@@ -138,8 +93,8 @@
   <p class="topless"><a href="Stoner.FileFormats.EasyPlotFile.html"
                         title="previous chapter">Stoner.FileFormats.EasyPlotFile</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.BigBlueFile.save.html"
-                        title="next chapter">BigBlueFile.save</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.FmokeFile.html"
+                        title="next chapter">Stoner.FileFormats.FmokeFile</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -174,7 +129,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.BigBlueFile.save.html" title="BigBlueFile.save"
+          <a href="Stoner.FileFormats.FmokeFile.html" title="Stoner.FileFormats.FmokeFile"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.FileFormats.EasyPlotFile.html" title="Stoner.FileFormats.EasyPlotFile"
@@ -185,7 +140,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 12, 2015.
+      Last updated on Dec 15, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

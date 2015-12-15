@@ -1,8 +1,0 @@
-
-
-SNSFile.save
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SNSFile.save

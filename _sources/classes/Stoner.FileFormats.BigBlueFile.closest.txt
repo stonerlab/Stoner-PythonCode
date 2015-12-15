@@ -1,8 +1,0 @@
-
-
-BigBlueFile.closest
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.closest

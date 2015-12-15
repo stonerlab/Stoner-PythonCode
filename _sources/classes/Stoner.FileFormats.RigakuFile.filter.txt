@@ -1,8 +1,0 @@
-
-
-RigakuFile.filter
-====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.filter

@@ -1,8 +1,0 @@
-
-
-RigakuFile.reorder_columns
-=============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.reorder_columns

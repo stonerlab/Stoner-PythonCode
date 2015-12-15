@@ -1,8 +1,0 @@
-
-
-BNLFile.del_column
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BNLFile.del_column

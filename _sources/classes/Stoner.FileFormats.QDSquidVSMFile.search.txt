@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.search
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.search

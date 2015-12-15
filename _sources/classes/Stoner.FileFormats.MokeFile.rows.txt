@@ -1,8 +1,0 @@
-
-
-MokeFile.rows
-================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: MokeFile.rows

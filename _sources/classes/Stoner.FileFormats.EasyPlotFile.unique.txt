@@ -1,8 +1,0 @@
-
-
-EasyPlotFile.unique
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: EasyPlotFile.unique

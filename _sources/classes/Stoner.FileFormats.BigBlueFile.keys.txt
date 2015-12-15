@@ -1,8 +1,0 @@
-
-
-BigBlueFile.keys
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.keys

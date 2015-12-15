@@ -1,8 +1,0 @@
-
-
-XRDFile.save
-===============================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.save

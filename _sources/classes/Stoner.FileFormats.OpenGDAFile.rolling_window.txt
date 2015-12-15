@@ -1,8 +1,0 @@
-
-
-OpenGDAFile.rolling_window
-=============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OpenGDAFile.rolling_window

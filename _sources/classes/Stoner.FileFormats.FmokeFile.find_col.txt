@@ -1,8 +1,0 @@
-
-
-FmokeFile.find_col
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: FmokeFile.find_col

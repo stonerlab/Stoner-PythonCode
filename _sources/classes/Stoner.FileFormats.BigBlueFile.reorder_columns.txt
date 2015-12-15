@@ -1,8 +1,0 @@
-
-
-BigBlueFile.reorder_columns
-==============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.reorder_columns

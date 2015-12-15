@@ -1,8 +1,0 @@
-
-
-XRDFile.find_col
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.find_col

@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.closest
-============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.closest

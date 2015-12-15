@@ -1,8 +1,0 @@
-
-
-XRDFile.del_rows
-===================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: XRDFile.del_rows

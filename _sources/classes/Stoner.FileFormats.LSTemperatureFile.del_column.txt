@@ -1,8 +1,0 @@
-
-
-LSTemperatureFile.del_column
-===============================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: LSTemperatureFile.del_column

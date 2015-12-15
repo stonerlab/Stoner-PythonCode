@@ -1,8 +1,0 @@
-
-
-RigakuFile.__init__
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: RigakuFile.__init__

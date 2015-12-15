@@ -1,8 +1,0 @@
-
-
-BigBlueFile.del_rows
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: BigBlueFile.del_rows

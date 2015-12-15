@@ -1,8 +1,0 @@
-
-
-OVFFile.insert_rows
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: OVFFile.insert_rows

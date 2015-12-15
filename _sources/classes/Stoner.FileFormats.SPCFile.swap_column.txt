@@ -1,8 +1,0 @@
-
-
-SPCFile.swap_column
-======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: SPCFile.swap_column
