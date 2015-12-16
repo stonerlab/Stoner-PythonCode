@@ -133,6 +133,9 @@ class StonerLoadError(Exception):
     """
     pass
 
+class StonerSetasError(AttributeError):
+    """An exception tjrown when we try to access a column in data without setas being set."""
+    pass
 
 class _attribute_store(dict):
     """A dictionary=like class that provides attributes that work like indices.
@@ -227,7 +230,7 @@ class _setas(object):
         l=len(self._column_headers)
         if l<c: # Extend the column headers if necessary
             self._column_headers.extend(["Column {}".format(i+l) for i in range(c-l)])
-        return self._column_headers[:c]
+        return self._column_headers
 
     @column_headers.setter
     def column_headers(self,value):
@@ -1033,7 +1036,10 @@ class DataArray(_ma_.MaskedArray):
             else:
                 return None
             ret = self[tuple(indexer)]
-        return ret
+        if ret is None:
+            raise StonerSetasError("Tried accessing a {} column, but setas is not defined.".format(name))
+        else:
+            return ret
 
     def __getitem__(self,ix):
         """Indexing function for DataArray.
@@ -1152,7 +1158,11 @@ class DataArray(_ma_.MaskedArray):
              lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2),
              lambda d: _np_.sqrt(d.x ** 2 + d.y ** 2 + d.z ** 2), lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2),
              lambda d: _np_.sqrt(d.u ** 2 + d.v ** 2 + d.w ** 2)]
-        return m[axes](self)
+        ret = m[axes](self)
+        if ret is None:
+            raise StonerSetasError("Insufficient axes defined in setas to calculate the r component. need 2 not {}".format(axes))
+        else:
+            return ret
 
     @property
     def q(self):
@@ -1161,7 +1171,11 @@ class DataArray(_ma_.MaskedArray):
         m = [lambda d: None, lambda d: None, lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.x, d.y),
              lambda d: _np_.arctan2(d.x, d.y), lambda d: _np_.arctan2(d.u, d.v),
              lambda d: _np_.arctan2(d.u, d.v)]
-        return m[axes](self)
+        ret = m[axes](self)
+        if ret is None:
+            raise StonerSetasError("Insufficient axes defined in setas to calculate the theta component. need 2 not {}".format(axes))
+        else:
+            return ret
 
     @property
     def p(self):
@@ -1169,7 +1183,11 @@ class DataArray(_ma_.MaskedArray):
         axes = int(self._setas.cols["axes"])
         m = [lambda d: None, lambda d: None, lambda d: None, lambda d: _np_.arcsin(d.z),
              lambda d: _np_.arsin(d.z), lambda d: _np_.arcsin(d.w), lambda d: _np_.arcsin(d.w)]
-        return m[axes](self)
+        ret = m[axes](self)
+        if ret is None:
+            raise StonerSetasError("Insufficient axes defined in setas to calculate the phi component. need 3 not {}".format(axes))
+        else:
+            return ret
 
     @property
     def i(self):
@@ -2029,7 +2047,8 @@ class DataFile(object):
         AttributeError.
        """
 
-        if name in ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p"):
+        setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
+        if name in setas_cols:
             ret = self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile, self).__getattribute__(name)
@@ -2045,12 +2064,17 @@ class DataFile(object):
                 return self.column(col)
             except (KeyError, IndexError):
                 pass
+        if name in setas_cols: # Probably tried to use a setas col when it wasn't defined
+            raise StonerSetasError("Tried accessing a {} column, but setas is not defined and {} is not a column name either".format(name,name))
         raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))
 
 
     def _getattr_col(self, name):
         """Get a column using the setas attribute."""
-        return self._data.__getattr__(name)
+        try:
+            return self._data.__getattr__(name)
+        except StonerSetasError:
+            return None
 
     def __getitem__(self, name):
         """Called for DataFile[x] to return either a row or iterm of metadata.
@@ -2951,11 +2975,9 @@ class DataFile(object):
                     kargs.pop("auto_load",None)
                     test._load(self.filename,auto_load=False,*args,**kargs)
                     failed=False
-                    self["Loaded as"]=cls.__name__
-                    self.data =test.data
-                    for attr in test._public_attrs:
-                       self.__setattr__(attr,test.__getattr__(attr))
-                    self.metadata.update(test.metadata)
+                    test["Loaded as"]=cls.__name__
+                    copy_into(test,self)
+
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:
                     continue

@@ -207,7 +207,6 @@ class DefaultPlotStyle(object):
         if self._stylesheet is not None and self._stylesheet[0]==self.stylename: # Have we cached a copy of our stylesheets ?
             return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
-        print levels
         sheets=[]
         for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
             if c is self.__class__:

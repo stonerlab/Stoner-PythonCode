@@ -109,7 +109,7 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d["Float"],1.0)
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
-        self.assertEqual(len(self.d.dir()),4,"Failed meta data directory listing ({})".format(len(self.d.dir())))
+        self.assertEqual(len(self.d.dir()),5,"Failed meta data directory listing ({})".format(len(self.d.dir())))
 
 
     def test_dir(self):
