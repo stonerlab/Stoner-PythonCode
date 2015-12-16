@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.save
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.save

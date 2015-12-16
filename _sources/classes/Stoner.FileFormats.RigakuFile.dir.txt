@@ -1,0 +1,8 @@
+
+
+RigakuFile.dir
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RigakuFile.dir

@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.get
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.get

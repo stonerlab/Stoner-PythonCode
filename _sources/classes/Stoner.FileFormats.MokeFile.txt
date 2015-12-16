@@ -8,6 +8,38 @@ Stoner.FileFormats.MokeFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.MokeFile.__init__
+      ~Stoner.FileFormats.MokeFile.add_column
+      ~Stoner.FileFormats.MokeFile.closest
+      ~Stoner.FileFormats.MokeFile.column
+      ~Stoner.FileFormats.MokeFile.columns
+      ~Stoner.FileFormats.MokeFile.del_column
+      ~Stoner.FileFormats.MokeFile.del_rows
+      ~Stoner.FileFormats.MokeFile.dir
+      ~Stoner.FileFormats.MokeFile.filter
+      ~Stoner.FileFormats.MokeFile.find_col
+      ~Stoner.FileFormats.MokeFile.get
+      ~Stoner.FileFormats.MokeFile.get_filename
+      ~Stoner.FileFormats.MokeFile.insert_rows
+      ~Stoner.FileFormats.MokeFile.keys
+      ~Stoner.FileFormats.MokeFile.load
+      ~Stoner.FileFormats.MokeFile.rename
+      ~Stoner.FileFormats.MokeFile.reorder_columns
+      ~Stoner.FileFormats.MokeFile.rolling_window
+      ~Stoner.FileFormats.MokeFile.rows
+      ~Stoner.FileFormats.MokeFile.save
+      ~Stoner.FileFormats.MokeFile.search
+      ~Stoner.FileFormats.MokeFile.section
+      ~Stoner.FileFormats.MokeFile.sort
+      ~Stoner.FileFormats.MokeFile.swap_column
+      ~Stoner.FileFormats.MokeFile.unique
+
+   
    
 
    
@@ -16,7 +48,19 @@ Stoner.FileFormats.MokeFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.MokeFile.T
+      ~Stoner.FileFormats.MokeFile.clone
+      ~Stoner.FileFormats.MokeFile.column_headers
+      ~Stoner.FileFormats.MokeFile.data
+      ~Stoner.FileFormats.MokeFile.dict_records
+      ~Stoner.FileFormats.MokeFile.dtype
+      ~Stoner.FileFormats.MokeFile.mask
       ~Stoner.FileFormats.MokeFile.patterns
+      ~Stoner.FileFormats.MokeFile.priority
       ~Stoner.FileFormats.MokeFile.priotity
+      ~Stoner.FileFormats.MokeFile.records
+      ~Stoner.FileFormats.MokeFile.setas
+      ~Stoner.FileFormats.MokeFile.shape
+      ~Stoner.FileFormats.MokeFile.subclasses
    
    

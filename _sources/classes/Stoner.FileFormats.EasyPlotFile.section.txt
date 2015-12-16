@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.section
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.section

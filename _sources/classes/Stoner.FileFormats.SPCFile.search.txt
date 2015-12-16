@@ -1,0 +1,8 @@
+
+
+SPCFile.search
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.search

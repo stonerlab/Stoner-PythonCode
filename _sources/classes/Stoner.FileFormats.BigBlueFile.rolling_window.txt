@@ -1,0 +1,8 @@
+
+
+BigBlueFile.rolling_window
+=============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.rolling_window

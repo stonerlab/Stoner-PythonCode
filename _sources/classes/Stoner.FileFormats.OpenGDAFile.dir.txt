@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.dir
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.dir

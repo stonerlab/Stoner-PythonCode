@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.del_column
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.del_column

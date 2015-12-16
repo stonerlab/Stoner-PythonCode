@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.columns
+============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.columns

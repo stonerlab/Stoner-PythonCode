@@ -1,0 +1,8 @@
+
+
+VSMFile.find_col
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.find_col

@@ -1,0 +1,8 @@
+
+
+MokeFile.search
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.search

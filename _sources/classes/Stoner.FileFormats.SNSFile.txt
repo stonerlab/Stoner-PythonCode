@@ -8,6 +8,38 @@ Stoner.FileFormats.SNSFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.SNSFile.__init__
+      ~Stoner.FileFormats.SNSFile.add_column
+      ~Stoner.FileFormats.SNSFile.closest
+      ~Stoner.FileFormats.SNSFile.column
+      ~Stoner.FileFormats.SNSFile.columns
+      ~Stoner.FileFormats.SNSFile.del_column
+      ~Stoner.FileFormats.SNSFile.del_rows
+      ~Stoner.FileFormats.SNSFile.dir
+      ~Stoner.FileFormats.SNSFile.filter
+      ~Stoner.FileFormats.SNSFile.find_col
+      ~Stoner.FileFormats.SNSFile.get
+      ~Stoner.FileFormats.SNSFile.get_filename
+      ~Stoner.FileFormats.SNSFile.insert_rows
+      ~Stoner.FileFormats.SNSFile.keys
+      ~Stoner.FileFormats.SNSFile.load
+      ~Stoner.FileFormats.SNSFile.rename
+      ~Stoner.FileFormats.SNSFile.reorder_columns
+      ~Stoner.FileFormats.SNSFile.rolling_window
+      ~Stoner.FileFormats.SNSFile.rows
+      ~Stoner.FileFormats.SNSFile.save
+      ~Stoner.FileFormats.SNSFile.search
+      ~Stoner.FileFormats.SNSFile.section
+      ~Stoner.FileFormats.SNSFile.sort
+      ~Stoner.FileFormats.SNSFile.swap_column
+      ~Stoner.FileFormats.SNSFile.unique
+
+   
    
 
    
@@ -16,7 +48,18 @@ Stoner.FileFormats.SNSFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.SNSFile.T
+      ~Stoner.FileFormats.SNSFile.clone
+      ~Stoner.FileFormats.SNSFile.column_headers
+      ~Stoner.FileFormats.SNSFile.data
+      ~Stoner.FileFormats.SNSFile.dict_records
+      ~Stoner.FileFormats.SNSFile.dtype
+      ~Stoner.FileFormats.SNSFile.mask
       ~Stoner.FileFormats.SNSFile.patterns
       ~Stoner.FileFormats.SNSFile.priority
+      ~Stoner.FileFormats.SNSFile.records
+      ~Stoner.FileFormats.SNSFile.setas
+      ~Stoner.FileFormats.SNSFile.shape
+      ~Stoner.FileFormats.SNSFile.subclasses
    
    

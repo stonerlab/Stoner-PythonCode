@@ -1,0 +1,8 @@
+
+
+FmokeFile.del_column
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.del_column

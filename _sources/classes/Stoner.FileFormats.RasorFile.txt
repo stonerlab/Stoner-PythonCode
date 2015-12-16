@@ -8,8 +8,58 @@ Stoner.FileFormats.RasorFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.RasorFile.__init__
+      ~Stoner.FileFormats.RasorFile.add_column
+      ~Stoner.FileFormats.RasorFile.closest
+      ~Stoner.FileFormats.RasorFile.column
+      ~Stoner.FileFormats.RasorFile.columns
+      ~Stoner.FileFormats.RasorFile.del_column
+      ~Stoner.FileFormats.RasorFile.del_rows
+      ~Stoner.FileFormats.RasorFile.dir
+      ~Stoner.FileFormats.RasorFile.filter
+      ~Stoner.FileFormats.RasorFile.find_col
+      ~Stoner.FileFormats.RasorFile.get
+      ~Stoner.FileFormats.RasorFile.get_filename
+      ~Stoner.FileFormats.RasorFile.insert_rows
+      ~Stoner.FileFormats.RasorFile.keys
+      ~Stoner.FileFormats.RasorFile.load
+      ~Stoner.FileFormats.RasorFile.rename
+      ~Stoner.FileFormats.RasorFile.reorder_columns
+      ~Stoner.FileFormats.RasorFile.rolling_window
+      ~Stoner.FileFormats.RasorFile.rows
+      ~Stoner.FileFormats.RasorFile.save
+      ~Stoner.FileFormats.RasorFile.search
+      ~Stoner.FileFormats.RasorFile.section
+      ~Stoner.FileFormats.RasorFile.sort
+      ~Stoner.FileFormats.RasorFile.swap_column
+      ~Stoner.FileFormats.RasorFile.unique
+
+   
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.RasorFile.T
+      ~Stoner.FileFormats.RasorFile.clone
+      ~Stoner.FileFormats.RasorFile.column_headers
+      ~Stoner.FileFormats.RasorFile.data
+      ~Stoner.FileFormats.RasorFile.dict_records
+      ~Stoner.FileFormats.RasorFile.dtype
+      ~Stoner.FileFormats.RasorFile.mask
+      ~Stoner.FileFormats.RasorFile.patterns
+      ~Stoner.FileFormats.RasorFile.priority
+      ~Stoner.FileFormats.RasorFile.records
+      ~Stoner.FileFormats.RasorFile.setas
+      ~Stoner.FileFormats.RasorFile.shape
+      ~Stoner.FileFormats.RasorFile.subclasses
    
    

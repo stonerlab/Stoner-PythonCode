@@ -1,0 +1,8 @@
+
+
+CSVFile.column
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.column

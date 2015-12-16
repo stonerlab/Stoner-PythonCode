@@ -8,6 +8,38 @@ Stoner.FileFormats.MDAASCIIFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.MDAASCIIFile.__init__
+      ~Stoner.FileFormats.MDAASCIIFile.add_column
+      ~Stoner.FileFormats.MDAASCIIFile.closest
+      ~Stoner.FileFormats.MDAASCIIFile.column
+      ~Stoner.FileFormats.MDAASCIIFile.columns
+      ~Stoner.FileFormats.MDAASCIIFile.del_column
+      ~Stoner.FileFormats.MDAASCIIFile.del_rows
+      ~Stoner.FileFormats.MDAASCIIFile.dir
+      ~Stoner.FileFormats.MDAASCIIFile.filter
+      ~Stoner.FileFormats.MDAASCIIFile.find_col
+      ~Stoner.FileFormats.MDAASCIIFile.get
+      ~Stoner.FileFormats.MDAASCIIFile.get_filename
+      ~Stoner.FileFormats.MDAASCIIFile.insert_rows
+      ~Stoner.FileFormats.MDAASCIIFile.keys
+      ~Stoner.FileFormats.MDAASCIIFile.load
+      ~Stoner.FileFormats.MDAASCIIFile.rename
+      ~Stoner.FileFormats.MDAASCIIFile.reorder_columns
+      ~Stoner.FileFormats.MDAASCIIFile.rolling_window
+      ~Stoner.FileFormats.MDAASCIIFile.rows
+      ~Stoner.FileFormats.MDAASCIIFile.save
+      ~Stoner.FileFormats.MDAASCIIFile.search
+      ~Stoner.FileFormats.MDAASCIIFile.section
+      ~Stoner.FileFormats.MDAASCIIFile.sort
+      ~Stoner.FileFormats.MDAASCIIFile.swap_column
+      ~Stoner.FileFormats.MDAASCIIFile.unique
+
+   
    
 
    
@@ -16,7 +48,18 @@ Stoner.FileFormats.MDAASCIIFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.MDAASCIIFile.T
+      ~Stoner.FileFormats.MDAASCIIFile.clone
+      ~Stoner.FileFormats.MDAASCIIFile.column_headers
+      ~Stoner.FileFormats.MDAASCIIFile.data
+      ~Stoner.FileFormats.MDAASCIIFile.dict_records
+      ~Stoner.FileFormats.MDAASCIIFile.dtype
+      ~Stoner.FileFormats.MDAASCIIFile.mask
       ~Stoner.FileFormats.MDAASCIIFile.patterns
       ~Stoner.FileFormats.MDAASCIIFile.priority
+      ~Stoner.FileFormats.MDAASCIIFile.records
+      ~Stoner.FileFormats.MDAASCIIFile.setas
+      ~Stoner.FileFormats.MDAASCIIFile.shape
+      ~Stoner.FileFormats.MDAASCIIFile.subclasses
    
    

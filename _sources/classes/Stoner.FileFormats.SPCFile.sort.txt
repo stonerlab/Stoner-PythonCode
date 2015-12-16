@@ -1,0 +1,8 @@
+
+
+SPCFile.sort
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.sort

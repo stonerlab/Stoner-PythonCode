@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.section
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.section

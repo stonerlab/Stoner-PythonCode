@@ -1,0 +1,8 @@
+
+
+TDMSFile.unique
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.unique

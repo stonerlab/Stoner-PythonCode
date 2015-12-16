@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.rows
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.rows

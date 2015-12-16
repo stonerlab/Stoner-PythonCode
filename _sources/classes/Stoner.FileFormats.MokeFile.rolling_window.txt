@@ -1,0 +1,8 @@
+
+
+MokeFile.rolling_window
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.rolling_window

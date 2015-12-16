@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.del_rows
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.del_rows

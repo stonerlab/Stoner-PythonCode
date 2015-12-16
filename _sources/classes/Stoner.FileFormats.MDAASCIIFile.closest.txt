@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.closest
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.closest

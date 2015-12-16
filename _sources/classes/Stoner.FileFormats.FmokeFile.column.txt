@@ -1,0 +1,8 @@
+
+
+FmokeFile.column
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.column

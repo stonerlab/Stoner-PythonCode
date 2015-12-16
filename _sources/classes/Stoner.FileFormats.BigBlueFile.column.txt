@@ -1,0 +1,8 @@
+
+
+BigBlueFile.column
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.column

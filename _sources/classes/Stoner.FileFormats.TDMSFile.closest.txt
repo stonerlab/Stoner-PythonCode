@@ -1,0 +1,8 @@
+
+
+TDMSFile.closest
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.closest

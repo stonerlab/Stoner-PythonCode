@@ -1,0 +1,8 @@
+
+
+VSMFile.swap_column
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.swap_column

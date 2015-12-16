@@ -1,0 +1,8 @@
+
+
+SPCFile.insert_rows
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.insert_rows

@@ -1,0 +1,8 @@
+
+
+CSVFile.rows
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.rows

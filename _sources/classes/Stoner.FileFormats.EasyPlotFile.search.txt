@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.search
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.search

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.__init__
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.__init__

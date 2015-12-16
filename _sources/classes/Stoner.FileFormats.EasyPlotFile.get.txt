@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.get
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.get

@@ -257,7 +257,6 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">:</span> <span class="c"># Have we cached a copy of our stylesheets ?</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stylesheet</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="nb">type</span><span class="o">.</span><span class="n">mro</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">print</span> <span class="n">levels</span>
         <span class="n">sheets</span><span class="o">=</span><span class="p">[]</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">levels</span><span class="p">:</span> <span class="c"># Iterate through all possible parent classes and build a list of stylesheets</span>
             <span class="k">if</span> <span class="n">c</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
@@ -542,7 +541,7 @@
 </div></div>
 <span class="k">if</span> <span class="n">SEABORN</span><span class="p">:</span> <span class="c"># extra classes if we have seaborn available</span>
 
-<div class="viewcode-block" id="SeabornPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.html#Stoner.Plot.SeabornPlotStyle">[docs]</a>    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</span>
 
 <span class="sd">        Attributes:</span>
@@ -596,12 +595,12 @@
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;style name should be one of  {darkgrid, whitegrid, dark, white, ticks}&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SeabornPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.apply.html#Stoner.Plot.SeabornPlotStyle.apply">[docs]</a>        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Override base method to apply seaborn style sheets.&quot;&quot;&quot;</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_palette</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -644,7 +643,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 15, 2015.
+      Last updated on Dec 16, 2015.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
     </div>
   </body>

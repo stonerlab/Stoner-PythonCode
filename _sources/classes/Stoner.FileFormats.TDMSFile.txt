@@ -8,6 +8,38 @@ Stoner.FileFormats.TDMSFile
    
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.TDMSFile.__init__
+      ~Stoner.FileFormats.TDMSFile.add_column
+      ~Stoner.FileFormats.TDMSFile.closest
+      ~Stoner.FileFormats.TDMSFile.column
+      ~Stoner.FileFormats.TDMSFile.columns
+      ~Stoner.FileFormats.TDMSFile.del_column
+      ~Stoner.FileFormats.TDMSFile.del_rows
+      ~Stoner.FileFormats.TDMSFile.dir
+      ~Stoner.FileFormats.TDMSFile.filter
+      ~Stoner.FileFormats.TDMSFile.find_col
+      ~Stoner.FileFormats.TDMSFile.get
+      ~Stoner.FileFormats.TDMSFile.get_filename
+      ~Stoner.FileFormats.TDMSFile.insert_rows
+      ~Stoner.FileFormats.TDMSFile.keys
+      ~Stoner.FileFormats.TDMSFile.load
+      ~Stoner.FileFormats.TDMSFile.rename
+      ~Stoner.FileFormats.TDMSFile.reorder_columns
+      ~Stoner.FileFormats.TDMSFile.rolling_window
+      ~Stoner.FileFormats.TDMSFile.rows
+      ~Stoner.FileFormats.TDMSFile.save
+      ~Stoner.FileFormats.TDMSFile.search
+      ~Stoner.FileFormats.TDMSFile.section
+      ~Stoner.FileFormats.TDMSFile.sort
+      ~Stoner.FileFormats.TDMSFile.swap_column
+      ~Stoner.FileFormats.TDMSFile.unique
+
+   
    
 
    
@@ -16,7 +48,18 @@ Stoner.FileFormats.TDMSFile
 
    .. autosummary::
    
+      ~Stoner.FileFormats.TDMSFile.T
+      ~Stoner.FileFormats.TDMSFile.clone
+      ~Stoner.FileFormats.TDMSFile.column_headers
+      ~Stoner.FileFormats.TDMSFile.data
+      ~Stoner.FileFormats.TDMSFile.dict_records
+      ~Stoner.FileFormats.TDMSFile.dtype
+      ~Stoner.FileFormats.TDMSFile.mask
       ~Stoner.FileFormats.TDMSFile.patterns
       ~Stoner.FileFormats.TDMSFile.priority
+      ~Stoner.FileFormats.TDMSFile.records
+      ~Stoner.FileFormats.TDMSFile.setas
+      ~Stoner.FileFormats.TDMSFile.shape
+      ~Stoner.FileFormats.TDMSFile.subclasses
    
    
