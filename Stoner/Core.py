@@ -1665,7 +1665,7 @@ class DataFile(object):
             newdata: A modified newdata
             """
         if isinstance(other, _np_.ndarray):
-            if len(self.data) == 0:
+            if len(self) == 0:
                 t = _np_.atleast_2d(other)
                 c = t.shape[1]
                 if len(self.column_headers) < c:
@@ -2221,7 +2221,10 @@ class DataFile(object):
 
         Returns: Returns the number of rows of data
                 """
-        return _np_.shape(self.data)[0]
+        if _np_.prod(self.data.shape)>0:
+            return _np_.shape(self.data)[0]
+        else:
+            return 0
 
     def __lshift__(self, other):
         """Overird the left shift << operator for a string or an iterable object to import using the :py:meth:`__read_iterable` function.

@@ -147,5 +147,5 @@ Online documentation for the development version can be found on the
 Stable Version
 --------------
 
-The current stable version is 0.5. This version was primarily stablising
-and bug-fixing the code.
+The development version is now in beta release and so no further relases
+will be made to the current stable release (0.5).

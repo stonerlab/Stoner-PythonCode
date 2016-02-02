@@ -374,7 +374,6 @@ def hysteresis_correct(data, **kargs):
         p2, pcov = down.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
         perr2 = diag(pcov)
         if p1[0]>p2[0]:
-            print "Inverting loop"
             data.y=-data.y
         else:
             break
