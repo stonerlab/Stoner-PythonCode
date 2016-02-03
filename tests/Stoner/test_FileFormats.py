@@ -18,7 +18,7 @@ pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
 from Stoner import Data
 from Stoner.Core import DataFile
-from Stoner.HDF5 import HDF5File
+from Stoner.HDF5 import HDF5File,HGXFile
 from Stoner.Zip import ZipFile
 
 
@@ -32,16 +32,19 @@ class FileFormats_test(unittest.TestCase):
 
     def test_loaders(self):
         d=None
+        print(os.listdir(self.datadir))
         for f in os.listdir(self.datadir):
             if f.strip().lower() in ["ad_data_filemnames_list"]: # Known bad files to load
                 print("Skipping {}".format(f))
                 continue
             else:
+                print("Testing {}".format(f))
                 try:
                     del d
-                    d=Data(path.join(self.datadir,f))
+                    fname=path.join(self.datadir,f)
+                    d=Data(fname,debug=True)
                 except Exception as e:
-                    self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),e.message))
+                    self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),str(e)))
                 self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
 
 if __name__=="__main__": # Run some tests manually to allow debugging

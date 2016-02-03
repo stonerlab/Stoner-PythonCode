@@ -228,7 +228,7 @@ class HGXFile(DataFile):
             self.column_headers[-3]=dataset["x_command"].value
             self.column_headers[-2]=dataset["y_command"].value
             self.column_headers[-1]=dataset["error_command"].value
-
+            self.column_headers=[str(x) for x in self.column_headers]
 
 
 

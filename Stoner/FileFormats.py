@@ -271,7 +271,7 @@ class QDSquidVSMFile(DataFile):
                     key = key.title()
                     value = ' '.join(parts[2:])
                 self.metadata[key] = self.metadata.string_to_type(value)
-            column_headers = f.next().strip().split(',')
+            column_headers = f.readline().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
         self.setas(x="Magnetic Field", y="Moment")
@@ -317,7 +317,10 @@ class OpenGDAFile(DataFile):
                 key = parts[0]
                 value = parts[1].strip()
                 self.metadata[key] = self.metadata.string_to_type(value)
-            column_headers = f.next().strip().split("\t")
+            if python_v3:
+                column_headers = f.readline().strip().split("\t")
+            else:
+                column_headers = f.next().strip().split("\t")
         self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
         return self
@@ -667,7 +670,10 @@ class XRDFile(DataFile):
                     section = section + str(drive)
                     drive = drive + 1
                 elif section == "Data":  # Data section contains the business but has a redundant first line
-                    f.readline()
+                    if python_v3:
+                        f.readline()
+                    else:
+                        f.next()
                 for line in f:  #Now start reading lines in this section...
                     if line.strip(
                     ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section

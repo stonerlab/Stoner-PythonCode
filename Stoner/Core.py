@@ -463,7 +463,7 @@ class _setas(object):
         Returns:
             The matching column index as an integer or a KeyError
         """
-        if isinstance(col, (int,long)):  # col is an int so pass on
+        if isinstance(col, int_types):  # col is an int so pass on
             if col >= len(self.column_headers):
                 raise IndexError('Attempting to index a non - existant column {}'.format(col))
             if col < 0:
@@ -917,7 +917,7 @@ class typeHintedDict(sorteddict):
             key (string): The metadata key to export
         Returns:
             A string of the format : key{type hint} = value"""
-        return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('string_escape'))
+        return "{}{{{}}}={}".format(key, self.type(key), repr(self[key]).encode('unicode_escape'))
 
     def export_all(self):
         """Return all the entries in the typeHintedDict as a list of exported lines.
@@ -1384,7 +1384,7 @@ class DataFile(object):
                 used to set those public attributes.
         """
         # init instance attributes
-        self.debug = False
+        self.debug = kargs.pop("debug",False)
         self._masks = [False]
         self.metadata = typeHintedDict()
         super(DataFile,self).__setattr__("_data",DataArray([]))

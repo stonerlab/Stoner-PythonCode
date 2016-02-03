@@ -14,6 +14,7 @@ from re import _pattern_type
 if __vi__[0] == 2:
     range = xrange
     string_types = (str, unicode)
+    int_types=(int,long)
     python_v3 = False
 
     def str2bytes(s):
@@ -48,6 +49,7 @@ if __vi__[0] == 2:
 
 elif __vi__[0] == 3:
     string_types = (str, )
+    int_types=(int,)
     python_v3 = True
 
     def str2bytes(s):
