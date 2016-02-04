@@ -62,6 +62,7 @@ class Datatest(unittest.TestCase):
 
     def test_len(self):
         # Check that length of the column is the same as length of the data
+        self.assertEqual(len(Data()),0,"Empty DataFile not length zero")
         self.assertEqual(len(self.d.column(0)),len(self.d),"Column 0 length not equal to DataFile length")
         self.assertEqual(len(self.d),self.d.data.shape[0],"DataFile length not equal to data.shape[0]")
         # Check that self.column_headers returns the right length
@@ -137,6 +138,9 @@ class Datatest(unittest.TestCase):
         self.assertTrue(len(d.column_headers)==3,"& messed up setas")
         d&=d.x
         self.assertTrue(d.shape[1]==4,"Inplace & operator failed")
+        empty=Data()
+        empty=empty+np.zeros(10)
+        self.assertEqual(empty.shape,(1,10),"Adding to an empty array failed")
         d=self.d+np.array([0,0])
         self.assertTrue(len(d)==len(self.d)+1,"+ operator failed.")
         d+=np.array([0,0])
