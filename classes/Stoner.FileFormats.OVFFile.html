@@ -26,8 +26,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="Stoner.FileFormats.EasyPlotFile" href="Stoner.FileFormats.EasyPlotFile.html" />
-    <link rel="prev" title="Stoner.FileFormats.TDMSFile" href="Stoner.FileFormats.TDMSFile.html" /> 
+    <link rel="next" title="OVFFile.__init__" href="Stoner.FileFormats.OVFFile.__init__.html" />
+    <link rel="prev" title="TDMSFile.unique" href="Stoner.FileFormats.TDMSFile.unique.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -40,10 +40,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.EasyPlotFile.html" title="Stoner.FileFormats.EasyPlotFile"
+          <a href="Stoner.FileFormats.OVFFile.__init__.html" title="OVFFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.html" title="Stoner.FileFormats.TDMSFile"
+          <a href="Stoner.FileFormats.TDMSFile.unique.html" title="TDMSFile.unique"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -69,6 +69,81 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.__init__.html#Stoner.FileFormats.OVFFile.__init__" title="Stoner.FileFormats.OVFFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.add_column.html#Stoner.FileFormats.OVFFile.add_column" title="Stoner.FileFormats.OVFFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.closest.html#Stoner.FileFormats.OVFFile.closest" title="Stoner.FileFormats.OVFFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<td>Return the row in a data file which has an x-column value closest to the given value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.column.html#Stoner.FileFormats.OVFFile.column" title="Stoner.FileFormats.OVFFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.columns.html#Stoner.FileFormats.OVFFile.columns" title="Stoner.FileFormats.OVFFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_column.html#Stoner.FileFormats.OVFFile.del_column" title="Stoner.FileFormats.OVFFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.del_rows.html#Stoner.FileFormats.OVFFile.del_rows" title="Stoner.FileFormats.OVFFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.dir.html#Stoner.FileFormats.OVFFile.dir" title="Stoner.FileFormats.OVFFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.filter.html#Stoner.FileFormats.OVFFile.filter" title="Stoner.FileFormats.OVFFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.find_col.html#Stoner.FileFormats.OVFFile.find_col" title="Stoner.FileFormats.OVFFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get.html#Stoner.FileFormats.OVFFile.get" title="Stoner.FileFormats.OVFFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.get_filename.html#Stoner.FileFormats.OVFFile.get_filename" title="Stoner.FileFormats.OVFFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.insert_rows.html#Stoner.FileFormats.OVFFile.insert_rows" title="Stoner.FileFormats.OVFFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.keys.html#Stoner.FileFormats.OVFFile.keys" title="Stoner.FileFormats.OVFFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<td>An alias for <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></code> .</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.load.html#Stoner.FileFormats.OVFFile.load" title="Stoner.FileFormats.OVFFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rename.html#Stoner.FileFormats.OVFFile.rename" title="Stoner.FileFormats.OVFFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.reorder_columns.html#Stoner.FileFormats.OVFFile.reorder_columns" title="Stoner.FileFormats.OVFFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rolling_window.html#Stoner.FileFormats.OVFFile.rolling_window" title="Stoner.FileFormats.OVFFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.rows.html#Stoner.FileFormats.OVFFile.rows" title="Stoner.FileFormats.OVFFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.save.html#Stoner.FileFormats.OVFFile.save" title="Stoner.FileFormats.OVFFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
+<td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.search.html#Stoner.FileFormats.OVFFile.search" title="Stoner.FileFormats.OVFFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.section.html#Stoner.FileFormats.OVFFile.section" title="Stoner.FileFormats.OVFFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.sort.html#Stoner.FileFormats.OVFFile.sort" title="Stoner.FileFormats.OVFFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.swap_column.html#Stoner.FileFormats.OVFFile.swap_column" title="Stoner.FileFormats.OVFFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.unique.html#Stoner.FileFormats.OVFFile.unique" title="Stoner.FileFormats.OVFFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -99,22 +174,25 @@
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
 <td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
 <td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
 <td>Returns the data as a _np_ structured data array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
 <td>Get the list of column assignments.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
 <td>Return a list of all in memory subclasses of this DataFile.</td>
 </tr>
 </tbody>
@@ -133,11 +211,11 @@
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.TDMSFile.html"
-                        title="previous chapter">Stoner.FileFormats.TDMSFile</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.TDMSFile.unique.html"
+                        title="previous chapter">TDMSFile.unique</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.EasyPlotFile.html"
-                        title="next chapter">Stoner.FileFormats.EasyPlotFile</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.OVFFile.__init__.html"
+                        title="next chapter">OVFFile.__init__</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -172,10 +250,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.EasyPlotFile.html" title="Stoner.FileFormats.EasyPlotFile"
+          <a href="Stoner.FileFormats.OVFFile.__init__.html" title="OVFFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.TDMSFile.html" title="Stoner.FileFormats.TDMSFile"
+          <a href="Stoner.FileFormats.TDMSFile.unique.html" title="TDMSFile.unique"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -183,8 +261,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

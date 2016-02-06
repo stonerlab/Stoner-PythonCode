@@ -55,6 +55,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.dict_records
       ~Stoner.FileFormats.VSMFile.dtype
       ~Stoner.FileFormats.VSMFile.mask
+      ~Stoner.FileFormats.VSMFile.mime_type
       ~Stoner.FileFormats.VSMFile.patterns
       ~Stoner.FileFormats.VSMFile.priority
       ~Stoner.FileFormats.VSMFile.records

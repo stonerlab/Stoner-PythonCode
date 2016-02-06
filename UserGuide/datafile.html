@@ -62,7 +62,7 @@
 <p>The first step in using the Stoner module is to load some data from a
 measurement.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s1">&#39;my_data.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this example we have loaded data from <code class="docutils literal"><span class="pre">my_data.txt</span></code> which should be in the
@@ -153,10 +153,10 @@ the data reduction software used on the BL-4A Beam Line at the SNS in Oak Ridge.
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">Stoner</span>
 <span class="kn">import</span> <span class="nn">stoner.FileFormats</span> <span class="kn">as</span> <span class="nn">SFF</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_data.txt&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;my_data.txt&#39;</span><span class="p">)</span>
 <span class="n">v</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">VSMFIle</span><span class="p">()</span>
-<span class="n">v</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;my_VSM_data.fld&#39;</span><span class="p">)</span>
-<span class="n">c</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s">&#39;data.csv&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">v</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;my_VSM_data.fld&#39;</span><span class="p">)</span>
+<span class="n">c</span><span class="o">=</span><span class="n">SFF</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -195,7 +195,7 @@ of the data file, to be used as the source of the data. The <a class="reference 
 that the left shift operator calls the method in <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> to read the data in. It also
 determines the type of the object <code class="docutils literal"><span class="pre">data</span></code>. This also provides an alternative syntax for reading a file
 from disk:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;File on Disk.txt&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Core</span><span class="o">.</span><span class="n">DataFile</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;File on Disk.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -234,12 +234,12 @@ attribute.</p>
 </div>
 <div class="section" id="examples">
 <h4>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
-<div class="code highlight-python"><div class="highlight"><pre><span class="c"># Load a file from disc, set the setas attribute and column headers</span>
-<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&quot;filename.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">])</span>
-<span class="c"># Create a DataFile from a dictionary:</span>
-<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">})</span>
-<span class="c"># The same, but set metadata too</span>
-<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">},{</span><span class="s">&quot;User&quot;</span><span class="p">:</span><span class="s">&quot;Fred&quot;</span><span class="p">,</span><span class="s">&quot;Sample&quot;</span><span class="p">:</span><span class="s">&quot;X234_a&quot;</span><span class="p">,</span><span class="s">&quot;Field&quot;</span><span class="p">:</span><span class="mf">2.4</span><span class="p">})</span>
+<div class="code highlight-python"><div class="highlight"><pre><span class="c1"># Load a file from disc, set the setas attribute and column headers</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s2">&quot;filename.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">])</span>
+<span class="c1"># Create a DataFile from a dictionary:</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s2">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s2">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">})</span>
+<span class="c1"># The same, but set metadata too</span>
+<span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">({</span><span class="s2">&quot;Temperature&quot;</span><span class="p">:</span><span class="n">temp_array</span><span class="p">,</span><span class="s2">&quot;Resistance&quot;</span><span class="p">:</span><span class="n">res_data</span><span class="p">},{</span><span class="s2">&quot;User&quot;</span><span class="p">:</span><span class="s2">&quot;Fred&quot;</span><span class="p">,</span><span class="s2">&quot;Sample&quot;</span><span class="p">:</span><span class="s2">&quot;X234_a&quot;</span><span class="p">,</span><span class="s2">&quot;Field&quot;</span><span class="p">:</span><span class="mf">2.4</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
@@ -319,16 +319,16 @@ indicats that the current assignment is to be left as is.</p>
 <p>Alternately, you can pass <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> a string. In the simplest case, the string is just read in the same way that
 the list would have been  - each character corresponds to one column. However, if the string contains an integer, then the next
 non-numeric character will be interpreted that many times, so:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;3.xy&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;...xy&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;3.xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;...xy&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>There are still more ways of setting column types with the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;x&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">3</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="s">&quot;3.xy&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">([</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">seetas</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;x&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span><span class="o">=</span><span class="mi">3</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="s2">&quot;3.xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">([</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;.&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
 <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -343,14 +343,14 @@ d.e == d.column(5)
 <p>Note that if <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> is not set then attempting to use the quick access column attributes will
 result in an exception. Once the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is set, a further set of <em>virtual</em> or <em>derived</em> column attributes
 become available.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c"># The magnitude of the point x,y,z</span>
-<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c"># The angle in the x-y plane relative to the x axis</span>
-<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c"># The angle relative to the z axis</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz..uvw&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c"># the magnitude of (u,v,w)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c"># The angle in the x-y plane of (u,v) relative to +x</span>
-<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c"># The angle of (u,v,w) relatiuve to +z</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c1"># The magnitude of the point x,y,z</span>
+<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c1"># The angle in the x-y plane relative to the x axis</span>
+<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c1"># The angle relative to the z axis</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz..uvw&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">r</span> <span class="c1"># the magnitude of (u,v,w)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">q</span> <span class="c1"># The angle in the x-y plane of (u,v) relative to +x</span>
+<span class="n">d</span><span class="o">.</span><span class="n">p</span> <span class="c1"># The angle of (u,v,w) relatiuve to +z</span>
 </pre></div>
 </div>
 <p>Where fewer than 3 or 6 dimensions are specified, these virtual columns fallback to working with the appropriate
@@ -369,13 +369,13 @@ and convenience when writing code. However it can be fooled if one of your colum
 <h4>Reading Column Types<a class="headerlink" href="#reading-column-types" title="Permalink to this headline">¶</a></h4>
 <p>The normal representation of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> is as a list, but it also has a string conversion available. You can also find which column
 has been assigned as &#8216;x&#8217;, &#8216;y&#8217; etc. by treating the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> as a dictionary:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;One&quot;</span><span class="p">,</span><span class="s">&quot;Two&quot;</span><span class="p">,</span><span class="s">&quot;three&quot;</span><span class="p">,</span><span class="s">&quot;Four&quot;</span><span class="p">]</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.z&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;One&quot;</span><span class="p">,</span><span class="s2">&quot;Two&quot;</span><span class="p">,</span><span class="s2">&quot;three&quot;</span><span class="p">,</span><span class="s2">&quot;Four&quot;</span><span class="p">]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
 
-<span class="k">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="c">#[&#39;x&#39;,&#39;y&#39;,&#39;.&#39;,&#39;z&#39;]</span>
-<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="c">#&#39;xy.z&#39;</span>
-<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span> <span class="c"># &quot;One&quot;</span>
-<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;#x&quot;</span><span class="p">]</span> <span class="c"># 0</span>
+<span class="k">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span> <span class="c1">#[&#39;x&#39;,&#39;y&#39;,&#39;.&#39;,&#39;z&#39;]</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span> <span class="c1">#&#39;xy.z&#39;</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="c1"># &quot;One&quot;</span>
+<span class="k">print</span> <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;#x&quot;</span><span class="p">]</span> <span class="c1"># 0</span>
 </pre></div>
 </div>
 <p>Note that the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute supports reading keys that are either the single letter t get the name of the column or the letter
@@ -401,8 +401,8 @@ print e.setas
 <p>This is all very well, but often you want to examine a particular column of data
 or a particular row:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>In the first example, the first column of numeric data will be returned. In the
@@ -418,9 +418,9 @@ pass slices to select columns and should do the expected thing.</p>
 is an alias for the <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method and secondly for working
 with cases where the column headers are not the same as the names of any of the attributes
 of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> object:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s">&quot;Temperature&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">//</span><span class="s2">&quot;Temperature&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">Temperature</span>
-<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>all return the same data.</p>
@@ -483,29 +483,29 @@ and these can be used directly:</p>
 </div>
 <p>In addition to the column assignments, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> also keeps a track of the row numbers and makes them available via
 the <em>i</em> attribute.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c"># [0,1,2,3...,len(d)]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">i</span> <span class="c1"># [0,1,2,3...,len(d)]</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
-<span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="c"># 10</span>
+<span class="n">r</span><span class="o">.</span><span class="n">i</span> <span class="c1"># 10</span>
 <span class="n">r</span><span class="o">.</span><span class="n">column_headers</span>
 </pre></div>
 </div>
 <p>You can reset the row numbers by assiging a value to the <em>i</em> attribute.</p>
 <p>A single column of data also gains a <em>.name</em> attribute that matches its column_header:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">c</span><span class="o">=</span><span class="n">d</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c">#True</span>
+<span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">c</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#True</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="manipulating-the-metadata">
 <h3>Manipulating the metadata<a class="headerlink" href="#manipulating-the-metadata" title="Permalink to this headline">¶</a></h3>
 <p>What happens if you use a string and not a number in the above examples ?:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="p">[</span><span class="s">&#39;User&#39;</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="p">[</span><span class="s1">&#39;User&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>in this case, it is assumed that you meant the metadata with key <em>User</em>.
 To get a list of possible keys in the metadata, you can do:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(</span><span class="s">&#39;Option\:.*&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">dir</span><span class="p">(</span><span class="s1">&#39;Option\:.*&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In the first case, all of the keys will be returned in a list. In the second,
@@ -520,7 +520,7 @@ as the item name also has the same effect - this is useful if the regular expres
 you want to match is also an exact match to one particular metadata name.</p>
 <p>We mentioned above that the metadata also keeps a note of the expected type of
 the data. You can get at the metadata type for a particular key like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s">&#39;User&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="s1">&#39;User&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>to get a dictionary of all of the types associated with each key you could do:</p>
@@ -619,11 +619,11 @@ masked rows are skipped over.</p>
 <h4>Searching, sectioning and filtering the data<a class="headerlink" href="#searching-sectioning-and-filtering-the-data" title="Permalink to this headline">¶</a></h4>
 <p>In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,[</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Resistance&#39;</span><span class="p">])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span>
-              <span class="n">x</span><span class="o">&lt;</span><span class="mi">1000</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">,[</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Resistance&#39;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Resistance&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">and</span>
+              <span class="n">x</span><span class="o">&lt;</span><span class="mi">1000</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">1000</span><span class="p">,[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Resistance&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The general form is <code class="docutils literal"><span class="pre">DataFile.search(&lt;search</span> <span class="pre">column&gt;,&lt;search</span> <span class="pre">term&gt;[,&lt;listof</span> <span class="pre">return</span> <span class="pre">columns&gt;])</span></code></p>
@@ -652,7 +652,7 @@ separate array, but merely mark them for inclusion (or exclusion) from subsequen
 operations. This is where the masked array (see &#8216;<a class="reference internal" href="#maskeddata"><span>Masked Data and Why You Care</span></a>) comes into its own.
 To select which rows of data have been masked off, use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.filter.html#Stoner.Core.DataFile.filter" title="Stoner.Core.DataFile.filter"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.filter()</span></code></a> method.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">5</span><span class="p">,[</span><span class="s1">&#39;Temp&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>With just a single argument, the filter method takes a complete row at a time and passes it
@@ -663,7 +663,7 @@ of things which can be used to index a column (ie strings, integers, regular exp
 <p>Another option is to construct a new <cite>DataFile</cite> object from a section of the data - this is
 particularly useful where the <cite>DataFile</cite> represents data correspondi ng to a set of (x,y,z)
 points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be used:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y.z.&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y.z.&quot;</span>
 <span class="n">slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">5.2</span><span class="p">)</span>
 <span class="n">line</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">4.7</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">thick_slab</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span><span class="mf">6.0</span><span class="p">))</span>
@@ -674,7 +674,7 @@ points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be u
 &#8216;x&#8217;, &#8216;y&#8217; and &#8216;z&#8217; keyword arguments which ar then used to search for matching data rows (the arguments to
 these keyword arguments follow the same rules as the <a class="reference internal" href="../classes/Stoner.Core.DataFile.search.html#Stoner.Core.DataFile.search" title="Stoner.Core.DataFile.search"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.search()</span></code></a> method).</p>
 <p>A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Search Col&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Search Col&quot;</span><span class="p">)</span>
 <span class="n">r</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">closest</span><span class="p">(</span><span class="mf">10.3</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -688,7 +688,7 @@ will make that available via it&#8217;s <em>i</em> attribute.</p>
 values of data in a given column (or set of columns). The Python numpy
 package has a function to do this and we have a direct pass through
 from the DataFile object for this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Temp&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">return_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -722,7 +722,7 @@ provided to make a deep copy of a DataFile object.</p>
 <p>The simplest way to modify some data might be to append some columns or rows.
 The Stoner module redefines two standard operators, <code class="docutils literal"><span class="pre">+</span></code> and <code class="docutils literal"><span class="pre">&amp;</span></code> to
 have special meanings:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&#39;some_new_data.txt&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;some_new_data.txt&#39;</span><span class="p">)</span>
 <span class="n">add_rows</span><span class="o">=</span><span class="n">d</span><span class="o">+</span><span class="n">a</span>
 <span class="n">add_columns</span><span class="o">=</span><span class="n">d</span><span class="o">&amp;</span><span class="n">a</span>
 </pre></div>
@@ -773,7 +773,7 @@ can be directly modified like any other numpy array like class might be. If, how
 been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written
 to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
 Thus the following will work:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y..z&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y..z&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="mf">5.0</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">z</span>
 <span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span>
 <span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
@@ -785,13 +785,13 @@ then you should supply a 2D array with the corresponding number of columns of da
 <p>In order to preserve the behaviour that allows you to set the column assingments by setting the attribute to an index type, the
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> checks to see if you are setting something that might be a column index or a numpy array. Thus the following
 also works:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span> <span class="c"># Set the Temp column to be x data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="c"># And set the column to contain a linear array of values from 0 to 300.</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span> <span class="c1"># Set the Temp column to be x data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="c1"># And set the column to contain a linear array of values from 0 to 300.</span>
 </pre></div>
 </div>
 <p>You cannot set the p,q, or r attributes like this as they are calculated on the fly from the cartesian co-ordinates.
 On the otherhand you can do an efficient conversion to polar co-ordinates with:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
 <span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">)</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">p</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">q</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -799,11 +799,11 @@ On the otherhand you can do an efficient conversion to polar co-ordinates with:<
 <div class="section" id="rearranging-columns-of-data">
 <h4>Rearranging Columns of Data<a class="headerlink" href="#rearranging-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>Sometimes it is useful to rearrange columns of data. <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> offers a couple of methods to help with this.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s">&#39;Resistance&#39;</span><span class="p">,</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">headers_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="s">&#39;Temp&#39;</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;Curr&#39;</span><span class="p">)])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;Volt&#39;</span><span class="p">,</span><span class="s">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s1">&#39;Resistance&#39;</span><span class="p">,</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">(</span><span class="s1">&#39;Resistance&#39;</span><span class="p">,</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">headers_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">swap_column</span><span class="p">([(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="s1">&#39;Temp&#39;</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">),(</span><span class="mi">2</span><span class="p">,</span><span class="s1">&#39;Curr&#39;</span><span class="p">)])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">reorder_columns</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s1">&#39;Volt&#39;</span><span class="p">,</span><span class="s1">&#39;Temp&#39;</span><span class="p">],</span><span class="n">header_too</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">setas_too</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.swap_column()</span></code></a> method takes either a either a tuple (or just a pair of arguments) of column names, indices or a list of such
@@ -818,8 +818,8 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 <div class="section" id="renaming-columns-of-data">
 <h4>Renaming Columns of Data<a class="headerlink" href="#renaming-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>As a convenience, <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> also offers a useful method to rename data columns:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s">&#39;old_name&#39;</span><span class="p">,</span><span class="s">&#39;new_name&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;new_name&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s1">&#39;old_name&#39;</span><span class="p">,</span><span class="s1">&#39;new_name&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;new_name&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Alternatively,of course, one could just edit the column_headers attribute.</p>
@@ -829,9 +829,9 @@ The <code class="docutils literal"><span class="pre">headers_too=False</span></c
 <p>The append columns operator <strong>&amp;</strong> will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the <a class="reference internal" href="../classes/Stoner.Core.DataFile.add_column.html#Stoner.Core.DataFile.add_column" title="Stoner.Core.DataFile.add_column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.add_column()</span></code></a> method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Column Header&#39;</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first example simply adds a column of data to the end of the dataset and
@@ -877,8 +877,8 @@ rows are deleted(kept for <em>invert</em> = True) if the specified column lies b
 values of the tuple. The test is done inclusively. Any length two iterable object can be used
 for specifying the bounds. Fianlly, if you call <a class="reference internal" href="../classes/Stoner.Core.DataFile.del_rows.html#Stoner.Core.DataFile.del_rows" title="Stoner.Core.DataFile.del_rows"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.del_rows()</span></code></a> with no arguments at all, then
 it removes all rows where at least one column of data is masked out.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c"># Mask all rows where the first column is greater than 50</span>
-<span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">()</span> <span class="c"># Then delete them.</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">r</span><span class="p">:</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">50</span><span class="p">)</span> <span class="c1"># Mask all rows where the first column is greater than 50</span>
+<span class="n">d</span><span class="o">.</span><span class="n">del_rows</span><span class="p">()</span> <span class="c1"># Then delete them.</span>
 </pre></div>
 </div>
 <p>For simple caases where the row to be delted can be expressed as an integer or list of integers,
@@ -895,13 +895,13 @@ the subtration operator can be used.:</p>
 <p>Deleting whole columns of data can be done by referring to a column by index or
 column header - the indexing rules are the same as used for the
 <a class="reference internal" href="../classes/Stoner.Core.DataFile.column.html#Stoner.Core.DataFile.column" title="Stoner.Core.DataFile.column"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.column()</span></code></a> method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">del_column</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Again, there is an operator that can be used to achieve the same effect, in this
 case the modulus operator %.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s">&quot;temperature&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="s2">&quot;temperature&quot;</span>
 <span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">%</span><span class="mi">1</span>
 <span class="n">d</span><span class="o">%=-</span><span class="mi">1</span>
 </pre></div>
@@ -912,8 +912,8 @@ case the modulus operator %.:</p>
 <p>Data can be sorted by one or more columns, specifying the columns as a number or
 string for single columns or a list or tuple of strings or numbers for multiple
 columns. Currently only ascending sorts are supported.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;Temp&#39;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&#39;Temp&#39;</span><span class="p">,</span><span class="s">&#39;Gate&#39;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;Temp&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s1">&#39;Temp&#39;</span><span class="p">,</span><span class="s1">&#39;Gate&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -925,7 +925,7 @@ columns. Currently only ascending sorts are supported.:</p>
 <span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">CSVFile</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In the first case, the filename used tosave the data is determined from the
@@ -1068,8 +1068,8 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

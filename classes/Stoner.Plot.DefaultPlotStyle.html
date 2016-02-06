@@ -111,18 +111,21 @@ method to carry out additional plot formatting.</p>
 <p>Calculated list of stylesheets found by traversing the class heirarchy</p>
 </dd></dl>
 
-<p class="rubric">Example</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<dl class="docutils">
+<dt>Example</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/plotstyles/default.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/default.png">png</a>, <a class="reference external" href="../samples/plotstyles/default.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/default.pdf">pdf</a>)</p>
-<div class="figure">
+<div class="last figure">
 <img alt="../_images/default.png" src="../_images/default.png" />
 </div>
+</dd>
+</dl>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -130,6 +133,30 @@ method to carry out additional plot formatting.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.__call__.html#Stoner.Plot.DefaultPlotStyle.__call__" title="Stoner.Plot.DefaultPlotStyle.__call__"><code class="xref py py-obj docutils literal"><span class="pre">__call__</span></code></a>(**kargs)</td>
+<td>Calling the template object can manipulate the rcParams that will be set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.__init__.html#Stoner.Plot.DefaultPlotStyle.__init__" title="Stoner.Plot.DefaultPlotStyle.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(**kargs)</td>
+<td>Create a template instance of this template.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.annotate.html#Stoner.Plot.DefaultPlotStyle.annotate" title="Stoner.Plot.DefaultPlotStyle.annotate"><code class="xref py py-obj docutils literal"><span class="pre">annotate</span></code></a>(ix,&nbsp;multiple,&nbsp;plot,&nbsp;**kargs)</td>
+<td>Call all the routines necessary to annotate the axes etc.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.apply.html#Stoner.Plot.DefaultPlotStyle.apply" title="Stoner.Plot.DefaultPlotStyle.apply"><code class="xref py py-obj docutils literal"><span class="pre">apply</span></code></a>()</td>
+<td>Scan for all attributes that start <a href="#id1"><span class="problematic" id="id2">templtate_</span></a> and build them into a dictionary to update matplotlib settings with.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.customise.html#Stoner.Plot.DefaultPlotStyle.customise" title="Stoner.Plot.DefaultPlotStyle.customise"><code class="xref py py-obj docutils literal"><span class="pre">customise</span></code></a>()</td>
+<td>This method is supplied for sub classes to override to provide additional plot customisation after the rc paramaters are updated from the class and instance attributes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.customise_axes.html#Stoner.Plot.DefaultPlotStyle.customise_axes" title="Stoner.Plot.DefaultPlotStyle.customise_axes"><code class="xref py py-obj docutils literal"><span class="pre">customise_axes</span></code></a>(ax,&nbsp;plot)</td>
+<td>This method is run when we have an axis to manipulate.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.new_figure.html#Stoner.Plot.DefaultPlotStyle.new_figure" title="Stoner.Plot.DefaultPlotStyle.new_figure"><code class="xref py py-obj docutils literal"><span class="pre">new_figure</span></code></a>([figure])</td>
+<td>This is called by PlotFile to setup a new figure before we do anything.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.DefaultPlotStyle.update.html#Stoner.Plot.DefaultPlotStyle.update" title="Stoner.Plot.DefaultPlotStyle.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(**kargs)</td>
+<td>Update the template with new attributes from keyword arguments.</td>
+</tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
@@ -216,8 +243,8 @@ method to carry out additional plot formatting.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

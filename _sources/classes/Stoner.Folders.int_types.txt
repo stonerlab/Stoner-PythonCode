@@ -1,0 +1,15 @@
+Stoner.Folders.int_types
+========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: int_types
+
+   
+
+   
+   
+
+   
+   
+   

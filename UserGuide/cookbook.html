@@ -70,7 +70,7 @@ the plotting functions of <a class="reference internal" href="../classes/Stoner.
 subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module provides the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a>
 class that does this for you.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -93,12 +93,12 @@ don&#8217;t already exist) and files will be added.</p>
 <p>Since much of our group&#8217;s work is concerned with measuring magnetic hystersis loops, the <a class="reference internal" href="../functions/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct" title="Stoner.Util.hysteresis_correct"><code class="xref py py-func docutils literal"><span class="pre">hysteresis_correct()</span></code></a> function
 provides a handy way to correct some instrumental artifacts and measure properties of hysteresis loops.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">hysteresis_correct</span>
-<span class="n">d</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="s">&#39;QD-SQUID-VSM.dat&#39;</span><span class="p">,</span><span class="n">correct_background</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">correct_H</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="s1">&#39;QD-SQUID-VSM.dat&#39;</span><span class="p">,</span><span class="n">correct_background</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">correct_H</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">e</span><span class="o">=</span><span class="n">hysteresis_correct</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
-<span class="k">print</span> <span class="s">&quot;Saturation Magnetisation = {}+/-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s">&quot;Ms&quot;</span><span class="p">],</span><span class="n">e</span><span class="p">[</span><span class="s">&quot;Ms Error&quot;</span><span class="p">])</span>
-<span class="k">print</span> <span class="s">&quot;Coercive Field = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s">&quot;Hc&quot;</span><span class="p">])</span>
-<span class="k">print</span> <span class="s">&quot;Remanance = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s">&quot;Remenance&quot;</span><span class="p">])</span>
+<span class="k">print</span> <span class="s2">&quot;Saturation Magnetisation = {}+/-{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;Ms&quot;</span><span class="p">],</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;Ms Error&quot;</span><span class="p">])</span>
+<span class="k">print</span> <span class="s2">&quot;Coercive Field = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">])</span>
+<span class="k">print</span> <span class="s2">&quot;Remanance = {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s2">&quot;Remenance&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The keyword arguments provide options to turn on or off corrections to remove diamagnetic background (and offset in M),
@@ -158,28 +158,28 @@ illustrates this by fitting a plane to a collection of points in 3D space.</p>
 
 
 
-<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span> <span class="c"># Function to define a plane</span>
+<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span> <span class="c1"># Function to define a plane</span>
     <span class="k">return</span> <span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
 
 <span class="n">coeefs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">col</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
 <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
 <span class="n">Z</span><span class="o">=</span><span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span><span class="o">*</span><span class="n">coeefs</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">7.0</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
-<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.z&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
 
-<span class="n">txt</span><span class="o">=</span><span class="s">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s">&quot;</span>
-<span class="n">txt</span><span class="o">+=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;c&quot;</span><span class="p">]])</span>
+<span class="n">txt</span><span class="o">=</span><span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">txt</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">]])</span>
 
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
@@ -210,7 +210,7 @@ For example:</p>
     <span class="sd">&quot;&quot;&quot;Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
 
-<span class="c"># Create some points approximately spherical distribution</span>
+<span class="c1"># Create some points approximately spherical distribution</span>
 <span class="n">p</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">q</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">r</span><span class="o">=</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -221,16 +221,16 @@ For example:</p>
 <span class="n">y</span><span class="o">-=</span><span class="mf">4.0</span>
 <span class="n">z</span><span class="o">+=</span><span class="mf">2.0</span>
 
-<span class="c"># Construct the  DataFile object</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Best fit sphere&quot;</span><span class="p">)</span>
+<span class="c1"># Construct the  DataFile object</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Best fit sphere&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mf">5.2</span>
-<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c"># Square aspect ratio</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c1"># Square aspect ratio</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
 
-<span class="c">#curve_fit does the hard work</span>
+<span class="c1">#curve_fit does the hard work</span>
 <span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">sphere</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
 
-<span class="c"># This manually constructs the best fit sphere</span>
+<span class="c1"># This manually constructs the best fit sphere</span>
 <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="n">popt</span>
 <span class="n">p</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
 <span class="n">q</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span>
@@ -241,7 +241,7 @@ For example:</p>
 <span class="n">y</span><span class="o">+=</span><span class="n">b</span>
 <span class="n">z</span><span class="o">+=</span><span class="n">c</span>
 
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
@@ -260,11 +260,11 @@ For example:</p>
 Z and one wishes to extract X-Y as a function of constant Z. For example, <em>I-V</em>
 sweeps as a function of gate voltage <em>V:sub:G</em>. Assuming we have a data file with
 columns <em>Current</em>, <em>Voltage</em>,*Gate*:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&#39;data.txt&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;data.txt&#39;</span><span class="p">)</span>
 <span class="n">t</span><span class="o">=</span><span class="n">d</span>
-<span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Gate&#39;</span><span class="p">):</span>
-    <span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)</span>
-    <span class="n">t</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;Data Gate=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span><span class="o">+</span><span class="s">&#39;.txt&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">):</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;Data Gate=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">gate</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first line opens the data file containing the <em>I-V(V_G)</em> data. The second
@@ -279,12 +279,12 @@ then saves it.</p>
 <p>In a similar fashion to the previous section, where data has been recorded with
 fixed values of <em>X</em> and <em>Y</em> eg <em>I</em> measured for fixed <em>V</em> and <em>V_</em>, it can be
 useful to map the data to a matrix.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s">&#39;Data,.txt&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;Data,.txt&#39;</span><span class="p">)</span>
 <span class="n">t</span><span class="o">=</span><span class="n">d</span>
-<span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Gate&#39;</span><span class="p">):</span>
-   <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="o">+</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)[:,</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s">&#39;Current&#39;</span><span class="p">)]</span>
-<span class="n">t</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;Bias=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Voltage&#39;</span><span class="p">)]</span>
-<span class="n">t</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s">&#39;Gate&#39;</span><span class="p">),</span><span class="s">&#39;Gate Voltage&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">gate</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">):</span>
+   <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="o">+</span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">,</span><span class="n">gate</span><span class="p">)[:,</span><span class="n">d</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="s1">&#39;Current&#39;</span><span class="p">)]</span>
+<span class="n">t</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Bias=&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Voltage&#39;</span><span class="p">)]</span>
+<span class="n">t</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="s1">&#39;Gate&#39;</span><span class="p">),</span><span class="s1">&#39;Gate Voltage&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The start of the script follows the previous section, however this time in the
@@ -311,10 +311,10 @@ using the <code class="xref py py-class docutils literal"><span class="pre">Plot
 <span class="n">surf</span><span class="o">=</span><span class="n">PlotFile</span><span class="p">()</span>
 <span class="n">surf</span><span class="o">&amp;=</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">X0</span><span class="p">,</span><span class="n">X0</span><span class="p">,</span><span class="n">samples</span><span class="p">)</span>
 <span class="n">surf</span><span class="o">&amp;=</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">Y0</span><span class="p">,</span><span class="n">Y0</span><span class="p">,</span><span class="n">samples</span><span class="p">)</span>
-<span class="n">surf</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
+<span class="n">surf</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span>
 <span class="n">surf</span><span class="o">&amp;=</span><span class="n">Z</span><span class="p">(</span><span class="n">surf</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">surf</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
-<span class="n">surf</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span>
-<span class="n">surf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c"># or surf.plot(cstride=1,rstride=1,linewidth=0) for finer detail.</span>
+<span class="n">surf</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span>
+<span class="n">surf</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># or surf.plot(cstride=1,rstride=1,linewidth=0) for finer detail.</span>
 </pre></div>
 </div>
 </div>
@@ -324,14 +324,14 @@ using the <code class="xref py py-class docutils literal"><span class="pre">Plot
 modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often useful to
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="kn">import</span> <span class="n">OVFFile</span> <span class="c"># reads OOMMF vector field files</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="kn">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
 <span class="kn">import</span> <span class="nn">Stoner.Plot</span>
-<span class="n">p</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">(</span><span class="s">&#39;my_simulation.ovf&#39;</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyzuvw&quot;</span>
-<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">10.5</span><span class="p">)</span> <span class="c"># Take a slice inthe xy plane where z is 10.5 nm</span>
-<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c"># A 3D plot with cones</span>
-<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.uvw&quot;</span>
-<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c"># a 2D colour wheel plot with triangular glyphs showing vector direction.</span>
+<span class="n">p</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">(</span><span class="s1">&#39;my_simulation.ovf&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyzuvw&quot;</span>
+<span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">10.5</span><span class="p">)</span> <span class="c1"># Take a slice inthe xy plane where z is 10.5 nm</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># A 3D plot with cones</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.uvw&quot;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span> <span class="c1"># a 2D colour wheel plot with triangular glyphs showing vector direction.</span>
 </pre></div>
 </div>
 </div>
@@ -424,8 +424,8 @@ to quickly examine the output data:</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

@@ -55,6 +55,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.dict_records
       ~Stoner.FileFormats.FmokeFile.dtype
       ~Stoner.FileFormats.FmokeFile.mask
+      ~Stoner.FileFormats.FmokeFile.mime_type
       ~Stoner.FileFormats.FmokeFile.patterns
       ~Stoner.FileFormats.FmokeFile.priority
       ~Stoner.FileFormats.FmokeFile.records

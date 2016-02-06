@@ -65,7 +65,7 @@ The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.htm
 <p>The first thing you probably want to do is to get a list of data files in a directory
 (possibly including its subdirectories) and probably matching some sort of filename pattern.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="kn">import</span> <span class="n">DataFolder</span>
-<span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.dat&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this very simple example, the <code class="xref py py-class docutils literal"><span class="pre">DataFolder</span> <span class="pre">class</span> <span class="pre">is</span> <span class="pre">imported</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">first</span> <span class="pre">line</span> <span class="pre">and</span>
@@ -73,12 +73,12 @@ The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.htm
 <span class="pre">the</span> <span class="pre">files</span> <span class="pre">with</span> <span class="pre">a</span> <span class="pre">.dat</span> <span class="pre">extension.</span> <span class="pre">In</span> <span class="pre">this</span> <span class="pre">example,</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">assumed</span> <span class="pre">that</span> <span class="pre">the</span> <span class="pre">files</span> <span class="pre">are</span> <span class="pre">readable</span> <span class="pre">by</span>
 <span class="pre">:py:class:`{DataFile</span></code>, if they are in some other format then the <em>type</em> keyword can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="kn">import</span> <span class="n">XRDFile</span>
-<span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">XRDFile</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.dql&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">XRDFile</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dql&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To specify a particular directory to look in, simply give the directory as the first
 argument - otherwise the current duirectory will be used.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s">&#39;/home/phygbu/Data&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.tdi&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s1">&#39;/home/phygbu/Data&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tdi&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you pass False into the constructor as the first argument then the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> will
@@ -96,7 +96,7 @@ This allows the <a class="reference internal" href="../classes/Stoner.Folders.Da
 <dl class="docutils">
 <dt>If you don&#8217;t want the file listing to be recursive, this can be suppressed by using the <em>recursive</em></dt>
 <dd><p class="first">keyword argument and the file listing can be suppressed altogether with the <em>nolist</em> keyword:</p>
-<div class="last highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.dat&#39;</span><span class="p">,</span><span class="n">recursive</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="last highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dat&#39;</span><span class="p">,</span><span class="n">recursive</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="n">f2</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">nolist</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -139,19 +139,19 @@ that you get a list of strings representing the filenames, use <a class="referen
 <h2>Controlling the Gathering of the List of Files<a class="headerlink" href="#controlling-the-gathering-of-the-list-of-files" title="Permalink to this headline">¶</a></h2>
 <p>The current root directory and pattern are stored in the <em>directory</em> and <em>pattern</em> keywords and the
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.getlist()</span></code></a> method can be used to force a new listing of files.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">dirctory</span><span class="o">=</span><span class="s">&#39;/home/phygbu/Data&#39;</span>
-<span class="n">f</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.txt&#39;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">dirctory</span><span class="o">=</span><span class="s1">&#39;/home/phygbu/Data&#39;</span>
+<span class="n">f</span><span class="o">.</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.txt&#39;</span>
 <span class="n">f</span><span class="o">.</span><span class="n">getlist</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Sometimes a more complex filename matching mechanism than simple &#8216;&#8217;globbing&#8217;&#8217; is useful.
 The <em>pattern</em> keyword can also be a compiled regular expression:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">re</span>
-<span class="n">p</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;i10-\d*.dat&#39;</span><span class="p">)</span>
+<span class="n">p</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;i10-\d*.dat&#39;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
-<span class="n">p2</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;i10-(?P&lt;run&gt;\d*)&#39;</span><span class="p">)</span>
+<span class="n">p2</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;i10-(?P&lt;run&gt;\d*)&#39;</span><span class="p">)</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
-<span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;run&#39;</span><span class="p">]</span>
+<span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;run&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>The second case illustrates a useful feature of regular expressions - they can be used to capture
@@ -173,18 +173,18 @@ then additional metadata is set for each file that contains the mean value of ea
 <p>A <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is an object that you can iterate over, lading the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
 type object for each of the files in turn. This probides an easy way to run through a set of files,
 performing the same operation on each:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">folder</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">folder</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">folder</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s">&#39;mac116&#39;</span><span class="p">,</span><span class="s">&#39;mac119&#39;</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s1">&#39;mac116&#39;</span><span class="p">,</span><span class="s1">&#39;mac119&#39;</span><span class="p">)</span>
     <span class="n">f</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>or even more compacts:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s">&#39;mac116&#39;</span><span class="p">,</span><span class="s">&#39;macc119&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s1">&#39;mac116&#39;</span><span class="p">,</span><span class="s1">&#39;macc119&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)]</span>
 </pre></div>
 </div>
 <p>of even (!):</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s">&#39;mac116&#39;</span><span class="p">,</span><span class="s">&#39;mac119&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tdi&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s1">&#39;mac116&#39;</span><span class="p">,</span><span class="s1">&#39;mac119&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This last example illustrates a special ability of a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to use the methods of the
@@ -194,19 +194,19 @@ on the DataFile returns the DataFile back, then this is sotred in the DataFolder
 to the user is the revised DataFolder. If, on the otherhand, the method when executed on the DataFile returns some other
 return value, then the user is returned a list of all of those return values. CFor example:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">newT</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1.4</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">folder</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;*.txt&quot;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span>
-<span class="n">ret</span><span class="o">=</span><span class="n">folder</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newT</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="c"># ret will be a copy of folder as Data,interpolate returns a copy of itself.</span>
+<span class="n">folder</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="n">Stoner</span><span class="o">.</span><span class="n">Data</span><span class="p">)</span>
+<span class="n">ret</span><span class="o">=</span><span class="n">folder</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newT</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="c1"># ret will be a copy of folder as Data,interpolate returns a copy of itself.</span>
 
-<span class="n">ret</span><span class="o">=</span><span class="n">folder</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s">&quot;Resistance&quot;</span><span class="p">)</span>
-<span class="c"># ret is a list of tuples as the return value of Data.span() is a tuple</span>
+<span class="n">ret</span><span class="o">=</span><span class="n">folder</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s2">&quot;Resistance&quot;</span><span class="p">)</span>
+<span class="c1"># ret is a list of tuples as the return value of Data.span() is a tuple</span>
 </pre></div>
 </div>
 <p><a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is also indexable and has a length:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">()</span>
 <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">f</span><span class="p">[</span><span class="s">&#39;filename&#39;</span><span class="p">]</span>
+<span class="n">f</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>For the second case of indexing, the code will search the list of file names for a matching file
@@ -226,8 +226,8 @@ of the filename whilst <a class="reference internal" href="../classes/Stoner.Fol
 <p>The order of the files in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is arbitrary. If it is important to process
 them in a given order then the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.sort()</span></code></a> method can be used:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-<span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;tmperature&#39;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;tmperature&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">f</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -238,11 +238,11 @@ variant, each file is loaded in turn and the supplied function is called and eva
 sort key.</p>
 <p>The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.filter.html#Stoner.Folders.DataFolder.filter" title="Stoner.Folders.DataFolder.filter"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.filter()</span></code></a> method can be used to prune the list of files to be used by the
 <code class="xref py py-class docutils literal"><span class="pre">DataFoler</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s">&#39;[ab]*.dat&#39;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s1">&#39;[ab]*.dat&#39;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;i10-\d*\.dat&#39;</span><span class="p">))</span>
-<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">150</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">150</span><span class="p">,</span><span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;i10-\d*\.dat&#39;</span><span class="p">))</span>
+<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">150</span><span class="p">,</span><span class="n">invert</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The first form performs the filter on the filenames (using the standard python fnmatch module).
@@ -258,16 +258,16 @@ according to some logical test &#8211;  for example gathering files with magneti
 direction together and those with magnetic field in a negative direction together. The
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> method provides a powerful way to do this. Suppose we have a series of
 data curves taken at a variety of temperatures and with three different magnetic fields:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s">&#39;temperature&#39;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="s">&quot;positive&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;B-Field&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s">&quot;negative&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s">&#39;temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="s">&quot;positive&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s">&#39;B-Field&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s">&quot;negative&quot;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="s2">&quot;positive&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;B-Field&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;negative&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="s2">&quot;positive&quot;</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;B-Field&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;negative&quot;</span><span class="p">])</span>
 <span class="n">f</span><span class="o">.</span><span class="n">groups</span>
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> method splits the files in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> into several
 groups each of which share a common value of the arguement supplied to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a>
 method. A group is itself another instance of the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> class. Each
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> object maintains a dictionary called <code class="xref py py-attr docutils literal"><span class="pre">DataFolder.groups</span></code> whose keys
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> object maintains a dictionary called <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder.groups" title="Stoner.Folders.DataFolder.groups"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.groups</span></code></a> whose keys
 are the distinct values of the argument of the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.group()</span></code></a> methods and whose values are
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> objects. So, if our <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> <em>f</em> contained files measured at
 4.2, 77 and 300K and at fields of 1T and -1T then the first variant would create 3 groups: 4.2, 77 and
@@ -276,16 +276,16 @@ temperatures. The second variant would produce 2 groups &#8211; &#8216;&#8217;po
 magnetic field of 1T and &#8216;&#8217;negative&#8217;&#8217; containing the files measured at -1T. The third variant then goes
 one stage further and would produce 3 groups, each of which in turn had 2 groups. The groups are accessed
 via the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-attr docutils literal"><span class="pre">DataFolder.group</span></code></a> attribute:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s">&quot;positive&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;positive&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span>
 </pre></div>
 </div>
 <p>would return a list of the files measured at 4.2K and 1T.</p>
 <p>If you try indexing a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> with a string and there is no file with as its filename
 and there is a group with a key of the same string then <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> will return the
 corresponding group. This allows a more compact navigation through an extended group structure.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s">&#39;project&#39;</span><span class="p">,</span><span class="s">&#39;sample&#39;</span><span class="p">,</span><span class="s">&#39;device&#39;</span><span class="p">])</span> <span class="c"># group will take a list</span>
-<span class="n">f</span><span class="p">[</span><span class="s">&#39;ASF&#39;</span><span class="p">][</span><span class="s">&#39;ASF038&#39;</span><span class="p">][</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="c"># Succsibe indexing</span>
-<span class="n">f</span><span class="p">[</span><span class="s">&#39;ASF&#39;</span><span class="p">,</span><span class="s">&#39;ASF038&#39;</span><span class="p">,</span><span class="s">&#39;A&#39;</span><span class="p">]</span> <span class="c"># index with a tuple - will go and get a file if requested</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">([</span><span class="s1">&#39;project&#39;</span><span class="p">,</span><span class="s1">&#39;sample&#39;</span><span class="p">,</span><span class="s1">&#39;device&#39;</span><span class="p">])</span> <span class="c1"># group will take a list</span>
+<span class="n">f</span><span class="p">[</span><span class="s1">&#39;ASF&#39;</span><span class="p">][</span><span class="s1">&#39;ASF038&#39;</span><span class="p">][</span><span class="s1">&#39;A&#39;</span><span class="p">]</span> <span class="c1"># Succsibe indexing</span>
+<span class="n">f</span><span class="p">[</span><span class="s1">&#39;ASF&#39;</span><span class="p">,</span><span class="s1">&#39;ASF038&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">]</span> <span class="c1"># index with a tuple - will go and get a file if requested</span>
 </pre></div>
 </div>
 <p>If you just ant to create a new empty group in your <code class="xref py py-class docutils literal"><span class="pre">DataFoler</span></code>, you can use
@@ -300,8 +300,8 @@ the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.add
 data reduction tasks. The simplest form of data reduction would be to gather one or more
 columns from each of a folder of files and return it as a single large table or matrix. This task is
 easily accomplished by the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code></a> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s">&quot;X Data&quot;</span><span class="p">,</span><span class="s">&quot;Y Data&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s">&quot;X Data&quot;</span><span class="p">,[</span><span class="s">&quot;Ydata 1&quot;</span><span class="p">,</span><span class="s">&quot;Y Data 2&quot;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s2">&quot;X Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y Data&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="s2">&quot;X Data&quot;</span><span class="p">,[</span><span class="s2">&quot;Ydata 1&quot;</span><span class="p">,</span><span class="s2">&quot;Y Data 2&quot;</span><span class="p">])</span>
 <span class="n">f</span><span class="o">.</span><span class="n">gather</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -312,7 +312,7 @@ x and y columns are determined by the values from the <a class="reference intern
 <p>A similar operation to <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.gather()</span></code></a> is to build a new set of data where each row corresponds
 to a set of metadata values from each file in the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>. This can be achieved with the
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code></a> method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s">&quot;Temperature&quot;</span><span class="p">,</span><span class="s">&quot;Angle&quot;</span><span class="p">,</span><span class="s">&quot;Other_metadata&quot;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">extract</span><span class="p">([</span><span class="s2">&quot;Temperature&quot;</span><span class="p">,</span><span class="s2">&quot;Angle&quot;</span><span class="p">,</span><span class="s2">&quot;Other_metadata&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The argument to the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.extract()</span></code></a> method is a list of metadata values to be extracted from each file. The
@@ -323,7 +323,7 @@ table are the names of the metadata that were used in the extraction.</p>
 and run some function either with each file in the group or on the whole group. This is further
 complicated if you want to iterate over all the sub-groups within a group. The
 <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.walk_groups()</span></code></a> method is useful here.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;arg1&quot;</span><span class="p">:</span><span class="s">&quot;value1&quot;</span><span class="p">})</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="n">func</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;arg1&quot;</span><span class="p">:</span><span class="s2">&quot;value1&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>This will iterate over the complete hierarchy of groups and sub groups in the folder and
@@ -347,7 +347,7 @@ data files representing a multi-dimensional data set into a single file with min
 For example, if above we had a sequence of 10 data files for each field and temperature and we wanted
 to process the positive and negative field curves together for a given temperature in turn.
 In this case the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups" title="Stoner.Folders.DataFolder.zip_groups"><code class="xref py py-meth docutils literal"><span class="pre">DataFolder.zip_groups()</span></code></a> method can be useful.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">zip_groups</span><span class="p">([</span><span class="s">&#39;positive&#39;</span><span class="p">,</span><span class="s">&#39;negative&#39;</span><span class="p">])</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">f</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="mf">4.2</span><span class="p">]</span><span class="o">.</span><span class="n">zip_groups</span><span class="p">([</span><span class="s1">&#39;positive&#39;</span><span class="p">,</span><span class="s1">&#39;negative&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>This would return a list of tuples of <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> objects where the tuples
@@ -434,8 +434,8 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

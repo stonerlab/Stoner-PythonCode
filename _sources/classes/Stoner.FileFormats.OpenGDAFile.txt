@@ -55,6 +55,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.dict_records
       ~Stoner.FileFormats.OpenGDAFile.dtype
       ~Stoner.FileFormats.OpenGDAFile.mask
+      ~Stoner.FileFormats.OpenGDAFile.mime_type
       ~Stoner.FileFormats.OpenGDAFile.patterns
       ~Stoner.FileFormats.OpenGDAFile.priority
       ~Stoner.FileFormats.OpenGDAFile.records

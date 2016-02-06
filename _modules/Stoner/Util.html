@@ -48,7 +48,7 @@
           <div class="body" role="main">
             
   <h1>Source code for Stoner.Util</h1><div class="highlight"><pre>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Stoner.Utils - a module of some slightly experimental routines that use the Stoner classes</span>
 
@@ -82,11 +82,11 @@
     <span class="n">f</span><span class="o">=</span><span class="n">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s">&quot;rising&quot;</span><span class="p">,</span><span class="s">&quot;falling&quot;</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s2">&quot;rising&quot;</span><span class="p">,</span><span class="s2">&quot;falling&quot;</span><span class="p">]):</span>
         <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="n">grp</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="n">grp</span><span class="p">][</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">d</span>
-        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s">&#39;xcol&#39;</span><span class="p">))</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s1">&#39;xcol&#39;</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">ret</span>
 
 
@@ -95,7 +95,7 @@
 <span class="sd">    This &#39;kitchen-sink&#39; class is intended as a convenience for writing scripts that carry out both plotting and</span>
 <span class="sd">    analysis on data files.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Data.format"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.format.html#Stoner.Util.Data.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;float&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Data.format"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.format.html#Stoner.Util.Data.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the contents of key pretty formatted using :py:func:`format_error`.</span>
 
 <span class="sd">        Args:</span>
@@ -119,23 +119,23 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;{} should be a floating point value of the metadata.&quot;</span><span class="p">,</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;{} should be a floating point value of the metadata.&quot;</span><span class="p">,</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">error</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s">&quot; err&quot;</span><span class="p">])</span>
+            <span class="n">error</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; err&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">error</span><span class="o">=</span><span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span>
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;{} = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s">&quot; label&quot;</span><span class="p">])</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;{} = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">])</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;{} =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;{} =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s">&quot; units&quot;</span><span class="p">]</span>
+                <span class="n">units</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; units&quot;</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">units</span><span class="o">=</span><span class="s">&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">,</span><span class="n">latex</span><span class="p">,</span><span class="n">mode</span><span class="p">,</span><span class="n">units</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
-</div>
+                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">,</span><span class="n">latex</span><span class="p">,</span><span class="n">mode</span><span class="p">,</span><span class="n">units</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Data.annotate_fit"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.annotate_fit.html#Stoner.Util.Data.annotate_fit">[docs]</a>    <span class="k">def</span> <span class="nf">annotate_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Annotate a plot with some information about a fit.</span>
 
@@ -165,14 +165,14 @@
             <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">__name__</span>
             <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;model should be either an lmfit.Model or a callable function, not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)))</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;model should be either an lmfit.Model or a callable function, not a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)))</span>
 
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="n">prefix</span><span class="o">+</span><span class="s">&quot;:&quot;</span>
-        <span class="k">elif</span> <span class="s">&quot;lmfit.prefix&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s">&quot;lmfit.prefix&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">prefix</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
+        <span class="k">elif</span> <span class="s2">&quot;lmfit.prefix&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;lmfit.prefix&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">prefix</span><span class="o">+</span><span class="s">&quot;:&quot;</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">prefix</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
 
         <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">xl</span><span class="p">,</span><span class="n">xr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xlim</span><span class="p">()</span>
@@ -182,13 +182,13 @@
             <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">yt</span><span class="o">-</span><span class="n">yb</span><span class="p">)</span><span class="o">+</span><span class="n">yb</span>
 
 
-        <span class="n">text</span><span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
+        <span class="n">text</span><span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">text_only</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-            <span class="k">if</span> <span class="s">&quot;zlim&quot;</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">():</span>
-                <span class="c">#3D plot then</span>
+            <span class="k">if</span> <span class="s2">&quot;zlim&quot;</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">():</span>
+                <span class="c1">#3D plot then</span>
                 <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">zb</span><span class="p">,</span><span class="n">zt</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">()[</span><span class="s">&quot;zlim&quot;</span><span class="p">]</span>
+                    <span class="n">zb</span><span class="p">,</span><span class="n">zt</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">()[</span><span class="s2">&quot;zlim&quot;</span><span class="p">]</span>
                     <span class="n">z</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">zt</span><span class="o">-</span><span class="n">zb</span><span class="p">)</span><span class="o">+</span><span class="n">zb</span>
                 <span class="n">ax</span><span class="o">.</span><span class="n">text3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -196,12 +196,12 @@
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="n">text</span>
-        <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="n">ret</span></div></div>
 
 
 
 
-</div></div>
+
 <div class="viewcode-block" id="split_up_down"><a class="viewcode-back" href="../../functions/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down">[docs]</a><span class="k">def</span> <span class="nf">split_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Splits the DataFile data into several files where the column \b col is either rising or falling</span>
 
@@ -215,31 +215,31 @@
 <span class="sd">        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">_AF_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
-    <span class="k">if</span> <span class="n">width</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c"># Ensure the window for Satvisky Golay filter is odd</span>
+    <span class="k">if</span> <span class="n">width</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure the window for Satvisky Golay filter is odd</span>
         <span class="n">width</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
     <span class="n">troughs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c">#Ok more than up down here</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Ok more than up down here</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">troughs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c">#Rise then fall</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Rise then fall</span>
         <span class="n">order</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c"># Fall then rise</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Fall then rise</span>
         <span class="n">order</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c">#No peaks or troughs so just return a single rising</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1">#No peaks or troughs so just return a single rising</span>
         <span class="k">return</span> <span class="p">([</span><span class="n">data</span><span class="p">],</span> <span class="p">[])</span>
     <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">_SF_</span><span class="p">):</span>  <span class="c"># Create a new DataFolder object</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">_SF_</span><span class="p">):</span>  <span class="c1"># Create a new DataFolder object</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">folder</span>
-    <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s">&quot;rising&quot;</span><span class="p">)</span>
-    <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s">&quot;falling&quot;</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;rising&quot;</span><span class="p">)</span>
+    <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;falling&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">splits</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
         <span class="n">working1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">working2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">clone</span>
@@ -247,12 +247,12 @@
         <span class="n">working2</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">splits</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">splits</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],:]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">order</span><span class="p">:</span>
             <span class="p">(</span><span class="n">working1</span><span class="p">,</span> <span class="n">working2</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">working2</span><span class="p">,</span> <span class="n">working1</span><span class="p">)</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s">&quot;rising&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working1</span><span class="p">)</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s">&quot;falling&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">output</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;rising&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working1</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;falling&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span></div>
 
-</div>
-<div class="viewcode-block" id="format_error"><a class="viewcode-back" href="../../functions/Stoner.Util.format_error.html#Stoner.Util.format_error">[docs]</a><span class="k">def</span> <span class="nf">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&quot;float&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+
+<div class="viewcode-block" id="format_error"><a class="viewcode-back" href="../../functions/Stoner.Util.format_error.html#Stoner.Util.format_error">[docs]</a><span class="k">def</span> <span class="nf">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;float&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This handles the printing out of the answer with the uncertaintly to 1sf and the</span>
 <span class="sd">    value to no more sf&#39;s than the uncertainty.</span>
 
@@ -271,75 +271,75 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c"># special case for zero uncertainty</span>
+    <span class="k">if</span> <span class="n">error</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>  <span class="c1"># special case for zero uncertainty</span>
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="c">#Sort out special fomatting for different modes</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&quot;float&quot;</span><span class="p">:</span>  <span class="c"># Standard</span>
-        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&quot;eng&quot;</span><span class="p">:</span>  <span class="c">#Use SI prefixes</span>
+    <span class="c1">#Sort out special fomatting for different modes</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;float&quot;</span><span class="p">:</span>  <span class="c1"># Standard</span>
+        <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;eng&quot;</span><span class="p">:</span>  <span class="c1">#Use SI prefixes</span>
         <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">3.0</span>
         <span class="n">prefixes</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="mi">3</span><span class="p">:</span> <span class="s">&quot;k&quot;</span><span class="p">,</span>
-            <span class="mi">6</span><span class="p">:</span> <span class="s">&quot;M&quot;</span><span class="p">,</span>
-            <span class="mi">9</span><span class="p">:</span> <span class="s">&quot;G&quot;</span><span class="p">,</span>
-            <span class="mi">12</span><span class="p">:</span> <span class="s">&quot;T&quot;</span><span class="p">,</span>
-            <span class="mi">15</span><span class="p">:</span> <span class="s">&quot;P&quot;</span><span class="p">,</span>
-            <span class="mi">18</span><span class="p">:</span> <span class="s">&quot;E&quot;</span><span class="p">,</span>
-            <span class="mi">21</span><span class="p">:</span> <span class="s">&quot;Z&quot;</span><span class="p">,</span>
-            <span class="mi">24</span><span class="p">:</span> <span class="s">&quot;Y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s">&quot;m&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">mu&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s">&quot;n&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s">&quot;p&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s">&quot;f&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s">&quot;a&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s">&quot;y&quot;</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;M&quot;</span><span class="p">,</span>
+            <span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;G&quot;</span><span class="p">,</span>
+            <span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span>
+            <span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;P&quot;</span><span class="p">,</span>
+            <span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span>
+            <span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span>
+            <span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">:</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">mu&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">:</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">12</span><span class="p">:</span> <span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span><span class="p">:</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">21</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">24</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="n">v_mag</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">latex</span><span class="p">:</span>
-                <span class="n">suffix_val</span> <span class="o">=</span> <span class="s">r&quot;\mathrm{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
+                <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">r&quot;\mathrm{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">suffix_val</span> <span class="o">=</span> <span class="n">prefixes</span><span class="p">[</span><span class="n">v_mag</span><span class="p">]</span>
             <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
             <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c"># Implies 10^-3&lt;x&lt;10^3</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&quot;sci&quot;</span><span class="p">:</span>  <span class="c"># Scientific mode - raise to common power of 10</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Implies 10^-3&lt;x&lt;10^3</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sci&quot;</span><span class="p">:</span>  <span class="c1"># Scientific mode - raise to common power of 10</span>
         <span class="n">v_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
         <span class="k">if</span> <span class="n">latex</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s">r&quot;\times 10^{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">r&quot;\times 10^{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s">&quot;E{} &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
+            <span class="n">suffix_val</span> <span class="o">=</span> <span class="s2">&quot;E{} &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v_mag</span><span class="p">))</span>
         <span class="n">value</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
         <span class="n">error</span> <span class="o">/=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">v_mag</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c"># Bad mode</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Unrecognised mode: {} in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Bad mode</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised mode: {} in format_error&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
 
-<span class="c"># Now do the rounding of the value based on error to 1 s.f.</span>
+<span class="c1"># Now do the rounding of the value based on error to 1 s.f.</span>
     <span class="n">e2</span> <span class="o">=</span> <span class="n">error</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>  <span class="c">#work out the scale of the error</span>
-    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">error</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c"># round the error, but this could round to 0.x0</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>  <span class="c"># so go round the loop again</span>
-    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">e2</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c"># and get a new error magnitude</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">error</span><span class="p">)))</span>  <span class="c1">#work out the scale of the error</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">error</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># round the error, but this could round to 0.x0</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>  <span class="c1"># so go round the loop again</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">e2</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>  <span class="c1"># and get a new error magnitude</span>
     <span class="n">value</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">u_mag</span>
-    <span class="n">u_mag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u_mag</span><span class="p">)</span>  <span class="c"># Force integer results to have no dp</span>
+    <span class="n">u_mag</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">u_mag</span><span class="p">)</span>  <span class="c1"># Force integer results to have no dp</span>
 
-    <span class="c">#Protect {} in units string</span>
-    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;{&quot;</span><span class="p">,</span> <span class="s">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;}&quot;</span><span class="p">,</span> <span class="s">&quot;}}&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">latex</span><span class="p">:</span>  <span class="c"># Switch to latex math mode symbols</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="s">r&quot;${}{{:.{}f}}\pm &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s">r&quot;\mathrm{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
+    <span class="c1">#Protect {} in units string</span>
+    <span class="n">units</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span> <span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">latex</span><span class="p">:</span>  <span class="c1"># Switch to latex math mode symbols</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="s2">r&quot;${}{{:.{}f}}\pm &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">r&quot;\mathrm{{{{{}}}}}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
-        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s">&quot;$&quot;</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c"># Plain text</span>
-        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="s">r&quot;{}{{:.{}f}}+/-&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
+            <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">suffix_fmt</span> <span class="o">+=</span> <span class="s2">&quot;$&quot;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Plain text</span>
+        <span class="n">val_fmt_str</span> <span class="o">=</span> <span class="s2">r&quot;{}{{:.{}f}}+/-&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span>
         <span class="n">suffix_fmt</span> <span class="o">=</span> <span class="n">units</span>
-    <span class="k">if</span> <span class="n">u_mag</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c"># the error is less than 1, so con strain decimal places</span>
-        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="s">r&quot;{:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span> <span class="o">+</span> <span class="s">&quot;f}&quot;</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c"># We&#39;ll be converting it to an integer anyway</span>
-        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="s">r&quot;{}&quot;</span>
+    <span class="k">if</span> <span class="n">u_mag</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># the error is less than 1, so con strain decimal places</span>
+        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="s2">r&quot;{:.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">u_mag</span><span class="p">)))</span> <span class="o">+</span> <span class="s2">&quot;f}&quot;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># We&#39;ll be converting it to an integer anyway</span>
+        <span class="n">err_fmt_str</span> <span class="o">=</span> <span class="s2">r&quot;{}&quot;</span>
     <span class="n">fmt_str</span> <span class="o">=</span> <span class="n">val_fmt_str</span> <span class="o">+</span> <span class="n">err_fmt_str</span> <span class="o">+</span> <span class="n">suffix_val</span> <span class="o">+</span> <span class="n">suffix_fmt</span>
     <span class="k">if</span> <span class="n">error</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
         <span class="n">error</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
-</div>
+    <span class="k">return</span> <span class="n">fmt_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></div>
+
 <span class="n">Hickeyify</span> <span class="o">=</span> <span class="n">format_error</span>
 
 
@@ -356,13 +356,13 @@
 
     <span class="n">last_digit</span> <span class="o">=</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">10</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">%</span> <span class="mi">100</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">]:</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="s">&quot;th&quot;</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;th&quot;</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;st&quot;</span><span class="p">,</span> <span class="s">&quot;nd&quot;</span><span class="p">,</span> <span class="s">&quot;rd&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">,</span> <span class="s">&quot;th&quot;</span><span class="p">][</span><span class="n">last_digit</span><span class="p">]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;st&quot;</span><span class="p">,</span> <span class="s2">&quot;nd&quot;</span><span class="p">,</span> <span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">,</span> <span class="s2">&quot;th&quot;</span><span class="p">][</span><span class="n">last_digit</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="s">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;{}{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span></div>
 
-</div>
+
 <div class="viewcode-block" id="hysteresis_correct"><a class="viewcode-back" href="../../functions/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct">[docs]</a><span class="k">def</span> <span class="nf">hysteresis_correct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Peform corrections to a hysteresis loop.</span>
 
@@ -392,23 +392,23 @@
         <span class="n">cls</span> <span class="o">=</span> <span class="n">Data</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c"># Allow us to override the setas variable</span>
-        <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;setas&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># Allow us to override the setas variable</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
 
-    <span class="c">#Get xcol and ycols from kargs if specified</span>
-    <span class="n">xc</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;xcol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]))</span>
-    <span class="n">yc</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;ycol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]))</span>
+    <span class="c1">#Get xcol and ycols from kargs if specified</span>
+    <span class="n">xc</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
+    <span class="n">yc</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]))</span>
     <span class="n">setas</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span>
-    <span class="n">setas</span><span class="p">[</span><span class="n">xc</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;x&quot;</span>
-    <span class="n">setas</span><span class="p">[</span><span class="n">yc</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;y&quot;</span>
+    <span class="n">setas</span><span class="p">[</span><span class="n">xc</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;x&quot;</span>
+    <span class="n">setas</span><span class="p">[</span><span class="n">yc</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
     <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
 
-    <span class="c">#Split into two sets of data:</span>
+    <span class="c1">#Split into two sets of data:</span>
 
-    <span class="c">#Get other keyword arguments</span>
-    <span class="n">correct_background</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;correct_background&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">correct_H</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;correct_H&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
-    <span class="n">saturation_fraction</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;saturation_fraction&quot;</span><span class="p">,</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="c1">#Get other keyword arguments</span>
+    <span class="n">correct_background</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_background&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">correct_H</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;correct_H&quot;</span><span class="p">,</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">saturation_fraction</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;saturation_fraction&quot;</span><span class="p">,</span><span class="mf">0.2</span><span class="p">)</span>
 
     <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
         <span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="o">=</span><span class="n">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -416,32 +416,31 @@
         <span class="n">mix</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">saturation_fraction</span><span class="p">)</span>
 
 
-        <span class="c">#Find upper branch saturated moment slope and offset</span>
+        <span class="c1">#Find upper branch saturated moment slope and offset</span>
         <span class="n">p1</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">up</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span> <span class="n">absolute_sigma</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">mix</span><span class="p">)</span>
         <span class="n">perr1</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">)</span>
 
-        <span class="c">#Find lower branch saturated moment and offset</span>
+        <span class="c1">#Find lower branch saturated moment and offset</span>
         <span class="n">p2</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">down</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span> <span class="n">absolute_sigma</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">mx</span><span class="p">)</span>
         <span class="n">perr2</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">pcov</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="k">print</span> <span class="s">&quot;Inverting loop&quot;</span>
             <span class="n">data</span><span class="o">.</span><span class="n">y</span><span class="o">=-</span><span class="n">data</span><span class="o">.</span><span class="n">y</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">break</span>
 
 
-    <span class="c">#Find mean slope and offset</span>
+    <span class="c1">#Find mean slope and offset</span>
     <span class="n">pm</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span> <span class="o">+</span> <span class="n">p2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">perr</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">perr1</span> <span class="o">+</span> <span class="n">perr2</span><span class="p">)</span>
     <span class="n">Ms</span><span class="o">=</span><span class="n">array</span><span class="p">([</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
     <span class="n">Ms</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">Ms</span><span class="o">-</span><span class="n">mean</span><span class="p">(</span><span class="n">Ms</span><span class="p">))</span>
 
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ms</span> <span class="c">#mean(Ms)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Ms Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Offset Moment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Offset Moment Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Background susceptibility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Background Susceptibility Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Ms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ms</span> <span class="c1">#mean(Ms)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Ms Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Offset Moment Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background susceptibility&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pm</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Background Susceptibility Error&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span>
 
     <span class="n">p1</span><span class="o">=</span><span class="n">p1</span><span class="o">-</span><span class="n">pm</span>
     <span class="n">p2</span><span class="o">=</span><span class="n">p2</span><span class="o">-</span><span class="n">pm</span>
@@ -458,12 +457,12 @@
     <span class="n">Mr</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">]</span>
     <span class="n">Mr_err</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,(</span><span class="n">d</span><span class="p">,</span><span class="n">sat</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="p">],</span><span class="n">m_sat</span><span class="p">)):</span>
-        <span class="n">hc</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># Get the Hc value</span>
+        <span class="n">hc</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># Get the Hc value</span>
         <span class="n">Hc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">mean</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">hc</span><span class="o">.</span><span class="n">size</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">Hc_err</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">sem</span><span class="p">(</span><span class="n">hc</span><span class="p">)</span>
-        <span class="n">hs</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">sat</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># Get the Hc value</span>
-        <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span> <span class="c"># Get the H_sat value</span>
+        <span class="n">hs</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">sat</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># Get the Hc value</span>
+        <span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">mean</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span> <span class="c1"># Get the H_sat value</span>
         <span class="k">if</span> <span class="n">hs</span><span class="o">.</span><span class="n">size</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">Hsat_err</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">sem</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
         <span class="n">mr</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="n">xc</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="n">yc</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -476,21 +475,21 @@
         <span class="n">Hc_mean</span><span class="o">=</span><span class="n">mean</span><span class="p">(</span><span class="n">Hc</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span><span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="p">]:</span>
             <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">Hc_mean</span>
-        <span class="n">data</span><span class="p">[</span><span class="s">&quot;Exchange Bias offset&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">Hc_mean</span>
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Exchange Bias offset&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">Hc_mean</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">Hc_mean</span><span class="o">=</span><span class="mf">0.0</span>
 
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Hc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Hsat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hsat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Remenance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mr</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Hsat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Hsat</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">,</span> <span class="n">Hsat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hc_mean</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Remenance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mr</span>
 
 
     <span class="n">bh</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">y</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">argmax</span><span class="p">(</span><span class="n">bh</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;BH_Max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bh</span><span class="p">)</span>
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;BH_Max_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;BH_Max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">bh</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;BH_Max_H&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
-    <span class="n">data</span><span class="p">[</span><span class="s">&quot;Area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">integrate</span><span class="p">()</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Area&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">integrate</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 </pre></div>
 
@@ -534,8 +533,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on Feb 06, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
 </html>

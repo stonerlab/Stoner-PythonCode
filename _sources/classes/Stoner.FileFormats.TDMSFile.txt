@@ -55,6 +55,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.dict_records
       ~Stoner.FileFormats.TDMSFile.dtype
       ~Stoner.FileFormats.TDMSFile.mask
+      ~Stoner.FileFormats.TDMSFile.mime_type
       ~Stoner.FileFormats.TDMSFile.patterns
       ~Stoner.FileFormats.TDMSFile.priority
       ~Stoner.FileFormats.TDMSFile.records

@@ -55,6 +55,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.dict_records
       ~Stoner.FileFormats.OVFFile.dtype
       ~Stoner.FileFormats.OVFFile.mask
+      ~Stoner.FileFormats.OVFFile.mime_type
       ~Stoner.FileFormats.OVFFile.patterns
       ~Stoner.FileFormats.OVFFile.priority
       ~Stoner.FileFormats.OVFFile.records
