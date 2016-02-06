@@ -18,23 +18,23 @@ Getting this Code
 =================
 
 The *Stoner* package requires numpy \>=1.8, scipy \>=0.14, matplotlib
-\>=1.4, h5py, numba lmfit and blist. Experimental code also makes use of
-the Enthought Tools Suite packages.
+\>=1.4, h5py, numba lmfit, filemagic, and blist. Experimental code also
+makes use of the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions)
 include nearly all of the dependencies, aprt from lmfit. However, this
 can by installed with the usual tools such as *easy\_install* or *pip*.
 
-``` {.sourceCode .sh}
+~~~~ {.sourceCode .sh}
 easy_install lmfit
-```
+~~~~
 
 The easiest way to install the Stoner package is via seuptools'
 easy\_install
 
-``` {.sourceCode .sh}
+~~~~ {.sourceCode .sh}
 easy_install Stoner
-```
+~~~~
 
 This will install the Stoner package and any missing dependencies into
 your current Python environment. Since the package is under fairly
@@ -136,6 +136,10 @@ data by column name and designation. The metadata storage has also been
 switched to using blist.sortteddict for a fast, alphabetically ordered
 dictionary storage. Other underlying changes are a switch to using
 properties rather than straight attribute access.
+
+0.6 now also makes use of filemagic to work out the mime type of files
+to be loaded to try and improve the resilience of the automatic file
+format detection.
 
 0.6 also adds some extra methods to AnalyseFile for extrapolation.
 
