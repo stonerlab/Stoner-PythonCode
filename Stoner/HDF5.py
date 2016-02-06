@@ -40,6 +40,7 @@ class HDF5File(DataFile):
     compression = 'gzip'
     compression_opts = 6
     patterns = ["*.hdf", "*.hf5"]
+    mime_type=["application/x-hdf"]
 
     #    def __init__(self,*args,**kargs):
     #       """Constructor to catch initialising with an h5py.File or h5py.Group
@@ -163,6 +164,7 @@ class HGXFile(DataFile):
 
     priority=16
     pattern=["*.hgx"]
+    mime_type=["application/x-hdf"]
 
     def _load(self, filename=None, *args, **kargs):
         """GenX HDF file loader routine.
@@ -179,11 +181,16 @@ class HGXFile(DataFile):
         else:
             self.filename = filename
         try:
-            with h5py.File(filename) as f:
-                f1=f["current"]
-                f2=f1["config"]
-        except:
+            f=h5py.File(filename)
+            if "current" in f and "config" in f["current"]:
+                pass
+            else:
+                f.close()
+                raise StonerLoadError("Looks like an unexpected HDF layout!.")
+        except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
+        else:
+            f.close()            
 
         with h5py.File(self.filename, "r") as f:
             self.scan_group(f["current"],"")
@@ -197,7 +204,7 @@ class HGXFile(DataFile):
 
         if not isinstance(grp,h5py.Group):
             return None
-        for x in grp:
+        for i,x in enumerate(grp):
             if pth=="":
                 new_pth=x
             else:
@@ -208,6 +215,7 @@ class HGXFile(DataFile):
                 self.scan_group(grp[x],new_pth)
             elif isinstance(grp[x],h5py.Dataset):
                 self[new_pth]=grp[x].value
+        return None
 
     def main_data(self,data_grp):
         """Work through the main data group and build something that looks like a numpy 2D array."""
