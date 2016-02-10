@@ -274,7 +274,7 @@ class QDSquidVSMFile(DataFile):
             if python_v3:
                 column_headers = f.readline().strip().split(',')
             else:
-                column_headers = f.next().strip().split(',')                
+                column_headers = f.next().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
         self.setas(x="Magnetic Field", y="Moment")
@@ -345,6 +345,8 @@ class SPCFile(DataFile):
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.spc"] # Recognised filename patterns
+
+    mime_type=["application/octet-stream"]
 
     def _load(self, filename=None, *args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)

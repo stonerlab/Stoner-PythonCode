@@ -23,7 +23,10 @@ import inspect as _inspect_
 import itertools
 from collections import Iterable, OrderedDict
 from blist import sorteddict
-
+try:
+    from magic import Magic as filemagic,MAGIC_MIME_TYPE
+except ImportError:
+    filemagic=None
 
 def copy_into(source,dest):
     """Copies the data associated with source to dest.
@@ -1335,6 +1338,9 @@ class DataFile(object):
     # the file load/save dialog boxes.
     patterns=["*.txt","*.tdi"] # Recognised filename patterns
 
+    #mimetypes we match
+    mime_type=["text/plain"]
+    
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
 
@@ -2967,14 +2973,23 @@ class DataFile(object):
 
         if not path.exists(self.filename):
             raise IOError("Cannot find {} to load".format(self.filename))
+        if filemagic is not None:
+            with filemagic(flags=MAGIC_MIME_TYPE) as m:
+                mimetype=m.id_filename(filename)
+            if self.debug:
+                print("Mimetype:{}".format(mimetype))
         cls = self.__class__
         failed = True
         if auto_load:  # We're going to try every subclass we canA
             for cls in self.subclasses.values():
-                if self.debug:
-                    print(cls.__name__)
                 try:
+                    if filemagic is not None and mimetype not in cls.mime_type: #short circuit for non-=matching mime-types
+                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))                        
+                        continue
                     test = cls()
+                    if self.debug and filemagic is not None:
+                        print("Trying: {} =mimetype {}".format(cls.__name__,test.mime_type))
+
                     kargs.pop("auto_load",None)
                     test._load(self.filename,auto_load=False,*args,**kargs)
                     failed=False
