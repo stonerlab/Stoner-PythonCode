@@ -10,6 +10,6 @@ from .Core import DataFile
 from .Util import Data
 from Stoner.Folders import DataFolder
 
-__version_info__ = ('0', '6', '0b5')
+__version_info__ = ('0', '7', '0dev')
 __version__ = '.'.join(__version_info__)
 
