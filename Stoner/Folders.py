@@ -17,8 +17,7 @@ import string
 from collections import Iterable
 from inspect import ismethod
 import matplotlib.pyplot as plt
-
-from .Util import Data
+from .Core import DataFile
 
 class DataFolder(object):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
@@ -80,6 +79,7 @@ class DataFolder(object):
         self.groups={}
         self._file_attrs=dict()
         if not "type" in kargs:
+            from .Util import Data
             self.type=Data
         else:
             self.type=kargs["type"]
