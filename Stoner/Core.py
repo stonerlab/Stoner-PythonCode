@@ -2005,7 +2005,7 @@ class DataFile(object):
                     descs[p] = self.subclasses[c].__name__ + " file"
 
         patterns = [(descs[p], p) for p in sorted(descs.keys())]
-        patterns.append(("All File", "*.*"))
+        patterns.insert(0,("All File", "*.*"))
 
         if self.filename is not None:
             filename = os.path.basename(self.filename)
