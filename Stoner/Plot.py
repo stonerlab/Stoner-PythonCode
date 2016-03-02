@@ -223,6 +223,27 @@ class PlotFile(DataFile):
 
         return surf
 
+    def __mpl3DQuiver(self, X, Y, Z, U, V, W, **kargs):
+        """Helper function to plot vector fields using mpltoolkit.quiver.
+
+        Args:
+            X (array): X data co-ordinates
+            Y (array): Y data co-ordinates
+            Z (array): Z data co-ordinates
+            U (array): U data vector field component
+            V (array): V data vector field component
+            W (array): W data vector field component
+
+        Return:
+            matpltolib.pyplot.figure with a quiver plot."""
+        ax=plt.gca(projection="3d")
+        vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
+
+        return vector_field
+
+
+
+
     def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
         """Helper function to plot vector fields using mayavi.mlab.
 
@@ -1140,26 +1161,52 @@ class PlotFile(DataFile):
         """
         try:
             from mayavi import mlab, core
+            mayavi=True
         except ImportError:
-            return None
+            mayavi=False
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, multi_y=False, **kargs)
 
         if "template" in kargs: #Catch template in kargs
             self.template=kargs.pop("template")
 
-        defaults = {
-            "figure": self.__figure,
-            "plotter": self._VectorFieldPlot,
-            "show_plot": True,
-            "mode": "cone",
-            "scale_factor": 1.0,
-            "colors": True
-        }
-        otherkargs = ["color", "colormap", "extent", "figure", "line_width", "mask_points", "mode", "name", "opacity",
-                      "reset_zoom", "resolution", "scalars", "scale_factor", "scale_mode", "transparent", "vmax",
-                      "vmin"]
+        if mayavi:
+            defaults = {
+                "figure": self.__figure,
+                "plotter": self._VectorFieldPlot,
+                "show_plot": True,
+                "mode": "cone",
+                "scale_factor": 1.0,
+                "colors": True
+            }
+            otherkargs = ["color", "colormap", "extent", "figure", "line_width", "mask_points", "mode", "name", "opacity",
+                          "reset_zoom", "resolution", "scalars", "scale_factor", "scale_mode", "transparent", "vmax",
+                          "vmin"]
+        else:
+            defaults = {
+                "plotter": self.__mpl3DQuiver,
+                "show_plot": True,
+                "figure": self.__figure,
+                "title": self.filename,
+                "save_filename": None,
+                "cmap": cm.jet,
+                "color":hsl2rgb((1 + self.q / _np_.pi) / 2, self.r / _np_.max(self.r), (1 + self.w) / 2)/255.0
+
+            }
+            projection=kargs.pop("projection","3d")
+            coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
+            for k in coltypes:
+                if isinstance(coltypes[k], index_types):
+                    label = self._col_label(coltypes[k])
+                    if isinstance(label, list):
+                        label = ",".join(label)
+                    defaults[k] = label
+            if "plotter" not in kargs or ("plotter" in kargs and kargs["plotter"] == self.__mpl3DQuiver):
+                otherkargs = [ "color", "cmap", "linewidth","ax","length","pivot","arrow_length_ratio"]
+            else:
+                otherkargs = ["color","linewidth"]
+
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
-        colors = nonkargs["colors"]
+        colors = nonkargs.pop("color",True)
         if isinstance(colors, bool) and colors:
             pass
         elif isinstance(colors, index_types):
@@ -1170,25 +1217,36 @@ class PlotFile(DataFile):
             colors = _np_.array([colors(x) for x in self.rows()])
         else:
             raise RuntimeError("Do not recognise what to do with the colors keyword.")
-        kargs["scalars"] = colors
+        if mayavi:
+            kargs["scalars"] = colors
         figure = nonkargs["figure"]
         plotter = nonkargs["plotter"]
-        if isinstance(figure, int):
-            figure = mlab.figure(figure)
-        elif isinstance(figure, bool) and not figure:
-            figure = mlab.figure(bgcolor=(1, 1, 1))
-        elif isinstance(figure, core.scene.Scene):
-            pass
-        elif isinstance(self.__figure, core.scene.Scene):
-            figure = self.__figure
+        if mayavi:
+            if isinstance(figure, int):
+                figure = mlab.figure(figure)
+            elif isinstance(figure, bool) and not figure:
+                figure = mlab.figure(bgcolor=(1, 1, 1))
+            elif isinstance(figure, core.scene.Scene):
+                pass
+            elif isinstance(self.__figure, core.scene.Scene):
+                figure = self.__figure
+            else:
+                figure = mlab.figure(bgcolor=(1, 1, 1))
+            self.__figure = figure
+
         else:
-            figure = mlab.figure(bgcolor=(1, 1, 1))
-        self.__figure = figure
+            self.__figure, ax = self._fix_fig(nonkargs["figure"], projection=projection)
+            if isinstance(plotter,string_types):
+                plotter=ax.__getattribute__(plotter)
+
         kargs["figure"] = figure
         plotter(self.column(c.xcol), self.column(c.ycol), self.column(c.zcol), self.column(c.ucol), self.column(c.vcol),
                 self.column(c.wcol), **kargs)
         if nonkargs["show_plot"]:
-            mlab.show()
+            if mayavi:
+                mlab.show()
+            else:
+                plt.show()
         return self.__figure
 
     def quiver_plot(self, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
