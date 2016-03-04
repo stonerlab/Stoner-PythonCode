@@ -179,7 +179,9 @@ def split_up_down(data, col=None, folder=None):
     elif len(troughs) > 0:  # Fall then rise
         order = False
     else:  #No peaks or troughs so just return a single rising
-        return ([data], [])
+        ret=_SF_()
+        ret+=data
+        return ret
     splits = [0, len(a)]
     splits.extend(peaks)
     splits.extend(troughs)
