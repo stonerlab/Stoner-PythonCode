@@ -1555,10 +1555,12 @@ class DataFile(object):
         """Returns the data as a _np_ structured data array. If columns names are duplicated then they
         are made unique.
         """
+        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
+        ch_bak=copy.copy(ch)
+        setas=self.setas.clone #We'll need these later !
         f = self.data.flags
         if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
             self.data = self.data.copy()
-        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
         for i in range(len(ch)):
             header = ch[i]
             j = 0
@@ -1566,6 +1568,8 @@ class DataFile(object):
                 j = j + 1
                 ch[i] = "{}_{}".format(header, j)
         dtype = [(x, self.dtype) for x in ch]
+        self.setas=setas
+        self.column_headers=ch_bak
         return self.data.view(dtype=dtype).reshape(len(self))
 
     @property
@@ -3264,7 +3268,8 @@ class DataFile(object):
 
         reverse=kargs.pop("reverse",False)
         order=list(order)
-
+        setas=self.setas.clone
+        ch=copy.copy(self.column_headers)
         if len(order)==0:
             if self.setas.cols["xcol"] is not None:
                 order=[self.setas.cols["xcol"]]
@@ -3288,11 +3293,11 @@ class DataFile(object):
             d = _np_.sort(recs, order=order)
         else:
             raise KeyError("Unable to work out how to sort by a {}".format(type(order)))
-        setas=self.setas.clone
         self.data = d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers))
-        self.data._setas=setas
         if reverse:
             self.data=self.data[::-1]
+        self.data._setas=setas
+        self.column_headers=ch
         return self
 
     def swap_column(self, *swp,**kargs):
