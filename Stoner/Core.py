@@ -2637,7 +2637,6 @@ class DataFile(object):
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
             else:
                 columns=copy.copy(self.column_headers)
-                columns.insert(index,header)
                 setas=list(self.setas)
                 setas.insert(index,".")
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
@@ -2645,8 +2644,6 @@ class DataFile(object):
                 self.column_headers=columns
         #Finally sort out column headers
             self.column_headers=newcols
-
-
         return self
 
     def closest(self,value,xcol=None):
