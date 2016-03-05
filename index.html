@@ -140,19 +140,26 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <h2>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="development-version">
 <h3>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h3>
-<p>The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
-The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
-Other underlying changes are a switch to using properties rather than straight attribute access.</p>
-<p>0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
-file format detection.</p>
-<p>0.6 also adds some extra methods to AnalyseFile for extrapolation.</p>
+<p>Teh current development version is 0.7. Features of 0.7 include</p>
+<blockquote>
+<div><ul class="simple">
+<li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a></li>
+<li>DataFolder has an options to skip iterating over empty Data files</li>
+<li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
+</ul>
+</div></blockquote>
 <p>Online documentation for the development version can be found on the <a class="reference external" href="http://gb119.github.io/Stoner-PythonCode">githib repository pages</a></p>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
 </div>
 <div class="section" id="stable-version">
 <h3>Stable Version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h3>
-<p>The development version is now in beta release and so no further relases will be made to the current stable release (0.5).</p>
+<p>The current stable version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
+as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
+The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+Other underlying changes are a switch to using properties rather than straight attribute access.</p>
+<p>0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
+file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.</p>
+<p>0.6 should work on Python 2.7 and 3.5</p>
 </div>
 </div>
 <div class="section" id="user-guide">
@@ -272,7 +279,7 @@ file format detection.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 06, 2016.
+      Last updated on Mar 05, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>

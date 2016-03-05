@@ -73,8 +73,10 @@
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">blist</span> <span class="kn">import</span> <span class="n">sorteddict</span>
-<span class="kn">from</span> <span class="nn">magic</span> <span class="kn">import</span> <span class="n">Magic</span> <span class="k">as</span> <span class="n">filemagic</span><span class="p">,</span><span class="n">MAGIC_MIME_TYPE</span>
-
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">magic</span> <span class="kn">import</span> <span class="n">Magic</span> <span class="k">as</span> <span class="n">filemagic</span><span class="p">,</span><span class="n">MAGIC_MIME_TYPE</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">filemagic</span><span class="o">=</span><span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">copy_into</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">dest</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Copies the data associated with source to dest.</span>
@@ -376,9 +378,14 @@
             <span class="k">for</span> <span class="n">typ</span> <span class="ow">in</span> <span class="s2">&quot;xyzdefuvw.-&quot;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">typ</span><span class="p">],</span> <span class="bp">True</span><span class="p">):</span>  <span class="c1">#x=&quot;Col1&quot; type</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">typ</span>
-                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">value</span> <span class="ow">and</span> <span class="n">value</span><span class="p">[</span><span class="n">typ</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="c1">#x=None deletes all assignments to x</span>
+                            <span class="k">while</span> <span class="bp">True</span><span class="p">:</span> <span class="c1"># This will stop when we run out of column type x in self.setas and throw a ValueError</span>
+                                <span class="n">ix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;.&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">typ</span><span class="p">],</span> <span class="bp">True</span><span class="p">):</span>  <span class="c1">#x=&quot;Col1&quot; type</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">typ</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
                         <span class="k">pass</span>
                 <span class="k">if</span> <span class="n">typ</span> <span class="ow">in</span> <span class="n">alt_vals</span><span class="p">:</span>
                     <span class="k">try</span><span class="p">:</span>
@@ -766,7 +773,7 @@
                             <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>                            
+                            <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
                     <span class="n">tt</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span>
                     <span class="n">tt</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
                     <span class="n">typ</span> <span class="o">=</span> <span class="s1">&#39;Cluster (&#39;</span> <span class="o">+</span> <span class="n">tt</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
@@ -1388,7 +1395,7 @@
 
     <span class="c1">#mimetypes we match</span>
     <span class="n">mime_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text/plain&quot;</span><span class="p">]</span>
-    
+
     <span class="n">_conv_string</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="n">_conv_float</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 
@@ -1603,10 +1610,12 @@
         <span class="sd">&quot;&quot;&quot;Returns the data as a _np_ structured data array. If columns names are duplicated then they</span>
 <span class="sd">        are made unique.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>  <span class="c1"># renoved duplicated column headers for structured record</span>
+        <span class="n">ch_bak</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+        <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#We&#39;ll need these later !</span>
         <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">flags</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;C_CONTIGUOUS&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;F_CONTIGUOUS&quot;</span><span class="p">]:</span>  <span class="c1"># We need our data to be contiguous before we try a records view</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">ch</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>  <span class="c1"># renoved duplicated column headers for structured record</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ch</span><span class="p">)):</span>
             <span class="n">header</span> <span class="o">=</span> <span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1614,6 +1623,8 @@
                 <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
                 <span class="n">ch</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;{}_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
         <span class="n">dtype</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ch</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">ch_bak</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
     <span class="nd">@property</span>
@@ -2053,7 +2064,7 @@
                     <span class="n">descs</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s2">&quot; file&quot;</span>
 
         <span class="n">patterns</span> <span class="o">=</span> <span class="p">[(</span><span class="n">descs</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">descs</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
-        <span class="n">patterns</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;All File&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">))</span>
+        <span class="n">patterns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,(</span><span class="s2">&quot;All File&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
@@ -2628,7 +2639,7 @@
 <span class="sd">            Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies</span>
 <span class="sd">            the original DataFile Instance as well as returning it.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">replace</span> <span class="o">=</span> <span class="bp">False</span>
             <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;Col{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
@@ -2636,6 +2647,9 @@
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">column_data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">column_data</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
@@ -2648,8 +2662,6 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">new_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_data</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span>
             <span class="n">_np__data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">_np__data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">column_data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="c1">#Sort out the sizes of the arrays</span>
@@ -2669,21 +2681,17 @@
         <span class="k">if</span> <span class="n">replace</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np__data</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">dc</span> <span class="o">*</span> <span class="n">dr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">_np__data</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="n">header</span><span class="p">,]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">columns</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
-                <span class="n">columns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">header</span><span class="p">)</span>
                 <span class="n">setas</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span>
                 <span class="n">setas</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_np__data</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">setas</span><span class="p">)</span>
+                <span class="n">columns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">header</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">columns</span>
-        <span class="c1">#Finally sort out column headers</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span> <span class="n">header</span>
-
-
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DataFile.closest"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.closest.html#Stoner.Core.DataFile.closest">[docs]</a>    <span class="k">def</span> <span class="nf">closest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -3021,20 +3029,21 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Cannot find {} to load&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">))</span>
-        <span class="k">with</span> <span class="n">filemagic</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">MAGIC_MIME_TYPE</span><span class="p">)</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
-            <span class="n">mimetype</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">id_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Mimetype:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mimetype</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">filemagic</span><span class="p">(</span><span class="n">flags</span><span class="o">=</span><span class="n">MAGIC_MIME_TYPE</span><span class="p">)</span> <span class="k">as</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">mimetype</span><span class="o">=</span><span class="n">m</span><span class="o">.</span><span class="n">id_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Mimetype:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mimetype</span><span class="p">))</span>
         <span class="n">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
         <span class="n">failed</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">if</span> <span class="n">auto_load</span><span class="p">:</span>  <span class="c1"># We&#39;re going to try every subclass we canA</span>
             <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">mimetype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">:</span> <span class="c1">#short circuit for non-=matching mime-types</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Skipping {} due to mismatcb mime type {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">))</span>                        
+                    <span class="k">if</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mimetype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">:</span> <span class="c1">#short circuit for non-=matching mime-types</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Skipping {} due to mismatcb mime type {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">))</span>
                         <span class="k">continue</span>
                     <span class="n">test</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="ow">and</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                         <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Trying: {} =mimetype {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">test</span><span class="o">.</span><span class="n">mime_type</span><span class="p">))</span>
 
                     <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;auto_load&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
@@ -3309,7 +3318,8 @@
 
         <span class="n">reverse</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reverse&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
         <span class="n">order</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
-
+        <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">ch</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">order</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]]</span>
@@ -3333,11 +3343,11 @@
             <span class="n">d</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">recs</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Unable to work out how to sort by a {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">order</span><span class="p">)))</span>
-        <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">setas</span>
         <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">setas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">ch</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DataFile.swap_column"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column">[docs]</a>    <span class="k">def</span> <span class="nf">swap_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">swp</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -3459,7 +3469,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 06, 2016.
+      Last updated on Mar 05, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
     </div>
   </body>
