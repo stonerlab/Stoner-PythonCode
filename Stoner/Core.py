@@ -2631,19 +2631,17 @@ class DataFile(object):
         if replace:
             self.data[:, index] = _np__data
         else:
-            newcols=copy.copy(self.column_headers)
-            newcols.insert(index, header)
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
+                self.column_headers=[header,]
             else:
                 columns=copy.copy(self.column_headers)
                 setas=list(self.setas)
                 setas.insert(index,".")
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
                 self.setas(setas)
+                columns.insert(index,header)
                 self.column_headers=columns
-        #Finally sort out column headers
-            self.column_headers=newcols
         return self
 
     def closest(self,value,xcol=None):
