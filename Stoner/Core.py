@@ -328,9 +328,14 @@ class _setas(object):
             for typ in "xyzdefuvw.-":
                 if typ in value:
                     try:
-                        for c in self.find_col(value[typ], True):  #x="Col1" type
-                            self.setas[c] = typ
-                    except KeyError:
+                        if typ in value and value[typ] is None: #x=None deletes all assignments to x
+                            while True: # This will stop when we run out of column type x in self.setas and throw a ValueError
+                                ix=self.setas.index(typ)
+                                self.setas[ix]="."
+                        else:
+                            for c in self.find_col(value[typ], True):  #x="Col1" type
+                                self.setas[c] = typ
+                    except (ValueError,KeyError):
                         pass
                 if typ in alt_vals:
                     try:
@@ -718,7 +723,7 @@ class typeHintedDict(sorteddict):
                             elements.append(self.findtype(value[k]))
                     else:
                         for i,v in enumerate(value):
-                            elements.append(self.findtype(v))                            
+                            elements.append(self.findtype(v))
                     tt = ','
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
@@ -1340,7 +1345,7 @@ class DataFile(object):
 
     #mimetypes we match
     mime_type=["text/plain"]
-    
+
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
 
@@ -2984,7 +2989,7 @@ class DataFile(object):
             for cls in self.subclasses.values():
                 try:
                     if filemagic is not None and mimetype not in cls.mime_type: #short circuit for non-=matching mime-types
-                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))                        
+                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))
                         continue
                     test = cls()
                     if self.debug and filemagic is not None:
