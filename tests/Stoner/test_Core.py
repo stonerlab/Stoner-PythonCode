@@ -166,6 +166,13 @@ class Datatest(unittest.TestCase):
         d.insert_rows(10,np.zeros((2,2)))
         self.assertEqual(len(d),102,"Failed to inert extra rows")
         self.assertTrue(d[9,0]==10 and d[10,0]==0 and d[12,0]==11, "Failed to insert rows properly.")
+        d=self.d.clone
+        d.add_column(np.ones(len(d)),replace=False,header="added")
+        self.assertTrue(d.shape[1]==self.d.shape[1]+1,"Adding a column with replace=False did add a column.")
+        self.assertTrue(np.all(d.data[:,-1]==np.ones(len(d))),"Didn't add the new column to the end of the data.")
+        self.assertTrue(len(d.column_headers)==len(self.d.column_headers)+1,"Column headers isn't bigger by one")
+        self.assertTrue(d.column_headers==self.d.column_headers+["added",],"Column header not added correctly")
+
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")

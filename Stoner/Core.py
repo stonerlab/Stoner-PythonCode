@@ -718,7 +718,7 @@ class typeHintedDict(sorteddict):
                             elements.append(self.findtype(value[k]))
                     else:
                         for i,v in enumerate(value):
-                            elements.append(self.findtype(v))                            
+                            elements.append(self.findtype(v))
                     tt = ','
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
@@ -1340,7 +1340,7 @@ class DataFile(object):
 
     #mimetypes we match
     mime_type=["text/plain"]
-    
+
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
 
@@ -2580,7 +2580,7 @@ class DataFile(object):
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it."""
         if index is None or isinstance(index,bool) and index:
-            index = len(self.column_headers)
+            index = self.shape[1]
             replace = False
             if header is None:
                 header = "Col{}".format(index)
@@ -2588,6 +2588,9 @@ class DataFile(object):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
+
+        if isinstance(column_data, list):
+            column_data = _np_.array(column_data)
 
         if isinstance(column_data, _np_.ndarray):
             if len(_np_.shape(column_data)) != 1:
@@ -2600,8 +2603,6 @@ class DataFile(object):
             else:
                 new_data = [column_data(x) for x in self]
             _np__data = _np_.array(new_data)
-        elif isinstance(column_data, list):
-            _np__data = _np_.array(column_data)
         else:
             return NotImplemented
         #Sort out the sizes of the arrays
@@ -2621,7 +2622,8 @@ class DataFile(object):
         if replace:
             self.data[:, index] = _np__data
         else:
-            self.column_headers.insert(index, header)
+            newcols=copy.copy(self.column_headers)
+            newcols.insert(index, header)
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
             else:
@@ -2633,7 +2635,7 @@ class DataFile(object):
                 self.setas(setas)
                 self.column_headers=columns
         #Finally sort out column headers
-            self.column_headers[index]= header
+            self.column_headers=newcols
 
 
         return self
@@ -2984,7 +2986,7 @@ class DataFile(object):
             for cls in self.subclasses.values():
                 try:
                     if filemagic is not None and mimetype not in cls.mime_type: #short circuit for non-=matching mime-types
-                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))                        
+                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))
                         continue
                     test = cls()
                     if self.debug and filemagic is not None:
