@@ -43,6 +43,7 @@ class DataFolder(object):
         read_means (bool): If true, create metadata when reading each file that is the mean of each column
         setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.DataFile.setas` attribute for each
             :py:class:`Stoner.Core.DataFile` in the folder.
+        skip_empty (bool): Controls whether iterating over the Folder will skip over empty files. Defaults to False.
         type (DataFile): The type of the members of the :py:class:`DataFolder`. Can be either a subclass of
             :py:class:`Stoner.Core.DataFile` or an instance of one (in which ase the class of the instance is used).
 
@@ -78,6 +79,7 @@ class DataFolder(object):
         self.recursive=True
         self.groups={}
         self._file_attrs=dict()
+        self.skip_empty=kargs.pop("skip_empty",False)
         if not "type" in kargs:
             from .Util import Data
             self.type=Data
@@ -368,8 +370,20 @@ class DataFolder(object):
 
 
     def __next__(self):
+        """Iterates over contents of DataFolder.
+
+        If :py:attr:`DataFolder.skip_empty` is True, then any members that
+        either faile to load or have zero length are skipped over."""
         for i in range(len(self.files)):
-            yield self[i]
+            try:
+                ret=self[i]
+                if self.skip_empty and len(ret)==0:
+                    continue
+            except StonerLoadError:
+                if self.skip_empty:
+                    continue
+            else:
+                yield ret
 
     def next(elf):
         for i in range(len(self.files)):
