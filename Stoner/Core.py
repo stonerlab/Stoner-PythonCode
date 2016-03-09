@@ -328,9 +328,14 @@ class _setas(object):
             for typ in "xyzdefuvw.-":
                 if typ in value:
                     try:
-                        for c in self.find_col(value[typ], True):  #x="Col1" type
-                            self.setas[c] = typ
-                    except KeyError:
+                        if typ in value and value[typ] is None: #x=None deletes all assignments to x
+                            while True: # This will stop when we run out of column type x in self.setas and throw a ValueError
+                                ix=self.setas.index(typ)
+                                self.setas[ix]="."
+                        else:
+                            for c in self.find_col(value[typ], True):  #x="Col1" type
+                                self.setas[c] = typ
+                    except (ValueError,KeyError):
                         pass
                 if typ in alt_vals:
                     try:
@@ -718,7 +723,7 @@ class typeHintedDict(sorteddict):
                             elements.append(self.findtype(value[k]))
                     else:
                         for i,v in enumerate(value):
-                            elements.append(self.findtype(v))                            
+                            elements.append(self.findtype(v))
                     tt = ','
                     tt = tt.join(elements)
                     typ = 'Cluster (' + tt + ')'
@@ -1340,7 +1345,7 @@ class DataFile(object):
 
     #mimetypes we match
     mime_type=["text/plain"]
-    
+
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
 
@@ -1555,10 +1560,12 @@ class DataFile(object):
         """Returns the data as a _np_ structured data array. If columns names are duplicated then they
         are made unique.
         """
+        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
+        ch_bak=copy.copy(ch)
+        setas=self.setas.clone #We'll need these later !
         f = self.data.flags
         if not f["C_CONTIGUOUS"] and not f["F_CONTIGUOUS"]:  # We need our data to be contiguous before we try a records view
             self.data = self.data.copy()
-        ch = copy.copy(self.column_headers)  # renoved duplicated column headers for structured record
         for i in range(len(ch)):
             header = ch[i]
             j = 0
@@ -1566,6 +1573,8 @@ class DataFile(object):
                 j = j + 1
                 ch[i] = "{}_{}".format(header, j)
         dtype = [(x, self.dtype) for x in ch]
+        self.setas=setas
+        self.column_headers=ch_bak
         return self.data.view(dtype=dtype).reshape(len(self))
 
     @property
@@ -2580,7 +2589,7 @@ class DataFile(object):
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
             the original DataFile Instance as well as returning it."""
         if index is None or isinstance(index,bool) and index:
-            index = len(self.column_headers)
+            index = self.shape[1]
             replace = False
             if header is None:
                 header = "Col{}".format(index)
@@ -2588,6 +2597,9 @@ class DataFile(object):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
+
+        if isinstance(column_data, list):
+            column_data = _np_.array(column_data)
 
         if isinstance(column_data, _np_.ndarray):
             if len(_np_.shape(column_data)) != 1:
@@ -2600,8 +2612,6 @@ class DataFile(object):
             else:
                 new_data = [column_data(x) for x in self]
             _np__data = _np_.array(new_data)
-        elif isinstance(column_data, list):
-            _np__data = _np_.array(column_data)
         else:
             return NotImplemented
         #Sort out the sizes of the arrays
@@ -2621,15 +2631,16 @@ class DataFile(object):
         if replace:
             self.data[:, index] = _np__data
         else:
-            self.column_headers.insert(index, header)
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
+                self.column_headers=[header,]
             else:
                 columns=copy.copy(self.column_headers)
                 setas=list(self.setas)
                 setas.insert(index,".")
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
                 self.setas(setas)
+                columns.insert(index,header)
                 self.column_headers=columns
         return self
 
@@ -2979,7 +2990,7 @@ class DataFile(object):
             for cls in self.subclasses.values():
                 try:
                     if filemagic is not None and mimetype not in cls.mime_type: #short circuit for non-=matching mime-types
-                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))                        
+                        if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))
                         continue
                     test = cls()
                     if self.debug and filemagic is not None:
@@ -3257,7 +3268,8 @@ class DataFile(object):
 
         reverse=kargs.pop("reverse",False)
         order=list(order)
-
+        setas=self.setas.clone
+        ch=copy.copy(self.column_headers)
         if len(order)==0:
             if self.setas.cols["xcol"] is not None:
                 order=[self.setas.cols["xcol"]]
@@ -3281,11 +3293,11 @@ class DataFile(object):
             d = _np_.sort(recs, order=order)
         else:
             raise KeyError("Unable to work out how to sort by a {}".format(type(order)))
-        setas=self.setas.clone
         self.data = d.view(dtype=self.dtype).reshape(len(self), len(self.column_headers))
-        self.data._setas=setas
         if reverse:
             self.data=self.data[::-1]
+        self.data._setas=setas
+        self.column_headers=ch
         return self
 
     def swap_column(self, *swp,**kargs):

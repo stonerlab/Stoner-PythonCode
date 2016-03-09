@@ -129,19 +129,11 @@ Recent Changes
 Development Version
 -------------------
 
-The current development version is 0.6. This features some major changes
-in the architecture, switching from a numpy MaskedArray as the main data
-store to a custom sub-class that contains most of the logic for indexing
-data by column name and designation. The metadata storage has also been
-switched to using blist.sortteddict for a fast, alphabetically ordered
-dictionary storage. Other underlying changes are a switch to using
-properties rather than straight attribute access.
+Teh current development version is 0.7. Features of 0.7 include
 
-0.6 now also makes use of filemagic to work out the mime type of files
-to be loaded to try and improve the resilience of the automatic file
-format detection.
-
-0.6 also adds some extra methods to AnalyseFile for extrapolation.
+> -   DataFolder now defaults to using :pyStoner.Util.Data
+> -   DataFolder has an options to skip iterating over empty Data files
+> -   Further improvements to :pyStoner.Core.DataFile.setas handline.
 
 Online documentation for the development version can be found on the
 [githib repository pages](http://gb119.github.io/Stoner-PythonCode)
@@ -151,5 +143,17 @@ Online documentation for the development version can be found on the
 Stable Version
 --------------
 
-The development version is now in beta release and so no further relases
-will be made to the current stable release (0.5).
+The current stable version is 0.6. This features some major changes in
+the architecture, switching from a numpy MaskedArray as the main data
+store to a custom sub-class that contains most of the logic for indexing
+data by column name and designation. The metadata storage has also been
+switched to using blist.sortteddict for a fast, alphabetically ordered
+dictionary storage. Other underlying changes are a switch to using
+properties rather than straight attribute access.
+
+0.6 now also makes use of filemagic to work out the mime type of files
+to be loaded to try and improve the resilience of the automatic file
+format detection on platforms where this is supported and adds some
+extra methods to AnalyseFile for extrapolation.
+
+0.6 should work on Python 2.7 and 3.5

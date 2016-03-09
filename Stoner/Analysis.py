@@ -717,7 +717,9 @@ class AnalyseFile(DataFile):
             sigma = working[:, self.find_col(sigma)]
         else:
             sigma=None
-        if isinstance(xcol,Iterable):
+        if isinstance(xcol,string_types):
+            xdat = working[:, self.find_col(xcol)]
+        elif isinstance(xcol,Iterable):
             xdat=()
             for c in xcol:
                 xdat = xdat  + (working[:, self.find_col(c)],)
