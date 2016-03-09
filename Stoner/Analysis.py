@@ -2221,10 +2221,10 @@ class AnalyseFile(DataFile):
             ret=retval
         elif xcol is not None:
             retval = self.interpolate(ret, xcol=False)[:,self.find_col(xcol)]
-            if retval.ndim>0:
-                retval.setas=self.setas.clone
-                retval.setas.shape=retval.shape
-                retval.i=ret
+            #if retval.ndim>0:   #not sure what this bit does but it's throwing errors for a simple threshold
+                #retval.setas=self.setas.clone
+                #retval.setas.shape=retval.shape
+                #retval.i=ret
             ret=retval
         else:
             ret=DataArray(ret)
