@@ -1116,9 +1116,13 @@ class DataArray(_ma_.MaskedArray):
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
             if len(ix)>1:
-                tmp=_np_.array(self.setas)[ix[-1]]
+                try:
+                    tmp=_np_.array(self.setas)[ix[-1]]
+                    ret.setas(tmp)
+                except IndexError:
+                    #setas was not set for this data
+                    ret.setas('.')
                 tmpcol=_np_.array(self.column_headers)[ix[-1]]
-                ret.setas(tmp)
                 ret.column_headers=tmpcol
             else:
                 ret.setas=self.setas.clone
