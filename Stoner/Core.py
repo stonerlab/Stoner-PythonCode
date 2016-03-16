@@ -1068,7 +1068,6 @@ class DataArray(_ma_.MaskedArray):
             you give a string as the first index element and assumes that you've forgotten that we're
             row major and tries to do the right thing.
         """
-
         #Is this goign to be a single row ?
         single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
         #If the index is a single string type, then build a column accessing index
@@ -1088,7 +1087,6 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
-
         # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
         if ret.ndim==0 or isinstance(ret,_np_.ndarray) and ret.size==1:
@@ -1104,10 +1102,8 @@ class DataArray(_ma_.MaskedArray):
                 return ret
             else: # A regular 2D array
                 ret.isrow=single_row
-                tmp=_np_.array(self.setas)[ix[-1]]
-                tmpcol=_np_.array(self.column_headers)[ix[-1]]
-                ret.setas(tmp)
-                ret.column_headers=tmpcol
+                ret.setas=self.setas.clone
+                ret.column_headers=copy.copy(self.column_headers)
                 # Sort out whether we need an array of row labels
                 if isinstance(self.i,_np_.ndarray):
                     ret.i=self.i[ix[0]]
@@ -1116,12 +1112,8 @@ class DataArray(_ma_.MaskedArray):
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
             if len(ix)>1:
-                try:
-                    tmp=_np_.array(self.setas)[ix[-1]]
-                    ret.setas(tmp)
-                except IndexError:
-                    #setas was not set for this data
-                    ret.setas('.')
+                tmp=_np_.array(self.setas)[ix[-1]]
+                ret.setas(tmp)
                 tmpcol=_np_.array(self.column_headers)[ix[-1]]
                 ret.column_headers=tmpcol
             else:
@@ -1133,7 +1125,7 @@ class DataArray(_ma_.MaskedArray):
             else: #This is a single element?
                 ret.i=self.i
             if not single_row:
-                ret.name=self.column_headers[ix[-1]]
+                ret.name=self.column_headers
         return ret
 
     def __setitem__(self,ix,val):
