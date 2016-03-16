@@ -985,7 +985,7 @@ class DataArray(_ma_.MaskedArray):
         if mask is not None:
             obj.mask=mask
         else:
-            obj.maske=False
+            obj.mask=False
         # Finally, we must return the newly created object:
         obj.i=i
         obj.setas._row=_row and len(obj.shape)==1
@@ -3099,12 +3099,18 @@ class DataFile(object):
                 post_data = _np_.zeros((0, self.shape[1]))
             starti = max(i - hw, 0)
             stopi = min(len(self), i + hw + 1)
-            if exclude_centre:
+            if exclude_centre: #hacked to stop problems with DataArray concatenation
+                tmp=self.clone #copy all properties
                 data = _np_.row_stack((self.data[starti:i - hc], self.data[i + 1 + hc:stopi]))
+                tmp.data=_np_.array(data) #guarantee an ndarray
+                data=tmp.data #get the DataArray
             else:
                 data = self.data[starti:stopi]
             if wrap:
+                tmp=self.clone #copy all properties
                 ret = _np_.row_stack((pre_data, data, post_data))
+                tmp.data=_np_.array(ret) #guarantee an ndarray
+                ret=tmp.data #get the DataArray
             else:
                 ret = data
             yield ret
