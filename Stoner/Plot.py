@@ -999,7 +999,7 @@ class PlotFile(DataFile):
                 if multiple == "y2" and ix == 1:
                     self.y2()
                     lines=plt.gca()._get_lines
-                    if hasattr(lines,"color_cylce"): #mpl<1.5
+                    if hasattr(lines,"color_cycle"): #mpl<1.5
                         cc=lines.color_cycle
                     else: #MPL >=1.5
                         cc=lines.prop_cycler
