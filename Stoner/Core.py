@@ -22,7 +22,11 @@ import os.path as path
 import inspect as _inspect_
 import itertools
 from collections import Iterable, OrderedDict
-from blist import sorteddict
+try:
+    assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
+    from blist import sorteddict
+except (AssertionError,ImportError): #Fail if blist not present or Python 3
+    sorteddict=OrderedDict
 try:
     from magic import Magic as filemagic,MAGIC_MIME_TYPE
 except ImportError:

@@ -34,8 +34,7 @@ class FileFormats_test(unittest.TestCase):
     def test_loaders(self):
         d=None
         if python_v3:
-            skip_files=["genx.hgx"] # HDF5 loader not working Python 3.5
-            return None # skip this completely at this time
+            skip_files=[] #New Python 3.5 code should be ok
         else:
             skip_files=[]
         print(os.listdir(self.datadir))

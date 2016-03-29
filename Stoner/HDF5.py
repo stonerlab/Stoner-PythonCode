@@ -87,7 +87,7 @@ class HDF5File(DataFile):
             self.data = [[]]
         metadata = f.require_group('metadata')
         if "column_headers" in f.attrs:
-            self.column_headers = f.attrs["column_headers"]
+            self.column_headers = f.attrs["column_headers"].astype("U")
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -190,7 +190,7 @@ class HGXFile(DataFile):
         except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
         else:
-            f.close()            
+            f.close()
 
         with h5py.File(self.filename, "r") as f:
             self.scan_group(f["current"],"")
