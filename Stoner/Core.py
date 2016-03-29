@@ -22,7 +22,11 @@ import os.path as path
 import inspect as _inspect_
 import itertools
 from collections import Iterable, OrderedDict
-from blist import sorteddict
+try:
+    assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
+    from blist import sorteddict
+except (AssertionError,ImportError): #Fail if blist not present or Python 3
+    sorteddict=OrderedDict
 try:
     from magic import Magic as filemagic,MAGIC_MIME_TYPE
 except ImportError:
@@ -2988,6 +2992,7 @@ class DataFile(object):
         failed = True
         if auto_load:  # We're going to try every subclass we canA
             for cls in self.subclasses.values():
+                if self.debug: print(cls.__name__)
                 try:
                     if filemagic is not None and mimetype not in cls.mime_type: #short circuit for non-=matching mime-types
                         if self.debug: print("Skipping {} due to mismatcb mime type {}".format(cls.__name__,cls.mime_type))
@@ -2998,12 +3003,14 @@ class DataFile(object):
 
                     kargs.pop("auto_load",None)
                     test._load(self.filename,auto_load=False,*args,**kargs)
+                    if self.debug: print("Passed Load")
                     failed=False
                     test["Loaded as"]=cls.__name__
                     copy_into(test,self)
 
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:
+                    if self.debug: print("Failed Load: {}".format(e))
                     continue
             else:
                 raise IOError("Ran out of subclasses to try and load as.")
