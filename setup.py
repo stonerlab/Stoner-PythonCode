@@ -21,10 +21,12 @@ setup(
     install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.4","h5py","lmfit","numba"],
     long_description=read('doc/readme.md'),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Science/Research",
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Physics",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
 )
