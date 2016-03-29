@@ -124,8 +124,21 @@ for adding appropriately formatted details of the fit to the plot.
 .. plot:: samples/curve_fit_line.py
     :include-source:
 
+:py:meth:`AnalyseFile.curve_fit` can also be used to fit more complex problems. In the example below, a set of
+points in x,y,z space are fitted to a plane.
+
+.. plot:: samples/curve_fit_plane.py
+    :include-source:
+
+Finally, by you can sepcify the *y-data* to fit to as a numpy array. This can be used to fit functions that
+don't themseleves return values that can be matched up to existing data. An example of doing this is fitting a
+sphere to a set of :math:`(x,y,z) data points.
+
+.. plot:: samples/sphere_fit.py
+    :include-source:
 
 See also :ref:`Fitting_tricks`
+
 
 .. _fitting_with_limits:
 
@@ -143,9 +156,9 @@ lmfit provides a flexible way to fit complex models to experimental data in a py
 A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`_. . The
 :py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
 
-In order to use :py:meth:`AnalyseFile.lmfit`, one requires a c instance. This describes a function
+In order to use :py:meth:`AnalyseFile.lmfit`, one requires a :py:class:`lmfit.model.Model` instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The :py:mod:`Stoner.Fit` module contains
-a series of :py:class:lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
+a series of :py:class:`lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
 
 The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
 
@@ -157,6 +170,10 @@ The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:met
 
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+
+The *model* argument to :py:meth:`AnalyseFile.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
+instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
+a simple call to :py:meth:`AnalyseFile.curve_fit`.
 
 The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
 instance. This contains all the information about the fit and fitting process.
@@ -175,7 +192,7 @@ edit the source code. :py:meth:`AnalyseFile.lmfit` and :py:mod:`Stoner.Fit` prov
 
 Firstly, the initialisation file should take the form like so.
 
-.. include:: ../scripts/PCAR-New.ini
+.. include:: ../../scripts/PCAR-New.ini
    :literal:
 
 This initialisation file can be passed to :py:func:`Stoner.Fit.cfg_data_from_ini` which will use the information in the [Data]
@@ -280,6 +297,63 @@ points averaged into each bin.. If *clone* is True or not provided, :py:meth:`An
 .. plot:: samples/bins.py
    :include-source:
 
+
+.. _smoothing_guide:
+
+Smoothing and Filtering Data
+----------------------------
+
+As experimental data normally includes noise in some form, it is useful to be able to filter and smooth data to better see
+underlying trends. The Stoner package offers a  number of approaches to filtering data.
+
+    - Smoothing by convoluting with a window
+
+        This is a powerful method of smoothing data by constructing an appropriate length and shape of 'window function' that
+        is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
+        defined by the window function. This is handled by the :py:meth:`AnalyseFile.smooth` method.::
+
+            d.smooth("boxcar",size=10)
+            d.smooth(("gaussian",1.5),size=0.4,result=True,replace=False,header="Smoothed data")
+
+        In both these examples, the data to be smoothed is determined from the :py:attr:`Stoner.Core.DataFile.setas` attribute.
+        The first argument is passed to :py:func:`scipy.signal.get_window` to define the window function. The *size* argument
+        can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
+        terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
+        and then smoothed and then reinterpolated back to the original x data co-ordinates.
+
+        .. warning::
+
+            This will fail for hysteretic data. In this case it would be better to use an integer size argument and to ensure
+            the data is evenly spaced to start with.
+
+        The *result* and *replace* arguments are passed through to :py:meth:`Stoner.Core.DataFile.add_column` unless *replace*
+        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalyseFile`
+        is left unmodified.
+
+    - Savitzky-Golay filtering
+
+        This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
+        and widths. In essence it is equivalent to least-squares fitting a low order polynomial to a window of the data and using
+        the co-effienicents of the fitting polynomail to determine the smoothed (or differentiated) data. This is impletemented as
+        :py:meth:`AnalyseFile.SG_Filter` method.
+
+    - Spline
+
+        An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
+        this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
+        Golay fitlering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainities. It is
+        implemented as the :py:meth:`AnalyseFile.spline` method.
+
+    - Rebinning
+
+        As ullustrated above, rebinning the data is a common way fof reducing noise by combining several data points. This is simple
+        and effective, but does reduce the length of the data !
+
+All three approaches are illustrated in the excample below:
+
+.. plot:: samples/Smoothing_Data.py
+    :include-source:
+
 .. _stitch_guide:
 
 Stitching Datasets together
@@ -322,8 +396,8 @@ In addition to changing the X and Y data in the current :py:class:`AnalyseFile`
 instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
 with the co-efficients used to modify the scan data.
 
-Thresholding and Interpolating Data
------------------------------------
+Thresholding, Interpolating and Extrapolation of Data
+-----------------------------------------------------
 
 Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
 :math:`y=f(x)-y_{threshold}`). This is carried out by the :py:meth:`AnalyseFile.threshold` method::
@@ -343,6 +417,42 @@ scipy routine :py:func:`scipy.optimize.interp1d`::
 
 The new values of X are set from the mandetory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the
 :py:attr:`Stoner.Core.DataFile.setas` attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.
+
+The :py:meth:`AnalyseFile.interpolate` method will return values that are obtained from 'joining the dots' - which is
+appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
+use some locally fitted spline function to interpolate with. The :py:meth:`AnalyseFile.spline` function can be used for this.::
+
+    d.spline("X-Data","Y-Data",header="Spline Data",order=3,smoothing=2.0,replace=True)
+    d.spline("X-Data","Y-Data",header="Spline Data",order=2,smoothing=2.0,replace="Extra")
+    new_y=d.spline("X-Data","Y-Data",order=2,smoothing=2.0,replace=False)
+    spline=d.spline("X-Data","Y-Data",order=2,smoothing=2.0,replace=None)
+
+The *order* keyword gives the polynomial order of the spline function being fitted. The *smoothing* factor determines how
+closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *repalce* argument
+controls what the return value from the :py:meth:`AnalyseFile.spline` method reutrns. IF *replace* is True or a column
+index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
+the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
+:py:meth:`AnalyseFile.spline` method returns a :py:class:`scipy.interpolate.UnivararateSpline` object that can be used to
+evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.
+
+Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalyseFile.extrapolate`
+method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
+data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
+a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
+the new x-data point  approaches and passes the limits of the exisiting data, the window used to provide the fit function
+runs up to and stops at the limit of the supplied data. Thus when extrapolating, the new values of data are increasingly less certain
+as one moves further from the end of the data.
+
+.. plot:: samples/extrapolate-demo.py
+    :include-source:
+
+
+Extrapolation is of course most succesful if one has a physical model that should describe the data.
+To allow for this, you can pass an arbitary fitting function as the *kind* parameter.
+
+
+Whilst interpolation will tell you the
 
 Smoothing and Differentiating Data
 -----------------------------------
@@ -378,7 +488,7 @@ If *ycol* is not provided then both x and y data is taken from the *setas* attri
 The algorithm used is to differentiate the data with a Savitsky-Golay filter - which in effect fits a polynomial locally over the data.
 Zero crossing values in the derivative are located and then the second derivative is found for these points and are used to identify
 peaks and troughs in the data. The *width* and *poly* keywords are used to control the order of polynomial and the width of the window
-used for calculating the derivative - a lower order of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
+used for calculating the derivative - a lower order  of polynomial and wider width will make the algroithm less sensitive to narrow peaks.
 The *significance* parameter controls which peaks and troughs are returned. If *signficance* is a float, then only peaks and troughs whose
 second derivatives are larger than *significance* are returned. If *significance* is an integer, then maxmium snd derivative in the data is divided
 by the supplied significance and used as the threshold on which peaks and troughs to return. If *significance* is not provided then a value of 20 is used.

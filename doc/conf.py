@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Stoner Package'
-copyright = u'2013, Gavin Burnell et al'
+copyright = u'2013-15, Gavin Burnell et al'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -104,15 +104,14 @@ autosummary_generate = True
 
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
-#intersphinx_mapping = {
-#   'python': ('http://docs.python.org/', None),
-#    'python3': ('http://docs.python.org/3/', path.abspath(path.join(path.dirname(__file__), 'local/python3links.inv'))),
-#    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-#    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
-#    'matplotlib': ('http://matplotlib.org/', None),
-#    'astropy': ('http://docs.astropy.org/en/stable/', None),
-#    'h5py': ('http://docs.h5py.org/en/latest/', None)
-#    }
+intersphinx_mapping = {
+   'python': ('http://docs.python.org/', None),
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+    'scipy': ('http://docs.scipy.org/doc/scipy/reference/', None),
+    'matplotlib': ('http://matplotlib.org/', None),
+    'astropy': ('http://docs.astropy.org/en/stable/', None),
+    'h5py': ('http://docs.h5py.org/en/latest/', None),
+    }
 
 
 # -- Options for HTML output ---------------------------------------------------
@@ -280,9 +279,6 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False
 napoleon_use_rtype = False
-
-# Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'http://docs.python.org/': None}
 
 automodapi_toctreedirnm='classes'
 

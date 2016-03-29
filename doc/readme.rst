@@ -7,14 +7,13 @@ the Condensed Matter Physics group at the University of Leeds as a shared resour
 programs to do things like fitting functions to data, extract curve parameters and churn through large numbers of
 small text data files.
 
-For a general introduction, users are referred to the Users Guide, which is part of the `online documentation
-<http://pythonhosted.org/Stoner/>` along with the API Reference guide. The `github repository
-<http://www.github.com/gb119/Stoner-PythonCode/> also contains some example scripts.
+For a general introduction, users are referred to the Users Guide, which is part of the `online documentation`_ along with the
+API Reference guide. The `github repository`_ also contains some example scripts.
 
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  and lmfit. Experimental code also makes use of
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
@@ -30,7 +29,7 @@ The easiest way to install the Stoner package is via seuptools' easy_install
 
    easy_install Stoner
 
-This will install the Stoner package into your current Python environment. Since the package is under fairly
+This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
 constant updates, you might want to follow the development with git. The source code, along with example scripts
 and some sample data files can be obtained from the github repository: https://github.com/gb119/Stoner-PythonCode
 
@@ -80,14 +79,14 @@ brutal to your computer's OS than having directory trees with millions of indivi
 Resources
 ==========
 
-Included in the `github repository <http://www.github.com/gb119/Stoner-PythonCode/> are a (small) collection of sample scripts
+Included in the `github repository`_  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-:doc:`user guide <UserGuide/ugindex>` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
+:ref:`User_Guide` as part of this documentation, along with a :doc:`complete API reference <Stoner>`
 
 Contact and Licensing
 =====================
 
-The lead developer for this code is Dr Gavin Burnell <g.burnell@leeds.ac.uk> http://www.stoner.leeds.ac.uk/people/gb.
+The lead developer for this code is `Dr Gavin Burnell`_ <g.burnell@leeds.ac.uk> .
 The User Guide gives the current list of other contributors to the project.
 
 This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file.
@@ -96,29 +95,31 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 Recent Changes
 ==============
 
-Version 0.4.x
--------------
+Development Version
+-------------------
 
-Refactored the PlotFormats sub module to use Matplotlib 1.4 stylesheets. Additional features in Plot
-and new outlier detection routines in AnalyseFile. New operators added to DataFile to make some column and row
-operations more compact. Number of bugs squashed.
+The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
+as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
+The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+Other underlying changes are a switch to using properties rather than straight attribute access.
 
-Version 0.3.0
--------------
+0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
+file format detection.
 
-Refactorise the setas attribute again to remove circular references. Get writing to the setas column attributes working.
+0.6 also adds some extra methods to AnalyseFile for extrapolation.
 
-Version 0.2.5
--------------
+Online documentation for the development version can be found on the `githib repository pages`_
 
-Add a MokeFile class for loading Leeds MOKE system files.
+.. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
+   :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode
 
-Version 0.2.4
--------------
 
-Refactored the setas attribute, improvments to loading some file formats, new Engineering formatting for plots (optional)
+Stable Version
+--------------
 
-Version 0.2.0
--------------
+The development version is now in beta release and so no further relases will be made to the current stable release (0.5).
 
-Added the dependency on lmfit and depricated mpfit for doing bounded least-squares fitting of complex data functions.
+.. _online documentation: http://pythonhosted.org/Stoner/
+.. _githib repository pages: http://gb119.github.io/Stoner-PythonCode
+.. _github repository: http://www.github.com/gb119/Stoner-PythonCode/
+.. _Dr Gavin Burnell: http://www.stoner.leeds.ac.uk/people/gb

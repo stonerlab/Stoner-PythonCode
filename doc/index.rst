@@ -14,7 +14,7 @@ User Guide
 
    User Guide <UserGuide/ugindex>
 
-Modules Documentatuion
+Package Documentatuion
 ======================
 .. toctree::
    :maxdepth: 2

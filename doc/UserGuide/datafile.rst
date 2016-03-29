@@ -253,66 +253,25 @@ with a "fill" value of 10^20.
    This is somewhat dangerous behaviour. Be very careful to remove a mask before saving data if there is any
    chance that you will need the masked data values again later !
 
-Working with columns of data
------------------------------
-
-This is all very well, but often you want to examine a particular column of data
-or a particular row::
-
-  d.column(0)
-  d.column('Temperature')
-  d.column(['Temperature',0])
-
-In the first example, the first column of numeric data will be returned. In the
-second example, the column headers will first be checked for one labeled exactly
-*Temperature* and then if no column is found, the column headers will be
-searched using *Temperature* as a regular expression. This would then
-match *Temperature (K)* or *Sample Temperature*.  The third
-example results in a 2 dimensional numpy array containing two columns in the
-order that they appear in the list (ie not the order that they are in the data
-file). For completeness, the :py:meth:`DataFile.column` method also allows one to
-pass slices to select columns and should do the expected thing.
-
-There are a couple of convenient short cuts/ Firstly the *floormod* operator //
-is an alias for the :py:meth:`DataFile.column` method and secondly for working
-with cases where the column headers are not the same as the names of any of the attributes
-of the :py:class:`DataFile` object::
-
-  d//"Temperature"
-  d.Temperature
-  d.column('Temperature')
-
-all return the same data.
-
-Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
-
- 1) As an integer where the first column on the left is index 0
- 2) As a string. if the string matches a column header exactly then the index of that column is returned.
-      If the string fails to match any column header it is compiled as a regular expression and then that
-      is tried as a match. If multiple columns match then only the first is returned.
- 3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
-      expression in directly with any extra options (like case insensitivity flags) set.
- 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
- 5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
-      the final result would be to use a list of column indices.
-
-For example::
-    import re
-    col=re.compile('^temp',re.IGNORECASE)
-    d.column(col)
+.. note::
+    Strictgly speaking, the :py:attr:`DataFile.data` attribute is a sub-class of the numpy masked array, :py:class:`DataArray`.
+    This works the same way as a masked array, but supports some additional magic indexing and attributes discussed below.
 
 .. _setas:
 
-Other ways to Identify Columns of Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Marking Columns as Dimensions: the magic *setas* attribute
+----------------------------------------------------------
 
 Often in a calculation with some data you will be using one column for 'x' values and one or more 'y' columns
 or indeed having 'z' column data and uncertainties in all of these (conventionally we call these 'd', 'e' and 'f' columns
-so that 'e' data is the error in the y data). DataFile has a concept of marking a column as containing such data and
+so that 'e' data is the error in the y data). :py:class:`DataFile` has a concept of marking a column as containing such data and
 will then use these by default in many methods when appropriate to have 'x' and 'y' data.
 
-For data that describes a vector field, you can mark the columns as containing 'u', 'v', 'w' data where (u,v,w) is the vector value at the point (x,y,z). There's no
-support at present for uncertainities in (u,v,w) being marked.
+In addition to identifying columns as 'x','y', or 'z', for data that describes a vector field, you can mark the columns as containing
+'u', 'v', 'w' data where (u,v,w) is the vector value at  the point (x,y,z). There's no support at present for uncertainities in (u,v,w) being marked.
+
+Setting Column Types
+^^^^^^^^^^^^^^^^^^^^
 
 To set which columns contain 'x','y' etc data use the :py:attr:`DataFile.setas` attribute. This attribute can take
 a list of single character strings from the set 'x','y','z','d','e', 'f', 'u', 'v', 'w' or '.' where each element of the list refers to
@@ -370,6 +329,86 @@ There are some more convenience ways to set which columns to use as x,y,z etc.::
 In each of these cases, the :py:class:`DataFile` will try to work out what you intended to achieve for maximum flexibility
 and convenience when writing code. However it can be fooled if one of your columns is called 'x' or 'y' !
 
+Reading Column Types
+^^^^^^^^^^^^^^^^^^^^
+
+The normal representation of :py:attr:`DataFile.setas` is as a list, but it also has a string conversion available. You can also find which column
+has been assigned as 'x', 'y' etc. by treating the :py:attr:`DataFile.setas` as a dictionary::
+
+    d.column_headers=["One","Two","three","Four"]
+    d.setas="xy.z"
+
+    print list(d.setas) #['x','y','.','z']
+    print d.setas #'xy.z'
+    print d.setas['x'] # "One"
+    print d.setas["#x"] # 0
+
+Note that the :py:attr:`DataFile.setas` attribute supports reading keys that are either the single letter t get the name of the column or the letter
+preceded by a # character to get the number of the column.
+
+Swapping and Rotating Column Assignments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Finally, if the :py:attr:`DataFile.setas` attribute has been set with *x*, *y* (and *z*) columns then these assingments can be
+swapped around by the **invert** operator **~**. This either swaps *x* and *y* with eir associated errorbars for 2-D datasets, or rotates
+*x* to *y*, *y* to *z* and *z* to *x* )again with their associated errors bars.::
+
+    d.setas="xye"
+    print d.setas
+    >>> ['x','y','e']
+    e=~d
+    print e.setas
+    >>> ['y','x','d']
+
+Working with columns of data
+-----------------------------
+
+This is all very well, but often you want to examine a particular column of data
+or a particular row::
+
+  d.column(0)
+  d.column('Temperature')
+  d.column(['Temperature',0])
+
+In the first example, the first column of numeric data will be returned. In the
+second example, the column headers will first be checked for one labeled exactly
+*Temperature* and then if no column is found, the column headers will be
+searched using *Temperature* as a regular expression. This would then
+match *Temperature (K)* or *Sample Temperature*.  The third
+example results in a 2 dimensional numpy array containing two columns in the
+order that they appear in the list (ie not the order that they are in the data
+file). For completeness, the :py:meth:`DataFile.column` method also allows one to
+pass slices to select columns and should do the expected thing.
+
+There are a couple of convenient short cuts/ Firstly the *floormod* operator //
+is an alias for the :py:meth:`DataFile.column` method and secondly for working
+with cases where the column headers are not the same as the names of any of the attributes
+of the :py:class:`DataFile` object::
+
+  d//"Temperature"
+  d.Temperature
+  d.column('Temperature')
+
+all return the same data.
+
+Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-
+
+ 1) As an integer where the first column on the left is index 0
+ 2) As a string. if the string matches a column header exactly then the index of that column is returned.
+      If the string fails to match any column header it is compiled as a regular expression and then that
+      is tried as a match. If multiple columns match then only the first is returned.
+ 3) As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular
+      expression in directly with any extra options (like case insensitivity flags) set.
+ 4) As a slice object (ee.g. ``0:10:2``) this is expanded to a list of integers.
+ 5) As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and
+      the final result would be to use a list of column indices.
+
+For example::
+    import re
+    col=re.compile('^temp',re.IGNORECASE)
+    d.column(col)
+
+
 Working with complete rows of data
 ----------------------------------
 
@@ -381,6 +420,33 @@ Rows don't have labels, so are accessed directly by number::
 The second example uses a slice to pull out more than one row. This syntax also
 supports the full slice syntax which allows one to, for example, decimate the
 rows, or directly pull out the last fews rows in the file.
+
+Special Magic When Working with Subsets of Data
+-----------------------------------------------
+
+As mentioned above, the data in a :py:class:`DataFile` is a sepcial siubclass of numpy's Masked Array - :py:class:`DataArray`.
+A DataArray understands that columns can have names and can be assigned to hold specific types of data - x,y,z values etc. In
+fact, the logic used for the column names and setas attribute in a :py:class:`DataFile` is actually supplied by the
+:py:class:`DataArray`. Whn you index a DataFile or it's data, the resulting data remembers it's column names and assignments
+and these can be used directly::
+
+    r=d[1:4]
+    print r.x,r.y
+
+In addition to the column assignments, :py:class:`DataArray` also keeps a track of the row numbers and makes them available via
+the *i* attribute.::
+
+    d.data.i # [0,1,2,3...,len(d)]
+    r=d[10]
+    r.i # 10
+    r.column_headers
+
+You can reset the row numbers by assiging a value to the *i* attribute.
+
+A single column of data also gains a *.name* attribute that matches its column_header::
+
+    c=d[:,0]
+    c.name == c.column_headers[0] #True
 
 Manipulating the metadata
 -------------------------
@@ -445,6 +511,9 @@ attribute to d this. This read-only attribute is just providing an alternative
 view of the same data.::
 
    d.records
+
+Finally the :py:attr:`DataFile.dict_records` atrtibute does the same thing, but presetns the data as an array of dictionaries, where the
+keys are the column names and each dictionary represents a single row.
 
 Selecting Individual rows and columns of data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -570,7 +639,16 @@ points. For this case the :py:,eth:`DataFile.section` method can be used::
 
 After the x, y, z data columns are identified, the :py:meth:`DataFile.section` method works with
 'x', 'y' and 'z' keyword arguments which ar then used to search for matching data rows (the arguments to
-these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method). The
+these keyword arguments follow the same rules as the :py:meth:`DataFile.search` method).
+
+A final way of searching data is to look for the closest row to a given value. For this the eponymous method may be used::
+
+    r=d.closest(10.3,xcol="Search Col")
+    r=d.closest(10.3)
+
+If the *xcol* parameter is not supplied, the value from the :py:attr:`DataFile.setas` attribute is used. Since the returned row
+is an instance of the :py:class:`DataArray` that has been taken from the original data, it will know what row number it was and
+will make that available via it's *i* attribute.
 
 Find out more about the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -667,10 +745,11 @@ Working with Columns of Data
 Changing Individual Columns of Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :py:attr:`DataFile.data` attribute is simply a 2D numpy array, so can be directly modified like any other
-numpy array might be. If, however, the :py:attr:`DataFile.setas` attribute has been used to identify columns as
-containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written to as well as read to directly
-modify the data without having to keep track any further of which column(s) is indexed. This the following will work::
+The :py:attr:`DataFile.data` attribute is not simply a 2D numpy array, but a special subclass :py:class:`DataArray`, but still
+can be directly modified like any other numpy array like class might be. If, however, the :py:attr:`DataFile.setas` attribute has
+been used to identify columns as containing x,y,z,u,v,w,d,e or f type data, then the correspondign attributes can be written
+to as well as read to directly modify the data without having to keep track any further of which column(s) is indexed.
+Thus the following will work::
 
     d.setas="x..y..z"
     d.x=d.x-5.0*d.y/d.z
@@ -730,9 +809,9 @@ The append columns operator **&** will only add columns to the end of a
 dataset. If you want to add a column of data in the middle of the data set then
 you should use the :py:meth:`DataFile.add_column` method.::
 
-  d.add_column(numpy.array(range(100)),'Column Header')
-  d.add_column(numpy.array(range(100)),'Column Header',Index)
-  d.add_column(lambda x: x[0]-x[1],'Column Header',func_args=None)
+  d.add_column(numpy.array(range(100)),header='Column Header')
+  d.add_column(numpy.array(range(100)),header='Column Header',index=Index)
+  d.add_column(lambda x: x[0]-x[1],header='Column Header',func_args=None)
 
 The first example simply adds a column of data to the end of the dataset and
 sets the new column headers. The second variant  inserts the new column before

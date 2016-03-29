@@ -7,7 +7,7 @@ Classes:
     PlotFile - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
-from Stoner.Core import DataFile, _attribute_store
+from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
 import numpy as _np_
@@ -29,23 +29,6 @@ import copy
 from collections import Iterable
 from mpl_toolkits.axes_grid1 import host_subplot
 import mpl_toolkits.axisartist as AA
-
-def all_none(iter):
-    """Checks to see if an iterable is all None.
-
-    Args:
-        iter (anything): Thing to check if None
-
-    Returns:
-        True if it iter is None or all items in iter are None or iter has zero length.
-    """
-    if not isinstance(iter,Iterable):
-        return iter is None
-    else:
-        ret=True
-        for i in iter:
-            ret&=i is None
-        return ret
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions.
@@ -74,10 +57,120 @@ class PlotFile(DataFile):
             self.template = DefaultPlotStyle
         super(PlotFile, self).__init__(*args, **kargs)
         self.__figure = None
-        self._labels = self.column_headers
+        self._labels = copy.deepcopy(self.column_headers)
         self.legend = True
         self._subplots = []
         self.multiple = "common"
+
+#============================================================================================================================
+#Properties of PlotFile
+#============================================================================================================================
+    @property
+    def _public_attrs(self):
+        ret = super(PlotFile, self)._public_attrs
+        ret.update({
+            "fig": (int, mplfig.Figure),
+            "labels": list,
+            "template": DefaultPlotStyle,
+            "xlim": tuple,
+            "ylim": tuple,
+            "title": string_types,
+            "xlabel": string_types,
+            "ylabel": string_types
+        })
+        return ret
+
+    @property
+    def ax(self):
+        return self.axes.index(self.fig.gca())
+
+    @ax.setter
+    def ax(self,value):
+        if isinstance(value, int) and 0 <= value < len(self.axes):
+            self.fig.sca(self.axes[value])
+        else:
+            raise IndexError("Figure doesn't have enough axes")
+
+    @property
+    def axes(self):
+        if isinstance(self.__figure, mplfig.Figure):
+            ret = self.__figure.axes
+        else:
+            ret = None
+        return ret
+
+    @DataFile.clone.getter
+    def clone(self):
+        c = self.__class__()
+        ret = copy_into(self,c)
+        ret.template = copy.deepcopy(self.template)
+        ret.labels=self.labels
+        return ret
+
+    @property
+    def column_headers(self):
+        return DataFile.column_headers.fget(self)
+
+    @column_headers.setter
+    def column_headers(self,value):
+        if all_type(value,string_types):
+            DataFile.column_headers.fset(self,value)
+            self.labels = value
+        else:
+            raise NotImplementedError("Column headers should be an iterable of strings.")
+
+    @property
+    def fig(self):
+        return self.__figure
+
+    @fig.setter
+    def fig(self,value):
+        if isinstance(value,plt.Figure):
+            self.__figure = value
+            self.__figure, ax = self.template.new_figure(value.number)
+        elif isinstance(value.int):
+            value=plt.Figure(value)
+            self.fig=value
+        else:
+            raise NotImplementedError("fig should be a number of matplotlib figure")
+
+    @property
+    def fignum(self):
+        return self.__figure.number
+
+    @property
+    def labels(self):
+        if len(self._labels) < len(self.column_headers):
+            self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
+        return self._labels
+
+    @labels.setter
+    def labels(self,value):
+        self._labels = value
+
+    @property
+    def subplots(self):
+        if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
+            self._subplots = self.__figure.axes
+        return self._subplots
+
+
+    @property
+    def template(self):
+        return self._template
+
+    @template.setter
+    def template(self,value):
+        if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
+            value = value()
+        if isinstance(value, DefaultPlotStyle):
+            self._template = value
+        else:
+            raise ValueError("Template is not of the right class")
+        self._template.apply()
+
+
+
 
     def _Plot(self, ix, iy, fmt, plotter, figure, **kwords):
         """Private method for plotting a single plot to a figure.
@@ -293,59 +386,21 @@ class PlotFile(DataFile):
 
                 All other attrbiutes are passed over to the parent class
                 """
-        if name == "fig" or name == "__figure":
-            ret = self.__figure
-        elif name == "fignum":
-            ret = self.__figure.number
-        elif name == "template":
-            ret = self._template
-        elif name == "ax":
-            return self.axes.index(self.fig.gca())
-        elif name == "labels":
-            if len(self._labels) < len(self.column_headers):
-                self._labels.extend(self.column_headers[len(self._labels):])
-            ret = self._labels
-        elif name == "subplots":
-            if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
-                self._subplots = self.__figure.axes
-            ret = self._subplots
-        elif name == "axes":
-            if isinstance(self.__figure, mplfig.Figure):
-                ret = self.__figure.axes
+        try:
+            return super(PlotFile, self).__getattr__(name)
+        except AttributeError:
+            if not isinstance(self.__figure, mplfig.Figure):
+                raise AttributeError("Unknown attribute {}".format(name))
+            ax = self.__figure.axes
+            if "get_{}".format(name) in dir(ax):
+                func = ax.__getattribute__("get_{}".format(name))
+                ret = func()
+            elif name in plt.__dict__:  # Sort of a universal pass through to plt
+                ret = plt.__dict__[name]
+            elif name in dir(ax):  # Sort of a universal pass through to plt
+                ret = ax.__getattribute__(name)
             else:
-                ret = None
-        elif name == "clone":
-            ret = super(PlotFile, self).__getattr__("clone")
-            ret.template = copy.deepcopy(self.template)
-            ret.labels=self.labels
-        elif name == "_public_attrs":
-            ret = super(PlotFile, self).__getattr__(name)
-            ret.update({
-                "fig": (int, mplfig.Figure),
-                "labels": list,
-                "template": DefaultPlotStyle,
-                "xlim": tuple,
-                "ylim": tuple,
-                "title": string_types,
-                "xlabel": string_types,
-                "ylabel": string_types
-            })
-        else:
-            try:
-                return super(PlotFile, self).__getattr__(name)
-            except AttributeError:
-                if not isinstance(self.__figure, mplfig.Figure):
-                    raise AttributeError
-                ax = self.__figure.axes
-                if "get_{}".format(name) in dir(ax):
-                    func = ax.__getattribute__("get_{}".format(name))
-                    ret = func()
-                elif name in plt.__dict__:  # Sort of a universal pass through to plt
-                    ret = plt.__dict__[name]
-                elif name in dir(ax):  # Sort of a universal pass through to plt
-                    ret = ax.__getattribute__(name)
-                else:
-                    raise AttributeError
+                raise AttributeError("Unknown attribute {}".format(name))
         return ret
 
     def __setattr__(self, name, value):
@@ -364,24 +419,8 @@ class PlotFile(DataFile):
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
     """
-        if name == "fig":
-            self.__figure = value
-            self.__figure, ax = self.template.new_figure(value.number)
-        elif name == "labels":
-            self._labels = value
-        elif name == "template":
-            if isinstance(value, DefaultPlotStyle):
-                self._template = value
-            elif type(value) == type(object) and issubclass(value, DefaultPlotStyle):
-                self._template = value()
-            else:
-                raise ValueError("Template is not of the right class")
-            self._template.apply()
-        elif name == "column_headers":  # Overwrite the labels if we overwrite the column_headers
-            self._labels = value
-            super(PlotFile, self).__setattr__(name, value)
-        elif name == "ax" and isinstance(value, int) and 0 <= value < len(self.axes):
-            self.fig.sca(self.axes[value])
+        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
+            object.__setattr__(self,name, value)
         elif name in dir(super(PlotFile, self)):
             super(PlotFile, self).__setattr__(name, value)
         elif "set_{}".format(name) in dir(plt.Axes):
@@ -400,7 +439,7 @@ class PlotFile(DataFile):
         else:
             super(PlotFile, self).__setattr__(name, value)
 
-    def add_column(self, column_data, column_header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
@@ -422,14 +461,14 @@ class PlotFile(DataFile):
             the original DataFile Instance as well as returning it."""
 
         # Call the parent method and then update this label
-        super(PlotFile,self).add_column(column_data,column_header,index,func_args,replace)
+        super(PlotFile,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
         else:
             index = self.find_col(index)
 
-        self.labels[index]=column_header
+        self.labels[index]=header
         return self
 
 
@@ -486,7 +525,7 @@ class PlotFile(DataFile):
         kargs["plotter"] = plotter
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
-    def figure(self, figure=None,projection="rectilinear"):
+    def figure(self, figure=None,projection="rectilinear",**kargs):
         """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
 
         Args:
@@ -495,11 +534,11 @@ class PlotFile(DataFile):
         Returns:
             The current \b Stoner.PlotFile instance"""
         if figure is None:
-            figure, ax = self.template.new_figure(None,projection=projection)
+            figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure,projection=projection)
+            figure, ax = self.template.new_figure(figure,projection=projection,**kargs)
         elif isinstance(figure, mplfig.Figure):
-            figure, ax = self.template.new_figure(figure.number,projection=projection)
+            figure, ax = self.template.new_figure(figure.number,projection=projection,**kargs)
         self.__figure = figure
         return self
 
@@ -685,6 +724,9 @@ class PlotFile(DataFile):
                 kargs["_startx"] = x
                 axes = cols["axes"]
 
+        if "template" in kargs:
+            self.template=kargs.pop("template")
+
         plotters = [None, None, self.plot_xy, self.plot_xyz, self.plot_xyuv, self.plot_xyuv, self.plot_xyzuvw]
         if 2 <= axes <= 6:
             plotter = plotters[axes]
@@ -858,6 +900,10 @@ class PlotFile(DataFile):
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, multi_y=True, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "plotter": plt.plot,
             "show_plot": True,
@@ -895,7 +941,7 @@ class PlotFile(DataFile):
         kargs, nonkargs = self._fix_kargs(None, defaults, otherargs, **kargs)
 
         for err in ["xerr", "yerr"]:  # Check for x and y error keywords
-            if err in kargs and not all_none(kargs[err]):
+            if err in kargs and not isNone(kargs[err]):
                 if isinstance(kargs[err], index_types):
                     kargs[err] = self.column(kargs[err])
                 elif isinstance(kargs[err], list) and isinstance(c.ycol, list) and len(kargs[err]) == len(c.ycol):
@@ -931,7 +977,11 @@ class PlotFile(DataFile):
             if ix > 0:
                 if multiple == "y2" and ix == 1:
                     self.y2()
-                    cc = plt.gca()._get_lines.color_cycle
+                    lines=plt.gca()._get_lines
+                    if hasattr(lines,"color_cylce"): #mpl<1.5
+                        cc=lines.color_cycle
+                    else: #MPL >=1.5
+                        cc=lines.prop_cycler
                     for i in range(ix):
                         next(cc)
             if len(c.ycol) > 1 and multiple in ["y2", "panels", "subplots"]:
@@ -945,6 +995,7 @@ class PlotFile(DataFile):
             if "yerr" in kargs and isinstance(kargs["yerr"], list):  # Fix yerr keywords
                 temp_kwords["yerr"] = kargs["yerr"][ix]
             # Call plot
+
             if fmt_t is None:
                 self._Plot(c.xcol, c.ycol[ix], fmt_t, nonkargs["plotter"], self.__figure, **temp_kwords)
             else:
@@ -983,6 +1034,10 @@ class PlotFile(DataFile):
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, multi_y=False, **kargs)
         xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "plotter": self.__SurfPlotter,
             "show_plot": True,
@@ -1034,6 +1089,10 @@ class PlotFile(DataFile):
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
                 """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         if isinstance(c.wcol, index_types):
             wdata = self.column(c.wcol)
             phidata = (wdata - _np_.min(wdata)) / (_np_.max(wdata) - _np_.min(wdata))
@@ -1084,6 +1143,10 @@ class PlotFile(DataFile):
         except ImportError:
             return None
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, ucol=ucol, vcol=vcol, wcol=wcol, multi_y=False, **kargs)
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         defaults = {
             "figure": self.__figure,
             "plotter": self._VectorFieldPlot,
@@ -1174,6 +1237,10 @@ class PlotFile(DataFile):
         }
         otherkargs = ["units", "angles", "scale", "scale_units", "width", "headwidth", "headlength", "headaxislength",
                       "minshaft", "minlength", "pivot", "color"]
+
+        if "template" in kargs: #Catch template in kargs
+            self.template=kargs.pop("template")
+
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
         self.__figure, ax = self._fix_fig(nonkargs["figure"])

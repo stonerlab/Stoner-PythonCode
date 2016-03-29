@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon May 25 20:50:05 2015
-
-@author: phygbu
-"""
-
 from Stoner import Data
-from numpy import sin,cos,pi,column_stack,zeros,sqrt,diag,ones,meshgrid,linspace
+from numpy import sin,cos,pi,column_stack,zeros_like,sqrt,diag,ones_like,meshgrid,linspace
 from numpy.random import normal,uniform
 import matplotlib.pyplot as plt
 
@@ -38,14 +31,15 @@ d.template.fig_width=5.2
 d.template.fig_height=5.0 # Square aspect ratio
 d.plot_xyz(plotter="scatter")
 
-popt,pcov=d.curve_fit(sphere,(0,1,2),zeros(len(d)),result=True,header="Fitted Sphere")
+#curve_fit does the hard work
+popt,pcov=d.curve_fit(sphere,(0,1,2),zeros_like(d.x))
 
 # This manually constructs the best fit sphere
 a,b,c,r=popt
 p=linspace(-pi/2,pi/2,16)
 q=linspace(-pi,pi,31)
 P,Q=meshgrid(p,q)
-R=ones(p.shape)*r
+R=ones_like(P)*r
 x,y,z=transform(R,Q,P)
 x+=a
 y+=b

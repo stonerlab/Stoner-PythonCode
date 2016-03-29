@@ -12,9 +12,16 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
-from os.path import join, dirname, realpath
+from os.path import join, dirname, realpath,exists
 from sys import platform as _platform
 from numpy.random import normal
+from inspect import getfile
+
+try:
+    import seaborn as sns
+    SEABORN=True
+except ImportError:
+    SEABORN=False
 
 import numpy as _np_
 
@@ -158,20 +165,22 @@ class DefaultPlotStyle(object):
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
+        self._stylesheet=None
         self.update(**kargs)
 
     def __call__(self, **kargs):
         """Calling the template object can manipulate the rcParams that will be set."""
         for k in kargs:
+            ok=k
+            if k.startswith("template_"):
+                k=k[9:]
             nk = k.replace("_", ".").replace("..", "_")
             if nk in plt.rcParams:
-                super(DefaultPlotStyle, self).__setattr__("template_" + k, kargs[k])
+                super(DefaultPlotStyle, self).__setattr__("template_{}".format(k), kargs[ok])
 
     def __getattr__(self, name):
         """Provide magic to read certain attributes of the template."""
-        if name == "stylesheet":
-            return self._stylesheet()
-        elif name.startswith("template_"):  #Magic conversion to rcParams
+        if name.startswith("template_"):  #Magic conversion to rcParams
             attrname = name[9:].replace("_", ".").replace("..", "_")
             if attrname in plt.rcParams:
                 return plt.rcParams[attrname]
@@ -184,19 +193,52 @@ class DefaultPlotStyle(object):
 
     def __setattr__(self, name, value):
         """Ensure stylesheet can't be overwritten and provide magic for template attributes."""
-        if name == "stylesheet":
-            raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
-        elif name.startswith("template_"):
+        if name.startswith("template_"):
             attrname = name[9:].replace("_", ".").replace("..", "_")
             plt.rcParams[attrname] = value
             super(DefaultPlotStyle, self).__setattr__(name, value)
         else:
             super(DefaultPlotStyle, self).__setattr__(name, value)
 
-    def _stylesheet(self):
+
+    @property
+    def stylesheet(self):
         """Horribly hacky method to traverse over the class heirarchy for style sheet names."""
+        if self._stylesheet is not None and self._stylesheet[0]==self.stylename: # Have we cached a copy of our stylesheets ?
+            return self._stylesheet[1]
         levels = type.mro(type(self))[:-1]
-        return [join(dirname(realpath(__file__)), "stylelib", c.stylename + ".mplstyle") for c in levels[::-1]]
+        sheets=[]
+        for c in levels: # Iterate through all possible parent classes and build a list of stylesheets
+            if c is self.__class__:
+                continue
+            for f in [join(dirname(getfile(c)), c.stylename + ".mplstyle"),
+                      join(dirname(getfile(c)), "stylelib",c.stylename + ".mplstyle"),
+                      join(dirname(realpath(__file__)), "stylelib",c.stylename + ".mplstyle"),
+                ]: # Look in first of all the same directory as the class file and then in a stylib folder
+                if exists(f):
+                    sheets.append(f)
+                    break
+            else: # Fallback, does the parent class define a builtin stylesheet ?
+                if c.stylename in plt.style.available:
+                    sheets.append(c.stylename)
+        #Now do the same for this class, but allow the stylename to be an instance variable as well
+        for f in [join(dirname(getfile(self.__class__)), self.stylename + ".mplstyle"),
+                  join(dirname(getfile(self.__class__)), "stylelib",self.stylename + ".mplstyle"),
+            ]:
+            if exists(f):
+                sheets.append(f)
+                break
+        else:
+            if self.stylename in plt.style.available:
+                sheets.append(self.stylename)
+
+        self._stylesheet=self.stylename,sheets
+        return sheets
+
+    @stylesheet.setter
+    def stylesheet(self,value):
+        raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
+
 
     def update(self, **kargs):
         """Update the template with new attributes from keyword arguments.
@@ -204,7 +246,9 @@ class DefaultPlotStyle(object):
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
         for k in kargs:
-            if not k.startswith("_"):
+            if k in dir(self) and not callable(self.__getattr__(k)):
+                self.__setattr__(k,kargs[k])
+            elif not k.startswith("_"):
                 self.__setattr__("template_" + k, kargs[k])
 
     def new_figure(self, figure=False, **kargs):
@@ -267,6 +311,7 @@ class DefaultPlotStyle(object):
         """This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
+        pass
 
     def customise_axes(self, ax, plot):
         """This method is run when we have an axis to manipulate.
@@ -443,3 +488,66 @@ class SketchPlot(DefaultPlotStyle):
             l.set_rotation(normal(scale=2))
 
         plt.draw
+
+if SEABORN: # extra classes if we have seaborn available
+
+    class SeabornPlotStyle(DefaultPlotStyle):
+        """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
+
+        Attributes:
+            stylename (str): The seaborn plot stlye to use - darkgrid, whitegrid, dark, white, or ticks
+            context (str): The seaborn plot context for scaling elements - paper,notebook,talk, or poster
+            palette (str): A name of a predefined seaborn palette.
+
+        Example
+            .. plot:: samples/plotstyles/SeabornStyle.py
+                :include-source:
+        """
+
+
+        _stylename=None
+        _context=None
+        _palette=None
+
+        @property
+        def context(self):
+            return self._context
+
+        @context.setter
+        def context(self,name):
+            if name in ["paper", "notebook", "talk", "poster"]:
+                self._context=name
+            else:
+                raise AttributeError("style name should be one of  {paper,notebook,talk,poster}")
+
+        @property
+        def palette(self):
+            return self._palette
+
+        @context.setter
+        def palette(self,name):
+            try:
+                with sns.color_palette(name):
+                    pass
+                self._palette=name
+            except Exception as e:
+                raise e
+
+        @property
+        def stylename(self):
+            return self._stylename
+
+        @stylename.setter
+        def stylename(self,name):
+            if name in ["darkgrid", "whitegrid", "dark", "white", "ticks"]:
+                self._stylename=name
+            else:
+                raise AttributeError("style name should be one of  {darkgrid, whitegrid, dark, white, ticks}")
+
+
+        def apply(self):
+            """Override base method to apply seaborn style sheets."""
+            sns.set_style(style=self.stylename)
+            sns.set_context(context=self.context)
+            sns.set_palette(sns.color_palette(self._palette))
+            self.customise()

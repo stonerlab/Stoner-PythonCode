@@ -40,6 +40,7 @@ class HDF5File(DataFile):
     compression = 'gzip'
     compression_opts = 6
     patterns = ["*.hdf", "*.hf5"]
+    mime_type=["application/x-hdf"]
 
     #    def __init__(self,*args,**kargs):
     #       """Constructor to catch initialising with an h5py.File or h5py.Group
@@ -86,7 +87,7 @@ class HDF5File(DataFile):
             self.data = [[]]
         metadata = f.require_group('metadata')
         if "column_headers" in f.attrs:
-            self.column_headers = f.attrs["column_headers"]
+            self.column_headers = f.attrs["column_headers"].astype("U")
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -163,6 +164,7 @@ class HGXFile(DataFile):
 
     priority=16
     pattern=["*.hgx"]
+    mime_type=["application/x-hdf"]
 
     def _load(self, filename=None, *args, **kargs):
         """GenX HDF file loader routine.
@@ -180,12 +182,15 @@ class HGXFile(DataFile):
             self.filename = filename
         try:
             f=h5py.File(filename)
-            f1=f["current"]
-            f2=f1["config"]
-            f.close()
-        except:
-            f.close()
+            if "current" in f and "config" in f["current"]:
+                pass
+            else:
+                f.close()
+                raise StonerLoadError("Looks like an unexpected HDF layout!.")
+        except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
+        else:
+            f.close()
 
         with h5py.File(self.filename, "r") as f:
             self.scan_group(f["current"],"")
@@ -199,7 +204,7 @@ class HGXFile(DataFile):
 
         if not isinstance(grp,h5py.Group):
             return None
-        for x in grp:
+        for i,x in enumerate(grp):
             if pth=="":
                 new_pth=x
             else:
@@ -210,6 +215,7 @@ class HGXFile(DataFile):
                 self.scan_group(grp[x],new_pth)
             elif isinstance(grp[x],h5py.Dataset):
                 self[new_pth]=grp[x].value
+        return None
 
     def main_data(self,data_grp):
         """Work through the main data group and build something that looks like a numpy 2D array."""
@@ -230,7 +236,7 @@ class HGXFile(DataFile):
             self.column_headers[-3]=dataset["x_command"].value
             self.column_headers[-2]=dataset["y_command"].value
             self.column_headers[-1]=dataset["error_command"].value
-
+            self.column_headers=[str(x) for x in self.column_headers]
 
 
 

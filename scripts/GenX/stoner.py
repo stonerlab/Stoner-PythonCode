@@ -5,8 +5,8 @@ read in data files. Supports loading from the Brucker D8
 
 import numpy as np
 import wx
-import Stoner as SC
-import Stoner.FileFormats as SF
+from Stoner import Data
+import Stoner.HDF5 as SH
 
 from wx.lib.masked import NumCtrl
 
@@ -26,7 +26,7 @@ class Plugin(Template):
         Loads the data from filename into the data_item_number.
         '''
         try:
-            datafile=SC.DataFile(str(filename)) # does all the hard work here
+            datafile=Data(str(filename)) # does all the hard work here
         except Exception, e:
             ShowWarningDialog(self.parent, 'Could not load the file: ' +\
                     filename + ' \nPlease check the format.\n\n Stoner.DataFile'\
@@ -34,22 +34,31 @@ class Plugin(Template):
         else:
             # For the freak case of only one data point
             try:
-                self.x_col=datafile.find_col(self.x_col)
-                self.y_col=datafile.find_col(self.y_col)
-                self.e_col=datafile.find_col(self.e_col)
-            except KeyError:
+                if datafile.setas.cols["axes"]==0:
+                    self.x_col=datafile.find_col(self.x_col)
+                    self.y_col=datafile.find_col(self.y_col)
+                    self.e_col=datafile.find_col(self.e_col)
+                    datafile.etsas(x=self.x_col,y=self.y_col,e=self.e_col)
+                else:
+                    self.x_col=datafile.setas.cols["xcol"]
+                    self.y_col=datafile.setas.cols["ycol"][0]
+                    if len(datafile.setas.cols["yerr"])>0:
+                        self.e_col=datafile.setas.cols["yerr"][0]
+                    else:
+                        datafile&=np.ones(len(datafile))
+                        datafile.setas[-1]="e"
+            except Exception as e:
                 ShowWarningDialog(self.parent, 'The data file does not contain'\
-                        + 'all the columns specified in the opions\n')
+                        + 'all the columns specified in the opions\n'+e.message)
                 # Okay now we have showed a dialog lets bail out ...
                 return
             # The data is set by the default Template.__init__ function, neat hu
             # Know the loaded data goes into *_raw so that they are not
             # changed by the transforms
-            datafile=SC.AnalyseFile(datafile)
-            datafile=datafile.apply(lambda x:x1E-8 if [self.y_col]==0.0 else x[self.y_col], self.y_col, header=datafile.column_headers[self.y_col]) # clear out zeroes
-            self.data[data_item_number].x_raw = datafile.column(self.x_col)
-            self.data[data_item_number].y_raw =  datafile.column(self.y_col)
-            self.data[data_item_number].error_raw =  datafile.column(self.e_col)
+            datafile.y=np.where(datafile.y==0.0,1E-8,datafile.y)
+            self.data[data_item_number].x_raw = datafile.x
+            self.data[data_item_number].y_raw =  datafile.y
+            self.data[data_item_number].error_raw =  datafile.e
             # Run the commands on the data - this also sets the x,y, error memebers
             # of that data item.
             self.data[data_item_number].run_command()

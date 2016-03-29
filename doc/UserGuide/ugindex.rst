@@ -1,3 +1,5 @@
+.. _User_Guide:
+
 #####################################
  The Stoner Python Package User Guide
 #####################################
@@ -17,4 +19,3 @@
    Developing and Extending <developer>
    Credits <credits>
 
-    

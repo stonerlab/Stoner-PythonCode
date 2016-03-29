@@ -64,9 +64,9 @@ class CSVFile(DataFile):
                 tmp = header_string.index(header_delim)
             except ValueError:
                 raise StonerLoadError("No Delimiters in header line")
-            self.column_headers = [x.strip() for x in header_string.split(header_delim)]
+            column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
-            self.column_headers = ["Column" + str(x) for x in range(_np_.shape(self.data)[1])]
+            column_headers = ["Column" + str(x) for x in range(_np_.shape(self.data)[1])]
             data_line = linecache.getline(self.filename, data_line)
             try:
                 data_line.index(data_delim)
@@ -74,6 +74,7 @@ class CSVFile(DataFile):
                 raise StonerLoadError("No delimiters in data lines")
 
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
+        self.column_headers=column_headers
         return self
 
     def save(self, filename, deliminator=','):
@@ -143,8 +144,8 @@ class VSMFile(DataFile):
                         header_string = line.strip()
                     elif i == 3:
                         unit_string = line.strip()
-                        self.column_headers = [
-                            "{} {}".format(h, u)
+                        column_headers = [
+                            "{} ({})".format(h.strip(), u.strip())
                             for h, u in zip(header_string.split(header_delim), unit_string.split(header_delim))
                         ]
                     elif i > 3:
@@ -154,14 +155,15 @@ class VSMFile(DataFile):
         self.data = _np_.genfromtxt(self.filename,
                                     dtype='float',
                                     usemask=True,
-                                    delimiter=data_delim,
                                     skip_header=data_line - 1,
-                                    missing_values=['         6:0', '         ---'],
+                                    missing_values=['6:0', '---'],
                                     invalid_raise=False)
 
         self.data = ma.mask_rows(self.data)
         cols = self.data.shape[1]
         self.data = _np_.reshape(self.data.compressed(), (-1, cols))
+        self.column_headers=column_headers
+        self.setas(x="H_vsm (T)",y="m (emu)")
 
     def _load(self, filename=None, *args, **kargs):
         """VSM file loader routine.
@@ -178,7 +180,6 @@ class VSMFile(DataFile):
         else:
             self.filename = filename
         self.__parse_VSM()
-        self.setas(x="H_vsm", y="m (emu)")
         return self
 
 
@@ -270,8 +271,12 @@ class QDSquidVSMFile(DataFile):
                     key = key.title()
                     value = ' '.join(parts[2:])
                 self.metadata[key] = self.metadata.string_to_type(value)
-            self.column_headers = f.next().strip().split(',')
+            if python_v3:
+                column_headers = f.readline().strip().split(',')
+            else:
+                column_headers = f.next().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
+        self.column_headers=column_headers
         self.setas(x="Magnetic Field", y="Moment")
         return self
 
@@ -315,8 +320,12 @@ class OpenGDAFile(DataFile):
                 key = parts[0]
                 value = parts[1].strip()
                 self.metadata[key] = self.metadata.string_to_type(value)
-            self.column_headers = f.next().strip().split("\t")
+            if python_v3:
+                column_headers = f.readline().strip().split("\t")
+            else:
+                column_headers = f.next().strip().split("\t")
         self.data = _np_.genfromtxt(self.filename, dtype='float', invalid_raise=False, skip_header=i + 2)
+        self.column_headers=column_headers
         return self
 
 
@@ -336,6 +345,8 @@ class SPCFile(DataFile):
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.spc"] # Recognised filename patterns
+
+    mime_type=["application/octet-stream"]
 
     def _load(self, filename=None, *args, **kargs):
         """Reads a .scf file produced by the Renishaw Raman system (amongs others)
@@ -506,10 +517,10 @@ class TDMSFile(DataFile):
         (metadata, data) = tdms_read(self.filename)
         for key in metadata:
             self.metadata[key] = metadata[key]
-        self.column_headers = list()
+        column_headers = list()
         for column in data:
             nd = data[column]
-            self.add_column(nd, column)
+            self.add_column(nd, header=column)
         return self
 
 
@@ -598,12 +609,13 @@ class RigakuFile(DataFile):
                                     invalid_raise=False,
                                     comments="*",
                                     skip_header=i + i2 + 1)
-        self.column_headers = ['Column' + str(i) for i in range(self.data.shape[1])]
-        self.column_headers[0:2] = [self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
+        column_headers = ['Column' + str(i) for i in range(self.data.shape[1])]
+        column_headers[0:2] = [self.metadata['meas.scan.unit.x'], self.metadata['meas.scan.unit.y']]
         for key in self.metadata:
             if isinstance(self[key], list):
                 self[key] = _np_.array(self[key])
         self.setas = "xy"
+        self.column_headers=column_headers
         return self
 
     def to_Q(self, l=1.540593):
@@ -611,7 +623,7 @@ class RigakuFile(DataFile):
 
         returns a copy of itself."""
 
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
 
 
 class XRDFile(DataFile):
@@ -663,7 +675,10 @@ class XRDFile(DataFile):
                     section = section + str(drive)
                     drive = drive + 1
                 elif section == "Data":  # Data section contains the business but has a redundant first line
-                    f.readline()
+                    if python_v3:
+                        f.readline()
+                    else:
+                        f.next()
                 for line in f:  #Now start reading lines in this section...
                     if line.strip(
                     ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
@@ -678,13 +693,14 @@ class XRDFile(DataFile):
                         parts=line.split('=')
                         key=parts[0].strip()
                         data=parts[1].strip()
-                        self[section+":"+key]=data # Keynames in main metadata are section:key - use theDataFile magic to do type determination
-        self.column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
+                        self[section+":"+key]=self.metadata.string_to_type(data) # Keynames in main metadata are section:key - use theDataFile magic to do type determination
+        column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
 
         f.close()# Cleanup
         self.data=_np_.reshape(self.data, (-1, 2))
         self.setas="xy"
         self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
+        self.column_headers=column_headers
         return self
 
     def to_Q(self, l=1.540593):
@@ -692,7 +708,7 @@ class XRDFile(DataFile):
 
         returns a copy of itself."""
 
-        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), "Momentum Transfer, Q ($\\AA$)")
+        self.add_column((4 * _np_.pi / l) * _np_.sin(_np_.pi * self.column(0) / 360), header="Momentum Transfer, Q ($\\AA$)")
 
 
 class BNLFile(DataFile):
@@ -765,13 +781,14 @@ class BNLFile(DataFile):
         header_string = linecache.getline(self.filename, self.line_numbers[0])
         header_string = re.sub(r'["\n]', '', header_string)  #get rid of new line character
         header_string = re.sub(r'#L', '', header_string)  #get rid of line indicator character
-        self.column_headers = map(lambda x: x.strip(), header_string.split())
+        column_headers = map(lambda x: x.strip(), header_string.split())
         self.__get_metadata()
         try:
             self.data = _np_.genfromtxt(self.filename, skip_header=self.line_numbers[1] - 1)
         except IOError:
             self.data = _np_.array([0])
             print('Did not import any data for {}'.format(self.filename))
+        self.column_headers=column_headers
 
     def _load(self, filename, *args, **kargs):  #fileType omitted, implicit in class call
         """BNLFile.load(filename)
@@ -834,9 +851,10 @@ class MokeFile(DataFile):
                     data = ":".join(parts[1:]).strip()
                     self[key] = data
                 line = bytes2str(f.readline()).strip()
-            self.column_headers = [x.strip() for x in line.split(",")]
+            column_headers = [x.strip() for x in line.split(",")]
             self.data = _np_.genfromtxt(f, delimiter=",")
         self.setas = "xy.de"
+        self.column_headers=column_headers
         return self
 
 
@@ -877,8 +895,9 @@ class FmokeFile(DataFile):
         del (label[0])
         for k, v in zip(label, value):
             self.metadata[k] = v  # Create metatdata from first 2 lines
-        self.column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+        column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
         self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
+        self.column_headers=column_headers
         return self
 
 
@@ -923,10 +942,11 @@ class GenXFile(DataFile):
                 dataset = "asymmetry"
             else:
                 raise StonerLoadError("Not a GenXFile")
-            self.column_headers = [f.strip() for f in line.strip().split('\t')]
+            column_headers = [f.strip() for f in line.strip().split('\t')]
             self.data = _np_.genfromtxt(datafile)
             self["dataset"] = dataset
             self.setas = "xye"
+            self.column_headers=column_headers
         return self
 
 
@@ -967,7 +987,7 @@ class SNSFile(DataFile):
                     section = line.strip().strip("[]")
                     if section == "Data":  # The Data section has one line of colum headers and then data
                         header = next(data)[2:].split("\t")
-                        self.column_headers = [h.strip().decode('ascii', 'ignore') for h in header]
+                        column_headers = [h.strip().decode('ascii', 'ignore') for h in header]
                         self.data = _np_.genfromtxt(data)  # we end by reading the raw data
                     elif section == "Global Options":  # This section can go into metadata
                         for line in data:
@@ -995,6 +1015,7 @@ class SNSFile(DataFile):
                         key = line[:i].strip()
                         value = line[i + 1:].strip()
                         self[key.strip()] = value.strip()
+        self.column_headers=column_headers
         return self
 
 
@@ -1025,10 +1046,13 @@ class OVFFile(DataFile):
             line = next(data)
             ptr += len(line)
             line = line.strip()
-            if line == "# OOMMF: rectangular mesh v1.0":
-                self["version"] = 1
-            elif line == "# OOMMF: rectangular mesh v2.0":
-                self["version"] = 2
+            if "OOMMF: rectangular mesh" in line:
+                if "v1.0" in line:
+                    self["version"] = 1
+                elif "v2.0" in line:
+                    self["version"] = 2
+                else:
+                    raise StonerLoadError("Cannot determine version of OOMMFF file")
             else:  # bug out oif we don't like the header
                 raise StonerLoadError("Not n OOMMF OVF File: opening line eas {}".format(line))
             pattern = re.compile(r"#\s*([^\:]+)\:\s+(.*)$")
@@ -1047,7 +1071,7 @@ class OVFFile(DataFile):
                         self[key] = self.metadata.string_to_type(val)
                     else:
                         raise StonerLoadError("Failed to understand metadata")
-            fmt = re.match(r".*Data\s+(.*)", line).group(1)
+            fmt = re.match(r".*Data\s+(.*)", line).group(1).strip()
             assert self["meshtype"] == "rectangular", "Sorry only OVF files with rectnagular meshes are currently supported."
             if self["version"] == 1:
                 if self["meshtype"] == "rectangular":
@@ -1092,8 +1116,9 @@ class OVFFile(DataFile):
         z = (_np_.linspace(self["zmin"], self["zmax"], self["znode"] + 1)[:-1] + self["zbase"]) * 1E9
         (y, z, x) = (_np_.ravel(i) for i in _np_.meshgrid(y, z, x))
         self.data = _np_.column_stack((x, y, z, uvwdata))
-        self.column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
+        column_headers = ["X (nm)", "Y (nm)", "Z (nm)", "U", "V", "W"]
         self.setas = "xyzuvw"
+        self.column_headers=column_headers
         return self
 
 
@@ -1158,7 +1183,7 @@ class MDAASCIIFile(DataFile):
             else:
                 raise StonerLoadError("Overran end of scan header before column descriptions")
             colpat = re.compile(r"#\s+\d+\s+\[([^\]]*)\](.*)")
-            self.column_headers = []
+            column_headers = []
             for i4, line in enumerate(data):
                 res = colpat.match(line)
                 line.strip()
@@ -1175,14 +1200,15 @@ class MDAASCIIFile(DataFile):
                             colname = bits[-2]
                         if bits[-1] != "":
                             colname += " ({})".format(bits[-1])
-                        if colname in self.column_headers:
+                        if colname in column_headers:
                             colname = "{}:{}".format(bits[0], colname)
                     else:
                         colname = res.group(1).strip()
-                    self.column_headers.append(colname)
+                    column_headers.append(colname)
             else:
                 raise StonerLoadError("Overand the end of file without reading data")
         self.data = _np_.genfromtxt(self.filename, skip_header=i1 + i2 + i3 + i4)  # so that's ok then !
+        self.column_headers=column_headers
         return self
 
 
@@ -1232,9 +1258,10 @@ class LSTemperatureFile(DataFile):
                 v = v.split()[0]
                 self.metadata[k] = self.metadata.string_to_type(v)
             headers = bytes2str(next(data)).strip().split()
-            self.column_headers = headers[1:]
+            column_headers = headers[1:]
             dat = _np_.genfromtxt(data)
             self.data = dat[:, 1:]
+        self.column_headers=column_headers
         return self
 
     def save(self, filename=None):
@@ -1271,17 +1298,17 @@ class LSTemperatureFile(DataFile):
                     vstr = str(len(self))
                 else:
                     vstr = str(v)
-                f.write("{}{}\n".format(kstr, vstr))
-            f.write("\n")
+                f.write("{}{}\r\n".format(kstr, vstr))
+            f.write("\r\n")
             f.write("No.   ")
             for h in self.column_headers:
                 f.write("{:11s}".format(h))
-            f.write("\n\n")
+            f.write("\r\n\r\n")
             for i in range(
                 len(self.data)):  # This is a slow way to write the data, but there should only ever be 200 lines
                 line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
-                f.write("{}\n".format(line))
+                f.write("{}\r\n".format(line))
         return self
 
 
@@ -1351,6 +1378,7 @@ class EasyPlotFile(DataFile):
         """Ensure the column headers are at least i long."""
         if len(self.column_headers) < i:
             l = len(self.column_headers)
+            self.data=_np_.append(self.data,_np_.zeros((self.shape[0],i-l)),axis=1) # Need to expand the array first
             self.column_headers.extend(["Column {}".format(x) for x in range(l, i)])
 
     def _et_cmd(self, parts):
@@ -1414,9 +1442,10 @@ class PinkLibFile(DataFile):
                 elif any(s in line for s in ('Start time', 'End time', 'Title')):
                     tmp=line.strip('#').split(':')
                     self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
-            self.column_headers = f[header_line].strip('#\t ').split('\t')
+            column_headers = f[header_line].strip('#\t ').split('\t')
             data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
             self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
-            if all(h in self.column_headers for h in ('T (C)', 'R (Ohm)')):
+            if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
                 self.setas(x='T (C)', y='R (Ohm)')
+        self.column_headers=column_headers
         return self

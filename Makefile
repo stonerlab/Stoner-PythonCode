@@ -16,9 +16,13 @@ wheel:
 
 doc: docbuild
 	$(PYTHON_SETUP) upload_docs --upload-dir=doc/_build/html
-	cp -ar doc/_build/html/* ../gh-pages/
 
 docbuild: FORCE
-	$(SPHINX_BUILD) -b html -a -E doc doc/_build/html
+	$(MAKE) -C doc clean
+	$(MAKE) -C doc html
+	rm -rfr doc/_build
+	$(MAKE) -C doc html
+	( cd ../gh-pages; git pull )
+	rsync -rcm --perms --chmod=ugo=rwX --delete  --filter="P .git" --filter="P .nojekyll" doc/_build/html/ ../gh-pages/
 
 FORCE:
