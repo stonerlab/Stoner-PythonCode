@@ -149,8 +149,57 @@ class Data(_AF_, _PF_):
         return ret
 
 
+def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, skip=0):
+    """Splits the DataFile data into several files where the column \b col is either rising or falling
+    
+    Args:
+        data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
+        col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
+        folder (:py:class:`Stoner.Folders.DataFolder` or None): if this is an instance of :py:class:`Stoner.Folders.DataFolder` then add
+            rising and falling files to groups of this DataFolder, otherwise create a new one
+        spliton (str or float): Define where to split the data, 'peak' to split on peaks, 'trough' to split
+            on troughs, 'both' to split on peaks and troughs or number to split at that number
+        rising (bool): whether to split on threshold crossing when data is rising
+        falling (bool): whether to split on threshold crossing when data is falling
+        skip (int): skip this number of splitons each time. eg skip=1 picks out odd crossings
+    Returns:
+        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
+    """ 
+    if col is None:
+        col = data.setas["x"]
+    d=Data(data)
+    if not isinstance(folder, _SF_):  # Create a new DataFolder object
+        output = _SF_()
+    else:
+        output = folder
+        
+    if isinstance(spliton, (int,long,float)):
+        spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True)
+        
+    elif spliton in ['peaks','troughs','both']:
+        width = len(d) / 10
+        if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
+            width += 1
+        if spliton=='peaks':
+            spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=False))
+        elif spliton=='troughs':
+            spl = list(d.peaks(col, width, xcol=False, peaks=False, troughs=True))
+        else:            
+            spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=True))
 
-
+    else:
+        raise ValueError('Did not recognise spliton')    
+    
+    spl = [spl[i] for i in range(len(spl)) if i%(skip+1)==0]              
+    spl.extend([0,len(d)])          
+    spl.sort()
+    for i in range(len(spl)-1):
+        tmp=d.clone
+        tmp.data=tmp[spl[i]:spl[i+1]]
+        output.files.append(tmp)
+    return output
+    
+        
 
 def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
@@ -196,7 +245,7 @@ def split_up_down(data, col=None, folder=None):
         working1 = data.clone
         working2 = data.clone
         working1.data = data.data[splits[i - 1]:splits[i],:]
-        working2.data = data.data[splits[i]:splits[1 + 1],:]
+        working2.data = data.data[splits[i]:splits[i + 1],:]
         if not order:
             (working1, working2) = (working2, working1)
         output.groups["rising"].files.append(working1)
@@ -328,7 +377,7 @@ def hysteresis_correct(data, **kargs):
         correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
             this will remove any offset in filed due to trapped flux
         saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be
-            fully saturated.
+            fully saturated. If an integer is given it will use that many data points at the end of the loop.
         xcol (column index): Column with the x data in it
         ycol (column_index): Column with the y data in it
         setas (string or iterable): Column assignments.
@@ -364,10 +413,14 @@ def hysteresis_correct(data, **kargs):
 
     while True:
         up,down=_up_down(data)
+        if type(saturation_fraction) is int and saturation_fraction>0:
+            saturation_fraction=saturation_fraction/len(up)
         mx = max(data.x) * (1 - saturation_fraction)
         mix = min(data.x) * (1 - saturation_fraction)
 
-
+        #ensure a minimum of 3 points to fit
+        int(up.threshold(mx,xcol=False,rising=True,falling=False))+1       
+        
         #Find upper branch saturated moment slope and offset
         p1, pcov = up.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
         perr1 = diag(pcov)
