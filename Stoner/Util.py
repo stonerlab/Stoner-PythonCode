@@ -241,6 +241,7 @@ def split_up_down(data, col=None, folder=None):
         output = folder
     output.add_group("rising")
     output.add_group("falling")
+    """ old code, bug when unequal number of rising/falling sections
     for i in range(1, len(splits), 2):
         working1 = data.clone
         working2 = data.clone
@@ -250,6 +251,15 @@ def split_up_down(data, col=None, folder=None):
             (working1, working2) = (working2, working1)
         output.groups["rising"].files.append(working1)
         output.groups["falling"].files.append(working2)
+    """
+    if order:
+        risefall=["rising","falling"]
+    else:
+        risefall=["falling","rising"]
+    for i in range(len(splits)-1):
+        working=data.clone
+        working.data = data.data[splits[i]:splits[i+1],:]
+        output.groups[risefall[i%2]].files.append(working)
     return output
 
 
