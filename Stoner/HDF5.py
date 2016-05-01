@@ -68,6 +68,17 @@ class HDF5File(DataFile):
         else:
             self.filename = filename
         if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
+            with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
+                blk=sniff.read(8)
+                if not blk==b'\x89HDF\r\n\x1a\n':
+                    c=0
+                    while len(blk)==8:
+                        sniff.seek(512*2**c)
+                        blk=sniff.read(8)
+                        if blk==b'\x89HDF\r\n\x1a\n':
+                            break
+                    else:
+                        raise StonerLoadError("Couldn't find the HD5 format singature block")
             try:
                 f = h5py.File(filename, 'r')
             except IOError:
@@ -87,7 +98,7 @@ class HDF5File(DataFile):
             self.data = [[]]
         metadata = f.require_group('metadata')
         if "column_headers" in f.attrs:
-            self.column_headers = f.attrs["column_headers"]
+            self.column_headers = f.attrs["column_headers"].astype("U")
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -176,10 +187,24 @@ class HGXFile(DataFile):
         Returns:
             A copy of the itself after loading the data.
             """
+
+        self.seen=[]
         if filename is None or not filename:
             self.get_filename('r')
         else:
             self.filename = filename
+        with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
+            blk=sniff.read(8)
+            if not blk==b'\x89HDF\r\n\x1a\n':
+                c=0
+                while len(blk)==8:
+                    sniff.seek(512*2**c)
+                    blk=sniff.read(8)
+                    if blk==b'\x89HDF\r\n\x1a\n':
+                        break
+                else:
+                    raise StonerLoadError("Couldn't find the HD5 format singature block")
+
         try:
             f=h5py.File(filename)
             if "current" in f and "config" in f["current"]:
@@ -190,7 +215,7 @@ class HGXFile(DataFile):
         except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
         else:
-            f.close()            
+            f.close()
 
         with h5py.File(self.filename, "r") as f:
             self.scan_group(f["current"],"")
@@ -202,8 +227,14 @@ class HGXFile(DataFile):
     def scan_group(self,grp,pth):
         """Recursively list HDF5 Groups."""
 
+
+        if pth in self.seen:
+            return None
+        else:
+            self.seen.append(pth)
         if not isinstance(grp,h5py.Group):
             return None
+        print("Scanning in {}".format(pth))
         for i,x in enumerate(grp):
             if pth=="":
                 new_pth=x
@@ -214,7 +245,8 @@ class HGXFile(DataFile):
             if isinstance(grp[x],type(grp)):
                 self.scan_group(grp[x],new_pth)
             elif isinstance(grp[x],h5py.Dataset):
-                self[new_pth]=grp[x].value
+                y=grp[x].value
+                self[new_pth]=y
         return None
 
     def main_data(self,data_grp):
