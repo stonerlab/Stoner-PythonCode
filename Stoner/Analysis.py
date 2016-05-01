@@ -2148,10 +2148,10 @@ class AnalyseFile(DataFile):
         """Finds partial indices where the data in column passes the threshold, rising or falling.
 
         Args:
-            col (index): Column index to look for data in
             threshold (float): Value to look for in column col
 
         Keyword Arguments:
+            col (index): Column index to look for data in
             rising (bool):  look for case where the data is increasing in value (defaukt True)
             falling (bool): look for case where data is fallinh in value (default False)
             xcol (index, bool or None): rather than returning a fractional row index, return the

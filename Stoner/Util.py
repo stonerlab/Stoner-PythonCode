@@ -30,13 +30,14 @@ def _up_down(data):
         (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
     """
     f=split_up_down(data)
-
+    
     ret=[None,None]
     for i,grp in enumerate(["rising","falling"]):
         ret[i]=f[grp][0]
         for d in f[grp][1:]:
             ret[i]=ret[i]+d
         ret[i].sort(data.setas._get_cols('xcol'))
+        ret[i].setas=f["rising"][0].setas.clone #hack due to bug in sort wiping the setas info
     return ret
 
 
@@ -424,13 +425,17 @@ def hysteresis_correct(data, **kargs):
     while True:
         up,down=_up_down(data)
         if type(saturation_fraction) is int and saturation_fraction>0:
-            saturation_fraction=saturation_fraction/len(up)
+            saturation_fraction=saturation_fraction/len(up)+0.001 #add 0.1% to ensure we get the point
         mx = max(data.x) * (1 - saturation_fraction)
         mix = min(data.x) * (1 - saturation_fraction)
 
         #ensure a minimum of 3 points to fit
-        int(up.threshold(mx,xcol=False,rising=True,falling=False))+1       
-        
+        #int(up.threshold(mx,xcol=False,rising=True,falling=False))+1
+        thresh=up.threshold(mx,col=xc,rising=True,falling=False)[0]
+        if len(up)-1-thresh<2: #less than three points
+            mx = (data[-3][yc]+data[-4][yc])/2.0
+            mix = (data[2][yc]+data[3][yc])/2.0
+            
         #Find upper branch saturated moment slope and offset
         p1, pcov = up.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
         perr1 = diag(pcov)
