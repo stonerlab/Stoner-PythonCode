@@ -67,35 +67,24 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<em>lmfit.Model</em>) &#8211;
-An instance of an lmfit.Model that represents the model to be fitted to the data</li>
-<li><strong>xcol</strong> (<em>index or None</em>) &#8211;
-Columns to be used for the x  data for the fitting. If not givem defaults to the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
-<li><strong>ycol</strong> (<em>index or None</em>) &#8211;
-Columns to be used for the  y data for the fitting. If not givem defaults to the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
+<li><strong>model</strong> (<em>lmfit.Model</em>) &#8211; An instance of an lmfit.Model that represents the model to be fitted to the data</li>
+<li><strong>xcol</strong> (<em>index or None</em>) &#8211; Columns to be used for the x  data for the fitting. If not givem defaults to the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> x column</li>
+<li><strong>ycol</strong> (<em>index or None</em>) &#8211; Columns to be used for the  y data for the fitting. If not givem defaults to the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> y column</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>p0</strong> (<em>list, tuple or array</em>) &#8211;
-A vector of initial parameter values to try.</li>
-<li><strong>sigma</strong> (<em>index</em>) &#8211;
-The index of the column with the y-error bars</li>
-<li><strong>bounds</strong> (<em>callable</em>) &#8211;
-A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
-<li><strong>result</strong> (<em>bool</em>) &#8211;
-Determines whether the fitted data should be added into the DataFile object. If result is True then
+<li><strong>p0</strong> (<em>list, tuple or array</em>) &#8211; A vector of initial parameter values to try.</li>
+<li><strong>sigma</strong> (<em>index</em>) &#8211; The index of the column with the y-error bars</li>
+<li><strong>bounds</strong> (<em>callable</em>) &#8211; A callable object that evaluates true if a row is to be included. Should be of the form f(x,y)</li>
+<li><strong>result</strong> (<em>bool</em>) &#8211; Determines whether the fitted data should be added into the DataFile object. If result is True then
 the last column will be used. If result is a string or an integer then it is used as a column index.
 Default to None for not adding fitted data</li>
-<li><strong>replace</strong> (<em>bool</em>) &#8211;
-Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
-<li><strong>header</strong> (<em>string or None</em>) &#8211;
-If this is a string then it is used as the name of the fitted data. (default None)</li>
-<li><strong>scale_covar</strong> (<em>bool</em>) &#8211;
-whether to automatically scale covariance matrix (leastsq only)</li>
-<li><strong>output</strong> (<em>str, default &#8220;fit&#8221;</em>) &#8211;
-Specifiy what to return.</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211; Inidcatesa whether the fitted data replaces existing data or is inserted as a new column (default False)</li>
+<li><strong>header</strong> (<em>string or None</em>) &#8211; If this is a string then it is used as the name of the fitted data. (default None)</li>
+<li><strong>scale_covar</strong> (<em>bool</em>) &#8211; whether to automatically scale covariance matrix (leastsq only)</li>
+<li><strong>output</strong> (<em>str, default &#8220;fit&#8221;</em>) &#8211; Specifiy what to return.</li>
 </ul>
 </td>
 </tr>
@@ -117,7 +106,7 @@ relevant information about the fit.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>
-User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span>Fitting with limits</span></a></p>
+User guide section <a class="reference internal" href="../UserGuide/analysisfile.html#fitting-with-limits"><span class="std std-ref">Fitting with limits</span></a></p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -128,7 +117,7 @@ values of the parameters. In this mode the return value is a 2D array whose rows
 columns are the fitted values of the parameters with an additional column for <span class="math">\(\chi^2\)</span>.</div></blockquote>
 <dl class="last docutils">
 <dt>Example:</dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">exp</span><span class="p">,</span><span class="n">random</span>
 
 <span class="c1">#Make some data</span>
@@ -150,10 +139,7 @@ columns are the fitted values of the parameters with an additional column for <s
 <span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit_simple.py">Source code</a>, <a class="reference external" href="../samples/lmfit_simple.png">png</a>, <a class="reference external" href="../samples/lmfit_simple.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_simple.pdf">pdf</a>)</p>
-<div class="last figure">
-<img alt="../_images/lmfit_simple.png" src="../_images/lmfit_simple.png" />
-</div>
+<p class="last">(<a class="reference external" href="../samples/lmfit_simple.py">Source code</a>)</p>
 </dd>
 </dl>
 </div>
@@ -191,9 +177,6 @@ columns are the fitted values of the parameters with an additional column for <s
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -222,8 +205,8 @@ columns are the fitted values of the parameters with an additional column for <s
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 05, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

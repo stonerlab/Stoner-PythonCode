@@ -48,7 +48,7 @@
           <div class="body" role="main">
             
   <h1>Source code for Stoner.Core</h1><div class="highlight"><pre>
-<span class="sd">&quot;&quot;&quot;Stoner.Core provides the core classes for the Stoner package.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Stoner.Core provides the core classes for the Stoner package.</span>
 
 <span class="sd">Classes:</span>
 <span class="sd">    `DataFile` :the base class for representing a single data set of experimental data.</span>
@@ -72,7 +72,11 @@
 <span class="kn">import</span> <span class="nn">inspect</span> <span class="kn">as</span> <span class="nn">_inspect_</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">blist</span> <span class="kn">import</span> <span class="n">sorteddict</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">python_v3</span> <span class="c1"># blist doesn&#39;t seem entirely reliable in 3.5 :-(</span>
+    <span class="kn">from</span> <span class="nn">blist</span> <span class="kn">import</span> <span class="n">sorteddict</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span><span class="ne">ImportError</span><span class="p">):</span> <span class="c1">#Fail if blist not present or Python 3</span>
+    <span class="n">sorteddict</span><span class="o">=</span><span class="n">OrderedDict</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">magic</span> <span class="kn">import</span> <span class="n">Magic</span> <span class="k">as</span> <span class="n">filemagic</span><span class="p">,</span><span class="n">MAGIC_MIME_TYPE</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -1035,7 +1039,7 @@
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">maske</span><span class="o">=</span><span class="bp">False</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="bp">False</span>
         <span class="c1"># Finally, we must return the newly created object:</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="n">i</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_row</span><span class="o">=</span><span class="n">_row</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
@@ -1118,7 +1122,6 @@
 <span class="sd">            you give a string as the first index element and assumes that you&#39;ve forgotten that we&#39;re</span>
 <span class="sd">            row major and tries to do the right thing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1">#Is this goign to be a single row ?</span>
         <span class="n">single_row</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">))</span>
         <span class="c1">#If the index is a single string type, then build a column accessing index</span>
@@ -1138,7 +1141,6 @@
             <span class="n">ix</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
             <span class="n">ix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
             <span class="n">ix</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
-
         <span class="c1"># Now can index with our constructed multidimesnional indexer</span>
         <span class="n">ret</span><span class="o">=</span><span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span><span class="o">==</span><span class="mi">0</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
@@ -1154,10 +1156,8 @@
                 <span class="k">return</span> <span class="n">ret</span>
             <span class="k">else</span><span class="p">:</span> <span class="c1"># A regular 2D array</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span><span class="o">=</span><span class="n">single_row</span>
-                <span class="n">tmp</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">tmpcol</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">tmpcol</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
                 <span class="c1"># Sort out whether we need an array of row labels</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                     <span class="n">ret</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">[</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
@@ -1167,8 +1167,8 @@
             <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span><span class="o">=</span><span class="n">single_row</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">tmp</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
-                <span class="n">tmpcol</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+                <span class="n">tmpcol</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">tmpcol</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
@@ -1179,7 +1179,7 @@
             <span class="k">else</span><span class="p">:</span> <span class="c1">#This is a single element?</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">single_row</span><span class="p">:</span>
-                <span class="n">ret</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">val</span><span class="p">):</span>
@@ -3038,6 +3038,7 @@
         <span class="n">failed</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">if</span> <span class="n">auto_load</span><span class="p">:</span>  <span class="c1"># We&#39;re going to try every subclass we canA</span>
             <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">filemagic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">mimetype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">:</span> <span class="c1">#short circuit for non-=matching mime-types</span>
                         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Skipping {} due to mismatcb mime type {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">mime_type</span><span class="p">))</span>
@@ -3048,12 +3049,14 @@
 
                     <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;auto_load&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
                     <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">auto_load</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Passed Load&quot;</span><span class="p">)</span>
                     <span class="n">failed</span><span class="o">=</span><span class="bp">False</span>
                     <span class="n">test</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span>
                     <span class="n">copy_into</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
 
                     <span class="k">break</span>
                 <span class="k">except</span> <span class="p">(</span><span class="n">StonerLoadError</span><span class="p">,</span> <span class="ne">UnicodeDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Failed Load: {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                     <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Ran out of subclasses to try and load as.&quot;</span><span class="p">)</span>
@@ -3153,12 +3156,18 @@
                 <span class="n">post_data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
             <span class="n">starti</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">hw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">stopi</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">i</span> <span class="o">+</span> <span class="n">hw</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span> <span class="c1">#hacked to stop problems with DataArray concatenation</span>
+                <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#copy all properties</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">i</span> <span class="o">-</span> <span class="n">hc</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">hc</span><span class="p">:</span><span class="n">stopi</span><span class="p">]))</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1">#guarantee an ndarray</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="c1">#get the DataArray</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">starti</span><span class="p">:</span><span class="n">stopi</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">wrap</span><span class="p">:</span>
+                <span class="n">tmp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#copy all properties</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="n">pre_data</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">post_data</span><span class="p">))</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="c1">#guarantee an ndarray</span>
+                <span class="n">ret</span><span class="o">=</span><span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="c1">#get the DataArray</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret</span> <span class="o">=</span> <span class="n">data</span>
             <span class="k">yield</span> <span class="n">ret</span></div>
@@ -3445,9 +3454,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -3469,8 +3475,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 05, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

@@ -66,29 +66,21 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>window</strong> (<em>string or tuple</em>) &#8211;
-Defines the window type to use by passing to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.17.0)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>window</strong> (<em>string or tuple</em>) &#8211; Defines the window type to use by passing to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.17.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a>.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>column index or None</em>) &#8211;
-Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
-<li><strong>ycvol</strong> (<em>column index or None</em>) &#8211;
-Data to be smoothed</li>
-<li><strong>size</strong> (<em>int or float</em>) &#8211;
-If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</li>
-<li><strong>result</strong> (<em>bool or column index</em>) &#8211;
-Whether to add the smoothed data to the dataset and if so where.</li>
-<li><strong>replace</strong> (<em>bool</em>) &#8211;
-Replace the exiting data or insert as a new column.</li>
-<li><strong>header</strong> (<em>string</em>) &#8211;
-New column header for the new data.</li>
+<li><strong>xcol</strong> (<em>column index or None</em>) &#8211; Data to use as x data if needed to define a window. If None, use <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a></li>
+<li><strong>ycvol</strong> (<em>column index or None</em>) &#8211; Data to be smoothed</li>
+<li><strong>size</strong> (<em>int or float</em>) &#8211; If int, then the number of points to use in the smoothing window. If float, then the size in x-data to be used.</li>
+<li><strong>result</strong> (<em>bool or column index</em>) &#8211; Whether to add the smoothed data to the dataset and if so where.</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211; Replace the exiting data or insert as a new column.</li>
+<li><strong>header</strong> (<em>string</em>) &#8211; New column header for the new data.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(self or array)</em> &#8211;
-If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(self or array)</em> &#8211; If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
 is a copy of the AnalyseFile object with the smoothed data added,</p>
 </td>
 </tr>
@@ -133,9 +125,6 @@ to the original x values.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -164,8 +153,8 @@ to the original x values.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 05, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

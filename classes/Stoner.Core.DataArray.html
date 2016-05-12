@@ -64,39 +64,34 @@
 <dl class="attribute">
 <dt id="Stoner.Core.DataArray.column_headers">
 <code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataArray.column_headers" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em></p>
-<p>of strings of the column names of the data.</p>
+<dd><p><em>list</em> &#8211; of strings of the column names of the data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataArray.i">
 <code class="descname">i</code><a class="headerlink" href="#Stoner.Core.DataArray.i" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array of integers</em></p>
-<p>When read, returns the row  umbers of the data. When written to, sets the
+<dd><p><em>array of integers</em> &#8211; When read, returns the row  umbers of the data. When written to, sets the
 base row index. The base row index is preserved when a DataArray is indexed.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <code class="descname">x,y,z</code></dt>
-<dd><p><em>1D DataArray</em></p>
-<p>When a column is declared to contain <em>x</em>, <em>y</em>, or <em>z</em> data, then these attributes access
+<dd><p><em>1D DataArray</em> &#8211; When a column is declared to contain <em>x</em>, <em>y</em>, or <em>z</em> data, then these attributes access
 the corresponding columns. When written to, the attributes overwrite the existing column&#8217;s data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <code class="descname">d,e,f</code></dt>
-<dd><p><em>1D DataArray</em></p>
-<p>Where a column is identified as containing uncertainities for <em>x</em>, <em>y</em> or <em>z</em> data, then these
+<dd><p><em>1D DataArray</em> &#8211; Where a column is identified as containing uncertainities for <em>x</em>, <em>y</em> or <em>z</em> data, then these
 attributes provide a quick access to them. When written to, the attributes overwrite the existing column&#8217;s data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt>
 <code class="descname">u,v,w</code></dt>
-<dd><p><em>1D DataArray</em></p>
-<p>Columns may be identieid as containing vectgor field information. These attributes provide quick
+<dd><p><em>1D DataArray</em> &#8211; Columns may be identieid as containing vectgor field information. These attributes provide quick
 access to them, assuming that they are defined as cartesian co-ordinates. When written to, the attributes
 overwrite the existing column&#8217;s data.</p>
 </dd></dl>
@@ -104,8 +99,7 @@ overwrite the existing column&#8217;s data.</p>
 <dl class="attribute">
 <dt>
 <code class="descname">p,q,r</code></dt>
-<dd><p><em>1D DataArray</em></p>
-<p>These attributes access calculated columns that convert <span class="math">\((x,y,z)\)</span> data or <span class="math">\((u,v,w)\)</span>
+<dd><p><em>1D DataArray</em> &#8211; These attributes access calculated columns that convert <span class="math">\((x,y,z)\)</span> data or <span class="math">\((u,v,w)\)</span>
 into <span class="math">\((\phi,\theta,r)\)</span> polar co-ordinates. If on <em>x</em> and <em>y</em> columns are defined, then 2D polar
 co-ordinates are returned for <em>q</em> and <em>r</em>.</p>
 </dd></dl>
@@ -113,8 +107,7 @@ co-ordinates are returned for <em>q</em> and <em>r</em>.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataArray.setas">
 <code class="descname">setas</code><a class="headerlink" href="#Stoner.Core.DataArray.setas" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list or string</em></p>
-<p>Actually a proxy to a magic class that handles the assignment of columns to different axes and
+<dd><p><em>list or string</em> &#8211; Actually a proxy to a magic class that handles the assignment of columns to different axes and
 also tracks the names of columns (so that columns may be accessed as named items).</p>
 </dd></dl>
 
@@ -203,9 +196,6 @@ more attractive.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -233,8 +223,8 @@ more attractive.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 05, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

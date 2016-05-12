@@ -67,44 +67,31 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xcol</strong> (<em>index</em>) &#8211;
-Column to be used for the X-Data</li>
-<li><strong>ycol</strong> (<em>index</em>) &#8211;
-column to be used for Y-Data - default value is column to the right of the x-data column</li>
+<li><strong>xcol</strong> (<em>index</em>) &#8211; Column to be used for the X-Data</li>
+<li><strong>ycol</strong> (<em>index</em>) &#8211; column to be used for Y-Data - default value is column to the right of the x-data column</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>fmt</strong> (<em>strong or sequence of strings</em>) &#8211;
-Specifies the format for the plot - see matplotlib documentation for details</li>
-<li><strong>xerr,yerr</strong> (<em>index</em>) &#8211;
-Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar</li>
+<li><strong>fmt</strong> (<em>strong or sequence of strings</em>) &#8211; Specifies the format for the plot - see matplotlib documentation for details</li>
+<li><strong>xerr,yerr</strong> (<em>index</em>) &#8211; Columns of data to get x and y errorbars from. Setting these turns the default plotter to plt.errorbar</li>
 <li><strong>xlabel</strong> (<em>string</em>)</li>
-<li><strong>ylabel</strong> (<em>string</em>) &#8211;
-Y axes label, Default is None - guess from metadata</li>
-<li><strong>zlabel</strong> (<em>string</em>) &#8211;
-Z axis label, Default is None - guess from metadata</li>
-<li><strong>title</strong> (<em>string</em>) &#8211;
-Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
-<li><strong>plotter</strong> (<em>function</em>) &#8211;
-Function to use to plot data. Defaults to plt.plot unless error bars are set</li>
-<li><strong>show_plot</strong> (<em>bool</em>) &#8211;
-Turn on interfactive plotting and show plot when drawn</li>
-<li><strong>save_filename</strong> (<em>string or None</em>) &#8211;
-If set to a string, save the plot with this filename</li>
-<li><strong>figure</strong> (<em>integer or matplotlib.figure or boolean</em>) &#8211;
-Controls which figure is used for the plot, or if a new figure is opened.</li>
-<li><strong>multiple</strong> (<em>string</em>) &#8211;
-how to handle multiple y-axes with a common x axis. Options are:<ul>
+<li><strong>ylabel</strong> (<em>string</em>) &#8211; Y axes label, Default is None - guess from metadata</li>
+<li><strong>zlabel</strong> (<em>string</em>) &#8211; Z axis label, Default is None - guess from metadata</li>
+<li><strong>title</strong> (<em>string</em>) &#8211; Optional parameter that specfies the plot title - otherwise the current DataFile filename is used</li>
+<li><strong>plotter</strong> (<em>function</em>) &#8211; Function to use to plot data. Defaults to plt.plot unless error bars are set</li>
+<li><strong>show_plot</strong> (<em>bool</em>) &#8211; Turn on interfactive plotting and show plot when drawn</li>
+<li><strong>save_filename</strong> (<em>string or None</em>) &#8211; If set to a string, save the plot with this filename</li>
+<li><strong>figure</strong> (<em>integer or matplotlib.figure or boolean</em>) &#8211; Controls which figure is used for the plot, or if a new figure is opened.</li>
+<li><strong>multiple</strong> (<em>string</em>) &#8211; how to handle multiple y-axes with a common x axis. Options are:<ul>
 <li><em>common</em> single y-axis (default)</li>
 <li><em>panels</em> panels sharing common x axis</li>
 <li><em>sub plots</em> sub plots</li>
 <li><em>y2</em> single axes with 2 y scales</li>
 </ul>
 </li>
-<li><strong>**kargs</strong> (<em>dict</em>) &#8211;
-Other arguments are passed on to the plotter.</li>
+<li><strong>**kargs</strong> (<em>dict</em>) &#8211; Other arguments are passed on to the plotter.</li>
 </ul>
 </td>
 </tr>
@@ -147,9 +134,6 @@ Other arguments are passed on to the plotter.</li>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -178,8 +162,8 @@ Other arguments are passed on to the plotter.</li>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 05, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.5.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>
