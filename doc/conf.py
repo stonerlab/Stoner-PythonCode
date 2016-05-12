@@ -29,7 +29,6 @@ import os.path as path
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.todo',
-              'sphinx.ext.pngmath',
               'sphinx.ext.viewcode',
               'sphinx.ext.napoleon',
               'sphinx.ext.graphviz',
