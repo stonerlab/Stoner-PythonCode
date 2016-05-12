@@ -250,6 +250,8 @@ class Arrhenius(Model):
     The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
+    display_names=["A",r"\Delta E"]
+
 
     def __init__(self, *args, **kwargs):
         super(Arrhenius, self).__init__(arrhenius, *args, **kwargs)
@@ -297,6 +299,7 @@ class NDimArrhenius(Model):
     The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
+    display_names=["A",r"\Delta E","n"]
 
     def __init__(self, *args, **kwargs):
         super(NDimArrhenius, self).__init__(nDimArrhenius, *args, **kwargs)
@@ -344,6 +347,8 @@ class ModArrhenius(Model):
     The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
+
+    display_names=["A",r"\Delta E","n"]
 
     def __init__(self, *args, **kwargs):
         super(ModArrhenius, self).__init__(modArrhenius, *args, **kwargs)
@@ -426,6 +431,8 @@ class Simmons(Model):
 
        Simmons model from Simmons J. App. Phys. 34 6 1963
     """
+
+    display_names=["A",r"\phi","d"]
 
     def __init__(self, *args, **kwargs):
         super(Simmons, self).__init__(simmons, *args, **kwargs)
@@ -620,6 +627,8 @@ class WLfit(Model):
        2D WL model as per Wu et al  PRL 98, 136801 (2007), Porter et al PRB 86, 064423 (2012)
     """
 
+    display_names=[r"\sigma_0","D_S","B_1","B_2"]
+
     def __init__(self, *args, **kwargs):
         super(WLfit, self).__init__(wlfit, *args, **kwargs)
 
@@ -752,6 +761,8 @@ class Strijkers(Model):
     This version only uses 1 delta, not modified for proximity
     """
 
+    display_names=[r"\omega",r"\Delta","P","Z"]
+
     def __init__(self, *args, **kwargs):
         super(Strijkers, self).__init__(strijkers, *args, **kwargs)
 
@@ -803,6 +814,7 @@ class FluchsSondheimer(Model):
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
     """
+    display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
 
     def __init__(self, *args, **kwargs):
         super(FluchsSondheimer, self).__init__(fluchsSondheimer, *args, **kwargs)
@@ -848,6 +860,8 @@ class BlochGrueneisen(Model):
 
     Return:
         Evaluation of the BlochGrueneisen function for R(T)"""
+
+    display_names=[r"\theta_D",r"\rho_0","A","n"]
 
     def __init__(self, *args, **kwargs):
         super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
@@ -953,6 +967,7 @@ class VFTEquation(Model):
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
     """
+    display_names=["A",r"\Delta E","x_0"]
 
     def __init__(self, *args, **kwargs):
         super(VFTEquation, self).__init__(vftEquation, *args, **kwargs)
@@ -1000,6 +1015,8 @@ class StretchedExp(Model):
     The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.
     """
 
+    display_names=["A",r"\beta","x_0"]
+
     def __init__(self, *args, **kwargs):
         super(StretchedExp, self).__init__(stretchedExp, *args, **kwargs)
 
@@ -1045,6 +1062,9 @@ class KittelEquation(Model):
     Returns:
         Reesonance peak frequencies in Hz
     """
+
+    display_names=[r"\gamma","M_s","H_k"]
+
     def __init__(self, *args, **kwargs):
         super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
 

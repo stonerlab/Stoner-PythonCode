@@ -16,7 +16,8 @@ d.labels=[]
 d.plot(fmt="b-")
 
 # Make nice label of the parameters
-text="\n".join([d.format(k,latex=True) for k in ["Model:A","Model:B","Model:C"]])
-d.text(6,4,text)
+text=r"$y=A+Be^{-x/C}$"+"\n\n"
+text+="\n".join([d.format(k,latex=True) for k in ["Model:A","Model:B","Model:C"]])
+d.text(5,4,text)
 
 

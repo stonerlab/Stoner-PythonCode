@@ -25,8 +25,8 @@ from cgi import escape as html_escape
 def tex_escape(text):
     """
         Escapes spacecial text charcters in a string.
-        
-        Parameters:   
+
+        Parameters:
             text (str): a plain text message
 
         Returns:
@@ -62,7 +62,7 @@ def _up_down(data):
         (Data, Data): Tuple of two DataFile like instances for the rising and falling data.
     """
     f=split_up_down(data)
-    
+
     ret=[None,None]
     for i,grp in enumerate(["rising","falling"]):
         ret[i]=f[grp][0]
@@ -78,19 +78,24 @@ class Data(_AF_, _PF_):
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""
 
-    def format(self,key,latex=False, mode="float", units=None, prefix=None):
+    def format(self,key,**kargs):
         """Return the contents of key pretty formatted using :py:func:`format_error`.
 
         Args:
-            key (string): Name of a metadata key that identifies the balue to be formatted.
-        latex (bool): If true, then latex formula codes will be used for +/- symbol for matplotlib annotations
-        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-            i.e. mantissa and exponent format is used.
-        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
-        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-            inside the math-mode markers, but not embedded in \\mathrm.
+            fmt (str): Specify the output format, opyions are:
+
+                *  "text" - plain text output
+                * "latex" - latex output
+                * "html" - html entities
+
+            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
+            mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+                to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+                i.e. mantissa and exponent format is used.
+            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+                prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+                inside the math-mode markers, but not embedded in \\mathrm.
 
         Returns:
             A pretty string representation.
@@ -99,6 +104,14 @@ class Data(_AF_, _PF_):
         the units are self["key units"] or "".
 
         """
+
+        mode=kargs.pop("mode","float")
+        units=kargs.pop("units",self.get(key+" units","")	)
+        prefix=kargs.pop("prefix","{} = ".format(self.get(key+"_label","{} =".format(key))))
+        latex=kargs.pop("latex",False)
+        fmt=kargs.pop("fmt","latex" if latex else "text")
+        escape=kargs.pop("escape",False)
+
         try:
             value=float(self[key])
         except ValueError:
@@ -107,17 +120,7 @@ class Data(_AF_, _PF_):
             error=float(self[key+" err"])
         except KeyError:
             error=float_info.epsilon
-        if prefix is None:
-            try:
-                prefix="{} = ".format(self[key+" label"])
-            except KeyError:
-                prefix="{} =".format(key)
-        if units is None:
-            try:
-                units=self[key+" units"]
-            except KeyError:
-                units=""
-        return format_error(value,error,latex,mode,units,prefix)
+        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
 
     def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
         """Annotate a plot with some information about a fit.
@@ -155,7 +158,10 @@ class Data(_AF_, _PF_):
         elif "lmfit.prefix" in self:
             prefix=self["lmfit.prefix"][0]
         else:
-            prefix=model.prefix+":"
+            if model.prefix=="":
+                prefix=""
+            else:
+                prefix=model.prefix+":"
 
         if x is None:
             xl,xr=self.xlim()
@@ -164,8 +170,13 @@ class Data(_AF_, _PF_):
             yb,yt=self.ylim()
             y=0.5*(yt-yb)+yb
 
+        try: # if the model has an attribute display params then use these as the parameter anmes
+            for k,display_name in zip(model.param_names,model.display_names):
+                self[k+"_label"]=display_name
+        except (AttributeError,KeyError):
+            pass
 
-        text= "\n".join([self.format("{}{}".format(prefix,k),latex=True) for k in model.param_names])
+        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex") for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():
@@ -184,7 +195,7 @@ class Data(_AF_, _PF_):
 
 def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, skip=0):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
-    
+
     Args:
         data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
         col (index): is something that :py:meth:`Stoner.Core.DataFile.find_col` can use
@@ -197,7 +208,7 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
         skip (int): skip this number of splitons each time. eg skip=1 picks out odd crossings
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
-    """ 
+    """
     if col is None:
         col = data.setas["x"]
     d=Data(data)
@@ -205,10 +216,10 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
         output = _SF_()
     else:
         output = folder
-        
+
     if isinstance(spliton, (int,long,float)):
         spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True)
-        
+
     elif spliton in ['peaks','troughs','both']:
         width = len(d) / 10
         if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
@@ -217,22 +228,22 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
             spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=False))
         elif spliton=='troughs':
             spl = list(d.peaks(col, width, xcol=False, peaks=False, troughs=True))
-        else:            
+        else:
             spl = list(d.peaks(col, width, xcol=False, peaks=True, troughs=True))
 
     else:
-        raise ValueError('Did not recognise spliton')    
-    
-    spl = [spl[i] for i in range(len(spl)) if i%(skip+1)==0]              
-    spl.extend([0,len(d)])          
+        raise ValueError('Did not recognise spliton')
+
+    spl = [spl[i] for i in range(len(spl)) if i%(skip+1)==0]
+    spl.extend([0,len(d)])
     spl.sort()
     for i in range(len(spl)-1):
         tmp=d.clone
         tmp.data=tmp[spl[i]:spl[i+1]]
         output.files.append(tmp)
     return output
-    
-        
+
+
 
 def split_up_down(data, col=None, folder=None):
     """Splits the DataFile data into several files where the column \b col is either rising or falling
@@ -327,25 +338,25 @@ def format_error(value, error, **kargs):
     fmt=kargs.pop("fmt","latex" if latex else "text")
     escape=kargs.pop("escape",False)
     escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
-    
+
     if escape:
         prefix=escape_func(prefix)
         units=escape_func(units)
-        
+
     prefs={"text":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y", 
+            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
             -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
             },
             "latex":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y", 
-            -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"            
+            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+            -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
             },
             "html":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y", 
-            -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"            
+            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+            -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
             }
-        }        
-        
+        }
+
     if error == 0.0:  # special case for zero uncertainty
         return repr(value)
     #Sort out special fomatting for different modes
@@ -494,7 +505,7 @@ def hysteresis_correct(data, **kargs):
         if len(up)-1-thresh<2: #less than three points
             mx = (data[-3][yc]+data[-4][yc])/2.0
             mix = (data[2][yc]+data[3][yc])/2.0
-            
+
         #Find upper branch saturated moment slope and offset
         p1, pcov = up.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
         perr1 = diag(pcov)
