@@ -769,7 +769,7 @@ class AnalyseFile(DataFile):
                     tmp_mask=_np_.column_stack((tmp_mask,col_mask))
                 else: # Inserting data
                     tmp_mask=_np_.column_stack((tmp_mask[:,0:result],col_mask,tmp_mask[:,result:]))
-                new_col=func(xdat,*popt)
+                new_col=func(self.column(xc),*popt)
                 self.add_column(new_col,index=result, replace=replace, header=header)
                 self.mask=tmp_mask
             row = _np_.array([])
