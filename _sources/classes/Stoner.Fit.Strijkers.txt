@@ -21,4 +21,10 @@ Stoner.Fit.Strijkers
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.Strijkers.display_names
+   
    

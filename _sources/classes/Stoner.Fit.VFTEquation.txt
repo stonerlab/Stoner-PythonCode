@@ -21,4 +21,10 @@ Stoner.Fit.VFTEquation
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.VFTEquation.display_names
+   
    

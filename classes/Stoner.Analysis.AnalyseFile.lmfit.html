@@ -135,11 +135,15 @@ columns are the fitted values of the parameters with an additional column for <s
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
 
 <span class="c1"># Make nice label of the parameters</span>
-<span class="n">text</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Model:A&quot;</span><span class="p">,</span><span class="s2">&quot;Model:B&quot;</span><span class="p">,</span><span class="s2">&quot;Model:C&quot;</span><span class="p">]])</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+<span class="n">text</span><span class="o">=</span><span class="s2">r&quot;$y=A+Be^{-x/C}$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="n">text</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;Model:A&quot;</span><span class="p">,</span><span class="s2">&quot;Model:B&quot;</span><span class="p">,</span><span class="s2">&quot;Model:C&quot;</span><span class="p">]])</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">(<a class="reference external" href="../samples/lmfit_simple.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_simple.py">Source code</a>, <a class="reference external" href="../samples/lmfit_simple.png">png</a>, <a class="reference external" href="../samples/lmfit_simple.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_simple.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/lmfit_simple.png" src="../_images/lmfit_simple.png" />
+</div>
 </dd>
 </dl>
 </div>

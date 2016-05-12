@@ -21,4 +21,10 @@ Stoner.Fit.Simmons
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.Simmons.display_names
+   
    

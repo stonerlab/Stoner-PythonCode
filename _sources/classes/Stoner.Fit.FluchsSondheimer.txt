@@ -21,4 +21,10 @@ Stoner.Fit.FluchsSondheimer
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.FluchsSondheimer.display_names
+   
    

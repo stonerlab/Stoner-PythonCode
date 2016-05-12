@@ -178,7 +178,10 @@ for adding appropriately formatted details of the fit to the plot.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
+</div>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
@@ -217,7 +220,10 @@ points in x,y,z space are fitted to a plane.</p>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_plane.png">png</a>, <a class="reference external" href="../samples/curve_fit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_plane.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_plane.png" src="../_images/curve_fit_plane.png" />
+</div>
 <p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
 don&#8217;t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
 sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>(x,y,z) data points.</p>
@@ -324,12 +330,15 @@ instance. This contains all the information about the fit and fitting process.</
 <span class="c1"># Make apretty label using Stoner.Util methods</span>
 <span class="n">text</span><span class="o">=</span><span class="s2">&quot;$y=A</span><span class="se">\\</span><span class="s2">exp</span><span class="se">\\</span><span class="s2">left[</span><span class="se">\\</span><span class="s2">left(-</span><span class="se">\\</span><span class="s2">frac{x}{x_0}</span><span class="se">\\</span><span class="s2">right)^</span><span class="se">\\</span><span class="s2">beta</span><span class="se">\\</span><span class="s2">right]$</span><span class="se">\n</span><span class="s2">&quot;</span>
 <span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
 <span class="c1">#Adjust layout NB pass-through method to pyplot used here</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>, <a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
+</div>
 </div>
 <div class="section" id="non-linear-curve-fitting-with-initialisation-file">
 <h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
@@ -455,7 +464,10 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>, <a class="reference external" href="../../scripts/lmfit-demo.png">png</a>, <a class="reference external" href="../../scripts/lmfit-demo.hires.png">hires.png</a>, <a class="reference external" href="../../scripts/lmfit-demo.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit-demo.png" src="../_images/lmfit-demo.png" />
+</div>
 </div>
 </div>
 </div>
