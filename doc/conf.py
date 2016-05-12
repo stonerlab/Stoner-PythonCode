@@ -29,7 +29,7 @@ import os.path as path
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
               'sphinx.ext.todo',
-              'sphinx.ext.pngmath',
+              'sphinx.ext.imgmath',
               'sphinx.ext.viewcode',
               'sphinx.ext.napoleon',
               'sphinx.ext.graphviz',
@@ -37,7 +37,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.todo',
               'astropy_helpers.sphinx.ext.automodapi',
               'astropy_helpers.sphinx.ext.automodsumm',
-              'sphinx.ext.mathjax',
+              #'sphinx.ext.mathjax',
               'matplotlib.sphinxext.plot_directive'
               ]
 
