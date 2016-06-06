@@ -1784,25 +1784,36 @@ class DataFile(object):
             newdata.data = _np_.atleast_2d(newdata.data)
 
         #Get other to be a numpy masked array of data
+        #Get other_headers to be a suitable length list of strings
         if isinstance(other, DataFile):
             newdata.metadata.update(other.metadata)
-            newdata.column_headers.extend(other.column_headers)
+            other_headers=other.column_headers
             other = copy.copy(other.data)
         elif isinstance(other,DataArray):
             other=copy.copy(other)
+            if len(other.shape) < 2:  # 1D array, make it 2D column
+                other = _np_.atleast_2d(other)
+                other = other.T
+            other_headers=["Column {}".format(i + newdata.shape[1])
+                                           for i in range(other.shape[1])]
         elif isinstance(other, _np_.ndarray):
             other = DataArray(copy.copy(other))
+            if len(other.shape) < 2:  # 1D array, make it 2D column
+                other = _np_.atleast_2d(other)
+                other = other.T
+            other_headers=["Column {}".format(i + newdata.shape[1])
+                                           for i in range(other.shape[1])]
         else:
-            newdata = NotImplemented
+            return NotImplemented
 
-        if len(other.shape) != 2:  # 1D array, make it 2D column
-            other = _np_.atleast_2d(other)
-            other = other.T
-        if _np_.product(self.data.shape) == 0:  #Special case no data yet
+        newdata_headers=newdata.column_headers+other_headers
+
+        # Workout whether to extend rows on one side or the other
+        if _np_.product(newdata.data.shape) == 0:  #Special case no data yet
             newdata.data = other
-        elif self.data.shape[0] == other.shape[0]:
+        elif newdata.data.shape[0] == other.shape[0]:
             newdata.data = _np_.append(newdata.data, other, 1)
-        elif self.data.shape[0] < other.shape[0]:  #Need to extend self.data
+        elif newdata.data.shape[0] < other.shape[0]:  #Need to extend self.data
             extra_rows = other.shape[0] - self.data.shape[0]
             newdata.data = _np_.append(self.data, _np_.zeros((extra_rows, self.data.shape[1])), 0)
             new_mask = newdata.mask
@@ -1811,7 +1822,7 @@ class DataFile(object):
             other_mask = _ma_.getmaskarray(other)
             new_mask = _np_.append(new_mask, other_mask, 1)
             newdata.mask = new_mask
-        elif other.shape[0] < self.data.shape[0]:
+        elif other.shape[0] < newdata.data.shape[0]:
             # too few rows we can extend with zeros
             extra_rows = self.data.shape[0] - other.shape[0]
             other = _np_.append(other, _np_.zeros((extra_rows, other.shape[1])), 0)
@@ -1821,11 +1832,9 @@ class DataFile(object):
             new_mask = _np_.append(new_mask, other_mask, 1)
             newdata.data = _np_.append(self.data, other, 1)
             newdata.mask = new_mask
-        if len(newdata.column_headers) < newdata.shape[1]:
-            newdata.column_headers.extend(["Column {}".format(i + newdata.shape[1])
-                                           for i in range(other.shape[1])])
+
         setas=self.setas.clone
-        setas.column_headers=newdata.column_headers
+        setas.column_headers=newdata_headers
         newdata._data._setas=setas
         newdata._data._setas.shape=newdata.shape
         for attr in self.__dict__:
