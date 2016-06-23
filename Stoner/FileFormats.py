@@ -20,6 +20,8 @@ from re import split
 from datetime import datetime
 import numpy.ma as ma
 
+import PIL
+
 from .Core import DataFile, StonerLoadError
 from .pyTDMS import read as tdms_read
 
@@ -1449,3 +1451,45 @@ class PinkLibFile(DataFile):
                 self.setas(x='T (C)', y='R (Ohm)')
         self.column_headers=column_headers
         return self
+
+class KermitPNGFile(DataFile):
+    """Loads PNG files with additional metadata embedded in them and extracts as metadata"""
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    priority=32 # reasonably generic format
+    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+    # the file load/save dialog boxes.
+    patterns=["*.png"] # Recognised filename patterns
+
+    mime_type="image/png"
+
+    def _load(self, filename=None, *args, **kargs):
+        """PNG file loader routine.
+
+        Args:
+            filename (string or bool): File to load. If None then the existing filename is used,
+                if False, then a file dialog will be used.
+
+        Returns:
+            A copy of the itself after loading the data.
+            """
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        try:
+            img=PIL.Image.open(self.filename,"r")
+        except IOError:
+            raise StonerLoadError("Unable to read as a PNG file.")
+
+        for k in img.info:
+            self.metadata[k]=self.metadata.string_to_type(img.info[k])
+        self.data=_np_.asarray(img)
+        img.close()
+        return self
+
+
+
