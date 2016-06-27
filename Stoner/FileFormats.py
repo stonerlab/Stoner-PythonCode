@@ -1491,5 +1491,33 @@ class KermitPNGFile(DataFile):
         img.close()
         return self
 
+    def save(self, filename=None):
+        """Overrides the save method to allow KermitPNGFiles to be written out to disc
+
+        Args:
+            filename (string): Filename to save as (using the same rules as for the load routines)
+
+        Keyword Arguments:
+            deliminator (string): Record deliniminator (defaults to a comma)
+
+        Returns:
+            A copy of itself."""
+        if filename is None:
+            filename = self.filename
+        if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
+            filename = self.__file_dialog('w')
+
+        metadata=PIL.PngImagePlugin.PngInfo()
+        for k in self.metadata:
+            parts=self.metadata.exort(k).split("=")
+            key=parts[0]
+            val=re.escape("=".join(parts[1:]))
+            metadata.add_text(key,val)
+        img=PIL.Image.fromarray(self.data)
+        img.save(self.filename,"ong",pnginfo=metadata)
+        return self
+
+
+
 
 
