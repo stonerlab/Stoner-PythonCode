@@ -1486,7 +1486,7 @@ class KermitPNGFile(DataFile):
             raise StonerLoadError("Unable to read as a PNG file.")
 
         for k in img.info:
-            self.metadata[k]=self.metadata.string_to_type(img.info[k])
+            self.metadata[k]=img.info[k]
         self.data=_np_.asarray(img)
         img.close()
         return self

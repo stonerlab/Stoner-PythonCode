@@ -942,38 +942,47 @@ class typeHintedDict(sorteddict):
             The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
         """
         return [self.export(x) for x in self]
-        
+
 class metadataObject(MutableMapping):
     """Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
 
     Attributes:
         metadata (typeHintedDict): of key-value metadata pairs. The dictionary
                                    tries to retain information about the type of
-                                   data so as to aid import and export from CM group LabVIEw code.  
-    
+                                   data so as to aid import and export from CM group LabVIEw code.
+
     """
-    
+
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         self.metadata = typeHintedDict()
-                
+
     def __getitem__(self,name):
         return self.metadata[name]
-        
+
     def __setitem__(self,name,value):
         self.metadata[name]=value
-        
+
     def __delitem__(self,name):
         del self.metadata[name]
-        
+
     def __len__(self):
         return len(self.metadata)
-        
+
     def __iter__(self):
         return self.metadata.__iter__()
-        
+
     def keys(self):
         return self.metadata.keys()
+
+    def save(self,path):
+        """Stub method for a save function."""
+        raise NotImplementedError("Save is not implemented in the base class.")
+
+    def _load(self,filename):
+        """Stub method for a load function."""
+        raise NotImplementedError("Save is not implemented in the base class.")
+
 
 class DataArray(_ma_.MaskedArray):
     """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.

@@ -2,7 +2,7 @@
  FStoner.Folders : Classes for working collections of data files
 
  Classes:
-     :py:class:`DataFolder` - manages a list of individual data files (e.g. from a directory tree)
+     :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 
 from Stoner.compat import *
@@ -14,44 +14,44 @@ import numpy as _np_
 from copy import copy
 import unicodedata
 import string
-from collections import Iterable
+from collections import Iterable,MutableSequence
 from inspect import ismethod
 import matplotlib.pyplot as plt
-from .Core import DataFile
+from .Core import metadataObject,DataFile
 
-class DataFolder(object):
+class objectFolder(MutableSequence):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
     Attributes:
         basenames (list of str): Returns the list of files after passing through os.path.basename()
-        depth (int): Maximum number of levels of groups below this :py:class:`DataFolder`.
-        directory (string): Root directory of the files handled by the DataFolder
-        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.DataFile`
+        depth (int): Maximum number of levels of groups below this :py:class:`objectFolder`.
+        directory (string): Root directory of the files handled by the objectFolder
+        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.metadataObject`
            objects.
-        files (list): List of filenames or loaded :py:class:`Stoner.DataFile` instances
-        groups (dict of :py:class:`DataFolder`) Represent a heirarchy of Folders
+        files (list): List of filenames or loaded :py:class:`Stoner.metadataObject` instances
+        groups (dict of :py:class:`objectFolder`) Represent a heirarchy of Folders
         ls (list of str): Returns a list of filenames (either the matched filename patterns, or
-            :py;attr:`Stoner.Core.DataFile.filename` if DataFolder.files contains DataFile objects
-        loaded (list of bool): Inidicates which fiels are loaded in memory for the :py:class:`DataFolder`
-        lsgrp (list of str): Returns a list of the group keys (equivalent to DataFolder.groups.keys()
-        mindepth (int): Minimum number of levels of groups from this :py:class:`DataFolder` to a terminal group.
+            :py;attr:`Stoner.Core.metadataObject.filename` if objectFolder.files contains metadataObject objects
+        loaded (list of bool): Inidicates which fiels are loaded in memory for the :py:class:`objectFolder`
+        lsgrp (list of str): Returns a list of the group keys (equivalent to objectFolder.groups.keys()
+        mindepth (int): Minimum number of levels of groups from this :py:class:`objectFolder` to a terminal group.
         multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
         pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included.
             If pattern is a compiled reular expression with named groups then the named groups are used to
-            generate metadata in the :py:class:`Stoner.DataFile` object. If pattern is a list, then the set of
-            files included in the py:class:`DataFolder` is the union of files that match any single pattern.
+            generate metadata in the :py:class:`Stoner.metadataObject` object. If pattern is a list, then the set of
+            files included in the py:class:`objectFolder` is the union of files that match any single pattern.
         read_means (bool): If true, create metadata when reading each file that is the mean of each column
-        setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.DataFile.setas` attribute for each
-            :py:class:`Stoner.Core.DataFile` in the folder.
+        setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.metadataObject.setas` attribute for each
+            :py:class:`Stoner.Core.metadataObject` in the folder.
         skip_empty (bool): Controls whether iterating over the Folder will skip over empty files. Defaults to False.
-        type (DataFile): The type of the members of the :py:class:`DataFolder`. Can be either a subclass of
-            :py:class:`Stoner.Core.DataFile` or an instance of one (in which ase the class of the instance is used).
+        type (metadataObject): The type of the members of the :py:class:`objectFolder`. Can be either a subclass of
+            :py:class:`Stoner.Core.metadataObject` or an instance of one (in which ase the class of the instance is used).
 
     Args:
-        directory (string or :py:class:`DataFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
+        directory (string or :py:class:`objectFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
 
     Keyword Arguments:
-        type (class): An subclass of :py:class:`Stoner.Core.DataFolder` that will be used to construct the individual DataFile objects in the folder
+        type (class): An subclass of :py:class:`Stoner.Core.objectFolder` that will be used to construct the individual metadataObject objects in the folder
         pattern (string or re): A filename pattern - either globbing string or regular expression
         nolist (bool): Delay doing a directory scan to get data files
         multifile (bool): if True brings up a dialog for selecting files from a directory.
@@ -61,49 +61,28 @@ class DataFolder(object):
         The newly constructed instance
 
     Note:
-        All other keywords are set as attributes of the DataFolder.
+        All other keywords are set as attributes of the objectFolder.
 
     Todo:
-        Handle :py:meth:`__init__(DataFolder)` with subclasses
+        Handle :py:meth:`__init__(objectFolder)` with subclasses
 
     """
 
-    _type=DataFile # class attribute to keep things happy
+    _type=metadataObject # class attribute to keep things happy
     _pattern=None
 
     def __init__(self, *args, **kargs):
         self.directory=None
         self.files=[]
         self.flat=False
-        self.read_means=False
         self.recursive=True
         self.groups={}
         self._file_attrs=dict()
         self.skip_empty=kargs.pop("skip_empty",False)
-        if not "type" in kargs:
-            from .Util import Data
-            self.type=Data
-        else:
-            self.type=kargs["type"]
-            del kargs["type"]
         self.pattern=kargs.pop("pattern","*.*")
-        if not "nolist" in kargs:
-            self.nolist=(len(args)==0)
-        else:
-            self.nolist=kargs["nolist"]
-            del kargs["nolist"]
-        if not "multifile" in kargs:
-            self.multifile = False
-        elif isinstance(kargs["multifile"], bool):
-            self.multifile=kargs["multifile"]
-            del kargs["multifile"]
-        else:
-            raise ValueError("multifile argument must be boolean")
-        if "extra_args" in kargs:
-            self.extra_args=kargs["extra_args"]
-            del kargs["extra_args"]
-        else:
-            self.extra_args=dict()
+        self.nolist=kargs.pop("nolist",len(args)==0)
+        self.multifile=kargs.pop("multifile",False)
+        self.extra_args=kargs.pop("extra_args",{})
         for v in kargs:
             self.__setattr__(v,kargs[v])
         if self.directory is None:
@@ -117,7 +96,7 @@ class DataFolder(object):
                 self.directory=False
                 if not self.nolist:
                     self.getlist()
-            elif isinstance(args[0],DataFolder):
+            elif isinstance(args[0],objectFolder):
                 other=args[0]
                 for k in other.__dict__:
                     self.__dict__[k]=other.__dict__[k]
@@ -134,10 +113,10 @@ class DataFolder(object):
 
     @property
     def basenames(self):
-        """Returns a list of just the filename parts of the DataFolder."""
+        """Returns a list of just the filename parts of the objectFolder."""
         ret=[]
         for x in self.files:
-            if isinstance(x,DataFile):
+            if isinstance(x,metadataObject):
                 ret.append(path.basename(x.filename))
             elif isinstance(x,string_types):
                 ret.append(path.basename(x))
@@ -145,7 +124,7 @@ class DataFolder(object):
 
     @property
     def depth(self):
-        """Gives the maximum number of levels of group below the current DataFolder."""
+        """Gives the maximum number of levels of group below the current objectFolder."""
         if len(self.groups)==0:
             r=0
         else:
@@ -156,10 +135,10 @@ class DataFolder(object):
 
     @property
     def loaded(self):
-        """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.DataFolder` has been
+        """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
         loaded into memory."""
         for f in self.files:
-            yield isinstance(f,DataFile)
+            yield isinstance(f,metadataObject)
 
     @property
     def lsgrp(self):
@@ -173,13 +152,13 @@ class DataFolder(object):
         for f in self.files:
             if isinstance(f,string_types):
                 ret.append(f)
-            elif isinstance(f,DataFile):
+            elif isinstance(f,metadataObject):
                 ret.append(f.filename)
         return ret
 
     @property
     def mindepth(self):
-        """Gives the minimum number of levels of group below the current DataFolder."""
+        """Gives the minimum number of levels of group below the current objectFolder."""
         if len(self.groups)==0:
             r=0
         else:
@@ -194,7 +173,7 @@ class DataFolder(object):
 
     @pattern.setter
     def pattern(self,value):
-        """Sets the filename searching pattern(s) for the :py:class:`Stoner.Core.DataFile`s."""
+        """Sets the filename searching pattern(s) for the :py:class:`Stoner.Core.metadataObject`s."""
         if isinstance(value,string_types):
             self._pattern=(value,)
         elif isinstance(value,re._pattern_type):
@@ -207,37 +186,37 @@ class DataFolder(object):
 
     @property
     def type(self):
-        """Defines the (sub)class of the :py:class:`Stoner.Core.DataFile` instances."""
+        """Defines the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
         return self._type
 
     @type.setter
     def type(self,value):
-        """Ensures that type is a subclass of DataFile."""
-        if issubclass(value,DataFile):
+        """Ensures that type is a subclass of metadataObject."""
+        if issubclass(value,metadataObject):
             self._type=value
-        elif isinstance(value,DataFile):
+        elif isinstance(value,metadataObject):
             self._type=value.__class__
         else:
-            raise TypeError("{} os neither a subclass nor instance of DataFile".format(type(value)))
+            raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
 
     #########################################################
     ######## Special Methods ################################
     #########################################################
 
     def __add__(self,other):
-        """Implement the addition operator for DataFolder and DataFiles."""
+        """Implement the addition operator for objectFolder and metadataObjects."""
         result=copy(self)
-        if isinstance(other,DataFolder):
+        if isinstance(other,objectFolder):
             result.files.extend([self.type(f) for f in other.files])
             result.groups.update(other.groups)
-        elif isinstance(other,DataFile):
+        elif isinstance(other,metadataObject):
             result.files.append(self.type(other))
         else:
             result=NotImplemented
         return result
 
     def __delitem__(self,item):
-        """Deelte and item or a group from the DataFolder
+        """Deelte and item or a group from the objectFolder
 
         Args:
             item(string or int): the Item to be deleted.
@@ -273,7 +252,7 @@ class DataFolder(object):
 
 
     def __getattr__(self, item):
-        """Handles some special case attributes that provide alternative views of the DataFolder
+        """Handles some special case attributes that provide alternative views of the objectFolder
 
         Args:
             item (string): The attribute name being requested
@@ -283,54 +262,54 @@ class DataFolder(object):
 
         """
         if not item.startswith("_"):
-            if item in dir(self._type): #Something is in our DataFile type
+            if item in dir(self._type): #Something is in our metadataObject type
                 if ismethod(getattr(self._type,item)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     ret=self.__get_file_attr__(item)
             else: # Ok, pass back
-                ret=super(DataFolder,self).__getattribute__(item)
+                ret=super(objectFolder,self).__getattribute__(item)
         else: # We dpon't intercept private or special methods
-            ret=super(DataFolder,self).__getattribute__(item)
+            ret=super(objectFolder,self).__getattribute__(item)
         return ret
 
     def __getattr_proxy(self,item):
-        """Make a prpoxy call to access a method of the DataFile like types.
+        """Make a prpoxy call to access a method of the metadataObject like types.
 
         Args:
-            item (string): Name of method of DataFile class to be called
+            item (string): Name of method of metadataObject class to be called
 
         Returns:
-            Either a modifed copy of this DataFolder or a list of return values
+            Either a modifed copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
         def _wrapper_(*args,**kargs):
-            """Wraps a call to the DataFile type for magic method calling.
+            """Wraps a call to the metadataObject type for magic method calling.
             Note:
-                This relies on being defined inside the enclosure of the DataFolder method
+                This relies on being defined inside the enclosure of the objectFolder method
                 so we have access to self and item"""
             retvals=[]
             for ix,f in enumerate(self):
                 meth=f.__getattribute__(item)
                 ret=meth(*args,**kargs)
-                if ret is not f: # method did not returned a modified version of the DataFile
+                if ret is not f: # method did not returned a modified version of the metadataObject
                     retvals.append(ret)
-            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our DataFolder
+            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our objectFolder
                 retvals=self
             return retvals
         #Ok that;s the wrapper function, now return  it for the user to mess around with.
         return _wrapper_
 
     def __getitem__(self, i):
-        """Load and returen DataFile type objects based on the filenames in self.files
+        """Load and returen metadataObject type objects based on the filenames in self.files
 
         Args:
             i(int or slice): The index(eces) of the files to return Can also be a string in which case it is interpreted as one of self.files
 
         Returns:
-            One or more instances of DataFile objects
+            One or more instances of metadataObject objects
 
-        This is the canonical method for producing a DataFile from a DataFolder. Various substitutions are done as the file is created:
+        This is the canonical method for producing a metadataObject from a objectFolder. Various substitutions are done as the file is created:
         1.  Firstly, the filename is inserted into the metadata key "Loaded From"
         2.  Secondly, if the pattern was given as a regular exression then any named matching groups are
             interpreted as metadata key-value pairs (where the key will be the name of the capturing
@@ -341,7 +320,7 @@ class DataFolder(object):
             tmp=self.__read__(files)
             self.files[i]=tmp
             return tmp
-        elif isinstance(i, string_types): # Ok we've done a DataFolder['filename']
+        elif isinstance(i, string_types): # Ok we've done a objectFolder['filename']
             try:
                 i=self.ls.index(i)
                 return self.__read__(self.files[i])
@@ -370,9 +349,9 @@ class DataFolder(object):
 
 
     def __next__(self):
-        """Iterates over contents of DataFolder.
+        """Iterates over contents of objectFolder.
 
-        If :py:attr:`DataFolder.skip_empty` is True, then any members that
+        If :py:attr:`objectFolder.skip_empty` is True, then any members that
         either faile to load or have zero length are skipped over."""
         for i in range(len(self.files)):
             try:
@@ -390,11 +369,11 @@ class DataFolder(object):
             yield self[i]
 
     def __repr__(self):
-        """Prints a summary of the DataFolder structure
+        """Prints a summary of the objectFolder structure
 
         Returns:
-            A string representation of the current DataFolder object"""
-        s="DataFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self.files),len(self.groups))
+            A string representation of the current objectFolder object"""
+        s="objectFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self.files),len(self.groups))
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()
             for l in r.split("\n"): # indent each line by one tab
@@ -404,40 +383,40 @@ class DataFolder(object):
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
         if name.startswith("_"): # pass ddirectly through for private attributes
-            super(DataFolder,self).__setattr__(name,value)
+            super(objectFolder,self).__setattr__(name,value)
         elif name in self.__dict__ and not callable(self.__getattr__(name)):
-            super(DataFolder,self).__setattr__(name,value)
+            super(objectFolder,self).__setattr__(name,value)
         elif name in dir(self._type()):
             self._file_attrs[name]=value
         else:
-            super(DataFolder,self).__setattr__(name,value)
+            super(objectFolder,self).__setattr__(name,value)
 
 
     def __setitem__(self,name,value):
-        """Set a DataFile or DataFolder backinto the DataFolder.
+        """Set a metadataObject or objectFolder backinto the objectFolder.
 
         Args:
-            name (int or string): The index of the DataFile or Folder to be replaced.
-            value (DataFile or DataFolder): The data to be stored
+            name (int or string): The index of the metadataObject or Folder to be replaced.
+            value (metadataObject or objectFolder): The data to be stored
 
         Returns:
             None
 
-        The method operates in two modes, depending on whether the supplied value is a :py:class:`Stoner.Core.DataFile` or :py:class:`DataFolder`.
+        The method operates in two modes, depending on whether the supplied value is a :py:class:`Stoner.Core.metadataObject` or :py:class:`objectFolder`.
 
-        If the value is a :py:class:`Stoner.Core.DataFile`, then the corresponding entry in the files attriobute
+        If the value is a :py:class:`Stoner.Core.metadataObject`, then the corresponding entry in the files attriobute
         is written. The name in this case may be either a string or an integer. In the former case, the string is compared
-        to the :py:attr:`DataFolder.ls`  list of filenames and then to the :py:attr:`DataFolder.basenames` attroibute to
-        determine which entry should be replaced. If there is no match, then the new DataFile is imply appended after its
-        :py:attr:`Stopner.Core.DataFile.filename` attribute is et to the name parameter. If name is an integer then it is used
-        simply as a numerioc index into the :py:attr:`DataFolder.files` atttribute.
+        to the :py:attr:`objectFolder.ls`  list of filenames and then to the :py:attr:`objectFolder.basenames` attroibute to
+        determine which entry should be replaced. If there is no match, then the new metadataObject is imply appended after its
+        :py:attr:`Stopner.Core.metadataObject.filename` attribute is et to the name parameter. If name is an integer then it is used
+        simply as a numerioc index into the :py:attr:`objectFolder.files` atttribute.
 
-        If the value is a :py:class:`Stoner.Core.DataFolder`, then the name must be a string and is used to index into the
-        :py:attr:`DataFolder.groups`.
+        If the value is a :py:class:`Stoner.Core.objectFolder`, then the name must be a string and is used to index into the
+        :py:attr:`objectFolder.groups`.
         """
-        if not isinstance(value,(DataFolder,DataFile)):
-            raise TypError("Can only store DataFile like objects and DataFolders in a DataFolder")
-        if isinstance(value,DataFile):
+        if not isinstance(value,(objectFolder,metadataObject)):
+            raise TypError("Can only store metadataObject like objects and objectFolders in a objectFolder")
+        if isinstance(value,metadataObject):
             if isinstance(name,int):
                 self.files[name]=value
             elif isinstance(name,string_types):
@@ -450,7 +429,7 @@ class DataFolder(object):
                     self.files.append(value)
             else:
                 raise KeyError("Cannot workout how to use {} as a key".format(name))
-        elif isinstance(value,DataFolder):
+        elif isinstance(value,objectFolder):
             if isinstance(name,string_types):
                 self.groups[name]=value
             else:
@@ -460,13 +439,13 @@ class DataFolder(object):
         """Implements a subtraction operator."""
         result=copy(self)
         to_del=list()
-        if isinstance(other,DataFolder):
+        if isinstance(other,objectFolder):
             for f in other.ls:
                 if f in result.ls:
                     to_del.append(result.ls.index(f))
             for i in to_del.sort(reverse=True):
                 del result[i]
-        elif isinstance(other,DataFile) and other.filename in result.ls:
+        elif isinstance(other,metadataObject) and other.filename in result.ls:
             del result[result.ls.index(other.filename)]
         elif isinstance(other,string_types) and other in result.ls:
             del result[result.ls.index(other)]
@@ -525,7 +504,7 @@ class DataFolder(object):
                 return path
 
     def _pruner_(self,grp,breadcrumb):
-        """Removes any empty groups fromthe DataFolder tree."""
+        """Removes any empty groups fromthe objectFolder tree."""
         if len(grp)==0:
             self._pruneable.append(breadcrumb)
             ret=True
@@ -534,13 +513,531 @@ class DataFolder(object):
         return ret
 
     def __read__(self,f):
-        """Reads a single filename in and creates an instance of DataFile.
+        """Reads a single filename in and creates an instance of metadataObject.
 
         Args:
-            f(string or :py:class:`Stoner.Core.DataFile`): A filename or DataFile object
+            f(string or :py:class:`Stoner.Core.metadataObject`): A filename or metadataObject object
 
         Returns:
-            A DataFile object
+            A metadataObject object
+
+        Note:
+             If self.pattern is a regular expression then use any named groups in it to create matadata from the
+            filename. If self.read_means is true then create metadata from the mean of the data columns.
+        """
+        if isinstance(f,metadataObject):
+            return f
+        tmp= self.type(f,**self.extra_args)
+        if not isinstance(tmp.filename,string_types):
+            tmp.filename=path.basename(f)
+        for p in self.pattern:
+            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
+                m=p.search(tmp.filename)
+                for k in m.groupdict():
+                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
+        tmp['Loaded from']=tmp.filename
+        for k in self._file_attrs:
+            tmp.__setattr__(k,self._file_attrs[k])
+        return tmp
+
+    def _removeDisallowedFilenameChars(filename):
+        """Utility method to clean characters in filenames
+
+        Args:
+            filename (string): filename to cleanse
+
+        Returns:
+            A filename with non ASCII characters stripped out
+        """
+        validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+        cleanedFilename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore')
+        return ''.join(c for c in cleanedFilename if c in validFilenameChars)
+
+
+    def _save(self,grp,trail,root=None):
+        """Save a group of files to disc by calling the save() method on each file. This internal method is called by walk_groups in turn
+        called from the public save() method. The trail of group keys is used to create a directory tree.
+
+        Args:
+            grp (:py:class:`objectFolder` or :py:calss:`Stoner.metadataObject`): A group or file to save
+            trail (list of strings): the trail of paths used to get here
+            root (string or None): a replacement root directory
+
+        Returns:
+            Saved Path
+        """
+
+        trail=[self._removeDisallowedFilenameChars(t) for t in trail]
+        grp.filename=self._removeDisallowedFilenameChars(grp.filename)
+        if root is None:
+            root=self.directory
+
+        pth=path.join(root,*trail)
+        os.makesdirs(pth)
+        grp.save(path.join(pth,grp.filename))
+        return grp.filename
+
+    def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
+        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
+
+        Args:
+            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+
+        Keyword Arguments:
+            group (bool): (default False) determines whether the wealker function will expect to be given the objectFolder
+                representing the lowest level group or individual metadataObject objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
+                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            walker_args (dict): a dictionary of static arguments for the walker function.
+            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
+
+        Notes:
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args)
+                where f is either a objectFolder or metadataObject."""
+        if (len(self.groups)>0):
+            ret=[]
+            removeGroups=[]
+            if replace_terminal:
+                self.files=[]
+            for g in self.groups:
+                bcumb=copy(breadcrumb)
+                bcumb.append(g)
+                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
+                if group and  replace_terminal and isinstance (tmp, metadataObject):
+                    removeGroups.append(g)
+                    tmp.filename="{}-{}".format(g,tmp.filename)
+                    self.files.append(tmp)
+                    ret.append(tmp)
+            for g in removeGroups:
+                del(self.groups[g])
+            return ret
+        else:
+            if group:
+                return walker(self,breadcrumb,**walker_args)
+            else:
+                return [walker(f,breadcrumb,**walker_args) for f in self]
+
+    ##################################################################################
+    ############# Public Methods #####################################################
+    ##################################################################################
+
+    def add_group(self,key):
+        """Add a new group to the current Folder with the given key.
+
+        Args:
+            key(string): A hashable value to be used as the dictionary key in the groups dictionary
+        Returns:
+            A copy of the objectFolder
+
+        Note:
+            If key already exists in the groups dictionary then no action is taken.
+
+        Todo:
+            Propagate any extra attributes into the groups.
+        """
+        if key in self.groups: # do nothing here
+            pass
+        else:
+            self.groups[key]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
+            for k in self.__dict__:
+                if k not in ["files","groups"]:
+                    self.groups[key].__dict__[k]=self.__dict__[k]
+            self.groups[key].key=key
+        return self
+
+    def filter(self, filter=None,  invert=False):
+        """Filter the current set of files by some criterion
+
+        Args:
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
+        Returns:
+            The current objectFolder object"""
+
+        files=[]
+        if isinstance(filter, string_types):
+            for f in self.files:
+                if fnmatch.fnmatch(f, filter)  ^ invert:
+                    files.append(f)
+        elif isinstance(filter, re._pattern_type):
+            for f in self.files:
+                if filter.search(f) is not None:
+                    files.append(f)
+        elif filter is None:
+            raise ValueError("A filter must be defined !")
+        else:
+            for i in range(len(self.files)):
+                x=self[i]
+                if filter(x)  ^ invert:
+                    files.append(self.files[i])
+        self.files=files
+        return self
+
+
+    def filterout(self, filter):
+        """Synonym for self.filter(filter,invert=True)
+
+        Args:
+        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+
+        Returns:
+            The current objectFolder object with the files in the file list filtered."""
+        return self.filter(filter, invert=True)
+
+
+    def flatten(self, depth=None):
+        """Compresses all the groups and sub-groups iunto a single flat file list.
+
+        Keyword Arguments:
+            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
+
+        Returns:
+            A copy of the now flattened DatFolder"""
+        if isinstance(depth,int):
+            if self.depth<=depth:
+                self.flatten()
+            else:
+                for g in self.groups:
+                    self.groups[g].flatten(depth)
+        else:
+            for g in self.groups:
+                self.groups[g].flatten()
+                self.files.extend(self.groups[g].files)
+            self.groups={}
+        return self
+
+
+    def getlist(self, recursive=None, directory=None,flatten=None):
+        """Scans the current directory, optionally recursively to build a list of filenames
+
+        Keyword Arguments:
+            recursive (bool): Do a walk through all the directories for files
+            directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
+            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of
+            :py:meth:`objectFolder.getlist()`)
+
+        Returns:
+            A copy of the current DataFoder directory with the files stored in the files attribute
+
+        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
+        directory tree finding sub directories and creating groups in the data folder for each sub directory.
+        """
+        self.files=[]
+        if recursive is None:
+            recursive=self.recursive
+        if flatten is None:
+            flatten=self.flat
+        if isinstance(directory,  bool) and not directory:
+            self._dialog()
+        elif isinstance(directory, string_types):
+            self.directory=directory
+            if self.multifile:
+                self._dialog()
+        if isinstance(self.directory, bool) and not self.directory:
+            self._dialog()
+        elif self.directory is None:
+            self.directory=os.getcwd()
+        root=self.directory
+        dirs=[]
+        files=[]
+        for f in os.listdir(root):
+            if path.isdir(path.join(root, f)):
+                dirs.append(f)
+            elif path.isfile(path.join(root, f)):
+                files.append(f)
+        for p in self.pattern: # pattern is a list of strings and regeps
+            if isinstance(p,string_types):
+                for f in fnmatch.filter(files, p):
+                    self.files.append(path.join(root, f))
+                    # Now delete the matched file from the list of candidates
+                    #This stops us double adding fles that match multiple patterns
+                    del(files[files.index(f)])
+            if isinstance(p,re._pattern_type):
+                matched=[]
+                # For reg expts we iterate over all files, but we can't delete matched
+                # files as we go as we're iterating over them - so we store the
+                # indices and delete them later.
+                for f in files:
+                    if p.search(f):
+                        self.files.append(path.join(root,f))
+                        matched.append(files.index(f))
+                matched.sort(reverse=True)
+                for i in matched: # reverse sort the matching indices to safely delete
+                    del(files[i])
+        if recursive:
+            for d in dirs:
+                self.add_group(d)
+                self.groups[d].directory=path.join(root,d)
+                self.groups[d].getlist(recursive=recursive,flatten=flatten)
+        if flatten:
+            self.flatten()
+        return self
+
+
+    def group(self, key):
+        """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
+
+        Args:
+            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
+                takes a single argument x which should be an instance of a metadataObject and returns some vale. If key is a list then the grouping is done recursively for each element
+                in key.
+        Returns:
+            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
+
+        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
+        are generated from the filename are supported."""
+        self.groups={}
+        if isinstance(key, list):
+            next_keys=key[1:]
+            key=key[0]
+        else:
+            next_keys=[]
+        if isinstance(key, string_types):
+            k=key
+            key=lambda x:x[k]
+        for f in self.ls:
+            x=self[f]
+            v=key(x)
+            self.add_group(v)
+            self.groups[v].files.append(x)
+        self.files=[]
+        if len(next_keys)>0:
+            for g in self.groups:
+                self.groups[g].group(next_keys)
+        return self
+
+    def insert(self,index,value):
+        """Implements the insert method to support MutableSequence.
+
+        Parameters:
+            index (integer): Position before which new value will be inserted.
+            value (metadataObject, or string): New value to be inserted.
+
+        Returns:
+            Modifield objectFolder"""
+        if isinstance(value,string_types) or isinstance(value,metadataObject):
+            self.files.insert(index,value)
+        else:
+            raise TypeError("Can't store a {} in a {}".format(type(value),type(self)))
+        return self
+
+
+
+    def keys(self):
+        """An alias for self.lsgrp as a gwenerator."""
+        for g in self.lsgrp:
+            yield g
+
+
+    def not_empty(self):
+        """An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.
+
+        Returns the next non-empty DatFile member of the objectFolder.
+
+        Note:
+            not_empty will also silently skip over any cases where loading the metadataObject object will raise
+            and exception."""
+        for i in range(len(self)):
+            try:
+                d=self[i]
+            except:
+                continue
+            if len(d)==0:
+                continue
+            yield(d)
+
+    def prune(self):
+        """Remove any groups from the objectFolder (and subgroups).
+
+        Returns:
+            A copy of thte pruned objectFolder."""
+        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
+        self.walk_groups(self._pruner_,group=True)
+        while len(self._pruneable)!=0:
+            for p in self._pruneable:
+                pth=tuple(p[:-1])
+                item=p[-1]
+                if len(pth)==0:
+                    del self[item]
+                else:
+                    grp=self[pth]
+                    del grp[item]
+            self._pruneable=[]
+            self.walk_groups(self._pruner_,group=True)
+        del self._pruneable
+        return self
+
+
+
+    def save(self,root=None):
+        """Save the entire data folder out to disc using the groups as a directory tree,
+        calling the save method for each file in turn.
+
+        Args:
+            root (string): The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
+                diretory attribute will be used.
+        Returns:
+            A list of the saved files
+        """
+        return self.walk_groups(self._save,walker_args={"root",root})
+
+
+    def select(self,*args,**kargs):
+        """A generator that can be used to select particular data files from the objectFolder
+
+        Args:
+            args (various): A single positional argument if present is interpreted as follows:
+
+            * If a callable function is given, the entire metadataObject is presented to it.
+                If it evaluates True then that metadataObject is selected. This allows arbitary select operations
+            * If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects
+
+        Keyword Arguments:
+            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                metadata values. The value of the argument is used as follows:
+
+            * if is a scalar, then an equality test is carried out
+            * If is a list then a membership test is carried out
+            * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
+
+        Yields:
+            A metadataObject that matches the select requirements
+        """
+        if len(args)!=0:
+            arg=args[0]
+            if callable(arg):
+                mode="call"
+            elif isinstance(arg,dict):
+                kargs.update(arg)
+                mode="dict"
+            else:
+                raise RuntimeError("Bad select specification")
+        else:
+            mode="dict"
+        for f in self:
+            if mode=="call":
+                result=arg(f)
+            elif mode=="dict":
+                result=True
+                for k in kargs:
+                    v=kargs[k]
+                    if isinstance(v,tuple) and len(v)==2:
+                        l1=v[0]
+                        l2=v[1]
+                        result&=l1<=f[k]<l2
+                    elif isinstance(v,tuple) and len(v)==1:
+                        v=v[0]
+                    if isinstance(v,list):
+                        result&=f[k] in v
+                    else:
+                        result&=f[k]==v
+            else:
+                raise RuntimeError("oops what happened here?")
+            if result:
+                yield f
+
+
+    def sort(self, key=None, reverse=False):
+        """Sort the files by some key
+
+        Keyword Arguments:
+            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
+                metadata key, if callable then it is assumed that this is a a function of one paramater x
+                that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
+                If key is not specified (default), then a sort is performed on the filename
+
+        reverse (bool): Optionally sort in reverse order
+
+        Returns:
+            A copy of the current objectFolder object"""
+        if isinstance(key, string_types):
+            k=[(self[i].get(key),i) for i in range(len(self.files))]
+            k=sorted(k,reverse=reverse)
+            self.files=[self.files[y] for (x,y) in k]
+        elif key is None:
+            fnames=self.ls
+            fnames.sort(reverse=reverse)
+            self.files=[self[f] for f in fnames]
+        elif isinstance(key,re._pattern_type):
+            self.files=sorted(self.files,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
+        else:
+            self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+        return self
+
+    def unflatten(self):
+        """Takes a file list an unflattens them according to the file paths.
+
+        Returns:
+            A copy of the objectFolder
+        """
+        self.directory=path.commonprefix(self.ls)
+        if self.directory[-1]!=path.sep:
+            self.directory=path.dirname(self.directory)
+        relpaths=[path.relpath(f,self.directory) for f in self.ls]
+        dels=list()
+        for i,f in enumerate(relpaths):
+            grp=path.split(f)[0]
+            if grp!=f and grp!="":
+                self.add_group(grp)
+                self.groups[grp]+=self[i]
+                dels.append(i)
+        for i in sorted(dels,reverse=True):
+            del self[i]
+        for g in self.groups:
+            self.groups[g].unflatten()
+
+    def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
+        """Walks through a heirarchy of groups and calls walker for each file.
+
+        Args:
+            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+
+        Keyword Arguments:
+            group (bool): (default False) determines whether the walker function will expect to be given the objectFolder
+                representing the lowest level group or individual metadataObject objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
+                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            walker_args (dict): a dictionary of static arguments for the walker function.
+
+        Notes:
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args)
+                where f is either a objectFolder or metadataObject."""
+        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
+
+
+    def zip_groups(self, groups):
+        """Return a list of tuples of metadataObjects drawn from the specified groups
+
+        Args:
+            groups(list of strings): A list of keys of groups in the Lpy:class:`objectFolder`
+
+        ReturnsL
+            A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
+        """
+        if not isinstance(groups, list):
+            raise SyntaxError("groups must be a list of groups")
+        grps=[[y for y in self.groups[x]] for x in groups]
+        return zip(*grps)
+
+class DataFolder(objectFolder):
+
+
+    def __init__(self,*args,**kargs):
+        from Stoner import Data
+        self.type=kargs.pop("type",Data)
+        self.read_means=kargs.pop("read_means",False)
+        super(DataFolder,self).__init__(*args,**kargs)
+
+    def __read__(self,f):
+        """Reads a single filename in and creates an instance of metadataObject.
+
+        Args:
+            f(string or :py:class:`Stoner.Core.metadataObject`): A filename or metadataObject object
+
+        Returns:
+            A metadataObject object
 
         Note:
              If self.pattern is a regular expression then use any named groups in it to create matadata from the
@@ -570,124 +1067,18 @@ class DataFolder(object):
             tmp.__setattr__(k,self._file_attrs[k])
         return tmp
 
-    def _removeDisallowedFilenameChars(filename):
-        """Utility method to clean characters in filenames
-
-        Args:
-            filename (string): filename to cleanse
-
-        Returns:
-            A filename with non ASCII characters stripped out
-        """
-        validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        cleanedFilename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore')
-        return ''.join(c for c in cleanedFilename if c in validFilenameChars)
-
-
-    def _save(self,grp,trail,root=None):
-        """Save a group of files to disc by calling the save() method on each file. This internal method is called by walk_groups in turn
-        called from the public save() method. The trail of group keys is used to create a directory tree.
-
-        Args:
-            grp (:py:class:`DataFolder` or :py:calss:`Stoner.DataFile`): A group or file to save
-            trail (list of strings): the trail of paths used to get here
-            root (string or None): a replacement root directory
-
-        Returns:
-            Saved Path
-        """
-
-        trail=[self._removeDisallowedFilenameChars(t) for t in trail]
-        grp.filename=self._removeDisallowedFilenameChars(grp.filename)
-        if root is None:
-            root=self.directory
-
-        pth=path.join(root,*trail)
-        os.makesdirs(pth)
-        grp.save(path.join(pth,grp.filename))
-        return grp.filename
-
-    def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
-        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
-
-        Args:
-            walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.
-
-        Keyword Arguments:
-            group (bool): (default False) determines whether the wealker function will expect to be given the DataFolder
-                representing the lowest level group or individual DataFile objects from the lowest level group
-            replace_terminal (bool): if group is True and the walker function returns an instance of DataFile then the return value is appended
-                to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
-            walker_args (dict): a dictionary of static arguments for the walker function.
-            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
-
-        Notes:
-            The walker function should have a prototype of the form:
-                walker(f,list_of_group_names,**walker_args)
-                where f is either a DataFolder or DataFile."""
-        if (len(self.groups)>0):
-            ret=[]
-            removeGroups=[]
-            if replace_terminal:
-                self.files=[]
-            for g in self.groups:
-                bcumb=copy(breadcrumb)
-                bcumb.append(g)
-                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
-                if group and  replace_terminal and isinstance (tmp, DataFile):
-                    removeGroups.append(g)
-                    tmp.filename="{}-{}".format(g,tmp.filename)
-                    self.files.append(tmp)
-                    ret.append(tmp)
-            for g in removeGroups:
-                del(self.groups[g])
-            return ret
-        else:
-            if group:
-                return walker(self,breadcrumb,**walker_args)
-            else:
-                return [walker(f,breadcrumb,**walker_args) for f in self]
-
-    ##################################################################################
-    ############# Public Methods #####################################################
-    ##################################################################################
-
-    def add_group(self,key):
-        """Add a new group to the current Folder with the given key.
-
-        Args:
-            key(string): A hashable value to be used as the dictionary key in the groups dictionary
-        Returns:
-            A copy of the DataFolder
-
-        Note:
-            If key already exists in the groups dictionary then no action is taken.
-
-        Todo:
-            Propagate any extra attributes into the groups.
-        """
-        if key in self.groups: # do nothing here
-            pass
-        else:
-            self.groups[key]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
-            for k in self.__dict__:
-                if k not in ["files","groups"]:
-                    self.groups[key].__dict__[k]=self.__dict__[k]
-            self.groups[key].key=key
-        return self
-
 
     def concatentate(self,sort=None,reverse=False):
-        """Concatentates all the files in a DataFolder into a single DataFile like object.
+        """Concatentates all the files in a objectFolder into a single metadataObject like object.
 
         Keyword Arguments:
-            sort (column index, None or bool, or clallable function): Sort the resultant DataFile by this column (if a column index),
+            sort (column index, None or bool, or clallable function): Sort the resultant metadataObject by this column (if a column index),
                 or by the *x* column if None or True, or not at all if False. *sort* is passed directly to the eponymous method as the
                 *order* paramter.
             reverse (bool): Reverse the order of the sort (defaults to False)
 
         Returns:
-            The current DataFolder with only one DataFile item containing all the data.
+            The current objectFolder with only one metadataObject item containing all the data.
         """
         for d in self[1:]:
             self[0]+=d
@@ -701,13 +1092,13 @@ class DataFolder(object):
         return self
 
     def extract(self,metadata):
-        """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.
+        """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.
 
         Args:
             metadata (list): List of metadata indices that should be used to construct the new data file.
 
         Returns:
-            An instance of a DataFile like object.
+            An instance of a metadataObject like object.
         """
 
         def _extractor(group,trail,metadata):
@@ -735,70 +1126,8 @@ class DataFolder(object):
 
         return self.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
 
-    def filter(self, filter=None,  invert=False):
-        """Filter the current set of files by some criterion
-
-        Args:
-            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
-            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
-        Returns:
-            The current DataFolder object"""
-
-        files=[]
-        if isinstance(filter, string_types):
-            for f in self.files:
-                if fnmatch.fnmatch(f, filter)  ^ invert:
-                    files.append(f)
-        elif isinstance(filter, re._pattern_type):
-            for f in self.files:
-                if filter.search(f) is not None:
-                    files.append(f)
-        elif filter is None:
-            raise ValueError("A filter must be defined !")
-        else:
-            for i in range(len(self.files)):
-                x=self[i]
-                if filter(x)  ^ invert:
-                    files.append(self.files[i])
-        self.files=files
-        return self
-
-
-    def filterout(self, filter):
-        """Synonym for self.filter(filter,invert=True)
-
-        Args:
-        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a DataFile and evaluates True or False
-
-        Returns:
-            The current DataFolder object with the files in the file list filtered."""
-        return self.filter(filter, invert=True)
-
-
-    def flatten(self, depth=None):
-        """Compresses all the groups and sub-groups iunto a single flat file list.
-
-        Keyword Arguments:
-            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
-
-        Returns:
-            A copy of the now flattened DatFolder"""
-        if isinstance(depth,int):
-            if self.depth<=depth:
-                self.flatten()
-            else:
-                for g in self.groups:
-                    self.groups[g].flatten(depth)
-        else:
-            for g in self.groups:
-                self.groups[g].flatten()
-                self.files.extend(self.groups[g].files)
-            self.groups={}
-        return self
-
-
     def gather(self,xcol=None,ycol=None):
-        """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.DataFile`
+        """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.metadataObject`
 
         Keyword Arguments:
             xcol (index or None): Column in each file that has x data. if None, then the setas settings are used
@@ -884,307 +1213,11 @@ class DataFolder(object):
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
 
 
-    def getlist(self, recursive=None, directory=None,flatten=None):
-        """Scans the current directory, optionally recursively to build a list of filenames
-
-        Keyword Arguments:
-            recursive (bool): Do a walk through all the directories for files
-            directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
-            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of
-            :py:meth:`DataFolder.getlist()`)
-
-        Returns:
-            A copy of the current DataFoder directory with the files stored in the files attribute
-
-        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
-        directory tree finding sub directories and creating groups in the data folder for each sub directory.
-        """
-        self.files=[]
-        if recursive is None:
-            recursive=self.recursive
-        if flatten is None:
-            flatten=self.flat
-        if isinstance(directory,  bool) and not directory:
-            self._dialog()
-        elif isinstance(directory, string_types):
-            self.directory=directory
-            if self.multifile:
-                self._dialog()
-        if isinstance(self.directory, bool) and not self.directory:
-            self._dialog()
-        elif self.directory is None:
-            self.directory=os.getcwd()
-        root=self.directory
-        dirs=[]
-        files=[]
-        for f in os.listdir(root):
-            if path.isdir(path.join(root, f)):
-                dirs.append(f)
-            elif path.isfile(path.join(root, f)):
-                files.append(f)
-        for p in self.pattern: # pattern is a list of strings and regeps
-            if isinstance(p,string_types):
-                for f in fnmatch.filter(files, p):
-                    self.files.append(path.join(root, f))
-                    # Now delete the matched file from the list of candidates
-                    #This stops us double adding fles that match multiple patterns
-                    del(files[files.index(f)])
-            if isinstance(p,re._pattern_type):
-                matched=[]
-                # For reg expts we iterate over all files, but we can't delete matched
-                # files as we go as we're iterating over them - so we store the
-                # indices and delete them later.
-                for f in files:
-                    if p.search(f):
-                        self.files.append(path.join(root,f))
-                        matched.append(files.index(f))
-                matched.sort(reverse=True)
-                for i in matched: # reverse sort the matching indices to safely delete
-                    del(files[i])
-        if recursive:
-            for d in dirs:
-                self.add_group(d)
-                self.groups[d].directory=path.join(root,d)
-                self.groups[d].getlist(recursive=recursive,flatten=flatten)
-        if flatten:
-            self.flatten()
-        return self
-
-
-    def group(self, key):
-        """Take the files and sort them into a series of separate DataFolder objects according to the value of the key
-
-        Args:
-            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
-                takes a single argument x which should be an instance of a DataFile and returns some vale. If key is a list then the grouping is done recursively for each element
-                in key.
-        Returns:
-            A copy of the current DataFolder object in which the groups attribute is a dictionary of DataFolder objects with sub lists of files
-
-        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
-        are generated from the filename are supported."""
-        self.groups={}
-        if isinstance(key, list):
-            next_keys=key[1:]
-            key=key[0]
-        else:
-            next_keys=[]
-        if isinstance(key, string_types):
-            k=key
-            key=lambda x:x[k]
-        for f in self.ls:
-            x=self[f]
-            v=key(x)
-            self.add_group(v)
-            self.groups[v].files.append(x)
-        self.files=[]
-        if len(next_keys)>0:
-            for g in self.groups:
-                self.groups[g].group(next_keys)
-        return self
-
-    def keys(self):
-        """An alias for self.lsgrp as a gwenerator."""
-        for g in self.lsgrp:
-            yield g
-
-
-    def not_empty(self):
-        """An iterator for DataFolder that checks whether the loaded DataFile objects have any data.
-
-        Returns the next non-empty DatFile member of the DataFolder.
-
-        Note:
-            not_empty will also silently skip over any cases where loading the DataFile object will raise
-            and exception."""
-        for i in range(len(self)):
-            try:
-                d=self[i]
-            except:
-                continue
-            if len(d)==0:
-                continue
-            yield(d)
-
-    def prune(self):
-        """Remove any groups from the DataFolder (and subgroups).
-
-        Returns:
-            A copy of thte pruned DataFolder."""
-        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
-        self.walk_groups(self._pruner_,group=True)
-        while len(self._pruneable)!=0:
-            for p in self._pruneable:
-                pth=tuple(p[:-1])
-                item=p[-1]
-                if len(pth)==0:
-                    del self[item]
-                else:
-                    grp=self[pth]
-                    del grp[item]
-            self._pruneable=[]
-            self.walk_groups(self._pruner_,group=True)
-        del self._pruneable
-        return self
-
-
-
-    def save(self,root=None):
-        """Save the entire data folder out to disc using the groups as a directory tree,
-        calling the save method for each file in turn.
-
-        Args:
-            root (string): The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
-                diretory attribute will be used.
-        Returns:
-            A list of the saved files
-        """
-        return self.walk_groups(self._save,walker_args={"root",root})
-
-
-    def select(self,*args,**kargs):
-        """A generator that can be used to select particular data files from the DataFolder
-
-        Args:
-            args (various): A single positional argument if present is interpreted as follows:
-
-            * If a callable function is given, the entire DataFile is presented to it.
-                If it evaluates True then that DataFile is selected. This allows arbitary select operations
-            * If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles
-
-        Keyword Arguments:
-            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-                metadata values. The value of the argument is used as follows:
-
-            * if is a scalar, then an equality test is carried out
-            * If is a list then a membership test is carried out
-            * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
-
-        Yields:
-            A DataFile that matches the select requirements
-        """
-        if len(args)!=0:
-            arg=args[0]
-            if callable(arg):
-                mode="call"
-            elif isinstance(arg,dict):
-                kargs.update(arg)
-                mode="dict"
-            else:
-                raise RuntimeError("Bad select specification")
-        else:
-            mode="dict"
-        for f in self:
-            if mode=="call":
-                result=arg(f)
-            elif mode=="dict":
-                result=True
-                for k in kargs:
-                    v=kargs[k]
-                    if isinstance(v,tuple) and len(v)==2:
-                        l1=v[0]
-                        l2=v[1]
-                        result&=l1<=f[k]<l2
-                    elif isinstance(v,tuple) and len(v)==1:
-                        v=v[0]
-                    if isinstance(v,list):
-                        result&=f[k] in v
-                    else:
-                        result&=f[k]==v
-            else:
-                raise RuntimeError("oops what happened here?")
-            if result:
-                yield f
-
-
-    def sort(self, key=None, reverse=False):
-        """Sort the files by some key
-
-        Keyword Arguments:
-            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
-                metadata key, if callable then it is assumed that this is a a function of one paramater x
-                that is a :py:class:`Stoner.Core.DataFile` object and that returns a key value.
-                If key is not specified (default), then a sort is performed on the filename
-
-        reverse (bool): Optionally sort in reverse order
-
-        Returns:
-            A copy of the current DataFolder object"""
-        if isinstance(key, string_types):
-            k=[(self[i].get(key),i) for i in range(len(self.files))]
-            k=sorted(k,reverse=reverse)
-            self.files=[self.files[y] for (x,y) in k]
-        elif key is None:
-            fnames=self.ls
-            fnames.sort(reverse=reverse)
-            self.files=[self[f] for f in fnames]
-        elif isinstance(key,re._pattern_type):
-            self.files=sorted(self.files,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
-        else:
-            self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
-        return self
-
-    def unflatten(self):
-        """Takes a file list an unflattens them according to the file paths.
-
-        Returns:
-            A copy of the DataFolder
-        """
-        self.directory=path.commonprefix(self.ls)
-        if self.directory[-1]!=path.sep:
-            self.directory=path.dirname(self.directory)
-        relpaths=[path.relpath(f,self.directory) for f in self.ls]
-        dels=list()
-        for i,f in enumerate(relpaths):
-            grp=path.split(f)[0]
-            if grp!=f and grp!="":
-                self.add_group(grp)
-                self.groups[grp]+=self[i]
-                dels.append(i)
-        for i in sorted(dels,reverse=True):
-            del self[i]
-        for g in self.groups:
-            self.groups[g].unflatten()
-
-    def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
-        """Walks through a heirarchy of groups and calls walker for each file.
-
-        Args:
-            walker (callable): a callable object that takes either a DataFile instance or a DataFolder instance.
-
-        Keyword Arguments:
-            group (bool): (default False) determines whether the walker function will expect to be given the DataFolder
-                representing the lowest level group or individual DataFile objects from the lowest level group
-            replace_terminal (bool): if group is True and the walker function returns an instance of DataFile then the return value is appended
-                to the files and the group is removed from the current DataFolder. This will unwind the group heirarchy by one level.
-            walker_args (dict): a dictionary of static arguments for the walker function.
-
-        Notes:
-            The walker function should have a prototype of the form:
-                walker(f,list_of_group_names,**walker_args)
-                where f is either a DataFolder or DataFile."""
-        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
-
-
-    def zip_groups(self, groups):
-        """Return a list of tuples of DataFiles drawn from the specified groups
-
-        Args:
-            groups(list of strings): A list of keys of groups in the Lpy:class:`DataFolder`
-
-        ReturnsL
-            A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
-        """
-        if not isinstance(groups, list):
-            raise SyntaxError("groups must be a list of groups")
-        grps=[[y for y in self.groups[x]] for x in groups]
-        return zip(*grps)
-
 class PlotFolder(DataFolder):
-    """A subclass of :py:class:`DataFolder` with extra methods for plotting lots of files."""
+    """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files."""
 
     def plot(self,*args,**kargs):
-        """Call the plot method for each DataFile, but switching to a subplot each time.
+        """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
             args: Positional arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.
@@ -1194,7 +1227,7 @@ class PlotFolder(DataFolder):
             A list of :py:class:`matplotlib.pyplot.Axes` instances.
 
         Notes:
-            If the underlying type of the :py:class:`Stoner.Core.DataFile` instances in the :py:class:`PlotFolder`
+            If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the :py:class:`PlotFolder`
             lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Util.Data`.
 
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
