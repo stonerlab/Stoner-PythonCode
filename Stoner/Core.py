@@ -21,7 +21,8 @@ import copy
 import os.path as path
 import inspect as _inspect_
 import itertools
-from collections import Iterable, OrderedDict
+from collections import Iterable, OrderedDict,MutableMapping
+
 try:
     assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
     from blist import sorteddict
@@ -941,6 +942,38 @@ class typeHintedDict(sorteddict):
             The keys are returned in sorted order as a result of the underlying blist.sorteddict meothd.
         """
         return [self.export(x) for x in self]
+        
+class metadataObject(MutableMapping):
+    """Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.
+
+    Attributes:
+        metadata (typeHintedDict): of key-value metadata pairs. The dictionary
+                                   tries to retain information about the type of
+                                   data so as to aid import and export from CM group LabVIEw code.  
+    
+    """
+    
+    def __init__(self, *args, **kargs):
+        """Initialises the current metadata attribute."""
+        self.metadata = typeHintedDict()
+                
+    def __getitem__(self,name):
+        return self.metadata[name]
+        
+    def __setitem__(self,name,value):
+        self.metadata[name]=value
+        
+    def __delitem__(self,name):
+        del self.metadata[name]
+        
+    def __len__(self):
+        return len(self.metadata)
+        
+    def __iter__(self):
+        return self.metadata.__iter__()
+        
+    def keys(self):
+        return self.metadata.keys()
 
 class DataArray(_ma_.MaskedArray):
     """A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.
@@ -1300,14 +1333,11 @@ class DataArray(_ma_.MaskedArray):
             raise TypeError("Swap parameter must be either a tuple or a \
             list of tuples")
 
-class DataFile(object):
+class DataFile(metadataObject):
     """:py:class:`Stoner.Core.DataFile` is the base class object that represents
     a matrix of data, associated metadata and column headers.
 
     Attributes:
-        metadata (typeHintedDict): of key-value metadata pairs. The dictionary
-                                   tries to retain information about the type of
-                                   data so as to aid import and export from CM group LabVIEw code.
         column_headers (list): of strings of the column names of the data.
         data (2D numpy masked array): The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which
             is itself a subclass of :py:class:`numpy.ma.MaskedArray`.
@@ -1395,9 +1425,9 @@ class DataFile(object):
                 used to set those public attributes.
         """
         # init instance attributes
+        super(DataFile,self).__init__(*args,**kargs) # initialise self.metadata)
         self.debug = kargs.pop("debug",False)
         self._masks = [False]
-        self.metadata = typeHintedDict()
         super(DataFile,self).__setattr__("_data",DataArray([]))
         self.filename = None
         self.column_headers = list()
