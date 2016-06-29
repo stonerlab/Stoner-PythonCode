@@ -1058,6 +1058,12 @@ class DataArray(_ma_.MaskedArray):
                 self._setas._row=False
             self._setas.shape=getattr(self,'shape',(0,))
 
+    def __array_wrap__(self, out_arr, context=None):
+        """Make sure ufuncs do the right thing with DataArrays"""
+        ret=_ma_.MaskedArray.__array_wrap__(self, out_arr, context)
+        return ret
+
+
 
     def __getattr__(self,name):
         #Overrides __getattr__ to allow access as row.x etc.
