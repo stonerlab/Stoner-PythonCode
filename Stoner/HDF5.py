@@ -69,11 +69,15 @@ class HDF5File(DataFile):
             self.filename = filename
         if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
             with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
+                sniff.seek(0,2)
+                size=sniff.tell()
+                sniff.seek(0)
                 blk=sniff.read(8)
                 if not blk==b'\x89HDF\r\n\x1a\n':
                     c=0
-                    while len(blk)==8:
+                    while sniff.tell()<size and len(blk)==8:
                         sniff.seek(512*2**c)
+                        c+=1
                         blk=sniff.read(8)
                         if blk==b'\x89HDF\r\n\x1a\n':
                             break
@@ -194,11 +198,15 @@ class HGXFile(DataFile):
         else:
             self.filename = filename
         with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
+            sniff.seek(0,2)
+            size=sniff.tell()
+            sniff.seek(0)
             blk=sniff.read(8)
             if not blk==b'\x89HDF\r\n\x1a\n':
                 c=0
                 while len(blk)==8:
                     sniff.seek(512*2**c)
+                    c+=1
                     blk=sniff.read(8)
                     if blk==b'\x89HDF\r\n\x1a\n':
                         break
@@ -234,7 +242,8 @@ class HGXFile(DataFile):
             self.seen.append(pth)
         if not isinstance(grp,h5py.Group):
             return None
-        print("Scanning in {}".format(pth))
+        if self.debug: 
+            print("Scanning in {}".format(pth))
         for i,x in enumerate(grp):
             if pth=="":
                 new_pth=x
