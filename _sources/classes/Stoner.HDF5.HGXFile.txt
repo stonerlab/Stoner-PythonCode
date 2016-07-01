@@ -26,6 +26,7 @@ Stoner.HDF5.HGXFile
 
    .. autosummary::
    
+      ~Stoner.HDF5.HGXFile.mime_type
       ~Stoner.HDF5.HGXFile.pattern
       ~Stoner.HDF5.HGXFile.priority
    

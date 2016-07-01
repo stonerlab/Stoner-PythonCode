@@ -55,6 +55,7 @@ Stoner.FileFormats.QDSquidVSMFile
       ~Stoner.FileFormats.QDSquidVSMFile.dict_records
       ~Stoner.FileFormats.QDSquidVSMFile.dtype
       ~Stoner.FileFormats.QDSquidVSMFile.mask
+      ~Stoner.FileFormats.QDSquidVSMFile.mime_type
       ~Stoner.FileFormats.QDSquidVSMFile.patterns
       ~Stoner.FileFormats.QDSquidVSMFile.priority
       ~Stoner.FileFormats.QDSquidVSMFile.records

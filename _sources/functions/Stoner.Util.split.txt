@@ -1,0 +1,8 @@
+
+
+split
+=================
+
+.. currentmodule:: Stoner.Util
+
+.. autofunction:: split

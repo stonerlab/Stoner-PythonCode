@@ -21,4 +21,10 @@ Stoner.Fit.BlochGrueneisen
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.BlochGrueneisen.display_names
+   
    

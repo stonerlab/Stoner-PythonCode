@@ -57,6 +57,7 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.dict_records
       ~Stoner.Core.DataFile.dtype
       ~Stoner.Core.DataFile.mask
+      ~Stoner.Core.DataFile.mime_type
       ~Stoner.Core.DataFile.patterns
       ~Stoner.Core.DataFile.priority
       ~Stoner.Core.DataFile.records

@@ -55,6 +55,7 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.dict_records
       ~Stoner.FileFormats.LSTemperatureFile.dtype
       ~Stoner.FileFormats.LSTemperatureFile.mask
+      ~Stoner.FileFormats.LSTemperatureFile.mime_type
       ~Stoner.FileFormats.LSTemperatureFile.patterns
       ~Stoner.FileFormats.LSTemperatureFile.priority
       ~Stoner.FileFormats.LSTemperatureFile.records

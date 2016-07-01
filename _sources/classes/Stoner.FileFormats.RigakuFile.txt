@@ -56,6 +56,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.dict_records
       ~Stoner.FileFormats.RigakuFile.dtype
       ~Stoner.FileFormats.RigakuFile.mask
+      ~Stoner.FileFormats.RigakuFile.mime_type
       ~Stoner.FileFormats.RigakuFile.patterns
       ~Stoner.FileFormats.RigakuFile.priority
       ~Stoner.FileFormats.RigakuFile.records

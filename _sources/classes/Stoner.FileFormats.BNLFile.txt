@@ -55,6 +55,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.dict_records
       ~Stoner.FileFormats.BNLFile.dtype
       ~Stoner.FileFormats.BNLFile.mask
+      ~Stoner.FileFormats.BNLFile.mime_type
       ~Stoner.FileFormats.BNLFile.patterns
       ~Stoner.FileFormats.BNLFile.priority
       ~Stoner.FileFormats.BNLFile.records

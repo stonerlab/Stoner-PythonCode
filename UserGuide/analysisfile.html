@@ -61,7 +61,7 @@
 <h2>Normalising and Basic Maths Operations<a class="headerlink" href="#normalising-and-basic-maths-operations" title="Permalink to this headline">¶</a></h2>
 <p>Several methods are provided to assist with common data fitting and preparation tasks, such as normalising columns,
 adding and subtracting columns.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s">&#39;data&#39;</span><span class="p">,</span><span class="s">&#39;reference&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;Normalised Data&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="s1">&#39;reference&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;Normalised Data&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">3.141592654</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">normalise</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
@@ -73,10 +73,10 @@ replaces the data column with the new (normalised) data and appends &#8216;(norm
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
 The final variant takes a 1D array with the same number of elements as rows and uses that to normalise to.
 A typical example might be to have some baseline scan that one is normalising to.:</p>
-<div class="highlight-python"><div class="highlight"><pre>a.subtract(&#39;A&#39;,&#39;B&#39;m header=&quot;A-B&quot;,replace=True)
-a.subtract(0,1)
-a.subtract(0,3.141592654)
-a.subtract(0,a2.column(0))
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="n">m</span> <span class="n">header</span><span class="o">=</span><span class="s2">&quot;A-B&quot;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">3.141592654</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>As one might expect form the name, the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></code></a> method subtracts the second column form the first.
@@ -85,24 +85,24 @@ Unlike <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFil
 keyword arguments. The next two variants of the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract" title="Stoner.Analysis.AnalyseFile.subtract"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.subtract()</span></code></a> method work in an analogous manner to the
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise" title="Stoner.Analysis.AnalyseFile.normalise"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.normalise()</span></code></a> methods. Finally the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add" title="Stoner.Analysis.AnalyseFile.add"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.add()</span></code></a> method allows one to add two columns in a
 similar fashion:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;A plus B&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;A plus B&#39;</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">3.141592654</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">a2</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>For completeness we also have:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;A/B&#39;</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&#39;A*B&#39;</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;A/B&#39;</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;A*B&#39;</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>with variants that take either a 1D array of data or a constant instead of the B column index.</p>
 <p>One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
 each row belongs in. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split" title="Stoner.Analysis.AnalyseFile.split"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.split()</span></code></a> method is useful for this case.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;Polarisation&#39;</span><span class="p">)</span>
-<span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="s">&#39;Temperature&#39;</span><span class="p">,</span><span class="s">&#39;Polarisation&#39;</span><span class="p">],[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">,</span><span class="bp">None</span><span class="p">])</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Polarisation&#39;</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">([</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="s1">&#39;Polarisation&#39;</span><span class="p">],[</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">r</span><span class="p">:</span><span class="n">x</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">,</span><span class="kc">None</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>In these examples we assume the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> has a data column &#8216;Polarisation&#8217; that takes two (or more) discrete values
@@ -119,7 +119,7 @@ The final example will result in a <a class="reference internal" href="../classe
 <h3>Simple polynomial Fits<a class="headerlink" href="#simple-polynomial-fits" title="Permalink to this headline">¶</a></h3>
 <p>Simple least squares fitting of polynomial functions is handled by the
 <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit" title="Stoner.Analysis.AnalyseFile.polyfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.polyfit()</span></code></a> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="bp">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">column_x</span><span class="p">,</span><span class="n">column_y</span><span class="p">,</span><span class="n">polynomial_order</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is a simple pass through to the numpy routine of the same name. The x and y
@@ -139,7 +139,7 @@ created and the fitted polynomial evaluated at each point.</p>
 <p>For more general curve fitting operations the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;New Column&quot;</span> <span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>  <span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;New Column&quot;</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>The first parameter is the fitting function. This should have prototype
@@ -162,26 +162,29 @@ The fitted data will be given the column header <em>header</em> unless <em>heade
 will be called &#8216;Fitted with &#8216; and the name of the function <em>func</em>.</p>
 <p>The utility method of the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>, <a class="reference internal" href="../classes/Stoner.Util.Data.annotate_fit.html#Stoner.Util.Data.annotate_fit" title="Stoner.Util.Data.annotate_fit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Util.Data.annotate_fit()</span></code></a> is useful
 for adding appropriately formatted details of the fit to the plot.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 
 <span class="k">def</span> <span class="nf">linear</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">m</span><span class="o">*</span><span class="n">x</span><span class="o">+</span><span class="n">c</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;curve_fit_data.dat&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xye&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
-<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x..y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;curve_fit_data.dat&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xye&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
+<span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x..y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">linear</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/curve_fit_line.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_line.png">png</a>, <a class="reference external" href="../samples/curve_fit_line.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_line.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_line.png" src="../_images/curve_fit_line.png" />
+</div>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a> can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">column_stack</span>
@@ -191,37 +194,40 @@ points in x,y,z space are fitted to a plane.</p>
 
 
 
-<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span> <span class="c"># Function to define a plane</span>
+<span class="k">def</span> <span class="nf">plane</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span> <span class="c1"># Function to define a plane</span>
     <span class="k">return</span> <span class="n">c</span><span class="o">-</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">a</span><span class="o">+</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>
 
 <span class="n">coeefs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">col</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
 <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">col</span><span class="p">)</span>
 <span class="n">Z</span><span class="o">=</span><span class="n">plane</span><span class="p">((</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span><span class="o">*</span><span class="n">coeefs</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">7.0</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Y</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">Z</span><span class="o">.</span><span class="n">ravel</span><span class="p">())),</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Fitting a Plane&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;X&quot;</span><span class="p">,</span><span class="s">&quot;Y&quot;</span><span class="p">,</span><span class="s">&quot;Z&quot;</span><span class="p">]</span>
-<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+<span class="n">d</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">,</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span>
+<span class="n">d</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">,</span><span class="n">c</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">plane</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy.z&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy.z&quot;</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="o">.</span><span class="n">jet</span><span class="p">)</span>
 
-<span class="n">txt</span><span class="o">=</span><span class="s">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s">&quot;</span>
-<span class="n">txt</span><span class="o">+=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;c&quot;</span><span class="p">]])</span>
+<span class="n">txt</span><span class="o">=</span><span class="s2">&quot;$z=c-ax+by$</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">txt</span><span class="o">+=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;plane:{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span><span class="s2">&quot;b&quot;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">]])</span>
 
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="n">txt</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/curve_fit_plane.py">Source code</a>, <a class="reference external" href="../samples/curve_fit_plane.png">png</a>, <a class="reference external" href="../samples/curve_fit_plane.hires.png">hires.png</a>, <a class="reference external" href="../samples/curve_fit_plane.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/curve_fit_plane.png" src="../_images/curve_fit_plane.png" />
+</div>
 <p>Finally, by you can sepcify the <em>y-data</em> to fit to as a numpy array. This can be used to fit functions that
 don&#8217;t themseleves return values that can be matched up to existing data. An example of doing this is fitting a
 sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>(x,y,z) data points.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">sqrt</span><span class="p">,</span><span class="n">diag</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span><span class="n">uniform</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -237,7 +243,7 @@ sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</sp
     <span class="sd">&quot;&quot;&quot;Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="n">z</span><span class="o">-</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span>
 
-<span class="c"># Create some points approximately spherical distribution</span>
+<span class="c1"># Create some points approximately spherical distribution</span>
 <span class="n">p</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">q</span><span class="o">=</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="n">pi</span><span class="p">,</span><span class="n">high</span><span class="o">=</span><span class="n">pi</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
 <span class="n">r</span><span class="o">=</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -248,16 +254,16 @@ sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</sp
 <span class="n">y</span><span class="o">-=</span><span class="mf">4.0</span>
 <span class="n">z</span><span class="o">+=</span><span class="mf">2.0</span>
 
-<span class="c"># Construct the  DataFile object</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Best fit sphere&quot;</span><span class="p">)</span>
+<span class="c1"># Construct the  DataFile object</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyz&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Best fit sphere&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mf">5.2</span>
-<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c"># Square aspect ratio</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s">&quot;scatter&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mf">5.0</span> <span class="c1"># Square aspect ratio</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="s2">&quot;scatter&quot;</span><span class="p">)</span>
 
-<span class="c">#curve_fit does the hard work</span>
+<span class="c1">#curve_fit does the hard work</span>
 <span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">sphere</span><span class="p">,(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">))</span>
 
-<span class="c"># This manually constructs the best fit sphere</span>
+<span class="c1"># This manually constructs the best fit sphere</span>
 <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="n">popt</span>
 <span class="n">p</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
 <span class="n">q</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pi</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="mi">31</span><span class="p">)</span>
@@ -268,7 +274,7 @@ sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</sp
 <span class="n">y</span><span class="o">+=</span><span class="n">b</span>
 <span class="n">z</span><span class="o">+=</span><span class="n">c</span>
 
-<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">rstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">cstride</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.25</span><span class="p">),</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
@@ -277,12 +283,12 @@ sphere to a set of :math:<a href="#id1"><span class="problematic" id="id2">`</sp
 <div class="figure">
 <img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
 </div>
-<p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span>Fitting Tricks</span></a></p>
+<p>See also <a class="reference internal" href="cookbook.html#fitting-tricks"><span class="std std-ref">Fitting Tricks</span></a></p>
 </div>
 <div class="section" id="fitting-with-limits">
 <span id="id3"></span><h3>Fitting with limits<a class="headerlink" href="#fitting-with-limits" title="Permalink to this headline">¶</a></h3>
 <p>The Stoner package has a number of alternative fitting mechanisms that supplement the standard
-<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v0.16.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html#scipy.optimize.curve_fit" title="(in SciPy v0.17.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.curve_fit()</span></code></a> function. New in version 0.2 onwards of the Package is an interface to the
 <em>lmfit</em> module.</p>
 <div class="section" id="non-linear-curve-fitting-with-lmfit">
 <h4>Non-linear curve fitting with lmfit<a class="headerlink" href="#non-linear-curve-fitting-with-lmfit" title="Permalink to this headline">¶</a></h4>
@@ -293,11 +299,11 @@ A full description of the lmfit module is given in the <a class="reference exter
 and its independent and fittable parameters, whether they have limits and what the limits are. The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> module contains
 a series of <code class="xref py py-class docutils literal"><span class="pre">lmfit.model.Model</span></code> subclasses that represent various models used in condensed matter physics.</p>
 <p>The operation of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> is very similar to that of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit" title="Stoner.Analysis.AnalyseFile.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">Arrehenius</span>
-<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mf">1E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
-<span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">)</span>
-<span class="k">print</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">()</span>
-<span class="k">print</span> <span class="n">a</span><span class="p">[</span><span class="s">&quot;Arrehenius:A&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;Arrehenius:A err&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;chi^2&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s">&quot;nfev&quot;</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">Arrehenius</span>
+<span class="n">model</span><span class="o">=</span><span class="n">Arrehenius</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="mi">1</span><span class="n">E7</span><span class="p">,</span><span class="n">DE</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Temp&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Cond&quot;</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">()</span>
+<span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;Arrehenius:A err&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;chi^2&quot;</span><span class="p">],</span><span class="n">a</span><span class="p">[</span><span class="s2">&quot;nfev&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>In this example we would be fitting an Arrehenius model to data contained inthe &#8216;Temp&#8217; and &#8216;Cond&#8217; columns. The resulting
@@ -309,120 +315,123 @@ a simple call to <a class="reference internal" href="../classes/Stoner.Analysis.
 instance. This contains all the information about the fit and fitting process.</p>
 <p>You can pass the model as a subclass of model, if you don&#8217;t pass initial values either via the <em>p0</em> parameter or as keyword arguements, then the model&#8217;s
 <em>guess</em> method is called (e.g. <a class="reference internal" href="../classes/Stoner.Fit.Arrhenius.guess.html#Stoner.Fit.Arrhenius.guess" title="Stoner.Fit.Arrhenius.guess"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Fit.Arrhenius.guess()</span></code></a>) to determine parameters fromt he data. For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">StretchedExp</span>
 
-<span class="c">#Load dat and plot</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;lmfit_data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+<span class="c1">#Load dat and plot</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;lmfit_data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
-<span class="c"># Do the fit</span>
-<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Fit&quot;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
-<span class="c"># plot</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xyy&quot;</span>
+<span class="c1"># Do the fit</span>
+<span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Fit&quot;</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="c1"># plot</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;+&quot;</span><span class="p">,</span><span class="s">&quot;-&quot;</span><span class="p">])</span>
-<span class="c"># Make apretty label using Stoner.Util methods</span>
-<span class="n">text</span><span class="o">=</span><span class="s">&quot;$y=A</span><span class="se">\\</span><span class="s">exp</span><span class="se">\\</span><span class="s">left[</span><span class="se">\\</span><span class="s">left(-</span><span class="se">\\</span><span class="s">frac{x}{x_0}</span><span class="se">\\</span><span class="s">right)^</span><span class="se">\\</span><span class="s">beta</span><span class="se">\\</span><span class="s">right]$</span><span class="se">\n</span><span class="s">&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;+&quot;</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">])</span>
+<span class="c1"># Make apretty label using Stoner.Util methods</span>
+<span class="n">text</span><span class="o">=</span><span class="s2">&quot;$y=A</span><span class="se">\\</span><span class="s2">exp</span><span class="se">\\</span><span class="s2">left[</span><span class="se">\\</span><span class="s2">left(-</span><span class="se">\\</span><span class="s2">frac{x}{x_0}</span><span class="se">\\</span><span class="s2">right)^</span><span class="se">\\</span><span class="s2">beta</span><span class="se">\\</span><span class="s2">right]$</span><span class="se">\n</span><span class="s2">&quot;</span>
 <span class="n">text</span><span class="o">+=</span><span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">StretchedExp</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
-<span class="c">#Adjust layout NB pass-through method to pyplot used here</span>
+<span class="n">d</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">4E4</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+<span class="c1">#Adjust layout NB pass-through method to pyplot used here</span>
 <span class="n">d</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/lmfit_example.py">Source code</a>, <a class="reference external" href="../samples/lmfit_example.png">png</a>, <a class="reference external" href="../samples/lmfit_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/lmfit_example.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit_example.png" src="../_images/lmfit_example.png" />
+</div>
 </div>
 <div class="section" id="non-linear-curve-fitting-with-initialisation-file">
 <h4>Non-linear curve fitting with initialisation file<a class="headerlink" href="#non-linear-curve-fitting-with-initialisation-file" title="Permalink to this headline">¶</a></h4>
 <p>For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
 edit the source code. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a> and <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Fit</span></code> provide some mechanisms to enable this.</p>
 <p>Firstly, the initialisation file should take the form like so.</p>
-<div class="highlight-python"><div class="highlight"><pre>[Options]
-model: Stoner.Fit.Strijkers
-# Controls whether the data and fit are plotted or not.
-show_plot: True
-# Sets whether to print a nice report to the console
-print_report: True
-# Save the final result ?
-save_fit: False
-#
-# These are optional options that turn on various (experimental) bits of code
-#
-#This turns on the normalisation
-normalise: False
-# This turns on the fitting a quadratic to the outer 10% to determine the normalisation
-# Don&#39;t use it unless you know why this might be sensible for your data !
-fancy_normaliser: False
-# Turns on rescaling the V axis into mV
-# Only use if data not already correctly scaled.
-rescale_v: False
-# Tries to find and remove an offset in V by looking for peaks within 5 Delta
-# Warning, this may go badly wrong with certain DC waveforms
-remove_offset: False
-# Be clever about annotating the result on the plots
-fancy_result: True
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">Options</span><span class="p">]</span>
+<span class="n">model</span><span class="p">:</span> <span class="n">Stoner</span><span class="o">.</span><span class="n">Fit</span><span class="o">.</span><span class="n">Strijkers</span>
+<span class="c1"># Controls whether the data and fit are plotted or not.</span>
+<span class="n">show_plot</span><span class="p">:</span> <span class="kc">True</span>
+<span class="c1"># Sets whether to print a nice report to the console</span>
+<span class="n">print_report</span><span class="p">:</span> <span class="kc">True</span>
+<span class="c1"># Save the final result ?</span>
+<span class="n">save_fit</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1">#</span>
+<span class="c1"># These are optional options that turn on various (experimental) bits of code</span>
+<span class="c1">#</span>
+<span class="c1">#This turns on the normalisation</span>
+<span class="n">normalise</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1"># This turns on the fitting a quadratic to the outer 10% to determine the normalisation</span>
+<span class="c1"># Don&#39;t use it unless you know why this might be sensible for your data !</span>
+<span class="n">fancy_normaliser</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1"># Turns on rescaling the V axis into mV</span>
+<span class="c1"># Only use if data not already correctly scaled.</span>
+<span class="n">rescale_v</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1"># Tries to find and remove an offset in V by looking for peaks within 5 Delta</span>
+<span class="c1"># Warning, this may go badly wrong with certain DC waveforms</span>
+<span class="n">remove_offset</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1"># Be clever about annotating the result on the plots</span>
+<span class="n">fancy_result</span><span class="p">:</span> <span class="kc">True</span>
 
 
-# These settings will read old style files directly
-[Data]
-x: V
-y: G
-# This will load from a csv file, comment out to have it guess the file type
-type: Stoner.FileFormats.CSVFile
-header_line:1
-start_line:2
-separator: ,
-# Only need v_scale if rescale_v is true
-v_scale:1000
-# Only need this if normalise is True and fancy_normaliser is False
-Normal_conductance: 0.0
-# Set true to discard data at high bias
-discard: False
-# Bias limit to discard at
-v_limit: 10.0
+<span class="c1"># These settings will read old style files directly</span>
+<span class="p">[</span><span class="n">Data</span><span class="p">]</span>
+<span class="n">x</span><span class="p">:</span> <span class="n">V</span>
+<span class="n">y</span><span class="p">:</span> <span class="n">G</span>
+<span class="c1"># This will load from a csv file, comment out to have it guess the file type</span>
+<span class="nb">type</span><span class="p">:</span> <span class="n">Stoner</span><span class="o">.</span><span class="n">FileFormats</span><span class="o">.</span><span class="n">CSVFile</span>
+<span class="n">header_line</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">start_line</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">separator</span><span class="p">:</span> <span class="p">,</span>
+<span class="c1"># Only need v_scale if rescale_v is true</span>
+<span class="n">v_scale</span><span class="p">:</span><span class="mi">1000</span>
+<span class="c1"># Only need this if normalise is True and fancy_normaliser is False</span>
+<span class="n">Normal_conductance</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="c1"># Set true to discard data at high bias</span>
+<span class="n">discard</span><span class="p">:</span> <span class="kc">False</span>
+<span class="c1"># Bias limit to discard at</span>
+<span class="n">v_limit</span><span class="p">:</span> <span class="mf">10.0</span>
 
 
-# The next four sections set the parameters up
-[omega]
-#starting value
-value:0.55
-# Allow this parameter to vary in the fix
-vary: True
-#Lower bound is set
-min: 0.0
-# Would give upper limit if it were constrained
-# Just comment out limits which are not set
-#max: None
-# Symbol for plot annotations
-label: \omega
-# Default step size 0 . Use in conjunction with vary,min and max when mapping a parameter
-step: 0.0
-# Defines the units label for the plots
-units: meV
+<span class="c1"># The next four sections set the parameters up</span>
+<span class="p">[</span><span class="n">omega</span><span class="p">]</span>
+<span class="c1">#starting value</span>
+<span class="n">value</span><span class="p">:</span><span class="mf">0.55</span>
+<span class="c1"># Allow this parameter to vary in the fix</span>
+<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
+<span class="c1">#Lower bound is set</span>
+<span class="nb">min</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="c1"># Would give upper limit if it were constrained</span>
+<span class="c1"># Just comment out limits which are not set</span>
+<span class="c1">#max: None</span>
+<span class="c1"># Symbol for plot annotations</span>
+<span class="n">label</span><span class="p">:</span> \<span class="n">omega</span>
+<span class="c1"># Default step size 0 . Use in conjunction with vary,min and max when mapping a parameter</span>
+<span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="c1"># Defines the units label for the plots</span>
+<span class="n">units</span><span class="p">:</span> <span class="n">meV</span>
 
-[delta]
-value: 1.5
-vary: True
-min: 0.5
-max: 2.0
-label: \Delta
-step: 0.0
-units: meV
+<span class="p">[</span><span class="n">delta</span><span class="p">]</span>
+<span class="n">value</span><span class="p">:</span> <span class="mf">1.5</span>
+<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
+<span class="nb">min</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="nb">max</span><span class="p">:</span> <span class="mf">2.0</span>
+<span class="n">label</span><span class="p">:</span> \<span class="n">Delta</span>
+<span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="n">units</span><span class="p">:</span> <span class="n">meV</span>
 
-[P]
-value: 0.5
-vary: True
-min: 0.2
-max: 0.7
-label: P
-step: 0.05
+<span class="p">[</span><span class="n">P</span><span class="p">]</span>
+<span class="n">value</span><span class="p">:</span> <span class="mf">0.5</span>
+<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
+<span class="nb">min</span><span class="p">:</span> <span class="mf">0.2</span>
+<span class="nb">max</span><span class="p">:</span> <span class="mf">0.7</span>
+<span class="n">label</span><span class="p">:</span> <span class="n">P</span>
+<span class="n">step</span><span class="p">:</span> <span class="mf">0.05</span>
 
-[Z]
-value: 0.17
-vary: True
-min: 0.0
-#max: None
-label: Z
-step: 0.0
+<span class="p">[</span><span class="n">Z</span><span class="p">]</span>
+<span class="n">value</span><span class="p">:</span> <span class="mf">0.17</span>
+<span class="n">vary</span><span class="p">:</span> <span class="kc">True</span>
+<span class="nb">min</span><span class="p">:</span> <span class="mf">0.0</span>
+<span class="c1">#max: None</span>
+<span class="n">label</span><span class="p">:</span> <span class="n">Z</span>
+<span class="n">step</span><span class="p">:</span> <span class="mf">0.0</span>
 </pre></div>
 </div>
 <p>This initialisation file can be passed to <a class="reference internal" href="../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini" title="Stoner.Fit.cfg_data_from_ini"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Fit.cfg_data_from_ini()</span></code></a> which will use the information in the [Data]
@@ -432,7 +441,7 @@ setup the model and parameter hints. The configuration file should have one sect
 returns the configured model and also a 2D array of values to feed as the starting values to <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit" title="Stoner.Analysis.AnalyseFile.lmfit"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.lmfit()</span></code></a>. Depending
 on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 <span class="math">\(\\chi^2\)</span> goodeness of fit.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Demo of new Stoner.Analysis.AnalyseFile.lmfit</span>
 <span class="sd">Created on Thu Oct 02 21:17:41 2014</span>
@@ -443,19 +452,22 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 
 <span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="kn">import</span> <span class="n">cfg_data_from_ini</span><span class="p">,</span><span class="n">cfg_model_from_ini</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="s">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="s">&quot;../sample-data/PCAR Co Data.csv&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">cfg_data_from_ini</span><span class="p">(</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="s2">&quot;../sample-data/PCAR Co Data.csv&quot;</span><span class="p">)</span>
 
-<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="s">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="n">model</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="n">cfg_model_from_ini</span><span class="p">(</span><span class="s2">&quot;PCAR-New.ini&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
 
-<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;lmfit&quot;</span><span class="p">)</span>
+<span class="n">fit</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">lmfit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;lmfit&quot;</span><span class="p">)</span>
 
-<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s">&quot;r-&quot;</span><span class="p">,</span><span class="s">&quot;bo&quot;</span><span class="p">])</span> <span class="c"># plot the data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">xycoords</span><span class="o">=</span><span class="s">&quot;axes fraction&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot_xy</span><span class="p">(</span><span class="mi">0</span><span class="p">,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">],[</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="s2">&quot;bo&quot;</span><span class="p">])</span> <span class="c1"># plot the data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">annotate_fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span><span class="n">xycoords</span><span class="o">=</span><span class="s2">&quot;axes fraction&quot;</span><span class="p">)</span>
 
 <span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">fit_report</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../../scripts/lmfit-demo.py">Source code</a>, <a class="reference external" href="../../scripts/lmfit-demo.png">png</a>, <a class="reference external" href="../../scripts/lmfit-demo.hires.png">hires.png</a>, <a class="reference external" href="../../scripts/lmfit-demo.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/lmfit-demo.png" src="../_images/lmfit-demo.png" />
+</div>
 </div>
 </div>
 </div>
@@ -464,7 +476,7 @@ on the presence and values of the <em>vary</em> and <em>step</em> keys, tnhe cod
 <div class="section" id="applying-an-arbitary-function-through-the-data">
 <h3>Applying an arbitary function through the data<a class="headerlink" href="#applying-an-arbitary-function-through-the-data" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply" title="Stoner.Analysis.AnalyseFile.apply"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.apply()</span></code></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Here <em>func</em> is an arbitrary function that will take a complete row in the form of a numpy 1D array, <em>col</em>
@@ -474,10 +486,10 @@ existing data (depending on the values of <em>replace</em> and <em>header</em>).
 <div class="section" id="basic-data-inspection">
 <h3>Basic Data Inspection<a class="headerlink" href="#basic-data-inspection" title="Permalink to this headline">¶</a></h3>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max" title="Stoner.Analysis.AnalyseFile.max"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.max()</span></code></a> and <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min" title="Stoner.Analysis.AnalyseFile.min"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.min()</span></code></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre>a.max(column)
-a.min(column)
-a.max(column,bounds=labda x,y:y[2]&gt;1 and y[2]&lt;10)
-a.min(column,bounds=labda x,y:y[2]&gt;1 and y[2]&lt;10)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="n">labda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="n">labda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Hopefully all of the above are fairly obvious ! In the last two cases, one can use a function
@@ -485,10 +497,10 @@ to limit the search to particular rows (eg to search for the maximum y value sub
 in x). One important point to note is that the routines return a tuple of two numbers, the maximum (or
 minimum) and the row number where the maximum or minimum was found.</p>
 <p>There are a couple of related functions to help here:</p>
-<div class="highlight-python"><div class="highlight"><pre>a.span(column)
-a.span(column, bounds=lambda x,y:y[2]&gt;100)
-a.clip(column,(max_v,min_v)
-a.clip(column,b.span(column))
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">column</span><span class="p">,(</span><span class="n">max_v</span><span class="p">,</span><span class="n">min_v</span><span class="p">)</span>
+<span class="n">a</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">b</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span" title="Stoner.Analysis.AnalyseFile.span"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.span()</span></code></a> method simply returns a tuple of minimum and maximum values within either the whole column or
@@ -501,7 +513,7 @@ float would have the effect of removing all rows where the column didn&#8217;t e
 in which case the mask is temproarily discarded in favour of one generated from the bounds expression. This can be worked around,
 however, as the parameter passed to the bounds function is itself a masked array and thus one can include a test of the mask in the
 bounds function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">mask</span><span class="p">))</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="n">column</span><span class="p">,</span><span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">10</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">mask</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -514,9 +526,9 @@ bounds function:</p>
 <p>Data binning is the process of taking approximately continuous (x,y) data and grouping them into &#8220;bins&#8221; of specified x, and average y. Since
 this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.</p>
 <p><a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> provides a simple <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></code></a> method that can re-bin data:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
-<span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="s">&quot;dCounts&quot;</span><span class="p">)</span>
-<span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;log&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">bin_start</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">bin_stop</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Counts&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="s2">&quot;dCounts&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">x_bin</span><span class="p">,</span><span class="n">y_bin</span><span class="p">,</span><span class="n">dy</span><span class="p">)</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span><span class="n">bin_start</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">bin_stop</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The mode parameter controls whether linear binning or logarithmic binning is used. The bins parameter is either an integer
@@ -532,27 +544,27 @@ is also taken from this attribute if not specified spearately.</p>
 <p>IF the keyword <em>clone</em> is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
 points averaged into each bin.. If <em>clone</em> is True or not provided, <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin" title="Stoner.Analysis.AnalyseFile.bin"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.bin()</span></code></a> returns a clone of the current data file with its data
 (and column headers) replaced with the newly binned data.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.plotutils</span> <span class="kn">import</span> <span class="n">errorfill</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_height</span><span class="o">=</span><span class="mi">6</span>
 <span class="n">d</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">fig_width</span><span class="o">=</span><span class="mi">8</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 
-<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">e</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 
 <span class="n">e</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
 <span class="n">f</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
 
-<span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;0.05 bins&quot;</span><span class="p">)</span>
-<span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;0.25 bins&quot;</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;0.05 bins&quot;</span><span class="p">)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">plotter</span><span class="o">=</span><span class="n">errorfill</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;0.25 bins&quot;</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Bin demo&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Bin demo&quot;</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/bins.py">Source code</a>)</p>
@@ -568,12 +580,12 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
 <div><p>This is a powerful method of smoothing data by constructing an appropriate length and shape of &#8216;window function&#8217; that
 is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
 defined by the window function. This is handled by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.smooth.html#Stoner.Analysis.AnalyseFile.smooth" title="Stoner.Analysis.AnalyseFile.smooth"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.smooth()</span></code></a> method.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">((</span><span class="s">&quot;gaussian&quot;</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Smoothed data&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s2">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">((</span><span class="s2">&quot;gaussian&quot;</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Smoothed data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In both these examples, the data to be smoothed is determined from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute.
-The first argument is passed to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.16.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
+The first argument is passed to <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.get_window.html#scipy.signal.get_window" title="(in SciPy v0.17.1)"><code class="xref py py-func docutils literal"><span class="pre">scipy.signal.get_window()</span></code></a> to define the window function. The <em>size</em> argument
 can either be an integer to sepcify the number of rows in the window, or a float to specify the size of the window in
 terms of the x data. In the latter case, the data is first reinterpolated to an evenly space set in terms of the x-column
 and then smoothed and then reinterpolated back to the original x data co-ordinates.</p>
@@ -612,33 +624,33 @@ and effective, but does reduce the length of the data !</p>
 </ul>
 </div></blockquote>
 <p>All three approaches are illustrated in the excample below:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="n">fig</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Noisy_Data.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">fig</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;grey&#39;</span><span class="p">)</span>
-<span class="c"># Filter with Savitsky-Golay filter, linear over 7 ppoints</span>
-<span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;S-G Filtered&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;SG Filter&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
-<span class="c">#Filter with cubic splines</span>
-<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Spline&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x.y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Spline&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
-<span class="c"># Rebin data</span>
-<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s">&quot;hamming&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Smoothed&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;x...y&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Smoooth&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;green&quot;</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span>
-<span class="n">d2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;lin&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+<span class="c1"># Filter with Savitsky-Golay filter, linear over 7 ppoints</span>
+<span class="n">d</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">points</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;S-G Filtered&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;SG Filter&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span>
+<span class="c1">#Filter with cubic splines</span>
+<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x.y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Spline&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span>
+<span class="c1"># Rebin data</span>
+<span class="n">d</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="s2">&quot;hamming&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Smoothed&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;x...y&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Smoooth&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span>
+<span class="n">d2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">fig</span>
-<span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Re-binned&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">d2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Re-binned&quot;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">6.5</span><span class="p">)</span>
 <span class="n">d2</span><span class="o">.</span><span class="n">ylim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.4</span><span class="p">)</span>
 </pre></div>
@@ -654,38 +666,41 @@ operator), in practise one often finds that there are systematic changes in scal
 between individual scans. The task of stitching data sets together then becomes one of finding the
 best mapping between two sets of (x,y) points that are nominally the same. <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a> provides
 a <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch" title="Stoner.Analysis.AnalyseFile.stitch"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.stitch()</span></code></a> method to facilitate this.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">format_error</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
-<span class="c"># Load and plot two sets of data</span>
-<span class="n">s1</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Stitch-scan1.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
-<span class="n">s2</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;Stitch-scan2.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">)</span>
-<span class="n">s1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Set 1&quot;</span><span class="p">)</span>
+<span class="c1"># Load and plot two sets of data</span>
+<span class="n">s1</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Stitch-scan1.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">s2</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;Stitch-scan2.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">s1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Set 1&quot;</span><span class="p">)</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">s1</span><span class="o">.</span><span class="n">fig</span>
-<span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Set 2&quot;</span><span class="p">)</span>
-<span class="c">#Stitch scan 2 onto scan 1</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Set 2&quot;</span><span class="p">)</span>
+<span class="c1">#Stitch scan 2 onto scan 1</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
 
-<span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Stictched&quot;</span><span class="p">)</span>
-<span class="n">s2</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Stictching Example&quot;</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Stictched&quot;</span><span class="p">)</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Stictching Example&quot;</span>
 
-<span class="c">#Tidy up the plot by adding annotation fo the stirching co-efficients</span>
-<span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;C&quot;</span><span class="p">]</span>
+<span class="c1">#Tidy up the plot by adding annotation fo the stirching co-efficients</span>
+<span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span><span class="s2">&quot;B&quot;</span><span class="p">,</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>
 <span class="n">txt</span><span class="o">=</span><span class="p">[]</span>
-<span class="n">lead</span><span class="o">=</span><span class="s">r&quot;$x&#39;\rightarrow x+A$&quot;</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="s">r&quot;$y&#39;=\rightarrow By+C$&quot;</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
-<span class="k">for</span> <span class="n">l</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">s2</span><span class="p">[</span><span class="s">&quot;Stitching Coefficients&quot;</span><span class="p">],</span><span class="n">s2</span><span class="p">[</span><span class="s">&quot;Stitching Coeffient Errors&quot;</span><span class="p">]):</span>
-    <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_error</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">l</span><span class="o">+</span><span class="s">&quot;=&quot;</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.65</span><span class="p">,</span><span class="n">lead</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">))</span>
+<span class="n">lead</span><span class="o">=</span><span class="s2">r&quot;$x&#39;\rightarrow x+A$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">+</span><span class="s2">r&quot;$y&#39;=\rightarrow By+C$&quot;</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="k">for</span> <span class="n">l</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span><span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coefficients&quot;</span><span class="p">],</span><span class="n">s2</span><span class="p">[</span><span class="s2">&quot;Stitching Coeffient Errors&quot;</span><span class="p">]):</span>
+    <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_error</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">latex</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">l</span><span class="o">+</span><span class="s2">&quot;=&quot;</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.65</span><span class="p">,</span><span class="n">lead</span><span class="o">+</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/stitch.py">Source code</a>, <a class="reference external" href="../samples/stitch.png">png</a>, <a class="reference external" href="../samples/stitch.hires.png">hires.png</a>, <a class="reference external" href="../samples/stitch.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/stitch.png" src="../_images/stitch.png" />
+</div>
 <p>The stitch method can be fine tuned by specifying the possible scaling and shifting operations, overlap
 region to use or even a custom stiching transofmration function:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;shift x&quot;</span><span class="p">)</span>
-<span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&quot;scale y, shift x&quot;</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">))</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;shift x&quot;</span><span class="p">)</span>
+<span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;scale y, shift x&quot;</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">5.0</span><span class="p">))</span>
 <span class="n">s2</span><span class="o">.</span><span class="n">stitch</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="n">func</span><span class="o">=</span><span class="n">my_stitcher</span><span class="p">,</span><span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">3.14</span><span class="p">,</span><span class="mf">2.54</span><span class="p">,</span><span class="mf">2.0</span><span class="p">])</span>
 </pre></div>
 </div>
@@ -698,7 +713,7 @@ the y data by some factor. If even more control of the transformation is needed,
 the <em>func</em> keyword and <em>p0</em> keyword can be used to provide an alternative transformation
 function and initial guesses to its parameters. The profotype for the transformation
 function should be:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">my_stitcher</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">p3</span><span class="o">...</span><span class="p">,</span><span class="n">pn</span><span class="p">):</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_stitcher</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span><span class="n">p3</span><span class="o">...</span><span class="p">,</span><span class="n">pn</span><span class="p">):</span>
     <span class="o">...</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">mapped_x</span><span class="p">,</span><span class="n">mapped_y</span><span class="p">)</span>
 </pre></div>
@@ -711,7 +726,7 @@ with the co-efficients used to modify the scan data.</p>
 <h3>Thresholding, Interpolating and Extrapolation of Data<a class="headerlink" href="#thresholding-interpolating-and-extrapolation-of-data" title="Permalink to this headline">¶</a></h3>
 <p>Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
 <span class="math">\(y=f(x)-y_{threshold}\)</span>). This is carried out by the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold" title="Stoner.Analysis.AnalyseFile.threshold"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.threshold()</span></code></a> method:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;Y-data&quot;</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X-data&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Y-data&quot;</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X-data&quot;</span><span class="p">)</span>
 <span class="n">a</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -721,7 +736,7 @@ just the first threshold or all thresholds it can find. The values returned are 
 two point linear fit to find the thresholds.</p>
 <p>Interpolating data finds values of y for points x that lie between data points. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.interpolate()</span></code></a> provides a simple pass-through to the
 scipy routine <code class="xref py py-func docutils literal"><span class="pre">scipy.optimize.interp1d()</span></code>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X-Data&quot;</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">newX</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X-Data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The new values of X are set from the mandetory first argument. <strong>kind</strong> can be either &#8220;linear&#8221; or &#8220;cubic&#8221; whilst the xcol data can be omitted in which case the
@@ -729,10 +744,10 @@ scipy routine <code class="xref py py-func docutils literal"><span class="pre">s
 <p>The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate" title="Stoner.Analysis.AnalyseFile.interpolate"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.interpolate()</span></code></a> method will return values that are obtained from &#8216;joining the dots&#8217; - which is
 appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
 use some locally fitted spline function to interpolate with. The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline" title="Stoner.Analysis.AnalyseFile.spline"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.spline()</span></code></a> function can be used for this.:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="s">&quot;Extra&quot;</span><span class="p">)</span>
-<span class="n">new_y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">spline</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s">&quot;X-Data&quot;</span><span class="p">,</span><span class="s">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s2">&quot;Spline Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="s2">&quot;Extra&quot;</span><span class="p">)</span>
+<span class="n">new_y</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">spline</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">spline</span><span class="p">(</span><span class="s2">&quot;X-Data&quot;</span><span class="p">,</span><span class="s2">&quot;Y-Data&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <em>order</em> keyword gives the polynomial order of the spline function being fitted. The <em>smoothing</em> factor determines how
@@ -750,26 +765,26 @@ a form of interpolation and the window of data fitted to the extrpolation functi
 the new x-data point  approaches and passes the limits of the exisiting data, the window used to provide the fit function
 runs up to and stops at the limit of the supplied data. Thus when extrapolating, the new values of data are increasingly less certain
 as one moves further from the end of the data.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">linspace</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 <span class="n">x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">91</span><span class="p">)</span>
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span><span class="n">setas</span><span class="o">=</span><span class="s">&quot;xy&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">,</span><span class="s">&quot;y&quot;</span><span class="p">])</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">x</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">),</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
 
 <span class="n">extra_x</span><span class="o">=</span><span class="n">linspace</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">17</span><span class="p">)</span>
 
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
-<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Extrapolation Demo&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Extrapolation Demo&quot;</span>
 
-<span class="n">y3</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&quot;cubic&quot;</span><span class="p">)</span>
-<span class="n">y2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&quot;quadratic&quot;</span><span class="p">)</span>
-<span class="n">y1</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s">&quot;linear&quot;</span><span class="p">)</span>
+<span class="n">y3</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
+<span class="n">y2</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;quadratic&quot;</span><span class="p">)</span>
+<span class="n">y1</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">extrapolate</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="s">&#39;bo&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Linear Extrapolation&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="s">&#39;g o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Quadratic Extrapolation&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y3</span><span class="p">,</span><span class="s">&#39;ro&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Cubic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span><span class="s1">&#39;g o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Quadratic Extrapolation&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">extra_x</span><span class="p">,</span><span class="n">y3</span><span class="p">,</span><span class="s1">&#39;ro&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Cubic Extrapolation&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -785,7 +800,7 @@ To allow for this, you can pass an arbitary fitting function as the <em>kind</em
 <h3>Smoothing and Differentiating Data<a class="headerlink" href="#smoothing-and-differentiating-data" title="Permalink to this headline">¶</a></h3>
 <p>Smoothing and numerical differentation are carried out using the Savitsky-Golay filtering function.
 Whilst not the most sophisticated algorithm it is reasonably easy to implement and simple to use.:</p>
-<div class="highlight-python"><div class="highlight"><pre>SG_Filter(col=(&quot;X&quot;.&quot;Y&quot;), points=15, poly=1, order=0,result=None, replace=False, header=None)
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="o">.</span><span class="s2">&quot;Y&quot;</span><span class="p">),</span> <span class="n">points</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If col is a tuple then it is taken to be specifing both x and y data column indices. Otherwise the data
@@ -801,8 +816,8 @@ the <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.h
 <p>Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
 The <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></code></a> provides a relatively simple and effective method for doing this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">()</span>
-<span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="s">&quot;Y Data&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s">&quot;X Data&quot;</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">sort</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">()</span>
+<span class="n">peak_data</span><span class="o">=</span><span class="n">peaks</span><span class="p">(</span><span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;Y Data&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="mf">0.001</span> <span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;X Data&quot;</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <em>xcol</em> and <em>ycol</em> arguments index the columns with the relevant data. If <em>xcol</em> is not provided then the row number is used instead.
@@ -818,13 +833,13 @@ Finally, if <em>sort</em> is True, the peaks are returned in order of their sign
 <p>The default values of width and saignificance are set on the assumption that a data set will have less than about 10 peaks of more or
 less equal significance. By default, only peaks are returned in order of x position.</p>
 <p>The example below shows how to use <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks" title="Stoner.Analysis.AnalyseFile.peaks"><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.peaks()</span></code></a> to filter out just the peak positions in a set of data.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 
-<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s">&quot;../../sample-data/New-XRay-Data.dql&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;../../sample-data/New-XRay-Data.dql&quot;</span><span class="p">)</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">d</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span><span class="n">poly</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">significance</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s">&quot;Peaks&quot;</span>
-<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&quot;ro&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s2">&quot;Peaks&quot;</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../samples/peaks_example.py">Source code</a>, <a class="reference external" href="../samples/peaks_example.png">png</a>, <a class="reference external" href="../samples/peaks_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/peaks_example.pdf">pdf</a>)</p>
@@ -897,9 +912,6 @@ less equal significance. By default, only peaks are returned in order of x posit
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -927,8 +939,8 @@ less equal significance. By default, only peaks are returned in order of x posit
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

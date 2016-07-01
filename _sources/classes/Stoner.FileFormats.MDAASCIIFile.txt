@@ -55,6 +55,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.dict_records
       ~Stoner.FileFormats.MDAASCIIFile.dtype
       ~Stoner.FileFormats.MDAASCIIFile.mask
+      ~Stoner.FileFormats.MDAASCIIFile.mime_type
       ~Stoner.FileFormats.MDAASCIIFile.patterns
       ~Stoner.FileFormats.MDAASCIIFile.priority
       ~Stoner.FileFormats.MDAASCIIFile.records

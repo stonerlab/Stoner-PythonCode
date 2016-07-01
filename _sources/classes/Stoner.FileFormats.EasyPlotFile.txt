@@ -55,6 +55,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.dict_records
       ~Stoner.FileFormats.EasyPlotFile.dtype
       ~Stoner.FileFormats.EasyPlotFile.mask
+      ~Stoner.FileFormats.EasyPlotFile.mime_type
       ~Stoner.FileFormats.EasyPlotFile.patterns
       ~Stoner.FileFormats.EasyPlotFile.priority
       ~Stoner.FileFormats.EasyPlotFile.records

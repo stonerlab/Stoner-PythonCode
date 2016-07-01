@@ -65,8 +65,7 @@ a matrix of data, associated metadata and column headers.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.metadata">
 <code class="descname">metadata</code><a class="headerlink" href="#Stoner.Core.DataFile.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>typeHintedDict</em></p>
-<p>of key-value metadata pairs. The dictionary
+<dd><p><em>typeHintedDict</em> &#8211; of key-value metadata pairs. The dictionary
 tries to retain information about the type of
 data so as to aid import and export from CM group LabVIEw code.</p>
 </dd></dl>
@@ -74,30 +73,26 @@ data so as to aid import and export from CM group LabVIEw code.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.column_headers">
 <code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataFile.column_headers" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em></p>
-<p>of strings of the column names of the data.</p>
+<dd><p><em>list</em> &#8211; of strings of the column names of the data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.data">
 <code class="descname">data</code><a class="headerlink" href="#Stoner.Core.DataFile.data" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>2D numpy masked array</em></p>
-<p>The attribute that stores the nuermical data for each DataFile. This is a <a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> instance - which
+<dd><p><em>2D numpy masked array</em> &#8211; The attribute that stores the nuermical data for each DataFile. This is a <a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> instance - which
 is itself a subclass of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.10)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.title">
 <code class="descname">title</code><a class="headerlink" href="#Stoner.Core.DataFile.title" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>string</em></p>
-<p>The title of the measurement.</p>
+<dd><p><em>string</em> &#8211; The title of the measurement.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.filename">
 <code class="descname">filename</code><a class="headerlink" href="#Stoner.Core.DataFile.filename" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>string</em></p>
-<p>The current filename of the data if loaded from or
+<dd><p><em>string</em> &#8211; The current filename of the data if loaded from or
 already saved to disc. This is the default filename used by the <a class="reference internal" href="Stoner.Core.DataFile.load.html#Stoner.Core.DataFile.load" title="Stoner.Core.DataFile.load"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.load()</span></code></a>
 and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save" title="Stoner.Core.DataFile.save"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.save()</span></code></a>.</p>
 </dd></dl>
@@ -105,80 +100,69 @@ and <a class="reference internal" href="Stoner.Core.DataFile.save.html#Stoner.Co
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.mask">
 <code class="descname">mask</code><a class="headerlink" href="#Stoner.Core.DataFile.mask" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array of booleans</em></p>
-<p>Returns the current mask applied to the numerical data equivalent to self.data.mask.</p>
+<dd><p><em>array of booleans</em> &#8211; Returns the current mask applied to the numerical data equivalent to self.data.mask.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.patterns">
 <code class="descname">patterns</code><a class="headerlink" href="#Stoner.Core.DataFile.patterns" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em></p>
-<p>A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (<a href="#id1"><span class="problematic" id="id2">*</span></a>.txt and <a href="#id3"><span class="problematic" id="id4">*</span></a>.dat&#8221;)</p>
+<dd><p><em>list</em> &#8211; A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (<a href="#id1"><span class="problematic" id="id2">*</span></a>.txt and <a href="#id3"><span class="problematic" id="id4">*</span></a>.dat&#8221;)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.priority">
 <code class="descname">priority</code><a class="headerlink" href="#Stoner.Core.DataFile.priority" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em></p>
-<p>Used to indicathe order in which subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> are tried when loading data. A higher number means a lower
+<dd><p><em>int</em> &#8211; Used to indicathe order in which subclasses of <a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> are tried when loading data. A higher number means a lower
 priority (!)</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.setas">
 <code class="descname">setas</code><a class="headerlink" href="#Stoner.Core.DataFile.setas" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list or string</em></p>
-<p>Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</p>
+<dd><p><em>list or string</em> &#8211; Defines certain columns to contain X, Y, Z or errors in X,Y,Z data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.shape">
 <code class="descname">shape</code><a class="headerlink" href="#Stoner.Core.DataFile.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>tuple of integers</em></p>
-<p>Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</p>
+<dd><p><em>tuple of integers</em> &#8211; Returns the shape of the data (rows,columns) - equivalent to self.data.shape.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.records">
 <code class="descname">records</code><a class="headerlink" href="#Stoner.Core.DataFile.records" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>numpoy record array</em></p>
-<p>Returns the data in the form of a list of yuples where each tuple maps to the columsn names.</p>
+<dd><p><em>numpoy record array</em> &#8211; Returns the data in the form of a list of yuples where each tuple maps to the columsn names.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.clone">
 <code class="descname">clone</code><a class="headerlink" href="#Stoner.Core.DataFile.clone" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFile</em></p>
-<p>Creates a deep copy of the :py:class`DataFile` object.</p>
+<dd><p><em>DataFile</em> &#8211; Creates a deep copy of the :py:class`DataFile` object.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.dict_records">
 <code class="descname">dict_records</code><a class="headerlink" href="#Stoner.Core.DataFile.dict_records" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>array of dictionaries</em></p>
-<p>View the data as an array or dictionaries where each dictionary represnets one
+<dd><p><em>array of dictionaries</em> &#8211; View the data as an array or dictionaries where each dictionary represnets one
 row with keys dervied from column headers.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.dtype">
 <code class="descname">dtype</code><a class="headerlink" href="#Stoner.Core.DataFile.dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>numpoy dtype</em></p>
-<p>Returns the datatype stored in the <a class="reference internal" href="#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute.</p>
+<dd><p><em>numpoy dtype</em> &#8211; Returns the datatype stored in the <a class="reference internal" href="#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.T">
 <code class="descname">T</code><a class="headerlink" href="#Stoner.Core.DataFile.T" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a></p>
-<p>Transposed version of the data.</p>
+<dd><p><a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> &#8211; Transposed version of the data.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="Stoner.Core.DataFile.subclasses">
 <code class="descname">subclasses</code><a class="headerlink" href="#Stoner.Core.DataFile.subclasses" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em></p>
-<p>Returns a list of all the subclasses of DataFile currently in memory, sorted by
+<dd><p><em>list</em> &#8211; Returns a list of all the subclasses of DataFile currently in memory, sorted by
 their py:attr:<a href="#id5"><span class="problematic" id="id6">`</span></a>Stoner.Core.DataFile.priority. Each entry in the list consists of the
 string name of the subclass and the class object.</p>
 </dd></dl>
@@ -301,22 +285,25 @@ string name of the subclass and the class object.</p>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.mask" title="Stoner.Core.DataFile.mask"><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></a></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></a></td>
-<td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></a></td>
-<td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.patterns" title="Stoner.Core.DataFile.patterns"><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></a></td>
+<td><em>pattern (list of str)</em> &#8211; A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.priority" title="Stoner.Core.DataFile.priority"><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></a></td>
+<td><em>priority (int)</em> &#8211; is the load order for the class, smaller numbers are tried before larger numbers.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.records" title="Stoner.Core.DataFile.records"><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></a></td>
 <td>Returns the data as a _np_ structured data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></a></td>
 <td>Get the list of column assignments.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.shape" title="Stoner.Core.DataFile.shape"><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.shape" title="Stoner.Core.DataFile.shape"><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></a></td>
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Core.DataFile.subclasses" title="Stoner.Core.DataFile.subclasses"><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Core.DataFile.subclasses" title="Stoner.Core.DataFile.subclasses"><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></a></td>
 <td>Return a list of all in memory subclasses of this DataFile.</td>
 </tr>
 </tbody>
@@ -355,9 +342,6 @@ string name of the subclass and the class object.</p>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -385,8 +369,8 @@ string name of the subclass and the class object.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

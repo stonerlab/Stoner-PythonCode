@@ -55,6 +55,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.dict_records
       ~Stoner.FileFormats.RasorFile.dtype
       ~Stoner.FileFormats.RasorFile.mask
+      ~Stoner.FileFormats.RasorFile.mime_type
       ~Stoner.FileFormats.RasorFile.patterns
       ~Stoner.FileFormats.RasorFile.priority
       ~Stoner.FileFormats.RasorFile.records

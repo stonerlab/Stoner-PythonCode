@@ -55,6 +55,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.dict_records
       ~Stoner.FileFormats.BigBlueFile.dtype
       ~Stoner.FileFormats.BigBlueFile.mask
+      ~Stoner.FileFormats.BigBlueFile.mime_type
       ~Stoner.FileFormats.BigBlueFile.patterns
       ~Stoner.FileFormats.BigBlueFile.priority
       ~Stoner.FileFormats.BigBlueFile.records

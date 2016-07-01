@@ -56,15 +56,15 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 </div>
 <div class="section" id="getting-this-code">
 <h1>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h1>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  lmfit and blist. Experimental code also makes use of
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.4, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
 the Enthought Tools Suite packages.</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
 However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
-<div class="highlight-sh"><div class="highlight"><pre>easy_install lmfit
+<div class="highlight-sh"><div class="highlight"><pre><span></span>easy_install lmfit
 </pre></div>
 </div>
 <p>The easiest way to install the Stoner package is via seuptools&#8217; easy_install</p>
-<div class="highlight-sh"><div class="highlight"><pre>easy_install Stoner
+<div class="highlight-sh"><div class="highlight"><pre><span></span>easy_install Stoner
 </pre></div>
 </div>
 <p>This will install the Stoner package and any missing dependencies into your current Python environment. Since the package is under fairly
@@ -117,7 +117,7 @@ brutal to your computer&#8217;s OS than having directory trees with millions of 
 <h1>Resources<a class="headerlink" href="#resources" title="Permalink to this headline">¶</a></h1>
 <p>Included in the <a class="reference external" href="http://www.github.com/gb119/Stoner-PythonCode/">github repository</a>  are a (small) collection of sample scripts
 for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a
-<a class="reference internal" href="UserGuide/ugindex.html#user-guide"><span>The Stoner Python Package User Guide</span></a> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><em>complete API reference</em></a></p>
+<a class="reference internal" href="UserGuide/ugindex.html#user-guide"><span class="std std-ref">The Stoner Python Package User Guide</span></a> as part of this documentation, along with a <a class="reference internal" href="Stoner.html"><span class="doc">complete API reference</span></a></p>
 </div>
 <div class="section" id="contact-and-licensing">
 <h1>Contact and Licensing<a class="headerlink" href="#contact-and-licensing" title="Permalink to this headline">¶</a></h1>
@@ -130,17 +130,26 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <h1>Recent Changes<a class="headerlink" href="#recent-changes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="development-version">
 <h2>Development Version<a class="headerlink" href="#development-version" title="Permalink to this headline">¶</a></h2>
-<p>The current development version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
-as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
-The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
-Other underlying changes are a switch to using properties rather than straight attribute access.</p>
-<p>0.6 also adds some extra methods to AnalyseFile for extrapolation.</p>
+<p>Teh current development version is 0.7. Features of 0.7 include</p>
+<blockquote>
+<div><ul class="simple">
+<li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a></li>
+<li>DataFolder has an options to skip iterating over empty Data files</li>
+<li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
+</ul>
+</div></blockquote>
 <p>Online documentation for the development version can be found on the <a class="reference external" href="http://gb119.github.io/Stoner-PythonCode">githib repository pages</a></p>
 <a class="reference external image-reference" href="https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode"><img src="https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg" /></a>
 </div>
 <div class="section" id="stable-version">
 <h2>Stable Version<a class="headerlink" href="#stable-version" title="Permalink to this headline">¶</a></h2>
-<p>The development version is now in beta release and so no further relases will be made to the current stable release (0.5).</p>
+<p>The current stable version is 0.6. This features some major changes in the architecture, switching from a numpy MaskedArray
+as the main data store to a custom sub-class that contains most of the logic for indexing data by column name and designation.
+The metadata storage has also been switched to using blist.sortteddict for a fast, alphabetically ordered dictionary storage.
+Other underlying changes are a switch to using properties rather than straight attribute access.</p>
+<p>0.6 now also makes use of filemagic to work out the mime type of files to be loaded to try and improve the resilience of the automatic
+file format detection on platforms where this is supported and adds some extra methods to AnalyseFile for extrapolation.</p>
+<p>0.6 should work on Python 2.7 and 3.5</p>
 </div>
 </div>
 
@@ -186,9 +195,6 @@ Other underlying changes are a switch to using properties rather than straight a
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -209,8 +215,8 @@ Other underlying changes are a switch to using properties rather than straight a
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

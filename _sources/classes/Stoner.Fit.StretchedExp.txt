@@ -21,4 +21,10 @@ Stoner.Fit.StretchedExp
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.StretchedExp.display_names
+   
    

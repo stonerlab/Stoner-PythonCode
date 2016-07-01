@@ -26,7 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
-    <link rel="next" title="CSVFile.save" href="Stoner.FileFormats.CSVFile.save.html" />
+    <link rel="next" title="CSVFile.__init__" href="Stoner.FileFormats.CSVFile.__init__.html" />
     <link rel="prev" title="Stoner.Folders.unicode_literals" href="Stoner.Folders.unicode_literals.html" /> 
   </head>
   <body role="document">
@@ -40,7 +40,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.CSVFile.save.html" title="CSVFile.save"
+          <a href="Stoner.FileFormats.CSVFile.__init__.html" title="CSVFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.Folders.unicode_literals.html" title="Stoner.Folders.unicode_literals"
@@ -68,8 +68,80 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.save.html#Stoner.FileFormats.CSVFile.save" title="Stoner.FileFormats.CSVFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(filename[,&nbsp;deliminator])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.__init__.html#Stoner.FileFormats.CSVFile.__init__" title="Stoner.FileFormats.CSVFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor method for <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.add_column.html#Stoner.FileFormats.CSVFile.add_column" title="Stoner.FileFormats.CSVFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.closest.html#Stoner.FileFormats.CSVFile.closest" title="Stoner.FileFormats.CSVFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<td>Return the row in a data file which has an x-column value closest to the given value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.column.html#Stoner.FileFormats.CSVFile.column" title="Stoner.FileFormats.CSVFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
+<td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.columns.html#Stoner.FileFormats.CSVFile.columns" title="Stoner.FileFormats.CSVFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
+<td>Generator method that will iterate over the columns of data int he datafile.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.del_column.html#Stoner.FileFormats.CSVFile.del_column" title="Stoner.FileFormats.CSVFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<td>Deletes a column from the current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.del_rows.html#Stoner.FileFormats.CSVFile.del_rows" title="Stoner.FileFormats.CSVFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.dir.html#Stoner.FileFormats.CSVFile.dir" title="Stoner.FileFormats.CSVFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
+<td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.filter.html#Stoner.FileFormats.CSVFile.filter" title="Stoner.FileFormats.CSVFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<td>Sets the mask on rows of data by evaluating a function for each row.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.find_col.html#Stoner.FileFormats.CSVFile.find_col" title="Stoner.FileFormats.CSVFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<td>Indexes the column headers in order to locate a column of data.shape.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.get.html#Stoner.FileFormats.CSVFile.get" title="Stoner.FileFormats.CSVFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.get_filename.html#Stoner.FileFormats.CSVFile.get_filename" title="Stoner.FileFormats.CSVFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
+<td>Forces the user to choose a new filename using a system dialog box.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.insert_rows.html#Stoner.FileFormats.CSVFile.insert_rows" title="Stoner.FileFormats.CSVFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<td>Insert new_data into the data array at position row.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.keys.html#Stoner.FileFormats.CSVFile.keys" title="Stoner.FileFormats.CSVFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<td>An alias for <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></code> .</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.load.html#Stoner.FileFormats.CSVFile.load" title="Stoner.FileFormats.CSVFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<td>Loads the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rename.html#Stoner.FileFormats.CSVFile.rename" title="Stoner.FileFormats.CSVFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
+<td>Renames columns without changing the underlying data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.reorder_columns.html#Stoner.FileFormats.CSVFile.reorder_columns" title="Stoner.FileFormats.CSVFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
+<td>Construct a new data array from the original data by assembling the columns in the order given.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rolling_window.html#Stoner.FileFormats.CSVFile.rolling_window" title="Stoner.FileFormats.CSVFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<td>Iterator that return a rolling window section of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.rows.html#Stoner.FileFormats.CSVFile.rows" title="Stoner.FileFormats.CSVFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
+<td>Generator method that will iterate over rows of data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.save.html#Stoner.FileFormats.CSVFile.save" title="Stoner.FileFormats.CSVFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(filename[,&nbsp;deliminator])</td>
 <td>Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.search.html#Stoner.FileFormats.CSVFile.search" title="Stoner.FileFormats.CSVFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.section.html#Stoner.FileFormats.CSVFile.section" title="Stoner.FileFormats.CSVFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.sort.html#Stoner.FileFormats.CSVFile.sort" title="Stoner.FileFormats.CSVFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
+<td>Sorts the data by column name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.swap_column.html#Stoner.FileFormats.CSVFile.swap_column" title="Stoner.FileFormats.CSVFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<td>Swaps pairs of columns in the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.CSVFile.unique.html#Stoner.FileFormats.CSVFile.unique" title="Stoner.FileFormats.CSVFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
 </table>
@@ -101,22 +173,25 @@
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
-<td>pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
+<td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
-<td>priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
+<td><em>pattern (list of str)</em> &#8211; A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
+<td><em>priority (int)</em> &#8211; is the load order for the class, smaller numbers are tried before larger numbers.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
 <td>Returns the data as a _np_ structured data array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
 <td>Get the list of column assignments.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
 <td>Return a list of all in memory subclasses of this DataFile.</td>
 </tr>
 </tbody>
@@ -138,8 +213,8 @@
   <p class="topless"><a href="Stoner.Folders.unicode_literals.html"
                         title="previous chapter">Stoner.Folders.unicode_literals</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.CSVFile.save.html"
-                        title="next chapter">CSVFile.save</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.CSVFile.__init__.html"
+                        title="next chapter">CSVFile.__init__</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -155,9 +230,6 @@
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -174,7 +246,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.CSVFile.save.html" title="CSVFile.save"
+          <a href="Stoner.FileFormats.CSVFile.__init__.html" title="CSVFile.__init__"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.Folders.unicode_literals.html" title="Stoner.Folders.unicode_literals"
@@ -185,8 +257,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

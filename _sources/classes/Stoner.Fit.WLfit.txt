@@ -21,4 +21,10 @@ Stoner.Fit.WLfit
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.WLfit.display_names
+   
    

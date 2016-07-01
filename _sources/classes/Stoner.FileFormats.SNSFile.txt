@@ -55,6 +55,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.dict_records
       ~Stoner.FileFormats.SNSFile.dtype
       ~Stoner.FileFormats.SNSFile.mask
+      ~Stoner.FileFormats.SNSFile.mime_type
       ~Stoner.FileFormats.SNSFile.patterns
       ~Stoner.FileFormats.SNSFile.priority
       ~Stoner.FileFormats.SNSFile.records

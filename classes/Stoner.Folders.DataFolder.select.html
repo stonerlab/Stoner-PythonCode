@@ -66,26 +66,20 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first">
-<li><p class="first"><strong>args</strong> (<em>various</em>) &#8211;
-A single positional argument if present is interpreted as follows:</p>
-</li>
-<li><p class="first"><strong>* If a callable function is given, the entire DataFile is presented to it.</strong> &#8211;</p>
-<p>If it evaluates True then that DataFile is selected. This allows arbitary select operations</p>
-</li>
-<li><p class="first"><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles</strong></p>
-</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>various</em>) &#8211; A single positional argument if present is interpreted as follows:</li>
+<li><strong>* If a callable function is given, the entire DataFile is presented to it.</strong> &#8211; If it evaluates True then that DataFile is selected. This allows arbitary select operations</li>
+<li><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the DataFiles</strong></li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>kargs</strong> (<em>varuous</em>) &#8211;
-Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+<li><strong>kargs</strong> (<em>varuous</em>) &#8211; Arbitary keyword arguments are interpreted as requestion matches against the corresponding
 metadata values. The value of the argument is used as follows:</li>
 <li><strong>* if is a scalar, then an equality test is carried out</strong></li>
 <li><strong>* If is a list then a membership test is carried out</strong></li>
-<li><strong>* if it is a tuple of numbers then it is interpreted as a bounds test (t1&lt;=x&lt;t2)</strong></li>
+<li><strong>* if it is a tuple of numbers then it is interpreted as a bounds test</strong> (<em>t1&lt;=x&lt;t2</em>)</li>
 </ul>
 </td>
 </tr>
@@ -128,9 +122,6 @@ metadata values. The value of the argument is used as follows:</li>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -159,8 +150,8 @@ metadata values. The value of the argument is used as follows:</li>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

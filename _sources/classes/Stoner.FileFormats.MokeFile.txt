@@ -55,6 +55,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.dict_records
       ~Stoner.FileFormats.MokeFile.dtype
       ~Stoner.FileFormats.MokeFile.mask
+      ~Stoner.FileFormats.MokeFile.mime_type
       ~Stoner.FileFormats.MokeFile.patterns
       ~Stoner.FileFormats.MokeFile.priority
       ~Stoner.FileFormats.MokeFile.priotity

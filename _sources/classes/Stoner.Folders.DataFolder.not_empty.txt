@@ -1,0 +1,8 @@
+
+
+DataFolder.not_empty
+===================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: DataFolder.not_empty

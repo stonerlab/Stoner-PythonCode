@@ -21,4 +21,10 @@ Stoner.Fit.Arrhenius
 
    
    
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Fit.Arrhenius.display_names
+   
    

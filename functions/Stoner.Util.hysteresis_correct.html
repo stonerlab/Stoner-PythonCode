@@ -65,28 +65,21 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> (<em>DataFile</em>) &#8211;
-The data containing the hysteresis loop. The <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> (<em>DataFile</em>) &#8211; The data containing the hysteresis loop. The <code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code> attribute
 should be set to give the H and M axes as x and y.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
 <tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>correct_background</strong> (<em>bool</em>) &#8211;
-Correct for a diamagnetic or paramagnetic background to the hystersis loop
+<li><strong>correct_background</strong> (<em>bool</em>) &#8211; Correct for a diamagnetic or paramagnetic background to the hystersis loop
 also recentres the loop about zero moment.</li>
-<li><strong>correct_H</strong> (<em>bool</em>) &#8211;
-Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
+<li><strong>correct_H</strong> (<em>bool</em>) &#8211; Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
 this will remove any offset in filed due to trapped flux</li>
-<li><strong>saturated_fraction</strong> (<em>float</em>) &#8211;
-The fraction of the horizontal (field) range where the moment can be assumed to be
-fully saturated.</li>
-<li><strong>xcol</strong> (<em>column index</em>) &#8211;
-Column with the x data in it</li>
-<li><strong>ycol</strong> (<em>column_index</em>) &#8211;
-Column with the y data in it</li>
-<li><strong>setas</strong> (<em>string or iterable</em>) &#8211;
-Column assignments.</li>
+<li><strong>saturated_fraction</strong> (<em>float</em>) &#8211; The fraction of the horizontal (field) range where the moment can be assumed to be
+fully saturated. If an integer is given it will use that many data points at the end of the loop.</li>
+<li><strong>xcol</strong> (<em>column index</em>) &#8211; Column with the x data in it</li>
+<li><strong>ycol</strong> (<em>column_index</em>) &#8211; Column with the y data in it</li>
+<li><strong>setas</strong> (<em>string or iterable</em>) &#8211; Column assignments.</li>
 </ul>
 </td>
 </tr>
@@ -130,9 +123,6 @@ background suceptibility, offset in moment, co-ercive fields and saturation magn
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -160,8 +150,8 @@ background suceptibility, offset in moment, co-ercive fields and saturation magn
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Dec 16, 2015.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+      Last updated on May 12, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
     </div>
   </body>
 </html>

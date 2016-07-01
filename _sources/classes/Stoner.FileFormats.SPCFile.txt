@@ -55,6 +55,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.dict_records
       ~Stoner.FileFormats.SPCFile.dtype
       ~Stoner.FileFormats.SPCFile.mask
+      ~Stoner.FileFormats.SPCFile.mime_type
       ~Stoner.FileFormats.SPCFile.patterns
       ~Stoner.FileFormats.SPCFile.priority
       ~Stoner.FileFormats.SPCFile.records
