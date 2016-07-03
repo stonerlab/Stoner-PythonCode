@@ -15,6 +15,7 @@ Stoner.FileFormats.BNLFile
    
       ~Stoner.FileFormats.BNLFile.__init__
       ~Stoner.FileFormats.BNLFile.add_column
+      ~Stoner.FileFormats.BNLFile.clear
       ~Stoner.FileFormats.BNLFile.closest
       ~Stoner.FileFormats.BNLFile.column
       ~Stoner.FileFormats.BNLFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.get
       ~Stoner.FileFormats.BNLFile.get_filename
       ~Stoner.FileFormats.BNLFile.insert_rows
+      ~Stoner.FileFormats.BNLFile.items
+      ~Stoner.FileFormats.BNLFile.iteritems
+      ~Stoner.FileFormats.BNLFile.iterkeys
+      ~Stoner.FileFormats.BNLFile.itervalues
       ~Stoner.FileFormats.BNLFile.keys
       ~Stoner.FileFormats.BNLFile.load
+      ~Stoner.FileFormats.BNLFile.pop
+      ~Stoner.FileFormats.BNLFile.popitem
       ~Stoner.FileFormats.BNLFile.rename
       ~Stoner.FileFormats.BNLFile.reorder_columns
       ~Stoner.FileFormats.BNLFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.save
       ~Stoner.FileFormats.BNLFile.search
       ~Stoner.FileFormats.BNLFile.section
+      ~Stoner.FileFormats.BNLFile.setdefault
       ~Stoner.FileFormats.BNLFile.sort
       ~Stoner.FileFormats.BNLFile.swap_column
       ~Stoner.FileFormats.BNLFile.unique
+      ~Stoner.FileFormats.BNLFile.update
+      ~Stoner.FileFormats.BNLFile.values
 
    
    

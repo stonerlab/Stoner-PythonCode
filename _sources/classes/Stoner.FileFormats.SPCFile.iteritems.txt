@@ -1,0 +1,8 @@
+
+
+SPCFile.iteritems
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.iteritems

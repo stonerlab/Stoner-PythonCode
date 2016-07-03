@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.items
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.items

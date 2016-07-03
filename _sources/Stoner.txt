@@ -200,5 +200,5 @@ Subpackages
 
 .. toctree::
 
-    Stoner.gui
+    Stoner.Image
 

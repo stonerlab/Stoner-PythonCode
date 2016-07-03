@@ -15,6 +15,7 @@ Stoner.FileFormats.TDMSFile
    
       ~Stoner.FileFormats.TDMSFile.__init__
       ~Stoner.FileFormats.TDMSFile.add_column
+      ~Stoner.FileFormats.TDMSFile.clear
       ~Stoner.FileFormats.TDMSFile.closest
       ~Stoner.FileFormats.TDMSFile.column
       ~Stoner.FileFormats.TDMSFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.get
       ~Stoner.FileFormats.TDMSFile.get_filename
       ~Stoner.FileFormats.TDMSFile.insert_rows
+      ~Stoner.FileFormats.TDMSFile.items
+      ~Stoner.FileFormats.TDMSFile.iteritems
+      ~Stoner.FileFormats.TDMSFile.iterkeys
+      ~Stoner.FileFormats.TDMSFile.itervalues
       ~Stoner.FileFormats.TDMSFile.keys
       ~Stoner.FileFormats.TDMSFile.load
+      ~Stoner.FileFormats.TDMSFile.pop
+      ~Stoner.FileFormats.TDMSFile.popitem
       ~Stoner.FileFormats.TDMSFile.rename
       ~Stoner.FileFormats.TDMSFile.reorder_columns
       ~Stoner.FileFormats.TDMSFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.save
       ~Stoner.FileFormats.TDMSFile.search
       ~Stoner.FileFormats.TDMSFile.section
+      ~Stoner.FileFormats.TDMSFile.setdefault
       ~Stoner.FileFormats.TDMSFile.sort
       ~Stoner.FileFormats.TDMSFile.swap_column
       ~Stoner.FileFormats.TDMSFile.unique
+      ~Stoner.FileFormats.TDMSFile.update
+      ~Stoner.FileFormats.TDMSFile.values
 
    
    

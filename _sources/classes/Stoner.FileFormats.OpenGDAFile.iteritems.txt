@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.iteritems
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.iteritems

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.popitem
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.popitem

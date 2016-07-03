@@ -1,0 +1,8 @@
+
+
+SNSFile.clear
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.clear

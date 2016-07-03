@@ -1,0 +1,8 @@
+
+
+BigBlueFile.iteritems
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.iteritems

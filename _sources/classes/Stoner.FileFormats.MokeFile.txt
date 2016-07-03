@@ -15,6 +15,7 @@ Stoner.FileFormats.MokeFile
    
       ~Stoner.FileFormats.MokeFile.__init__
       ~Stoner.FileFormats.MokeFile.add_column
+      ~Stoner.FileFormats.MokeFile.clear
       ~Stoner.FileFormats.MokeFile.closest
       ~Stoner.FileFormats.MokeFile.column
       ~Stoner.FileFormats.MokeFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.get
       ~Stoner.FileFormats.MokeFile.get_filename
       ~Stoner.FileFormats.MokeFile.insert_rows
+      ~Stoner.FileFormats.MokeFile.items
+      ~Stoner.FileFormats.MokeFile.iteritems
+      ~Stoner.FileFormats.MokeFile.iterkeys
+      ~Stoner.FileFormats.MokeFile.itervalues
       ~Stoner.FileFormats.MokeFile.keys
       ~Stoner.FileFormats.MokeFile.load
+      ~Stoner.FileFormats.MokeFile.pop
+      ~Stoner.FileFormats.MokeFile.popitem
       ~Stoner.FileFormats.MokeFile.rename
       ~Stoner.FileFormats.MokeFile.reorder_columns
       ~Stoner.FileFormats.MokeFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.save
       ~Stoner.FileFormats.MokeFile.search
       ~Stoner.FileFormats.MokeFile.section
+      ~Stoner.FileFormats.MokeFile.setdefault
       ~Stoner.FileFormats.MokeFile.sort
       ~Stoner.FileFormats.MokeFile.swap_column
       ~Stoner.FileFormats.MokeFile.unique
+      ~Stoner.FileFormats.MokeFile.update
+      ~Stoner.FileFormats.MokeFile.values
 
    
    

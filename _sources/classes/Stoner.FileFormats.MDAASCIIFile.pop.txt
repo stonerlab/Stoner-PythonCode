@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.pop
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.pop

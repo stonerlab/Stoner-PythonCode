@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.update
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.update

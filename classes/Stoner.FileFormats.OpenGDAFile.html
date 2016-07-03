@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="OpenGDAFile.__init__" href="Stoner.FileFormats.OpenGDAFile.__init__.html" />
-    <link rel="prev" title="MDAASCIIFile.unique" href="Stoner.FileFormats.MDAASCIIFile.unique.html" /> 
+    <link rel="prev" title="MDAASCIIFile.values" href="Stoner.FileFormats.MDAASCIIFile.values.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -43,7 +43,7 @@
           <a href="Stoner.FileFormats.OpenGDAFile.__init__.html" title="OpenGDAFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.unique.html" title="MDAASCIIFile.unique"
+          <a href="Stoner.FileFormats.MDAASCIIFile.values.html" title="MDAASCIIFile.values"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -74,65 +74,89 @@
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.add_column.html#Stoner.FileFormats.OpenGDAFile.add_column" title="Stoner.FileFormats.OpenGDAFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.closest.html#Stoner.FileFormats.OpenGDAFile.closest" title="Stoner.FileFormats.OpenGDAFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.clear.html#Stoner.FileFormats.OpenGDAFile.clear" title="Stoner.FileFormats.OpenGDAFile.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;D.)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.closest.html#Stoner.FileFormats.OpenGDAFile.closest" title="Stoner.FileFormats.OpenGDAFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
 <td>Return the row in a data file which has an x-column value closest to the given value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.column.html#Stoner.FileFormats.OpenGDAFile.column" title="Stoner.FileFormats.OpenGDAFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.column.html#Stoner.FileFormats.OpenGDAFile.column" title="Stoner.FileFormats.OpenGDAFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
 <td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.columns.html#Stoner.FileFormats.OpenGDAFile.columns" title="Stoner.FileFormats.OpenGDAFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.columns.html#Stoner.FileFormats.OpenGDAFile.columns" title="Stoner.FileFormats.OpenGDAFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over the columns of data int he datafile.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.del_column.html#Stoner.FileFormats.OpenGDAFile.del_column" title="Stoner.FileFormats.OpenGDAFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.del_column.html#Stoner.FileFormats.OpenGDAFile.del_column" title="Stoner.FileFormats.OpenGDAFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
 <td>Deletes a column from the current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.del_rows.html#Stoner.FileFormats.OpenGDAFile.del_rows" title="Stoner.FileFormats.OpenGDAFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.del_rows.html#Stoner.FileFormats.OpenGDAFile.del_rows" title="Stoner.FileFormats.OpenGDAFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
 <td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.dir.html#Stoner.FileFormats.OpenGDAFile.dir" title="Stoner.FileFormats.OpenGDAFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.dir.html#Stoner.FileFormats.OpenGDAFile.dir" title="Stoner.FileFormats.OpenGDAFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
 <td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.filter.html#Stoner.FileFormats.OpenGDAFile.filter" title="Stoner.FileFormats.OpenGDAFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.filter.html#Stoner.FileFormats.OpenGDAFile.filter" title="Stoner.FileFormats.OpenGDAFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
 <td>Sets the mask on rows of data by evaluating a function for each row.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.find_col.html#Stoner.FileFormats.OpenGDAFile.find_col" title="Stoner.FileFormats.OpenGDAFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.find_col.html#Stoner.FileFormats.OpenGDAFile.find_col" title="Stoner.FileFormats.OpenGDAFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
 <td>Indexes the column headers in order to locate a column of data.shape.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.get.html#Stoner.FileFormats.OpenGDAFile.get" title="Stoner.FileFormats.OpenGDAFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.get.html#Stoner.FileFormats.OpenGDAFile.get" title="Stoner.FileFormats.OpenGDAFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
 <td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.get_filename.html#Stoner.FileFormats.OpenGDAFile.get_filename" title="Stoner.FileFormats.OpenGDAFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.get_filename.html#Stoner.FileFormats.OpenGDAFile.get_filename" title="Stoner.FileFormats.OpenGDAFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
 <td>Forces the user to choose a new filename using a system dialog box.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.insert_rows.html#Stoner.FileFormats.OpenGDAFile.insert_rows" title="Stoner.FileFormats.OpenGDAFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.insert_rows.html#Stoner.FileFormats.OpenGDAFile.insert_rows" title="Stoner.FileFormats.OpenGDAFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
 <td>Insert new_data into the data array at position row.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.keys.html#Stoner.FileFormats.OpenGDAFile.keys" title="Stoner.FileFormats.OpenGDAFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.items.html#Stoner.FileFormats.OpenGDAFile.items" title="Stoner.FileFormats.OpenGDAFile.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;(key,&nbsp;value)&nbsp;pairs,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.iteritems.html#Stoner.FileFormats.OpenGDAFile.iteritems" title="Stoner.FileFormats.OpenGDAFile.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;(key,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.iterkeys.html#Stoner.FileFormats.OpenGDAFile.iterkeys" title="Stoner.FileFormats.OpenGDAFile.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;keys&nbsp;of&nbsp;D)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.itervalues.html#Stoner.FileFormats.OpenGDAFile.itervalues" title="Stoner.FileFormats.OpenGDAFile.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.keys.html#Stoner.FileFormats.OpenGDAFile.keys" title="Stoner.FileFormats.OpenGDAFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></code> .</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.load.html#Stoner.FileFormats.OpenGDAFile.load" title="Stoner.FileFormats.OpenGDAFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.load.html#Stoner.FileFormats.OpenGDAFile.load" title="Stoner.FileFormats.OpenGDAFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
 <td>Loads the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rename.html#Stoner.FileFormats.OpenGDAFile.rename" title="Stoner.FileFormats.OpenGDAFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.pop.html#Stoner.FileFormats.OpenGDAFile.pop" title="Stoner.FileFormats.OpenGDAFile.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;...)</td>
+<td>If key is not found, d is returned if given, otherwise KeyError is raised.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.popitem.html#Stoner.FileFormats.OpenGDAFile.popitem" title="Stoner.FileFormats.OpenGDAFile.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a>(()&nbsp;-&gt;&nbsp;(k,&nbsp;v),&nbsp;...)</td>
+<td>as a 2-tuple; but raise KeyError if D is empty.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rename.html#Stoner.FileFormats.OpenGDAFile.rename" title="Stoner.FileFormats.OpenGDAFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
 <td>Renames columns without changing the underlying data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.reorder_columns.html#Stoner.FileFormats.OpenGDAFile.reorder_columns" title="Stoner.FileFormats.OpenGDAFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.reorder_columns.html#Stoner.FileFormats.OpenGDAFile.reorder_columns" title="Stoner.FileFormats.OpenGDAFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
 <td>Construct a new data array from the original data by assembling the columns in the order given.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rolling_window.html#Stoner.FileFormats.OpenGDAFile.rolling_window" title="Stoner.FileFormats.OpenGDAFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rolling_window.html#Stoner.FileFormats.OpenGDAFile.rolling_window" title="Stoner.FileFormats.OpenGDAFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rows.html#Stoner.FileFormats.OpenGDAFile.rows" title="Stoner.FileFormats.OpenGDAFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.rows.html#Stoner.FileFormats.OpenGDAFile.rows" title="Stoner.FileFormats.OpenGDAFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.save.html#Stoner.FileFormats.OpenGDAFile.save" title="Stoner.FileFormats.OpenGDAFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.save.html#Stoner.FileFormats.OpenGDAFile.save" title="Stoner.FileFormats.OpenGDAFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
 <td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.search.html#Stoner.FileFormats.OpenGDAFile.search" title="Stoner.FileFormats.OpenGDAFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.search.html#Stoner.FileFormats.OpenGDAFile.search" title="Stoner.FileFormats.OpenGDAFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.section.html#Stoner.FileFormats.OpenGDAFile.section" title="Stoner.FileFormats.OpenGDAFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.section.html#Stoner.FileFormats.OpenGDAFile.section" title="Stoner.FileFormats.OpenGDAFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.setdefault.html#Stoner.FileFormats.OpenGDAFile.setdefault" title="Stoner.FileFormats.OpenGDAFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.sort.html#Stoner.FileFormats.OpenGDAFile.sort" title="Stoner.FileFormats.OpenGDAFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
 <td>Sorts the data by column name.</td>
@@ -142,6 +166,12 @@
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.unique.html#Stoner.FileFormats.OpenGDAFile.unique" title="Stoner.FileFormats.OpenGDAFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.update.html#Stoner.FileFormats.OpenGDAFile.update" title="Stoner.FileFormats.OpenGDAFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
+<td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OpenGDAFile.values.html#Stoner.FileFormats.OpenGDAFile.values" title="Stoner.FileFormats.OpenGDAFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -210,8 +240,8 @@
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.unique.html"
-                        title="previous chapter">MDAASCIIFile.unique</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.MDAASCIIFile.values.html"
+                        title="previous chapter">MDAASCIIFile.values</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.OpenGDAFile.__init__.html"
                         title="next chapter">OpenGDAFile.__init__</a></p>
@@ -225,8 +255,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -249,7 +279,7 @@
           <a href="Stoner.FileFormats.OpenGDAFile.__init__.html" title="OpenGDAFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.MDAASCIIFile.unique.html" title="MDAASCIIFile.unique"
+          <a href="Stoner.FileFormats.MDAASCIIFile.values.html" title="MDAASCIIFile.values"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -257,8 +287,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

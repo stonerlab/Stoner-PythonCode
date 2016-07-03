@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.items
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.items

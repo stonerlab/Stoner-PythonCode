@@ -1,0 +1,8 @@
+
+
+FmokeFile.setdefault
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.setdefault

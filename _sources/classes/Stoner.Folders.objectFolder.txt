@@ -1,0 +1,53 @@
+Stoner.Folders.objectFolder
+===========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: objectFolder
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Folders.objectFolder.__init__
+      ~Stoner.Folders.objectFolder.add_group
+      ~Stoner.Folders.objectFolder.filter
+      ~Stoner.Folders.objectFolder.filterout
+      ~Stoner.Folders.objectFolder.flatten
+      ~Stoner.Folders.objectFolder.getlist
+      ~Stoner.Folders.objectFolder.group
+      ~Stoner.Folders.objectFolder.insert
+      ~Stoner.Folders.objectFolder.keys
+      ~Stoner.Folders.objectFolder.next
+      ~Stoner.Folders.objectFolder.not_empty
+      ~Stoner.Folders.objectFolder.prune
+      ~Stoner.Folders.objectFolder.save
+      ~Stoner.Folders.objectFolder.select
+      ~Stoner.Folders.objectFolder.sort
+      ~Stoner.Folders.objectFolder.unflatten
+      ~Stoner.Folders.objectFolder.walk_groups
+      ~Stoner.Folders.objectFolder.zip_groups
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Folders.objectFolder.basenames
+      ~Stoner.Folders.objectFolder.depth
+      ~Stoner.Folders.objectFolder.loaded
+      ~Stoner.Folders.objectFolder.ls
+      ~Stoner.Folders.objectFolder.lsgrp
+      ~Stoner.Folders.objectFolder.mindepth
+      ~Stoner.Folders.objectFolder.pattern
+      ~Stoner.Folders.objectFolder.type
+   
+   

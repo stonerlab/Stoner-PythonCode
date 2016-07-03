@@ -15,6 +15,7 @@ Stoner.FileFormats.MDAASCIIFile
    
       ~Stoner.FileFormats.MDAASCIIFile.__init__
       ~Stoner.FileFormats.MDAASCIIFile.add_column
+      ~Stoner.FileFormats.MDAASCIIFile.clear
       ~Stoner.FileFormats.MDAASCIIFile.closest
       ~Stoner.FileFormats.MDAASCIIFile.column
       ~Stoner.FileFormats.MDAASCIIFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.get
       ~Stoner.FileFormats.MDAASCIIFile.get_filename
       ~Stoner.FileFormats.MDAASCIIFile.insert_rows
+      ~Stoner.FileFormats.MDAASCIIFile.items
+      ~Stoner.FileFormats.MDAASCIIFile.iteritems
+      ~Stoner.FileFormats.MDAASCIIFile.iterkeys
+      ~Stoner.FileFormats.MDAASCIIFile.itervalues
       ~Stoner.FileFormats.MDAASCIIFile.keys
       ~Stoner.FileFormats.MDAASCIIFile.load
+      ~Stoner.FileFormats.MDAASCIIFile.pop
+      ~Stoner.FileFormats.MDAASCIIFile.popitem
       ~Stoner.FileFormats.MDAASCIIFile.rename
       ~Stoner.FileFormats.MDAASCIIFile.reorder_columns
       ~Stoner.FileFormats.MDAASCIIFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.save
       ~Stoner.FileFormats.MDAASCIIFile.search
       ~Stoner.FileFormats.MDAASCIIFile.section
+      ~Stoner.FileFormats.MDAASCIIFile.setdefault
       ~Stoner.FileFormats.MDAASCIIFile.sort
       ~Stoner.FileFormats.MDAASCIIFile.swap_column
       ~Stoner.FileFormats.MDAASCIIFile.unique
+      ~Stoner.FileFormats.MDAASCIIFile.update
+      ~Stoner.FileFormats.MDAASCIIFile.values
 
    
    

@@ -15,6 +15,7 @@ Stoner.FileFormats.RasorFile
    
       ~Stoner.FileFormats.RasorFile.__init__
       ~Stoner.FileFormats.RasorFile.add_column
+      ~Stoner.FileFormats.RasorFile.clear
       ~Stoner.FileFormats.RasorFile.closest
       ~Stoner.FileFormats.RasorFile.column
       ~Stoner.FileFormats.RasorFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.get
       ~Stoner.FileFormats.RasorFile.get_filename
       ~Stoner.FileFormats.RasorFile.insert_rows
+      ~Stoner.FileFormats.RasorFile.items
+      ~Stoner.FileFormats.RasorFile.iteritems
+      ~Stoner.FileFormats.RasorFile.iterkeys
+      ~Stoner.FileFormats.RasorFile.itervalues
       ~Stoner.FileFormats.RasorFile.keys
       ~Stoner.FileFormats.RasorFile.load
+      ~Stoner.FileFormats.RasorFile.pop
+      ~Stoner.FileFormats.RasorFile.popitem
       ~Stoner.FileFormats.RasorFile.rename
       ~Stoner.FileFormats.RasorFile.reorder_columns
       ~Stoner.FileFormats.RasorFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.save
       ~Stoner.FileFormats.RasorFile.search
       ~Stoner.FileFormats.RasorFile.section
+      ~Stoner.FileFormats.RasorFile.setdefault
       ~Stoner.FileFormats.RasorFile.sort
       ~Stoner.FileFormats.RasorFile.swap_column
       ~Stoner.FileFormats.RasorFile.unique
+      ~Stoner.FileFormats.RasorFile.update
+      ~Stoner.FileFormats.RasorFile.values
 
    
    

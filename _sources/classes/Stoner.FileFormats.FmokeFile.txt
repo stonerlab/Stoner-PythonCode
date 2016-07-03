@@ -15,6 +15,7 @@ Stoner.FileFormats.FmokeFile
    
       ~Stoner.FileFormats.FmokeFile.__init__
       ~Stoner.FileFormats.FmokeFile.add_column
+      ~Stoner.FileFormats.FmokeFile.clear
       ~Stoner.FileFormats.FmokeFile.closest
       ~Stoner.FileFormats.FmokeFile.column
       ~Stoner.FileFormats.FmokeFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.get
       ~Stoner.FileFormats.FmokeFile.get_filename
       ~Stoner.FileFormats.FmokeFile.insert_rows
+      ~Stoner.FileFormats.FmokeFile.items
+      ~Stoner.FileFormats.FmokeFile.iteritems
+      ~Stoner.FileFormats.FmokeFile.iterkeys
+      ~Stoner.FileFormats.FmokeFile.itervalues
       ~Stoner.FileFormats.FmokeFile.keys
       ~Stoner.FileFormats.FmokeFile.load
+      ~Stoner.FileFormats.FmokeFile.pop
+      ~Stoner.FileFormats.FmokeFile.popitem
       ~Stoner.FileFormats.FmokeFile.rename
       ~Stoner.FileFormats.FmokeFile.reorder_columns
       ~Stoner.FileFormats.FmokeFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.save
       ~Stoner.FileFormats.FmokeFile.search
       ~Stoner.FileFormats.FmokeFile.section
+      ~Stoner.FileFormats.FmokeFile.setdefault
       ~Stoner.FileFormats.FmokeFile.sort
       ~Stoner.FileFormats.FmokeFile.swap_column
       ~Stoner.FileFormats.FmokeFile.unique
+      ~Stoner.FileFormats.FmokeFile.update
+      ~Stoner.FileFormats.FmokeFile.values
 
    
    

@@ -15,6 +15,7 @@ Stoner.FileFormats.OVFFile
    
       ~Stoner.FileFormats.OVFFile.__init__
       ~Stoner.FileFormats.OVFFile.add_column
+      ~Stoner.FileFormats.OVFFile.clear
       ~Stoner.FileFormats.OVFFile.closest
       ~Stoner.FileFormats.OVFFile.column
       ~Stoner.FileFormats.OVFFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.get
       ~Stoner.FileFormats.OVFFile.get_filename
       ~Stoner.FileFormats.OVFFile.insert_rows
+      ~Stoner.FileFormats.OVFFile.items
+      ~Stoner.FileFormats.OVFFile.iteritems
+      ~Stoner.FileFormats.OVFFile.iterkeys
+      ~Stoner.FileFormats.OVFFile.itervalues
       ~Stoner.FileFormats.OVFFile.keys
       ~Stoner.FileFormats.OVFFile.load
+      ~Stoner.FileFormats.OVFFile.pop
+      ~Stoner.FileFormats.OVFFile.popitem
       ~Stoner.FileFormats.OVFFile.rename
       ~Stoner.FileFormats.OVFFile.reorder_columns
       ~Stoner.FileFormats.OVFFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.save
       ~Stoner.FileFormats.OVFFile.search
       ~Stoner.FileFormats.OVFFile.section
+      ~Stoner.FileFormats.OVFFile.setdefault
       ~Stoner.FileFormats.OVFFile.sort
       ~Stoner.FileFormats.OVFFile.swap_column
       ~Stoner.FileFormats.OVFFile.unique
+      ~Stoner.FileFormats.OVFFile.update
+      ~Stoner.FileFormats.OVFFile.values
 
    
    

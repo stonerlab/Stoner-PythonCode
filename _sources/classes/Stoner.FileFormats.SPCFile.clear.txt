@@ -1,0 +1,8 @@
+
+
+SPCFile.clear
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.clear

@@ -15,6 +15,7 @@ Stoner.FileFormats.OpenGDAFile
    
       ~Stoner.FileFormats.OpenGDAFile.__init__
       ~Stoner.FileFormats.OpenGDAFile.add_column
+      ~Stoner.FileFormats.OpenGDAFile.clear
       ~Stoner.FileFormats.OpenGDAFile.closest
       ~Stoner.FileFormats.OpenGDAFile.column
       ~Stoner.FileFormats.OpenGDAFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.get
       ~Stoner.FileFormats.OpenGDAFile.get_filename
       ~Stoner.FileFormats.OpenGDAFile.insert_rows
+      ~Stoner.FileFormats.OpenGDAFile.items
+      ~Stoner.FileFormats.OpenGDAFile.iteritems
+      ~Stoner.FileFormats.OpenGDAFile.iterkeys
+      ~Stoner.FileFormats.OpenGDAFile.itervalues
       ~Stoner.FileFormats.OpenGDAFile.keys
       ~Stoner.FileFormats.OpenGDAFile.load
+      ~Stoner.FileFormats.OpenGDAFile.pop
+      ~Stoner.FileFormats.OpenGDAFile.popitem
       ~Stoner.FileFormats.OpenGDAFile.rename
       ~Stoner.FileFormats.OpenGDAFile.reorder_columns
       ~Stoner.FileFormats.OpenGDAFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.save
       ~Stoner.FileFormats.OpenGDAFile.search
       ~Stoner.FileFormats.OpenGDAFile.section
+      ~Stoner.FileFormats.OpenGDAFile.setdefault
       ~Stoner.FileFormats.OpenGDAFile.sort
       ~Stoner.FileFormats.OpenGDAFile.swap_column
       ~Stoner.FileFormats.OpenGDAFile.unique
+      ~Stoner.FileFormats.OpenGDAFile.update
+      ~Stoner.FileFormats.OpenGDAFile.values
 
    
    

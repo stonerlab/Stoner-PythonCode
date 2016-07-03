@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.iteritems
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.iteritems

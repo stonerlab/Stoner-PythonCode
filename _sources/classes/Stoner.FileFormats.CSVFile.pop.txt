@@ -1,0 +1,8 @@
+
+
+CSVFile.pop
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: CSVFile.pop

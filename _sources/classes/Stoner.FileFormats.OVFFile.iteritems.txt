@@ -1,0 +1,8 @@
+
+
+OVFFile.iteritems
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OVFFile.iteritems

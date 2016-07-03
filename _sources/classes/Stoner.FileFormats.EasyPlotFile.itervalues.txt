@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.itervalues
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.itervalues

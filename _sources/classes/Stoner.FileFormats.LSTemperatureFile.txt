@@ -15,6 +15,7 @@ Stoner.FileFormats.LSTemperatureFile
    
       ~Stoner.FileFormats.LSTemperatureFile.__init__
       ~Stoner.FileFormats.LSTemperatureFile.add_column
+      ~Stoner.FileFormats.LSTemperatureFile.clear
       ~Stoner.FileFormats.LSTemperatureFile.closest
       ~Stoner.FileFormats.LSTemperatureFile.column
       ~Stoner.FileFormats.LSTemperatureFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.get
       ~Stoner.FileFormats.LSTemperatureFile.get_filename
       ~Stoner.FileFormats.LSTemperatureFile.insert_rows
+      ~Stoner.FileFormats.LSTemperatureFile.items
+      ~Stoner.FileFormats.LSTemperatureFile.iteritems
+      ~Stoner.FileFormats.LSTemperatureFile.iterkeys
+      ~Stoner.FileFormats.LSTemperatureFile.itervalues
       ~Stoner.FileFormats.LSTemperatureFile.keys
       ~Stoner.FileFormats.LSTemperatureFile.load
+      ~Stoner.FileFormats.LSTemperatureFile.pop
+      ~Stoner.FileFormats.LSTemperatureFile.popitem
       ~Stoner.FileFormats.LSTemperatureFile.rename
       ~Stoner.FileFormats.LSTemperatureFile.reorder_columns
       ~Stoner.FileFormats.LSTemperatureFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.save
       ~Stoner.FileFormats.LSTemperatureFile.search
       ~Stoner.FileFormats.LSTemperatureFile.section
+      ~Stoner.FileFormats.LSTemperatureFile.setdefault
       ~Stoner.FileFormats.LSTemperatureFile.sort
       ~Stoner.FileFormats.LSTemperatureFile.swap_column
       ~Stoner.FileFormats.LSTemperatureFile.unique
+      ~Stoner.FileFormats.LSTemperatureFile.update
+      ~Stoner.FileFormats.LSTemperatureFile.values
 
    
    

@@ -63,14 +63,6 @@
 <dd><p><a class="reference internal" href="#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents
 a matrix of data, associated metadata and column headers.</p>
 <dl class="attribute">
-<dt id="Stoner.Core.DataFile.metadata">
-<code class="descname">metadata</code><a class="headerlink" href="#Stoner.Core.DataFile.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>typeHintedDict</em> &#8211; of key-value metadata pairs. The dictionary
-tries to retain information about the type of
-data so as to aid import and export from CM group LabVIEw code.</p>
-</dd></dl>
-
-<dl class="attribute">
 <dt id="Stoner.Core.DataFile.column_headers">
 <code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataFile.column_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list</em> &#8211; of strings of the column names of the data.</p>
@@ -80,7 +72,7 @@ data so as to aid import and export from CM group LabVIEw code.</p>
 <dt id="Stoner.Core.DataFile.data">
 <code class="descname">data</code><a class="headerlink" href="#Stoner.Core.DataFile.data" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>2D numpy masked array</em> &#8211; The attribute that stores the nuermical data for each DataFile. This is a <a class="reference internal" href="Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> instance - which
-is itself a subclass of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.10)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>.</p>
+is itself a subclass of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -337,8 +329,8 @@ string name of the subclass and the class object.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -369,8 +361,8 @@ string name of the subclass and the class object.</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

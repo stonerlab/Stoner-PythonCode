@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.setdefault
+===============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.setdefault

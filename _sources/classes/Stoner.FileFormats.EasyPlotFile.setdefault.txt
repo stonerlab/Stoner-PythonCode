@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.setdefault
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.setdefault

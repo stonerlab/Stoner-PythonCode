@@ -1,0 +1,8 @@
+
+
+MokeFile.pop
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.pop

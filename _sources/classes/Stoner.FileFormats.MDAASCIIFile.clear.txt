@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.clear
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.clear

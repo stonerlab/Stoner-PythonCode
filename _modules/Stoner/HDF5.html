@@ -119,11 +119,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>  <span class="c1">#We got a string, so we&#39;ll treat it like a file...</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sniff</span><span class="p">:</span> <span class="c1"># Some code to manaully look for the HDF5 format magic numbers</span>
+                <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+                <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                     <span class="n">c</span><span class="o">=</span><span class="mi">0</span>
-                    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="n">sniff</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span><span class="o">&lt;</span><span class="n">size</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
                         <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">512</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">c</span><span class="p">)</span>
+                        <span class="n">c</span><span class="o">+=</span><span class="mi">1</span>
                         <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                             <span class="k">break</span>
@@ -244,11 +248,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">sniff</span><span class="p">:</span> <span class="c1"># Some code to manaully look for the HDF5 format magic numbers</span>
+            <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+            <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                 <span class="n">c</span><span class="o">=</span><span class="mi">0</span>
                 <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">blk</span><span class="p">)</span><span class="o">==</span><span class="mi">8</span><span class="p">:</span>
                     <span class="n">sniff</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">512</span><span class="o">*</span><span class="mi">2</span><span class="o">**</span><span class="n">c</span><span class="p">)</span>
+                    <span class="n">c</span><span class="o">+=</span><span class="mi">1</span>
                     <span class="n">blk</span><span class="o">=</span><span class="n">sniff</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">blk</span><span class="o">==</span><span class="n">b</span><span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">HDF</span><span class="se">\r\n\x1a\n</span><span class="s1">&#39;</span><span class="p">:</span>
                         <span class="k">break</span>
@@ -284,7 +292,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">seen</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grp</span><span class="p">,</span><span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">None</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Scanning in {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pth</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> 
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Scanning in {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pth</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grp</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">pth</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">:</span>
                 <span class="n">new_pth</span><span class="o">=</span><span class="n">x</span>
@@ -502,8 +511,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -528,8 +537,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

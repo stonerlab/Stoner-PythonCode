@@ -1,0 +1,8 @@
+
+
+VSMFile.popitem
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.popitem

@@ -1,0 +1,8 @@
+
+
+QDSquidVSMFile.setdefault
+============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDSquidVSMFile.setdefault

@@ -14,42 +14,13 @@ Stoner.Folders.DataFolder
     :toctree:
    
       ~Stoner.Folders.DataFolder.__init__
-      ~Stoner.Folders.DataFolder.add_group
       ~Stoner.Folders.DataFolder.concatentate
       ~Stoner.Folders.DataFolder.extract
-      ~Stoner.Folders.DataFolder.filter
-      ~Stoner.Folders.DataFolder.filterout
-      ~Stoner.Folders.DataFolder.flatten
       ~Stoner.Folders.DataFolder.gather
-      ~Stoner.Folders.DataFolder.getlist
-      ~Stoner.Folders.DataFolder.group
-      ~Stoner.Folders.DataFolder.keys
-      ~Stoner.Folders.DataFolder.next
-      ~Stoner.Folders.DataFolder.not_empty
-      ~Stoner.Folders.DataFolder.prune
-      ~Stoner.Folders.DataFolder.save
-      ~Stoner.Folders.DataFolder.select
-      ~Stoner.Folders.DataFolder.sort
-      ~Stoner.Folders.DataFolder.unflatten
-      ~Stoner.Folders.DataFolder.walk_groups
-      ~Stoner.Folders.DataFolder.zip_groups
 
    
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~Stoner.Folders.DataFolder.basenames
-      ~Stoner.Folders.DataFolder.depth
-      ~Stoner.Folders.DataFolder.loaded
-      ~Stoner.Folders.DataFolder.ls
-      ~Stoner.Folders.DataFolder.lsgrp
-      ~Stoner.Folders.DataFolder.mindepth
-      ~Stoner.Folders.DataFolder.pattern
-      ~Stoner.Folders.DataFolder.type
    
    

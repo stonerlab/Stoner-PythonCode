@@ -1,0 +1,8 @@
+
+
+MokeFile.popitem
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.popitem

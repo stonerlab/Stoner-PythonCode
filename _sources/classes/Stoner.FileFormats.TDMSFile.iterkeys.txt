@@ -1,0 +1,8 @@
+
+
+TDMSFile.iterkeys
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.iterkeys

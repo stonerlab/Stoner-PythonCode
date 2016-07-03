@@ -15,6 +15,7 @@ Stoner.FileFormats.SNSFile
    
       ~Stoner.FileFormats.SNSFile.__init__
       ~Stoner.FileFormats.SNSFile.add_column
+      ~Stoner.FileFormats.SNSFile.clear
       ~Stoner.FileFormats.SNSFile.closest
       ~Stoner.FileFormats.SNSFile.column
       ~Stoner.FileFormats.SNSFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.get
       ~Stoner.FileFormats.SNSFile.get_filename
       ~Stoner.FileFormats.SNSFile.insert_rows
+      ~Stoner.FileFormats.SNSFile.items
+      ~Stoner.FileFormats.SNSFile.iteritems
+      ~Stoner.FileFormats.SNSFile.iterkeys
+      ~Stoner.FileFormats.SNSFile.itervalues
       ~Stoner.FileFormats.SNSFile.keys
       ~Stoner.FileFormats.SNSFile.load
+      ~Stoner.FileFormats.SNSFile.pop
+      ~Stoner.FileFormats.SNSFile.popitem
       ~Stoner.FileFormats.SNSFile.rename
       ~Stoner.FileFormats.SNSFile.reorder_columns
       ~Stoner.FileFormats.SNSFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.save
       ~Stoner.FileFormats.SNSFile.search
       ~Stoner.FileFormats.SNSFile.section
+      ~Stoner.FileFormats.SNSFile.setdefault
       ~Stoner.FileFormats.SNSFile.sort
       ~Stoner.FileFormats.SNSFile.swap_column
       ~Stoner.FileFormats.SNSFile.unique
+      ~Stoner.FileFormats.SNSFile.update
+      ~Stoner.FileFormats.SNSFile.values
 
    
    

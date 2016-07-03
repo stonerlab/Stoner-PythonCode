@@ -1,0 +1,8 @@
+
+
+FmokeFile.iteritems
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.iteritems

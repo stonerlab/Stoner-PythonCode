@@ -1,0 +1,8 @@
+
+
+TDMSFile.clear
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.clear

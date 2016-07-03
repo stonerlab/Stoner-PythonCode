@@ -1,0 +1,8 @@
+
+
+objectFolder.add_group
+=====================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: objectFolder.add_group

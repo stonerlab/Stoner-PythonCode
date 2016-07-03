@@ -541,7 +541,7 @@
 
 <span class="k">if</span> <span class="n">SEABORN</span><span class="p">:</span> <span class="c1"># extra classes if we have seaborn available</span>
 
-<div class="viewcode-block" id="SeabornPlotStyle"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.html#Stoner.Plot.SeabornPlotStyle">[docs]</a>    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">SeabornPlotStyle</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</span>
 
 <span class="sd">        Attributes:</span>
@@ -595,12 +595,12 @@
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;style name should be one of  {darkgrid, whitegrid, dark, white, ticks}&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="SeabornPlotStyle.apply"><a class="viewcode-back" href="../../classes/Stoner.PlotFormats.SeabornPlotStyle.apply.html#Stoner.Plot.SeabornPlotStyle.apply">[docs]</a>        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Override base method to apply seaborn style sheets.&quot;&quot;&quot;</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stylename</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">)</span>
             <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_palette</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customise</span><span class="p">()</span>
 </pre></div>
 
           </div>
@@ -614,8 +614,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -640,8 +640,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

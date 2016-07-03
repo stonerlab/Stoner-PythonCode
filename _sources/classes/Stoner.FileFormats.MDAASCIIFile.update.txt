@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.update
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.update

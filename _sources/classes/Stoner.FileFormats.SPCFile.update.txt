@@ -1,0 +1,8 @@
+
+
+SPCFile.update
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.update

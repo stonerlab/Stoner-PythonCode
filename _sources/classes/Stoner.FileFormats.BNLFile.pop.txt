@@ -1,0 +1,8 @@
+
+
+BNLFile.pop
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BNLFile.pop

@@ -15,6 +15,7 @@ Stoner.FileFormats.EasyPlotFile
    
       ~Stoner.FileFormats.EasyPlotFile.__init__
       ~Stoner.FileFormats.EasyPlotFile.add_column
+      ~Stoner.FileFormats.EasyPlotFile.clear
       ~Stoner.FileFormats.EasyPlotFile.closest
       ~Stoner.FileFormats.EasyPlotFile.column
       ~Stoner.FileFormats.EasyPlotFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.get
       ~Stoner.FileFormats.EasyPlotFile.get_filename
       ~Stoner.FileFormats.EasyPlotFile.insert_rows
+      ~Stoner.FileFormats.EasyPlotFile.items
+      ~Stoner.FileFormats.EasyPlotFile.iteritems
+      ~Stoner.FileFormats.EasyPlotFile.iterkeys
+      ~Stoner.FileFormats.EasyPlotFile.itervalues
       ~Stoner.FileFormats.EasyPlotFile.keys
       ~Stoner.FileFormats.EasyPlotFile.load
+      ~Stoner.FileFormats.EasyPlotFile.pop
+      ~Stoner.FileFormats.EasyPlotFile.popitem
       ~Stoner.FileFormats.EasyPlotFile.rename
       ~Stoner.FileFormats.EasyPlotFile.reorder_columns
       ~Stoner.FileFormats.EasyPlotFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.save
       ~Stoner.FileFormats.EasyPlotFile.search
       ~Stoner.FileFormats.EasyPlotFile.section
+      ~Stoner.FileFormats.EasyPlotFile.setdefault
       ~Stoner.FileFormats.EasyPlotFile.sort
       ~Stoner.FileFormats.EasyPlotFile.swap_column
       ~Stoner.FileFormats.EasyPlotFile.unique
+      ~Stoner.FileFormats.EasyPlotFile.update
+      ~Stoner.FileFormats.EasyPlotFile.values
 
    
    

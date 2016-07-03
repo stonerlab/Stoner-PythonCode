@@ -1,0 +1,8 @@
+
+
+FmokeFile.clear
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.clear

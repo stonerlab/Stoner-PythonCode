@@ -71,7 +71,8 @@
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="kn">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">inspect</span> <span class="kn">as</span> <span class="nn">_inspect_</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span><span class="n">MutableMapping</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">python_v3</span> <span class="c1"># blist doesn&#39;t seem entirely reliable in 3.5 :-(</span>
     <span class="kn">from</span> <span class="nn">blist</span> <span class="kn">import</span> <span class="n">sorteddict</span>
@@ -992,6 +993,47 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div></div>
 
+<span class="k">class</span> <span class="nc">metadataObject</span><span class="p">(</span><span class="n">MutableMapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Provides a base class representing some sort of object that has metadata stored in a :py:class:`Stoner.Core.typeHintedDict` object.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary</span>
+<span class="sd">                                   tries to retain information about the type of</span>
+<span class="sd">                                   data so as to aid import and export from CM group LabVIEw code.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialises the current metadata attribute.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">__iter__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stub method for a save function.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Save is not implemented in the base class.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stub method for a load function.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Save is not implemented in the base class.&quot;</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="DataArray"><a class="viewcode-back" href="../../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray">[docs]</a><span class="k">class</span> <span class="nc">DataArray</span><span class="p">(</span><span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A sub class of :py:class:`numpy.ma.MaskedArray` with a copy of the setas attribute to allow indexing by name.</span>
 
@@ -1066,6 +1108,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span><span class="o">=</span><span class="bp">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;shape&#39;</span><span class="p">,(</span><span class="mi">0</span><span class="p">,))</span>
 
+    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make sure ufuncs do the right thing with DataArrays&quot;&quot;&quot;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="n">_ma_</span><span class="o">.</span><span class="n">MaskedArray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="c1">#Overrides __getattr__ to allow access as row.x etc.</span>
@@ -1123,14 +1171,14 @@
 <span class="sd">            row major and tries to do the right thing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Is this goign to be a single row ?</span>
-        <span class="n">single_row</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">int</span><span class="p">))</span>
+        <span class="n">single_row</span><span class="o">=</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="n">int_types</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">int_types</span><span class="p">))</span>
         <span class="c1">#If the index is a single string type, then build a column accessing index</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">ix</span><span class="o">=</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ix</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ix</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">ix</span><span class="p">),)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,(</span><span class="nb">int</span><span class="p">,</span><span class="nb">slice</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,(</span><span class="n">int_types</span><span class="p">,</span><span class="nb">slice</span><span class="p">)):</span>
                 <span class="n">ix</span><span class="o">=</span><span class="p">(</span><span class="n">ix</span><span class="p">,)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">string_types</span><span class="p">):</span> <span class="c1"># index still has a string type in it</span>
             <span class="n">ix</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span>
@@ -1350,14 +1398,11 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Swap parameter must be either a tuple or a </span><span class="se">\</span>
 <span class="s2">            list of tuples&quot;</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile">[docs]</a><span class="k">class</span> <span class="nc">DataFile</span><span class="p">(</span><span class="n">metadataObject</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Core.DataFile` is the base class object that represents</span>
 <span class="sd">    a matrix of data, associated metadata and column headers.</span>
 
 <span class="sd">    Attributes:</span>
-<span class="sd">        metadata (typeHintedDict): of key-value metadata pairs. The dictionary</span>
-<span class="sd">                                   tries to retain information about the type of</span>
-<span class="sd">                                   data so as to aid import and export from CM group LabVIEw code.</span>
 <span class="sd">        column_headers (list): of strings of the column names of the data.</span>
 <span class="sd">        data (2D numpy masked array): The attribute that stores the nuermical data for each DataFile. This is a :py:class:`DataArray` instance - which</span>
 <span class="sd">            is itself a subclass of :py:class:`numpy.ma.MaskedArray`.</span>
@@ -1445,9 +1490,9 @@
 <span class="sd">                used to set those public attributes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># init instance attributes</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="c1"># initialise self.metadata)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="p">[</span><span class="bp">False</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;_data&quot;</span><span class="p">,</span><span class="n">DataArray</span><span class="p">([]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -1647,7 +1692,7 @@
     <span class="k">def</span> <span class="nf">subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of all in memory subclasses of this DataFile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">subclasses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">priority</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itersubclasses</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)}</span>
+        <span class="n">subclasses</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">itersubclasses</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)}</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;DataFile&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFile</span>
         <span class="k">for</span> <span class="n">cls</span><span class="p">,</span> <span class="n">priority</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">subclasses</span><span class="o">.</span><span class="n">items</span><span class="p">()),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
@@ -1834,25 +1879,36 @@
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
         <span class="c1">#Get other to be a numpy masked array of data</span>
+        <span class="c1">#Get other_headers to be a suitable length list of strings</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-            <span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+            <span class="n">other_headers</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">column_headers</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
             <span class="n">other</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 1D array, make it 2D column</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">other_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Column {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">other</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 1D array, make it 2D column</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+                <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">other_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Column {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">newdata</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># 1D array, make it 2D column</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">T</span>
-        <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Special case no data yet</span>
+        <span class="n">newdata_headers</span><span class="o">=</span><span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span><span class="o">+</span><span class="n">other_headers</span>
+
+        <span class="c1"># Workout whether to extend rows on one side or the other</span>
+        <span class="k">if</span> <span class="n">_np_</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Special case no data yet</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">other</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1">#Need to extend self.data</span>
+        <span class="k">elif</span> <span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>  <span class="c1">#Need to extend self.data</span>
             <span class="n">extra_rows</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">extra_rows</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">new_mask</span> <span class="o">=</span> <span class="n">newdata</span><span class="o">.</span><span class="n">mask</span>
@@ -1861,7 +1917,7 @@
             <span class="n">other_mask</span> <span class="o">=</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">getmaskarray</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
             <span class="n">new_mask</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">other_mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">new_mask</span>
-        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">newdata</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
             <span class="c1"># too few rows we can extend with zeros</span>
             <span class="n">extra_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">other</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">extra_rows</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span> <span class="mi">0</span><span class="p">)</span>
@@ -1871,11 +1927,9 @@
             <span class="n">new_mask</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">other_mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">new_mask</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;Column {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-                                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+
         <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
-        <span class="n">setas</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">newdata</span><span class="o">.</span><span class="n">column_headers</span>
+        <span class="n">setas</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">newdata_headers</span>
         <span class="n">newdata</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">setas</span>
         <span class="n">newdata</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="n">newdata</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
@@ -1942,9 +1996,9 @@
 
     <span class="k">def</span> <span class="nf">__sub_core__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">newdata</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actually do the subtraction.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">slice</span><span class="p">,</span> <span class="n">int_types</span><span class="p">))</span> <span class="ow">or</span> <span class="nb">callable</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">all_type</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">all_type</span><span class="p">(</span><span class="nb">bool</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">all_type</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">int_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">all_type</span><span class="p">(</span><span class="nb">bool</span><span class="p">)):</span>
             <span class="n">newdata</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">newdata</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
@@ -2461,7 +2515,7 @@
     <span class="k">def</span> <span class="nf">__search_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper for the search method that returns an array of booleans for indexing matching rows.&quot;&quot;&quot;</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">int_types</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="n">ix</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="n">x</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">),</span> <span class="n">accuracy</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
@@ -2841,21 +2895,21 @@
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                     <span class="n">col</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="bp">False</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">col</span><span class="p">)))</span>
                 <span class="n">col</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span> <span class="k">if</span> <span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">invert</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">invert</span><span class="p">:</span>
                 <span class="n">col</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">invert</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="n">all_type</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">invert</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">invert</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">invert</span><span class="p">:</span>
                 <span class="n">tmp_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span>
                 <span class="n">tmp_setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tmp_mask</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">tmp_setas</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">invert</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">invert</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">([</span><span class="n">c</span><span class="p">],</span> <span class="n">invert</span><span class="o">=</span><span class="n">invert</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
@@ -3134,7 +3188,7 @@
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">exclude_centre</span><span class="p">:</span>
             <span class="n">exclude_centre</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="n">int_types</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_centre</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">exclude_centre</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If excluding the centre of the window, this must be an odd number of rows.&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">window</span> <span class="o">-</span> <span class="n">exclude_centre</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">window</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">window</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -3449,8 +3503,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -3475,8 +3529,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

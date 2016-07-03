@@ -1,0 +1,8 @@
+
+
+TDMSFile.setdefault
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.setdefault

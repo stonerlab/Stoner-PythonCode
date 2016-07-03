@@ -72,7 +72,7 @@
 <td><a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> is the base class object that represents</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.DataArray</span></code></a></td>
-<td>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.10)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</td>
+<td>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict" title="Stoner.Core.typeHintedDict"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.typeHintedDict</span></code></a>(*args,&nbsp;**kargs)</td>
 <td>Extends a <code class="xref py py-class docutils literal"><span class="pre">blist.sorteddict</span></code> to include type hints of what each key contains.</td>
@@ -182,10 +182,10 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>Implements a class that manages lists of data files (e.g.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.PlotFolder.html#Stoner.Folders.PlotFolder" title="Stoner.Folders.PlotFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.PlotFolder</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>A subclass of <code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code> with extra methods for plotting lots of files.</td>
+<td>A subclass of <code class="xref py py-class docutils literal"><span class="pre">objectFolder</span></code> with extra methods for plotting lots of files.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.absolute_import.html#Stoner.Folders.absolute_import" title="Stoner.Folders.absolute_import"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.absolute_import</span></code></a></td>
 <td></td>
@@ -199,16 +199,19 @@
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.int_types.html#Stoner.Folders.int_types" title="Stoner.Folders.int_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.int_types</span></code></a></td>
 <td>tuple() -&gt; empty tuple</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.print_function.html#Stoner.Folders.print_function" title="Stoner.Folders.print_function"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.print_function</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.objectFolder.html#Stoner.Folders.objectFolder" title="Stoner.Folders.objectFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.objectFolder</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Implements a class that manages lists of data files (e.g.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.print_function.html#Stoner.Folders.print_function" title="Stoner.Folders.print_function"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.print_function</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.python_v3.html#Stoner.Folders.python_v3" title="Stoner.Folders.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.python_v3</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.python_v3.html#Stoner.Folders.python_v3" title="Stoner.Folders.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.python_v3</span></code></a></td>
 <td>bool(x) -&gt; bool</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.string_types.html#Stoner.Folders.string_types" title="Stoner.Folders.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.string_types</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.string_types.html#Stoner.Folders.string_types" title="Stoner.Folders.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.string_types</span></code></a></td>
 <td>tuple() -&gt; empty tuple</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.unicode_literals.html#Stoner.Folders.unicode_literals" title="Stoner.Folders.unicode_literals"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.unicode_literals</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.unicode_literals.html#Stoner.Folders.unicode_literals" title="Stoner.Folders.unicode_literals"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.unicode_literals</span></code></a></td>
 <td></td>
 </tr>
 </tbody>
@@ -329,19 +332,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.PRBPlotStyle.html#Stoner.PlotFormats.PRBPlotStyle" title="Stoner.PlotFormats.PRBPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.PRBPlotStyle</span></code></a>(**kargs)</td>
 <td>A figure Style for making figures for Phys Rev * Jounrals.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SeabornPlotStyle.html#Stoner.PlotFormats.SeabornPlotStyle" title="Stoner.PlotFormats.SeabornPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SeabornPlotStyle</span></code></a>(**kargs)</td>
-<td>A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SketchPlot.html#Stoner.PlotFormats.SketchPlot" title="Stoner.PlotFormats.SketchPlot"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SketchPlot</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.SketchPlot.html#Stoner.PlotFormats.SketchPlot" title="Stoner.PlotFormats.SketchPlot"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.SketchPlot</span></code></a>(**kargs)</td>
 <td>Turn on xkcd plot style.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexEngFormatter</span></code></a>([unit,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexEngFormatter.html#Stoner.PlotFormats.TexEngFormatter" title="Stoner.PlotFormats.TexEngFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexEngFormatter</span></code></a>([unit,&nbsp;...])</td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexFormatter</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.TexFormatter.html#Stoner.PlotFormats.TexFormatter" title="Stoner.PlotFormats.TexFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.TexFormatter</span></code></a></td>
 <td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.ThesisPlotStyle</span></code></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.PlotFormats.ThesisPlotStyle.html#Stoner.PlotFormats.ThesisPlotStyle" title="Stoner.PlotFormats.ThesisPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.PlotFormats.ThesisPlotStyle</span></code></a>(**kargs)</td>
 <td>Template class for Joe&#8217;s Plot settings.</td>
 </tr>
 </tbody>
@@ -651,12 +651,7 @@
 <div class="section" id="subpackages">
 <h3>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h3>
 <div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Stoner.gui.html">gui Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.gui.html#id1"><code class="docutils literal"><span class="pre">gui</span></code> Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Stoner.gui.html#module-Stoner.gui.traits_Stoner"><code class="docutils literal"><span class="pre">traits_Stoner</span></code> Module</a></li>
-</ul>
-</li>
+<ul class="simple">
 </ul>
 </div>
 </div>
@@ -740,8 +735,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -771,8 +766,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="LSTemperatureFile.__init__" href="Stoner.FileFormats.LSTemperatureFile.__init__.html" />
-    <link rel="prev" title="XRDFile.unique" href="Stoner.FileFormats.XRDFile.unique.html" /> 
+    <link rel="prev" title="XRDFile.values" href="Stoner.FileFormats.XRDFile.values.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -43,7 +43,7 @@
           <a href="Stoner.FileFormats.LSTemperatureFile.__init__.html" title="LSTemperatureFile.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.XRDFile.unique.html" title="XRDFile.unique"
+          <a href="Stoner.FileFormats.XRDFile.values.html" title="XRDFile.values"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -79,65 +79,89 @@ other temperature calibration data !</p>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.add_column.html#Stoner.FileFormats.LSTemperatureFile.add_column" title="Stoner.FileFormats.LSTemperatureFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
 <td>Appends a column of data or inserts a column to a datafile instance.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.closest.html#Stoner.FileFormats.LSTemperatureFile.closest" title="Stoner.FileFormats.LSTemperatureFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.clear.html#Stoner.FileFormats.LSTemperatureFile.clear" title="Stoner.FileFormats.LSTemperatureFile.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;D.)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.closest.html#Stoner.FileFormats.LSTemperatureFile.closest" title="Stoner.FileFormats.LSTemperatureFile.closest"><code class="xref py py-obj docutils literal"><span class="pre">closest</span></code></a>(value[,&nbsp;xcol])</td>
 <td>Return the row in a data file which has an x-column value closest to the given value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.column.html#Stoner.FileFormats.LSTemperatureFile.column" title="Stoner.FileFormats.LSTemperatureFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.column.html#Stoner.FileFormats.LSTemperatureFile.column" title="Stoner.FileFormats.LSTemperatureFile.column"><code class="xref py py-obj docutils literal"><span class="pre">column</span></code></a>(col)</td>
 <td>Extracts one or more columns of data from the datafile by name, partial name, regular expression or numeric index.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.columns.html#Stoner.FileFormats.LSTemperatureFile.columns" title="Stoner.FileFormats.LSTemperatureFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.columns.html#Stoner.FileFormats.LSTemperatureFile.columns" title="Stoner.FileFormats.LSTemperatureFile.columns"><code class="xref py py-obj docutils literal"><span class="pre">columns</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over the columns of data int he datafile.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.del_column.html#Stoner.FileFormats.LSTemperatureFile.del_column" title="Stoner.FileFormats.LSTemperatureFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.del_column.html#Stoner.FileFormats.LSTemperatureFile.del_column" title="Stoner.FileFormats.LSTemperatureFile.del_column"><code class="xref py py-obj docutils literal"><span class="pre">del_column</span></code></a>([col,&nbsp;duplicates])</td>
 <td>Deletes a column from the current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.del_rows.html#Stoner.FileFormats.LSTemperatureFile.del_rows" title="Stoner.FileFormats.LSTemperatureFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.del_rows.html#Stoner.FileFormats.LSTemperatureFile.del_rows" title="Stoner.FileFormats.LSTemperatureFile.del_rows"><code class="xref py py-obj docutils literal"><span class="pre">del_rows</span></code></a>([col,&nbsp;val,&nbsp;invert])</td>
 <td>Searchs in the numerica data for the lines that match and deletes the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.dir.html#Stoner.FileFormats.LSTemperatureFile.dir" title="Stoner.FileFormats.LSTemperatureFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.dir.html#Stoner.FileFormats.LSTemperatureFile.dir" title="Stoner.FileFormats.LSTemperatureFile.dir"><code class="xref py py-obj docutils literal"><span class="pre">dir</span></code></a>([pattern])</td>
 <td>Return a list of keys in the metadata, filtering wiht a regular expression if necessary.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.filter.html#Stoner.FileFormats.LSTemperatureFile.filter" title="Stoner.FileFormats.LSTemperatureFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.filter.html#Stoner.FileFormats.LSTemperatureFile.filter" title="Stoner.FileFormats.LSTemperatureFile.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([func,&nbsp;cols,&nbsp;reset])</td>
 <td>Sets the mask on rows of data by evaluating a function for each row.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.find_col.html#Stoner.FileFormats.LSTemperatureFile.find_col" title="Stoner.FileFormats.LSTemperatureFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.find_col.html#Stoner.FileFormats.LSTemperatureFile.find_col" title="Stoner.FileFormats.LSTemperatureFile.find_col"><code class="xref py py-obj docutils literal"><span class="pre">find_col</span></code></a>(col[,&nbsp;force_list])</td>
 <td>Indexes the column headers in order to locate a column of data.shape.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.get.html#Stoner.FileFormats.LSTemperatureFile.get" title="Stoner.FileFormats.LSTemperatureFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.get.html#Stoner.FileFormats.LSTemperatureFile.get" title="Stoner.FileFormats.LSTemperatureFile.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(item[,&nbsp;default])</td>
 <td>A wrapper around __get_item__ that handles missing keys by returning None.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.get_filename.html#Stoner.FileFormats.LSTemperatureFile.get_filename" title="Stoner.FileFormats.LSTemperatureFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.get_filename.html#Stoner.FileFormats.LSTemperatureFile.get_filename" title="Stoner.FileFormats.LSTemperatureFile.get_filename"><code class="xref py py-obj docutils literal"><span class="pre">get_filename</span></code></a>(mode)</td>
 <td>Forces the user to choose a new filename using a system dialog box.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.insert_rows.html#Stoner.FileFormats.LSTemperatureFile.insert_rows" title="Stoner.FileFormats.LSTemperatureFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.insert_rows.html#Stoner.FileFormats.LSTemperatureFile.insert_rows" title="Stoner.FileFormats.LSTemperatureFile.insert_rows"><code class="xref py py-obj docutils literal"><span class="pre">insert_rows</span></code></a>(row,&nbsp;new_data)</td>
 <td>Insert new_data into the data array at position row.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.keys.html#Stoner.FileFormats.LSTemperatureFile.keys" title="Stoner.FileFormats.LSTemperatureFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.items.html#Stoner.FileFormats.LSTemperatureFile.items" title="Stoner.FileFormats.LSTemperatureFile.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;(key,&nbsp;value)&nbsp;pairs,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.iteritems.html#Stoner.FileFormats.LSTemperatureFile.iteritems" title="Stoner.FileFormats.LSTemperatureFile.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;(key,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.iterkeys.html#Stoner.FileFormats.LSTemperatureFile.iterkeys" title="Stoner.FileFormats.LSTemperatureFile.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;keys&nbsp;of&nbsp;D)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.itervalues.html#Stoner.FileFormats.LSTemperatureFile.itervalues" title="Stoner.FileFormats.LSTemperatureFile.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.keys.html#Stoner.FileFormats.LSTemperatureFile.keys" title="Stoner.FileFormats.LSTemperatureFile.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
 <td>An alias for <code class="xref py py-meth docutils literal"><span class="pre">DataFile.dir(None)()</span></code> .</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.load.html#Stoner.FileFormats.LSTemperatureFile.load" title="Stoner.FileFormats.LSTemperatureFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.load.html#Stoner.FileFormats.LSTemperatureFile.load" title="Stoner.FileFormats.LSTemperatureFile.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>([filename,&nbsp;auto_load,&nbsp;filetype])</td>
 <td>Loads the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> in from disc guessing a better subclass if necessary.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rename.html#Stoner.FileFormats.LSTemperatureFile.rename" title="Stoner.FileFormats.LSTemperatureFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.pop.html#Stoner.FileFormats.LSTemperatureFile.pop" title="Stoner.FileFormats.LSTemperatureFile.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;...)</td>
+<td>If key is not found, d is returned if given, otherwise KeyError is raised.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.popitem.html#Stoner.FileFormats.LSTemperatureFile.popitem" title="Stoner.FileFormats.LSTemperatureFile.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a>(()&nbsp;-&gt;&nbsp;(k,&nbsp;v),&nbsp;...)</td>
+<td>as a 2-tuple; but raise KeyError if D is empty.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rename.html#Stoner.FileFormats.LSTemperatureFile.rename" title="Stoner.FileFormats.LSTemperatureFile.rename"><code class="xref py py-obj docutils literal"><span class="pre">rename</span></code></a>(old_col,&nbsp;new_col)</td>
 <td>Renames columns without changing the underlying data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.reorder_columns.html#Stoner.FileFormats.LSTemperatureFile.reorder_columns" title="Stoner.FileFormats.LSTemperatureFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.reorder_columns.html#Stoner.FileFormats.LSTemperatureFile.reorder_columns" title="Stoner.FileFormats.LSTemperatureFile.reorder_columns"><code class="xref py py-obj docutils literal"><span class="pre">reorder_columns</span></code></a>(cols[,&nbsp;headers_too,&nbsp;setas_too])</td>
 <td>Construct a new data array from the original data by assembling the columns in the order given.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rolling_window.html#Stoner.FileFormats.LSTemperatureFile.rolling_window" title="Stoner.FileFormats.LSTemperatureFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rolling_window.html#Stoner.FileFormats.LSTemperatureFile.rolling_window" title="Stoner.FileFormats.LSTemperatureFile.rolling_window"><code class="xref py py-obj docutils literal"><span class="pre">rolling_window</span></code></a>([window,&nbsp;wrap,&nbsp;exclude_centre])</td>
 <td>Iterator that return a rolling window section of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rows.html#Stoner.FileFormats.LSTemperatureFile.rows" title="Stoner.FileFormats.LSTemperatureFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.rows.html#Stoner.FileFormats.LSTemperatureFile.rows" title="Stoner.FileFormats.LSTemperatureFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.save.html#Stoner.FileFormats.LSTemperatureFile.save" title="Stoner.FileFormats.LSTemperatureFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.save.html#Stoner.FileFormats.LSTemperatureFile.save" title="Stoner.FileFormats.LSTemperatureFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
 <td>Overrides the save method to allow CSVFiles to be written out to disc (as a mininmalist output)</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.search.html#Stoner.FileFormats.LSTemperatureFile.search" title="Stoner.FileFormats.LSTemperatureFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.search.html#Stoner.FileFormats.LSTemperatureFile.search" title="Stoner.FileFormats.LSTemperatureFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.section.html#Stoner.FileFormats.LSTemperatureFile.section" title="Stoner.FileFormats.LSTemperatureFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.section.html#Stoner.FileFormats.LSTemperatureFile.section" title="Stoner.FileFormats.LSTemperatureFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.setdefault.html#Stoner.FileFormats.LSTemperatureFile.setdefault" title="Stoner.FileFormats.LSTemperatureFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.sort.html#Stoner.FileFormats.LSTemperatureFile.sort" title="Stoner.FileFormats.LSTemperatureFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
 <td>Sorts the data by column name.</td>
@@ -147,6 +171,12 @@ other temperature calibration data !</p>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.unique.html#Stoner.FileFormats.LSTemperatureFile.unique" title="Stoner.FileFormats.LSTemperatureFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.update.html#Stoner.FileFormats.LSTemperatureFile.update" title="Stoner.FileFormats.LSTemperatureFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
+<td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.LSTemperatureFile.values.html#Stoner.FileFormats.LSTemperatureFile.values" title="Stoner.FileFormats.LSTemperatureFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -215,8 +245,8 @@ other temperature calibration data !</p>
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.FileFormats.XRDFile.unique.html"
-                        title="previous chapter">XRDFile.unique</a></p>
+  <p class="topless"><a href="Stoner.FileFormats.XRDFile.values.html"
+                        title="previous chapter">XRDFile.values</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.FileFormats.LSTemperatureFile.__init__.html"
                         title="next chapter">LSTemperatureFile.__init__</a></p>
@@ -230,8 +260,8 @@ other temperature calibration data !</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -254,7 +284,7 @@ other temperature calibration data !</p>
           <a href="Stoner.FileFormats.LSTemperatureFile.__init__.html" title="LSTemperatureFile.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.FileFormats.XRDFile.unique.html" title="XRDFile.unique"
+          <a href="Stoner.FileFormats.XRDFile.values.html" title="XRDFile.values"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -262,8 +292,8 @@ other temperature calibration data !</p>
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

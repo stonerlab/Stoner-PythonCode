@@ -1,0 +1,8 @@
+
+
+VSMFile.iterkeys
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.iterkeys

@@ -1,0 +1,8 @@
+
+
+TDMSFile.update
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.update

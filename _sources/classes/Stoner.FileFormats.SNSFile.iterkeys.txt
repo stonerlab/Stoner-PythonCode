@@ -1,0 +1,8 @@
+
+
+SNSFile.iterkeys
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.iterkeys

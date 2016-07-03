@@ -1,0 +1,8 @@
+
+
+objectFolder.insert
+==================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: objectFolder.insert

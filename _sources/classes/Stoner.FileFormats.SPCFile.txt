@@ -15,6 +15,7 @@ Stoner.FileFormats.SPCFile
    
       ~Stoner.FileFormats.SPCFile.__init__
       ~Stoner.FileFormats.SPCFile.add_column
+      ~Stoner.FileFormats.SPCFile.clear
       ~Stoner.FileFormats.SPCFile.closest
       ~Stoner.FileFormats.SPCFile.column
       ~Stoner.FileFormats.SPCFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.get
       ~Stoner.FileFormats.SPCFile.get_filename
       ~Stoner.FileFormats.SPCFile.insert_rows
+      ~Stoner.FileFormats.SPCFile.items
+      ~Stoner.FileFormats.SPCFile.iteritems
+      ~Stoner.FileFormats.SPCFile.iterkeys
+      ~Stoner.FileFormats.SPCFile.itervalues
       ~Stoner.FileFormats.SPCFile.keys
       ~Stoner.FileFormats.SPCFile.load
+      ~Stoner.FileFormats.SPCFile.pop
+      ~Stoner.FileFormats.SPCFile.popitem
       ~Stoner.FileFormats.SPCFile.rename
       ~Stoner.FileFormats.SPCFile.reorder_columns
       ~Stoner.FileFormats.SPCFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.save
       ~Stoner.FileFormats.SPCFile.search
       ~Stoner.FileFormats.SPCFile.section
+      ~Stoner.FileFormats.SPCFile.setdefault
       ~Stoner.FileFormats.SPCFile.sort
       ~Stoner.FileFormats.SPCFile.swap_column
       ~Stoner.FileFormats.SPCFile.unique
+      ~Stoner.FileFormats.SPCFile.update
+      ~Stoner.FileFormats.SPCFile.values
 
    
    

@@ -1,0 +1,8 @@
+
+
+TDMSFile.pop
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.pop

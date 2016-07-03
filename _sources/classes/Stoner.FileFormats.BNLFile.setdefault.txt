@@ -1,0 +1,8 @@
+
+
+BNLFile.setdefault
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BNLFile.setdefault

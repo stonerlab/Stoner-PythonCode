@@ -1,0 +1,8 @@
+
+
+OpenGDAFile.setdefault
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: OpenGDAFile.setdefault

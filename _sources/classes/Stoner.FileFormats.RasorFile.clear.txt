@@ -1,0 +1,8 @@
+
+
+RasorFile.clear
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.clear

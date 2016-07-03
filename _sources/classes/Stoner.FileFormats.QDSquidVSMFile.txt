@@ -15,6 +15,7 @@ Stoner.FileFormats.QDSquidVSMFile
    
       ~Stoner.FileFormats.QDSquidVSMFile.__init__
       ~Stoner.FileFormats.QDSquidVSMFile.add_column
+      ~Stoner.FileFormats.QDSquidVSMFile.clear
       ~Stoner.FileFormats.QDSquidVSMFile.closest
       ~Stoner.FileFormats.QDSquidVSMFile.column
       ~Stoner.FileFormats.QDSquidVSMFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.QDSquidVSMFile
       ~Stoner.FileFormats.QDSquidVSMFile.get
       ~Stoner.FileFormats.QDSquidVSMFile.get_filename
       ~Stoner.FileFormats.QDSquidVSMFile.insert_rows
+      ~Stoner.FileFormats.QDSquidVSMFile.items
+      ~Stoner.FileFormats.QDSquidVSMFile.iteritems
+      ~Stoner.FileFormats.QDSquidVSMFile.iterkeys
+      ~Stoner.FileFormats.QDSquidVSMFile.itervalues
       ~Stoner.FileFormats.QDSquidVSMFile.keys
       ~Stoner.FileFormats.QDSquidVSMFile.load
+      ~Stoner.FileFormats.QDSquidVSMFile.pop
+      ~Stoner.FileFormats.QDSquidVSMFile.popitem
       ~Stoner.FileFormats.QDSquidVSMFile.rename
       ~Stoner.FileFormats.QDSquidVSMFile.reorder_columns
       ~Stoner.FileFormats.QDSquidVSMFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.QDSquidVSMFile
       ~Stoner.FileFormats.QDSquidVSMFile.save
       ~Stoner.FileFormats.QDSquidVSMFile.search
       ~Stoner.FileFormats.QDSquidVSMFile.section
+      ~Stoner.FileFormats.QDSquidVSMFile.setdefault
       ~Stoner.FileFormats.QDSquidVSMFile.sort
       ~Stoner.FileFormats.QDSquidVSMFile.swap_column
       ~Stoner.FileFormats.QDSquidVSMFile.unique
+      ~Stoner.FileFormats.QDSquidVSMFile.update
+      ~Stoner.FileFormats.QDSquidVSMFile.values
 
    
    

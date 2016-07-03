@@ -1,0 +1,8 @@
+
+
+SNSFile.popitem
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.popitem

@@ -1,0 +1,8 @@
+
+
+BigBlueFile.setdefault
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.setdefault

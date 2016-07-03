@@ -1,0 +1,8 @@
+
+
+RasorFile.pop
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.pop

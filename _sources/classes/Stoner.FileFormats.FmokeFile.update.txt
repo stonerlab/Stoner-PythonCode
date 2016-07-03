@@ -1,0 +1,8 @@
+
+
+FmokeFile.update
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.update

@@ -1,0 +1,8 @@
+
+
+EasyPlotFile.pop
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: EasyPlotFile.pop

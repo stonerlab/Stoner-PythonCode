@@ -1,0 +1,8 @@
+
+
+XRDFile.clear
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.clear

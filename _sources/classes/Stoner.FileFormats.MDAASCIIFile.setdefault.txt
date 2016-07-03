@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.setdefault
+==========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.setdefault

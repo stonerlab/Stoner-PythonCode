@@ -60,141 +60,7 @@
 <dl class="class">
 <dt id="Stoner.Folders.DataFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">DataFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#DataFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.DataFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways</p>
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.basenames">
-<code class="descname">basenames</code><a class="headerlink" href="#Stoner.Folders.DataFolder.basenames" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of str</em> &#8211; Returns the list of files after passing through os.path.basename()</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.depth">
-<code class="descname">depth</code><a class="headerlink" href="#Stoner.Folders.DataFolder.depth" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211; Maximum number of levels of groups below this <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.directory">
-<code class="descname">directory</code><a class="headerlink" href="#Stoner.Folders.DataFolder.directory" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>string</em> &#8211; Root directory of the files handled by the DataFolder</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.extra_args">
-<code class="descname">extra_args</code><a class="headerlink" href="#Stoner.Folders.DataFolder.extra_args" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>dict</em> &#8211; Extra Arguments to pass to the constructors of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
-objects.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.files">
-<code class="descname">files</code><a class="headerlink" href="#Stoner.Folders.DataFolder.files" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list</em> &#8211; List of filenames or loaded <code class="xref py py-class docutils literal"><span class="pre">Stoner.DataFile</span></code> instances</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.groups">
-<code class="descname">groups</code><a class="headerlink" href="#Stoner.Folders.DataFolder.groups" title="Permalink to this definition">¶</a></dt>
-<dd><p>dict of <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.ls">
-<code class="descname">ls</code><a class="headerlink" href="#Stoner.Folders.DataFolder.ls" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of str</em> &#8211; Returns a list of filenames (either the matched filename patterns, or
-:py;attr:<cite>Stoner.Core.DataFile.filename</cite> if DataFolder.files contains DataFile objects</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.loaded">
-<code class="descname">loaded</code><a class="headerlink" href="#Stoner.Folders.DataFolder.loaded" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of bool</em> &#8211; Inidicates which fiels are loaded in memory for the <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a></p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.lsgrp">
-<code class="descname">lsgrp</code><a class="headerlink" href="#Stoner.Folders.DataFolder.lsgrp" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list of str</em> &#8211; Returns a list of the group keys (equivalent to DataFolder.groups.keys()</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.mindepth">
-<code class="descname">mindepth</code><a class="headerlink" href="#Stoner.Folders.DataFolder.mindepth" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em> &#8211; Minimum number of levels of groups from this <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to a terminal group.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.multifile">
-<code class="descname">multifile</code><a class="headerlink" href="#Stoner.Folders.DataFolder.multifile" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> &#8211; if True a multi-file dialog box is used to load several files from the same folder</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.pattern">
-<code class="descname">pattern</code><a class="headerlink" href="#Stoner.Folders.DataFolder.pattern" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>string or re or sequence of strings and re</em> &#8211; Matches which files in the  directory tree are included.
-If pattern is a compiled reular expression with named groups then the named groups are used to
-generate metadata in the <code class="xref py py-class docutils literal"><span class="pre">Stoner.DataFile</span></code> object. If pattern is a list, then the set of
-files included in the py:class:<cite>DataFolder</cite> is the union of files that match any single pattern.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.read_means">
-<code class="descname">read_means</code><a class="headerlink" href="#Stoner.Folders.DataFolder.read_means" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> &#8211; If true, create metadata when reading each file that is the mean of each column</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.setas">
-<code class="descname">setas</code><a class="headerlink" href="#Stoner.Folders.DataFolder.setas" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>list or string</em> &#8211; Sets the default value of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute for each
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> in the folder.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.skip_empty">
-<code class="descname">skip_empty</code><a class="headerlink" href="#Stoner.Folders.DataFolder.skip_empty" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>bool</em> &#8211; Controls whether iterating over the Folder will skip over empty files. Defaults to False.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="Stoner.Folders.DataFolder.type">
-<code class="descname">type</code><a class="headerlink" href="#Stoner.Folders.DataFolder.type" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>DataFile</em> &#8211; The type of the members of the <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>. Can be either a subclass of
-<a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> or an instance of one (in which ase the class of the instance is used).</p>
-</dd></dl>
-
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>directory</strong> (string or <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> instance) &#8211; Where to get the data files from. If False will bring up a dialog for selecting the directory</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>type</strong> (<em>class</em>) &#8211; An subclass of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFolder</span></code> that will be used to construct the individual DataFile objects in the folder</li>
-<li><strong>pattern</strong> (<em>string or re</em>) &#8211; A filename pattern - either globbing string or regular expression</li>
-<li><strong>nolist</strong> (<em>bool</em>) &#8211; Delay doing a directory scan to get data files</li>
-<li><strong>multifile</strong> (<em>bool</em>) &#8211; if True brings up a dialog for selecting files from a directory.</li>
-<li><strong>read_means</strong> (<em>bool</em>) &#8211; Calculate the average value of each column and add it as metadata entries to the file.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The newly constructed instance</p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">All other keywords are set as attributes of the DataFolder.</p>
-</div>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Handle <code class="xref py py-meth docutils literal"><span class="pre">__init__(DataFolder)()</span></code> with subclasses</p>
-</div>
-<p class="rubric">Methods</p>
+<dd><p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -204,95 +70,14 @@ files included in the py:class:<cite>DataFolder</cite> is the union of files tha
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.__init__.html#Stoner.Folders.DataFolder.__init__" title="Stoner.Folders.DataFolder.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.add_group.html#Stoner.Folders.DataFolder.add_group" title="Stoner.Folders.DataFolder.add_group"><code class="xref py py-obj docutils literal"><span class="pre">add_group</span></code></a>(key)</td>
-<td>Add a new group to the current Folder with the given key.</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.concatentate.html#Stoner.Folders.DataFolder.concatentate" title="Stoner.Folders.DataFolder.concatentate"><code class="xref py py-obj docutils literal"><span class="pre">concatentate</span></code></a>([sort,&nbsp;reverse])</td>
+<td>Concatentates all the files in a objectFolder into a single metadataObject like object.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.concatentate.html#Stoner.Folders.DataFolder.concatentate" title="Stoner.Folders.DataFolder.concatentate"><code class="xref py py-obj docutils literal"><span class="pre">concatentate</span></code></a>([sort,&nbsp;reverse])</td>
-<td>Concatentates all the files in a DataFolder into a single DataFile like object.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-obj docutils literal"><span class="pre">extract</span></code></a>(metadata)</td>
-<td>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement DataFile.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.filter.html#Stoner.Folders.DataFolder.filter" title="Stoner.Folders.DataFolder.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([filter,&nbsp;invert])</td>
-<td>Filter the current set of files by some criterion</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.filterout.html#Stoner.Folders.DataFolder.filterout" title="Stoner.Folders.DataFolder.filterout"><code class="xref py py-obj docutils literal"><span class="pre">filterout</span></code></a>(filter)</td>
-<td>Synonym for self.filter(filter,invert=True)</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.flatten.html#Stoner.Folders.DataFolder.flatten" title="Stoner.Folders.DataFolder.flatten"><code class="xref py py-obj docutils literal"><span class="pre">flatten</span></code></a>([depth])</td>
-<td>Compresses all the groups and sub-groups iunto a single flat file list.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.extract.html#Stoner.Folders.DataFolder.extract" title="Stoner.Folders.DataFolder.extract"><code class="xref py py-obj docutils literal"><span class="pre">extract</span></code></a>(metadata)</td>
+<td>Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.gather.html#Stoner.Folders.DataFolder.gather" title="Stoner.Folders.DataFolder.gather"><code class="xref py py-obj docutils literal"><span class="pre">gather</span></code></a>([xcol,&nbsp;ycol])</td>
-<td>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.getlist.html#Stoner.Folders.DataFolder.getlist" title="Stoner.Folders.DataFolder.getlist"><code class="xref py py-obj docutils literal"><span class="pre">getlist</span></code></a>([recursive,&nbsp;directory,&nbsp;flatten])</td>
-<td>Scans the current directory, optionally recursively to build a list of filenames</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.group.html#Stoner.Folders.DataFolder.group" title="Stoner.Folders.DataFolder.group"><code class="xref py py-obj docutils literal"><span class="pre">group</span></code></a>(key)</td>
-<td>Take the files and sort them into a series of separate DataFolder objects according to the value of the key</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.keys.html#Stoner.Folders.DataFolder.keys" title="Stoner.Folders.DataFolder.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
-<td>An alias for self.lsgrp as a gwenerator.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.next.html#Stoner.Folders.DataFolder.next" title="Stoner.Folders.DataFolder.next"><code class="xref py py-obj docutils literal"><span class="pre">next</span></code></a>(elf)</td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.not_empty.html#Stoner.Folders.DataFolder.not_empty" title="Stoner.Folders.DataFolder.not_empty"><code class="xref py py-obj docutils literal"><span class="pre">not_empty</span></code></a>()</td>
-<td>An iterator for DataFolder that checks whether the loaded DataFile objects have any data.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.prune.html#Stoner.Folders.DataFolder.prune" title="Stoner.Folders.DataFolder.prune"><code class="xref py py-obj docutils literal"><span class="pre">prune</span></code></a>()</td>
-<td>Remove any groups from the DataFolder (and subgroups).</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.save.html#Stoner.Folders.DataFolder.save" title="Stoner.Folders.DataFolder.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([root])</td>
-<td>Save the entire data folder out to disc using the groups as a directory tree, calling the save method for each file in turn.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.select.html#Stoner.Folders.DataFolder.select" title="Stoner.Folders.DataFolder.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(*args,&nbsp;**kargs)</td>
-<td>A generator that can be used to select particular data files from the DataFolder</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.sort.html#Stoner.Folders.DataFolder.sort" title="Stoner.Folders.DataFolder.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
-<td>Sort the files by some key</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.unflatten.html#Stoner.Folders.DataFolder.unflatten" title="Stoner.Folders.DataFolder.unflatten"><code class="xref py py-obj docutils literal"><span class="pre">unflatten</span></code></a>()</td>
-<td>Takes a file list an unflattens them according to the file paths.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.DataFolder.walk_groups.html#Stoner.Folders.DataFolder.walk_groups" title="Stoner.Folders.DataFolder.walk_groups"><code class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></code></a>(walker[,&nbsp;group,&nbsp;...])</td>
-<td>Walks through a heirarchy of groups and calls walker for each file.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.DataFolder.zip_groups.html#Stoner.Folders.DataFolder.zip_groups" title="Stoner.Folders.DataFolder.zip_groups"><code class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></code></a>(groups)</td>
-<td>Return a list of tuples of DataFiles drawn from the specified groups</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Attributes</p>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.basenames" title="Stoner.Folders.DataFolder.basenames"><code class="xref py py-obj docutils literal"><span class="pre">basenames</span></code></a></td>
-<td>Returns a list of just the filename parts of the DataFolder.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.depth" title="Stoner.Folders.DataFolder.depth"><code class="xref py py-obj docutils literal"><span class="pre">depth</span></code></a></td>
-<td>Gives the maximum number of levels of group below the current DataFolder.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.loaded" title="Stoner.Folders.DataFolder.loaded"><code class="xref py py-obj docutils literal"><span class="pre">loaded</span></code></a></td>
-<td>An iterator that indicates wether the contents of the <a class="reference internal" href="#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> has been loaded into memory.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.ls" title="Stoner.Folders.DataFolder.ls"><code class="xref py py-obj docutils literal"><span class="pre">ls</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.lsgrp" title="Stoner.Folders.DataFolder.lsgrp"><code class="xref py py-obj docutils literal"><span class="pre">lsgrp</span></code></a></td>
-<td>Returns a list of the groups as a generator.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.mindepth" title="Stoner.Folders.DataFolder.mindepth"><code class="xref py py-obj docutils literal"><span class="pre">mindepth</span></code></a></td>
-<td>Gives the minimum number of levels of group below the current DataFolder.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.pattern" title="Stoner.Folders.DataFolder.pattern"><code class="xref py py-obj docutils literal"><span class="pre">pattern</span></code></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.DataFolder.type" title="Stoner.Folders.DataFolder.type"><code class="xref py py-obj docutils literal"><span class="pre">type</span></code></a></td>
-<td>Defines the (sub)class of the <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> instances.</td>
+<td>Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -325,8 +110,8 @@ files included in the py:class:<cite>DataFolder</cite> is the union of files tha
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -357,8 +142,8 @@ files included in the py:class:<cite>DataFolder</cite> is the union of files tha
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

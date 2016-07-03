@@ -1,0 +1,8 @@
+
+
+BigBlueFile.update
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.update

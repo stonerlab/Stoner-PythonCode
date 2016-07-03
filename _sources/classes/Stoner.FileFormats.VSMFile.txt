@@ -15,6 +15,7 @@ Stoner.FileFormats.VSMFile
    
       ~Stoner.FileFormats.VSMFile.__init__
       ~Stoner.FileFormats.VSMFile.add_column
+      ~Stoner.FileFormats.VSMFile.clear
       ~Stoner.FileFormats.VSMFile.closest
       ~Stoner.FileFormats.VSMFile.column
       ~Stoner.FileFormats.VSMFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.get
       ~Stoner.FileFormats.VSMFile.get_filename
       ~Stoner.FileFormats.VSMFile.insert_rows
+      ~Stoner.FileFormats.VSMFile.items
+      ~Stoner.FileFormats.VSMFile.iteritems
+      ~Stoner.FileFormats.VSMFile.iterkeys
+      ~Stoner.FileFormats.VSMFile.itervalues
       ~Stoner.FileFormats.VSMFile.keys
       ~Stoner.FileFormats.VSMFile.load
+      ~Stoner.FileFormats.VSMFile.pop
+      ~Stoner.FileFormats.VSMFile.popitem
       ~Stoner.FileFormats.VSMFile.rename
       ~Stoner.FileFormats.VSMFile.reorder_columns
       ~Stoner.FileFormats.VSMFile.rolling_window
@@ -35,9 +42,12 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.save
       ~Stoner.FileFormats.VSMFile.search
       ~Stoner.FileFormats.VSMFile.section
+      ~Stoner.FileFormats.VSMFile.setdefault
       ~Stoner.FileFormats.VSMFile.sort
       ~Stoner.FileFormats.VSMFile.swap_column
       ~Stoner.FileFormats.VSMFile.unique
+      ~Stoner.FileFormats.VSMFile.update
+      ~Stoner.FileFormats.VSMFile.values
 
    
    

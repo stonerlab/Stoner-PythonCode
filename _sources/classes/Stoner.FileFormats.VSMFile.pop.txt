@@ -1,0 +1,8 @@
+
+
+VSMFile.pop
+==============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.pop

@@ -70,6 +70,8 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="kn">as</span> <span class="nn">ma</span>
 
+<span class="kn">import</span> <span class="nn">PIL</span>
+
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
 <span class="kn">from</span> <span class="nn">.pyTDMS</span> <span class="kn">import</span> <span class="n">read</span> <span class="k">as</span> <span class="n">tdms_read</span>
 
@@ -1499,6 +1501,76 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;T (C)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;R (Ohm)&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">column_headers</span>
         <span class="k">return</span> <span class="bp">self</span>
+
+<span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loads PNG files with additional metadata embedded in them and extracts as metadata&quot;&quot;&quot;</span>
+
+    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+    <span class="c1">#   .. note::</span>
+    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+    <span class="c1">#      file type before attempting to read data.</span>
+    <span class="n">priority</span><span class="o">=</span><span class="mi">32</span> <span class="c1"># reasonably generic format</span>
+    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+    <span class="c1"># the file load/save dialog boxes.</span>
+    <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.png&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
+
+    <span class="n">mime_type</span><span class="o">=</span><span class="s2">&quot;image/png&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;PNG file loader routine.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                if False, then a file dialog will be used.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of the itself after loading the data.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">img</span><span class="o">=</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;Unable to read as a PNG file.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overrides the save method to allow KermitPNGFiles to be written out to disc</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (string): Filename to save as (using the same rules as for the load routines)</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            deliminator (string): Record deliniminator (defaults to a comma)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A copy of itself.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>  <span class="c1"># now go and ask for one</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+
+        <span class="n">metadata</span><span class="o">=</span><span class="n">PIL</span><span class="o">.</span><span class="n">PngImagePlugin</span><span class="o">.</span><span class="n">PngInfo</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">exort</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">val</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">img</span><span class="o">=</span><span class="n">PIL</span><span class="o">.</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;ong&quot;</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+
+
+
+
 </pre></div>
 
           </div>
@@ -1512,8 +1584,8 @@
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -1538,8 +1610,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on May 12, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+      Last updated on Jul 03, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
 </html>

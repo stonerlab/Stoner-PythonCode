@@ -1,0 +1,8 @@
+
+
+objectFolder.__init__
+====================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: objectFolder.__init__

@@ -1,0 +1,8 @@
+
+
+RasorFile.setdefault
+=======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RasorFile.setdefault

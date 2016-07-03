@@ -1,0 +1,8 @@
+
+
+VSMFile.update
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.update

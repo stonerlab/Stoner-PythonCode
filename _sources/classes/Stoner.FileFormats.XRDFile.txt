@@ -15,6 +15,7 @@ Stoner.FileFormats.XRDFile
    
       ~Stoner.FileFormats.XRDFile.__init__
       ~Stoner.FileFormats.XRDFile.add_column
+      ~Stoner.FileFormats.XRDFile.clear
       ~Stoner.FileFormats.XRDFile.closest
       ~Stoner.FileFormats.XRDFile.column
       ~Stoner.FileFormats.XRDFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.get
       ~Stoner.FileFormats.XRDFile.get_filename
       ~Stoner.FileFormats.XRDFile.insert_rows
+      ~Stoner.FileFormats.XRDFile.items
+      ~Stoner.FileFormats.XRDFile.iteritems
+      ~Stoner.FileFormats.XRDFile.iterkeys
+      ~Stoner.FileFormats.XRDFile.itervalues
       ~Stoner.FileFormats.XRDFile.keys
       ~Stoner.FileFormats.XRDFile.load
+      ~Stoner.FileFormats.XRDFile.pop
+      ~Stoner.FileFormats.XRDFile.popitem
       ~Stoner.FileFormats.XRDFile.rename
       ~Stoner.FileFormats.XRDFile.reorder_columns
       ~Stoner.FileFormats.XRDFile.rolling_window
@@ -35,10 +42,13 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.save
       ~Stoner.FileFormats.XRDFile.search
       ~Stoner.FileFormats.XRDFile.section
+      ~Stoner.FileFormats.XRDFile.setdefault
       ~Stoner.FileFormats.XRDFile.sort
       ~Stoner.FileFormats.XRDFile.swap_column
       ~Stoner.FileFormats.XRDFile.to_Q
       ~Stoner.FileFormats.XRDFile.unique
+      ~Stoner.FileFormats.XRDFile.update
+      ~Stoner.FileFormats.XRDFile.values
 
    
    

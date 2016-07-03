@@ -1,0 +1,8 @@
+
+
+LSTemperatureFile.itervalues
+===============================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: LSTemperatureFile.itervalues

@@ -15,6 +15,7 @@ Stoner.FileFormats.RigakuFile
    
       ~Stoner.FileFormats.RigakuFile.__init__
       ~Stoner.FileFormats.RigakuFile.add_column
+      ~Stoner.FileFormats.RigakuFile.clear
       ~Stoner.FileFormats.RigakuFile.closest
       ~Stoner.FileFormats.RigakuFile.column
       ~Stoner.FileFormats.RigakuFile.columns
@@ -26,8 +27,14 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.get
       ~Stoner.FileFormats.RigakuFile.get_filename
       ~Stoner.FileFormats.RigakuFile.insert_rows
+      ~Stoner.FileFormats.RigakuFile.items
+      ~Stoner.FileFormats.RigakuFile.iteritems
+      ~Stoner.FileFormats.RigakuFile.iterkeys
+      ~Stoner.FileFormats.RigakuFile.itervalues
       ~Stoner.FileFormats.RigakuFile.keys
       ~Stoner.FileFormats.RigakuFile.load
+      ~Stoner.FileFormats.RigakuFile.pop
+      ~Stoner.FileFormats.RigakuFile.popitem
       ~Stoner.FileFormats.RigakuFile.rename
       ~Stoner.FileFormats.RigakuFile.reorder_columns
       ~Stoner.FileFormats.RigakuFile.rolling_window
@@ -35,10 +42,13 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.save
       ~Stoner.FileFormats.RigakuFile.search
       ~Stoner.FileFormats.RigakuFile.section
+      ~Stoner.FileFormats.RigakuFile.setdefault
       ~Stoner.FileFormats.RigakuFile.sort
       ~Stoner.FileFormats.RigakuFile.swap_column
       ~Stoner.FileFormats.RigakuFile.to_Q
       ~Stoner.FileFormats.RigakuFile.unique
+      ~Stoner.FileFormats.RigakuFile.update
+      ~Stoner.FileFormats.RigakuFile.values
 
    
    

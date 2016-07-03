@@ -1,0 +1,8 @@
+
+
+BNLFile.popitem
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BNLFile.popitem
