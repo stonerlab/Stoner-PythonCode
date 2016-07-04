@@ -1121,14 +1121,14 @@ class DataArray(_ma_.MaskedArray):
             row major and tries to do the right thing.
         """
         #Is this goign to be a single row ?
-        single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
+        single_row=isinstance(ix,int_types) or (isinstance(ix,tuple) and isinstance(ix[0],int_types))
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
             if self.ndim>1:
                 ix=(slice(None,None,None),self._setas.find_col(ix))
             else:
                 ix=(self._setas.find_col(ix),)
-        if isinstance(ix,(int,slice)):
+        if isinstance(ix,(int_types,slice)):
                 ix=(ix,)
         elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
@@ -1642,7 +1642,7 @@ class DataFile(metadataObject):
     def subclasses(self):
         """Return a list of all in memory subclasses of this DataFile.
         """
-        subclasses = {x: x.priority for x in itersubclasses(DataFile)}
+        subclasses = {x: (x.priority,x.__name__) for x in itersubclasses(DataFile)}
         ret = OrderedDict()
         ret["DataFile"] = DataFile
         for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
@@ -1946,9 +1946,9 @@ class DataFile(metadataObject):
 
     def __sub_core__(self, other, newdata):
         """Actually do the subtraction."""
-        if isinstance(other, (slice, int)) or callable(other):
+        if isinstance(other, (slice, int_types)) or callable(other):
             newdata.del_rows(other)
-        elif isinstance(other, list) and (all_type(other,int) or all_type(bool)):
+        elif isinstance(other, list) and (all_type(other,int_types) or all_type(bool)):
             newdata.del_rows(other)
         else:
             newdata = NotImplemented
@@ -2465,7 +2465,7 @@ class DataFile(metadataObject):
     def __search_index(self, xcol, value, accuracy):
         """Helper for the search method that returns an array of booleans for indexing matching rows."""
         x = self.find_col(xcol)
-        if isinstance(value, (int, float)):
+        if isinstance(value, (int_types, float)):
             ix = _np_.less_equal(_np_.abs(self.data[:, x] - value), accuracy)
         elif isinstance(value, tuple) and len(value) == 2:
             (l, u) = (min(value), max(value))
@@ -2845,21 +2845,21 @@ class DataFile(metadataObject):
                 if len(col)<len(self):
                     col.extend([False]*(len(self)-len(col)))
                 col=[i for i in range(len(self)) if col[i]]
-            if isinstance(col, Iterable) and all_type(col,int) and val is None and not invert:
+            if isinstance(col, Iterable) and all_type(col,int_types) and val is None and not invert:
                 col.sort(reverse=True)
                 for c in col:
                     self.del_rows(c)
-            elif isinstance(col, list) and all_type(col,int) and val is None and invert:
+            elif isinstance(col, list) and all_type(col,int_types) and val is None and invert:
                 for i in range(len(self) - 1, -1, -1):
                     if i not in col:
                         self.del_rows(i)
-            elif isinstance(col, int) and val is None and not invert:
+            elif isinstance(col, int_types) and val is None and not invert:
                 tmp_mask=self.mask
                 tmp_setas=self.data._setas.clone
                 self.data = _np_.delete(self.data, col, 0)
                 self.data.mask=_np_.delete(tmp_mask, col, 0)
                 self.data._setas=tmp_setas
-            elif isinstance(col, int) and val is None and invert:
+            elif isinstance(col, int_types) and val is None and invert:
                 self.del_rows([c], invert=invert)
             else:
                 col = self.find_col(col)
@@ -3138,7 +3138,7 @@ class DataFile(metadataObject):
 
         if isinstance(exclude_centre, bool) and exclude_centre:
             exclude_centre = 1
-        if isinstance(exclude_centre, int) and not isinstance(exclude_centre, bool):
+        if isinstance(exclude_centre, int_types) and not isinstance(exclude_centre, bool):
             if exclude_centre % 2 == 0:
                 raise ValueError("If excluding the centre of the window, this must be an odd number of rows.")
             elif window - exclude_centre < 2 or window < 3 or window % 2 == 0:
