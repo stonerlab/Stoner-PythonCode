@@ -239,7 +239,7 @@ class objectFolder(MutableSequence):
         """
         attr=dir(type(self))
         attr.extend(list(self.__dict__.keys()))
-        attr.extend(dir(self.type))
+        attr.extend(dir(self._type))
         attr=list(set(attr))
         return attr
 
@@ -294,10 +294,14 @@ class objectFolder(MutableSequence):
                 ret=meth(*args,**kargs)
                 if ret is not f: # method did not returned a modified version of the metadataObject
                     retvals.append(ret)
+                if isinstance(ret,self._type):
+                    self[ix]=ret
             if len(retvals)==0: # If we haven't got anything to retun, return a copy of our objectFolder
                 retvals=self
             return retvals
-        #Ok that;s the wrapper function, now return  it for the user to mess around with.
+        #Ok that's the wrapper function, now return  it for the user to mess around with.
+        _wrapper_.__doc__=meth.__doc__
+        _wrapper_.__name__=meth.__name__
         return _wrapper_
 
     def __getitem__(self, i):
@@ -384,7 +388,7 @@ class objectFolder(MutableSequence):
         """Pass through to set the sample attributes."""
         if name.startswith("_"): # pass ddirectly through for private attributes
             super(objectFolder,self).__setattr__(name,value)
-        elif name in self.__dict__ and not callable(self.__getattr__(name)):
+        elif name in self.__dict__ and not callable(getattr(self,name,None)):
             super(objectFolder,self).__setattr__(name,value)
         elif name in dir(self._type()):
             self._file_attrs[name]=value
