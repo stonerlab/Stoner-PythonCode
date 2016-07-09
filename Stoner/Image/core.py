@@ -176,7 +176,7 @@ class KerrArray(np.ndarray,metadataObject):
     def _kfuncs(self):
         """Provide an attribtute that caches the imported KerrArray functions."""
         if self._kfuncs_proxy is None:
-            import Stoner.Image.kfuncs as kfuncs
+            import kfuncs
             self._kfuncs_proxy=kfuncs
         return self._kfuncs_proxy
 
@@ -223,7 +223,7 @@ class KerrArray(np.ndarray,metadataObject):
         ret=None
         #first check kermit funcs
         if name in dir(self._kfuncs):
-            workingfunc=getattr(kfuncs,name)
+            workingfunc=getattr(self._kfuncs,name)
             ret=self._func_generator(workingfunc)
         else:
             for key in self._ski_funcs.keys():
@@ -267,7 +267,7 @@ class KerrArray(np.ndarray,metadataObject):
             elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
                 r=Data(r)
                 r.metadata=self.metadata.opy()
-                r.column_headers[0]=workingfunc.__name__            
+                r.column_headers[0]=workingfunc.__name__
             elif isinstance(r,np.ndarray) and not isinstance(r,KerrArray): #make sure we return a KerrArray
                 r=r.view(type=KerrArray)
                 r.metadata=self.metadata.copy()
