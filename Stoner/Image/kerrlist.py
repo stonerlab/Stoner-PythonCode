@@ -80,7 +80,7 @@ class KerrList(objectFolder):
             workingfunc=getattr(self._listfuncs,name)
             ret=self._func_generator(workingfunc)
         else:
-            ret=getattr(super(KerrList,self),name)
+            ret=super(KerrList,self).__getattr__(name)
         return ret
 
 
@@ -103,7 +103,7 @@ class KerrList(objectFolder):
 
     def apply_all(self, func, *args, **kwargs):
         """Apply a function to all images in list"""
-        if isinstance(func,string_types_types):
+        if isinstance(func,string_types):
             f=getattr(self,func) # objectFolder handles this for us.
             f(*args,**kwargs)
             retval=self

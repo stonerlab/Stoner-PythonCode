@@ -70,6 +70,8 @@ class objectFolder(MutableSequence):
 
     _type=metadataObject # class attribute to keep things happy
     _pattern=None
+    _file_attrs=dict()
+    flat=False
 
     def __init__(self, *args, **kargs):
         self.directory=None
@@ -248,7 +250,7 @@ class objectFolder(MutableSequence):
         if item in self._file_attrs:
             return self._file_attrs[item]
         else:
-            raise KeyError()
+            return super(objectFolder,self).__getattribute__(item)
 
 
     def __getattr__(self, item):
@@ -262,8 +264,9 @@ class objectFolder(MutableSequence):
 
         """
         if not item.startswith("_"):
-            if item in dir(self._type): #Something is in our metadataObject type
-                if ismethod(getattr(self._type,item)): # It's a method
+            instance=self._type()
+            if item in dir(instance): #Something is in our metadataObject type
+                if callable(getattr(instance,item)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     ret=self.__get_file_attr__(item)
@@ -283,6 +286,7 @@ class objectFolder(MutableSequence):
             Either a modifed copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
+        meth=getattr(self._type(),item)
         def _wrapper_(*args,**kargs):
             """Wraps a call to the metadataObject type for magic method calling.
             Note:
@@ -290,7 +294,7 @@ class objectFolder(MutableSequence):
                 so we have access to self and item"""
             retvals=[]
             for ix,f in enumerate(self):
-                meth=f.__getattribute__(item)
+                meth=getattr(f,item)
                 ret=meth(*args,**kargs)
                 if ret is not f: # method did not returned a modified version of the metadataObject
                     retvals.append(ret)

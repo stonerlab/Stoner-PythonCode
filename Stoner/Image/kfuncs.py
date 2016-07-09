@@ -65,35 +65,36 @@ def clip_intensity(im):
     im=im.rescale_intensity(in_range='dtype')
     return im
 
-def correct_drift(im, ref, threshold=0.005, upsample_factor=50):
+def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     """Align images to correct for image drift.
+
+    Args:
+        ref (KerrArray): Reference image with assumed zero drift
+        threshold (float): threshold for detecting imperfections in images
+            (see skimage.feature.corner_fast for details)
+        upsample_factor (float): the resolution for the shift 1/upsample_factor pixels registered.
+            see skimage.feature.register_translation for more details
+        box (sequence of 4 ints): defines a region of the image to use for identifyign the drift
+            defaults to the whol image. Use this to avoid drift calculations being confused by
+            the scale bar/annotation region.
+    Returns:
+        A shifted iamge with the image shift added to the metadata as 'correct drift'.
+
     Detects common features on the images and tracks them moving.
     Adds 'drift_shift' to the metadata as the (x,y) vector that translated the
     image back to it's origin.
+    """
 
-    Parameters
-    ----------
-    ref: KerrArray or ndarray
-        reference image with zero drift
-    threshold: float
-        threshold for detecting imperfections in images
-        (see skimage.feature.corner_fast for details)
-    upsample_factor:
-        the resolution for the shift 1/upsample_factor pixels registered.
-        see skimage.feature.register_translation for more details
-
-    Returns
-    -------
-    shift: array
-        shift vector relative to ref (x drift, y drift)
-    transim: KerrArray
-        copy of im translated to account for drift"""
+    if box is None:
+        box=im.max_box
+    cim=im.crop_image(box=box)
 
     refed=KerrArray(ref,get_metadata=False)
+    refed=refed.crop_image(box=box)
     refed=refed.filter_image(sigma=1)
     refed=refed.corner_fast(threshold=threshold)
 
-    imed=im.clone
+    imed=cim.clone
     imed=imed.filter_image(sigma=1)
     imed=imed.corner_fast(threshold=threshold)
 

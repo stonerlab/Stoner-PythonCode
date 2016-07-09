@@ -203,7 +203,7 @@ class KerrArray(np.ndarray,metadataObject):
         for k in mods:
             skimage|=set(self._ski_funcs[k][1])
         parent=set(dir(super(KerrArray,self)))
-        mine=set(self.__dict__.keys())
+        mine=set(dir(KerrArray))
         return list(skimage|kfuncs|parent|mine)
 
     def __getattr__(self,name):
