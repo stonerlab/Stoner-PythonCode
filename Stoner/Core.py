@@ -1134,12 +1134,16 @@ class DataArray(_ma_.MaskedArray):
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
+        elif isinstance(ix,tuple) and isinstance(ix[-1],Iterable): # indexing with a list of columns
+            ix=list(ix)
+            ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
+            ix=tuple(ix)
         elif isinstance(ix,tuple) and isinstance(ix[0],string_types): # oops! backwards indexing
             c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
-        # Now can index with our constructed multidimesnional indexer
+            # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
         if ret.ndim==0 or isinstance(ret,_np_.ndarray) and ret.size==1:
             return ret.dtype.type(ret)
@@ -1156,6 +1160,7 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
+                ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
                 if isinstance(self.i,_np_.ndarray):
                     ret.i=self.i[ix[0]]
@@ -2188,12 +2193,14 @@ class DataFile(metadataObject):
                 ret=ret.__getitem__(*rest)
             except KeyError:
                 try:
-                    ret=self.data[name]
+                    ret=self.clone
+                    ret.data=self.data[name]
                 except KeyError:
                     raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
 
         else:
-            ret=self.data[name]
+            ret=self.clone
+            ret.data=self.data[name]
         return ret
 
     def __getstate__(self):
