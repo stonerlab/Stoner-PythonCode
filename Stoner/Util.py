@@ -7,6 +7,7 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 
+from Stoner.compat import *
 from Stoner.Core import DataFile as _DF_
 from Stoner.Analysis import AnalyseFile as _AF_
 from Stoner.Plot import PlotFile as _PF_
@@ -494,24 +495,29 @@ def hysteresis_correct(data, **kargs):
 
     while True:
         up,down=_up_down(data)
-        if type(saturation_fraction) is int and saturation_fraction>0:
+
+        if isinstance(saturation_fraction,int_types) and  saturation_fraction>0:
             saturation_fraction=saturation_fraction/len(up)+0.001 #add 0.1% to ensure we get the point
         mx = max(data.x) * (1 - saturation_fraction)
         mix = min(data.x) * (1 - saturation_fraction)
 
-        #ensure a minimum of 3 points to fit
-        #int(up.threshold(mx,xcol=False,rising=True,falling=False))+1
-        thresh=up.threshold(mx,col=xc,rising=True,falling=False)[0]
-        if len(up)-1-thresh<2: #less than three points
-            mx = (data[-3][yc]+data[-4][yc])/2.0
-            mix = (data[2][yc]+data[3][yc])/2.0
+
+        up._push_mask(lambda x, r: x >= mix)
+        pts=up.x.count()
+        up._pop_mask()
+        assert pts>=3,"Not enough points in the negative saturation state.(mix={},pts={},x={})".format(mix,pts,up.x)
+
+        down._push_mask(lambda x, r: x <= mx)
+        pts=down.x.count()
+        down._pop_mask()
+        assert pts>=3,"Not enough points in the positive saturation state(mx={},pts={},x={})".format(mx,pts,down.x)
 
         #Find upper branch saturated moment slope and offset
-        p1, pcov = up.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
+        p1, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x < mix)
         perr1 = diag(pcov)
 
         #Find lower branch saturated moment and offset
-        p2, pcov = down.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
+        p2, pcov = data.curve_fit(linear, absolute_sigma=False, bounds=lambda x, r: x > mx)
         perr2 = diag(pcov)
         if p1[0]>p2[0]:
             data.y=-data.y
@@ -524,6 +530,8 @@ def hysteresis_correct(data, **kargs):
     perr = sqrt(perr1 + perr2)
     Ms=array([p1[0],p2[0]])
     Ms=list(Ms-mean(Ms))
+
+
 
     data["Ms"] = Ms #mean(Ms)
     data["Ms Error"] = perr[0]/2
@@ -546,6 +554,7 @@ def hysteresis_correct(data, **kargs):
     m_sat=[p1[0]+perr[0],p2[0]-perr[0]]
     Mr=[None,None]
     Mr_err=[None,None]
+
     for i,(d,sat) in enumerate(zip([up,down],m_sat)):
         hc=d.threshold(0.,all_vals=True,rising=True,falling=True) # Get the Hc value
         Hc[i]=mean(hc)

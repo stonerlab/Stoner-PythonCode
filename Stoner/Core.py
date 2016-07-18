@@ -1121,7 +1121,7 @@ class DataArray(_ma_.MaskedArray):
             row major and tries to do the right thing.
         """
         #Is this goign to be a single row ?
-        single_row=isinstance(ix,int_types) or (isinstance(ix,tuple) and isinstance(ix[0],int_types))
+        single_row=isinstance(ix,int_types) or (isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],int_types))
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
             if self.ndim>1:
@@ -1130,15 +1130,15 @@ class DataArray(_ma_.MaskedArray):
                 ix=(self._setas.find_col(ix),)
         if isinstance(ix,(int_types,slice)):
                 ix=(ix,)
-        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
+        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and isinstance(ix[-1],Iterable): # indexing with a list of columns
+        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],Iterable): # indexing with a list of columns
             ix=list(ix)
             ix[-1]=[self._setas.find_col(c) for c in ix[-1]]
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and isinstance(ix[0],string_types): # oops! backwards indexing
+        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],string_types): # oops! backwards indexing
             c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
@@ -2747,6 +2747,16 @@ class DataFile(metadataObject):
                 continue
             else:
                 yield self.column(ix)
+
+    def count(self,axis=0):
+        """Count the number of un-masked elements in the :py:class:`DataFile`.
+
+        Keywords:
+            axis (int): Which axis to count the unmasked elements along.
+
+        Returns:
+            (int): Number of unmasked elements."""
+        return self.data.count(axis)
 
     def del_column(self, col=None, duplicates=False):
         """Deletes a column from the current :py:class:`DataFile` object.
