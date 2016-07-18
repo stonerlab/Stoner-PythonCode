@@ -2407,13 +2407,22 @@ class DataFile(object):
         elif r > m:  # More data than metadata
             if shorten is not None and shorten and r - m > shorten:
                 for x in range(m, m + shorten - 100):
-                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.shape[1]==1: # single column
+                        outp += "\t" + "\t{}\n".format(self.data[x])
+                    else:
+                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
                 outp += "... {} lines skipped...\n".format(r - m - shorten + 100)
                 for x in range(-100, -1):
-                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.shape[1]==1: # single column
+                        outp += "\t" + "\t{}n".format(self.data[x])
+                    else:
+                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
             else:
                 for x in range(m, r):
-                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.shape[1]==1: # single column
+                        outp = outp + "\t{}\n".format(self.data[x])
+                    else:
+                        outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
         return outp
 
     def __search_index(self, xcol, value, accuracy):
