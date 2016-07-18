@@ -2193,14 +2193,12 @@ class DataFile(metadataObject):
                 ret=ret.__getitem__(*rest)
             except KeyError:
                 try:
-                    ret=self.clone
-                    ret.data=self.data[name]
+                    ret=self.data[name]
                 except KeyError:
                     raise KeyError("{} was neither a key in the metadata nor a column in the main data.".format(name))
 
         else:
-            ret=self.clone
-            ret.data=self.data[name]
+            ret=self.data[name]
         return ret
 
     def __getstate__(self):
@@ -2453,20 +2451,32 @@ class DataFile(metadataObject):
         r = _np_.shape(self.data)[0]
         md = self.metadata.export_all()
         for x in range(min(r, m)):
-            outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+            if self.data.ndim!=2 or self.shape[1]==1:
+                outp = outp + md[x] + "\t{}\n".format(self.data[x])
+            else:
+                outp = outp + md[x] + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
         if m > r:  # More metadata
             for x in range(r, m):
                 outp = outp + md[x] + "\n"
         elif r > m:  # More data than metadata
             if shorten is not None and shorten and r - m > shorten:
                 for x in range(m, m + shorten - 100):
-                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp += "\t" + "\t{}\n".format(self.data[x])
+                    else:
+                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
                 outp += "... {} lines skipped...\n".format(r - m - shorten + 100)
                 for x in range(-100, -1):
-                    outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp += "\t" + "\t{}\n".format(self.data[x])
+                    else:
+                        outp += "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
             else:
                 for x in range(m, r):
-                    outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
+                    if self.data.ndim!=2 or self.shape[1]==1:
+                        outp = outp + "\t" + "\t{}\n".format(self.data[x])
+                    else:
+                        outp = outp + "\t" + "\t".join([str(y) for y in self.data[x].filled()]) + "\n"
         return outp
 
     def __search_index(self, xcol, value, accuracy):
