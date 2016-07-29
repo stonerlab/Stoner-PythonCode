@@ -47,10 +47,11 @@ def copy_into(source,dest):
     overwrites the attributes that represent the data in the DataFile.
     """
     for attr in source._public_attrs:
-        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers","metadata"]:
             continue
         dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
     dest.data = source.data.copy()
+    dest.metadata=source.metadata
     dest.data._setas = source.data._setas.clone
     return dest
 
