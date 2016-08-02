@@ -47,11 +47,10 @@ def copy_into(source,dest):
     overwrites the attributes that represent the data in the DataFile.
     """
     for attr in source._public_attrs:
-        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers","metadata"]:
+        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
             continue
         dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
     dest.data = source.data.copy()
-    dest.metadata=source.metadata
     dest.data._setas = source.data._setas.clone
     return dest
 
@@ -811,6 +810,16 @@ class typeHintedDict(sorteddict):
                     else:
                         ret = None
         return ret
+
+    def __deepcopy__(self,memo):
+        """Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x"""
+        cls = self.__class__
+        result = cls()
+        memo[id(self)] = result
+        for k in self:
+            result[k]=self[k]
+            result.types[k]=self.types[k]
+        return result
 
     def _get_name_(self, name):
         """Checks a string name for an embedded type hint and strips it out.
