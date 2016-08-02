@@ -805,6 +805,16 @@ class typeHintedDict(sorteddict):
                         ret = None
         return ret
 
+    def __deepcopy__(self,memo):
+        """Implements a deepcopy method for typeHintedDict to work around something that gives a hang in newer Python 2.7.x"""
+        cls = self.__class__
+        result = cls()
+        memo[id(self)] = result
+        for k in self:
+            result[k]=self[k]
+            result.types[k]=self.types[k]
+        return result
+
     def _get_name_(self, name):
         """Checks a string name for an embedded type hint and strips it out.
 
