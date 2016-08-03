@@ -19,9 +19,12 @@ from collections import Iterable
 try:  #Allow lmfit to be optional
     from lmfit.model import Model, ModelFit
     from lmfit import Parameters
+    _lmfit=True
 except ImportError:
     Model = None
     ModelFit = None
+    Parameters = None
+    _lmfit=False
 import sys
 from copy import deepcopy as copy
 
@@ -41,6 +44,8 @@ def _lmfit_p0_dict(p0,model):
     Returns:
         Dictionary of parameter starting points.
     """
+    if not _lmfit:
+        raise RuntimeError("lmfit module not available.")
     if isinstance(p0, (list, tuple, _np_.ndarray)):
         p0 = {p: pv for p, pv in zip(model.param_names, p0)}
     elif isinstance(p0,Parameters):
@@ -360,6 +365,9 @@ class AnalyseFile(DataFile):
         Returns:
             Results froma  fit or raises and exception.
         """
+        if not _lmfit:
+            raise RuntimeError("lmfit module not available.")
+
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []

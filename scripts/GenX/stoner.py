@@ -6,7 +6,6 @@ read in data files. Supports loading from the Brucker D8
 import numpy as np
 import wx
 from Stoner import Data
-import Stoner.HDF5 as SH
 
 from wx.lib.masked import NumCtrl
 
@@ -26,10 +25,10 @@ class Plugin(Template):
         Loads the data from filename into the data_item_number.
         '''
         try:
-            datafile=Data(str(filename)) # does all the hard work here
+            datafile=Data(str(filename),debug=True) # does all the hard work here
         except Exception, e:
             ShowWarningDialog(self.parent, 'Could not load the file: ' +\
-                    filename + ' \nPlease check the format.\n\n Stoner.DataFile'\
+                    filename + ' \nPlease check the format.\n\n Stoner.Data'\
                     + ' gave the following error:\n'  +  str(e))
         else:
             # For the freak case of only one data point
@@ -72,7 +71,7 @@ class Plugin(Template):
         This function should - if necessary implement a dialog box
         that allows the user set import settings for example.
         '''
-        col_values = {'x': self.x_col,'y': self.y_col,'y error': self.e_col}
+        col_values = {'x': self.x_col,'y': self.y_col,'y error': self.e_col,'format':self.format}
         dlg = SettingsDialog(self.parent, col_values)
         if dlg.ShowModal() == wx.ID_OK:
             col_values = dlg.GetColumnValues()
@@ -100,7 +99,6 @@ class SettingsDialog(wx.Dialog):
         keys.sort()
         for i, name in enumerate(keys):
             text = wx.StaticText(self, -1, name+': ')
-
             control = wx.TextCtrl(self, value = str(col_values[name]),\
                 style = wx.EXPAND)
             col_grid.Add(text, (i,0),\

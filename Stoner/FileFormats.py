@@ -516,7 +516,10 @@ class TDMSFile(DataFile):
             f.close()
             raise StonerLoadError('Not a TDMS File')
         f.close()
-        (metadata, data) = tdms_read(self.filename)
+        try:
+            (metadata, data) = tdms_read(self.filename)
+        except:
+            raise StonerLoadError("TDMS File failed to load")
         for key in metadata:
             self.metadata[key] = metadata[key]
         column_headers = list()

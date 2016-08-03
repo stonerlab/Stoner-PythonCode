@@ -16,17 +16,28 @@ from Stoner.compat import *
 from Stoner.Core import DataFile
 import numpy as _np_
 from scipy.special import digamma
-from lmfit import Model
-from lmfit.models import LinearModel as Linear
-from lmfit.models import PowerLawModel as PowerLaw
-from lmfit.models import QuadraticModel as Quadratic
-from lmfit.models import update_param_vals
+try:
+    from lmfit import Model
+    from lmfit.models import LinearModel as Linear
+    from lmfit.models import PowerLawModel as PowerLaw
+    from lmfit.models import QuadraticModel as Quadratic
+    from lmfit.models import update_param_vals
+except ImportError:
+    Model=object
+    Linear=None
+    PowerLaw=None
+    Quadratic=None
+    update_param_vals=None
+
 from scipy.integrate import quad
 import scipy.constants.codata as consts
-if python_v3:
-    import configparser as ConfigParser
-else:
-    import ConfigParser
+try:
+    if python_v3:
+        import configparser as ConfigParser
+    else:
+        import ConfigParser
+except ImportError:
+    ConfigParser=None
 
 try: # numba is an optional dependency
     from numba import jit
@@ -93,6 +104,8 @@ def cfg_data_from_ini(inifile,filename=None):
     - **ycol (column index):** defines the y-column data for fitting.
     - **yerr (column index):** Optional column with uncertainity values for the data
     """
+    if ConfigParser is None:
+        raise RuntimeError("Need to have ConfigParser module installed for this to work.")
     config = ConfigParser.SafeConfigParser()
     from Stoner.Util import Data
     if isinstance(inifile,string_types):

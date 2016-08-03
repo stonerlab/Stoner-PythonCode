@@ -10,25 +10,36 @@ from Stoner.compat import *
 from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
 from Stoner.PlotFormats import DefaultPlotStyle
 from Stoner.plotutils import errorfill
+
 import numpy as _np_
+from scipy.interpolate import griddata
 import os
+
 import platform
 from inspect import getargspec
+import copy
+from collections import Iterable
+from colorsys import hls_to_rgb
+
 if os.name == "posix" and platform.system() == "Darwin":
     import matplotlib
     matplotlib.use('MacOSX')
+
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
-from scipy.interpolate import griddata
-from mpl_toolkits.mplot3d import Axes3D
-from mpl_toolkits.axes_grid import inset_locator
 from matplotlib import cm
 import matplotlib.colors as colors
-from colorsys import hls_to_rgb
-import copy
-from collections import Iterable
-from mpl_toolkits.axes_grid1 import host_subplot
-import mpl_toolkits.axisartist as AA
+
+try: # Check we've got 3D plotting
+    from mpl_toolkits.mplot3d import Axes3D
+    from mpl_toolkits.axes_grid import inset_locator
+    from mpl_toolkits.axes_grid1 import host_subplot
+    import mpl_toolkits.axisartist as AA
+    _3D=True
+except ImportError:
+    _3D=False
+
+
 
 class PlotFile(DataFile):
     """Extends DataFile with plotting functions.
@@ -216,6 +227,8 @@ class PlotFile(DataFile):
             A matplotib Figure
 
         This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set"""
+        if not _3D:
+            raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         ax=plt.gca(projection="3d")
         Z = _np_.nan_to_num(Z)
         surf = ax.plot_surface(X, Y, Z, **kargs)
@@ -236,6 +249,8 @@ class PlotFile(DataFile):
 
         Return:
             matpltolib.pyplot.figure with a quiver plot."""
+        if not _3D:
+            raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         ax=plt.gca(projection="3d")
         vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
 
@@ -1053,6 +1068,8 @@ class PlotFile(DataFile):
             Returns:
                 A matplotlib.figure isntance
         """
+        if not _3D:
+            raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
         c = self._fix_cols(xcol=xcol, ycol=ycol, zcol=zcol, multi_y=False, **kargs)
         xdata, ydata, zdata = self.griddata(c.xcol, c.ycol, c.zcol, shape=shape, xlim=xlim, ylim=ylim)
 

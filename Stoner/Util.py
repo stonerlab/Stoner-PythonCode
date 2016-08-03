@@ -18,7 +18,12 @@ from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
 from scipy.integrate import trapz
 from scipy.stats import sem
 from sys import float_info
-from lmfit import Model
+try:
+    from lmfit import Model
+    _lmfit=True
+except ImportError:
+    Model=object
+    _lmfit=False
 from inspect import isclass
 import re
 from cgi import escape as html_escape
@@ -144,9 +149,9 @@ class Data(_AF_, _PF_):
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
         are set to be 0.75 * maximum x and y limit of the plot.
         """
-        if isclass(model) and issubclass(model,Model):
+        if _lmfit and isclass(model) and issubclass(model,Model):
             model=model()
-        elif isinstance(model,Model):
+        elif _lmfit and isinstance(model,Model):
             pass
         elif callable(model):
             prefix=model.__name__
