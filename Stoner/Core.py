@@ -817,7 +817,7 @@ class typeHintedDict(sorteddict):
         result = cls()
         memo[id(self)] = result
         for k in self:
-            result[k]=self[k]
+            result[k]=copy.deepcopy(self[k])
             result.types[k]=self.types[k]
         return result
 
