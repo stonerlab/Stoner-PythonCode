@@ -44,7 +44,7 @@ class Plugin(Template):
                     if len(datafile.setas.cols["yerr"])>0:
                         self.e_col=datafile.setas.cols["yerr"][0]
                     else:
-                        datafile&=np.ones(len(datafile))
+                        datafile.add_column(np.ones(len(datafile)))
                         datafile.setas[-1]="e"
             except Exception as e:
                 ShowWarningDialog(self.parent, 'The data file does not contain'\
