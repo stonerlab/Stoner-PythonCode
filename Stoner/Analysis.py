@@ -964,6 +964,8 @@ class AnalyseFile(DataFile):
         scalar_x=not isinstance(new_x,Iterable)
         if scalar_x:
             new_x=[new_x]
+        if isinstance(new_x,ma.MaskedArray):
+            new_x=new_x.compressed
         results=_np_.zeros((len(new_x),len(_.ycol)))
         for ix,x in enumerate(new_x):
             r=self.closest(x,xcol=_.xcol)
@@ -1077,6 +1079,10 @@ class AnalyseFile(DataFile):
             xcol = self.setas._get_cols("xcol")
         elif isinstance(xcol, bool) and not xcol:
             xcol = None
+
+        if isinstance(newX,ma.MaskedArray):
+            newX=newX.compressed()
+
         if xcol is not None:  # We need to convert newX to row indices
             xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
             newX = xfunc(newX)
