@@ -709,15 +709,9 @@ class AnalyseFile(DataFile):
         if output == "full":
             kargs["full_output"] = True
 
-        if None in (xcol, ycol, sigma):
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"]
-            if sigma is None:
-                if len(cols["yerr"]) > 0:
-                    sigma = cols["yerr"]
+        _=self._col_args(xcol=xcol,ycol=ycol,yerr=sigma,scalar=False)
+
+        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
 
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
