@@ -1160,7 +1160,7 @@ class AnalyseFile(DataFile):
                 p0=dict()
                 for k in model.param_names:
                     if k not in kargs:
-                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}".format(len(model.param_names),k,model.func.__name__))
                     else:
                         p0[k] = kargs[k]
         else:
