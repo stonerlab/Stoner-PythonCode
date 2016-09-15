@@ -2618,15 +2618,19 @@ class DataFile(metadataObject):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         ret=copy.deepcopy(self.setas.cols)
         for c in list(cols.keys()):
-            if cols[c] is None:
+            if cols[c] is None: # Not defined, fallback on setas
                 del cols[c]
+            elif isinstance(cols[c],bool) and not cols[c]: #False, delete column altogether
+                del cols[c]
+                if c in ret:
+                    del ret[c]
             elif c in ret and isinstance(ret[c],list):
                 if isinstance(cols[c],string_types):
-                    cols[c]=cols[c]
+                    cols[c]=self.find_col(cols[c])
                 elif isinstance(cols[c],Iterable):
-                    cols[c]=list(cols[c])
-                else:
-                    cols[c]=[cols[c]]
+                    cols[c]=[self.find_col(cols[c]) for c in cols]
+            else:
+                cols[c]=self.find_col(cols[c])
         ret.update(cols)
         if scalar:
             for c in ret:
