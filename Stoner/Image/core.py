@@ -93,10 +93,11 @@ class KerrArray(np.ndarray,metadataObject):
             img=Image.open(image,"r")
             fname=image
             image=np.asarray(img)
+            if 'dtype' not in kwargs.keys():
+                kwargs['dtype']='uint16' #defualt output for Kerr microscope
             tmp=typeHintedDict()
             for k in img.info:
                 tmp[k]=img.info[k]
-            img.close()
         else:
             tmp=typeHintedDict()
             np.array(image) #try array on image to check it's a valid numpy type
