@@ -197,6 +197,18 @@ class KerrArray(np.ndarray,metadataObject):
             for mod in _ski_modules:
                 self._ski_funcs_proxy[mod.__name__] = (mod, dir(mod))
         return self._ski_funcs_proxy
+        
+    @property
+    def tesseractable(self):
+        """Do a test call to tesseract to see if it is there and cache the result."""
+        if hasattr(self,"_tesseractable"):
+            return self._tesseractable
+        try:
+            ret=subprocess.call(["tesseract","-v"])
+        except:
+            ret = -1
+        self._tesseractable=ret==0
+        return ret==0
 
 #==============================================================
 #function generator
@@ -448,12 +460,8 @@ class KerrArray(np.ndarray,metadataObject):
         io.imsave(imagefile,i,plugin='pil') #python imaging library will save according to file extension
 
         #call tesseract
-        try:
+        if self.tesseractable:
             subprocess.call(['tesseract', imagefile, textfile[:-4]]) #adds '.txt' extension itself
-        except:
-            warnings.warn('Could not call tesseract for extracting metadata '+
-                     'from images, please ensure tesseract is a valid command on your '+
-                     'command line', RuntimeWarning)
         tf=open(textfile,'r')
         data=tf.readline()
         tf.close()
