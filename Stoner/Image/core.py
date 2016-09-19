@@ -384,17 +384,20 @@ class KerrArray(np.ndarray,metadataObject):
         useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
                     'Contrast Shift','HorizontalFieldOfView','Images to Average',
                     'Lens','Magnification','Substraction Std']
-        if not all([k in self.keys() for k in useful_keys]):
+        if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
             return self.metadata #we've not got a standard Labview output, not safe to reduce
         for key in useful_keys:
-            newmet[key]=self[key]
+            if key in self.keys():
+                newmet[key]=self[key]
         newmet['field']=newmet.pop('X-B-2d') #rename
-        newmet['subtraction']=newmet.pop('Substraction Std')
-        if self['Averaging']: #averaging was on
-            newmet['Averaging']=newmet.pop('Images to Average')
-        else:
-            newmet['Averaging']=1
-            newmet.pop('Images to Average')
+        if 'Substraction Std' in self.keys():
+            newmet['subtraction']=newmet.pop('Substraction Std')
+        if 'Averaging' in self.keys():
+            if self['Averaging']: #averaging was on
+                newmet['Averaging']=newmet.pop('Images to Average')
+            else:
+                newmet['Averaging']=1
+                newmet.pop('Images to Average')
         self.metadata=typeHintedDict(newmet)
         return self.metadata
 
