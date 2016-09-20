@@ -15,7 +15,8 @@ def hysteresis(images, fieldlist=None, box=None):
     ims: Kerrlist
         list of images for extracting hysteresis
     fieldlist: list or tuple
-        list of fields used, if None it will try to get field from imgae metadata
+        list of fields used, if None it will try to get field from image metadata,
+        finally it will just use the image index as an x value
     box: list
         [xmin,xmax,ymin,ymax] region of interest for hysteresis
 
@@ -28,7 +29,12 @@ def hysteresis(images, fieldlist=None, box=None):
         raise TypeError('images must be a KerrList')
     hys_length=len(images)
     if fieldlist is None:
-        fieldlist=images.slice_metadata(key='Field', values_only=True)
+        if 'field' in images[0].keys():
+            fieldlist=images.slice_metadata(key='field', values_only=True)
+        elif 'ocr_field' in images[0].keys():
+            fieldlist=images.slice_metadata(key='ocr_field', values_only=True)
+        else:
+            fieldlist=range(len(images))
     fieldlist=np.array(fieldlist)
     assert len(fieldlist)==hys_length, 'images and field list must be of equal length'
     assert all([i.shape==images[0].shape for i in images]), 'images must all be same shape'
@@ -42,8 +48,16 @@ def hysteresis(images, fieldlist=None, box=None):
     return hyst
 
 def correct_drifts(images, refindex, threshold=0.005, upsample_factor=50,box=None):
-    """Align images to correct for image drift."""
-    print type(images),type(refindex)
+    """Align images to correct for image drift.
+    
+    Parameters
+    ----------
+    images: KerrList
+        List of KerrArrays to use
+    refindex: int
+        index of the reference image to use for zero drift
+    Other parameters see KerrArray.correct_drift
+    """
     ref=images[refindex]
     ret=images.apply_all('correct_drift', ref,
                                                 threshold=threshold,upsample_factor=upsample_factor,box=box)

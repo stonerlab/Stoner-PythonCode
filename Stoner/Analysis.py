@@ -709,15 +709,9 @@ class AnalyseFile(DataFile):
         if output == "full":
             kargs["full_output"] = True
 
-        if None in (xcol, ycol, sigma):
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"]
-            if sigma is None:
-                if len(cols["yerr"]) > 0:
-                    sigma = cols["yerr"]
+        _=self._col_args(xcol=xcol,ycol=ycol,yerr=sigma,scalar=False)
+
+        xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
 
         working = self.search(xcol, bounds)
         working = ma.mask_rowcols(working, axis=0)
@@ -1185,7 +1179,7 @@ class AnalyseFile(DataFile):
                 p0=dict()
                 for k in model.param_names:
                     if k not in kargs:
-                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}",format(len(model.param_names),k,model.func.__bame__))
+                        raise RuntimeError("You must either supply a p0 of length {} or supply a value for keyword {} for your model function {}".format(len(model.param_names),k,model.func.__name__))
                     else:
                         p0[k] = kargs[k]
         else:
