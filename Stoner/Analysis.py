@@ -1057,7 +1057,10 @@ class AnalyseFile(DataFile):
         """Interpolate a dataset to get a new set of values for a given set of x data.
 
         Args:
-            ewX (1D array): Row indices or X column values to interpolate with
+            ewX (1D array or None): Row indices or X column values to interpolate with. If None, then the
+            :py:meth:`AnalyseFile.interpolate` returns an interpolation function. Unlike the raw interpolation
+            function from scipy, this interpolation function will work with MaskedArrays by compressing them
+            first.
 
         Keyword Arguments:
             kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
@@ -1065,13 +1068,16 @@ class AnalyseFile(DataFile):
             replace (bool): If true, then the current AnalyseFile's data is replaced with the  newly interpolated data and the current AnalyseFile is
                 returned.
 
-
         Returns:
             2D numpy array: representing a section of the current object's data if replace is False(default) or the modofied AnalyseFile if replace is true.
 
         Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
             Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.
+
+            If the positional argument, newX is None, then the return value is an interpolation function. This interpolation function takes one argument
+            - if *xcol* was None, this argument is interpreted as array indices, but if *xcol* was specified, then this argument is interpreted as
+            an array of xvalues.
         """
         l = _np_.shape(self.data)[0]
         index = _np_.arange(l)
@@ -1083,10 +1089,23 @@ class AnalyseFile(DataFile):
         if isinstance(newX,ma.MaskedArray):
             newX=newX.compressed()
 
-        if xcol is not None:  # We need to convert newX to row indices
+        if xcol is not None and newX is not None:  # We need to convert newX to row indices
             xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
             newX = xfunc(newX)
         inter = interp1d(index, self.data, kind, 0)
+
+        if newX is None: #Ok, we're going to return an interpolation function
+            def wrapper(newX):
+                if isinstance(newX,ma.MaskedArray):
+                    newX=newX.compressed()
+                else:
+                    newX=_np_.array(newX)
+                if xcol is not None and newX is not None:  # We need to convert newX to row indices
+                    xfunc = interp1d(self.column(xcol), index, kind, 0)  # xfunc(x) returns partial index
+                    newX = xfunc(newX)
+                return inter(newX)
+            return wrapper
+
         if replace:
             self.data=inter(newX)
             ret=self
