@@ -11,6 +11,7 @@ import numpy as np
 import unittest
 import sys
 from os import path
+import os
 
 #data arrays for testing - some useful small images for tests
 
@@ -46,11 +47,8 @@ td2=np.array(\
 """
  
 thisdir=sys.argv[0]
-class KerrArrayTest(unittest.TestCase):
 
-    """Path to sample Data File"""
-    datadir=path.join(thisdir,'coretestdata')
-    
+class KerrArrayTest(unittest.TestCase):
 
     def setUp(self):
         self.td1=KerrArray(td1)
@@ -83,6 +81,14 @@ class KerrArrayTest(unittest.TestCase):
         td1.metadata['testclone']='abc'
         self.assertTrue('testclone' not in self.td1.metadata.keys(), 'memory overlap for metadata on clone')
     
+    def test_save(self):
+        testfile=path.join('coretestdata','testsave.png')
+        keys=self.anim.keys()
+        self.anim.save(filename=testfile)
+        load=KerrArray(testfile)
+        self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata') 
+        os.remove(testfile) #tidy up
+        
     def test_max_box(self):
         s=self.anim.shape
         self.assertTrue(self.anim.max_box==(0,s[1],0,s[0]))

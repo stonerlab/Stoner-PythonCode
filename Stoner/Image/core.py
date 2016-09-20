@@ -24,7 +24,9 @@ from copy import deepcopy
 from skimage import exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
+from skimage import img_as_float
 from PIL import Image
+from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
 from Stoner import Data
 from Stoner.compat import * # Some things to help with Python2 and Python3 compatibility
@@ -79,6 +81,7 @@ class KerrArray(np.ndarray,metadataObject):
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
     _kfuncs_proxy=None
+    
 
     #now initialise class
 
@@ -108,8 +111,9 @@ class KerrArray(np.ndarray,metadataObject):
         ka.filename=fname
         return ka #__init__ called
 
-    def __init__(self, image=[], metadata=None, ocr_metadata=False,
-                               reduce_metadata=True, field_only=False, **kwargs):
+    def __init__(self, image=[],  reduce_metadata=True,
+                     ocr_metadata=False, field_only=False,
+                                 metadata=None, **kwargs):
         """Create a KerrArray instance with metadata attribute
 
         Parameters
@@ -118,16 +122,20 @@ class KerrArray(np.ndarray,metadataObject):
             If a filename is given it will try to load the image from memory
             Otherwise it will call np.array(image) on the object so an array or
             list is suitable
-        metadata: dict
-            dictionary of metadata items you would like adding to your array
+        reduce_metadata: bool
+            if True reduce the metadata to useful bits and do some processing on it          
+        convert_float: bool
+            if True convert the image to float values between 0 and 1 (necessary 
+            for some forms of processing)
         ocr_metadata: bool
             whether to try to use optical character recognition to get the 
             metadata from the image (necessary for images taken pre 06/2016)
-        reduce_metadata: bool
-            if True reduce the metadata to useful bits and do some processing on it
         field_only: bool
             if ocr_metadata is true, get field only (bit faster)
+        metadata: dict
+            dictionary of extra metadata items you would like adding to your array
         """
+        
         if reduce_metadata:
             self.reduce_metadata()
         if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
@@ -137,7 +145,7 @@ class KerrArray(np.ndarray,metadataObject):
             self.metadata['filename']=image
             self.filename=image
         if ocr_metadata:
-            self.ocr_metadata(field_only=field_only) #update metadata
+            self.ocr_metadata(field_only=field_only) #update metadat 
 
     def __array_finalize__(self, obj):
         """__array_finalize__ and __array_wrap__ are necessary functions when
@@ -400,7 +408,66 @@ class KerrArray(np.ndarray,metadataObject):
                 newmet.pop('Images to Average')
         self.metadata=typeHintedDict(newmet)
         return self.metadata
+    
+    def save(self, filename=None):
+        """Saves the image into the file 'filename', compatible with png.
 
+        Args:
+            filename (string, bool or None): Filename to save data as, if this is
+                None then the current filename for the object is used
+                If this is not set, then then a file dialog is used. If 
+                filename is False then a file dialog is forced.
+
+        Returns:
+            self: The current :py:class:`DataFile` object
+                """
+        if filename is None:
+            filename = self.filename
+        if filename in (None, '') or (isinstance(filename, bool) and not filename):
+            # now go and ask for one
+            filename = self.__file_dialog('w')
+        if filename[-4:]!='.png':
+            filename=filename+'.png' #must save as a png type
+        meta=PngImagePlugin.PngInfo()
+        info=self.metadata.export_all()
+        info=[i.split('=') for i in info]
+        for k,v in info:        
+            meta.add_text(k,v)
+        s=self.convert_int()
+        im=Image.fromarray(s.astype('uint32'),mode='I')
+        im.save(filename,pnginfo=meta)
+
+    def __file_dialog(self, mode):
+        """Creates a file dialog box for loading or saving ~b DataFile objects.
+
+        Args:
+            mode (string): The mode of the file operation  'r' or 'w'
+
+        Returns:
+            A filename to be used for the file operation."""
+        # Wildcard pattern to be used in file dialogs.
+
+        patterns=(('png', '*.png'))
+
+        if self.filename is not None:
+            filename = os.path.basename(self.filename)
+            dirname = os.path.dirname(self.filename)
+        else:
+            filename = ""
+            dirname = ""
+        if "r" in mode:
+            mode = "file"
+        elif "w" in mode:
+            mode = "save"
+        else:
+            mode = "directory"
+        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
+        if len(dlg) != 0:
+            self.filename = dlg
+            return self.filename
+        else:
+            return None
+            
     def _parse_text(self, text, key=None):
         """Attempt to parse text which has been recognised from an image
         if key is given specific hints may be applied"""
