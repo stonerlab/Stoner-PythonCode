@@ -46,15 +46,15 @@ td2=np.array(\
   [ 0.   0.   0.   0.   0.   0. ]]
 """
  
-thisdir=sys.argv[0]
+thisdir=path.dirname(__file__)
 
 class KerrArrayTest(unittest.TestCase):
 
     def setUp(self):
         self.td1=KerrArray(td1)
         self.td2=KerrArray(td2)
-        self.anim=KerrArray('coretestdata/im1_annotated.png',ocr_metadata=True)
-        self.unanim=KerrArray('coretestdata/im2_noannotations.png',ocr_metadata=True)
+        self.anim=KerrArray(path.join(thisdir,'coretestdata/im1_annotated.png'),ocr_metadata=True)
+        self.unanim=KerrArray(path.join(thisdir,'coretestdata/im2_noannotations.png'),ocr_metadata=True)
         self.testdata=(self.td1,self.td2,self.anim,self.unanim)
     
     def test_load(self):
@@ -109,6 +109,9 @@ class KerrArrayTest(unittest.TestCase):
         
     def test_metadata(self):
         #this incidently tests get_metadata too
+        if not self.anim.tesseractable:
+            print("#"*80)
+            print("Skipping test that uses tesseract.")
         m=self.anim.metadata
         self.assertTrue(all((m['ocr_average']=='on,8x',
                             m['ocr_date']=='09/03/16',
