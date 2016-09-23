@@ -21,13 +21,12 @@ from skimage import filters, feature
 #from skimage.viewer import ImageViewer,CollectionViewer
 from Stoner.Folders import objectFolder
 from Stoner.compat import *
+from Stoner.compat import string_types
 
 
 GRAY_RANGE=(0,65535)  #2^16
 IM_SIZE=(512,672)
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
-
-StringTypes=(str,unicode)
 
 
 def _load_KerrArray(f,img_num=0, **kwargs):
@@ -154,4 +153,104 @@ class KerrList(objectFolder):
                 metadata=[m[0] for m in metadata]
         return metadata
 
-
+class KerrStack(object):
+    """
+    This is used to deal with a stack of images from the Kerr software presented
+    as a 3d numpy array. The final axis is the number of images.    
+    """
+    
+    
+    def __init__(self, imagearray, fieldlist=None):
+        """3d array stack of images
+        Parameters
+        ----------
+        imagearray ndarray:
+            the last axis is taken as the stack number
+        fieldlist ndarray:
+            list of field values
+        """
+        self.imagearray=imagearray
+        self.convert_float()
+        if fieldlist is not None:
+            fieldlist=np.array(fieldlist)
+            assert len(fieldlist.shape)==1, 'fieldlist must be 1d'
+            assert fieldlist.shape[0]==imagearray.shape[2], 'fieldlist shape incompatible with image array'
+        else:
+            fieldlist=np.arange(imagearray.shape[2])
+        self.fields=fieldlist
+        
+    def __len__(self):
+        return self.imagearray.shape[2]
+        
+    def __getitem__(self, i):
+        return self.imagearray[:,:,i]
+        
+    def __setitem__(self, i, value):
+        self.imagearray[:,:,i]=value  
+    
+    def convert_float(self):
+        """convert array to floats between 0 and 1"""
+        for i,im in enumerate(self):
+            k=KerrArray(im)
+            k=k.convert_float()
+            self[i]=np.array(k)
+    
+    def clone(self):
+        return KerrStack(np.copy(self.imagearray), fieldlist=np.copy(self.fields))        
+    
+    def subtract(self, background, contrast=16):
+        """subtract a background image from all images in the stack"""
+        for i,im in enumerate(self):
+            self[i]=contrast*(im-background)+0.5
+    
+    def apply_all(self, func, quiet=True, *args, **kwargs):
+        """apply function func to all images in the stack
+        Parameters
+        ----------
+        func: string or callable
+            if string it must be a function reachable by KerrArray
+        quiet: bool
+            if False print '.' for every iteration
+        *args, **kwargs
+            arguments for the function
+        """
+        if isinstance(func, string_types):
+            for i, im in enumerate(self):
+                k=KerrArray(im)
+                f=getattr(k,func)
+                self[i]=f(*args,**kwargs)
+                if not quiet:
+                    print '.'
+        elif hasattr(func, '__call__'):
+            for i, im in enumerate(self):
+                self[i]=func(im, *args, **kwargs)
+            if not quiet:
+                print '.'
+        
+    def hysteresis(self, mask=None):
+        """Make a hysteresis loop of the average intensity in the given images
+    
+        Parameters
+        ----------
+        mask: boolean array of same size as an image, or list of masks for each image
+            if True then don't include that area in the hysteresis
+    
+        Returns
+        -------
+        hyst: nx2 np.ndarray
+            fields, intensities, 2 column numpy array
+        """
+        ia=self.imagearray
+        hys_length=len(self)       
+        hyst=np.column_stack((self.fields,np.zeros(hys_length)))
+        for i in range(hys_length):
+            im=ia[:,:,i]
+            if isinstance(mask, np.ndarray) and len(mask.shape)==2:
+                hyst[i,1] = np.average(im[np.invert(mask.astype(bool))])
+            elif isinstance(mask, np.ndarray) and len(mask.shape)==3:
+                hyst[i,1] = np.average(im[np.invert(mask[:,:,i].astype(bool))])
+            elif isinstance(mask, (tuple,list)):
+                hyst[i,1] = np.average(im[np.invert(mask[i])])
+            else:
+                hyst[i,1] = np.average(im)
+        return hyst
