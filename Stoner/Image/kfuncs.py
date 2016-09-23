@@ -27,8 +27,8 @@ If you want to add new functions that's great. There's a few important points:
 
 """
 
-import numpy as np
-from skimage import exposure,feature,filters,measure,transform
+import numpy as np,matplotlib.pyplot as plt, os
+from skimage import exposure,feature,filters,measure,transform,util
 from core import KerrArray
 from Stoner import Data
 
@@ -62,7 +62,7 @@ def clip_intensity(im):
     """clip intensity that lies outside the range allowed by dtype.
     Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
     are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
-    im=im.rescale_intensity(in_range='dtype')
+    im=im.rescale_intensity(in_range=util.dtype_limits(im,clip_negative=True))
     return im
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
@@ -103,6 +103,17 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     im.metadata['correct_drift']=(-shift[1],-shift[0])
     return im
 
+def subtract_image(im, background, contrast=16, clip=True):
+    """subtract a background image from the KerrArray
+    Multiply the contrast by the contrast parameter.
+    If clip is on then clip the intensity after for the maximum allowed data range.
+    """
+    im=im.convert_float()
+    im=contrast*(im-background)+0.5
+    if clip:
+        im.clip_intensity()
+    return im
+    
 def edge_det(filename,threshold1,threshold2):
     '''Detects an edges in an image according to the thresholds 1 and 2.
     Below threshold 1, a pixel is disregarded from the edge
@@ -128,7 +139,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
         poly (list or None): [pvert, phoriz] pvert and phoriz are arrays of polynomial coefficients
             (highest power first) to subtract in the horizontal and vertical
             directions. If None function defaults to fitting its own polynomial.
-        mode (str): Either 'crop' or 'norm' - specifies how to handle intensitry values that end up being outside
+        mode (str): Either 'clip' or 'norm' - specifies how to handle intensitry values that end up being outside
             of the accepted range for the image.
 
     Returns:
@@ -169,7 +180,7 @@ def level_image(im, poly_vert=1, poly_horiz=1, box=None, poly=None,mode="clip"):
         for i,c in enumerate(p_vert):
             im=im-c*vertcoord**(len(p_vert)-i-1)
     im.metadata['poly_sub']=(p_horiz,p_vert)
-    if mode=="crop":
+    if mode=="clip":
         im=im.clip_intensity() #saturate any pixels outside allowed range
     elif mode=="norm":
         im=im.normalise()
@@ -291,3 +302,97 @@ def translate_limits(im, translation):
 def NPPixel_BW(np_image,thresh1,thresh2):
     '''Changes the colour if pixels in a np array according to an inputted threshold'''
     pass
+
+def plot_histogram(im):
+    """plot the histogram and cumulative distribution for the image"""
+    hist,bins=im.histogram()
+    cum,bins=im.cumulative_distribution()
+    cum=cum*np.max(hist)/np.max(cum)
+    plt.plot(bins,hist,'k-')
+    plt.plot(bins,cum,'r-')
+    
+def threshold_minmax(im,threshmin=0.1,threshmax=0.9):
+    """returns a boolean array which is thresholded between threshmin and 
+    threshmax"""
+    im=im.convert_float()
+    return np.logical_or(im<threshmin, im>threshmax)
+    
+def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
+    """Tries to create a boolean array which is a mask for typical defects
+    found in Kerr images. Best for unprocessed raw images. (for subtract images
+    see defect_mask_subtract_image)
+    Looks for big bright things by thresholding and small and dark defects using
+    skimage's corner_fast algorithm
+    
+    Parameters
+    ----------    
+    thresh float
+        brighter stuff than this gets removed (after image levelling)
+    corner_thresh float
+        see corner_fast skimage
+    radius:
+        radius of pixels around corners that are added to mask
+        
+    return_extra dict
+        this returns a dictionary with some of the intermediate steps of the 
+        calculation
+    
+    Returns
+    -------
+    totmask ndarray of bool
+        mask
+    info (optional) dict
+        dictionary of intermediate calculation steps
+    """
+    im=im.convert_float()
+    im=im.level_image(poly_vert=3,poly_horiz=3)
+    th=im.threshold_minmax(0,thresh)
+    #corner fast good at finding the small black dots
+    cor=im.corner_fast(threshold=corner_thresh)
+    blobs=cor.blob_doh(min_sigma=1,max_sigma=20,num_sigma=3,threshold=0.01)
+    q=np.zeros_like(im)
+    for y,x,s in blobs:
+        q[y-radius:y+radius,x-radius:x+radius]=1.0
+    totmask=np.logical_or(q,th)
+    if return_extra:
+        info={'flattened_image':im,'corner_fast':cor,'corner_points':blobs,
+                  'corner_mask':q,'thresh_mask':th}
+        return totmask, info
+    return totmask
+
+def defect_mask_subtract_image(im,threshmin=0.25, threshmax=0.9,
+                               denoise_weight=0.1, return_extra=False):
+    """Create a mask array for a typical subtract Kerr image
+    Uses a denoise algorithm followed by simple thresholding.    
+    
+    Returns
+    -------
+    totmask: ndarray of bool
+        the created mask
+    info (optional) dict:
+        the intermediate denoised image
+    """
+                             
+    p=im.denoise_tv_chambolle(weight=denoise_weight)
+    submask=p.threshold_minmax(threshmin,threshmax)
+    if return_extra:
+        info={'denoised_image':p}
+        return submask,info
+    return submask
+
+def do_nothing(im):
+    """exactly what it says on the tin"""
+    return im
+    
+def imshow(im, fig=None, title=None):
+    """quick plot of image"""
+    if fig is not None:
+        fig=plt.imshow(im, figure=fig, cmap='gray')
+    else:
+        fig=plt.imshow(im, cmap='gray')
+    if title is None:
+        plt.title(os.path.split(im['filename'])[1])
+    else:
+        plt.title(title)
+    plt.axis('off')
+    return fig
