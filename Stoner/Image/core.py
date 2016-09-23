@@ -582,7 +582,7 @@ class KerrArray(np.ndarray,metadataObject):
         elif field_only:
             fbox=(110,165,527,540) #(This is just the number area not the unit)
             im=self.crop_image(box=fbox,copy=True)
-            field=self._tesseract_image(im,'Field')
+            field=self._tesseract_image(im,'ocr_field')
             self.metadata['ocr_field']=field
         else:
             text_areas={'ocr_field': (110,165,527,540),
@@ -609,8 +609,8 @@ class KerrArray(np.ndarray,metadataObject):
                 metadata['ocr_pixels_per_micron']=1/metadata['ocr_microns_per_pixel']
                 metadata['ocr_field_of_view_microns']=np.array(IM_SIZE)*metadata['ocr_microns_per_pixel']
             self.metadata.update(metadata)
-        if 'Field' in self.metadata.keys() and not isinstance(self.metadata['Field'],(int,float)):
-            self.metadata['Field']=np.nan  #didn't read the field properly
+        if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
+            self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
 
 

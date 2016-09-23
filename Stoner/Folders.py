@@ -423,7 +423,7 @@ class objectFolder(MutableSequence):
         :py:attr:`objectFolder.groups`.
         """
         if not isinstance(value,(objectFolder,metadataObject)):
-            raise TypError("Can only store metadataObject like objects and objectFolders in a objectFolder")
+            raise TypeError("Can only store metadataObject like objects and objectFolders in a objectFolder")
         if isinstance(value,metadataObject):
             if isinstance(name,int):
                 self.files[name]=value
