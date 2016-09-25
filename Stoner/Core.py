@@ -1480,6 +1480,10 @@ class DataFile(metadataObject):
                         else:
                             typ = "a {}".format(type(myattr[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
+                    del kargs[k]
+        for c in self._mro:
+            if c.__module__.startswith("Stoner") and c is not DataFile:
+                c.__init__(self,*args,**kargs)
 
 # Special Methods
 
@@ -1540,7 +1544,7 @@ class DataFile(metadataObject):
     @property
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return {
+        ret={
             "data": _np_.ndarray,
             "column_headers": list,
             "setas": (string_types, list),
@@ -1549,6 +1553,18 @@ class DataFile(metadataObject):
             "filename": string_types,
             "mask": (_np_.ndarray, bool)
         }
+        for c in self._mro:
+            if c is not DataFile and "_public_attrs" in c.__dict__:
+                ret.update(c._public_attrs)
+        return ret
+
+    @property
+    def _mro(self):
+        ret=[]
+        for c in self.__class__.__mro__[1:]:
+            if c not in ret:
+                ret.append(c)
+        return ret
 
     @property
     def clone(self):

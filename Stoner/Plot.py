@@ -39,11 +39,8 @@ try: # Check we've got 3D plotting
 except ImportError:
     _3D=False
 
-
-
-class PlotFile(DataFile):
-    """Extends DataFile with plotting functions.
-
+class PlotMixin(object):
+    """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
     Args:
         args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
         kargs (dict):  keyword arguments to pass to \b DataFile.__init__
@@ -51,35 +48,26 @@ class PlotFile(DataFile):
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
         labels (list of string): List of axis labels as aternates to the column_headers
-
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
     no_fmt = [errorfill]
+    template = DefaultPlotStyle
+    legend = True
+    multiple = "common"
 
     def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
         """Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.
 
         """
-        if "template" in kargs:  #Setup the template
-            self.template = kargs["template"]
-            del (kargs["template"])
-        else:
-            self.template = DefaultPlotStyle
-        super(PlotFile, self).__init__(*args, **kargs)
         self.__figure = None
         self._labels = copy.deepcopy(self.column_headers)
-        self.legend = True
         self._subplots = []
-        self.multiple = "common"
 
 #============================================================================================================================
 #Properties of PlotFile
 #============================================================================================================================
-    @property
-    def _public_attrs(self):
-        ret = super(PlotFile, self)._public_attrs
-        ret.update({
+    _public_attrs={
             "fig": (int, mplfig.Figure),
             "labels": list,
             "template": DefaultPlotStyle,
@@ -88,8 +76,7 @@ class PlotFile(DataFile):
             "title": string_types,
             "xlabel": string_types,
             "ylabel": string_types
-        })
-        return ret
+    }
 
     @property
     def ax(self):
@@ -321,7 +308,7 @@ class PlotFile(DataFile):
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones."""
         attr = dir(type(self))
-        attr.extend(super(PlotFile, self).__dir__())
+        attr.extend(super(PlotMixin, self).__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr.extend(["fig", "axes", "labels", "subplots", "template"])
         attr.extend(('xlabel', 'ylabel', 'title', 'xlim', 'ylim'))
@@ -423,7 +410,7 @@ class PlotFile(DataFile):
                 All other attrbiutes are passed over to the parent class
                 """
         try:
-            return super(PlotFile, self).__getattr__(name)
+            return super(PlotMixin, self).__getattr__(name)
         except AttributeError:
             if not isinstance(self.__figure, mplfig.Figure):
                 raise AttributeError("Unknown attribute {}".format(name))
@@ -457,8 +444,8 @@ class PlotFile(DataFile):
     """
         if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
             object.__setattr__(self,name, value)
-        elif name in dir(super(PlotFile, self)):
-            super(PlotFile, self).__setattr__(name, value)
+        elif name in dir(super(PlotMixin, self)):
+            super(PlotMixin, self).__setattr__(name, value)
         elif "set_{}".format(name) in dir(plt.Axes):
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
@@ -473,7 +460,7 @@ class PlotFile(DataFile):
             plt.figure(tfig.number)
             plt.sca(tax)
         else:
-            super(PlotFile, self).__setattr__(name, value)
+            super(PlotMixin, self).__setattr__(name, value)
 
     def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
@@ -497,7 +484,7 @@ class PlotFile(DataFile):
             the original DataFile Instance as well as returning it."""
 
         # Call the parent method and then update this label
-        super(PlotFile,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
+        super(PlotMixin,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
@@ -1406,3 +1393,9 @@ def hsl2rgb(h, s, l):
     for i in range(len(h)):
         rgb[i,:] = _np_.array(hls_to_rgb(*hls[i]))
     return (255 * rgb).astype('u1')
+
+class PlotFile(DataFile,PlotMixin):
+    """Extends DataFile with plotting functions.
+
+    """
+    pass

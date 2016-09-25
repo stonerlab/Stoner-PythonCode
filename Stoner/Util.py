@@ -9,8 +9,8 @@ Created on Tue Oct 08 20:14:34 2013
 
 from Stoner.compat import *
 from Stoner.Core import DataFile as _DF_
-from Stoner.Analysis import AnalyseFile as _AF_
-from Stoner.Plot import PlotFile as _PF_
+from Stoner.Analysis import AnalysisMixin as _AF_
+from Stoner.Plot import PlotMixin as _PF_
 import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
 from Stoner.Fit import linear
@@ -79,7 +79,7 @@ def _up_down(data):
     return ret
 
 
-class Data(_AF_, _PF_):
+class Data(_DF_,_AF_, _PF_):
     """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""

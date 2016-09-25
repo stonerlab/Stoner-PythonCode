@@ -227,13 +227,8 @@ def GetAffineTransform(p, pd):
     transform=_np_.linalg.solve(p, pd)
     return  transform.T
 
-
-class AnalyseFile(DataFile):
-    """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
-
-    Note:
-        There is no separate constructor for this class - it inherits from DataFile
-
+class AnalysisMixin(object):
+    """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.
     """
 
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
@@ -2267,3 +2262,12 @@ class AnalyseFile(DataFile):
         if isinstance(ret,DataArray):
             ret.isrow=True
         return ret
+
+class AnalyseFile(DataFile,AnalysisMixin):
+    """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
+
+    Note:
+        There is no separate constructor for this class - it inherits from DataFile
+
+    """
+    pass
