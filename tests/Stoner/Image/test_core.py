@@ -112,6 +112,7 @@ class KerrArrayTest(unittest.TestCase):
         if not self.anim.tesseractable:
             print("#"*80)
             print("Skipping test that uses tesseract.")
+            return None
         m=self.anim.metadata
         self.assertTrue(all((m['ocr_average']=='on,8x',
                             m['ocr_date']=='09/03/16',
