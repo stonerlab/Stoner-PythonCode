@@ -265,7 +265,7 @@ def split_up_down(data, col=None, folder=None):
     """
     if col is None:
         col = data.setas["x"]
-    a = _AF_(data)
+    a = Data(data)
     width = len(a) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1

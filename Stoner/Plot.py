@@ -97,14 +97,6 @@ class PlotMixin(object):
             ret = None
         return ret
 
-    @DataFile.clone.getter
-    def clone(self):
-        c = self.__class__()
-        ret = copy_into(self,c)
-        ret.template = copy.deepcopy(self.template)
-        ret.labels=self.labels
-        return ret
-
     @property
     def column_headers(self):
         return DataFile.column_headers.fget(self)
@@ -126,9 +118,11 @@ class PlotMixin(object):
         if isinstance(value,plt.Figure):
             self.__figure = value
             self.__figure, ax = self.template.new_figure(value.number)
-        elif isinstance(value.int):
+        elif isinstance(value,int):
             value=plt.Figure(value)
             self.fig=value
+        elif value is None:
+            self.__figure=None
         else:
             raise NotImplementedError("fig should be a number of matplotlib figure")
 
@@ -155,6 +149,8 @@ class PlotMixin(object):
 
     @property
     def template(self):
+        if not hasattr(self,"_template"):
+            self.template=DefaultPlotStyle
         return self._template
 
     @template.setter

@@ -47,9 +47,9 @@ def copy_into(source,dest):
     overwrites the attributes that represent the data in the DataFile.
     """
     for attr in source._public_attrs:
-        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+        if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data","setas","column_headers","debug"]:
             continue
-        dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
+        setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
     dest.data = source.data.copy()
     dest.data._setas = source.data._setas.clone
     return dest
@@ -965,7 +965,8 @@ class metadataObject(MutableMapping):
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
-        self.metadata = typeHintedDict()
+        if not hasattr(self,"metadata") or not isinstance(self.metadata,typeHintedDict):
+            self.metadata = typeHintedDict()
 
     def __getitem__(self,name):
         return self.metadata[name]
@@ -1470,6 +1471,7 @@ class DataFile(metadataObject):
         self.metadata["Stoner.class"] = self.__class__.__name__
         if len(kargs) > 0:  # set public attributes from keywords
             myattrs = self._public_attrs
+            to_go=[]
             for k in kargs:
                 if k in myattrs:
                     if isinstance(kargs[k], myattrs[k]):
@@ -1480,9 +1482,13 @@ class DataFile(metadataObject):
                         else:
                             typ = "a {}".format(type(myattr[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
-                    del kargs[k]
-        for c in self._mro:
-            if c.__module__.startswith("Stoner") and c is not DataFile:
+                    to_go.append(k)
+            for k in to_go:
+                del kargs[k]
+        for c in self._mro: # Call all inits in Stoner mixin classes
+            if c.__module__.startswith("Stoner") and c is not DataFile and "__init__" in c.__dict__:
+                if self.debug: print(c)
+                if self.debug: print(self.metadata)
                 c.__init__(self,*args,**kargs)
 
 # Special Methods
@@ -1551,7 +1557,8 @@ class DataFile(metadataObject):
             "metadata": typeHintedDict,
             "debug": bool,
             "filename": string_types,
-            "mask": (_np_.ndarray, bool)
+            "mask": (_np_.ndarray, bool),
+            "metadata":typeHintedDict,
         }
         for c in self._mro:
             if c is not DataFile and "_public_attrs" in c.__dict__:
@@ -1571,6 +1578,7 @@ class DataFile(metadataObject):
         """Gets a deep copy of the current DataFile.
         """
         c = self.__class__()
+        if self.debug: print("Cloning in DataFile")
         return copy_into(self,c)
 
     @property
@@ -3113,7 +3121,9 @@ class DataFile(metadataObject):
                     if self.debug: print("Passed Load")
                     failed=False
                     test["Loaded as"]=cls.__name__
+                    if (self.debug): print("Test matadata: {}".format(test.metadata))
                     copy_into(test,self)
+                    if (self.debug): print("Self matadata: {}".format(self.metadata))
 
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:

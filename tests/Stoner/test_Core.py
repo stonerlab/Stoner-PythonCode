@@ -114,7 +114,7 @@ class Datatest(unittest.TestCase):
 
 
     def test_dir(self):
-        self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed")
+        self.assertTrue(self.d.dir("S")==["Stoner.class"],"Dir method failed: dir was {}".format(self.d.dir()))
 
     def test_filter(self):
         self.d._push_mask()
