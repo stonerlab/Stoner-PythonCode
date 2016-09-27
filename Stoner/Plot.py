@@ -58,7 +58,7 @@ class PlotMixin(object):
     _public_attrs={
             "fig": (int, mplfig.Figure),
             "labels": list,
-            "template": DefaultPlotStyle,
+            "template": (DefaultPlotStyle,type(DefaultPlotStyle)),
             "xlim": tuple,
             "ylim": tuple,
             "title": string_types,
@@ -195,7 +195,7 @@ class PlotMixin(object):
                 fmt = "-"
             plotter(x, y, fmt=fmt, figure=figure, **kwords)
         for ax in figure.axes:
-            self._template.customise_axes(ax, self)
+            self.template.customise_axes(ax, self)
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface.
@@ -385,7 +385,7 @@ class PlotMixin(object):
 
     def _fix_titles(self, ix, multiple, **kargs):
         """Does the titling and labelling for a matplotlib plot."""
-        self._template.annotate(ix, multiple, self, **kargs)
+        self.template.annotate(ix, multiple, self, **kargs)
         if "show_plot" in kargs and kargs["show_plot"]:
             plt.ion()
             plt.draw()

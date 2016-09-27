@@ -1483,7 +1483,7 @@ class DataFile(metadataObject):
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
-                            typ = "a {}".format(type(myattr[k]))
+                            typ = "a {}".format(type(myattrs[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
                     to_go.append(k)
             for k in to_go:
@@ -2668,6 +2668,8 @@ class DataFile(metadataObject):
             elif c in ret and isinstance(ret[c],list):
                 if isinstance(cols[c],string_types):
                     cols[c]=self.find_col(cols[c])
+                elif isinstance(cols[c],_np_.ndarray) and cols[c].size==len(self):
+                    continue
                 elif isinstance(cols[c],Iterable):
                     cols[c]=self.find_col(cols[c])
             else:

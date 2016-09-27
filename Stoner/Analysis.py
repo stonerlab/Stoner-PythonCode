@@ -646,7 +646,7 @@ class AnalysisMixin(object):
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
             xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
-            ycol (index. ;ist of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
+            ycol (index, list of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
                 the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring
                 for each one. In this case the return value is a list of what would be returned for a single column fit.
 
@@ -2043,10 +2043,10 @@ class AnalysisMixin(object):
         """
         _=self._col_args(xcol=xcol,ycol=ycol,scalar=True)
         points = self.column([_.xcol, _.ycol])
-        points = points[points[:, 0].argsort()]
+        points = points[points[:, 0].argsort(),:]
         points[:, 0] += min_overlap
         otherpoints = other.column([_.xcol, _.ycol])
-        otherpoints = otherpoints[otherpoints[:, 0].argsort()]
+        otherpoints = otherpoints[otherpoints[:, 0].argsort(),:]
         self_second = _np_.max(points[:, 0]) > _np_.max(otherpoints[:, 0])
         if overlap is None:  # Calculate the overlap
             lower = max(_np_.min(points[:, 0]), _np_.min(otherpoints[:, 0]))
