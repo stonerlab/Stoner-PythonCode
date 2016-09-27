@@ -553,13 +553,13 @@ class _setas(object):
 
 
         #No longer enforce ordering of yezf - allow them to appear in any order.
-        ycol = []
-        yerr = []
-        zcol = []
-        zerr = []
-        ucol = []
-        vcol = []
-        wcol =  []
+        ycol = list()
+        yerr = list()
+        zcol = list()
+        zerr = list()
+        ucol = list()
+        vcol = list()
+        wcol =  list()
 
         columns=[ycol,yerr,zcol,zerr,ucol,vcol,wcol]
         letters="yezfuvw"
@@ -2168,8 +2168,16 @@ class DataFile(metadataObject):
             ret = self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile, self).__getattr__(name)
-        else:
-            ret = None
+        else: #See if we can get an attribute from a mixin class
+            for c in self._mro:
+                if c is not DataFile:
+                    try:
+                        ret = c.__getattr__(self,name)
+                        break
+                    except AttributeError:
+                        continue
+            else:
+                ret = None
         if ret is not None:
             return ret
         if name in ("_setas", ):  # clearly not setup yet
@@ -2646,11 +2654,11 @@ class DataFile(metadataObject):
         else:
             self.mask = mask
 
-    def _col_args(self,scalar=True,**cols):
+    def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
+        cols={"xcol":xcol,"ycol":ycol,"zcol":zcol,"ucol":ucol,"vcol":vcol,"wcol":wcol,"xerr":xerr,"yerr":yerr,"zerr":zerr}
         ret=copy.deepcopy(self.setas.cols)
         for c in list(cols.keys()):
-            print("c={} cols[c]={}".format(c,cols[c]))
             if isNone(cols[c]): # Not defined, fallback on setas
                 del cols[c]
             elif isinstance(cols[c],bool) and not cols[c]: #False, delete column altogether
@@ -2661,13 +2669,10 @@ class DataFile(metadataObject):
                 if isinstance(cols[c],string_types):
                     cols[c]=self.find_col(cols[c])
                 elif isinstance(cols[c],Iterable):
-                    cols[c]=[self.find_col(cols[c]) for c in cols]
+                    cols[c]=self.find_col(cols[c])
             else:
                 cols[c]=self.find_col(cols[c])
-        print(ret)
-        print(cols)
         ret.update(cols)
-        print(ret)
         if scalar:
             for c in ret:
                 if isinstance(ret[c],list):
