@@ -85,3 +85,4 @@ elif __vi__[0] == 3:
             return funcs[what](**opts)
 
 index_types = string_types + (int, _pattern_type)
+from distutils.version import LooseVersion

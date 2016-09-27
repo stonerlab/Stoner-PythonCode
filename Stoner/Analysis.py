@@ -17,7 +17,12 @@ from scipy.signal import savgol_filter
 from inspect import getargspec,isclass
 from collections import Iterable
 try:  #Allow lmfit to be optional
-    from lmfit.model import Model, ModelFit
+    import lmfit
+    if LooseVersion(lmfit.__version__)<LooseVersion("0.9.0"):
+        from lmfit.model import Model, ModelFit
+    else:
+        from lmfit.model import Model
+        from lmfit.model import ModelResult as ModelFit
     from lmfit import Parameters
 except ImportError:
     Model = None
