@@ -49,7 +49,10 @@ def copy_into(source,dest):
     for attr in source._public_attrs:
         if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data","setas","column_headers","debug"]:
             continue
-        setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
+        try:
+            setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
+        except NotImplementedError: # Deepcopying failed, so just copy a reference instead
+            setattr(dest,attr,getattr(source,attr))
     dest.data = source.data.copy()
     dest.data._setas = source.data._setas.clone
     return dest
@@ -65,7 +68,7 @@ def isNone(iterator):
 
     if iterator is None:
         ret=True
-    elif isinstance(iterator,Iterable):
+    elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
         if len(iterator)==0:
             ret=True
         else:
@@ -350,8 +353,8 @@ class _setas(object):
                         pass
         elif isinstance(value, Iterable):
             if len(value) > self._size:
-                value = value[:len(self.column_headers)]
-            elif len(value) < len(self.column_headers):
+                value = value[:self._size]
+            elif len(value) < self._size:
                 value = [v for v in value]  # Ensure value is now a list
                 value.extend(list("." * (len(self.column_headers) - len(value))))
             if len(self.setas)<self._size:
@@ -1179,7 +1182,7 @@ class DataArray(_ma_.MaskedArray):
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
-            if len(ix)>1:
+            if len(ix)==len(self._setas):
                 tmp=_np_.array(self.setas)[ix[-1]]
                 ret.setas(tmp)
                 tmpcol=_np_.array(self.column_headers)[ix[-1]]
@@ -2071,8 +2074,13 @@ class DataFile(metadataObject):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
         """
         attr = dir(type(self))
-        attr.extend(list(self.__dict__.keys()))
-        attr.extend(['column_headers', 'records', 'clone', 'subclasses', 'shape', 'mask', 'dict_records', 'setas'])
+        for c in self._mro:
+            attr.extend(dir(c))
+            if hasattr(c,"_public_attrs"):
+                if c is DataFile:
+                    attr.extend(self._public_attrs.keys())
+                else:
+                    attr.extend(c._public_attrs.keys())
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         for k in col_check:
             if "_setas" not in self.__dict__:
@@ -2159,7 +2167,7 @@ class DataFile(metadataObject):
         if name in setas_cols:
             ret = self._getattr_col(name)
         elif name in dir(self):
-            return super(DataFile, self).__getattribute__(name)
+            return super(DataFile, self).__getattr__(name)
         else:
             ret = None
         if ret is not None:
@@ -2642,7 +2650,8 @@ class DataFile(metadataObject):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         ret=copy.deepcopy(self.setas.cols)
         for c in list(cols.keys()):
-            if cols[c] is None: # Not defined, fallback on setas
+            print("c={} cols[c]={}".format(c,cols[c]))
+            if isNone(cols[c]): # Not defined, fallback on setas
                 del cols[c]
             elif isinstance(cols[c],bool) and not cols[c]: #False, delete column altogether
                 del cols[c]
@@ -2655,7 +2664,10 @@ class DataFile(metadataObject):
                     cols[c]=[self.find_col(cols[c]) for c in cols]
             else:
                 cols[c]=self.find_col(cols[c])
+        print(ret)
+        print(cols)
         ret.update(cols)
+        print(ret)
         if scalar:
             for c in ret:
                 if isinstance(ret[c],list):

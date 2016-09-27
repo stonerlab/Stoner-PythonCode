@@ -704,8 +704,9 @@ class AnalysisMixin(object):
         if output == "full":
             kargs["full_output"] = True
 
-        _=self._col_args(xcol=xcol,ycol=ycol,yerr=sigma,scalar=False)
-
+        print((sigma,))
+        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol,yerr=sigma)
+        print(_)
         xcol,ycol,sigma=_.xcol,_.ycol,_.yerr
 
         working = self.search(xcol, bounds)

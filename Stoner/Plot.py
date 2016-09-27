@@ -55,6 +55,16 @@ class PlotMixin(object):
     template = DefaultPlotStyle
     legend = True
     multiple = "common"
+    _public_attrs={
+            "fig": (int, mplfig.Figure),
+            "labels": list,
+            "template": DefaultPlotStyle,
+            "xlim": tuple,
+            "ylim": tuple,
+            "title": string_types,
+            "xlabel": string_types,
+            "ylabel": string_types
+    }
 
     def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
         """Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.
@@ -67,16 +77,6 @@ class PlotMixin(object):
 #============================================================================================================================
 #Properties of PlotFile
 #============================================================================================================================
-    _public_attrs={
-            "fig": (int, mplfig.Figure),
-            "labels": list,
-            "template": DefaultPlotStyle,
-            "xlim": tuple,
-            "ylim": tuple,
-            "title": string_types,
-            "xlabel": string_types,
-            "ylabel": string_types
-    }
 
     @property
     def ax(self):
