@@ -566,7 +566,10 @@
             <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s1">&#39;Not a TDMS File&#39;</span><span class="p">)</span>
         <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span> <span class="n">tdms_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span> <span class="n">tdms_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;TDMS File failed to load&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -1610,7 +1613,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Jul 03, 2016.
+      Last updated on Sep 28, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>

@@ -8,43 +8,6 @@ Stoner.Analysis.AnalyseFile
    
 
    
-   .. rubric:: Methods
-
-   .. autosummary::
-    :toctree:
-   
-      ~Stoner.Analysis.AnalyseFile.SG_Filter
-      ~Stoner.Analysis.AnalyseFile.add
-      ~Stoner.Analysis.AnalyseFile.apply
-      ~Stoner.Analysis.AnalyseFile.bin
-      ~Stoner.Analysis.AnalyseFile.clip
-      ~Stoner.Analysis.AnalyseFile.curve_fit
-      ~Stoner.Analysis.AnalyseFile.decompose
-      ~Stoner.Analysis.AnalyseFile.diffsum
-      ~Stoner.Analysis.AnalyseFile.divide
-      ~Stoner.Analysis.AnalyseFile.extrapolate
-      ~Stoner.Analysis.AnalyseFile.integrate
-      ~Stoner.Analysis.AnalyseFile.interpolate
-      ~Stoner.Analysis.AnalyseFile.lmfit
-      ~Stoner.Analysis.AnalyseFile.make_bins
-      ~Stoner.Analysis.AnalyseFile.max
-      ~Stoner.Analysis.AnalyseFile.mean
-      ~Stoner.Analysis.AnalyseFile.min
-      ~Stoner.Analysis.AnalyseFile.multiply
-      ~Stoner.Analysis.AnalyseFile.normalise
-      ~Stoner.Analysis.AnalyseFile.outlier_detection
-      ~Stoner.Analysis.AnalyseFile.peaks
-      ~Stoner.Analysis.AnalyseFile.polyfit
-      ~Stoner.Analysis.AnalyseFile.scale
-      ~Stoner.Analysis.AnalyseFile.smooth
-      ~Stoner.Analysis.AnalyseFile.span
-      ~Stoner.Analysis.AnalyseFile.spline
-      ~Stoner.Analysis.AnalyseFile.split
-      ~Stoner.Analysis.AnalyseFile.stitch
-      ~Stoner.Analysis.AnalyseFile.subtract
-      ~Stoner.Analysis.AnalyseFile.threshold
-
-   
    
 
    

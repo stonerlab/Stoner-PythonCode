@@ -27,7 +27,7 @@
     <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
     <link rel="up" title="Stoner Package" href="../Stoner.html" />
     <link rel="next" title="objectFolder.__init__" href="Stoner.Folders.objectFolder.__init__.html" />
-    <link rel="prev" title="Stoner.Folders.int_types" href="Stoner.Folders.int_types.html" /> 
+    <link rel="prev" title="Stoner.Folders.mpl_version" href="Stoner.Folders.mpl_version.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -43,7 +43,7 @@
           <a href="Stoner.Folders.objectFolder.__init__.html" title="objectFolder.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Folders.int_types.html" title="Stoner.Folders.int_types"
+          <a href="Stoner.Folders.mpl_version.html" title="Stoner.Folders.mpl_version"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
@@ -270,22 +270,25 @@ files included in the py:class:<cite>objectFolder</cite> is the union of files t
 <tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.depth" title="Stoner.Folders.objectFolder.depth"><code class="xref py py-obj docutils literal"><span class="pre">depth</span></code></a></td>
 <td>Gives the maximum number of levels of group below the current objectFolder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.loaded" title="Stoner.Folders.objectFolder.loaded"><code class="xref py py-obj docutils literal"><span class="pre">loaded</span></code></a></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">flat</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.loaded" title="Stoner.Folders.objectFolder.loaded"><code class="xref py py-obj docutils literal"><span class="pre">loaded</span></code></a></td>
 <td>An iterator that indicates wether the contents of the <a class="reference internal" href="#Stoner.Folders.objectFolder" title="Stoner.Folders.objectFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.objectFolder</span></code></a> has been loaded into memory.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.ls" title="Stoner.Folders.objectFolder.ls"><code class="xref py py-obj docutils literal"><span class="pre">ls</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.ls" title="Stoner.Folders.objectFolder.ls"><code class="xref py py-obj docutils literal"><span class="pre">ls</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.lsgrp" title="Stoner.Folders.objectFolder.lsgrp"><code class="xref py py-obj docutils literal"><span class="pre">lsgrp</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.lsgrp" title="Stoner.Folders.objectFolder.lsgrp"><code class="xref py py-obj docutils literal"><span class="pre">lsgrp</span></code></a></td>
 <td>Returns a list of the groups as a generator.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.mindepth" title="Stoner.Folders.objectFolder.mindepth"><code class="xref py py-obj docutils literal"><span class="pre">mindepth</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.mindepth" title="Stoner.Folders.objectFolder.mindepth"><code class="xref py py-obj docutils literal"><span class="pre">mindepth</span></code></a></td>
 <td>Gives the minimum number of levels of group below the current objectFolder.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.pattern" title="Stoner.Folders.objectFolder.pattern"><code class="xref py py-obj docutils literal"><span class="pre">pattern</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.pattern" title="Stoner.Folders.objectFolder.pattern"><code class="xref py py-obj docutils literal"><span class="pre">pattern</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.type" title="Stoner.Folders.objectFolder.type"><code class="xref py py-obj docutils literal"><span class="pre">type</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.objectFolder.type" title="Stoner.Folders.objectFolder.type"><code class="xref py py-obj docutils literal"><span class="pre">type</span></code></a></td>
 <td>Defines the (sub)class of the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</td>
 </tr>
 </tbody>
@@ -304,8 +307,8 @@ files included in the py:class:<cite>objectFolder</cite> is the union of files t
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Folders.int_types.html"
-                        title="previous chapter">Stoner.Folders.int_types</a></p>
+  <p class="topless"><a href="Stoner.Folders.mpl_version.html"
+                        title="previous chapter">Stoner.Folders.mpl_version</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Folders.objectFolder.__init__.html"
                         title="next chapter">objectFolder.__init__</a></p>
@@ -343,7 +346,7 @@ files included in the py:class:<cite>objectFolder</cite> is the union of files t
           <a href="Stoner.Folders.objectFolder.__init__.html" title="objectFolder.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Folders.int_types.html" title="Stoner.Folders.int_types"
+          <a href="Stoner.Folders.mpl_version.html" title="Stoner.Folders.mpl_version"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
@@ -351,7 +354,7 @@ files included in the py:class:<cite>objectFolder</cite> is the union of files t
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Jul 03, 2016.
+      Last updated on Sep 28, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>

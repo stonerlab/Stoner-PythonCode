@@ -43,6 +43,7 @@ Stoner.Folders.objectFolder
    
       ~Stoner.Folders.objectFolder.basenames
       ~Stoner.Folders.objectFolder.depth
+      ~Stoner.Folders.objectFolder.flat
       ~Stoner.Folders.objectFolder.loaded
       ~Stoner.Folders.objectFolder.ls
       ~Stoner.Folders.objectFolder.lsgrp

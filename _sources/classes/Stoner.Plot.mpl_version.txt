@@ -1,0 +1,15 @@
+Stoner.Plot.mpl_version
+=======================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: mpl_version
+
+   
+
+   
+   
+
+   
+   
+   

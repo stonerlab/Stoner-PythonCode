@@ -1,0 +1,8 @@
+
+
+RigakuFile.count
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: RigakuFile.count

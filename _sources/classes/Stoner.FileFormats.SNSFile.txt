@@ -19,6 +19,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.closest
       ~Stoner.FileFormats.SNSFile.column
       ~Stoner.FileFormats.SNSFile.columns
+      ~Stoner.FileFormats.SNSFile.count
       ~Stoner.FileFormats.SNSFile.del_column
       ~Stoner.FileFormats.SNSFile.del_rows
       ~Stoner.FileFormats.SNSFile.dir

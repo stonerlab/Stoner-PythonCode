@@ -1,0 +1,15 @@
+Stoner.Folders.mpl_version
+==========================
+
+.. currentmodule:: Stoner.Folders
+
+.. autoclass:: mpl_version
+
+   
+
+   
+   
+
+   
+   
+   

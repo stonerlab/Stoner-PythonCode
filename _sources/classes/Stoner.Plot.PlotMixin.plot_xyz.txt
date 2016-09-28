@@ -1,0 +1,8 @@
+
+
+PlotMixin.plot_xyz
+==============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotMixin.plot_xyz

@@ -1,8 +1,0 @@
-
-
-AnalyseFile.curve_fit
-=====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.curve_fit

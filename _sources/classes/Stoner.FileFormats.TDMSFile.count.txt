@@ -1,0 +1,8 @@
+
+
+TDMSFile.count
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.count

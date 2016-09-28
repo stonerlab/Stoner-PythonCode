@@ -1,0 +1,8 @@
+
+
+SPCFile.count
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SPCFile.count

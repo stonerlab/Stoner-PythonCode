@@ -19,6 +19,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.closest
       ~Stoner.FileFormats.RasorFile.column
       ~Stoner.FileFormats.RasorFile.columns
+      ~Stoner.FileFormats.RasorFile.count
       ~Stoner.FileFormats.RasorFile.del_column
       ~Stoner.FileFormats.RasorFile.del_rows
       ~Stoner.FileFormats.RasorFile.dir

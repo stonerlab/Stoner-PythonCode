@@ -120,6 +120,8 @@
 
     <span class="n">_type</span><span class="o">=</span><span class="n">metadataObject</span> <span class="c1"># class attribute to keep things happy</span>
     <span class="n">_pattern</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">_file_attrs</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
+    <span class="n">flat</span><span class="o">=</span><span class="bp">False</span>
 
 <div class="viewcode-block" id="objectFolder.__init__"><a class="viewcode-back" href="../../classes/Stoner.Folders.objectFolder.__init__.html#Stoner.Folders.objectFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="o">=</span><span class="bp">None</span>
@@ -289,7 +291,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">attr</span><span class="o">=</span><span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">))</span>
+        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">))</span>
         <span class="n">attr</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">attr</span>
 
@@ -298,7 +300,7 @@
         <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_attrs</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_attrs</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">objectFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -312,8 +314,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span> <span class="c1">#Something is in our metadataObject type</span>
-                <span class="k">if</span> <span class="n">ismethod</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">item</span><span class="p">)):</span> <span class="c1"># It&#39;s a method</span>
+            <span class="n">instance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">instance</span><span class="p">):</span> <span class="c1">#Something is in our metadataObject type</span>
+                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="n">item</span><span class="p">)):</span> <span class="c1"># It&#39;s a method</span>
                     <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr_proxy</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span> <span class="c1"># It&#39;s a static attribute</span>
                     <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__get_file_attr__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -333,6 +336,7 @@
 <span class="sd">            Either a modifed copy of this objectFolder or a list of return values</span>
 <span class="sd">            from evaluating the method for each file in the Folder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meth</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">(),</span><span class="n">item</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_wrapper_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Wraps a call to the metadataObject type for magic method calling.</span>
 <span class="sd">            Note:</span>
@@ -340,14 +344,18 @@
 <span class="sd">                so we have access to self and item&quot;&quot;&quot;</span>
             <span class="n">retvals</span><span class="o">=</span><span class="p">[]</span>
             <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-                <span class="n">meth</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+                <span class="n">meth</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">item</span><span class="p">)</span>
                 <span class="n">ret</span><span class="o">=</span><span class="n">meth</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">f</span><span class="p">:</span> <span class="c1"># method did not returned a modified version of the metadataObject</span>
                     <span class="n">retvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">=</span><span class="n">ret</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">retvals</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1"># If we haven&#39;t got anything to retun, return a copy of our objectFolder</span>
                 <span class="n">retvals</span><span class="o">=</span><span class="bp">self</span>
             <span class="k">return</span> <span class="n">retvals</span>
-        <span class="c1">#Ok that;s the wrapper function, now return  it for the user to mess around with.</span>
+        <span class="c1">#Ok that&#39;s the wrapper function, now return  it for the user to mess around with.</span>
+        <span class="n">_wrapper_</span><span class="o">.</span><span class="n">__doc__</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="n">_wrapper_</span><span class="o">.</span><span class="n">__name__</span><span class="o">=</span><span class="n">meth</span><span class="o">.</span><span class="n">__name__</span>
         <span class="k">return</span> <span class="n">_wrapper_</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
@@ -434,7 +442,7 @@
         <span class="sd">&quot;&quot;&quot;Pass through to set the sample attributes.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span> <span class="c1"># pass ddirectly through for private attributes</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">objectFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)):</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="bp">None</span><span class="p">)):</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">objectFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_file_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
@@ -465,7 +473,7 @@
 <span class="sd">        :py:attr:`objectFolder.groups`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,(</span><span class="n">objectFolder</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">TypError</span><span class="p">(</span><span class="s2">&quot;Can only store metadataObject like objects and objectFolders in a objectFolder&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Can only store metadataObject like objects and objectFolders in a objectFolder&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
@@ -1349,7 +1357,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Jul 03, 2016.
+      Last updated on Sep 28, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>

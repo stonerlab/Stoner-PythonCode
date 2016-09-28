@@ -19,6 +19,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.closest
       ~Stoner.FileFormats.OpenGDAFile.column
       ~Stoner.FileFormats.OpenGDAFile.columns
+      ~Stoner.FileFormats.OpenGDAFile.count
       ~Stoner.FileFormats.OpenGDAFile.del_column
       ~Stoner.FileFormats.OpenGDAFile.del_rows
       ~Stoner.FileFormats.OpenGDAFile.dir

@@ -20,6 +20,7 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.closest
       ~Stoner.Core.DataFile.column
       ~Stoner.Core.DataFile.columns
+      ~Stoner.Core.DataFile.count
       ~Stoner.Core.DataFile.del_column
       ~Stoner.Core.DataFile.del_rows
       ~Stoner.Core.DataFile.dir

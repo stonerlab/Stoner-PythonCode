@@ -1,8 +1,0 @@
-
-
-PlotFile.plot_matrix
-================================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.plot_matrix

@@ -1,0 +1,8 @@
+
+
+PlotMixin.colormap_xyz
+==================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotMixin.colormap_xyz

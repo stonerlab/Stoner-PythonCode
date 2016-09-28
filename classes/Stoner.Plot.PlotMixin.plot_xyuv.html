@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PlotMixin.plot_xyuv &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Plot.PlotMixin" href="Stoner.Plot.PlotMixin.html" />
+    <link rel="next" title="PlotMixin.plot_xyz" href="Stoner.Plot.PlotMixin.plot_xyz.html" />
+    <link rel="prev" title="PlotMixin.plot_xy" href="Stoner.Plot.PlotMixin.plot_xy.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.plot_xyz.html" title="PlotMixin.plot_xyz"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.plot_xy.html" title="PlotMixin.plot_xy"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Plot.PlotMixin.html" accesskey="U">Stoner.Plot.PlotMixin</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plotmixin-plot-xyuv">
+<h1>PlotMixin.plot_xyuv<a class="headerlink" href="#plotmixin-plot-xyuv" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Plot.PlotMixin.plot_xyuv">
+<code class="descclassname">PlotMixin.</code><code class="descname">plot_xyuv</code><span class="sig-paren">(</span><em>xcol=None</em>, <em>ycol=None</em>, <em>ucol=None</em>, <em>vcol=None</em>, <em>wcol=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotMixin.plot_xyuv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotMixin.plot_xyuv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes an overlaid image and quiver plot.
+:Parameters: * <strong>xcol</strong> (<em>index</em>) &#8211; Xcolumn index or label</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li><strong>ycol</strong> (<em>index</em>) &#8211; Y column index or label</li>
+<li><strong>zcol</strong> (<em>index</em>) &#8211; Z column index or label</li>
+<li><strong>ucol</strong> (<em>index</em>) &#8211; U column index or label</li>
+<li><strong>vcol</strong> (<em>index</em>) &#8211; V column index or label</li>
+<li><strong>wcol</strong> (<em>index</em>) &#8211; W column index or label</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>Keyword Arguments:</dt>
+<dd>show_plot (bool): True Turns on interactive plot control
+title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
+save_filename (string): Filename used to save the plot
+figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
+<a href="#id1"><span class="problematic" id="id2">**</span></a>kargs (dict): A dictionary of other keyword arguments to pass into the plot function.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotMixin.plot_xy.html"
+                        title="previous chapter">PlotMixin.plot_xy</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotMixin.plot_xyz.html"
+                        title="next chapter">PlotMixin.plot_xyz</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Plot.PlotMixin.plot_xyuv.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.plot_xyz.html" title="PlotMixin.plot_xyz"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.plot_xy.html" title="PlotMixin.plot_xy"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Plot.PlotMixin.html" >Stoner.Plot.PlotMixin</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Sep 28, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

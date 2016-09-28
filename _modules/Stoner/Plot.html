@@ -60,29 +60,37 @@
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="kn">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">copy_into</span><span class="p">,</span><span class="n">isNone</span><span class="p">,</span><span class="n">all_type</span>
 <span class="kn">from</span> <span class="nn">Stoner.PlotFormats</span> <span class="kn">import</span> <span class="n">DefaultPlotStyle</span>
 <span class="kn">from</span> <span class="nn">Stoner.plotutils</span> <span class="kn">import</span> <span class="n">errorfill</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np_</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
 <span class="kn">import</span> <span class="nn">os</span>
+
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getargspec</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">colorsys</span> <span class="kn">import</span> <span class="n">hls_to_rgb</span>
+
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span> <span class="ow">and</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span>
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;MacOSX&#39;</span><span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">figure</span> <span class="k">as</span> <span class="n">mplfig</span>
-<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">griddata</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid</span> <span class="kn">import</span> <span class="n">inset_locator</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
 <span class="kn">import</span> <span class="nn">matplotlib.colors</span> <span class="kn">as</span> <span class="nn">colors</span>
-<span class="kn">from</span> <span class="nn">colorsys</span> <span class="kn">import</span> <span class="n">hls_to_rgb</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Iterable</span>
-<span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">host_subplot</span>
-<span class="kn">import</span> <span class="nn">mpl_toolkits.axisartist</span> <span class="kn">as</span> <span class="nn">AA</span>
 
-<div class="viewcode-block" id="PlotFile"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile">[docs]</a><span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extends DataFile with plotting functions.</span>
+<span class="k">try</span><span class="p">:</span> <span class="c1"># Check we&#39;ve got 3D plotting</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid</span> <span class="kn">import</span> <span class="n">inset_locator</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">host_subplot</span>
+    <span class="kn">import</span> <span class="nn">mpl_toolkits.axisartist</span> <span class="kn">as</span> <span class="nn">AA</span>
+    <span class="n">_3D</span><span class="o">=</span><span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_3D</span><span class="o">=</span><span class="bp">False</span>
 
+<div class="viewcode-block" id="PlotMixin"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.html#Stoner.Plot.PlotMixin">[docs]</a><span class="k">class</span> <span class="nc">PlotMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`</span>
 <span class="sd">        kargs (dict):  keyword arguments to pass to \b DataFile.__init__</span>
@@ -90,45 +98,35 @@
 <span class="sd">    Attributes:</span>
 <span class="sd">        fig (matplotlib.figure): The current figure object being worked with</span>
 <span class="sd">        labels (list of string): List of axis labels as aternates to the column_headers</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">positional_fmt</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">]</span>
     <span class="n">no_fmt</span> <span class="o">=</span> <span class="p">[</span><span class="n">errorfill</span><span class="p">]</span>
-
-<div class="viewcode-block" id="PlotFile.__init__"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.__init__.html#Stoner.Plot.PlotFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1">#Do the import of plt here to speed module load</span>
-        <span class="sd">&quot;&quot;&quot;Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;template&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>  <span class="c1">#Setup the template</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">]</span>
-            <span class="k">del</span> <span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;template&quot;</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">multiple</span> <span class="o">=</span> <span class="s2">&quot;common&quot;</span></div>
-
-<span class="c1">#============================================================================================================================</span>
-<span class="c1">#Properties of PlotFile</span>
-<span class="c1">#============================================================================================================================</span>
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_public_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_public_attrs</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">DefaultPlotStyle</span>
+    <span class="n">legend</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">multiple</span> <span class="o">=</span> <span class="s2">&quot;common&quot;</span>
+    <span class="n">_public_attrs</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;fig&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
             <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-            <span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="n">DefaultPlotStyle</span><span class="p">,</span>
+            <span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">DefaultPlotStyle</span><span class="p">)),</span>
             <span class="s2">&quot;xlim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
             <span class="s2">&quot;ylim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span>
-        <span class="p">})</span>
-        <span class="k">return</span> <span class="n">ret</span>
+    <span class="p">}</span>
+
+<div class="viewcode-block" id="PlotMixin.__init__"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.__init__.html#Stoner.Plot.PlotMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>  <span class="c1">#Do the import of plt here to speed module load</span>
+        <span class="sd">&quot;&quot;&quot;Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<span class="c1">#============================================================================================================================</span>
+<span class="c1">#Properties of PlotFile</span>
+<span class="c1">#============================================================================================================================</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -147,14 +145,6 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">return</span> <span class="n">ret</span>
-
-    <span class="nd">@DataFile.clone.getter</span>
-    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="n">copy_into</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">template</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">.</span><span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="nd">@property</span>
@@ -178,9 +168,11 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">new_figure</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">int</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
             <span class="n">value</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">=</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">=</span><span class="bp">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;fig should be a number of matplotlib figure&quot;</span><span class="p">)</span>
 
@@ -207,6 +199,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_template&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_template</span>
 
     <span class="nd">@template.setter</span>
@@ -251,7 +245,7 @@
                 <span class="n">fmt</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span>
             <span class="n">plotter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">figure</span><span class="o">.</span><span class="n">axes</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_template</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">customise_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__SurfPlotter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Utility private function to plot a 3D color mapped surface.</span>
@@ -266,6 +260,8 @@
 <span class="sd">            A matplotib Figure</span>
 
 <span class="sd">        This function attempts to work the same as the 2D surface plotter pcolor, but draws a 3D axes set&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_3D</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;3D plotting Not available. Install matplotlib toolkits&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
         <span class="n">Z</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
         <span class="n">surf</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -286,6 +282,8 @@
 
 <span class="sd">        Return:</span>
 <span class="sd">            matpltolib.pyplot.figure with a quiver plot.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_3D</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;3D plotting Not available. Install matplotlib toolkits&quot;</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
         <span class="n">vector_field</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">quiver</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span><span class="n">V</span><span class="p">,</span><span class="n">W</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
@@ -356,7 +354,7 @@
     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles the local attributes as well as the inherited ones.&quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__dir__</span><span class="p">())</span>
+        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__dir__</span><span class="p">())</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;fig&quot;</span><span class="p">,</span> <span class="s2">&quot;axes&quot;</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="s2">&quot;subplots&quot;</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">])</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="s1">&#39;xlabel&#39;</span><span class="p">,</span> <span class="s1">&#39;ylabel&#39;</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="s1">&#39;xlim&#39;</span><span class="p">,</span> <span class="s1">&#39;ylim&#39;</span><span class="p">))</span>
@@ -437,7 +435,7 @@
 
     <span class="k">def</span> <span class="nf">_fix_titles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Does the titling and labelling for a matplotlib plot.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_template</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">multiple</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;show_plot&quot;</span> <span class="ow">in</span> <span class="n">kargs</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;show_plot&quot;</span><span class="p">]:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ion</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
@@ -458,7 +456,7 @@
 <span class="sd">                All other attrbiutes are passed over to the parent class</span>
 <span class="sd">                &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unknown attribute {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
@@ -492,8 +490,8 @@
 <span class="sd">    &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">name</span><span class="p">),</span><span class="nb">property</span><span class="p">):</span>
             <span class="nb">object</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)):</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)):</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="s2">&quot;set_{}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">):</span>
             <span class="n">tfig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
             <span class="n">tax</span> <span class="o">=</span> <span class="n">tfig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>  <span class="c1"># protect the current axes and figure</span>
@@ -508,9 +506,9 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">tfig</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">tax</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PlotFile.add_column"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.add_column.html#Stoner.Plot.PlotFile.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.add_column"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.add_column.html#Stoner.Plot.PlotMixin.add_column">[docs]</a>    <span class="k">def</span> <span class="nf">add_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">func_args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Appends a column of data or inserts a column to a datafile instance.</span>
 
 <span class="sd">        Args:</span>
@@ -532,7 +530,7 @@
 <span class="sd">            the original DataFile Instance as well as returning it.&quot;&quot;&quot;</span>
 
         <span class="c1"># Call the parent method and then update this label</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PlotFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="n">func_args</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column_data</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span><span class="n">func_args</span><span class="o">=</span><span class="n">func_args</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
         <span class="c1">#Mostly this is duplicating the parent method</span>
         <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
@@ -543,7 +541,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
-<div class="viewcode-block" id="PlotFile.colormap_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.colormap_xyz.html#Stoner.Plot.PlotFile.colormap_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">colormap_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.colormap_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.colormap_xyz.html#Stoner.Plot.PlotMixin.colormap_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">colormap_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An xyz plot that forces the use of plt.contour.</span>
 
 <span class="sd">        Args:</span>
@@ -570,7 +568,7 @@
         <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;projection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;rectilinear&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">zcol</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">ylim</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlotFile.contour_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.contour_xyz.html#Stoner.Plot.PlotFile.contour_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">contour_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.contour_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.contour_xyz.html#Stoner.Plot.PlotMixin.contour_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">contour_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">plotter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An xyz plot that forces the use of plt.contour.</span>
 
 <span class="sd">        Args:</span>
@@ -596,7 +594,7 @@
         <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;plotter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plotter</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_xyz</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="p">,</span> <span class="n">zcol</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">xlim</span><span class="p">,</span> <span class="n">ylim</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlotFile.figure"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.figure.html#Stoner.Plot.PlotFile.figure">[docs]</a>    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;rectilinear&quot;</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.figure"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.figure.html#Stoner.Plot.PlotMixin.figure">[docs]</a>    <span class="k">def</span> <span class="nf">figure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s2">&quot;rectilinear&quot;</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the figure used by :py:class:`Stoner.Plot.PlotFile`.</span>
 
 <span class="sd">        Args:</span>
@@ -613,7 +611,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="n">figure</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="PlotFile.griddata"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.griddata.html#Stoner.Plot.PlotFile.griddata">[docs]</a>    <span class="k">def</span> <span class="nf">griddata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.griddata"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.griddata.html#Stoner.Plot.PlotMixin.griddata">[docs]</a>    <span class="k">def</span> <span class="nf">griddata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Function to convert xyz data onto a regular grid.</span>
 
 <span class="sd">            Args:</span>
@@ -683,7 +681,7 @@
                 <span class="n">Z</span><span class="p">[:,:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">griddata</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">zdata</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="n">np</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="p">[:,:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="p">[:,:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">Z</span></div>
 
-<div class="viewcode-block" id="PlotFile.image_plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.image_plot.html#Stoner.Plot.PlotFile.image_plot">[docs]</a>    <span class="k">def</span> <span class="nf">image_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.image_plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.image_plot.html#Stoner.Plot.PlotMixin.image_plot">[docs]</a>    <span class="k">def</span> <span class="nf">image_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Grid up the three columns of data and plot.</span>
 
 <span class="sd">        Args:</span>
@@ -741,7 +739,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fix_titles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">nonkargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span></div>
 
-<div class="viewcode-block" id="PlotFile.inset"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.inset.html#Stoner.Plot.PlotFile.inset">[docs]</a>    <span class="k">def</span> <span class="nf">inset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.inset"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.inset.html#Stoner.Plot.PlotMixin.inset">[docs]</a>    <span class="k">def</span> <span class="nf">inset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.30</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a new set of axes as an inset to the current plot.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -780,7 +778,7 @@
             <span class="n">parent</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">inset_locator</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot.html#Stoner.Plot.PlotFile.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot.html#Stoner.Plot.PlotMixin.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Try to make an appropriate plot based on the defined column assignments.</span>
 
 <span class="sd">        The column assignments are examined to determine whether to plot and x,y plot or an x,y,z plot</span>
@@ -807,7 +805,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Unable to work out plot type !&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot_matrix"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">plot_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="PlotMixin.plot_matrix"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot_matrix.html#Stoner.Plot.PlotMixin.plot_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">plot_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">xvals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                     <span class="n">yvals</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                     <span class="n">rectang</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -938,7 +936,7 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot_xy"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot_xy.html#Stoner.Plot.PlotFile.plot_xy">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.plot_xy"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot_xy.html#Stoner.Plot.PlotMixin.plot_xy">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Makes a simple X-Y plot of the specified data.</span>
 
 <span class="sd">        Args:</span>
@@ -1079,7 +1077,7 @@
                     <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lab</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.plot_xyz"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot_xyz.html#Stoner.Plot.PlotMixin.plot_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</span>
 
 <span class="sd">            Args:</span>
@@ -1103,6 +1101,8 @@
 <span class="sd">            Returns:</span>
 <span class="sd">                A matplotlib.figure isntance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_3D</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;3D plotting Not available. Install matplotlib toolkits&quot;</span><span class="p">)</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_cols</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="n">zcol</span><span class="p">,</span> <span class="n">multi_y</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">,</span> <span class="n">zdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">griddata</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">ycol</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">zcol</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="n">xlim</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="n">ylim</span><span class="p">)</span>
 
@@ -1141,7 +1141,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fix_titles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">nonkargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot_xyuv"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot_xyuv.html#Stoner.Plot.PlotFile.plot_xyuv">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.plot_xyuv"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot_xyuv.html#Stoner.Plot.PlotMixin.plot_xyuv">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Makes an overlaid image and quiver plot.</span>
 <span class="sd">        Args:</span>
 <span class="sd">                xcol (index): Xcolumn index or label</span>
@@ -1186,7 +1186,7 @@
 
         <span class="k">return</span> <span class="n">fig</span></div>
 
-<div class="viewcode-block" id="PlotFile.plot_xyzuvw"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.plot_xyzuvw.html#Stoner.Plot.PlotFile.plot_xyzuvw">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyzuvw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.plot_xyzuvw"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.plot_xyzuvw.html#Stoner.Plot.PlotMixin.plot_xyzuvw">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyzuvw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</span>
 
 <span class="sd">            Args:</span>
@@ -1299,7 +1299,7 @@
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
 
-<div class="viewcode-block" id="PlotFile.quiver_plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.quiver_plot.html#Stoner.Plot.PlotFile.quiver_plot">[docs]</a>    <span class="k">def</span> <span class="nf">quiver_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.quiver_plot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.quiver_plot.html#Stoner.Plot.PlotMixin.quiver_plot">[docs]</a>    <span class="k">def</span> <span class="nf">quiver_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a 2D Quiver plot from the data.</span>
 
 <span class="sd">        Args:</span>
@@ -1357,7 +1357,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_fix_titles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;non&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">nonkargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span></div>
 
-<div class="viewcode-block" id="PlotFile.subplot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.subplot.html#Stoner.Plot.PlotFile.subplot">[docs]</a>    <span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.subplot"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.subplot.html#Stoner.Plot.PlotMixin.subplot">[docs]</a>    <span class="k">def</span> <span class="nf">subplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pass throuygh for plt.subplot().</span>
 
 <span class="sd">        Args:</span>
@@ -1388,7 +1388,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="p">[</span><span class="n">index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span>
         <span class="k">return</span> <span class="n">sp</span></div>
 
-<div class="viewcode-block" id="PlotFile.x2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.x2.html#Stoner.Plot.PlotFile.x2">[docs]</a>    <span class="k">def</span> <span class="nf">x2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.x2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.x2.html#Stoner.Plot.PlotMixin.x2">[docs]</a>    <span class="k">def</span> <span class="nf">x2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a new set of axes with a second x-scale.</span>
 
 <span class="sd">        Returns:</span>
@@ -1399,7 +1399,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax2</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ax2</span></div>
 
-<div class="viewcode-block" id="PlotFile.y2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.y2.html#Stoner.Plot.PlotFile.y2">[docs]</a>    <span class="k">def</span> <span class="nf">y2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PlotMixin.y2"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotMixin.y2.html#Stoner.Plot.PlotMixin.y2">[docs]</a>    <span class="k">def</span> <span class="nf">y2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generate a new set of axes with a second y-scale.</span>
 
 <span class="sd">        Returns:</span>
@@ -1439,6 +1439,12 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)):</span>
         <span class="n">rgb</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="o">*</span><span class="n">hls</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
     <span class="k">return</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">rgb</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlotFile"><a class="viewcode-back" href="../../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile">[docs]</a><span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="n">PlotMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extends DataFile with plotting functions.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
 </pre></div>
 
           </div>
@@ -1478,7 +1484,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Jul 03, 2016.
+      Last updated on Sep 28, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>

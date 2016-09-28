@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.count
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.count

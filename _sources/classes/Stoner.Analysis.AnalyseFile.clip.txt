@@ -1,8 +1,0 @@
-
-
-AnalyseFile.clip
-================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.clip

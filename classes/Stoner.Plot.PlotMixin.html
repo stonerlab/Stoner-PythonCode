@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Plot.PlotMixin &mdash; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="next" title="PlotMixin.__init__" href="Stoner.Plot.PlotMixin.__init__.html" />
+    <link rel="prev" title="Stoner.Plot.PlotFile" href="Stoner.Plot.PlotFile.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.__init__.html" title="PlotMixin.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.html" title="Stoner.Plot.PlotFile"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-plot-plotmixin">
+<h1>Stoner.Plot.PlotMixin<a class="headerlink" href="#stoner-plot-plotmixin" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Plot.PlotMixin">
+<em class="property">class </em><code class="descclassname">Stoner.Plot.</code><code class="descname">PlotMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Plot.html#PlotMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Plot.PlotMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.
+:Parameters: * <strong>args</strong> (<em>tuple</em>) &#8211; Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></a></p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>kargs</strong> (<em>dict</em>) &#8211; keyword arguments to pass to  DataFile.__init__</li>
+</ul>
+</div></blockquote>
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotMixin.fig">
+<code class="descname">fig</code><a class="headerlink" href="#Stoner.Plot.PlotMixin.fig" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>matplotlib.figure</em> &#8211; The current figure object being worked with</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Plot.PlotMixin.labels">
+<code class="descname">labels</code><a class="headerlink" href="#Stoner.Plot.PlotMixin.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of string</em> &#8211; List of axis labels as aternates to the column_headers</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.__init__.html#Stoner.Plot.PlotMixin.__init__" title="Stoner.Plot.PlotMixin.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Constructor of  PlotFile class.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.add_column.html#Stoner.Plot.PlotMixin.add_column" title="Stoner.Plot.PlotMixin.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
+<td>Appends a column of data or inserts a column to a datafile instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.colormap_xyz.html#Stoner.Plot.PlotMixin.colormap_xyz" title="Stoner.Plot.PlotMixin.colormap_xyz"><code class="xref py py-obj docutils literal"><span class="pre">colormap_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;...])</td>
+<td>An xyz plot that forces the use of plt.contour.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.contour_xyz.html#Stoner.Plot.PlotMixin.contour_xyz" title="Stoner.Plot.PlotMixin.contour_xyz"><code class="xref py py-obj docutils literal"><span class="pre">contour_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>An xyz plot that forces the use of plt.contour.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.figure.html#Stoner.Plot.PlotMixin.figure" title="Stoner.Plot.PlotMixin.figure"><code class="xref py py-obj docutils literal"><span class="pre">figure</span></code></a>([figure,&nbsp;projection])</td>
+<td>Set the figure used by <a class="reference internal" href="Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.griddata.html#Stoner.Plot.PlotMixin.griddata" title="Stoner.Plot.PlotMixin.griddata"><code class="xref py py-obj docutils literal"><span class="pre">griddata</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>Function to convert xyz data onto a regular grid.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.image_plot.html#Stoner.Plot.PlotMixin.image_plot" title="Stoner.Plot.PlotMixin.image_plot"><code class="xref py py-obj docutils literal"><span class="pre">image_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;ylim])</td>
+<td>Grid up the three columns of data and plot.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.inset.html#Stoner.Plot.PlotMixin.inset" title="Stoner.Plot.PlotMixin.inset"><code class="xref py py-obj docutils literal"><span class="pre">inset</span></code></a>([parent,&nbsp;loc,&nbsp;width,&nbsp;height])</td>
+<td>Add a new set of axes as an inset to the current plot.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot.html#Stoner.Plot.PlotMixin.plot" title="Stoner.Plot.PlotMixin.plot"><code class="xref py py-obj docutils literal"><span class="pre">plot</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Try to make an appropriate plot based on the defined column assignments.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot_matrix.html#Stoner.Plot.PlotMixin.plot_matrix" title="Stoner.Plot.PlotMixin.plot_matrix"><code class="xref py py-obj docutils literal"><span class="pre">plot_matrix</span></code></a>([xvals,&nbsp;yvals,&nbsp;rectang,&nbsp;cmap,&nbsp;...])</td>
+<td>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot_xy.html#Stoner.Plot.PlotMixin.plot_xy" title="Stoner.Plot.PlotMixin.plot_xy"><code class="xref py py-obj docutils literal"><span class="pre">plot_xy</span></code></a>([xcol,&nbsp;ycol,&nbsp;fmt,&nbsp;xerr,&nbsp;yerr,&nbsp;multiple])</td>
+<td>Makes a simple X-Y plot of the specified data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot_xyuv.html#Stoner.Plot.PlotMixin.plot_xyuv" title="Stoner.Plot.PlotMixin.plot_xyuv"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyuv</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<td>Makes an overlaid image and quiver plot.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot_xyz.html#Stoner.Plot.PlotMixin.plot_xyz" title="Stoner.Plot.PlotMixin.plot_xyz"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyz</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;shape,&nbsp;xlim,&nbsp;...])</td>
+<td>Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.plot_xyzuvw.html#Stoner.Plot.PlotMixin.plot_xyzuvw" title="Stoner.Plot.PlotMixin.plot_xyzuvw"><code class="xref py py-obj docutils literal"><span class="pre">plot_xyzuvw</span></code></a>([xcol,&nbsp;ycol,&nbsp;zcol,&nbsp;ucol,&nbsp;vcol,&nbsp;wcol])</td>
+<td>Plots a vector field plot based on rows of X,Y,Z (U,V,W) data using ,ayavi.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.quiver_plot.html#Stoner.Plot.PlotMixin.quiver_plot" title="Stoner.Plot.PlotMixin.quiver_plot"><code class="xref py py-obj docutils literal"><span class="pre">quiver_plot</span></code></a>([xcol,&nbsp;ycol,&nbsp;ucol,&nbsp;vcol])</td>
+<td>Make a 2D Quiver plot from the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.subplot.html#Stoner.Plot.PlotMixin.subplot" title="Stoner.Plot.PlotMixin.subplot"><code class="xref py py-obj docutils literal"><span class="pre">subplot</span></code></a>(*args,&nbsp;**kargs)</td>
+<td>Pass throuygh for plt.subplot().</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.x2.html#Stoner.Plot.PlotMixin.x2" title="Stoner.Plot.PlotMixin.x2"><code class="xref py py-obj docutils literal"><span class="pre">x2</span></code></a>()</td>
+<td>Generate a new set of axes with a second x-scale.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Plot.PlotMixin.y2.html#Stoner.Plot.PlotMixin.y2" title="Stoner.Plot.PlotMixin.y2"><code class="xref py py-obj docutils literal"><span class="pre">y2</span></code></a>()</td>
+<td>Generate a new set of axes with a second y-scale.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ax</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">column_headers</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Plot.PlotMixin.fig" title="Stoner.Plot.PlotMixin.fig"><code class="xref py py-obj docutils literal"><span class="pre">fig</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">fignum</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Plot.PlotMixin.labels" title="Stoner.Plot.PlotMixin.labels"><code class="xref py py-obj docutils literal"><span class="pre">labels</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">legend</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">multiple</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">no_fmt</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">positional_fmt</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">subplots</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">template</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotFile.html"
+                        title="previous chapter">Stoner.Plot.PlotFile</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Plot.PlotMixin.__init__.html"
+                        title="next chapter">PlotMixin.__init__</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Plot.PlotMixin.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotMixin.__init__.html" title="PlotMixin.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Plot.PlotFile.html" title="Stoner.Plot.PlotFile"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Sep 28, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

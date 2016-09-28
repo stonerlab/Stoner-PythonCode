@@ -1,0 +1,57 @@
+Stoner.Plot.PlotMixin
+=====================
+
+.. currentmodule:: Stoner.Plot
+
+.. autoclass:: PlotMixin
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Plot.PlotMixin.__init__
+      ~Stoner.Plot.PlotMixin.add_column
+      ~Stoner.Plot.PlotMixin.colormap_xyz
+      ~Stoner.Plot.PlotMixin.contour_xyz
+      ~Stoner.Plot.PlotMixin.figure
+      ~Stoner.Plot.PlotMixin.griddata
+      ~Stoner.Plot.PlotMixin.image_plot
+      ~Stoner.Plot.PlotMixin.inset
+      ~Stoner.Plot.PlotMixin.plot
+      ~Stoner.Plot.PlotMixin.plot_matrix
+      ~Stoner.Plot.PlotMixin.plot_xy
+      ~Stoner.Plot.PlotMixin.plot_xyuv
+      ~Stoner.Plot.PlotMixin.plot_xyz
+      ~Stoner.Plot.PlotMixin.plot_xyzuvw
+      ~Stoner.Plot.PlotMixin.quiver_plot
+      ~Stoner.Plot.PlotMixin.subplot
+      ~Stoner.Plot.PlotMixin.x2
+      ~Stoner.Plot.PlotMixin.y2
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Plot.PlotMixin.ax
+      ~Stoner.Plot.PlotMixin.axes
+      ~Stoner.Plot.PlotMixin.column_headers
+      ~Stoner.Plot.PlotMixin.fig
+      ~Stoner.Plot.PlotMixin.fignum
+      ~Stoner.Plot.PlotMixin.labels
+      ~Stoner.Plot.PlotMixin.legend
+      ~Stoner.Plot.PlotMixin.multiple
+      ~Stoner.Plot.PlotMixin.no_fmt
+      ~Stoner.Plot.PlotMixin.positional_fmt
+      ~Stoner.Plot.PlotMixin.subplots
+      ~Stoner.Plot.PlotMixin.template
+   
+   

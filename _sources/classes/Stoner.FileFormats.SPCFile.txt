@@ -19,6 +19,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.closest
       ~Stoner.FileFormats.SPCFile.column
       ~Stoner.FileFormats.SPCFile.columns
+      ~Stoner.FileFormats.SPCFile.count
       ~Stoner.FileFormats.SPCFile.del_column
       ~Stoner.FileFormats.SPCFile.del_rows
       ~Stoner.FileFormats.SPCFile.dir

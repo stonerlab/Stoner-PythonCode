@@ -1,0 +1,8 @@
+
+
+PlotMixin.contour_xyz
+=================================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotMixin.contour_xyz

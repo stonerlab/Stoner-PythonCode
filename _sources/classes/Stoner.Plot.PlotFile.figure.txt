@@ -1,8 +1,0 @@
-
-
-PlotFile.figure
-===========================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotFile.figure

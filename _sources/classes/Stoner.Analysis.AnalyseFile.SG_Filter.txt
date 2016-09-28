@@ -1,8 +1,0 @@
-
-
-AnalyseFile.SG_Filter
-=====================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.SG_Filter

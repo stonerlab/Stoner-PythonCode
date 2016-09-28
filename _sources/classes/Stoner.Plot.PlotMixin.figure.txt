@@ -1,0 +1,8 @@
+
+
+PlotMixin.figure
+============================
+
+.. currentmodule:: Stoner.Plot
+
+.. automethod:: PlotMixin.figure

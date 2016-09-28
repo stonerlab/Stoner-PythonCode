@@ -19,6 +19,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.closest
       ~Stoner.FileFormats.MDAASCIIFile.column
       ~Stoner.FileFormats.MDAASCIIFile.columns
+      ~Stoner.FileFormats.MDAASCIIFile.count
       ~Stoner.FileFormats.MDAASCIIFile.del_column
       ~Stoner.FileFormats.MDAASCIIFile.del_rows
       ~Stoner.FileFormats.MDAASCIIFile.dir

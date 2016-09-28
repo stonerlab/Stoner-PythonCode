@@ -19,6 +19,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.closest
       ~Stoner.FileFormats.MokeFile.column
       ~Stoner.FileFormats.MokeFile.columns
+      ~Stoner.FileFormats.MokeFile.count
       ~Stoner.FileFormats.MokeFile.del_column
       ~Stoner.FileFormats.MokeFile.del_rows
       ~Stoner.FileFormats.MokeFile.dir

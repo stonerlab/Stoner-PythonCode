@@ -1,0 +1,8 @@
+
+
+MokeFile.count
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.count

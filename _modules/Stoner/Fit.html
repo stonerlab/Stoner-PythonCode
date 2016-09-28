@@ -66,17 +66,28 @@
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="kn">import</span> <span class="n">DataFile</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">digamma</span>
-<span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">LinearModel</span> <span class="k">as</span> <span class="n">Linear</span>
-<span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">PowerLawModel</span> <span class="k">as</span> <span class="n">PowerLaw</span>
-<span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">QuadraticModel</span> <span class="k">as</span> <span class="n">Quadratic</span>
-<span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">update_param_vals</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">lmfit</span> <span class="kn">import</span> <span class="n">Model</span>
+    <span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">LinearModel</span> <span class="k">as</span> <span class="n">Linear</span>
+    <span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">PowerLawModel</span> <span class="k">as</span> <span class="n">PowerLaw</span>
+    <span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">QuadraticModel</span> <span class="k">as</span> <span class="n">Quadratic</span>
+    <span class="kn">from</span> <span class="nn">lmfit.models</span> <span class="kn">import</span> <span class="n">update_param_vals</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">Model</span><span class="o">=</span><span class="nb">object</span>
+    <span class="n">Linear</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">PowerLaw</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">Quadratic</span><span class="o">=</span><span class="bp">None</span>
+    <span class="n">update_param_vals</span><span class="o">=</span><span class="bp">None</span>
+
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">quad</span>
 <span class="kn">import</span> <span class="nn">scipy.constants.codata</span> <span class="kn">as</span> <span class="nn">consts</span>
-<span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">configparser</span> <span class="kn">as</span> <span class="nn">ConfigParser</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">ConfigParser</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">configparser</span> <span class="kn">as</span> <span class="nn">ConfigParser</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">ConfigParser</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">ConfigParser</span><span class="o">=</span><span class="bp">None</span>
 
 <span class="k">try</span><span class="p">:</span> <span class="c1"># numba is an optional dependency</span>
     <span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
@@ -143,6 +154,8 @@
 <span class="sd">    - **ycol (column index):** defines the y-column data for fitting.</span>
 <span class="sd">    - **yerr (column index):** Optional column with uncertainity values for the data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ConfigParser</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Need to have ConfigParser module installed for this to work.&quot;</span><span class="p">)</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">SafeConfigParser</span><span class="p">()</span>
     <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="kn">import</span> <span class="n">Data</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
@@ -1165,7 +1178,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &copy; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Jul 03, 2016.
+      Last updated on Sep 28, 2016.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
     </div>
   </body>
