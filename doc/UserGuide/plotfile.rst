@@ -3,7 +3,7 @@ Plotting Data
 *************
 .. currentmodule:: Stoner.Plot
 
-Data plotting and visualisation is handled by the :py:class:`PlotFile` sub-class of :py:class:`Stoner.Core.DataFile`.
+Data plotting and visualisation is handled by the :py:class:`PlotMixin` sub-class of :py:class:`Stoner.Core.DataFile`.
 The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing
 publication ready figures.::
 
@@ -11,7 +11,7 @@ publication ready figures.::
    p=plot.PlotFile(d)
 
 The first line imports the :py:mod:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's name-space is
-imported when the Stoner package as a whole is imported. The second line creates an instance of the :py:class:`PlotFile` class.
+imported when the Stoner package as a whole is imported. The second line creates an instance of the :py:class:`PlotMixin` class.
 PlotFile inherits the constructor method of :[y:class:`Stoner.Core.DataFile` and so all the variations detailed above work with
 PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance
 for plotting.
@@ -19,7 +19,7 @@ for plotting.
 Quick Plots
 ===========
 
-:py:class:`PlotFile` is intended to help you make plots that look reasonably good with as little hassle as possible.
+:py:class:`PlotMixin` is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
 for containing error bars. This is done with the :py:attr:`DataFile.setas` attribute (see :ref:`setas` for full details). Once this is done, the plotting
 methods will use these to try to make a sensible plot.::
@@ -119,7 +119,7 @@ method.
    :include-source:
 
 Both :py:meth:`PlotFile.plot_xyz` and :py:meth:`PlotFile.contour_xyz` make use of a call to :py:meth:`PlotFile.griddata`
-which is a utility method of the :py:class:`PlotFile` -- essentially this is just a pass through method to the underlying
+which is a utility method of the :py:class:`PlotMixin` -- essentially this is just a pass through method to the underlying
 *scipy.interpolate.griddata** function. The shape of the grid is determined through a combination of the *xlim*, *ylim*
 and *shape* arguments.::
 
@@ -200,14 +200,14 @@ with the :py:attr:`Stoner.Core.DataFile.setas` attribute it allows very quick pl
 Getting More Control on the Figure
 ==================================
 
-It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`PlotFile` instance. The
-:py:attr:`PlotFile.fig` attribute can do this, thus allowing plots from multiple :py:class:`PlotFile` instances to be
+It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`PlotMixin` instance. The
+:py:attr:`PlotFile.fig` attribute can do this, thus allowing plots from multiple :py:class:`PlotMixin` instances to be
 combined in a single figure.::
 
     p1.plot_xy(0,1,'r-')
     p2.plot_xy(0,1,'bo',figure=p1.fig)
 
-Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotFile`
+Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotMixin`
 instance.
 
 There's a couple of extra methods that just pass through to the pyplot equivalents::
@@ -218,9 +218,9 @@ There's a couple of extra methods that just pass through to the pyplot equivalen
 Setting Axes Labels, Plot Titles and Legends
 --------------------------------------------
 
-:py:class:`PlotFile` provides some useful attributes for setting specific aspects of the figures. Any
-*get_* and *set_* method of :py:class:`pyplot.Axes` can be read or written as a :py:class:`PlotFile` attribute.
-Internally this is implemented by calling the corresponding method on the current axes of the :py:class:`PlotFile`'s
+:py:class:`PlotMixin` provides some useful attributes for setting specific aspects of the figures. Any
+*get_* and *set_* method of :py:class:`pyplot.Axes` can be read or written as a :py:class:`PlotMixin` attribute.
+Internally this is implemented by calling the corresponding method on the current axes of the :py:class:`PlotMixin`'s
 figure. When setting the attribute, lists and tuples will be assumed to contain positional arguments and dictionaries
 keyword arguments. If you want to pass a single tuple, list or dictionary, then you should wrap it in a single
 element tuple.
@@ -236,7 +236,7 @@ Particualrly useful attributes include:
         header is used instead. If a column header is changed, then the :py:attr:`Plotfile.labels` attribute will
         be overwritten.
 
-In addition, you can read any method of :py:class:`pyplot.Axes` as an attribute of :py:class:`PlotFile`. This allows
+In addition, you can read any method of :py:class:`pyplot.Axes` as an attribute of :py:class:`PlotMixin`. This allows
 one to call the methods directly on the PlotFile instance without needing to extract a reference to the current
 axes.::
 

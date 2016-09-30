@@ -53,14 +53,14 @@ each row belongs in. The :py:meth:`AnalyseFile.split` method is useful for this 
    a.split('Temperature',lambda x,r:x>100)
    a.split(['Temperature','Polarisation'],[lambda x,r:x>100,None])
 
-In these examples we assume the :py:class:`AnalyseFile` has a data column 'Polarisation' that takes two (or more) discrete values
+In these examples we assume the :py:class:`AnalysisMixin` has a data column 'Polarisation' that takes two (or more) discrete values
 and a column 'Temperature' that contains numbers above and below 100.
 
-The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalyseFile`  which
+The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalysisMixin`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature above and below 100.
+produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalysisMixin` objects for the rows with temperature above and below 100.
 The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
-:py:class:`AnalyseFile` objects for each polarisation value.
+:py:class:`AnalysisMixin` objects for each polarisation value.
 
 .. _curve_fit_guide:
 
@@ -111,7 +111,7 @@ of data.
 where *popt* is an array of the optimal fitting parameters and
 *pcov* is a 2D array of the co-variances between the parameters.
 
-If *result* is not **None** then the fitted data is added to the :py:class:`AnalyseFile`
+If *result* is not **None** then the fitted data is added to the :py:class:`AnalysisMixin`
 object. Where it is added depends on the combination of the *result*, *replace*
 and *header* parameters. If *result* is a string or integer it is interpreted as a column
 index at which the fitted data will be inserted (*replace* **False**) or overwritten over the existing data (*replace* **True**).
@@ -169,7 +169,7 @@ The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:met
     print a["Arrehenius:A"],a["Arrehenius:A err"],a["chi^2"],a["nfev"]
 
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
-fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalysisMixin`.
 
 The *model* argument to :py:meth:`AnalyseFile.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
 instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
@@ -261,7 +261,7 @@ bounds function::
 Data Reduction Methods
 ======================
 
-:py:class:`AnalyseFile` offers a number of methods to assist in data reduction and data processing.
+:py:class:`AnalysisMixin` offers a number of methods to assist in data reduction and data processing.
 
 .. _binning_guide:
 
@@ -271,7 +271,7 @@ Data Reduction Methods
 Data binning is the process of taking approximately continuous (x,y) data and grouping them into "bins" of specified x, and average y. Since
 this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.
 
-:py:class:`AnalyseFile` provides a simple :py:meth:`AnalyseFile.bin` method that can re-bin data::
+:py:class:`AnalysisMixin` provides a simple :py:meth:`AnalyseFile.bin` method that can re-bin data::
 
    (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=100,mode="lin")
    (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=0.02,mode="log",yerr="dCounts")
@@ -327,7 +327,7 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
             the data is evenly spaced to start with.
 
         The *result* and *replace* arguments are passed through to :py:meth:`Stoner.Core.DataFile.add_column` unless *replace*
-        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalyseFile`
+        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalysisMixin`
         is left unmodified.
 
     - Savitzky-Golay filtering
@@ -364,7 +364,7 @@ for example, joinging several scans over different angular or energy ranges to m
 combinaed scan. In the ideal world, these scans could simple be joing together (e.g. by using the +
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
-best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalyseFile` provides
+best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalysisMixin` provides
 a :py:meth:`AnalyseFile.stitch` method to facilitate this.
 
 .. plot:: samples/stitch.py
@@ -392,7 +392,7 @@ function should be::
         ...
         return (mapped_x,mapped_y)
 
-In addition to changing the X and Y data in the current :py:class:`AnalyseFile`
+In addition to changing the X and Y data in the current :py:class:`AnalysisMixin`
 instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
 with the co-efficients used to modify the scan data.
 
@@ -467,7 +467,7 @@ indexed by col is differentiated with repsect to the row. *order* specifies the 
 means simply smoothing the data. The algorithm works by locally fitting a polynomial over a certain window of points.
 The parameters for this fitting are controlled by the *points* and *poly* parameters. *points*>*poly*>*order* for
 the algorithm to work. *resul;t*, *replace* and *header* specify that the calculated data should also be added to
-the :py:class:`AnalyseFile` instance, optionally replacing an existing column indexed by *result* and given a new header
+the :py:class:`AnalysisMixin` instance, optionally replacing an existing column indexed by *result* and given a new header
 *header*. The nature of the local fitting means that the first and last *poly*/2 points are not valid.
 
 .. _peak_finding:

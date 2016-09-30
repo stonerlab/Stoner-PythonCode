@@ -16,7 +16,7 @@ functions.
 The :py:class:`Data` Class
 --------------------------
 
-In practice, one often requires both the analysis functions of :py:class:`Stoner.Analysis.AnalyseFile` and
+In practice, one often requires both the analysis functions of :py:class:`Stoner.Analysis.AnalysisMixin` and
 the plotting functions of :py:class:`Stoner.Plot.PlotFile`. This can be done easily by creating a
 subclass that inherits from both, but for convenience, the :py:mod:`Stoner.Util` module provides the :py:class:`Data`
 class that does this for you.::

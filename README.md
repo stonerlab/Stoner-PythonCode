@@ -17,9 +17,9 @@ contains some example scripts.
 Getting this Code
 =================
 
-The *Stoner* package requires numpy \>=1.8, scipy \>=0.14, matplotlib
-\>=1.4, h5py, numba lmfit, filemagic, and blist. Experimental code also
-makes use of the Enthought Tools Suite packages.
+The *Stoner* package requires numpy &gt;=1.8, scipy &gt;=0.14,
+matplotlib &gt;=1.4, h5py, numba lmfit, filemagic, and blist.
+Experimental code also makes use of the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions)
 include nearly all of the dependencies, aprt from lmfit. However, this
@@ -70,7 +70,10 @@ large number of sub classes - most of these are in Stoner.FileFormats
 and are used to handle the loading of specific file formats. Two,
 however, contain additional functionality for writing analysis programs.
 
--   **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+-   
+
+    **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+
     :   basic calculations on data.
 
 -   **Stoner.Plot.PlotFile** provides additional routines for plotting
@@ -108,15 +111,15 @@ repository](http://www.github.com/gb119/Stoner-PythonCode/) are a
 (small) collection of sample scripts for carrying out various operations
 and some sample data files for testing the loading and processing of
 data. There is also a User\_Guide as part of this documentation, along
-with a complete API reference \<Stoner\>
+with a complete API reference &lt;Stoner&gt;
 
 Contact and Licensing
 =====================
 
 The lead developer for this code is [Dr Gavin
 Burnell](http://www.stoner.leeds.ac.uk/people/gb)
-\<<g.burnell@leeds.ac.uk>\> . The User Guide gives the current list of
-other contributors to the project.
+&lt;<g.burnell@leeds.ac.uk>&gt; . The User Guide gives the current list
+of other contributors to the project.
 
 This code and the sample data are all (C) The University of Leeds
 2008-2015 unless otherwise indficated in the source file. The contents
