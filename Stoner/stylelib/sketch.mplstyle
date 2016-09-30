@@ -1,4 +1,4 @@
-axes.color_cycle:b, r, g, c, m, y
+axes.prop_cycle:cycler("color":"brgcmy")
 font.family: Comic Sans MS
 xtick.direction:inout
 ytick.direction:inout
