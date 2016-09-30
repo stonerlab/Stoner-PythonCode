@@ -18,7 +18,7 @@ Getting this Code
 =================
 
 The *Stoner* package requires numpy &gt;=1.8, scipy &gt;=0.14,
-matplotlib &gt;=1.4, h5py, numba lmfit, filemagic, and blist.
+matplotlib &gt;=1.5, h5py, numba lmfit, filemagic, and blist.
 Experimental code also makes use of the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions)

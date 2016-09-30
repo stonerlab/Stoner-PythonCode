@@ -29,14 +29,14 @@ methods will use these to try to make a sensible plot.::
    print(p.setas)
 
 
-Once the columns are identified, the :py:meth:`PlotFile.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
-available columns and calls either :py:meth:`PlotFile.plot_xy` or :py:meth:`PlotFile.plot_xyz` as appropriate. All keyword arguments to :
+Once the columns are identified, the :py:meth:`PlotMixin.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
+available columns and calls either :py:meth:`PlotMixin.plot_xy` or :py:meth:`PlotMixin.plot_xyz` as appropriate. All keyword arguments to :
 py:meth:`PlotFile.plot` are passed on to the actual plotting method.
 
 Types of Plot
 =============
 
-:py:meth:`PlotFile.plot` will try to make the msot sensible choice of plot depending on which columns you have specified and
+:py:meth:`PlotMixin.plot` will try to make the msot sensible choice of plot depending on which columns you have specified and
 the number of axes represetned.
 
     * x-y, x-y+-e, x-y-e-y-e etc. data will default to a 2D scatter plot with error bars
@@ -49,13 +49,13 @@ the number of axes represetned.
 
 An alternative plot type for data with errorbars in :py:func:`plotutils.errorfill`. This uses a shaded line as an
 alternative to the error bars, where the shading of the line varies from intense to transparent the further one
-gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`PlotFile.contour_xyz` and a :py:meth:`PlotFile.image_plot`
+gets from the mean value. For 3D x-y-z plotting there is a :py:meth:`PlotMixin.contour_xyz` and a :py:meth:`PlotMixin.image_plot`
 methods available. These give contonour plots and 2D colour map plots respectively.
 
 Plotting 2D data
 ----------------
 
-*x-y* plots are produced by the :py:meth:`PlotFile.plot_xy` method::
+*x-y* plots are produced by the :py:meth:`PlotMixin.plot_xy` method::
 
    p.plot_xy(column_x, column_y)
    p.plot_xy(column_x, [y1,y2])
@@ -65,13 +65,13 @@ Plotting 2D data
    p.plot_xy(x,y,figure=2)
    p.plot_xy(x,y,plotter=pyplot.semilogy)
 
-The examples above demonstrate several use cases of the :py:meth:`PlotFile.plot_xy` method. The first parameter is always
+The examples above demonstrate several use cases of the :py:meth:`PlotMixin.plot_xy` method. The first parameter is always
 the x column that contains the data, the second is the y-data either as a single column or list of columns.
 The third parameter is the style of the plot (lines, points, colours etc) and can either be a list if the y-column data
 is a list or a single string. Finally additional parameters can be given to specify a title and to control which figure
 is used for the plot. All matplotlib keyword parameters can be specified as additional keyword arguments and are passed
 through to the relevant plotting function. The final example illustrates a convenient way to produce log-linear and log-log
-plots. By default, :py:meth:`PlotFile.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
+plots. By default, :py:meth:`PlotMixin.plot_xy` uses the **pyplot.plot** function to produce linear scaler plots. There
 are a number of useful plotter functions that will work like this
 
 *   [pyplot.semilogx,pyplot.semilogy] These two plotting functions will produce log-linear plots, with semilogx making
@@ -79,7 +79,7 @@ are a number of useful plotter functions that will work like this
 *   [pyplot.loglog] Liek the semi-log plots, this will produce a log-log plot.
 *   [pyplot.errorbar] this particularly useful plotting function will draw error bars. The values for the error bars are
     passed as keyword arguments, *xerr* or *yerr*. In standard matplotlib, these can be numpy arrays or constants.
-    :py:meth:`PlotFile.plot_xy` extends this by intercepting these arguements and offering some short cuts::
+    :py:meth:`PlotMixin.plot_xy` extends this by intercepting these arguements and offering some short cuts::
 
          p.plot_xy(x,y,plotter=errorbar,yerr='dResistance',xerr=[5,'dTemp+'])
 
@@ -96,7 +96,7 @@ Plotting 3D Data
 ----------------
 
 A number of the measurement rigs will produce data in the form of rows of $x,y,z$ values. Often it is desirable to plot
-these on a surface plot or 3D plot. The :py:meth:`PlotFile.plot_xyz` method can be used for this.
+these on a surface plot or 3D plot. The :py:meth:`PlotMixin.plot_xyz` method can be used for this.
 
 .. plot:: samples/3D_plot.py
    :include-source:
@@ -104,21 +104,21 @@ these on a surface plot or 3D plot. The :py:meth:`PlotFile.plot_xyz` method can 
 .. plot:: samples/colormap_plot.py
    :include-source:
 
-By default the :py:meth:`PlotFile.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
+By default the :py:meth:`PlotMixin.plot_xyz` will produce a 3D surface plot with the z-axis coded with a rainbow colour-map
 (specifically, the matplotlib provided *matplotlib.cm.jet* colour-map. This can be overriden with the *cmap* keyword
 parameter. If a simple 2D surface plot is required, then the *plotter* parameter should be set to a suitable function
 such as **pyplot.pcolor**.
 
-Like :py:meth:`PlotFile.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional
+Like :py:meth:`PlotMixin.plot_xy`, a *figure* parameter can be used to control the figure being used and any additional
 keywords are passed through to the plotting function. The axes labels are set from the corresponding column labels.
 
-Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotFile.contour_xyz`
+Another option is a contour plot based on ``(x,y,z)`` data points. This can be done with the :py:meth:`PlotMixin.contour_xyz`
 method.
 
 .. plot:: samples/contour_plot.py
    :include-source:
 
-Both :py:meth:`PlotFile.plot_xyz` and :py:meth:`PlotFile.contour_xyz` make use of a call to :py:meth:`PlotFile.griddata`
+Both :py:meth:`PlotMixin.plot_xyz` and :py:meth:`PlotMixin.contour_xyz` make use of a call to :py:meth:`PlotMixin.griddata`
 which is a utility method of the :py:class:`PlotMixin` -- essentially this is just a pass through method to the underlying
 *scipy.interpolate.griddata** function. The shape of the grid is determined through a combination of the *xlim*, *ylim*
 and *shape* arguments.::
@@ -132,7 +132,7 @@ parameter. If the *xlim* or *ylim* parameters are not presents, then the maximum
 If no *shape* information is provided, the default is to make the shape a square of sidelength given by the square root of the
 number of points.
 
- Alternatively, if your data is already in the form of a matrix, you can use the :py:meth:`PlotFile.plot_matrix` method.
+ Alternatively, if your data is already in the form of a matrix, you can use the :py:meth:`PlotMixin.plot_matrix` method.
 
 .. plot:: samples/matrix_plot.py
    :include-source:
@@ -145,7 +145,7 @@ either from the meta data item 'ylabel or to 'Y Data'. Likewise the z axis label
 item or defaults to 'Z Data;. In the second form these parameters are all set explicitly. The *xvals* parameter can be
 either a column index (integer or sring) or a list, tuple or numpy array. The *yvals* parameter can be either a row number
 (integer) or list,tuple or numpy array. Other parameters (including *plotter*, *figure* etc) work as for the
-:py:meth:`PlotFile.plot_xyz` method. The *rectang* parameter is used to select only part of the data array to use as the matrix.
+:py:meth:`PlotMixin.plot_xyz` method. The *rectang* parameter is used to select only part of the data array to use as the matrix.
 It may be 2-tuple in which case it specifies just the origin as (row,column) or a 4-tuple in which case the third and forth
 elements are the number of rows and columns to include. If *xvals* or *yvals* specify particular column or rows then the
 origin of the matrix is moved to be one column further over and one row further down (ie the matrix is to the right and
@@ -160,7 +160,7 @@ fields are visualised by using quiver plots, where a small arrow points in the d
 is proportional to the magnitude. This can also be suplemented by colour information - in one scheme a hue-saturation-luminence
 space is used, where hue described a direction in the x-y plane, the luminence describes the vertical component and the
 saturation, the relative magnitude. This is a common scheme in micro-magnetics, so is supported in the Stoner package.
-Following the naming convention above, the :py:meth:`PlotFile.plot_xyzuvw` method handles these plots.::
+Following the naming convention above, the :py:meth:`PlotMixin.plot_xyzuvw` method handles these plots.::
 
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol)
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,colors="color_data")
@@ -169,7 +169,7 @@ Following the naming convention above, the :py:meth:`PlotFile.plot_xyzuvw` metho
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,mode='arrow',colors=True,scale_factor=1.0)
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,plotter=myplotfunc)
 
-The :py:meth:`PlotFile.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
+The :py:meth:`PlotMixin.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
 Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.Plot` when
 2D plotting only is required.
 
@@ -190,7 +190,7 @@ default in this function.
 Very Quick Plotting
 ===================
 
-For convenience, a :py:meth:`PlotFile.plot` method is defined that will try to work out the necessary details. In combination
+For convenience, a :py:meth:`PlotMixin.plot` method is defined that will try to work out the necessary details. In combination
 with the :py:attr:`Stoner.Core.DataFile.setas` attribute it allows very quick plots to be constructed.
 
 .. plot:: samples/single_plot.py
@@ -248,13 +248,13 @@ are both equivalent, but the latter form allows access to the full keyword argum
 Plotting on Second Y (or X) Axes
 ================================
 
-To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`PlotFile.y2` method is
+To plot a second curve using the same x axis, but a different y axis scale, the :py:meth:`PlotMixin.y2` method is
 provided. This produces a second axes object with a common x-axis, but independent y-axis on the right of the plot.
 
 .. plot:: samples/double_y_plot.py
    :include-source:
 
-There is an equivalent :py:meth:`PlotFile.x2` method to create a second set of axes with a common y scale but different x scales.
+There is an equivalent :py:meth:`PlotMixin.x2` method to create a second set of axes with a common y scale but different x scales.
 
 To work out which set of axes you are current working with the :py:attr:`PlotFile.ax` attribute can be read or set.::
 
@@ -334,7 +334,7 @@ Making Multi-plot Figures
 Adding an Inset to a Figure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :py:meth:`PlotFile.inset` method can be used to creagte an inset in the current figure. Subsequent plots
+The :py:meth:`PlotMixin.inset` method can be used to creagte an inset in the current figure. Subsequent plots
 will be to the inset until a new set of axes are chosen. The :py:class:`pyplot.Axes` instance of the inset is appended to the
 :py:attr:`PlotFile.axes` attribute.
 
@@ -360,14 +360,14 @@ inset.
 Handling More than One Column of Y Data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-By default if :py:meth:`PlotFile.plot_xy` is given more than one column of y data, it will plot all
+By default if :py:meth:`PlotMixin.plot_xy` is given more than one column of y data, it will plot all
 of the data on a single y-axis scale. If the y data to be plotted is not of a similar order of mangitude
 this can result in a less than helpful plot.
 
 .. plot:: samples/common_y_plot.py
    :include-source:
 
-The :py:meth:`PlotFile.plot_xy` method (and also the :py:meth:`PlotFile.plot` method when doing 2D plots) will take
+The :py:meth:`PlotMixin.plot_xy` method (and also the :py:meth:`PlotMixin.plot` method when doing 2D plots) will take
 a keyword argument *multiple* that can offer a number of alternatives. If you have just two y columns, or the the
 second and subsequent ones can fit on a common scale, then a double-y axis plot might be appropriate.
 
