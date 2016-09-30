@@ -1,4 +1,4 @@
-axes.prop_cycle:cycle('color',"Krgbcmy")
+axes.prop_cycle:cycler('color',"Krgbcmy")
 axes.formatter.limits:-1, 1
 axes.grid:False
 axes.labelsize:12

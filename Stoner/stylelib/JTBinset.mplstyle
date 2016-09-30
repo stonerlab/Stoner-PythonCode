@@ -1,4 +1,4 @@
-axes.prop_cycle:cycle("color":"krbgcmy")
+axes.prop_cycle:cycler("color":"krbgcmy")
 axes.formatter.limits:-4, 4
 axes.grid:False
 axes.labelsize:16
