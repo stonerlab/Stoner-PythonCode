@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyseFile.apply &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
+    <link rel="next" title="AnalyseFile.bin" href="Stoner.Analysis.AnalyseFile.bin.html" />
+    <link rel="prev" title="AnalyseFile.add" href="Stoner.Analysis.AnalyseFile.add.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.bin.html" title="AnalyseFile.bin"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.add.html" title="AnalyseFile.add"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="analysefile-apply">
+<h1>AnalyseFile.apply<a class="headerlink" href="#analysefile-apply" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.apply">
+<code class="descclassname">AnalyseFile.</code><code class="descname">apply</code><span class="sig-paren">(</span><em>func</em>, <em>col=None</em>, <em>replace=True</em>, <em>header=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the given function to each row in the data set and adds to the data set.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>func</strong> (<em>callable</em>) &#8211; A function that takes a numpy 1D array representing each row of data</li>
+<li><strong>col</strong> (<em>index</em>) &#8211; The column in which to place the result of the function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>replace</strong> (<em>bool</em>) &#8211; Isnert a new data column (False) or replace the data column (True, default)</li>
+<li><strong>header</strong> (<em>string or None</em>) &#8211; The new column header (defaults to the name of the function func</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> &#8211; The newly modified <a class="reference internal" href="Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">AnalyseFile</span></code></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.add.html"
+                        title="previous chapter">AnalyseFile.add</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.bin.html"
+                        title="next chapter">AnalyseFile.bin</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.apply.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.bin.html" title="AnalyseFile.bin"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.add.html" title="AnalyseFile.add"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Sep 30, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>

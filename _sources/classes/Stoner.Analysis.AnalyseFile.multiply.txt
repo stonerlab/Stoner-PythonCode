@@ -1,0 +1,8 @@
+
+
+AnalyseFile.multiply
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalyseFile.multiply

@@ -1,8 +1,0 @@
-
-
-PlotMixin.quiver_plot
-=================================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotMixin.quiver_plot

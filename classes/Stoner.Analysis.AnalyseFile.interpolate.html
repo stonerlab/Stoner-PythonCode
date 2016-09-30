@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyseFile.interpolate &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
+    <link rel="up" title="Stoner.Analysis.AnalyseFile" href="Stoner.Analysis.AnalyseFile.html" />
+    <link rel="next" title="AnalyseFile.lmfit" href="Stoner.Analysis.AnalyseFile.lmfit.html" />
+    <link rel="prev" title="AnalyseFile.integrate" href="Stoner.Analysis.AnalyseFile.integrate.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.lmfit.html" title="AnalyseFile.lmfit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.integrate.html" title="AnalyseFile.integrate"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" accesskey="U">Stoner.Analysis.AnalyseFile</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="analysefile-interpolate">
+<h1>AnalyseFile.interpolate<a class="headerlink" href="#analysefile-interpolate" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.Analysis.AnalyseFile.interpolate">
+<code class="descclassname">AnalyseFile.</code><code class="descname">interpolate</code><span class="sig-paren">(</span><em>newX</em>, <em>kind='linear'</em>, <em>xcol=None</em>, <em>replace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalyseFile.interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalyseFile.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate a dataset to get a new set of values for a given set of x data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ewX</strong> (<em>1D array or None</em>) &#8211; Row indices or X column values to interpolate with. If None, then the</li>
+<li><strong>:py:meth:`AnalyseFile.interpolate` returns an interpolation function. Unlike the raw interpolation</strong></li>
+<li><strong>function from scipy, this interpolation function will work with MaskedArrays by compressing them</strong></li>
+<li><strong>first.</strong></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>kind</strong> (<em>string</em>) &#8211; Type of interpolation function to use - does a pass through from numpy. Default is linear.</li>
+<li><strong>xcol</strong> (<em>index or None</em>) &#8211; Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.</li>
+<li><strong>replace</strong> (<em>bool</em>) &#8211; If true, then the current AnalyseFile&#8217;s data is replaced with the  newly interpolated data and the current AnalyseFile is
+returned.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>2D numpy array</em> &#8211; representing a section of the current object&#8217;s data if replace is False(default) or the modofied AnalyseFile if replace is true.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
+Otherwise, the column specified in xcol is thresholded with the values given in newX and the resultant row indices used to return the data.</p>
+<p class="last">If the positional argument, newX is None, then the return value is an interpolation function. This interpolation function takes one argument
+- if <em>xcol</em> was None, this argument is interpreted as array indices, but if <em>xcol</em> was specified, then this argument is interpreted as
+an array of xvalues.</p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.integrate.html"
+                        title="previous chapter">AnalyseFile.integrate</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Analysis.AnalyseFile.lmfit.html"
+                        title="next chapter">AnalyseFile.lmfit</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Analysis.AnalyseFile.interpolate.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.lmfit.html" title="AnalyseFile.lmfit"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Analysis.AnalyseFile.integrate.html" title="AnalyseFile.integrate"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.Analysis.AnalyseFile.html" >Stoner.Analysis.AnalyseFile</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Sep 30, 2016.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+    </div>
+  </body>
+</html>

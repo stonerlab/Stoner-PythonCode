@@ -1,8 +1,0 @@
-
-
-PlotMixin.image_plot
-================================
-
-.. currentmodule:: Stoner.Plot
-
-.. automethod:: PlotMixin.image_plot
