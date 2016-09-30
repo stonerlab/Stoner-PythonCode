@@ -13,7 +13,7 @@ API Reference guide. The `github repository`_ also contains some example scripts
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.4, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
 the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
