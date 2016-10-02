@@ -84,7 +84,7 @@ def linear(x, intercept, slope):
     """Simple linear function"""
     return slope * x + intercept
 
-def cfg_data_from_ini(inifile,filename=None):
+def cfg_data_from_ini(inifile,filename=None,**kargs):
     """Read an inifile and load and configure a DataFile from it.
 
     Args:
@@ -92,6 +92,7 @@ def cfg_data_from_ini(inifile,filename=None):
 
     Keyword Arguments:
         filename (strig,boolean or None): File to load that contains the data.
+        **kargs: All other keywords are passed to the Data constructor
 
     Returns:
         An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.
@@ -122,7 +123,7 @@ def cfg_data_from_ini(inifile,filename=None):
         typ = __import__(typ_mod,fromlist=[typ]).__getattribute__(typ)
     else:
         typ = None
-    data=Data()
+    data=Data(**kargs)
     if filename is None:
         if not config.has_option("Data","filename"):
             filename=False

@@ -1,9 +1,9 @@
 """Stoner .Analysis provides a subclass of :py:class:`Stoner.Core.DataFile` that has extra analysis routines builtin.
 
-Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.
+Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 """
 
-__all__ = ["AnalyseFile"]
+__all__ = ["AnalysisMixin"]
 
 from Stoner.compat import *
 from Stoner.Core import DataFile,isNone,DataArray
@@ -232,15 +232,14 @@ def GetAffineTransform(p, pd):
     transform=_np_.linalg.solve(p, pd)
     return  transform.T
 
-
-class AnalyseFile(DataFile):
-    """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
-
-    Note:
-        There is no separate constructor for this class - it inherits from DataFile
-
+class AnalysisMixin(object):
+    """A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.
     """
 
+    def __init__(self,*args,**kargs):
+        """Just call super."""
+        if self.debug: print("Done AnlaysisMixin init")
+    
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
@@ -256,7 +255,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             (numpoy array or self): If result is None, a numpy array representing the smoothed or differentiated data is returned.
-            Otherwise, a copy of the modified AnalyseFile object is returned.
+            Otherwise, a copy of the modified AnalysisMixin object is returned.
 
         Notes:
             If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used
@@ -455,7 +454,7 @@ class AnalyseFile(DataFile):
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones"""
         attr = dir(type(self))
-        attr.extend(super(AnalyseFile, self).__dir__())
+        attr.extend(super(AnalysisMixin, self).__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr = list(set(attr))
         return sorted(attr)
@@ -472,7 +471,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -514,7 +513,7 @@ class AnalyseFile(DataFile):
             header (string or None): The new column header (defaults to the name of the function func
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
         """
 
         if col is None:
@@ -549,7 +548,7 @@ class AnalyseFile(DataFile):
             yerr (index): Column with y-error data if present.
             bin_start (float): Manually override the minimum bin value
             bin_stop (float): Manually override the maximum bin value
-            clone (bool): Return a clone of the current AnalyseFile with binned data (True)
+            clone (bool): Return a clone of the current AnalysisMixin with binned data (True)
                           or just the numbers (False).
 
         Returns:
@@ -631,7 +630,7 @@ class AnalyseFile(DataFile):
                 in which case the max and min values in that array will be
                 used as the clip limits
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         Note:
             If column is not defined (or is None) the :py:attr:`DataFile.setas` column
@@ -651,7 +650,7 @@ class AnalyseFile(DataFile):
         Args:
             func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters
             xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.
-            ycol (index. ;ist of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
+            ycol (index, list of indices or array): The index of the y-column data to fit. If an array, then should be 1D and
                 the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring
                 for each one. In this case the return value is a list of what would be returned for a single column fit.
 
@@ -697,7 +696,7 @@ class AnalyseFile(DataFile):
 
 
         See Also:
-            :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`
+            :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit`
             User guide section :ref:`curve_fit_guide`
         """
 
@@ -801,7 +800,7 @@ class AnalyseFile(DataFile):
             replace (bool): Overwrite data with output (true)
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -847,7 +846,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -891,7 +890,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -945,7 +944,7 @@ class AnalyseFile(DataFile):
             centred about the point and overlap points long will be used to interpolate a value.
 
             If *kind* is callable, it should take x values in the first parameter and free fitting parameters as the other
-            parameters (i.e. as with :py:meth:`AnalyseFile.curve_fit`).
+            parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).
         """
 
         _=self._col_args(xcol=xcol,ycol=ycol,yerr=yerr,scalar=False)
@@ -1056,18 +1055,18 @@ class AnalyseFile(DataFile):
 
         Args:
             ewX (1D array or None): Row indices or X column values to interpolate with. If None, then the
-            :py:meth:`AnalyseFile.interpolate` returns an interpolation function. Unlike the raw interpolation
+            :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation
             function from scipy, this interpolation function will work with MaskedArrays by compressing them
             first.
 
         Keyword Arguments:
             kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.
             xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.
-            replace (bool): If true, then the current AnalyseFile's data is replaced with the  newly interpolated data and the current AnalyseFile is
+            replace (bool): If true, then the current AnalysisMixin's data is replaced with the  newly interpolated data and the current AnalysisMixin is
                 returned.
 
         Returns:
-            2D numpy array: representing a section of the current object's data if replace is False(default) or the modofied AnalyseFile if replace is true.
+            2D numpy array: representing a section of the current object's data if replace is False(default) or the modofied AnalysisMixin if replace is true.
 
         Note:
             Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.
@@ -1142,7 +1141,7 @@ class AnalyseFile(DataFile):
             - "full"    a tuple of the fit instance and the row.
 
         See Also:
-            :py:meth:`AnalyseFile.curve_fit`
+            :py:meth:`AnalysisMixin.curve_fit`
             User guide section :ref:`fitting_with_limits`
 
         .. note::
@@ -1425,7 +1424,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1468,7 +1467,7 @@ class AnalyseFile(DataFile):
             header (string or None): The new column header - default is target name(norm)
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -1505,7 +1504,7 @@ class AnalyseFile(DataFile):
             func (callable): A function that determines if the current row is an outlier.
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         outlier_detection will add row numbers of detected outliers to the metadata
         of d, also will perform action depending on request eg 'mask', 'delete'
@@ -1584,7 +1583,7 @@ class AnalyseFile(DataFile):
             modify (book): If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
 
         Returns:
-            If *modify* is true, then returns a the AnalyseFile with the data set to just the peaks/troughs. If *modify* is false (default),
+            If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If *modify* is false (default),
             then the return value depends on *ycol* and *xcol*. If *ycol* is not None and *xcol* is None, then returns conplete rows of
             data corresponding to the found peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then
             returns a 1D array of the x positions of the peaks/troughs.
@@ -1709,12 +1708,12 @@ class AnalyseFile(DataFile):
             otherbounds (callable): Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.
             use_estimate (bool or 3x2 array): Specifies whether to estimate an initial transformation value or to use the provided one, or
                 start with an identity transformation.
-            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalyseFile (true) or to just return
+            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return
                 the results of the scaling.
             headers (2-element list or tuple of strings): new column headers to use if replace is True.
 
         Returns:
-            Either a copy of the AnalyseFile modified so that the x and y columns match *other* if *replace* is True, or
+            Either a copy of the AnalysisMixin modified so that the x and y columns match *other* if *replace* is True, or
             *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
             giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
 
@@ -1814,7 +1813,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             (self or array): If result is False, then the return value will be a copy of the smoothed data, otherwise the return value
-            is a copy of the AnalyseFile object with the smoothed data added,
+            is a copy of the AnalysisMixin object with the smoothed data added,
 
         Notes:
             If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data is evenly spaced in x.
@@ -1867,7 +1866,7 @@ class AnalyseFile(DataFile):
         return self
 
     def span(self, column=None, bounds=None):
-        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.
+        """Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.
 
         Args:
             column (index): Column to look for the maximum in
@@ -1904,7 +1903,7 @@ class AnalyseFile(DataFile):
             ext (int or str): How to extrapolate, default is "extrapolate", but can also be "raise","zeros" or "const".
 
         Returns:
-            Depending on the value of *replace*, returns a copy of the Analysefile, a 1D numpy array of data or an
+            Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of data or an
             scipy.interpolate.UniverateSpline object.
 
         This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate
@@ -1950,7 +1949,7 @@ class AnalyseFile(DataFile):
 
 
     def split(self, xcol=None, func=None):
-        """Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows
+        """Splits the current :py:class:`AnalysisMixin` object into multiple :py:class:`AnalysisMixin` objects where each one contains the rows
         from the original object which had the same value of a given column.
 
         Args:
@@ -1963,7 +1962,7 @@ class AnalyseFile(DataFile):
 
         Returns:
             Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual
-            :py:class:`AnalyseFile` objects
+            :py:class:`AnalysisMixin` objects
 
         Note:
             The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing
@@ -2027,7 +2026,7 @@ class AnalyseFile(DataFile):
             p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters
 
         Returns:
-            self: A copy of the current :py:class:`AnalyseFile` with the x and y data columns adjusted to stitch
+            self: A copy of the current :py:class:`AnalysisMixin` with the x and y data columns adjusted to stitch
 
         To stitch the data together, the x and y data in the current data file is transforms so that
         :math:`x'=x+A` and :math:`y'=By+C` where :math:`A,B,C` are constants and :math:`(x',y')` are close matches to the
@@ -2048,10 +2047,10 @@ class AnalyseFile(DataFile):
         """
         _=self._col_args(xcol=xcol,ycol=ycol,scalar=True)
         points = self.column([_.xcol, _.ycol])
-        points = points[points[:, 0].argsort()]
+        points = points[points[:, 0].argsort(),:]
         points[:, 0] += min_overlap
         otherpoints = other.column([_.xcol, _.ycol])
-        otherpoints = otherpoints[otherpoints[:, 0].argsort()]
+        otherpoints = otherpoints[otherpoints[:, 0].argsort(),:]
         self_second = _np_.max(points[:, 0]) > _np_.max(otherpoints[:, 0])
         if overlap is None:  # Calculate the overlap
             lower = max(_np_.min(points[:, 0]), _np_.min(otherpoints[:, 0]))
@@ -2144,7 +2143,7 @@ class AnalyseFile(DataFile):
             replace (bool): Replace the a column with the new data
 
         Returns:
-            self: The newly modified :py:class:`AnalyseFile`.
+            self: The newly modified :py:class:`AnalysisMixin`.
 
         If a and b are tuples of length two, then the firstelement is assumed to be the value and
         the second element an uncertainty in the value. The uncertainties will then be propagated and an
@@ -2271,3 +2270,12 @@ class AnalyseFile(DataFile):
         if isinstance(ret,DataArray):
             ret.isrow=True
         return ret
+
+class AnalyseFile(DataFile,AnalysisMixin):
+    """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
+
+    Note:
+        There is no separate constructor for this class - it inherits from DataFile
+
+    """
+    pass

@@ -47,9 +47,12 @@ def copy_into(source,dest):
     overwrites the attributes that represent the data in the DataFile.
     """
     for attr in source._public_attrs:
-        if attr not in source.__dict__ or callable(source.__dict__[attr]) or attr in ["data","setas","column_headers"]:
+        if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data","setas","column_headers","debug"]:
             continue
-        dest.__dict__[attr] = copy.deepcopy(source.__dict__[attr])
+        try:
+            setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
+        except NotImplementedError: # Deepcopying failed, so just copy a reference instead
+            setattr(dest,attr,getattr(source,attr))
     dest.data = source.data.copy()
     dest.data._setas = source.data._setas.clone
     return dest
@@ -65,7 +68,7 @@ def isNone(iterator):
 
     if iterator is None:
         ret=True
-    elif isinstance(iterator,Iterable):
+    elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
         if len(iterator)==0:
             ret=True
         else:
@@ -350,8 +353,8 @@ class _setas(object):
                         pass
         elif isinstance(value, Iterable):
             if len(value) > self._size:
-                value = value[:len(self.column_headers)]
-            elif len(value) < len(self.column_headers):
+                value = value[:self._size]
+            elif len(value) < self._size:
                 value = [v for v in value]  # Ensure value is now a list
                 value.extend(list("." * (len(self.column_headers) - len(value))))
             if len(self.setas)<self._size:
@@ -550,13 +553,13 @@ class _setas(object):
 
 
         #No longer enforce ordering of yezf - allow them to appear in any order.
-        ycol = []
-        yerr = []
-        zcol = []
-        zerr = []
-        ucol = []
-        vcol = []
-        wcol =  []
+        ycol = list()
+        yerr = list()
+        zcol = list()
+        zerr = list()
+        ucol = list()
+        vcol = list()
+        wcol =  list()
 
         columns=[ycol,yerr,zcol,zerr,ucol,vcol,wcol]
         letters="yezfuvw"
@@ -965,7 +968,8 @@ class metadataObject(MutableMapping):
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
-        self.metadata = typeHintedDict()
+        if not hasattr(self,"metadata") or not isinstance(self.metadata,typeHintedDict):
+            self.metadata = typeHintedDict()
 
     def __getitem__(self,name):
         return self.metadata[name]
@@ -1178,7 +1182,7 @@ class DataArray(_ma_.MaskedArray):
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
-            if len(ix)>1:
+            if len(ix)==len(self._setas):
                 tmp=_np_.array(self.setas)[ix[-1]]
                 ret.setas(tmp)
                 tmpcol=_np_.array(self.column_headers)[ix[-1]]
@@ -1470,6 +1474,7 @@ class DataFile(metadataObject):
         self.metadata["Stoner.class"] = self.__class__.__name__
         if len(kargs) > 0:  # set public attributes from keywords
             myattrs = self._public_attrs
+            to_go=[]
             for k in kargs:
                 if k in myattrs:
                     if isinstance(kargs[k], myattrs[k]):
@@ -1478,8 +1483,18 @@ class DataFile(metadataObject):
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
-                            typ = "a {}".format(type(myattr[k]))
+                            typ = "a {}".format(type(myattrs[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
+                    to_go.append(k)
+            for k in to_go:
+                del kargs[k]
+        if self.debug: print("Done DataFile init")
+#        super(DataFile,self).__init__(*args,**kargs)
+        for c in self._mro: # Call all inits in Stoner mixin classes
+            if c.__module__.startswith("Stoner") and c is not DataFile and "__init__" in c.__dict__:
+                if self.debug: print(c)
+                if self.debug: print(self.metadata)
+                c.__init__(self,*args,**kargs)
 
 # Special Methods
 
@@ -1540,21 +1555,35 @@ class DataFile(metadataObject):
     @property
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
-        return {
+        ret={
             "data": _np_.ndarray,
             "column_headers": list,
             "setas": (string_types, list),
             "metadata": typeHintedDict,
             "debug": bool,
             "filename": string_types,
-            "mask": (_np_.ndarray, bool)
+            "mask": (_np_.ndarray, bool),
+            "metadata":typeHintedDict,
         }
+        for c in self._mro:
+            if c is not DataFile and "_public_attrs" in c.__dict__:
+                ret.update(c._public_attrs)
+        return ret
+
+    @property
+    def _mro(self):
+        ret=[]
+        for c in self.__class__.__mro__[1:]:
+            if c not in ret:
+                ret.append(c)
+        return ret
 
     @property
     def clone(self):
         """Gets a deep copy of the current DataFile.
         """
         c = self.__class__()
+        if self.debug: print("Cloning in DataFile")
         return copy_into(self,c)
 
     @property
@@ -2047,8 +2076,13 @@ class DataFile(metadataObject):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
         """
         attr = dir(type(self))
-        attr.extend(list(self.__dict__.keys()))
-        attr.extend(['column_headers', 'records', 'clone', 'subclasses', 'shape', 'mask', 'dict_records', 'setas'])
+        for c in self._mro:
+            attr.extend(dir(c))
+            if hasattr(c,"_public_attrs"):
+                if c is DataFile:
+                    attr.extend(self._public_attrs.keys())
+                else:
+                    attr.extend(c._public_attrs.keys())
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         for k in col_check:
             if "_setas" not in self.__dict__:
@@ -2132,15 +2166,19 @@ class DataFile(metadataObject):
        """
 
         setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
+        if self.debug: print(name)
+        for c in self._mro:
+            if c is not DataFile:
+                try:
+                    ret = c.__getattr__(self,name)
+                    return ret
+                except AttributeError:
+                    continue       
         if name in setas_cols:
             ret = self._getattr_col(name)
         elif name in dir(self):
-            return super(DataFile, self).__getattribute__(name)
-        else:
-            ret = None
-        if ret is not None:
-            return ret
-        if name in ("_setas", ):  # clearly not setup yet
+            return super(DataFile, self).__getattr__(name)
+        elif name in ("_setas", ):  # clearly not setup yet
             raise KeyError("Tried accessing setas before initialised")
         else:
             try:
@@ -2614,11 +2652,12 @@ class DataFile(metadataObject):
         else:
             self.mask = mask
 
-    def _col_args(self,scalar=True,**cols):
+    def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
+        cols={"xcol":xcol,"ycol":ycol,"zcol":zcol,"ucol":ucol,"vcol":vcol,"wcol":wcol,"xerr":xerr,"yerr":yerr,"zerr":zerr}
         ret=copy.deepcopy(self.setas.cols)
         for c in list(cols.keys()):
-            if cols[c] is None: # Not defined, fallback on setas
+            if isNone(cols[c]): # Not defined, fallback on setas
                 del cols[c]
             elif isinstance(cols[c],bool) and not cols[c]: #False, delete column altogether
                 del cols[c]
@@ -2627,8 +2666,10 @@ class DataFile(metadataObject):
             elif c in ret and isinstance(ret[c],list):
                 if isinstance(cols[c],string_types):
                     cols[c]=self.find_col(cols[c])
+                elif isinstance(cols[c],_np_.ndarray) and cols[c].size==len(self):
+                    continue
                 elif isinstance(cols[c],Iterable):
-                    cols[c]=[self.find_col(cols[c]) for c in cols]
+                    cols[c]=self.find_col(cols[c])
             else:
                 cols[c]=self.find_col(cols[c])
         ret.update(cols)
@@ -3097,7 +3138,9 @@ class DataFile(metadataObject):
                     if self.debug: print("Passed Load")
                     failed=False
                     test["Loaded as"]=cls.__name__
+                    if (self.debug): print("Test matadata: {}".format(test.metadata))
                     copy_into(test,self)
+                    if (self.debug): print("Self matadata: {}".format(self.metadata))
 
                     break
                 except (StonerLoadError, UnicodeDecodeError) as e:

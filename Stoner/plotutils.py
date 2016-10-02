@@ -39,6 +39,7 @@ import warnings
 
 import numpy as np
 import matplotlib.pyplot as plt
+from Stoner.compat import *
 
 __all__ = ['errorfill']
 
@@ -86,7 +87,10 @@ def errorfill(x, y,
     alpha_fill *= alpha
 
     if color is None:
-        color = next(ax._get_lines.color_cycle)
+        if LooseVersion(mpl_version)<LooseVersion('1.5.0'):
+            color = next(ax._get_lines.color_cycle)
+        else:
+            color = next(ax._get_lines.prop_cycler)["color"]
     if ls is None:
         ls = plt.rcParams['lines.linestyle']
     if lw is None:

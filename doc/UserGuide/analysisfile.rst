@@ -14,7 +14,7 @@ adding and subtracting columns.::
    a.normalise(0,3.141592654)
    a.normalise(0,a2.column(0))
 
-The :py:meth:`AnalyseFile.normalise` method simply divides the data column by the reference column. By default the normalise method
+The :py:meth:`AnalysisMixin.normalise` method simply divides the data column by the reference column. By default the normalise method
 replaces the data column with the new (normalised) data and appends '(norm)' to the column header. The keyword arguments
 *header* and *replace* can override this behaviour. The third variant illustrates normalising to a constant
 (note, however, that if the second argument is an integer it is treated as a column index and not a constant).
@@ -26,11 +26,11 @@ A typical example might be to have some baseline scan that one is normalising to
    a.subtract(0,3.141592654)
    a.subtract(0,a2.column(0))
 
-As one might expect form the name, the :py:meth:`AnalyseFile.subtract` method subtracts the second column form the first.
-Unlike :py:meth:`AnalyseFile.normalise` the first data column will not be replaced but a new column inserted and a new header
+As one might expect form the name, the :py:meth:`AnalysisMixin.subtract` method subtracts the second column form the first.
+Unlike :py:meth:`AnalysisMixin.normalise` the first data column will not be replaced but a new column inserted and a new header
 (defaulting to 'column header 1 - column header 2') will be created. This can be overridden with the *header* and *replace*
-keyword arguments. The next two variants of the :py:meth:`AnalyseFile.subtract` method work in an analogous manner to the
-:py:meth:`AnalyseFile.normalise` methods. Finally the :py:meth:`AnalyseFile.add` method allows one to add two columns in a
+keyword arguments. The next two variants of the :py:meth:`AnalysisMixin.subtract` method work in an analogous manner to the
+:py:meth:`AnalysisMixin.normalise` methods. Finally the :py:meth:`AnalysisMixin.add` method allows one to add two columns in a
 similar fashion::
 
    a.add('A','B',header='A plus B',replace=False)
@@ -47,20 +47,20 @@ with variants that take either a 1D array of data or a constant instead of the B
 
 One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
-each row belongs in. The :py:meth:`AnalyseFile.split` method is useful for this case.::
+each row belongs in. The :py:meth:`AnalysisMixin.split` method is useful for this case.::
 
    a.split('Polarisation')
    a.split('Temperature',lambda x,r:x>100)
    a.split(['Temperature','Polarisation'],[lambda x,r:x>100,None])
 
-In these examples we assume the :py:class:`AnalyseFile` has a data column 'Polarisation' that takes two (or more) discrete values
+In these examples we assume the :py:class:`AnalysisMixin` has a data column 'Polarisation' that takes two (or more) discrete values
 and a column 'Temperature' that contains numbers above and below 100.
 
-The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalyseFile`  which
+The first example would return a :py:class:`Stoner.Folders.DataFolder` object  containing two separate isntances of :py:class:`AnalysisMixin`  which
 would each contain the rows from the original data that had each unique value of the polarisation data. The second example would
-produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalyseFile` objects for the rows with temperature above and below 100.
+produce a :py:class:`Stoner.Folders.DataFolder` object containing two :py:class:`AnalysisMixin` objects for the rows with temperature above and below 100.
 The final example will result in a :py:class:`Stoner.Folders.DataFolder` object that has two groups each of which contains
-:py:class:`AnalyseFile` objects for each polarisation value.
+:py:class:`AnalysisMixin` objects for each polarisation value.
 
 .. _curve_fit_guide:
 
@@ -71,7 +71,7 @@ Simple polynomial Fits
 ----------------------
 
 Simple least squares fitting of polynomial functions is handled by the
-:py:meth:`AnalyseFile.polyfit` method::
+:py:meth:`AnalysisMixin.polyfit` method::
 
    a.polyfit(column_x,column_y,polynomial_order, bounds=lambda x, y:True,result="New Column")
 
@@ -91,7 +91,7 @@ created and the fitted polynomial evaluated at each point.
 Simple function fitting
 -----------------------
 
-For more general curve fitting operations the :py:meth:`AnalyseFile.curve_fit`
+For more general curve fitting operations the :py:meth:`AnalysisMixin.curve_fit`
 method can be employed. Again, this is a pass through to the numpy routine of
 the same name.::
 
@@ -107,11 +107,11 @@ should also be an array of the same length as the x and y data. Fianlly, the
 *bounds* function can be used to restrict the fitting to only a subset of the rows
 of data.
 
-:py:meth:`AnalyseFile.curve_fit` returns a list of two arrays ``[popt,pcov]``:
+:py:meth:`AnalysisMixin.curve_fit` returns a list of two arrays ``[popt,pcov]``:
 where *popt* is an array of the optimal fitting parameters and
 *pcov* is a 2D array of the co-variances between the parameters.
 
-If *result* is not **None** then the fitted data is added to the :py:class:`AnalyseFile`
+If *result* is not **None** then the fitted data is added to the :py:class:`AnalysisMixin`
 object. Where it is added depends on the combination of the *result*, *replace*
 and *header* parameters. If *result* is a string or integer it is interpreted as a column
 index at which the fitted data will be inserted (*replace* **False**) or overwritten over the existing data (*replace* **True**).
@@ -124,7 +124,7 @@ for adding appropriately formatted details of the fit to the plot.
 .. plot:: samples/curve_fit_line.py
     :include-source:
 
-:py:meth:`AnalyseFile.curve_fit` can also be used to fit more complex problems. In the example below, a set of
+:py:meth:`AnalysisMixin.curve_fit` can also be used to fit more complex problems. In the example below, a set of
 points in x,y,z space are fitted to a plane.
 
 .. plot:: samples/curve_fit_plane.py
@@ -154,13 +154,13 @@ Non-linear curve fitting with lmfit
 
 lmfit provides a flexible way to fit complex models to experimental data in a pythonesque object-orientated fashion.
 A full description of the lmfit module is given in the `lmffit documentation <href=http://lmfit.github.io/lmfit-py/>`_. . The
-:py:meth:`AnalyseFile.lmfit` method is used to interact with lmfit.
+:py:meth:`AnalysisMixin.lmfit` method is used to interact with lmfit.
 
-In order to use :py:meth:`AnalyseFile.lmfit`, one requires a :py:class:`lmfit.model.Model` instance. This describes a function
+In order to use :py:meth:`AnalysisMixin.lmfit`, one requires a :py:class:`lmfit.model.Model` instance. This describes a function
 and its independent and fittable parameters, whether they have limits and what the limits are. The :py:mod:`Stoner.Fit` module contains
 a series of :py:class:`lmfit.model.Model` subclasses that represent various models used in condensed matter physics.
 
-The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:meth:`AnalyseFile.curve_fit`::
+The operation of :py:meth:`AnalysisMixin.lmfit` is very similar to that of :py:meth:`AnalysisMixin.curve_fit`::
 
     from Stoner.Fit import Arrehenius
     model=Arrehenius(A=1E7,DE=0.01)
@@ -169,13 +169,13 @@ The operation of :py:meth:`AnalyseFile.lmfit` is very similar to that of :py:met
     print a["Arrehenius:A"],a["Arrehenius:A err"],a["chi^2"],a["nfev"]
 
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
-fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalyseFile`.
+fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalysisMixin`.
 
-The *model* argument to :py:meth:`AnalyseFile.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
+The *model* argument to :py:meth:`AnalysisMixin.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
 instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
-a simple call to :py:meth:`AnalyseFile.curve_fit`.
+a simple call to :py:meth:`AnalysisMixin.curve_fit`.
 
-The return value from :py:meth:`AnalyseFile.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
+The return value from :py:meth:`AnalysisMixin.lmfit` is controlled by the *output* keyword parameter. By default it is the :py:class:`lmfit.model.ModelFit`
 instance. This contains all the information about the fit and fitting process.
 
 You can pass the model as a subclass of model, if you don't pass initial values either via the *p0* parameter or as keyword arguements, then the model's
@@ -188,7 +188,7 @@ Non-linear curve fitting with initialisation file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For writing general purpose fitting codes, it can be useful to drive the fitting code from a separate intialisation file so that users do not have to
-edit the source code. :py:meth:`AnalyseFile.lmfit` and :py:mod:`Stoner.Fit` provide some mechanisms to enable this.
+edit the source code. :py:meth:`AnalysisMixin.lmfit` and :py:mod:`Stoner.Fit` provide some mechanisms to enable this.
 
 Firstly, the initialisation file should take the form like so.
 
@@ -200,7 +200,7 @@ section to read in the data file and identify the x and y columns.
 
 The initialisation file can then be passed to :py:func:`Stoner.Fit.cfg_mode_from_ini` which will use the configuration file to
 setup the model and parameter hints. The configuration file should have one section for eac parameter in the model. This function
-returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`AnalyseFile.lmfit`. Depending
+returns the configured model and also a 2D array of values to feed as the starting values to :py:meth:`AnalysisMixin.lmfit`. Depending
 on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 :math:`\\chi^2` goodeness of fit.
 
@@ -208,13 +208,13 @@ on the presence and values of the *vary* and *step* keys, tnhe code will either 
     :include-source:
 
 
-More AnalyseFile Functions
-==========================
+More AnalysisMixin Functions
+============================
 
 Applying an arbitary function through the data
 ----------------------------------------------
 
-:py:meth:`AnalyseFile.apply`::
+:py:meth:`AnalysisMixin.apply`::
 
    a.apply(func, col, replace = True, header = None)
 
@@ -225,7 +225,7 @@ existing data (depending on the values of *replace* and *header*).
 Basic Data Inspection
 ---------------------
 
-:py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`::
+:py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`::
 
    a.max(column)
    a.min(column)
@@ -244,11 +244,11 @@ There are a couple of related functions to help here::
    a.clip(column,(max_v,min_v)
    a.clip(column,b.span(column))
 
-The :py:meth:`AnalyseFile.span` method simply returns a tuple of minimum and maximum values within either the whole column or
-bounded data. Internally this is just calling the :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min` methods.
-The :py:meth:`AnalyseFile.clip` method deletes rows for which the specified column as a value that is either larger or
+The :py:meth:`AnalysisMixin.span` method simply returns a tuple of minimum and maximum values within either the whole column or
+bounded data. Internally this is just calling the :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min` methods.
+The :py:meth:`AnalysisMixin.clip` method deletes rows for which the specified column as a value that is either larger or
 smaller than the maximum or minimum value within the second argument. This allows one to specify either a tuple --
-eg the result of the :py:meth:`AnalyseFile.span` method, or a complete list as in the last example above. Specifying a single
+eg the result of the :py:meth:`AnalysisMixin.span` method, or a complete list as in the last example above. Specifying a single
 float would have the effect of removing all rows where the column didn't equal the float value. This is probably not a good idea...
 
 It is worth pointing out that these functions will respect the existing mask on the data unless the bounds parameter is set,
@@ -261,7 +261,7 @@ bounds function::
 Data Reduction Methods
 ======================
 
-:py:class:`AnalyseFile` offers a number of methods to assist in data reduction and data processing.
+:py:class:`AnalysisMixin` offers a number of methods to assist in data reduction and data processing.
 
 .. _binning_guide:
 
@@ -271,7 +271,7 @@ Data Reduction Methods
 Data binning is the process of taking approximately continuous (x,y) data and grouping them into "bins" of specified x, and average y. Since
 this is a data averaging process, the statistical variation in y values is reduced, at the expense of a loss of resolution in x.
 
-:py:class:`AnalyseFile` provides a simple :py:meth:`AnalyseFile.bin` method that can re-bin data::
+:py:class:`AnalysisMixin` provides a simple :py:meth:`AnalysisMixin.bin` method that can re-bin data::
 
    (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=100,mode="lin")
    (x_bin,y_bin,dy)=a.bin(xcol="Q",ycol="Counts",bins=0.02,mode="log",yerr="dCounts")
@@ -291,7 +291,7 @@ If **xcol** and/or **ycol** are not specified, then they are looked up from the 
 is also taken from this attribute if not specified spearately.
 
 IF the keyword *clone* is supplied and is False, four 1D numpy arrays are returned, representing the x, y and y-errors for the new bins and the number of
-points averaged into each bin.. If *clone* is True or not provided, :py:meth:`AnalyseFile.bin` returns a clone of the current data file with its data
+points averaged into each bin.. If *clone* is True or not provided, :py:meth:`AnalysisMixin.bin` returns a clone of the current data file with its data
 (and column headers) replaced with the newly binned data.
 
 .. plot:: samples/bins.py
@@ -310,7 +310,7 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
 
         This is a powerful method of smoothing data by constructing an appropriate length and shape of 'window function' that
         is then convulted with the data so that every point becomes some form of weighted average of surrounding points as
-        defined by the window function. This is handled by the :py:meth:`AnalyseFile.smooth` method.::
+        defined by the window function. This is handled by the :py:meth:`AnalysisMixin.smooth` method.::
 
             d.smooth("boxcar",size=10)
             d.smooth(("gaussian",1.5),size=0.4,result=True,replace=False,header="Smoothed data")
@@ -327,7 +327,7 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
             the data is evenly spaced to start with.
 
         The *result* and *replace* arguments are passed through to :py:meth:`Stoner.Core.DataFile.add_column` unless *replace*
-        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalyseFile`
+        is **False** in which case, the smoothed data is passed back as the return value and the current :py:class:`AnalysisMixin`
         is left unmodified.
 
     - Savitzky-Golay filtering
@@ -335,14 +335,14 @@ underlying trends. The Stoner package offers a  number of approaches to filterin
         This is a common filtering technique, particularly for spectroscopic data as it is good at keeping major peak locations
         and widths. In essence it is equivalent to least-squares fitting a low order polynomial to a window of the data and using
         the co-effienicents of the fitting polynomail to determine the smoothed (or differentiated) data. This is impletemented as
-        :py:meth:`AnalyseFile.SG_Filter` method.
+        :py:meth:`AnalysisMixin.SG_Filter` method.
 
     - Spline
 
         An alternative approach is to use a smoothing spline to fit the data locally. Depending on the spline smoothing setting
         this will create a function that is continuous in both value and derivative that approaches the data. Unlike Savotzky-
         Golay fitlering it cannot be used to calculate a derivative easily, but it can handle y data with uncertainities. It is
-        implemented as the :py:meth:`AnalyseFile.spline` method.
+        implemented as the :py:meth:`AnalysisMixin.spline` method.
 
     - Rebinning
 
@@ -364,8 +364,8 @@ for example, joinging several scans over different angular or energy ranges to m
 combinaed scan. In the ideal world, these scans could simple be joing together (e.g. by using the +
 operator), in practise one often finds that there are systematic changes in scaling or offsets
 between individual scans. The task of stitching data sets together then becomes one of finding the
-best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalyseFile` provides
-a :py:meth:`AnalyseFile.stitch` method to facilitate this.
+best mapping between two sets of (x,y) points that are nominally the same. :py:class:`AnalysisMixin` provides
+a :py:meth:`AnalysisMixin.stitch` method to facilitate this.
 
 .. plot:: samples/stitch.py
    :include-source:
@@ -392,7 +392,7 @@ function should be::
         ...
         return (mapped_x,mapped_y)
 
-In addition to changing the X and Y data in the current :py:class:`AnalyseFile`
+In addition to changing the X and Y data in the current :py:class:`AnalysisMixin`
 instance, two new metadata keys, *Stitching Coefficient* and *Stitching Coeffient Errors*,
 with the co-efficients used to modify the scan data.
 
@@ -400,7 +400,7 @@ Thresholding, Interpolating and Extrapolation of Data
 -----------------------------------------------------
 
 Thresholding data is the process of identifying points where y data values cross a given limit (equivalently, finding roots for
-:math:`y=f(x)-y_{threshold}`). This is carried out by the :py:meth:`AnalyseFile.threshold` method::
+:math:`y=f(x)-y_{threshold}`). This is carried out by the :py:meth:`AnalysisMixin.threshold` method::
 
    a.threshold(threshold, col="Y-data", rising=True, falling=False,all_vals=False,xcol="X-data")
    a.threshold(threshold)
@@ -410,7 +410,7 @@ parameters control whether the y values are rising or falling with row number as
 just the first threshold or all thresholds it can find. The values returned are mapped to the x-column data if it is specified. The thresholding uses just a simple
 two point linear fit to find the thresholds.
 
-Interpolating data finds values of y for points x that lie between data points. The :py:meth:`AnalyseFile.interpolate` provides a simple pass-through to the
+Interpolating data finds values of y for points x that lie between data points. The :py:meth:`AnalysisMixin.interpolate` provides a simple pass-through to the
 scipy routine :py:func:`scipy.optimize.interp1d`::
 
    a.interpolate(newX,kind='linear', xcol="X-Data")
@@ -418,9 +418,9 @@ scipy routine :py:func:`scipy.optimize.interp1d`::
 The new values of X are set from the mandetory first argument. **kind** can be either "linear" or "cubic" whilst the xcol data can be omitted in which case the
 :py:attr:`Stoner.Core.DataFile.setas` attribute is used. The method will return a new set of data where all columns are interpolated against the new values of X.
 
-The :py:meth:`AnalyseFile.interpolate` method will return values that are obtained from 'joining the dots' - which is
+The :py:meth:`AnalysisMixin.interpolate` method will return values that are obtained from 'joining the dots' - which is
 appropriate if the uncertainities (and hence scatter) in the data is small. With more scatter in the data, it is better to
-use some locally fitted spline function to interpolate with. The :py:meth:`AnalyseFile.spline` function can be used for this.::
+use some locally fitted spline function to interpolate with. The :py:meth:`AnalysisMixin.spline` function can be used for this.::
 
     d.spline("X-Data","Y-Data",header="Spline Data",order=3,smoothing=2.0,replace=True)
     d.spline("X-Data","Y-Data",header="Spline Data",order=2,smoothing=2.0,replace="Extra")
@@ -429,14 +429,14 @@ use some locally fitted spline function to interpolate with. The :py:meth:`Analy
 
 The *order* keyword gives the polynomial order of the spline function being fitted. The *smoothing* factor determines how
 closely the spline follows the data points, with a *smoothing*=0.0 being a strict interpolation. The *repalce* argument
-controls what the return value from the :py:meth:`AnalyseFile.spline` method reutrns. IF *replace* is True or a column
+controls what the return value from the :py:meth:`AnalysisMixin.spline` method reutrns. IF *replace* is True or a column
 index, then the new data is added as a column of the Data, possibly replacing the current y-data. If *replace* is False, then
 the new y-data is returned, but the existing data is unmodified. Finally, if *replace* is None, then the
-:py:meth:`AnalyseFile.spline` method returns a :py:class:`scipy.interpolate.UnivararateSpline` object that can be used to
+:py:meth:`AnalysisMixin.spline` method returns a :py:class:`scipy.interpolate.UnivararateSpline` object that can be used to
 evaluate the spline at arbitary locations, including extrapolating outside the range of the original x data.
 
 Extrapolation is, of course, a dangerous, operation when applied to data as it is essentially 'inventing' new data.
-Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalyseFile.extrapolate`
+Extrapolating fromt he spline function, whislt possible, is a little tricky and in many cases the :py:meth:`AnalysisMixin.extrapolate`
 method is likely to be more successful. :py:meth:`AbnalyseFile.extrapolate` works by fitting a function over a window in the
 data and using the fit function to predict nearby values. Where the new values lie within the range of data, this is strictly
 a form of interpolation and the window of data fitted to the extrpolation function is centred around the new x-data point. As
@@ -467,7 +467,7 @@ indexed by col is differentiated with repsect to the row. *order* specifies the 
 means simply smoothing the data. The algorithm works by locally fitting a polynomial over a certain window of points.
 The parameters for this fitting are controlled by the *points* and *poly* parameters. *points*>*poly*>*order* for
 the algorithm to work. *resul;t*, *replace* and *header* specify that the calculated data should also be added to
-the :py:class:`AnalyseFile` instance, optionally replacing an existing column indexed by *result* and given a new header
+the :py:class:`AnalysisMixin` instance, optionally replacing an existing column indexed by *result* and given a new header
 *header*. The nature of the local fitting means that the first and last *poly*/2 points are not valid.
 
 .. _peak_finding:
@@ -477,7 +477,7 @@ Peak Finding
 
 Peak finding is a tricky and often required task in experimental data analysis. When a functional form is known,
 it is possible to fit the data to this functional form. However, often a more numerical approach is required.
-The :py:meth:`AnalyseFile.peaks` provides a relatively simple and effective method for doing this::
+The :py:meth:`AnalysisMixin.peaks` provides a relatively simple and effective method for doing this::
 
     peak_data=peaks()
     peak_data=peaks(ycol="Y Data", width=0.15, significance=0.001 , xcol="X Data", peaks=True, troughs=False, poly=2,  sort=True)
@@ -497,7 +497,7 @@ Finally, if *sort* is True, the peaks are returned in order of their significanc
 The default values of width and saignificance are set on the assumption that a data set will have less than about 10 peaks of more or
 less equal significance. By default, only peaks are returned in order of x position.
 
-The example below shows how to use :py:meth:`AnalyseFile.peaks` to filter out just the peak positions in a set of data.
+The example below shows how to use :py:meth:`AnalysisMixin.peaks` to filter out just the peak positions in a set of data.
 
 .. plot:: samples/peaks_example.py
     :include-source:
