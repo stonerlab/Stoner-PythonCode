@@ -51,15 +51,14 @@ DataFile and Friends
 **Stoner.Core.DataFile** is the base class for representing individual experimental data sets.
 It provides basic methods to examine and manipulate data, manage metadata and load and save data files.
 It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific
-file formats. Two, however, contain additional functionality for writing analysis programs.
+file formats. 
 
-*   **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.
+
+*   **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
         basic calculations on data.
 
-* **Stoner.Plot.PlotFile** provides additional routines for plotting data on 2D or 3D plots.
-
-As mentioned above, there are subclasses of **DataFile** in the **Stoner.FileFormats** module that support
-loading many of the common file formats used in our research.
+* **Stoner.Plot.PlotMixin** provides additional routines for plotting data on 2D or 3D plots.
 
 For rapid development of small scripts, we would recommend the **Stoner.Data** class which is a superclass of the above,
 and provides a 'kitchen-sink' one stop shop for most of the package's functionality.
@@ -100,6 +99,8 @@ Development Version
 
 Teh current development version is 0.7. Features of 0.7 include
 
+    *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
+    *   Addition of Stoner.Image package to handle image analysis
     *   DataFolder now defaults to using :py:class:`Stoner.Util.Data`
     *   DataFolder has an options to skip iterating over empty Data files
     *  Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.

@@ -208,8 +208,8 @@ on the presence and values of the *vary* and *step* keys, tnhe code will either 
     :include-source:
 
 
-More AnalyseFile Functions
-==========================
+More AnalysisMixin Functions
+============================
 
 Applying an arbitary function through the data
 ----------------------------------------------

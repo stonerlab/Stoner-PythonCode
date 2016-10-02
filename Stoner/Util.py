@@ -80,7 +80,8 @@ def _up_down(data):
 
 
 class Data(_DF_,_AF_, _PF_):
-    """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
+    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
+    which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""
 

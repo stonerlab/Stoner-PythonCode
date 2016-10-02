@@ -1488,6 +1488,8 @@ class DataFile(metadataObject):
                     to_go.append(k)
             for k in to_go:
                 del kargs[k]
+        if self.debug: print("Done DataFile init")
+#        super(DataFile,self).__init__(*args,**kargs)
         for c in self._mro: # Call all inits in Stoner mixin classes
             if c.__module__.startswith("Stoner") and c is not DataFile and "__init__" in c.__dict__:
                 if self.debug: print(c)
@@ -2164,23 +2166,19 @@ class DataFile(metadataObject):
        """
 
         setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
+        if self.debug: print(name)
+        for c in self._mro:
+            if c is not DataFile:
+                try:
+                    ret = c.__getattr__(self,name)
+                    return ret
+                except AttributeError:
+                    continue       
         if name in setas_cols:
             ret = self._getattr_col(name)
         elif name in dir(self):
             return super(DataFile, self).__getattr__(name)
-        else: #See if we can get an attribute from a mixin class
-            for c in self._mro:
-                if c is not DataFile:
-                    try:
-                        ret = c.__getattr__(self,name)
-                        break
-                    except AttributeError:
-                        continue
-            else:
-                ret = None
-        if ret is not None:
-            return ret
-        if name in ("_setas", ):  # clearly not setup yet
+        elif name in ("_setas", ):  # clearly not setup yet
             raise KeyError("Tried accessing setas before initialised")
         else:
             try:

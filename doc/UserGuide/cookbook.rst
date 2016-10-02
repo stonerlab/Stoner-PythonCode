@@ -100,7 +100,7 @@ Fitting Tricks
 Fitting 3D Data
 ---------------
 
-:py:meth:`AnalyseFile.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+:py:meth:`Stoner.Analysis.AnalysisMixin.curve_fit` can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the *xcol* parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.

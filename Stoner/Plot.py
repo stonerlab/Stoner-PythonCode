@@ -4,7 +4,7 @@
 Provides the a class to facilitate easier plotting of Stoner Data:
 
 Classes:
-    PlotFile - A class that uses matplotlib to plot data
+    PlotMixin - A class that uses matplotlib to plot data
 """
 from Stoner.compat import *
 from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
@@ -67,15 +67,18 @@ class PlotMixin(object):
     }
 
     def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
-        """Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.
+        """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
 
         """
         self.__figure = None
         self._labels = copy.deepcopy(self.column_headers)
         self._subplots = []
+        if "labels" in kargs:
+            self.labels=kargs.pop("labels")
+        if self.debug: print("Done PlotMixin init")
 
 #============================================================================================================================
-#Properties of PlotFile
+#Properties of PlotMixin
 #============================================================================================================================
 
     @property
@@ -96,18 +99,6 @@ class PlotMixin(object):
         else:
             ret = None
         return ret
-
-    @property
-    def column_headers(self):
-        return DataFile.column_headers.fget(self)
-
-    @column_headers.setter
-    def column_headers(self,value):
-        if all_type(value,string_types):
-            DataFile.column_headers.fset(self,value)
-            self.labels = value
-        else:
-            raise NotImplementedError("Column headers should be an iterable of strings.")
 
     @property
     def fig(self):
@@ -138,7 +129,10 @@ class PlotMixin(object):
 
     @labels.setter
     def labels(self,value):
-        self._labels = value
+        if value is None:
+            self._labels=copy.deepcopy(self.column_headers)
+        else:
+            self._labels = value
 
     @property
     def subplots(self):
@@ -491,7 +485,7 @@ class PlotMixin(object):
         return self
 
 
-    def colormap_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
+    def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
 
         Args:
@@ -504,6 +498,7 @@ class PlotMixin(object):
             xlim (tuple): The xlimits, defaults to automatically determined from data
             ylim (tuple): The ylimits, defaults to automatically determined from data
             plotter (function): Function to use to plot data. Defaults to plt.contour
+            colorbar (bool): Draw the z-scale color bar beside the plot (True by default)
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
@@ -512,11 +507,17 @@ class PlotMixin(object):
         Returns:
             A matplotlib figure
          """
-        if plotter is None:
-            plotter = plt.pcolor
-        kargs["plotter"] = plotter
-        kargs["projection"] = "rectilinear"
-        return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+        kargs["plotter"]=kargs.get("plotter",plt.pcolor)
+        kargs["projection"] = kargs.get("projection","rectilinear")
+        xlim=kargs.pop("xlim",None)
+        ylim=kargs.pop("ylim",None)
+        shape=kargs.pop("shape",None)
+        colorbar=kargs.pop("colorbar",True)
+        ax=self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+        if colorbar:
+            plt.colorbar()
+            plt.tight_layout()
+        return ax
 
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
@@ -545,13 +546,13 @@ class PlotMixin(object):
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
     def figure(self, figure=None,projection="rectilinear",**kargs):
-        """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
+        """Set the figure used by :py:class:`Stoner.Plot.PlotMixin`.
 
         Args:
             figure A matplotlib figure or figure number
 
         Returns:
-            The current \b Stoner.PlotFile instance"""
+            The current \b Stoner.PlotMixin instance"""
         if figure is None:
             figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
@@ -1391,7 +1392,7 @@ def hsl2rgb(h, s, l):
     return (255 * rgb).astype('u1')
 
 class PlotFile(DataFile,PlotMixin):
-    """Extends DataFile with plotting functions.
+    """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`
 
     """
     pass
