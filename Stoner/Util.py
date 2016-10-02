@@ -264,9 +264,10 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
-    if col is None:
-        col = data.setas["x"]
     a = Data(data)
+    if col is None:
+        _=a._col_args()
+        col=_.xcol
     width = len(a) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1

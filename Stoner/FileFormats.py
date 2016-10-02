@@ -1356,7 +1356,8 @@ class EasyPlotFile(DataFile):
                     if len(cmd) > 1:
                         cmdname = "_{}_cmd".format(cmd)
                         if cmdname in dir(self):  #If this command is implemented as a function run it
-                            self.__getattr__("_{}_cmd".format(cmd))(parts[1:])
+                            cmd=getattr(self,"_{}_cmd".format(cmd))
+                            cmd(parts[1:])
                         else:
                             if len(parts[1:]) > 1:
                                 cmd = cmd + "." + parts[1]

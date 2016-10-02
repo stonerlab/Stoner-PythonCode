@@ -100,7 +100,9 @@ class KerrArray(np.ndarray,metadataObject):
                 kwargs['dtype']='uint16' #defualt output for Kerr microscope
             tmp=typeHintedDict()
             for k in img.info:
-                tmp[k]=img.info[k]
+                v=img.info[k]
+                if "b'" in v: v=v.strip(" b'")    
+                tmp[k]=v
         else:
             tmp=typeHintedDict()
             np.array(image) #try array on image to check it's a valid numpy type
@@ -190,7 +192,7 @@ class KerrArray(np.ndarray,metadataObject):
     def _kfuncs(self):
         """Provide an attribtute that caches the imported KerrArray functions."""
         if self._kfuncs_proxy is None:
-            import kfuncs
+            from . import kfuncs
             self._kfuncs_proxy=kfuncs
         return self._kfuncs_proxy
 
@@ -540,7 +542,7 @@ class KerrArray(np.ndarray,metadataObject):
 
         #parse the reading
         if len(data)==0:
-            print 'No data read for {}'.format(key)
+            print('No data read for {}'.format(key))
         data=self._parse_text(data, key=key)
         return data
 

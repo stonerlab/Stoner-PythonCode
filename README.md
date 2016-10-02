@@ -72,7 +72,7 @@ and are used to handle the loading of specific file formats.
 There are also two mxin classes designed to work with DataFile to enable
 additional functionality for writing analysis programs.
 
--
+-   
 
     **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
 
@@ -132,12 +132,9 @@ Development Version
 
 Teh current development version is 0.7. Features of 0.7 include
 
-<<<<<<< HEAD
-=======
 > -   Replace older AnalyseFile and PlotFile with mixin based versions
 >     AnalysisMixin and PlotMixin
 > -   Addition of Stoner.Image package to handle image analysis
->>>>>>> mixins
 > -   DataFolder now defaults to using :pyStoner.Util.Data
 > -   DataFolder has an options to skip iterating over empty Data files
 > -   Further improvements to :pyStoner.Core.DataFile.setas handline.

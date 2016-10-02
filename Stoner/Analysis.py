@@ -1598,6 +1598,8 @@ class AnalysisMixin(object):
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
+        setas=self.setas
+        self.setas=""
         d1 = self.SG_Filter(ycol, width, poly, 1)
         d2 = self.SG_Filter(ycol, 2*width, poly, 2) # 2nd differential requires more smoothing
 
@@ -1644,7 +1646,7 @@ class AnalysisMixin(object):
             ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic",xcol=False)
         else:
             ret=xdata(possible_peaks+index_offset)
-
+        self.setas=setas
         # Return - but remembering to add back on the offset that we took off due to differentials not working at start and end
         return ret
 

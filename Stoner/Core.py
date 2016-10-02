@@ -695,7 +695,7 @@ class typeHintedDict(sorteddict):
         """
 
         super(typeHintedDict, self).__init__(*args, **kargs)
-        for key in self:  # Chekc through all the keys and see if they contain
+        for key in list(self.keys()):  # Chekc through all the keys and see if they contain
             # type hints. If they do, move them to the
             # _typehint dict
             value = super(typeHintedDict, self).__getitem__(key)
@@ -880,7 +880,10 @@ class typeHintedDict(sorteddict):
                 super(typeHintedDict, self).__setitem__(name, "")
                 self._typehints[name] = "String"
             else:
-                super(typeHintedDict, self).__setitem__(name, self.__mungevalue(typehint, value))
+                try:
+                    super(typeHintedDict, self).__setitem__(name, self.__mungevalue(typehint, value))
+                except ValueError:
+                    pass # Silently fail
         else:
             self._typehints[name] = self.findtype(value)
             super(typeHintedDict, self).__setitem__(name, self.__mungevalue(self._typehints[name], value))
@@ -968,8 +971,23 @@ class metadataObject(MutableMapping):
 
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
-        if not hasattr(self,"metadata") or not isinstance(self.metadata,typeHintedDict):
-            self.metadata = typeHintedDict()
+        metadata=kargs.pop("metadata",None)
+        self.metadata=metadata
+
+    @property
+    def metadata(self):
+        return self._metadata
+
+    @metadata.setter
+    def metadata(self,value):
+        if value is None and "_metadata" not in self.__dict__:
+            self._metadata=typeHintedDict()
+        elif not isinstance(value,typeHintedDict):
+            self._metadata=typeHintedDict(value)
+        else:
+            self._metadata=value
+
+
 
     def __getitem__(self,name):
         return self.metadata[name]
@@ -1491,7 +1509,7 @@ class DataFile(metadataObject):
         if self.debug: print("Done DataFile init")
 #        super(DataFile,self).__init__(*args,**kargs)
         for c in self._mro: # Call all inits in Stoner mixin classes
-            if c.__module__.startswith("Stoner") and c is not DataFile and "__init__" in c.__dict__:
+            if c.__module__.startswith("Stoner") and c not in (DataFile,metadataObject) and "__init__" in c.__dict__:
                 if self.debug: print(c)
                 if self.debug: print(self.metadata)
                 c.__init__(self,*args,**kargs)
@@ -2167,16 +2185,17 @@ class DataFile(metadataObject):
 
         setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
         if self.debug: print(name)
+        if name in setas_cols:
+            ret=self._getattr_col(name)
+            if ret is not None: return ret
         for c in self._mro:
-            if c is not DataFile:
+            if c not in (DataFile,metadataObject):
                 try:
                     ret = c.__getattr__(self,name)
                     return ret
                 except AttributeError:
-                    continue       
-        if name in setas_cols:
-            ret = self._getattr_col(name)
-        elif name in dir(self):
+                    continue
+        if name in dir(self):
             return super(DataFile, self).__getattr__(name)
         elif name in ("_setas", ):  # clearly not setup yet
             raise KeyError("Tried accessing setas before initialised")
@@ -3156,7 +3175,7 @@ class DataFile(metadataObject):
                 self.data = test.data
                 self.metadata.update(test.metadata)
                 failed = False
-            elif type(filetype).__name__=="type" and issubclass(filetype, DataFile):
+            elif issubclass(filetype, DataFile):
                 test = filetype()
                 test._load(self.filename,*args,**kargs)
                 self["Loaded as"] = filetype.__name__
@@ -3164,6 +3183,15 @@ class DataFile(metadataObject):
                 self.metadata.update(test.metadata)
                 self.column_headers=test.column_headers
                 failed = False
+            elif isinstance(filetype, DataFile):
+                test = filetype.clone
+                test._load(self.filename,*args,**kargs)
+                self["Loaded as"] = filetype.__name__
+                self.data = test.data
+                self.metadata.update(test.metadata)
+                self.column_headers=test.column_headers
+                failed = False
+
         if failed:
             raise SyntaxError("Failed to load file")
         return self
