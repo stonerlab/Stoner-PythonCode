@@ -37,8 +37,22 @@ GRAY_RANGE=(0,65535)  #2^16
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
+dtype_range = {np.bool_: (False, True), 
+               np.bool8: (False, True),
+               np.uint8: (0, 255),
+               np.uint16: (0, 65535),
+               np.int8: (-128, 127),
+               np.int16: (-32768, 32767),
+               np.int64: (-2**63, 2**63 - 1),
+               np.uint64: (0, 2**64 - 1),
+               np.int32: (-2**31, 2**31 - 1),
+               np.uint32: (0, 2**32 - 1),
+               np.float16: (-1, 1),
+               np.float32: (-1, 1),
+               np.float64: (-1, 1)}
 
 
+    
 class KerrArray(np.ndarray,metadataObject):
     """Class for manipulating Kerr images from Evico software.
     It is built to be almost identical to a numpy array except for one extra
@@ -339,14 +353,53 @@ class KerrArray(np.ndarray,metadataObject):
         """
         sub=(xmin,xmax,ymin,ymax)
         return self.crop_image(box=sub,copy=False)
-
-    def convert_float(self):
-        """return the image converted to float between 0 and 1. Dividing by the max
-        allowed value of its current dtype."""
-        return self.img_as_float() #there is no easy way to convert the type in
-                                #place self.astype(np.float64,copy=False) doesn't
-                                #seem to work for different memory block sizes
-
+    
+    def dtype_limits(self, clip_negative=None):
+        """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
+        Parameters
+        ----------
+        image : ndarray
+            Input image.
+        clip_negative : bool, optional
+            If True, clip the negative range (i.e. return 0 for min intensity)
+            even if the image dtype allows negative values.
+            The default behavior (None) is equivalent to True.
+        Returns
+        -------
+        imin, imax : tuple
+            Lower and upper intensity limits.
+        """
+        if clip_negative is None:
+            clip_negative = True
+        imin, imax = dtype_range[self.dtype.type]
+        if clip_negative:
+            imin = 0
+        return imin, imax
+    
+    def convert_float(self, clip_negative=True):
+        """return the image converted to floating point type normalised to -1 
+        to 1. If clip_negative then clip intensities below 0 to 0.
+        Unfortunately there is no easy way to convert the type in
+        place self.astype(np.float64,copy=False) doesn't
+        work for different memory block sizes so a new array is produced"""
+        if self.dtype.kind=='f': #already float
+            ret=self
+        else:
+            dl=self.dtype_limits(clip_negative=False)
+            ret=self.astype(np.float64)
+            ret=ret/float(dl[1])
+        if clip_negative and np.min(ret)<0:
+            ret=ret.clip_intensity()
+        return ret
+                  
+    def clip_intensity(self):
+        """clip intensity that lies outside the range allowed by dtype.
+        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
+        are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
+        dl=self.dtype_limits(clip_negative=True)
+        ret=self.rescale_intensity(in_range=dl)
+        return ret
+    
     def convert_int(self):
         """convert the image to uint16 (the format used by Evico)"""
         return self.img_as_uint()

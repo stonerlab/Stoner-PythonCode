@@ -58,12 +58,7 @@ def adjust_contrast(im, lims=(0.1,0.9), percent=True):
     im=im.rescale_intensity(in_range=(vmin,vmax)) #clip the intensity
     return im
 
-def clip_intensity(im):
-    """clip intensity that lies outside the range allowed by dtype.
-    Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-    are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
-    im=im.rescale_intensity(in_range=util.dtype_limits(im,clip_negative=True))
-    return im
+
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     """Align images to correct for image drift.
