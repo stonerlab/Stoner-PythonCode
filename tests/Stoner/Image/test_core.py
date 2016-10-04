@@ -106,6 +106,14 @@ class KerrArrayTest(unittest.TestCase):
         b[0,0]+=1
         self.assertTrue(t[1,1]==(self.td1[1,1]+1), 
                         'box does not have same memory space as original array')
+    
+    def test_convert_float(self):
+        t=KerrArray([[0,20000],[30000,60000]], dtype=np.uint16)
+        t2=t.convert_float()
+        self.assertTrue(np.allclose(np.array([[0., 0.30518044], [0.45777066, 0.91554131]]),t2), 'convert float failed')
+        t2=t2-0.4
+        t2=t2.clip_intensity()
+        self.assertTrue(np.allclose(np.array([[0.,0.],[ 0.05777066,0.51554131]]),t2), 'clip intensity failed')
         
     def test_metadata(self):
         #this incidently tests get_metadata too
