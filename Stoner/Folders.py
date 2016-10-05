@@ -5,6 +5,7 @@
      :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 
+__all__ = ["objectFolder","DataFolder","PlotFolder"]
 from Stoner.compat import *
 import os
 import re

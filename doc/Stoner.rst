@@ -38,15 +38,30 @@ Functions
 
 :mod:`Plot` Module
 ==================
+
+Classes
+-------
 .. automodsumm:: Stoner.Plot
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.Plot
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`Folders` Module
 ======================
+
+Classes
+-------
 .. automodsumm:: Stoner.Folders
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
 
 :mod:`FileFormats` Module
 =========================

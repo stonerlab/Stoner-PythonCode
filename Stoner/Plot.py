@@ -6,6 +6,7 @@ Provides the a class to facilitate easier plotting of Stoner Data:
 Classes:
     PlotMixin - A class that uses matplotlib to plot data
 """
+__all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import *
 from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
 from Stoner.PlotFormats import DefaultPlotStyle
