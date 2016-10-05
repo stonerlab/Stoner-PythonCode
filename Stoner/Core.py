@@ -1200,7 +1200,7 @@ class DataArray(_ma_.MaskedArray):
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
             ret.isrow=single_row
-            if len(ix)==len(self._setas):
+            if len(ix)==len(self.setas):
                 tmp=_np_.array(self.setas)[ix[-1]]
                 ret.setas(tmp)
                 tmpcol=_np_.array(self.column_headers)[ix[-1]]
@@ -1327,6 +1327,7 @@ class DataArray(_ma_.MaskedArray):
         """Returns an object for setting column assignments."""
         if "_setas" not in self.__dict__:
             self._setas=_setas()
+        if self._setas.shape!=self.shape:
             self._setas.shape=self.shape
         return self._setas
 
