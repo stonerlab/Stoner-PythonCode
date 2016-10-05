@@ -270,8 +270,10 @@ class AnalysisMixin(object):
             User guide section :ref:`smoothing_guide`
         """
         from Stoner.Util import ordinal
+        points=int(points)
         if points % 2 == 0:  #Ensure window length is odd
             points += 1
+            
         if col is None:
             cols = self.setas._get_cols()
             if order>0:
