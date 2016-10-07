@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-Plot Templates module - contains classes that style plots for Stoner.Plot and pyplot
+Plot Templates module - contains classes that style plots for Stoner.plot and pyplot
 Created on Fri Feb 07 19:57:30 2014
 
 @author: Gavin Burnell
@@ -97,7 +97,7 @@ class DefaultPlotStyle(object):
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
     create additional attributes to define rc Parameters (see Matplotlib documentation for
-    available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`
+    available rc parameters) and override the :py:meth:Stoner.pot.formats.DefaultPlotStyle.customise`
     method to carry out additional plot formatting.
 
     Attributes:
@@ -349,7 +349,7 @@ class DefaultPlotStyle(object):
         Args:
             ix(integer): Index of current subplot
             multiple (string): how to handle multiple subplots
-            plot (Stoner.PlotFile): The PlotFile boject we're working with
+            plot (Stoner.plot.PlotMixin): The PlotFile boject we're working with
         """
 
         if multiple in self.subplot_settings:

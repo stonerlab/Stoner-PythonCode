@@ -10,7 +10,7 @@ Created on Tue Oct 08 20:14:34 2013
 from Stoner.compat import *
 from Stoner.Core import DataFile as _DF_
 from Stoner.Analysis import AnalysisMixin as _AF_
-from Stoner.Plot import PlotMixin as _PF_
+from Stoner.plot import PlotMixin as _PF_
 import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
 from Stoner.Fit import linear

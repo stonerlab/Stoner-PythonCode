@@ -1,5 +1,5 @@
-"""         Stoner.Plot
-            ============
+"""         Stoner.plot Subpackage
+            ======================
 
 Provides the a class to facilitate easier plotting of Stoner Data:
 
@@ -9,8 +9,8 @@ Classes:
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import *
 from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
-from Stoner.PlotFormats import DefaultPlotStyle
-from Stoner.plotutils import errorfill
+from .formats import DefaultPlotStyle
+from .utils import errorfill
 
 import numpy as _np_
 from scipy.interpolate import griddata
@@ -547,13 +547,13 @@ class PlotMixin(object):
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
     def figure(self, figure=None,projection="rectilinear",**kargs):
-        """Set the figure used by :py:class:`Stoner.Plot.PlotMixin`.
+        """Set the figure used by :py:class:`Stoner.plot.PlotMixin`.
 
         Args:
             figure A matplotlib figure or figure number
 
         Returns:
-            The current \b Stoner.PlotMixin instance"""
+            The current \b Stoner.plot.PlotMixin instance"""
         if figure is None:
             figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
