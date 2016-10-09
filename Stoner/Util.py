@@ -114,7 +114,7 @@ class Data(_DF_,_AF_, _PF_):
 
         mode=kargs.pop("mode","float")
         units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+"_label","{} =".format(key))))
+        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
         latex=kargs.pop("latex",False)
         fmt=kargs.pop("fmt","latex" if latex else "text")
         escape=kargs.pop("escape",False)
@@ -179,7 +179,7 @@ class Data(_DF_,_AF_, _PF_):
 
         try: # if the model has an attribute display params then use these as the parameter anmes
             for k,display_name in zip(model.param_names,model.display_names):
-                self[k+"_label"]=display_name
+                self[k+" label"]=display_name
         except (AttributeError,KeyError):
             pass
 

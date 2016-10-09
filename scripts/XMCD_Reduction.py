@@ -1,9 +1,8 @@
 from __future__ import print_function
 # Normaliser with Stoner module
-import Stoner.Core as SC
 import Stoner.Folders as SF
-import Stoner.Analysis as SA
-import Stoner.Plot as SP
+from Stoner import Data
+
 
 import re
 import numpy as np
@@ -52,7 +51,6 @@ def alt_norm(f,trail,**kargs):
     ec=0
 
     md=f.find_col(signal)
-    f=SA.AnalyseFile(f)
     coeffs=f.polyfit(ec,md,1,lambda x,y:lfit[0]<=x<=lfit[1])
     linearfit=scipy.poly1d(coeffs)
     f.add_column(lambda r:r[md]-linearfit(r[ec]),'minus linear')
@@ -74,7 +72,7 @@ def norm_group(pos,trail,**kargs):
     lfit=kargs["lfit"]
     rfit=kargs["rfit"]
 
-    posfile=SA.AnalyseFile()
+    posfile=Data()
     posfile.metadata=pos[0].metadata
     posfile=posfile&pos[0].column(0)
     posfile.column_headers=['Energy']
@@ -84,7 +82,6 @@ def norm_group(pos,trail,**kargs):
     posfile.add_column(lambda r:np.mean(r[1:]),"mean drain")
     ec=posfile.find_col('Energy')
     md=posfile.find_col('mean drain')
-    posfile=SA.AnalyseFile(posfile)
     linearfit=scipy.poly1d(posfile.polyfit(ec,md,1,lambda x,y:lfit[0]<=x<=lfit[1]))
     posfile.add_column(lambda r:r[md]-linearfit(r[ec]),'minus linear')
     highend=posfile.mean('minus',lambda r:rfit[0]<=r[ec]<=rfit[1])
@@ -117,7 +114,7 @@ def asym(grp,trail,**kargs):
 
 def collate(grp,trail,**kargs):
     grp.sort()
-    final=SC.DataFile()
+    final=Data()
     final.add_column(grp[0].column('Energy'),'Energy')
     for g in grp:
         final.add_column(g.column('Asym'),g.title)
