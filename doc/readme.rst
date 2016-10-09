@@ -58,7 +58,7 @@ There are also two mxin classes designed to work with DataFile to enable additio
 *   **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
         basic calculations on data.
 
-* **Stoner.Plot.PlotMixin** provides additional routines for plotting data on 2D or 3D plots.
+* **Stoner.plot.PlotMixin** provides additional routines for plotting data on 2D or 3D plots.
 
 For rapid development of small scripts, we would recommend the **Stoner.Data** class which is a superclass of the above,
 and provides a 'kitchen-sink' one stop shop for most of the package's functionality.

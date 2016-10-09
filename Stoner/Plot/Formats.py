@@ -252,7 +252,7 @@ class DefaultPlotStyle(object):
                 self.__setattr__("template_" + k, kargs[k])
 
     def new_figure(self, figure=False, **kargs):
-        """This is called by PlotFile to setup a new figure before we do anything."""
+        """This is called by PlotMixin to setup a new figure before we do anything."""
         plt.rcdefaults()  # Start by resetting to our default settings
         params = dict()
         self.apply()
@@ -349,7 +349,7 @@ class DefaultPlotStyle(object):
         Args:
             ix(integer): Index of current subplot
             multiple (string): how to handle multiple subplots
-            plot (Stoner.plot.PlotMixin): The PlotFile boject we're working with
+            plot (Stoner.plot.PlotMixin): The PlotMixin boject we're working with
         """
 
         if multiple in self.subplot_settings:
