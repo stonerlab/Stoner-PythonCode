@@ -6,7 +6,7 @@ Created on Fri Feb 07 19:57:30 2014
 
 @author: Gavin Burnell
 """
-
+__all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
 from Stoner.compat import *
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -551,3 +551,6 @@ if SEABORN: # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
+
+else:
+    SeabornPlotStyle=DefaultPlotStyle
