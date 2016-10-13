@@ -1229,8 +1229,8 @@ class PlotFolder(DataFolder):
         """Call the plot method for each metadataObject, but switching to a subplot each time.
 
         Args:
-            args: Positional arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.
-            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.Plot.PlotFile.plot` call.
+            args: Positional arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
+            kargs: Keyword arguments to pass through to the :py:meth:`Stoner.plot.PlotMixin.plot` call.
 
         Returns:
             A list of :py:class:`matplotlib.pyplot.Axes` instances.

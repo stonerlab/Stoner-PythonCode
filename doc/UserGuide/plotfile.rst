@@ -1,20 +1,11 @@
 *************
 Plotting Data
 *************
-.. currentmodule:: Stoner.Plot
+.. currentmodule:: Stoner.plot
 
 Data plotting and visualisation is handled by the :py:class:`PlotMixin` sub-class of :py:class:`Stoner.Core.DataFile`.
 The purpose of the methods detailed here is to provide quick and convenient ways to plot data rather than providing
-publication ready figures.::
-
-   import Stoner.Plot as plot
-   p=plot.PlotFile(d)
-
-The first line imports the :py:mod:`Stoner.Plot` module. Strictly, this is unnecessary as the Plot module's name-space is
-imported when the Stoner package as a whole is imported. The second line creates an instance of the :py:class:`PlotMixin` class.
-PlotFile inherits the constructor method of :[y:class:`Stoner.Core.DataFile` and so all the variations detailed above work with
-PlotFile. In particular, the form shown in the second line is a easy way to convert a DataFile instance to a PlotFile instance
-for plotting.
+publication ready figures. The :py:class:`PlotMixin` is included as apart of the Data class::
 
 Quick Plots
 ===========
@@ -31,7 +22,7 @@ methods will use these to try to make a sensible plot.::
 
 Once the columns are identified, the :py:meth:`PlotMixin.plot` method can be used to do the actual plotting. This is simply a wrapper that insepects the
 available columns and calls either :py:meth:`PlotMixin.plot_xy` or :py:meth:`PlotMixin.plot_xyz` as appropriate. All keyword arguments to :
-py:meth:`PlotFile.plot` are passed on to the actual plotting method.
+py:meth:`PlotMixin.plot` are passed on to the actual plotting method.
 
 Types of Plot
 =============
@@ -170,7 +161,7 @@ Following the naming convention above, the :py:meth:`PlotMixin.plot_xyzuvw` meth
     p.plot_xyzuvw(xcol,ycol,zcol,ucol,vcol,wcol,plotter=myplotfunc)
 
 The :py:meth:`PlotMixin.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
-Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.Plot` when
+Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.plot` when
 2D plotting only is required.
 
 The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
@@ -201,13 +192,13 @@ Getting More Control on the Figure
 ==================================
 
 It is useful to be able to get access to the matplotlib figure that is used for each :py:class:`PlotMixin` instance. The
-:py:attr:`PlotFile.fig` attribute can do this, thus allowing plots from multiple :py:class:`PlotMixin` instances to be
+:py:attr:`PlotMixin.fig` attribute can do this, thus allowing plots from multiple :py:class:`PlotMixin` instances to be
 combined in a single figure.::
 
     p1.plot_xy(0,1,'r-')
     p2.plot_xy(0,1,'bo',figure=p1.fig)
 
-Likewise the :py:attr:`PlotFile.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotMixin`
+Likewise the :py:attr:`PlotMixin.axes` attribute returns the current axes object of the current figure in use by the :py:class:`PlotMixin`
 instance.
 
 There's a couple of extra methods that just pass through to the pyplot equivalents::
@@ -227,17 +218,17 @@ element tuple.
 
 Particualrly useful attributes include:
 
--   :py:attr:`PlotFile.xlabel`, :py:attr:`PlotFile.ylabel` will set the x and y axes labels
--   :py:attr:`PlotFile.title` will set the plot title
--   :py:attr:`PlotFile.xlim`, :py:attr:`PlotFile.ylim` will accept a tuple to set the x- and y-axes limits.
--   :py:attr:`PlotFile.labels` sets a list of strings that are the preferred name for each column. This is to
+-   :py:attr:`PlotMixin.xlabel`, :py:attr:`PlotMixin.ylabel` will set the x and y axes labels
+-   :py:attr:`PlotMixin.title` will set the plot title
+-   :py:attr:`PlotMixin.xlim`, :py:attr:`PlotMixin.ylim` will accept a tuple to set the x- and y-axes limits.
+-   :py:attr:`PlotMixin.labels` sets a list of strings that are the preferred name for each column. This is to
         allow the plotting routines to provide a default name for an axis label that can be different from the
         name of the column used for indexing purposes. If the label for a column is not set, then the column
-        header is used instead. If a column header is changed, then the :py:attr:`Plotfile.labels` attribute will
+        header is used instead. If a column header is changed, then the :py:attr:`PlotMixin.labels` attribute will
         be overwritten.
 
 In addition, you can read any method of :py:class:`pyplot.Axes` as an attribute of :py:class:`PlotMixin`. This allows
-one to call the methods directly on the PlotFile instance without needing to extract a reference to the current
+one to call the methods directly on the PlotMixin instance without needing to extract a reference to the current
 axes.::
 
     p.xlabel="My X Axis"
@@ -256,7 +247,7 @@ provided. This produces a second axes object with a common x-axis, but independe
 
 There is an equivalent :py:meth:`PlotMixin.x2` method to create a second set of axes with a common y scale but different x scales.
 
-To work out which set of axes you are current working with the :py:attr:`PlotFile.ax` attribute can be read or set.::
+To work out which set of axes you are current working with the :py:attr:`PlotMixin.ax` attribute can be read or set.::
 
     p.plot_xy(0,1)
     p.y2()
@@ -270,20 +261,20 @@ To work out which set of axes you are current working with the :py:attr:`PlotFil
 Plot Templates
 --------------
 
-.. currentmodule:: Stoner.PlotFormats
+.. currentmodule:: Stoner.plot.formats
 
 Frequently one wishes to create many plots that have a similar set of formatting options - for example
-in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.PlotFormats` in conjunctions with
-the :py:attr:`PlotFile.template` attribute can help here.
+in a thesis or to conform to a journal's specifications. The :py:mod:`Stoner.plot.formats` in conjunctions with
+the :py:attr:`PlotMixin.template` attribute can help here.
 
-A :py:attr:`PlotFile.template` template is a set of instructions that controls the default settings for many
+A :py:attr:`PlotMixin.template` template is a set of instructions that controls the default settings for many
 aspects of a matplotlib figure's style. In addition the template allows for pyplot formatting commands to be
 executed during the process of plotting a figure.
 
 .. plot:: samples/template2.py
    :include-source:
 
-The template can either be set by passing a subclass of :py:class:`Stoner.PlotFormats.DefaultPlotStyle` or
+The template can either be set by passing a subclass of :py:class:`Stoner.plot.formats.DefaultPlotStyle` or
 a particular instance of such a subclass. This latter option allows you to override the default plot attribute
 settings defined by the template class with your own choice - or indeed, to add further style attributes. This
 can be done by either calling the template and passing it arguments as keywords, or by settiong attributes directly on the template.
@@ -296,7 +287,7 @@ prefix the translated rcParam key with *template_*.
 
 You can also copy the style template from one plot to the next.
 
-    q=SP.PlotFile()
+    q=Data()
     q.template=p.template
 
 The possible attributes that can be passed over to the template are essentially all the rc parameters for matplotlib
@@ -325,7 +316,7 @@ The :py:class:`SeabornPlotStyle` template class offers a quick interface to usin
 :py:attr:`SeabornPlotStyle.context` and :py:attr:`SeabornPlotStyle.palette` to set the corresponding seaborn settings.
 
 
-.. currentmodule:: Stoner.Plot
+.. currentmodule:: Stoner.plot
 
 
 Making Multi-plot Figures
@@ -336,7 +327,7 @@ Adding an Inset to a Figure
 
 The :py:meth:`PlotMixin.inset` method can be used to creagte an inset in the current figure. Subsequent plots
 will be to the inset until a new set of axes are chosen. The :py:class:`pyplot.Axes` instance of the inset is appended to the
-:py:attr:`PlotFile.axes` attribute.
+:py:attr:`PlotMixin.axes` attribute.
 
 .. plot:: samples/inset_plot.py
    :include-source:

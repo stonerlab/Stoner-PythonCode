@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 
-Plot Templates module - contains classes that style plots for Stoner.Plot and pyplot
+Plot Templates module - contains classes that style plots for Stoner.plot and pyplot
 Created on Fri Feb 07 19:57:30 2014
 
 @author: Gavin Burnell
 """
-
+__all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
 from Stoner.compat import *
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -97,7 +97,7 @@ class DefaultPlotStyle(object):
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
     create additional attributes to define rc Parameters (see Matplotlib documentation for
-    available rc parameters) and override the :py:meth:Stoner.PlotFormats.DefaultPlotStyle.customise`
+    available rc parameters) and override the :py:meth:Stoner.pot.formats.DefaultPlotStyle.customise`
     method to carry out additional plot formatting.
 
     Attributes:
@@ -252,7 +252,7 @@ class DefaultPlotStyle(object):
                 self.__setattr__("template_" + k, kargs[k])
 
     def new_figure(self, figure=False, **kargs):
-        """This is called by PlotFile to setup a new figure before we do anything."""
+        """This is called by PlotMixin to setup a new figure before we do anything."""
         plt.rcdefaults()  # Start by resetting to our default settings
         params = dict()
         self.apply()
@@ -349,7 +349,7 @@ class DefaultPlotStyle(object):
         Args:
             ix(integer): Index of current subplot
             multiple (string): how to handle multiple subplots
-            plot (Stoner.PlotFile): The PlotFile boject we're working with
+            plot (Stoner.plot.PlotMixin): The PlotMixin boject we're working with
         """
 
         if multiple in self.subplot_settings:
@@ -551,3 +551,6 @@ if SEABORN: # extra classes if we have seaborn available
             sns.set_context(context=self.context)
             sns.set_palette(sns.color_palette(self._palette))
             self.customise()
+
+else:
+    SeabornPlotStyle=DefaultPlotStyle
