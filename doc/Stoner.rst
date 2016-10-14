@@ -124,7 +124,7 @@ Classes
 See also the stylesheets available in the stylelib directory.
 
 :mod:`plot.utils` Module
-=======================
+========================
 
 Functions
 ---------

@@ -243,7 +243,7 @@ class AnalysisMixin(object):
     def __init__(self,*args,**kargs):
         """Just call super."""
         if self.debug: print("Done AnlaysisMixin init")
-    
+
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
         """ Implements Savitsky-Golay filtering of data for smoothing and differentiating data.
 
@@ -273,7 +273,7 @@ class AnalysisMixin(object):
         points=int(points)
         if points % 2 == 0:  #Ensure window length is odd
             points += 1
-            
+
         if col is None:
             cols = self.setas._get_cols()
             if order>0:
@@ -1646,7 +1646,9 @@ class AnalysisMixin(object):
             possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_func(possible_peaks))))
 
         if modify:
+            setas=self.setas.clone
             self.data=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
+            self.setas=setas
             ret=self
         elif full_data:
             ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic",xcol=False)

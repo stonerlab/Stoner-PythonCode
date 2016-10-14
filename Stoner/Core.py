@@ -2672,7 +2672,7 @@ class DataFile(metadataObject):
         else:
             self.mask = mask
 
-    def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None):
+    def _col_args(self,scalar=True,xcol=None,ycol=None,zcol=None,ucol=None,vcol=None,wcol=None,xerr=None,yerr=None,zerr=None,**kargs):
         """Utility method that creates an object which has keys  based either on arguments or setas attribute."""
         cols={"xcol":xcol,"ycol":ycol,"zcol":zcol,"ucol":ucol,"vcol":vcol,"wcol":wcol,"xerr":xerr,"yerr":yerr,"zerr":zerr}
         ret=copy.deepcopy(self.setas.cols)

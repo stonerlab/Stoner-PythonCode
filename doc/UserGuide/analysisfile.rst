@@ -132,7 +132,7 @@ points in x,y,z space are fitted to a plane.
 
 Finally, by you can sepcify the *y-data* to fit to as a numpy array. This can be used to fit functions that
 don't themseleves return values that can be matched up to existing data. An example of doing this is fitting a
-sphere to a set of :math:`(x,y,z) data points.
+sphere to a set of :math:`(x,y,z)` data points.
 
 .. plot:: samples/sphere_fit.py
     :include-source:
@@ -171,7 +171,7 @@ The operation of :py:meth:`AnalysisMixin.lmfit` is very similar to that of :py:m
 In this example we would be fitting an Arrehenius model to data contained inthe 'Temp' and 'Cond' columns. The resulting
 fit would be added as an additional colum called fit. In addition, details of the fit are added as metadata to the current :py:class:`AnalysisMixin`.
 
-The *model* argument to :py:meth:`AnalysisMixin.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be 
+The *model* argument to :py:meth:`AnalysisMixin.lmfit` can be either an instance of the model class, or just the class itself (in which case it will be
 instantiated as required), or just a bare callable, in which case a model class will be created around it. The latter is approximately equivalent to
 a simple call to :py:meth:`AnalysisMixin.curve_fit`.
 

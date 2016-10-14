@@ -740,11 +740,8 @@ class PlotMixin(object):
         if len(args) != 0:
             axes = len(args)
         else:
-            for x in [i for i in range(len(self.setas)) if self.setas[i] == "x"]:
-                cols = self.setas._get_cols(startx=x)
-                kargs["_startx"] = x
-                axes = cols["axes"]
-
+            _=self._col_args(**kargs)
+            axes=_.axes
         if "template" in kargs:
             self.template=kargs.pop("template")
 
