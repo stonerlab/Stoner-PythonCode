@@ -586,7 +586,7 @@ class objectFolder(MutableSequence):
         grp.save(path.join(pth,grp.filename))
         return grp.filename
 
-    def __walk_groups(self,walker,group=False,replace_terminal=False,walker_args={},breadcrumb=[]):
+    def __walk_groups(self,walker,group=False,replace_terminal=False,only_terminal=True,walker_args={},breadcrumb=[]):
         """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
 
         Args:
@@ -597,6 +597,7 @@ class objectFolder(MutableSequence):
                 representing the lowest level group or individual metadataObject objects from the lowest level group
             replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
                 to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            only_terminal (bool): Only iterate over the files in the group if the group has no sub-groups.
             walker_args (dict): a dictionary of static arguments for the walker function.
             bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
 
@@ -620,12 +621,12 @@ class objectFolder(MutableSequence):
                     ret.append(tmp)
             for g in removeGroups:
                 del(self.groups[g])
-            return ret
-        else:
+        elif len(self.groups)==0 or not terminal_only:
             if group:
-                return walker(self,breadcrumb,**walker_args)
+                ret=walker(self,breadcrumb,**walker_args)
             else:
-                return [walker(f,breadcrumb,**walker_args) for f in self]
+                ret=[walker(f,breadcrumb,**walker_args) for f in self]
+        return ret
 
     ##################################################################################
     ############# Public Methods #####################################################
@@ -996,7 +997,7 @@ class objectFolder(MutableSequence):
         for g in self.groups:
             self.groups[g].unflatten()
 
-    def walk_groups(self, walker, group=False, replace_terminal=False,walker_args={}):
+    def walk_groups(self, walker, group=False, replace_terminal=False,only_terminal=True,walker_args={}):
         """Walks through a heirarchy of groups and calls walker for each file.
 
         Args:
@@ -1007,13 +1008,14 @@ class objectFolder(MutableSequence):
                 representing the lowest level group or individual metadataObject objects from the lowest level group
             replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
                 to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            obly_terminal(bool): Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)
             walker_args (dict): a dictionary of static arguments for the walker function.
 
         Notes:
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a objectFolder or metadataObject."""
-        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=[])
+        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,only_terminal=only_terminal,walker_args=walker_args,breadcrumb=[])
 
 
     def zip_groups(self, groups):
