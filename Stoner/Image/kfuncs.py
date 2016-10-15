@@ -303,6 +303,7 @@ def plot_histogram(im):
     hist,bins=im.histogram()
     cum,bins=im.cumulative_distribution()
     cum=cum*np.max(hist)/np.max(cum)
+    plt.figure()
     plt.plot(bins,hist,'k-')
     plt.plot(bins,cum,'r-')
     
@@ -379,15 +380,34 @@ def do_nothing(im):
     """exactly what it says on the tin"""
     return im
     
-def imshow(im, fig=None, title=None):
-    """quick plot of image"""
-    if fig is not None:
-        fig=plt.imshow(im, figure=fig, cmap='gray')
+def imshow(im, figure='new', title=None):
+    """quick plot of image
+    Parameters
+    ----------
+    figure: int, str or matplotlib.figure
+        if int then use figure number given
+        if figure is 'new' then create a new figure
+        if None then use whatever default figure is available"""
+    if figure is not None and isinstance(figure,int):
+        fig=plt.figure(figure)
+        plt.imshow(im, figure=fig, cmap='gray')
+    elif figure is not None and figure=='new':
+        fig=plt.figure()
+        plt.imshow(im, figure=fig, cmap='gray')
+    elif figure is not None: #matplotlib.figure instance
+        fig=plt.imshow(im, figure=figure, cmap='gray')
     else:
         fig=plt.imshow(im, cmap='gray')
     if title is None:
-        plt.title(os.path.split(im['filename'])[1])
+        if 'filename' in im.metadata.keys():
+            plt.title(os.path.split(im['filename'])[1])
+        else:
+            plt.title('')
     else:
         plt.title(title)
     plt.axis('off')
     return fig
+    
+def denoise(im, weight=0.1):
+    """just a rename of the skimage restore function"""
+    return im.denoise_tv_chambolle(weight=weight)

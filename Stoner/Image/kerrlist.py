@@ -192,16 +192,20 @@ class KerrStack(object):
         """convert array to floats between 0 and 1"""
         for i,im in enumerate(self):
             k=KerrArray(im)
-            k=k.convert_float()
+            k=k.convert_float(clip_negative=True)
             self[i]=np.array(k)
     
     def clone(self):
         return KerrStack(np.copy(self.imagearray), fieldlist=np.copy(self.fields))        
     
-    def subtract(self, background, contrast=16):
-        """subtract a background image from all images in the stack"""
+    def subtract(self, background, contrast=16, clip_intensity=True):
+        """subtract a background image from all images in the stack.
+        If clip_intensity then clip negative intensities to 0"""
         for i,im in enumerate(self):
-            self[i]=contrast*(im-background)+0.5
+            new=contrast*(im-background)+0.5
+            if clip_intensity:
+                new=new.clip_intensity()
+            self[i]=new
     
     def apply_all(self, func, quiet=True, *args, **kwargs):
         """apply function func to all images in the stack
