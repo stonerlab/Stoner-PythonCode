@@ -29,7 +29,7 @@ If you want to add new functions that's great. There's a few important points:
 
 import numpy as np,matplotlib.pyplot as plt, os
 from skimage import exposure,feature,filters,measure,transform,util
-from core import KerrArray
+from .core import KerrArray
 from Stoner import Data
 
 def adjust_contrast(im, lims=(0.1,0.9), percent=True):

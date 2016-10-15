@@ -224,12 +224,12 @@ class KerrStack(object):
                 f=getattr(k,func)
                 self[i]=f(*args,**kwargs)
                 if not quiet:
-                    print '.'
+                    print('.')
         elif hasattr(func, '__call__'):
             for i, im in enumerate(self):
                 self[i]=func(im, *args, **kwargs)
             if not quiet:
-                print '.'
+                print('.')
         
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images

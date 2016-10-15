@@ -17,9 +17,9 @@ contains some example scripts.
 Getting this Code
 =================
 
-The *Stoner* package requires numpy \>=1.8, scipy \>=0.14, matplotlib
-\>=1.4, h5py, numba lmfit, filemagic, and blist. Experimental code also
-makes use of the Enthought Tools Suite packages.
+The *Stoner* package requires numpy &gt;=1.8, scipy &gt;=0.14,
+matplotlib &gt;=1.5, h5py, numba lmfit, filemagic, and blist.
+Experimental code also makes use of the Enthought Tools Suite packages.
 
 Ananconda Python (and probably other scientific Python distributions)
 include nearly all of the dependencies, aprt from lmfit. However, this
@@ -67,18 +67,19 @@ DataFile and Friends
 experimental data sets. It provides basic methods to examine and
 manipulate data, manage metadata and load and save data files. It has a
 large number of sub classes - most of these are in Stoner.FileFormats
-and are used to handle the loading of specific file formats. Two,
-however, contain additional functionality for writing analysis programs.
+and are used to handle the loading of specific file formats.
 
--   **Stoner.Analysis.AnalyseFile** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+There are also two mxin classes designed to work with DataFile to enable
+additional functionality for writing analysis programs.
+
+-   
+
+    **Stoner.Analysis.AnalysisMixin** provides additional methods for curve-fitting, differentiating, smoothing and carrying out
+
     :   basic calculations on data.
 
--   **Stoner.Plot.PlotFile** provides additional routines for plotting
+-   **Stoner.plot.PlotMixin** provides additional routines for plotting
     data on 2D or 3D plots.
-
-As mentioned above, there are subclasses of **DataFile** in the
-**Stoner.FileFormats** module that support loading many of the common
-file formats used in our research.
 
 For rapid development of small scripts, we would recommend the
 **Stoner.Data** class which is a superclass of the above, and provides a
@@ -108,15 +109,15 @@ repository](http://www.github.com/gb119/Stoner-PythonCode/) are a
 (small) collection of sample scripts for carrying out various operations
 and some sample data files for testing the loading and processing of
 data. There is also a User\_Guide as part of this documentation, along
-with a complete API reference \<Stoner\>
+with a complete API reference &lt;Stoner&gt;
 
 Contact and Licensing
 =====================
 
 The lead developer for this code is [Dr Gavin
 Burnell](http://www.stoner.leeds.ac.uk/people/gb)
-\<<g.burnell@leeds.ac.uk>\> . The User Guide gives the current list of
-other contributors to the project.
+&lt;<g.burnell@leeds.ac.uk>&gt; . The User Guide gives the current list
+of other contributors to the project.
 
 This code and the sample data are all (C) The University of Leeds
 2008-2015 unless otherwise indficated in the source file. The contents
@@ -131,6 +132,9 @@ Development Version
 
 Teh current development version is 0.7. Features of 0.7 include
 
+> -   Replace older AnalyseFile and PlotFile with mixin based versions
+>     AnalysisMixin and PlotMixin
+> -   Addition of Stoner.Image package to handle image analysis
 > -   DataFolder now defaults to using :pyStoner.Util.Data
 > -   DataFolder has an options to skip iterating over empty Data files
 > -   Further improvements to :pyStoner.Core.DataFile.setas handline.

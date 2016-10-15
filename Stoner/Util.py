@@ -9,8 +9,8 @@ Created on Tue Oct 08 20:14:34 2013
 
 from Stoner.compat import *
 from Stoner.Core import DataFile as _DF_
-from Stoner.Analysis import AnalyseFile as _AF_
-from Stoner.Plot import PlotFile as _PF_
+from Stoner.Analysis import AnalysisMixin as _AF_
+from Stoner.plot import PlotMixin as _PF_
 import Stoner.FileFormats as _SFF_
 from Stoner.Folders import DataFolder as _SF_
 from Stoner.Fit import linear
@@ -79,8 +79,9 @@ def _up_down(data):
     return ret
 
 
-class Data(_AF_, _PF_):
-    """A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.
+class Data(_DF_,_AF_, _PF_):
+    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
+    which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
     analysis on data files."""
 
@@ -113,7 +114,7 @@ class Data(_AF_, _PF_):
 
         mode=kargs.pop("mode","float")
         units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+"_label","{} =".format(key))))
+        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
         latex=kargs.pop("latex",False)
         fmt=kargs.pop("fmt","latex" if latex else "text")
         escape=kargs.pop("escape",False)
@@ -178,7 +179,7 @@ class Data(_AF_, _PF_):
 
         try: # if the model has an attribute display params then use these as the parameter anmes
             for k,display_name in zip(model.param_names,model.display_names):
-                self[k+"_label"]=display_name
+                self[k+" label"]=display_name
         except (AttributeError,KeyError):
             pass
 
@@ -263,9 +264,10 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
+    a = Data(data)
     if col is None:
-        col = data.setas["x"]
-    a = _AF_(data)
+        _=a._col_args()
+        col=_.xcol
     width = len(a) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1

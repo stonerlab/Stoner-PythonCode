@@ -36,17 +36,32 @@ Functions
    :functions-only:
 
 
-:mod:`Plot` Module
-==================
-.. automodsumm:: Stoner.Plot
+:mod:`plot` Package
+====================
+
+Classes
+-------
+.. automodsumm:: Stoner.plot.core
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
+
+Functions
+---------
+.. automodsumm:: Stoner.plot.core
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
 
 :mod:`Folders` Module
 ======================
+
+Classes
+-------
 .. automodsumm:: Stoner.Folders
    :toctree: classes
    :template: classdocs.rst
+   :classes-only:
 
 :mod:`FileFormats` Module
 =========================
@@ -101,34 +116,19 @@ Facility Outputs
 
 Classes
 -------
-.. automodsumm:: Stoner.PlotFormats
+.. automodsumm:: Stoner.plot.formats
    :toctree: classes
    :template: classdocs.rst
    :classes-only:
-
-Functions
----------
-.. automodsumm:: Stoner.PlotFormats
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
 
 See also the stylesheets available in the stylelib directory.
 
-:mod:`plotutils` Module
-=======================
-
-
-Classes
--------
-.. automodsumm:: Stoner.plotutils
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
+:mod:`plot.utils` Module
+========================
 
 Functions
 ---------
-.. automodsumm:: Stoner.plotutils
+.. automodsumm:: Stoner.plot.utils
    :toctree: functions
    :template: funcdocs.rst
    :functions-only:

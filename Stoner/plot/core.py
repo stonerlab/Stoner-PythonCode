@@ -1,15 +1,16 @@
-"""         Stoner.Plot
-            ============
+"""         Stoner.plot Subpackage
+            ======================
 
 Provides the a class to facilitate easier plotting of Stoner Data:
 
 Classes:
-    PlotFile - A class that uses matplotlib to plot data
+    PlotMixin - A class that uses matplotlib to plot data
 """
+__all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import *
 from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
-from Stoner.PlotFormats import DefaultPlotStyle
-from Stoner.plotutils import errorfill
+from .formats import DefaultPlotStyle
+from .utils import errorfill
 
 import numpy as _np_
 from scipy.interpolate import griddata
@@ -39,11 +40,8 @@ try: # Check we've got 3D plotting
 except ImportError:
     _3D=False
 
-
-
-class PlotFile(DataFile):
-    """Extends DataFile with plotting functions.
-
+class PlotMixin(object):
+    """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
     Args:
         args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
         kargs (dict):  keyword arguments to pass to \b DataFile.__init__
@@ -51,45 +49,38 @@ class PlotFile(DataFile):
     Attributes:
         fig (matplotlib.figure): The current figure object being worked with
         labels (list of string): List of axis labels as aternates to the column_headers
-
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
     no_fmt = [errorfill]
-
-    def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
-        """Constructor of \b PlotFile class. Imports plt and then calls the parent constructor.
-
-        """
-        if "template" in kargs:  #Setup the template
-            self.template = kargs["template"]
-            del (kargs["template"])
-        else:
-            self.template = DefaultPlotStyle
-        super(PlotFile, self).__init__(*args, **kargs)
-        self.__figure = None
-        self._labels = copy.deepcopy(self.column_headers)
-        self.legend = True
-        self._subplots = []
-        self.multiple = "common"
-
-#============================================================================================================================
-#Properties of PlotFile
-#============================================================================================================================
-    @property
-    def _public_attrs(self):
-        ret = super(PlotFile, self)._public_attrs
-        ret.update({
+    template = DefaultPlotStyle
+    legend = True
+    multiple = "common"
+    _public_attrs={
             "fig": (int, mplfig.Figure),
             "labels": list,
-            "template": DefaultPlotStyle,
+            "template": (DefaultPlotStyle,type(DefaultPlotStyle)),
             "xlim": tuple,
             "ylim": tuple,
             "title": string_types,
             "xlabel": string_types,
             "ylabel": string_types
-        })
-        return ret
+    }
+
+    def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
+        """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
+
+        """
+        self.__figure = None
+        self._labels = copy.deepcopy(self.column_headers)
+        self._subplots = []
+        if "labels" in kargs:
+            self.labels=kargs.pop("labels")
+        if self.debug: print("Done PlotMixin init")
+
+#============================================================================================================================
+#Properties of PlotMixin
+#============================================================================================================================
 
     @property
     def ax(self):
@@ -110,26 +101,6 @@ class PlotFile(DataFile):
             ret = None
         return ret
 
-    @DataFile.clone.getter
-    def clone(self):
-        c = self.__class__()
-        ret = copy_into(self,c)
-        ret.template = copy.deepcopy(self.template)
-        ret.labels=self.labels
-        return ret
-
-    @property
-    def column_headers(self):
-        return DataFile.column_headers.fget(self)
-
-    @column_headers.setter
-    def column_headers(self,value):
-        if all_type(value,string_types):
-            DataFile.column_headers.fset(self,value)
-            self.labels = value
-        else:
-            raise NotImplementedError("Column headers should be an iterable of strings.")
-
     @property
     def fig(self):
         return self.__figure
@@ -139,9 +110,11 @@ class PlotFile(DataFile):
         if isinstance(value,plt.Figure):
             self.__figure = value
             self.__figure, ax = self.template.new_figure(value.number)
-        elif isinstance(value.int):
+        elif isinstance(value,int):
             value=plt.Figure(value)
             self.fig=value
+        elif value is None:
+            self.__figure=None
         else:
             raise NotImplementedError("fig should be a number of matplotlib figure")
 
@@ -157,7 +130,10 @@ class PlotFile(DataFile):
 
     @labels.setter
     def labels(self,value):
-        self._labels = value
+        if value is None:
+            self._labels=copy.deepcopy(self.column_headers)
+        else:
+            self._labels = value
 
     @property
     def subplots(self):
@@ -168,6 +144,8 @@ class PlotFile(DataFile):
 
     @property
     def template(self):
+        if not hasattr(self,"_template"):
+            self.template=DefaultPlotStyle
         return self._template
 
     @template.setter
@@ -212,7 +190,7 @@ class PlotFile(DataFile):
                 fmt = "-"
             plotter(x, y, fmt=fmt, figure=figure, **kwords)
         for ax in figure.axes:
-            self._template.customise_axes(ax, self)
+            self.template.customise_axes(ax, self)
 
     def __SurfPlotter(self, X, Y, Z, **kargs):
         """Utility private function to plot a 3D color mapped surface.
@@ -321,7 +299,7 @@ class PlotFile(DataFile):
     def __dir__(self):
         """Handles the local attributes as well as the inherited ones."""
         attr = dir(type(self))
-        attr.extend(super(PlotFile, self).__dir__())
+        attr.extend(super(PlotMixin, self).__dir__())
         attr.extend(list(self.__dict__.keys()))
         attr.extend(["fig", "axes", "labels", "subplots", "template"])
         attr.extend(('xlabel', 'ylabel', 'title', 'xlim', 'ylim'))
@@ -402,7 +380,7 @@ class PlotFile(DataFile):
 
     def _fix_titles(self, ix, multiple, **kargs):
         """Does the titling and labelling for a matplotlib plot."""
-        self._template.annotate(ix, multiple, self, **kargs)
+        self.template.annotate(ix, multiple, self, **kargs)
         if "show_plot" in kargs and kargs["show_plot"]:
             plt.ion()
             plt.draw()
@@ -423,7 +401,7 @@ class PlotFile(DataFile):
                 All other attrbiutes are passed over to the parent class
                 """
         try:
-            return super(PlotFile, self).__getattr__(name)
+            return super(PlotMixin, self).__getattr__(name)
         except AttributeError:
             if not isinstance(self.__figure, mplfig.Figure):
                 raise AttributeError("Unknown attribute {}".format(name))
@@ -457,8 +435,8 @@ class PlotFile(DataFile):
     """
         if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
             object.__setattr__(self,name, value)
-        elif name in dir(super(PlotFile, self)):
-            super(PlotFile, self).__setattr__(name, value)
+        elif name in dir(super(PlotMixin, self)):
+            super(PlotMixin, self).__setattr__(name, value)
         elif "set_{}".format(name) in dir(plt.Axes):
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
@@ -473,7 +451,7 @@ class PlotFile(DataFile):
             plt.figure(tfig.number)
             plt.sca(tax)
         else:
-            super(PlotFile, self).__setattr__(name, value)
+            super(PlotMixin, self).__setattr__(name, value)
 
     def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
@@ -497,7 +475,7 @@ class PlotFile(DataFile):
             the original DataFile Instance as well as returning it."""
 
         # Call the parent method and then update this label
-        super(PlotFile,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
+        super(PlotMixin,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1
@@ -508,7 +486,7 @@ class PlotFile(DataFile):
         return self
 
 
-    def colormap_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
+    def colormap_xyz(self, xcol=None, ycol=None, zcol=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
 
         Args:
@@ -521,6 +499,7 @@ class PlotFile(DataFile):
             xlim (tuple): The xlimits, defaults to automatically determined from data
             ylim (tuple): The ylimits, defaults to automatically determined from data
             plotter (function): Function to use to plot data. Defaults to plt.contour
+            colorbar (bool): Draw the z-scale color bar beside the plot (True by default)
             show_plot (bool): Turn on interfactive plotting and show plot when drawn
             save_filename (string or None): If set to a string, save the plot with this filename
             figure (integer or matplotlib.figure or boolean): Controls which figure is used for the plot, or if a new figure is opened.
@@ -529,11 +508,17 @@ class PlotFile(DataFile):
         Returns:
             A matplotlib figure
          """
-        if plotter is None:
-            plotter = plt.pcolor
-        kargs["plotter"] = plotter
-        kargs["projection"] = "rectilinear"
-        return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+        kargs["plotter"]=kargs.get("plotter",plt.pcolor)
+        kargs["projection"] = kargs.get("projection","rectilinear")
+        xlim=kargs.pop("xlim",None)
+        ylim=kargs.pop("ylim",None)
+        shape=kargs.pop("shape",None)
+        colorbar=kargs.pop("colorbar",True)
+        ax=self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
+        if colorbar:
+            plt.colorbar()
+            plt.tight_layout()
+        return ax
 
     def contour_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, plotter=None, **kargs):
         """An xyz plot that forces the use of plt.contour.
@@ -562,13 +547,13 @@ class PlotFile(DataFile):
         return self.plot_xyz(xcol, ycol, zcol, shape, xlim, ylim, **kargs)
 
     def figure(self, figure=None,projection="rectilinear",**kargs):
-        """Set the figure used by :py:class:`Stoner.Plot.PlotFile`.
+        """Set the figure used by :py:class:`Stoner.plot.PlotMixin`.
 
         Args:
             figure A matplotlib figure or figure number
 
         Returns:
-            The current \b Stoner.PlotFile instance"""
+            The current \b Stoner.plot.PlotMixin instance"""
         if figure is None:
             figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
@@ -755,11 +740,8 @@ class PlotFile(DataFile):
         if len(args) != 0:
             axes = len(args)
         else:
-            for x in [i for i in range(len(self.setas)) if self.setas[i] == "x"]:
-                cols = self.setas._get_cols(startx=x)
-                kargs["_startx"] = x
-                axes = cols["axes"]
-
+            _=self._col_args(**kargs)
+            axes=_.axes
         if "template" in kargs:
             self.template=kargs.pop("template")
 
@@ -1406,3 +1388,9 @@ def hsl2rgb(h, s, l):
     for i in range(len(h)):
         rgb[i,:] = _np_.array(hls_to_rgb(*hls[i]))
     return (255 * rgb).astype('u1')
+
+class PlotFile(DataFile,PlotMixin):
+    """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`
+
+    """
+    pass

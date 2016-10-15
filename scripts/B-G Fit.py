@@ -32,19 +32,24 @@ def select_col(data,message):
 # Load a datafile
 d=Data(False)
 
-t_pat=re.compile(r'[Tt]emp')
-r_pat=re.compile(r'[Rr](ho)|(es)')
+t_pat=[re.compile(r'^[Tt][\s\(]'),re.compile(r'[Tt]emp')]
+r_pat=[re.compile(r'[Rr]ho'),re.compile(r'[Rr]es')]
 
-t_col=d.find_col(t_pat)
-if len(t_col)!=1:
+for pat in t_pat:
+    t_col=d.find_col(pat,force_list=True)
+    if len(t_col)==1:
+        t_col=t_col[0]
+        break
+else:
     t_col=select_col(d,"Select column for temperature data :")
+
+for pat in r_pat:
+    r_col=d.find_col(pat,force_list=True)
+    if len(r_col)==1:
+        r_col=r_col[0]
+        break
 else:
-    t_col=t_col[0]
-r_col=d.find_col(r_pat)
-if len(r_col)!=1:
     r_col=select_col(d,"Select column for resistance data :")
-else:
-    r_col=r_col[0]
 
 rho0=d.min(r_col)[0]
 A=rho0*40
@@ -64,7 +69,7 @@ annotation=["${}$: {}\n".format(l,format_error(v,e,latex=True,mode="eng",units=u
 annotation="\n".join(annotation)
 popt=append(popt,5)
 T=d.column(t_col)
-d.add_column(blochGrueneisen(T,*popt),column_header=r"Bloch")
+d.add_column(blochGrueneisen(T,*popt),header=r"Bloch")
 
 d.plot_xy(t_col,[r_col,"Bloch"],["ro","b-"],label=["Data",r"$Bloch-Gr\"ueisen Fit$"])
 d.xlabel="Temperature (K)"

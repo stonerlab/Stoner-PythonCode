@@ -1,5 +1,5 @@
 from Stoner import Data
-from Stoner.plotutils import errorfill
+from Stoner.plot.utils import errorfill
 
 d=Data("Noisy_Data.txt",setas="xy")
 

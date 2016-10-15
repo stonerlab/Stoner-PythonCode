@@ -9,6 +9,8 @@ Created on Tue Jan 14 19:53:11 2014
 from __future__ import print_function, absolute_import, division, unicode_literals
 from sys import version_info as __vi__
 from re import _pattern_type
+from matplotlib import __version__ as mpl_version
+from distutils.version import LooseVersion
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
@@ -85,3 +87,4 @@ elif __vi__[0] == 3:
             return funcs[what](**opts)
 
 index_types = string_types + (int, _pattern_type)
+from distutils.version import LooseVersion

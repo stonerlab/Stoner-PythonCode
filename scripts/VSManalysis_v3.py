@@ -8,11 +8,9 @@ Created on Sat Aug 24 20:18:05 2013
 
 import numpy
 
-from Stoner.Analysis import AnalyseFile
-from Stoner.Plot import PlotFile
-from Stoner.FileFormats import VSMFile
+from Stoner import Data
 
-class VSMAnalysis(VSMFile,AnalyseFile,PlotFile):
+class VSMAnalysis(Data):
     """A mixin of AnalyseFile and VSMFile so we can easily load and process the Data
     """
 
