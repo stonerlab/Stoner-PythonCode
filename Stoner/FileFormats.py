@@ -8,7 +8,7 @@ is run last.
 Eacg class should implement a load() method and optionally a save() method.
 """
 from __future__ import print_function
-from Stoner.compat import *
+from .compat import *
 import linecache
 import re
 import numpy as _np_
@@ -22,7 +22,7 @@ import numpy.ma as ma
 
 import PIL
 
-from .Core import DataFile, StonerLoadError
+from .Core import DataFile,StonerLoadError
 from .pyTDMS import read as tdms_read
 
 

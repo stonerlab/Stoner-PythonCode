@@ -6,7 +6,7 @@
 """
 
 __all__ = ["objectFolder","DataFolder","PlotFolder"]
-from Stoner.compat import *
+from .compat import *
 import os
 import re
 import os.path as path
@@ -15,11 +15,761 @@ import numpy as _np_
 from copy import copy
 import unicodedata
 import string
-from collections import Iterable,MutableSequence
+from collections import Iterable,MutableSequence,MutableMapping,OrderedDict
 from inspect import ismethod
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile
 
+regexp_type=(re._pattern_type,)
+
+class regexpDict(OrderedDict):
+    """An ordered dictionary that permits looks up by regular expression."""
+
+    def __lookup__(self,name):
+        """Lookup name and find a matching key or raise KeyError.
+        
+        Parameters:
+            name (str, re._pattern_type): The name to be searched for
+            
+        Returns:
+            Canonical key matching the specified name.
+            
+        Raises:
+            KeyError: if no key matches name.
+        """
+        if super(regexpDict,self).__contains__(name):
+            return name
+        if isinstance(name,string_types):
+            name=re.compile(name)
+        if isinstance(name,re._pattern_type):
+            for n in sef.keys():
+                if name.match(n):
+                        return n
+        else:
+            raise KeyError("{} is not a match to any key.".format(name))
+
+    
+    def __getitem__(self,name):
+        """Adds a lookup via regular expression when retrieving items."""
+        super(regexpDict,self).__getitem__(self.__lookup__(name))
+            
+    def __setitem__(self,name,value):
+        """Overwrites any matching key, or if not found adds a new key."""
+        try:
+            key=self.__lookup__(name)
+        except KeyError:
+            if not isinstance(name,string_types):
+                raise KeyError("{} is not a match to any key.".format(name))
+            key=name
+        super(regexpDict,self).__setitem__(self.__lookup__(key),value)
+
+    def __delitem__(self,name):
+        """Deletes keys that match by regular expression as well as exact matches"""
+        super(regexpDict,self).__delitem__(self.__lookup__(name))
+
+    def __contains__(self,name):
+        """Returns True if name either is an exact key or matches when interpreted as a regular experssion."""
+        try:
+            name=self.__lookup__(name)
+            return True
+        except KeyError:
+            return False
+
+class baseFolder(MutableSequence):
+    """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
+    
+    Attributes:
+        groups(regexpDict): A dictionary of similar baseFolder instances
+        objects(regexptDict): A dictionary of metadataObjects
+        _index(list): An index of the keys associated with objects
+    """
+    
+    def __init__(self,*args,**kargs):
+        """Initialise the baseFolder.
+        
+        Notes:
+            - Creates empty groups and objects stres
+            - Sets all keyword arguments as attributes unless otherwise overwriting an existing attribute
+            - stores other arguments in self.args
+            - iterates over the multuiple inheritance tree and eplaces any interface methods with ones from
+                the mixin classes
+            - calls the mixin init methods.
+            """
+        self.groups=regexpDict()
+        self.objects=regexpDict()
+        self._mro_list=None
+        self._type=metadataObject
+        self._iface={}
+        self.args=args
+        self.kargs=kargs
+        #List of routines that define the interface for manipulating the objects stored in the folder
+        interface_routines=["__init__","__clone__","__getter__","__setter__","__deleter__","__lookup__","__names__","__clear__"]
+        for k in list(self.kargs.keys()): # Store keyword parameters as attributes
+            if not hasattr(self,k):
+                setattr(self,k.kargs.pop(k,None))
+        for c in self._mro: # Iterate over the multiple inheritance  run order
+            for method in interface_routines: # Look for methods implemented in a mixin
+                if hasattr(c,method):
+                    self._iface[method]=(self._iface.pop(method,[])).append(getattr(c,method))
+            #Now call the init method of the mixin classes
+            if c.__module__.startswith("Stoner") and not issubclass(c,baseFolder) and "__init__" in c.__dict__:
+                if self.debug: print(c)
+                c.__init__(self)
+
+    ###########################################################################
+    ################### Properties of baseFolder ##############################
+                
+    @property
+    def _mro(self):
+        #Cache the _mro order
+        if self._mro_list is None:
+            self._mro_list = []
+            for c in self.__class__.__mro__[1:]:
+                if c not in self._mro_list:
+                    self._mro_list.append(c)
+        return self._mro_list
+
+    @property
+    def depth(self):
+        """Gives the maximum number of levels of group below the current objectFolder."""
+        if len(self.groups)==0:
+            r=0
+        else:
+            r=1
+            for g in self.groups:
+                r=max(r,self.groups[g].depth+1)
+        return r
+
+    @property
+    def files(self):
+        """Return an iterator of potentially unloaded named objects."""
+        return [self.__getter__(i,instantiate=False) for i in range(len(self))]
+        
+    @files.setter
+    def files(self,value):
+        """Just a wrapper to clear and then set the objects."""
+        if isinstance(value,Iterable):
+            self.__clear__()
+            for i,v in enumerate(value):
+                self.insert(i,v)   
+
+    @property
+    def lsgrp(self):
+        """Returns a list of the groups as a generator."""
+        for k in self.groups.keys():
+            yield k
+
+    @property
+    def mindepth(self):
+        """Gives the minimum number of levels of group below the current objectFolder."""
+        if len(self.groups)==0:
+            r=0
+        else:
+            r=1E6
+            for g in self.groups:
+                r=min(r,self.groups[g].depth+1)
+        return r
+
+    @property
+    def not_empty(self):
+        """An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.
+
+        Returns the next non-empty DatFile member of the objectFolder.
+
+        Note:
+            not_empty will also silently skip over any cases where loading the metadataObject object will raise
+            and exception."""
+        for i in range(len(self)):
+            try:
+                d=self[i]
+            except:
+                continue
+            if len(d)==0:
+                continue
+            yield(d)
+
+    @property
+    def type(self):
+        """Defines the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
+        return self._type
+
+    @type.setter
+    def type(self,value):
+        """Ensures that type is a subclass of metadataObject."""
+        if issubclass(value,metadataObject):
+            self._type=value
+        elif isinstance(value,metadataObject):
+            self._type=value.__class__
+        else:
+            raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
+
+    ################### Mrthods for subclasses to override to handle storage #####
+    def __lookup__(self,name):
+        """Stub for other classes to implement.
+        Parameters:
+            name(str): Name of an object
+            
+        Returns:
+            A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
+        """
+        for method in self._iface.get("__lookup__",[]):
+            try:
+                return method(self,name)
+            except NotImplemented:
+                continue
+        return name
+        
+    def __names__(self):
+        """Stub method to return a list of names of all objects that can be indexed for __getter__."""
+        for method in self._iface.get("__names__",[]):
+            try:
+                return method(self)
+            except NotImplemented:
+                continue
+
+        return list(self.objects.keys())
+        
+    def __getter__(self,name,instantiate=True):
+        """Stub method to do whatever is needed to transform a key to a metadataObject.
+        
+        Parameters:
+            name (key type): The canonical mapping key to get the dataObject. By default
+                the baseFolder class uses a :py:class:`regexpDict` to store objects in.
+                
+        Keyword Arguments:
+            instatiate (bool): IF True (default) then always return a metadataObject. If False,
+                the __getter__ method may return a key that can be used by it later to actually get the
+                metadataObject.
+                
+        Returns:
+            (metadataObject): The metadataObject
+        """
+        for method in self._iface.get("__getter__",[]):
+            try:
+                return method(self,name,instantiate=instantiate)
+            except NotImplemented:
+                continue
+        return self.objects[name]
+        
+    def __setter__(self,name,value):
+        """Stub to setting routine to store a metadataObject.
+        Parameters:
+            name (string) the named object to write - may be an existing or new name
+            value (metadataObject) the value to store."""
+        for method in self._iface.get("__setter__",[]):
+            try:
+                method(self,name,value)
+                break
+            except NotImplemented:
+                continue
+        else:
+            self.objects[name]=value
+    
+
+    def __deleter__(self,ix):
+        """Deletes an object from the baseFolder.
+        
+        Parameters:
+            ix(str): Index to delete, should be within +- the lengthe length of the folder.
+        """
+        for method in self._iface.get("__deleter__",[]):
+            try:
+                method(self,name)
+                break
+            except NotImplemented:
+                continue
+        else:
+            del self.objects[ix]
+
+    def __clear__(self):
+        for method in self._iface.get("__clear__",[]):
+            try:
+                method(self,name)
+                break
+            except NotImplemented:
+                continue
+        else:
+            for n in self.__names__():
+                self.__deleter__(self.__lookup__(n))
+        
+    def __clone__(self,other=None):
+        """Do whatever is necessary to copy attributes from self to other."""
+        if other is None:
+            other=self.__classs__()
+        other.args=self.args
+        other.kargs=self.kargs
+        other.type=self.type
+        for k in self.kargs:
+            if not hasattr(other,k):
+                setattr(other,k,self.kargs[k])        
+        for method in self._iface.get("__cone__",[]):
+            method(self,other)
+            
+        
+        
+    ###########################################################################
+    ######## Methods to implement the MutableMapping abstract methods #########
+    ######## And to provide a mapping interface that mainly access groups #####
+        
+    def __getitem__(self,name):
+        """Try to get either a group or an object.
+        
+        Parameters:
+            name(str, int): If name is a string then it is checked first against the groups
+                and then against the objects dictionaries - both will fall back to a regular
+                expression if necessary. If name is an int, then the _index attribute is used to
+                find a matching object key.
+                
+        Returns:
+            Either a baseFolder instance or a metadataObject instance or raises KeyError
+        """
+        if isinstance(name,string_types+regexp_type):
+            if name in self.groups:
+                return self.groups[name]
+            elif name in self.objects:
+                name=self.__lookup__(name)
+                return self.__getter__(name)
+            else:
+                raise KeyError("{} is neither a group name nor object name.".format(name))
+        elif isinsance(name,int_types):
+            if -len(self)<name<len(self):
+                return self.__getter__(self.__lookup__(self.__names__()[name]))
+            else:
+                raise IndexError("{} is out of range.".format(name))
+        else:
+            raise KeyError("Can't index the baseFolder with {}",format(name))
+        
+    def __setitem__(self,name,value):
+        """Attempts to store a value in either the groups or objects.
+        
+        Parameters:
+            name(str or int): If the name is a string and the value is a baseFolder, then assumes we're accessing a group.
+                if name is an integer, then it must be a metadataObject.
+            value (baseFolder,metadataObject,str): The value to be storred.
+        """
+        if isinstance(name,string_types):
+            if isinstance(value,baseFolder):
+                self.groups[name]=value
+        else:
+            self.__setter__(self.__lookup__(name),value)
+        if isinstance(name,int_types):
+            if -len(self)<name<len(self):
+                self.__setter__(self.__lookup__(self.__names__()[name]),value)
+            else:
+                raise IndexError("{} is out of range".format(name))
+        else:
+            raise KeyError("{} is not a valid key for baseFolder".format(name))
+            
+    def __delitem__(self,name):
+        """Attempt to delete an item from either a group or list of files.
+        
+        Parameters:
+            name(str,int): IF name is a string, then it is checked first against the groups and then
+                against the objects. If name is an int then it s checked against the _index.
+        """
+        if isinstance(name,string_types):
+            if name in self.groups:
+                del self.groups[name]
+            elif name in self.objects:
+                self.__deleter__(self.__lookup__(name))
+            else:
+                raise KeyError("{} doesn't match either a group or object.".format(name))
+        elif isinstance(name,int_types):
+            if -len(self)<name<=len(self):
+                self.__deleter__(self.__lookup__(self.__names__()[name]))
+            else:
+                raise IndexError("{} is out of range.".format(name))
+        else:
+            raise KeyError("Can't use {} as a key to delete from baseFolder.".format(name))
+            
+    def __contains__(self,name):
+        """Check whether name is in a list of groups or in the list of names"""
+        return name in self.groups or name in self.__names__()
+        
+    def __len__(self):
+        return len(self.__names__())
+
+    ###########################################################################
+    ###################### Private Methods ####################################
+
+    def _pruner_(self,grp,breadcrumb):
+        """Removes any empty groups fromthe objectFolder tree."""
+        if len(grp)==0:
+            self._pruneable.append(breadcrumb)
+            ret=True
+        else:
+            ret=False
+        return ret
+            
+    def __walk_groups(self,walker,group=False,replace_terminal=False,only_terminal=True,walker_args={},breadcrumb=[]):
+        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
+
+        Args:
+            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+
+        Keyword Arguments:
+            group (bool): (default False) determines whether the wealker function will expect to be given the objectFolder
+                representing the lowest level group or individual metadataObject objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
+                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            only_terminal (bool): Only iterate over the files in the group if the group has no sub-groups.
+            walker_args (dict): a dictionary of static arguments for the walker function.
+            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
+
+        Notes:
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args)
+                where f is either a objectFolder or metadataObject."""
+        if (len(self.groups)>0):
+            ret=[]
+            removeGroups=[]
+            if replace_terminal:
+                self.__clear__()
+            for g in self.groups:
+                bcumb=copy(breadcrumb)
+                bcumb.append(g)
+                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
+                if group and  replace_terminal and isinstance (tmp, metadataObject):
+                    removeGroups.append(g)
+                    tmp.filename="{}-{}".format(g,tmp.filename)
+                    self.append(tmp)
+                    ret.append(tmp)
+            for g in removeGroups:
+                del(self.groups[g])
+        elif len(self.groups)==0 or not only_terminal:
+            if group:
+                ret=walker(self,breadcrumb,**walker_args)
+            else:
+                ret=[walker(f,breadcrumb,**walker_args) for f in self]
+        return ret              
+
+        
+    ###########################################################################
+    ############# Normal Methods ##############################################
+
+    def add_group(self,key):
+        """Add a new group to the current baseFolder with the given key.
+
+        Args:
+            key(string): A hashable value to be used as the dictionary key in the groups dictionary
+        Returns:
+            A copy of the objectFolder
+
+        Note:
+            If key already exists in the groups dictionary then no action is taken.
+
+        Todo:
+            Propagate any extra attributes into the groups.
+        """
+        if key in self.groups: # do nothing here
+            pass
+        else:
+            new_group=self.__clone__()
+            self.groups[key]=new_group
+            self.groups[key].key=key
+        return self
+        
+    def clear(self):
+        """Clear the subgroups."""
+        self.groups.clear()
+        self.__clear__()
+
+    def get(self,name,default=None):
+        """Return either a sub-group or named object from this folder."""
+        try:
+            ret=self[name]
+        except (KeyError,IndexError):
+            ret=default
+        return ret
+
+    def filter(self, filter=None,  invert=False):
+        """Filter the current set of files by some criterion
+
+        Args:
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
+        Returns:
+            The current objectFolder object"""
+
+        names=[]
+        if isinstance(filter, string_types):
+            for f in self.__names__():
+                if fnmatch.fnmatch(f, filter)  ^ invert:
+                    names.append(f)
+        elif isinstance(filter, re._pattern_type):
+            for f in self.__names__():
+                if filter.search(f) is not None:
+                    names.append(f)
+        elif filter is None:
+            raise ValueError("A filter must be defined !")
+        else:
+            for i,x in enumerate(self):
+                if filter(x)  ^ invert:
+                    names.append(self.files[i])
+        self.files=files
+        return self
+
+    def filterout(self, filter):
+        """Synonym for self.filter(filter,invert=True)
+
+        Args:
+        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+
+        Returns:
+            The current objectFolder object with the files in the file list filtered."""
+        return self.filter(filter, invert=True)
+            
+    def flatten(self, depth=None):
+        """Compresses all the groups and sub-groups iunto a single flat file list.
+
+        Keyword Arguments:
+            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
+
+        Returns:
+            A copy of the now flattened DatFolder"""
+        if isinstance(depth,int):
+            if self.depth<=depth:
+                self.flatten()
+            else:
+                for g in self.groups:
+                    self.groups[g].flatten(depth)
+        else:
+            for g in self.groups:
+                self.groups[g].flatten()
+                self.extend([
+                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=False) 
+                    for n in self.groups[g].__names__()])
+            self.groups={}
+        return self
+
+    def group(self, key):
+        """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
+
+        Args:
+            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
+                takes a single argument x which should be an instance of a metadataObject and returns some vale. If key is a list then the grouping is done recursively for each element
+                in key.
+        Returns:
+            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
+
+        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
+        are generated from the filename are supported."""
+        if isinstance(key, list):
+            next_keys=key[1:]
+            key=key[0]
+        else:
+            next_keys=[]
+        if isinstance(key, string_types):
+            k=key
+            key=lambda x:x[k]
+        for x in self:
+            v=key(x)
+            self.add_group(v)
+            self.groups[v].append(x)
+        self.__clear__()
+        if len(next_keys)>0:
+            for g in self.groups:
+                self.groups[g].group(next_keys)
+        return self
+
+    def insert(self,ix,value):
+        """Implements the insert method with the option to append as well."""
+        if -len(self)<ix<len(self):
+            name=self.__names__()[ix]
+            self.__setter__(self.__lookup__(name),value)
+        elif ix>=len(self):
+            name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else "object {}".format(len(self))
+            self.__setter__(name,value)
+
+    def items(self):
+        """Return the key,value pairs for the subbroups of this folder."""
+        return self.groups.items()
+        
+    def keys(self):
+        """Return the keys used to access the sub-=groups of this folder."""
+        return self.groups.keys()
+        
+    def pop(self,name=-1,default=None):
+        """Return and remove either a subgroup or named object from this folder."""
+        try:
+            ret=self[name]
+            del self[name]
+        except (KeyError,IndexError):
+            ret=default
+        return ret
+        
+    def popitem(self):
+        """Return the most recent subgroup from this folder."""
+        return self.groups.popitem()
+
+    def prune(self):
+        """Remove any groups from the objectFolder (and subgroups).
+
+        Returns:
+            A copy of thte pruned objectFolder."""
+            
+        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
+        self.walk_groups(self._pruner_,group=True)
+        while len(self._pruneable)!=0:
+            for p in self._pruneable:
+                pth=tuple(p[:-1])
+                item=p[-1]
+                if len(pth)==0:
+                    del self[item]
+                else:
+                    grp=self[pth]
+                    del grp[item]
+            self._pruneable=[]
+            self.walk_groups(self._pruner_,group=True)
+        del self._pruneable
+        return self
+
+    def select(self,*args, **kargs):
+        """A generator that can be used to select particular data files from the objectFolder
+
+        Args:
+            args (various): A single positional argument if present is interpreted as follows:
+
+            * If a callable function is given, the entire metadataObject is presented to it.
+                If it evaluates True then that metadataObject is selected. This allows arbitary select operations
+            * If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects
+
+        Keyword Arguments:
+            recurse (bool): Also recursively slect through the sub groups
+            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                metadata values. The keyword argument may have an additional *__operator** appended to it which is interpreted
+                as follows:
+                
+                - *eq* metadata value equals argument value (this is the default test for scalar argument)
+                - *ne* metadata value doe not equal argument value
+                - *gt* metadata value doe greater than argument value
+                - *lt* metadata value doe less than argument value
+                - *ge* metadata value doe greater than or equal to argument value
+                - *le* metadata value doe less than or equal to argument value
+                - *contains* metadata value contains argument value (this is the default test for non-tuple iterable arguments)
+                - *startswith* metadata value startswith argument value
+                - *endswith* metadata value endwith argument value
+                - *icontains*,*istartswith*,*iendswith* as above but case insensitive
+                - *between* metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
+                - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
+
+            The syntax is inspired by the Django project for selecting, but is not quite as rich.
+
+        Returns:
+            (baseFGolder): a new baseFolder instance that contains just the matching metadataObjects.
+            
+        Note:
+            If any of the tests is True, then the metadataObject will be selected, so the effect is a logical OR. To
+            achieve a logical AND, you can chain two selects together::
+            
+                d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)
+                
+            will select metadata objects that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.
+        
+            If you need to select on a aparameter called *recurse*, pass a dictionary of {"recurse":value} as the sole
+            positional argument. If you need to select on a metadata value that ends in an operator word, then append
+            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
+            then pass them via the first positional dictionary value.
+        """
+        recurse=kargs.pop("recurse",False)
+        if len(args)==1:
+            if callable(args[0]):
+                kargs["__"]=args[0]
+            elif isinstance(args[0],dict):
+                kargs.update(args[0])
+        operator={
+            "eq":lambda k,v:k==v,
+            "ne":lambda k,v:k!=v,
+            "contains":lambda k,v: k in v,
+            "icontains":lambda k,v: k.upper() in str(v).upper(),
+            "lt":lambda k,v:k<v,
+            "le":lambda k,v:k<=v,
+            "gt":lambda k,v:k>v,
+            "ge":lambda k,v:k>=v,
+            "between":lambda k,v: min(v)<k<max(v),
+            "ibetween":lambda k,v: min(v)<=k<=max(v),
+            "ilbetween":lambda k,v: min(v)<=k<max(v),
+            "iubetween":lambda k,v: min(v)<k<=max(v),
+            "startswith":lambda k,v:str(v).startswith(k),
+            "istartswith":lambda k,v:str(v).upper().startswith(k.upper()),
+            "endsswith":lambda k,v:str(v).endswith(k),
+            "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
+        }
+        result=self.__clone__
+        if recurse:
+            gkargs={}
+            gkargs.update(kargs)
+            gkargs["recurse"]=True
+            for g in self.groups:
+                result.groups[g]=self.groups[g].select(*args,**gkargs)
+        for f in self:
+            for arg in kargs:
+                if callable(kargs[arg]) and kargs[arg](f):
+                    break
+                elif isinstance(arg,string_types):
+                    parts=arg.split("__")
+                    if parts[-1] in operator and len(parts)>1:
+                        arg="__".join(parts[:-1])
+                        op=parts[-1]
+                    else:
+                        if isinstance(kargs[arg],tuple) and len(kargs[arg]==2):
+                            op="between" #Assume two length tuples are testing for range
+                        elif not isinstance(kargs[arg],string_types) and isinstance(kargs[arg],Iterable):
+                            op="contains" # Assume other iterables are testing for memebership
+                        else: #Everything else is exact matches
+                            op="eq"
+                    func=operator[op]
+                    if arg in f and func(kargs[arg],f[arg]):
+                        break
+            else: # No tests matched - contineu to next line
+                continue
+            #Something matched, so append to result
+            result.append(f)
+        return result
+        
+    def setdefault(self,k,d=None):
+        """Return or set a subgroup or named object."""
+        self[k]=self.get(k,d)
+        return self[k]
+        
+    def update(self,other):
+        """Update this folder with a dictionary or another folder."""
+        if isinstance(other,dict):
+            for k in other:
+                self[k]=other[k]
+        elif isinstance(other,baseFolder):
+            for k in other.groups:
+                self.groups[k]=other.groups[k]
+            for k in self.__names__():
+                self.__setter__(self.__lookup__(k),other.__getter__(other.__lookup__(k)))
+            
+    def values(self):
+        """Return the sub-groups of this folder."""
+        return self.groups.values()
+
+    def walk_groups(self, walker, group=False, replace_terminal=False,only_terminal=True,walker_args={}):
+        """Walks through a heirarchy of groups and calls walker for each file.
+
+        Args:
+            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
+
+        Keyword Arguments:
+            group (bool): (default False) determines whether the walker function will expect to be given the objectFolder
+                representing the lowest level group or individual metadataObject objects from the lowest level group
+            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
+                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
+            obly_terminal(bool): Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)
+            walker_args (dict): a dictionary of static arguments for the walker function.
+
+        Notes:
+            The walker function should have a prototype of the form:
+                walker(f,list_of_group_names,**walker_args)
+                where f is either a objectFolder or metadataObject."""
+
+        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,only_terminal=only_terminal,walker_args=walker_args,breadcrumb=[])
+
+            
+            
 class objectFolder(MutableSequence):
     """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
 
