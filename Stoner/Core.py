@@ -353,7 +353,7 @@ class _setas(object):
             for i, v in enumerate(list(value)):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
-                if v != "-":
+                if v != "-" and i<len(self.setas):
                     self.setas[i] = v.lower()
         else:
             raise ValueError("Set as column string ended with a number")
@@ -1079,7 +1079,7 @@ class DataArray(_ma_.MaskedArray):
         """
 
         #Is this goign to be a single row ?
-        single_row=isinstance(ix,int) or (isinstance(ix,tuple) and isinstance(ix[0],int))
+        single_row=isinstance(ix,int) or (isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],int))
         #If the index is a single string type, then build a column accessing index
         if isinstance(ix,string_types):
             if self.ndim>1:
@@ -1088,15 +1088,17 @@ class DataArray(_ma_.MaskedArray):
                 ix=(self._setas.find_col(ix),)
         if isinstance(ix,(int,slice)):
                 ix=(ix,)
-        elif isinstance(ix,tuple) and isinstance(ix[-1],string_types): # index still has a string type in it
+        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
             ix=tuple(ix)
-        elif isinstance(ix,tuple) and isinstance(ix[0],string_types): # oops! backwards indexing
+        elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[0],string_types): # oops! backwards indexing
             c=ix[0]
             ix=list(ix[1:])
             ix.append(self._setas.find_col(c))
             ix=tuple(ix)
+        elif isinstance(ix,list): # indexing with a list in here
+            ix=(ix,)
 
         # Now can index with our constructed multidimesnional indexer
         ret=super(DataArray,self).__getitem__(ix)
@@ -1137,7 +1139,7 @@ class DataArray(_ma_.MaskedArray):
                 ret.i=self.i[ix[0]]
             else: #This is a single element?
                 ret.i=self.i
-            if not single_row:
+            if not single_row and len(ix)>0:
                 ret.name=self.column_headers[ix[-1]]
         return ret
 

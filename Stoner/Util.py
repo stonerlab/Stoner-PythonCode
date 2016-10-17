@@ -37,6 +37,7 @@ def _up_down(data):
         for d in f[grp][1:]:
             ret[i]=ret[i]+d
         ret[i].sort(data.setas._get_cols('xcol'))
+        ret[i].setas=data.setas.clone
     return ret
 
 
@@ -166,12 +167,11 @@ def split_up_down(data, col=None, folder=None):
     """
     if col is None:
         col = data.setas["x"]
-    a = _AF_(data)
-    width = len(a) / 10
+    width = len(data) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1
-    peaks = list(a.peaks(col, width,xcol=False, peaks=True, troughs=False))
-    troughs = list(a.peaks(col, width, xcol=False, peaks=False, troughs=True))
+    peaks = list(data.peaks(col, width,xcol=False, peaks=True, troughs=False))
+    troughs = list(data.peaks(col, width, xcol=False, peaks=False, troughs=True))
     if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
         order = peaks[0] < troughs[0]
     elif len(peaks) > 0:  #Rise then fall
@@ -180,7 +180,7 @@ def split_up_down(data, col=None, folder=None):
         order = False
     else:  #No peaks or troughs so just return a single rising
         return ([data], [])
-    splits = [0, len(a)]
+    splits = [0, len(data)]
     splits.extend(peaks)
     splits.extend(troughs)
     splits.sort()
@@ -348,7 +348,7 @@ def hysteresis_correct(data, **kargs):
     #Get xcol and ycols from kargs if specified
     xc = kargs.pop("xcol",data.find_col(data.setas["x"]))
     yc = kargs.pop("ycol",data.find_col(data.setas["y"]))
-    setas=data.setas
+    setas=data.setas.clone
     setas[xc]="x"
     setas[yc]="y"
     data.setas=setas
@@ -385,6 +385,8 @@ def hysteresis_correct(data, **kargs):
     Ms=array([p1[0],p2[0]])
     Ms=list(Ms-mean(Ms))
 
+
+
     data["Ms"] = Ms #mean(Ms)
     data["Ms Error"] = perr[0]/2
     data["Offset Moment"] = pm[0]
@@ -406,6 +408,7 @@ def hysteresis_correct(data, **kargs):
     m_sat=[p1[0]+perr[0],p2[0]-perr[0]]
     Mr=[None,None]
     Mr_err=[None,None]
+
     for i,(d,sat) in enumerate(zip([up,down],m_sat)):
         hc=d.threshold(0.,all_vals=True,rising=True,falling=True) # Get the Hc value
         Hc[i]=mean(hc)
@@ -438,14 +441,7 @@ def hysteresis_correct(data, **kargs):
     i = argmax(bh)
     data["BH_Max"] = max(bh)
     data["BH_Max_H"] = data.x[i]
-    mr1 = data.threshold(0.0, col=xc, xcol=yc, rising=True, falling=False)
-    mr2 = data.threshold(0.0, col=xc, xcol=yc, rising=False, falling=True)
-
-    data["Remenance"] = abs((mr2 - mr1) / 2)
-
-    h_sat_data = data.search(data.setas["y"], lambda x, r: low_m <= x <= high_m)[:, xc]
-    if len(h_sat_data)>0:
-        data["H_sat"] = (min(h_sat_data), max(h_sat_data))
 
     data["Area"] = data.integrate()
+    return cls(data)
     return cls(data)
