@@ -44,8 +44,10 @@ class regexpDict(OrderedDict):
             return name
         if isinstance(name,string_types):
             nm=re.compile(name)
+        elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
+            return list(self.keys())[name]
         else:
-            nm=nmae
+            nm=name
         if isinstance(nm,re._pattern_type):
             for n in self.keys():
                 if nm.match(n):
@@ -56,7 +58,7 @@ class regexpDict(OrderedDict):
 
     def __getitem__(self,name):
         """Adds a lookup via regular expression when retrieving items."""
-        super(regexpDict,self).__getitem__(self.__lookup__(name))
+        return super(regexpDict,self).__getitem__(self.__lookup__(name))
 
     def __setitem__(self,name,value):
         """Overwrites any matching key, or if not found adds a new key."""
@@ -66,9 +68,7 @@ class regexpDict(OrderedDict):
             if not isinstance(name,string_types):
                 raise KeyError("{} is not a match to any key.".format(name))
             key=name
-        print(key,value)
         OrderedDict.__setitem__(self, key, value)
-        print(self,key,value)
 
     def __delitem__(self,name):
         """Deletes keys that match by regular expression as well as exact matches"""
@@ -108,12 +108,13 @@ class baseFolder(MutableSequence):
         self.objects=regexpDict()
         self._type=metadataObject
         self._iface={}
+        self._object_attrs=dict()
         self.args=args
         self.kargs=kargs
         #List of routines that define the interface for manipulating the objects stored in the folder
         interface_routines=["__init__","__clone__","__getter__","__setter__","__deleter__","__lookup__","__names__","__clear__"]
         for k in self.kargs: # Store keyword parameters as attributes
-            if not hasattr(self,k):
+            if not hasattr(self,k) or k in ["type",]:
                 self.__setattr__(k,kargs.pop(k,None))
                 if self.debug: print("Setting self.{} to {}".format(k,kargs[k]))
         for c in self._mro: # Iterate over the multiple inheritance  run order
@@ -231,7 +232,7 @@ class baseFolder(MutableSequence):
         else:
             raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
 
-    ################### Mrthods for subclasses to override to handle storage #####
+    ################### Methods for subclasses to override to handle storage #####
     def __lookup__(self,name):
         """Stub for other classes to implement.
         Parameters:
@@ -275,7 +276,7 @@ class baseFolder(MutableSequence):
         for method in self._iface.get("__getter__",[]):
             try:
                 return method(self,name,instantiate=instantiate)
-            except NotImplemented:
+            except NotImplementedError:
                 continue
         return self.objects[name]
 
@@ -360,7 +361,7 @@ class baseFolder(MutableSequence):
                 return self.__getter__(name)
             else:
                 raise KeyError("{} is neither a group name nor object name.".format(name))
-        elif isinsance(name,int_types):
+        elif isinstance(name,int_types):
             if -len(self)<name<len(self):
                 return self.__getter__(self.__lookup__(self.__names__()[name]))
             else:
@@ -417,6 +418,110 @@ class baseFolder(MutableSequence):
 
     def __len__(self):
         return len(self.__names__())
+
+    ###########################################################################
+    ###################### Standard Special Methods ###########################
+
+
+    def __add__(self,other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result=copy(self)
+        if isinstance(other,baseFolder):
+            if issubclass(other.type,self.type):
+                result.extend([f for f in other.files])
+                result.groups.update(other.groups)
+            else:
+                raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
+        elif isinstance(other,result.type):
+            result.append(self.type(other))
+        else:
+            result=NotImplemented
+        return result
+
+    def __getattr__(self, item):
+        """Handles some special case attributes that provide alternative views of the objectFolder
+
+        Args:
+            item (string): The attribute name being requested
+
+        Returns:
+            Depends on the attribute
+
+        """
+        if hasattr(self,item) or item.startswith("_"): # bypass for local attrs and private attrs
+            ret=getattr(super(baseFolder,self),item)
+        else:
+            instance=self._type()
+            if item in dir(instance): #Something is in our metadataObject type
+                if callable(getattr(instance,item,None)): # It's a method
+                    ret=self.__getattr_proxy(item)
+                else: # It's a static attribute
+                    if item in self._object_attrs:
+                        ret=self._object_attrs[item]
+                    else:
+                        ret=getattr(self[0],item,None)
+            else: # Ok, pass back
+                ret=getattr(super(baseFolder,self),item)
+        return ret
+
+    def __getattr_proxy(self,item):
+        """Make a prpoxy call to access a method of the metadataObject like types.
+
+        Args:
+            item (string): Name of method of metadataObject class to be called
+
+        Returns:
+            Either a modifed copy of this objectFolder or a list of return values
+            from evaluating the method for each file in the Folder.
+        """
+        meth=getattr(self._type(),item,None)
+        def _wrapper_(*args,**kargs):
+            """Wraps a call to the metadataObject type for magic method calling.
+            Note:
+                This relies on being defined inside the enclosure of the objectFolder method
+                so we have access to self and item"""
+            retvals=[]
+            for ix,f in enumerate(self):
+                meth=getattr(f,item,None)
+                ret=meth(*args,**kargs)
+                if ret is not f: # method did not returned a modified version of the metadataObject
+                    retvals.append(ret)
+                if isinstance(ret,self._type):
+                    self[ix]=ret
+            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our objectFolder
+                retvals=self
+            return retvals
+        #Ok that's the wrapper function, now return  it for the user to mess around with.
+        _wrapper_.__doc__=meth.__doc__
+        _wrapper_.__name__=meth.__name__
+        return _wrapper_
+
+
+
+    def __repr__(self):
+        """Prints a summary of the objectFolder structure
+
+        Returns:
+            A string representation of the current objectFolder object"""
+        s="objectFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self),len(self.groups))
+        for g in self.groups: # iterate over groups
+            r=self.groups[g].__repr__()
+            for l in r.split("\n"): # indent each line by one tab
+                s+="\t"+l+"\n"
+        return s.strip()
+
+    def __setattr__(self,name,value):
+        """Pass through to set the sample attributes."""
+        if name.startswith("_"): # pass ddirectly through for private attributes
+            super(baseFolder,self).__setattr__(name,value)
+        elif hasattr(self,name) and not callable(getattr(self,name,None)):
+            super(baseFolder,self).__setattr__(name,value)
+        elif hasattr(self,"_type") and name in dir(self._type()):
+            self._object_attrs[name]=value
+        else:
+            super(baseFolder,self).__setattr__(name,value)
+
+
 
     ###########################################################################
     ###################### Private Methods ####################################
@@ -815,21 +920,18 @@ class DiskBssedFolder(object):
     """A Mixin class that implmenets reading metadataObjects from disc."""
 
     def __init__(self,*args,**kargs):
-        print("Entered DiskBasedFolder init")
-
         from Stoner import Data
         defaults={"type":Data,
-                  "_extra_Args":{},
-                  "pattern":"[*.*]",
+                  "extra_args":dict(),
+                  "pattern":["*.*"],
                   "read_means":False,
-                  "_file_attrs":{},
                   "recursive":True,
                   "flattern":False,
                   "directory":os.getcwd(),
                   "multiple":False,
                   }
         for k in defaults:
-            setattr(self,k,getattr(self,k,defaults[k]))
+            setattr(self,k,self.kargs.get(k,defaults[k]))
 
 
     def _dialog(self, message="Select Folder",  new_directory=True):
@@ -915,7 +1017,7 @@ class DiskBssedFolder(object):
             (metadataObject): The metadataObject
         """
         if not instantiate or not path.exists(name): #If we're not try to instantiate this object then let the parent do the work
-            raise NotImplemented
+            raise NotImplementedError()
         if isinstance(self.objects[name],metadataObject):
             return self.objects[name]
         tmp= self.type(name,**self.extra_args)
@@ -936,8 +1038,8 @@ class DiskBssedFolder(object):
                 for h in tmp.column_headers:
                     tmp[h]=_np_.mean(tmp.column(h))
         tmp['Loaded from']=tmp.filename
-        for k in self._file_attrs:
-            tmp.__setattr__(k,self._file_attrs[k])
+        for k in self._object_attrs:
+            tmp.__setattr__(k,self._object_attrs[k])
         self.__setter__(name,tmp)
         return tmp
 
@@ -1007,7 +1109,7 @@ class DiskBssedFolder(object):
         for p in self.pattern: # pattern is a list of strings and regeps
             if isinstance(p,string_types):
                 for f in fnmatch.filter(files, p):
-                    self.files.append(path.join(root, f))
+                    self.append(path.join(root, f))
                     # Now delete the matched file from the list of candidates
                     #This stops us double adding fles that match multiple patterns
                     del(files[files.index(f)])
