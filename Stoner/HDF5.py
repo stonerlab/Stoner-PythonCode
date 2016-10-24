@@ -448,3 +448,79 @@ class HDF5Folder(DataFolder):
         f = HDF5File(f)
         f.save(tmp)
         return f.filename
+        
+class SLS_STXMFile(DataFile):
+    """Load images from the Swiss Light Source Pollux beamline"""
+    priority = 16
+    compression = 'gzip'
+    compression_opts = 6
+    patterns = ["*.hdf",]
+    mime_type=["application/x-hdf"]
+
+    def _load(self, filename=None, **kargs):
+        """Loads data from a hdf5 file
+
+        Args:
+            h5file (string or h5py.Group): Either a string or an h5py Group object to load data from
+
+        Returns:
+            itself after having loaded the data
+        """
+        if filename is None or not filename:
+            self.get_filename('r')
+            filename = self.filename
+        else:
+            self.filename = filename
+        if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
+            try:
+                f = h5py.File(filename, 'r')
+            except IOError:
+                raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
+        elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
+            f = filename
+        else:
+            raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
+        if (len(f.items())!=1 or 
+            f.items()[0][0]!="entry1" or 
+            "definition" not in f["entry1"] or 
+            f["entry1"]["definition"].value[0]!="NXstxm"): #Bad HDF5
+            raise StonerLoadError("HDF5 file lacks single top level group called entry1")
+
+        root=f["entry1"]
+        data=root["counter0"]["data"]
+        if _np_.product(_np_.array(data.shape)) > 0:
+            self.data = data[...]
+        else:
+            self.data = [[]]
+        self.scan_meta(root)
+        if "file_name" in f.attrs:
+            self.filename = f.attrs["file_name"]
+        elif isinstance(f, h5py.Group):
+            self.filename = f.name
+        else:
+            self.filename = f.file.filename
+
+        if isinstance(filename, string_types):
+            f.file.close()
+        return self
+        
+    def scan_meta(self,group):
+        """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
+        root=group.name.replace("/",".")
+        for name,thing in group.items():
+            parts=thing.name.split("/")
+            name=".".join(parts[2:])
+            if isinstance(thing,h5py.Group):
+                self.scan_meta(thing)
+            elif isinstance(thing,h5py.Dataset):
+                if len(thing.shape)>1:
+                    continue
+                if _np_.product(thing.shape)==1:
+                    self.metadata[name]=thing.value[0]
+                else:
+                    self.metadata[name]=thing.value
+        for attr in group.attrs:
+            self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
+            
+    
+    
