@@ -113,8 +113,8 @@ class baseFolder(MutableSequence):
         self.kargs=kargs
         #List of routines that define the interface for manipulating the objects stored in the folder
         interface_routines=["__init__","__clone__","__getter__","__setter__","__deleter__","__lookup__","__names__","__clear__"]
-        for k in self.kargs: # Store keyword parameters as attributes
-            if not hasattr(self,k) or k in ["type",]:
+        for k in list(self.kargs.keys()): # Store keyword parameters as attributes
+            if not hasattr(self,k) or k in ["type","kargs","args"]:
                 self.__setattr__(k,kargs.pop(k,None))
                 if self.debug: print("Setting self.{} to {}".format(k,kargs[k]))
         for c in self._mro: # Iterate over the multiple inheritance  run order
@@ -929,10 +929,12 @@ class DiskBssedFolder(object):
                   "flattern":False,
                   "directory":os.getcwd(),
                   "multiple":False,
+                  "readlist":True,
                   }
         for k in defaults:
             setattr(self,k,self.kargs.get(k,defaults[k]))
-
+        if self.readlist:
+            self.getlist()
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
