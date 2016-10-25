@@ -11,6 +11,7 @@ import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
+from .Image.core import KerrArray
 import os.path as path
 
 
@@ -502,11 +503,12 @@ class SLS_STXMFile(DataFile):
 
         if isinstance(filename, string_types):
             f.file.close()
+        self["Loaded from"]=self.filename
         return self
         
     def scan_meta(self,group):
         """Scan the HDF5 Group for atributes and datasets and sub groups and recursively add them to the metadata."""
-        root=group.name.replace("/",".")
+        root=".".join(group.name.split('/')[2:])
         for name,thing in group.items():
             parts=thing.name.split("/")
             name=".".join(parts[2:])
@@ -522,5 +524,13 @@ class SLS_STXMFile(DataFile):
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             
-    
+class STXMImage(KerrArray):
+    """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
+
+    _reduce_metadata=False
+
+    @classmethod
+    def _load(self,filename):
+        d=SLS_STXMFile(filename)
+        return d.data,d.metadata
     
