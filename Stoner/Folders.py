@@ -218,6 +218,18 @@ class objectFolder(MutableSequence):
             result=NotImplemented
         return result
 
+    def __iadd__(self,other):
+        """Implement the addition operator for objectFolder and metadataObjects."""
+        if isinstance(other,objectFolder):
+            self.files.extend([self.type(f) for f in other.files])
+            self.groups.update(other.groups)
+        elif isinstance(other,metadataObject):
+            self.files.append(self.type(other))
+        else:
+            result=NotImplemented
+        return self
+
+
     def __delitem__(self,item):
         """Deelte and item or a group from the objectFolder
 
@@ -806,8 +818,7 @@ class objectFolder(MutableSequence):
         if isinstance(key, string_types):
             k=key
             key=lambda x:x[k]
-        for f in self.ls:
-            x=self[f]
+        for x in self:
             v=key(x)
             self.add_group(v)
             self.groups[v].files.append(x)
