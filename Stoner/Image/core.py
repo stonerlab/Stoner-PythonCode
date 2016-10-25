@@ -81,6 +81,7 @@ class KerrArray(np.ndarray,metadataObject):
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
     _kfuncs_proxy=None
+    _reduce_metadata=True
     
 
     #now initialise class
@@ -91,29 +92,19 @@ class KerrArray(np.ndarray,metadataObject):
         to imitate a numpy array as close as possible.
         """
 
-        fname=""
         if isinstance(image,string_types): #we have a filename
-            img=Image.open(image,"r")
-            fname=image
-            image=np.asarray(img)
-            if 'dtype' not in kwargs.keys():
-                kwargs['dtype']='uint16' #defualt output for Kerr microscope
-            tmp=typeHintedDict()
-            for k in img.info:
-                v=img.info[k]
-                if "b'" in v: v=v.strip(" b'")    
-                tmp[k]=v
+            image,tmp=cls._load(image,**kwargs)
         else:
-            tmp=typeHintedDict()
+            tmp=typeHintedDict({"Loaded from":""})
             np.array(image) #try array on image to check it's a valid numpy type
         array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
         array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
         ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata=tmp # Store the metadata from the PNG file into the KerrImage
-        ka.filename=fname
+        ka.metadata.update(tmp) # Store the metadata from the PNG file into the KerrImage
+        ka.filename=tmp["Loaded from"]
         return ka #__init__ called
 
-    def __init__(self, image=[],  reduce_metadata=True,
+    def __init__(self, image=[],
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
         """Create a KerrArray instance with metadata attribute
@@ -138,7 +129,7 @@ class KerrArray(np.ndarray,metadataObject):
             dictionary of extra metadata items you would like adding to your array
         """
         
-        if reduce_metadata:
+        if kwargs.get("reduce_metadata",self._reduce_metadata):
             self.reduce_metadata()
         if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
             for key in metadata.keys():
@@ -481,6 +472,22 @@ class KerrArray(np.ndarray,metadataObject):
             return self.filename
         else:
             return None
+
+    @classmethod
+    def _load(self,filename,**kwargs):
+        """Load an image from a file and return as a 2D array and metadata dictionary."""
+        img=Image.open(filename,"r")
+        fname=filename
+        image=np.asarray(img)
+        if 'dtype' not in kwargs.keys():
+            kwargs['dtype']='uint16' #defualt output for Kerr microscope
+        tmp=typeHintedDict()
+        for k in img.info:
+            v=img.info[k]
+            if "b'" in v: v=v.strip(" b'")    
+            tmp[k]=v
+        tmp["Loaded from"]=fname
+        return image,tmp 
             
     def _parse_text(self, text, key=None):
         """Attempt to parse text which has been recognised from an image
