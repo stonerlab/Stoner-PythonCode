@@ -40,6 +40,7 @@ class KerrList(objectFolder):
     """
 
     _type=KerrArray # class attribute to keep things happy
+    read_means=False #Only to make grouping work
 
     _listfuncs_proxy=None
 
