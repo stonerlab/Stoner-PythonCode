@@ -109,20 +109,22 @@ class baseFolder(MutableSequence):
         self._type=metadataObject
         self._iface={}
         self._object_attrs=dict()
-        self.args=args
-        self.kargs=kargs
+        self.args=copy(args)
+        self.kargs=copy(kargs)
         #List of routines that define the interface for manipulating the objects stored in the folder
         interface_routines=["__init__","__clone__","__getter__","__setter__","__deleter__","__lookup__","__names__","__clear__"]
         for k in list(self.kargs.keys()): # Store keyword parameters as attributes
             if not hasattr(self,k) or k in ["type","kargs","args"]:
-                self.__setattr__(k,kargs.pop(k,None))
-                if self.debug: print("Setting self.{} to {}".format(k,kargs[k]))
+                value=kargs.pop(k,None)
+                self.__setattr__(k,value)
+                if self.debug: print("Setting self.{} to {}".format(k,value))
         for c in self._mro: # Iterate over the multiple inheritance  run order
+            if self.debug: print("Looking at {}".format(c.__name__))
             if c is baseFolder:
                 continue
             for method in interface_routines: # Look for methods implemented in a mixin
                 if self.debug: print("Examining {} {}".format(c.__name__,method))
-                if hasattr(c,method):
+                if method in c.__dict__:
                     if self.debug: print("Ok, need a routine to set...")
                     if method not in self._iface or not isinstance(self._iface[method],list):
                         lst=[]
@@ -133,7 +135,7 @@ class baseFolder(MutableSequence):
                     if self.debug: print("{} is now {}".format(method,self._iface[method]))
             #Now call the init method of the mixin classes
             if c.__module__.startswith("Stoner") and not issubclass(c,baseFolder):
-                if self.debug: print(c)
+                if self.debug: print("Initing {}".format(c))
                 c.__init__(self)
 
     ###########################################################################
@@ -313,7 +315,7 @@ class baseFolder(MutableSequence):
     def __clear__(self):
         for method in self._iface.get("__clear__",[]):
             try:
-                method(self,name)
+                method(self)
                 break
             except NotImplemented:
                 continue
@@ -423,9 +425,7 @@ class baseFolder(MutableSequence):
     ###################### Standard Special Methods ###########################
 
 
-    def __add__(self,other):
-        """Implement the addition operator for baseFolder and metadataObjects."""
-        result=copy(self)
+    def __add_core__(self,result,other):
         if isinstance(other,baseFolder):
             if issubclass(other.type,self.type):
                 result.extend([f for f in other.files])
@@ -437,6 +437,19 @@ class baseFolder(MutableSequence):
         else:
             result=NotImplemented
         return result
+
+    def __add__(self,other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result=copy(self)
+        result=self.__add_core__(result,other)
+        return result
+
+    def __iadd__(self,other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result=self
+        result=self.__add_core__(result,other)
+        return result
+        
 
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the objectFolder
@@ -452,7 +465,7 @@ class baseFolder(MutableSequence):
             ret=getattr(super(baseFolder,self),item)
         else:
             instance=self._type()
-            if item in dir(instance): #Something is in our metadataObject type
+            if hasattr(instance,item): #Something is in our metadataObject type
                 if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
@@ -708,11 +721,19 @@ class baseFolder(MutableSequence):
 
     def insert(self,ix,value):
         """Implements the insert method with the option to append as well."""
+        print(len(self),ix)
         if -len(self)<ix<len(self):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
             name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else "object {}".format(len(self))
+            i=1
+            names=self.__names__()
+            while name in names: # Since we're adding a new entry, make sure we have a unique name !
+                name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else "object {}".format(len(self))
+                name,ext=os.path.splitext(name)
+                name="{}({}).{}".format(name,i,ext)
+                i+=1
             self.__setter__(name,value)
 
     def items(self):
@@ -866,6 +887,36 @@ class baseFolder(MutableSequence):
         self[k]=self.get(k,d)
         return self[k]
 
+    def sort(self, key=None, reverse=False):
+        """Sort the files by some key
+
+        Keyword Arguments:
+            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
+                metadata key, if callable then it is assumed that this is a a function of one paramater x
+                that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
+                If key is not specified (default), then a sort is performed on the filename
+
+        reverse (bool): Optionally sort in reverse order
+
+        Returns:
+            A copy of the current objectFolder object"""
+        if isinstance(key, string_types):
+            k=[(x.get(key),i) for x,i in enumerate(self)]
+            k=sorted(k,reverse=reverse)
+            new_order=[self[i] for x,i in k]
+        elif key is None:
+            fnames=self.__names__()
+            fnames.sort(reverse=reverse)
+            new_order=[self.__getter__(name,instantiate=False) for name in fnames]
+        elif isinstance(key,re._pattern_type):
+            new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
+        else:
+            new_order=sorted(self,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+        self.__clear__()
+        self.extend(new_order)
+        return self
+
+
     def update(self,other):
         """Update this folder with a dictionary or another folder."""
         if isinstance(other,dict):
@@ -934,7 +985,7 @@ class DiskBssedFolder(object):
         for k in defaults:
             setattr(self,k,self.kargs.get(k,defaults[k]))
         if self.readlist:
-            self.getlist()
+            pass
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
