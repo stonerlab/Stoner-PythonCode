@@ -25,16 +25,16 @@ Ananconda Python (and probably other scientific Python distributions)
 include nearly all of the dependencies, aprt from lmfit. However, this
 can by installed with the usual tools such as *easy\_install* or *pip*.
 
-~~~~ {.sourceCode .sh}
+``` {.sourceCode .sh}
 easy_install lmfit
-~~~~
+```
 
 The easiest way to install the Stoner package is via seuptools'
 easy\_install
 
-~~~~ {.sourceCode .sh}
+``` {.sourceCode .sh}
 easy_install Stoner
-~~~~
+```
 
 This will install the Stoner package and any missing dependencies into
 your current Python environment. Since the package is under fairly

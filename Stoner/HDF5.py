@@ -409,11 +409,20 @@ class HDF5Folder(DataFolder):
         return f.filename
         
 class SLS_STXMFile(DataFile):
-    """Load images from the Swiss Light Source Pollux beamline"""
+    """Load images from the Swiss Light Source Pollux beamline.
+    
+    This class checks that theree is a single group "entry1" in the root of the HDF5 file
+    and that  the "definition" dataset is "NXstxm"
+    
+    The class assumes that the dataset "counter0" is the image, all other groups and datasets
+    are recursively scanned and any dataset that is less than 2D is recorded in the metadata. The attributes
+    of the root group are also recorded. Metadata kets are in dotted notation and have the leading
+    "entry1" removed.
+    """
     priority = 16
     compression = 'gzip'
     compression_opts = 6
-    patterns = ["*.hdf",]
+    patterns = ["*.hdf5",]
     mime_type=["application/x-hdf"]
 
     def _load(self, filename=None, **kargs):
