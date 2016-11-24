@@ -94,6 +94,7 @@ Facility Outputs
     OpenGDAFile
     RasorFile
     SNSFile
+    SLS_STXMFile
 
 :mod:`PlotFormats` Module
 ==========================

@@ -139,7 +139,6 @@ class working(Data):
             plots.append(ix*2+2)
             plots.remove(fixed)
             errors.remove(fixed+1)
-            print(ret.column_headers,fixed,plots,errors)
             if self.show_plot:
                 ret.plot_xy(fixed,plots,yerr=tuple(errors),multiple="panels")
             if self.save_fit:
