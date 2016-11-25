@@ -1,7 +1,7 @@
 axes.prop_cycle:cycler("color","krbgcmy")
 axes.formatter.limits:-3, 3
 axes.grid:False
-axes.labelsize:18
+axes.labelsize:20
 axes.linewidth: 2.0
 
 figure.autolayout:True
@@ -14,7 +14,7 @@ figure.subplot.top     : 0.95    # the top of the subplots of the figure
 figure.subplot.wspace  : 0
 
 font.family:Times New Roman
-font.size:18
+font.size:20
 
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
 legend.borderpad    :0    # border whitespace in fontsize units
@@ -39,14 +39,14 @@ lines.markeredgewidth:0
 lines.markersize:5
 
 xtick.direction:in
-xtick.labelsize:18
+xtick.labelsize:20
 xtick.major.pad:5
 xtick.major.size:5
 xtick.major.width    : 1    # major tick width in points
 xtick.minor.width    : 1
 
 ytick.direction:in
-ytick.labelsize:18
+ytick.labelsize:20
 ytick.major.pad:5
 ytick.major.size:5
 ytick.major.width    : 1    # major tick width in points
