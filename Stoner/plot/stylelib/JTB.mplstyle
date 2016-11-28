@@ -4,8 +4,15 @@ axes.grid:False
 axes.labelsize:20
 axes.linewidth: 2.0
 
-figure.autolayout:True
-figure.facecolor:1,1,1
+figure.titlesize : medium     # size of the figure title
+figure.titleweight : normal   # weight of the figure title
+figure.figsize   : 7, 5    # figure size in inches
+figure.dpi       : 200      # figure dots per inch
+figure.facecolor:1,1,1    # figure facecolor; 0.75 is scalar gray
+figure.edgecolor : white   # figure edgecolor
+figure.autolayout : False  # When True, automatically adjust subplot
+figure.max_open_warning : 20  
+
 figure.subplot.bottom  : 0.2    # the bottom of the subplots of the figure
 figure.subplot.hspace  : 0
 figure.subplot.left    : 0.175  # the left side of the subplots of the figure
@@ -13,7 +20,7 @@ figure.subplot.right   : 0.9    # the right side of the subplots of the figure
 figure.subplot.top     : 0.95    # the top of the subplots of the figure
 figure.subplot.wspace  : 0
 
-font.family:Times New Roman
+font.family:  Times New Roman#Arial,Helvetica
 font.size:20
 
 legend.borderaxespad:0.5   # the border between the axes and legend edge in fraction of fontsize
