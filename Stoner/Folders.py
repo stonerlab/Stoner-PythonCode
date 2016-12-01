@@ -296,7 +296,6 @@ class baseFolder(MutableSequence):
         else:
             self.objects[name]=value
 
-
     def __deleter__(self,ix):
         """Deletes an object from the baseFolder.
 
