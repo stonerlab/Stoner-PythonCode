@@ -298,24 +298,12 @@ class QDFile(DataFile):
                 column_headers = f.next().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
-        print(setas)
         s=self.setas
         for k in setas:
             for ix in setas[k]:
-                s[ix]=k
+                s[ix-1]=k
         self.setas=s
         return self
-
-    class QDSquidVSMFile(QFFile):
-    """Extends DataFile to load files from The SQUID VSM - now jsut an alias for QDFile"""
-
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
-    pass
-
-
 
 class OpenGDAFile(DataFile):
     """Extends DataFile to load files from RASOR"""
@@ -1554,67 +1542,3 @@ class KermitPNGFile(DataFile):
         img=PIL.Image.fromarray(self.data)
         img.save(self.filename,"ong",pnginfo=metadata)
         return self
-
-
-
-class QDPPMS(DataFile):
-    """Extends DataFile to load files from a QD PPMS"""
-
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
-    priority=32 # Is able to make a positive ID of its file content, so get priority to check
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
-    patterns=["*.dat"] # Recognised filename patterns
-
-
-    def _load(self, filename=None, *args, **kargs):
-        """QDPPMS file loader routine.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-            """
-        if filename is None or not filename:
-            self.get_filename('r')
-        else:
-            self.filename = filename
-        with open(self.filename, "r", encoding='iso-8859-1') as f:  # Read filename linewise
-            for i, line in enumerate(f):								
-                if i == 0 and "[Header]" not in line:
-                    raise StonerLoadError("Not a Quantum Design File !")
-                if i == 2 and "Quantum Design" not in line:
-                    raise StonerLoadError("Not a Quantum Design File !")
-                elif "[Data]" in line:
-                    break
-                elif i < 2:
-                    continue
-                if line[0] == ";":
-                    continue
-                parts = line.split(',')
-                if parts[0] == "INFO":
-                    key = parts[0] + parts[2]
-                    key = key.title()
-                    value = parts[1]
-                elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
-                    key = parts[0].title()
-                    value = ' '.join(parts[1:])
-                else:
-                    key = parts[0] + "." + parts[1]
-                    key = key.title()
-                    value = ' '.join(parts[2:])
-                self.metadata[key] = self.metadata.string_to_type(value)
-            if python_v3:
-                column_headers = f.readline().strip().split(',')
-            else:
-                column_headers = f.next().strip().split(',')
-        self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
-        self.column_headers=column_headers
-        self.setas(x="Magnetic Field", y="Moment")
-        return self
-
