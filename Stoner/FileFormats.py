@@ -219,22 +219,20 @@ class BigBlueFile(CSVFile):
             raise StonerLoadError("All data was NaN in Big Blue format")
         return self
 
-
-class QDSquidVSMFile(DataFile):
-    """Extends DataFile to load files from The SQUID VSM"""
+class QDFile(DataFile):
+    """Extends DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=16 # Is able to make a positive ID of its file content, so get priority to check
+    priority=15 # Is able to make a positive ID of its file content, so get priority to check
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.dat"] # Recognised filename patterns
 
-
     def _load(self, filename=None, *args, **kargs):
-        """QDSquidVSM file loader routine.
+        """QD system file loader routine.
 
         Args:
             filename (string or bool): File to load. If None then the existing filename is used,
@@ -247,40 +245,76 @@ class QDSquidVSMFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with open(self.filename, "r") as f:  # Read filename linewise
+            
+        extra={"encoding":'iso-8859-1'} if python_v3 else dict() #Fix encoding for Python 3
+        setas={}
+        with open(self.filename, "r",**extra) as f:  # Read filename linewise
             for i, line in enumerate(f):
                 line = line.strip()
                 if i == 0 and line != "[Header]":
                     raise StonerLoadError("Not a Quantum Design File !")
-                if i == 2 and "Quantum Design" not in line:
-                    raise StonerLoadError("Not a Quantum Design File !")
+                elif line == "[Header]":
+                    continue
                 elif "[Data]" in line:
                     break
-                elif i < 2:
+                elif line.startswith(";"):
                     continue
-                if line[0] == ";":
-                    continue
-                parts = line.split(',')
+                elif "," not in line:
+                    raise StonerLoadError("No data in file!")
+                parts = [x.strip() for x in line.split(',')]
                 if parts[0] == "INFO":
-                    key = parts[0] + parts[2]
+                    if parts[1]=="APPNAME":
+                        parts[1],parts[2]=parts[2],parts[1]
+                    if len(parts)>2:
+                        key = "{}.{}".format(parts[0],parts[2])
+                    else:
+                        raise StonerLoadError("No data in file!")
                     key = key.title()
                     value = parts[1]
                 elif parts[0] in ['BYAPP', 'FILEOPENTIME']:
                     key = parts[0].title()
                     value = ' '.join(parts[1:])
+                elif parts[0]=="FIELDGROUP":
+                    key="{}.{}".format(parts[0],parts[1]).title()
+                    value="[{}]".format(",".join(parts[2:]))
+                elif parts[0]=="STARTUPAXIS":
+                    axis=parts[1][0].lower()
+                    setas[axis]=setas.get(axis,[])+[int(parts[2])]
+                    key="Startupaxis-{}".format(parts[1].strip())
+                    value=parts[2].strip()
                 else:
-                    key = parts[0] + "." + parts[1]
+                    key = parts[0] + "," + parts[1]
                     key = key.title()
                     value = ' '.join(parts[2:])
                 self.metadata[key] = self.metadata.string_to_type(value)
+            else:
+                raise StonerLoadError("No data in file!")
+            if "Byapp" not in self:
+                raise StonerLoadError("Not a Quantum Design File !")
+                
             if python_v3:
                 column_headers = f.readline().strip().split(',')
             else:
                 column_headers = f.next().strip().split(',')
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
-        self.setas(x="Magnetic Field", y="Moment")
+        print(setas)
+        s=self.setas
+        for k in setas:
+            for ix in setas[k]:
+                s[ix]=k
+        self.setas=s
         return self
+
+    class QDSquidVSMFile(QFFile):
+    """Extends DataFile to load files from The SQUID VSM - now jsut an alias for QDFile"""
+
+    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+    #   .. note::
+    #      Subclasses with priority<=32 should make some positive identification that they have the right
+    #      file type before attempting to read data.
+    pass
+
 
 
 class OpenGDAFile(DataFile):
