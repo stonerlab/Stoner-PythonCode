@@ -12,7 +12,7 @@ import re
 import os.path as path
 import fnmatch
 import numpy as _np_
-from copy import copy
+from copy import copy,deepcopy
 import unicodedata
 import string
 from collections import Iterable,MutableSequence,MutableMapping,OrderedDict
@@ -22,6 +22,37 @@ from .Core import metadataObject,DataFile
 
 
 regexp_type=(re._pattern_type,)
+
+def run_first(function):
+    """Decorator to intercept method  call and run the first matching sub-class implementation."""
+    def wrapper(self,*args,**kargs):
+        """Looks for matching names in the interface table and tries them in turn until one executes
+        or finally executes the method given to the decorator."""
+        fname=function.__name__
+        for method in self._baseFolder__iface.get(fname,[]):
+            try:
+                return method(self,*args,**kargs)
+            except NotImplementedError:
+                continue
+        else:
+            return function(self,*args,**kargs)
+    return wrapper
+
+def run_all(function):
+    """Decorator to intercept method  call and run the first matching sub-class implementation."""
+    def wrapper(self,*args,**kargs):
+        """Looks for matching names in the interface table and tries them in turn until one executes
+        or finally executes the method given to the decorator."""
+        fname=function.__name__
+        for method in self._baseFolder__iface.get(fname,[]):
+            try:
+                method(self,*args,**kargs)
+            except NotImplementedError:
+                continue
+        else:
+            function(self,*args,**kargs)
+    return wrapper
+       
 
 class regexpDict(OrderedDict):
     """An ordered dictionary that permits looks up by regular expression."""
@@ -103,16 +134,28 @@ class baseFolder(MutableSequence):
                 the mixin classes
             - calls the mixin init methods.
             """
+        self._object_attrs=dict()
+        self._last_name=0
         self.debug=kargs.get("debug",False)
         self.groups=regexpDict()
         self.objects=regexpDict()
         self._type=metadataObject
-        self._iface={}
+        self.__iface={}
         self._object_attrs=dict()
         self.args=copy(args)
         self.kargs=copy(kargs)
         #List of routines that define the interface for manipulating the objects stored in the folder
-        interface_routines=["__init__","__clone__","__getter__","__setter__","__deleter__","__lookup__","__names__","__clear__"]
+        interface_routines=["__init__",
+                            "__clone__",
+                            "__getter__",
+                            "__setter__",
+                            "__deleter__",
+                            "__lookup__",
+                            "__names__",
+                            "__clear__",
+                            "__add_core__",
+                            "__sub_core__",
+                            ]
         for k in list(self.kargs.keys()): # Store keyword parameters as attributes
             if not hasattr(self,k) or k in ["type","kargs","args"]:
                 value=kargs.pop(k,None)
@@ -126,13 +169,13 @@ class baseFolder(MutableSequence):
                 if self.debug: print("Examining {} {}".format(c.__name__,method))
                 if method in c.__dict__:
                     if self.debug: print("Ok, need a routine to set...")
-                    if method not in self._iface or not isinstance(self._iface[method],list):
+                    if method not in self.__iface or not isinstance(self.__iface[method],list):
                         lst=[]
                     else:
-                        lst=self._iface[method]
+                        lst=self.__iface[method]
                     lst.append(getattr(c,method))
-                    self._iface[method]=lst
-                    if self.debug: print("{} is now {}".format(method,self._iface[method]))
+                    self.__iface[method]=lst
+                    if self.debug: print("{} is now {}".format(method,self.__iface[method]))
             #Now call the init method of the mixin classes
             if c.__module__.startswith("Stoner") and not issubclass(c,baseFolder):
                 if self.debug: print("Initing {}".format(c))
@@ -243,23 +286,19 @@ class baseFolder(MutableSequence):
         Returns:
             A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
         """
-        for method in self._iface.get("__lookup__",[]):
+        for method in self.__iface.get("__lookup__",[]):
             try:
                 return method(self,name)
-            except NotImplemented:
+            except NotImplementedError:
                 continue
         return name
 
+    @run_first
     def __names__(self):
         """Stub method to return a list of names of all objects that can be indexed for __getter__."""
-        for method in self._iface.get("__names__",[]):
-            try:
-                return method(self)
-            except NotImplemented:
-                continue
-
         return list(self.objects.keys())
 
+    @run_first
     def __getter__(self,name,instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.
 
@@ -275,53 +314,34 @@ class baseFolder(MutableSequence):
         Returns:
             (metadataObject): The metadataObject
         """
-        for method in self._iface.get("__getter__",[]):
-            try:
-                return method(self,name,instantiate=instantiate)
-            except NotImplementedError:
-                continue
         return self.objects[name]
 
+    @run_first
     def __setter__(self,name,value):
         """Stub to setting routine to store a metadataObject.
         Parameters:
             name (string) the named object to write - may be an existing or new name
             value (metadataObject) the value to store."""
-        for method in self._iface.get("__setter__",[]):
-            try:
-                method(self,name,value)
-                break
-            except NotImplemented:
-                continue
-        else:
-            self.objects[name]=value
+        if name is None:
+            name=self.make_name()
+        self.objects[name]=value
 
+    @run_first
     def __deleter__(self,ix):
         """Deletes an object from the baseFolder.
 
         Parameters:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
         """
-        for method in self._iface.get("__deleter__",[]):
-            try:
-                method(self,name)
-                break
-            except NotImplemented:
-                continue
-        else:
-            del self.objects[ix]
+        del self.objects[ix]
 
+    @run_first        
     def __clear__(self):
-        for method in self._iface.get("__clear__",[]):
-            try:
-                method(self)
-                break
-            except NotImplemented:
-                continue
-        else:
-            for n in self.__names__():
-                self.__deleter__(self.__lookup__(n))
+        """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored."""
+        for n in self.__names__():
+            self.__deleter__(self.__lookup__(n))
 
+    @run_all
     def __clone__(self,other=None):
         """Do whatever is necessary to copy attributes from self to other."""
         if other is None:
@@ -332,11 +352,9 @@ class baseFolder(MutableSequence):
         for k in self.kargs:
             if not hasattr(other,k):
                 setattr(other,k,self.kargs[k])
-        for method in self._iface.get("__clone__",[]):
+        for method in self.__iface.get("__clone__",[]):
             method(self,other)
         return other
-
-
 
     ###########################################################################
     ######## Methods to implement the MutableMapping abstract methods #########
@@ -419,12 +437,10 @@ class baseFolder(MutableSequence):
 
     def __len__(self):
         return len(self.__names__())
-
-    ###########################################################################
-    ###################### Standard Special Methods ###########################
-
-
+        
+    @run_first
     def __add_core__(self,result,other):
+        """Implements the core logic of the addition operator."""
         if isinstance(other,baseFolder):
             if issubclass(other.type,self.type):
                 result.extend([f for f in other.files])
@@ -437,9 +453,49 @@ class baseFolder(MutableSequence):
             result=NotImplemented
         return result
 
+    @run_first
+    def __sub_core__(self,result,other):
+        """Implemenets the core logic of the subtraction operator."""
+        if isinstance(other,int_types):
+            delname=result.__names__()[other]
+            result.__deleter__(delname)
+        elif isinstance(other,string_types):
+            if other in result.__names__():
+                result.__deleter__(other)
+            else:
+                raise RuntimeError("{} is not in the folder.".format(other))
+        elif isinstance(other,metadataObject) and (hasattr(other,"filename") or hasattr(other,"title")):
+            othername=getattr(other,"filename",getattr(other,"title"))
+            if othername in result.__names__():
+                result.__deleter__(othername)
+            else:
+                raise RuntimeError("{} is not in the folder.".format(othername))
+        elif isinstance(other,baseFolder):
+            if issubclass(other.type,self.type):
+                for othername in other.ls:
+                    if othername in result:
+                        result.__deleter__(othername)
+                for othergroup in other.groups:
+                    if othergroup in result.groups:
+                        result.groups[othergroup].__sub_core__(result.groups[othergroup],other.groups[othergroup])
+            else:
+                raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
+        elif isinstance(other,Iterable):
+            for c in sorted(other):
+                result.__sub_core__(result,c)
+        else:
+            result=NotImplemented
+        return result
+
+        
+    ###########################################################################
+    ###################### Standard Special Methods ###########################
+
+    
+
     def __add__(self,other):
         """Implement the addition operator for baseFolder and metadataObjects."""
-        result=copy(self)
+        result=deepcopy(self)
         result=self.__add_core__(result,other)
         return result
 
@@ -448,8 +504,33 @@ class baseFolder(MutableSequence):
         result=self
         result=self.__add_core__(result,other)
         return result
-        
 
+    def __invert__(self):
+        """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
+        
+        If we have no sub-groups then we assume we are unflattening the Folder and that the object names have embedded path separators.
+        If we have sub-groups then we assume that we need to flatten the data.."""
+        result=deepcopy(self)
+        if len(result.groups)==0:
+            result.unflatten()
+        else:
+            result.flatten()
+        return result
+        
+    def __sub__(self,other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result=deepcopy(self)
+        result=self.__sub_core__(result,other)
+        return result
+
+    def __isub__(self,other):
+        """Implement the addition operator for baseFolder and metadataObjects."""
+        result=self
+        result=self.__sub_core__(result,other)
+        return result
+
+        
+        
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the objectFolder
 
@@ -461,7 +542,7 @@ class baseFolder(MutableSequence):
 
         """
         if hasattr(self,item) or item.startswith("_"): # bypass for local attrs and private attrs
-            ret=getattr(super(baseFolder,self),item)
+            ret=super(baseFolder,self).__getattribute__(item)
         else:
             instance=self._type()
             if hasattr(instance,item): #Something is in our metadataObject type
@@ -508,8 +589,18 @@ class baseFolder(MutableSequence):
         _wrapper_.__name__=meth.__name__
         return _wrapper_
 
+    def __deepcopy__(self, memo):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            try:
+                setattr(result, k, deepcopy(v, memo))
+            except:
+                setattr(result, k, copy(v))                
+        return result
 
-
+        
     def __repr__(self):
         """Prints a summary of the objectFolder structure
 
@@ -524,11 +615,11 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_"): # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug",]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)):
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_type") and name in dir(self._type()):
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type()):
             self._object_attrs[name]=value
         else:
             super(baseFolder,self).__setattr__(name,value)
@@ -720,7 +811,6 @@ class baseFolder(MutableSequence):
 
     def insert(self,ix,value):
         """Implements the insert method with the option to append as well."""
-        print(len(self),ix)
         if -len(self)<ix<len(self):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
@@ -743,6 +833,14 @@ class baseFolder(MutableSequence):
         """Return the keys used to access the sub-=groups of this folder."""
         return self.groups.keys()
 
+    def make_name(self):
+        name="Untitled-{}".format(self._last_name)
+        while name in self:
+            self._last_name+=1
+            name="Untitled-{}".format(self._last_name)
+        return name
+            
+            
     def pop(self,name=-1,default=None):
         """Return and remove either a subgroup or named object from this folder."""
         try:
@@ -915,7 +1013,29 @@ class baseFolder(MutableSequence):
         self.extend(new_order)
         return self
 
+    def unflatten(self):
+        """Takes a file list an unflattens them according to the file paths.
 
+        Returns:
+            A copy of the objectFolder
+        """
+        self.directory=path.commonprefix(self.__names__())
+        if self.directory[-1]!=path.sep:
+            self.directory=path.dirname(self.directory)
+        relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
+        dels=list()
+        for i,f in enumerate(relpaths):
+            grp=path.split(f)[0]
+            if grp!=f and grp!="":
+                self.add_group(grp)
+                self.groups[grp].append([i])
+                dels.append(i)
+        for i in sorted(dels,reverse=True):
+            del self[i]
+        for g in self.groups:
+            self.groups[g].unflatten()
+        return self
+        
     def update(self,other):
         """Update this folder with a dictionary or another folder."""
         if isinstance(other,dict):
@@ -967,7 +1087,31 @@ class baseFolder(MutableSequence):
         return zip(*grps)
 
 class DiskBssedFolder(object):
-    """A Mixin class that implmenets reading metadataObjects from disc."""
+    """A Mixin class that implmenets reading metadataObjects from disc.
+    
+    Attributes:
+        type (:py:class:`Stoner.Core.metadataObject`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Util.Data`)
+
+        extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
+
+        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then
+            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.
+
+        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in
+            grouping files where one column of data contains a constant value for the experimental state. Default is False
+
+        recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.
+
+        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.
+            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.
+
+        directory (str): The root directory on disc for the folder - by default this is the current working directory.
+
+        multiple (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        
+        readlist (bool): Whether to read the directory immediately on creation. Default is True
+        
+        """
 
     def __init__(self,*args,**kargs):
         from Stoner import Data
@@ -976,7 +1120,7 @@ class DiskBssedFolder(object):
                   "pattern":["*.*"],
                   "read_means":False,
                   "recursive":True,
-                  "flattern":False,
+                  "flat":False,
                   "directory":os.getcwd(),
                   "multiple":False,
                   "readlist":True,
@@ -984,7 +1128,7 @@ class DiskBssedFolder(object):
         for k in defaults:
             setattr(self,k,self.kargs.get(k,defaults[k]))
         if self.readlist:
-            pass
+            self.getlist()
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -1052,18 +1196,38 @@ class DiskBssedFolder(object):
         os.makesdirs(pth)
         grp.save(path.join(pth,grp.filename))
         return grp.filename
+        
+    def __sub_core__(self,result,other):
+        """Additional logic to check for match to basenames,"""
+        if isinstance(other,string_types):
+            if other in result.basenames and path.join(result.directory,other) in result.ls:
+                other=path.join(result.directory,other)
+                result.__deleter__(other)
+                return result
+        raise NotImplementedError
 
+    def __add_core__(self,result,other):
+        if isinstance(other,string_types):
+            othername=path.join(self.directory,other)
+            if path.exists(othername) and othername not in result:
+                result.append(othername)
+            else:
+                raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
+        else:
+            raise NotImplementedError("Unahandled by DisKBasedFolder")
+        return result
+        
     def __getter__(self,name,instantiate=True):
-        """Stub method to do whatever is needed to transform a key to a metadataObject.
+        """Loads the specified name from a file on disk.
 
         Parameters:
             name (key type): The canonical mapping key to get the dataObject. By default
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): IF True (default) then always return a metadataObject. If False,
+            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Util.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                metadataObject.
+                :py:class:`Stoner.Util.Data` object.
 
         Returns:
             (metadataObject): The metadataObject
@@ -1139,7 +1303,7 @@ class DiskBssedFolder(object):
         if recursive is None:
             recursive=self.recursive
         if flatten is None:
-            flatten=self.flatten
+            flatten=self.flat
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):
@@ -1185,6 +1349,14 @@ class DiskBssedFolder(object):
                 self.groups[d].getlist(recursive=recursive,flatten=flatten)
         if flatten:
             self.flatten()
+            #Now collapse out the common path in the names
+            self.directory=path.commonprefix(self.__names__())
+            if self.directory[-1]!=path.sep:
+                self.directory=path.dirname(self.directory)
+            relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
+            for n,o in zip(relpaths,self.__names__()):
+                self.__setter__(n,self.__getter__(o))
+                self.__deleter__(o)
         return self
 
     def save(self,root=None):
@@ -1199,1043 +1371,10 @@ class DiskBssedFolder(object):
         """
         return self.walk_groups(self._save,walker_args={"root",root})
 
-    def unflatten(self):
-        """Takes a file list an unflattens them according to the file paths.
-
-        Returns:
-            A copy of the objectFolder
-        """
-        self.directory=path.commonprefix(self.__names__())
-        if self.directory[-1]!=path.sep:
-            self.directory=path.dirname(self.directory)
-        relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
-        dels=list()
-        for i,f in enumerate(relpaths):
-            grp=path.split(f)[0]
-            if grp!=f and grp!="":
-                self.add_group(grp)
-                self.groups[grp].append([i])
-                dels.append(i)
-        for i in sorted(dels,reverse=True):
-            del self[i]
-        for g in self.groups:
-            self.groups[g].unflatten()
 
 
 
-class objectFolder(baseFolder,DiskBssedFolder):
-    """Implements a class that manages lists of data files (e.g. the contents of a directory) and can sort and group them in arbitary ways
-
-    Attributes:
-        basenames (list of str): Returns the list of files after passing through os.path.basename()
-        depth (int): Maximum number of levels of groups below this :py:class:`objectFolder`.
-        directory (string): Root directory of the files handled by the objectFolder
-        extra_args (dict): Extra Arguments to pass to the constructors of the :py:class:`Stoner.Core.metadataObject`
-           objects.
-        files (list): List of filenames or loaded :py:class:`Stoner.metadataObject` instances
-        groups (dict of :py:class:`objectFolder`) Represent a heirarchy of Folders
-        ls (list of str): Returns a list of filenames (either the matched filename patterns, or
-            :py;attr:`Stoner.Core.metadataObject.filename` if objectFolder.files contains metadataObject objects
-        loaded (list of bool): Inidicates which fiels are loaded in memory for the :py:class:`objectFolder`
-        lsgrp (list of str): Returns a list of the group keys (equivalent to objectFolder.groups.keys()
-        mindepth (int): Minimum number of levels of groups from this :py:class:`objectFolder` to a terminal group.
-        multifile (bool): if True a multi-file dialog box is used to load several files from the same folder
-        pattern (string or re or sequence of strings and re): Matches which files in the  directory tree are included.
-            If pattern is a compiled reular expression with named groups then the named groups are used to
-            generate metadata in the :py:class:`Stoner.metadataObject` object. If pattern is a list, then the set of
-            files included in the py:class:`objectFolder` is the union of files that match any single pattern.
-        read_means (bool): If true, create metadata when reading each file that is the mean of each column
-        setas (list or string): Sets the default value of the :py:attr:`Stoner.Core.metadataObject.setas` attribute for each
-            :py:class:`Stoner.Core.metadataObject` in the folder.
-        skip_empty (bool): Controls whether iterating over the Folder will skip over empty files. Defaults to False.
-        type (metadataObject): The type of the members of the :py:class:`objectFolder`. Can be either a subclass of
-            :py:class:`Stoner.Core.metadataObject` or an instance of one (in which ase the class of the instance is used).
-
-    Args:
-        directory (string or :py:class:`objectFolder` instance): Where to get the data files from. If False will bring up a dialog for selecting the directory
-
-    Keyword Arguments:
-        type (class): An subclass of :py:class:`Stoner.Core.objectFolder` that will be used to construct the individual metadataObject objects in the folder
-        pattern (string or re): A filename pattern - either globbing string or regular expression
-        nolist (bool): Delay doing a directory scan to get data files
-        multifile (bool): if True brings up a dialog for selecting files from a directory.
-        read_means (bool): Calculate the average value of each column and add it as metadata entries to the file.
-
-    Returns:
-        The newly constructed instance
-
-    Note:
-        All other keywords are set as attributes of the objectFolder.
-
-    Todo:
-        Handle :py:meth:`__init__(objectFolder)` with subclasses
-
-    """
-#
-#    _type=metadataObject # class attribute to keep things happy
-#    _pattern=None
-#    _file_attrs=dict()
-#    flat=False
-#
-#    def __init__(self, *args, **kargs):
-#        self.directory=None
-#        self.files=[]
-#        self.flat=False
-#        self.recursive=True
-#        self.groups={}
-#        self._file_attrs=dict()
-#        self.skip_empty=kargs.pop("skip_empty",False)
-#        self.pattern=kargs.pop("pattern","*.*")
-#        self.nolist=kargs.pop("nolist",len(args)==0)
-#        self.multifile=kargs.pop("multifile",False)
-#        self.extra_args=kargs.pop("extra_args",{})
-#        for v in kargs:
-#            self.__setattr__(v,kargs[v])
-#        if self.directory is None:
-#            self.directory=os.getcwd()
-#        if len(args)>0:
-#            if isinstance(args[0], string_types):
-#                self.directory=args[0]
-#                if not self.nolist:
-#                    self.getlist()
-#            elif isinstance(args[0],bool) and not args[0]:
-#                self.directory=False
-#                if not self.nolist:
-#                    self.getlist()
-#            elif isinstance(args[0],objectFolder):
-#                other=args[0]
-#                for k in other.__dict__:
-#                    self.__dict__[k]=other.__dict__[k]
-#            else:
-#                if not self.nolist:
-#                    self.getlist()
-#        else:
-#            if not self.nolist:
-#                self.getlist()
-#
-#    ################################################################################
-#    ####### Property Methods #######################################################
-#    ################################################################################
-#
-#    @property
-#    def basenames(self):
-#        """Returns a list of just the filename parts of the objectFolder."""
-#        ret=[]
-#        for x in self.files:
-#            if isinstance(x,metadataObject):
-#                ret.append(path.basename(x.filename))
-#            elif isinstance(x,string_types):
-#                ret.append(path.basename(x))
-#        return ret
-#
-#    @property
-#    def depth(self):
-#        """Gives the maximum number of levels of group below the current objectFolder."""
-#        if len(self.groups)==0:
-#            r=0
-#        else:
-#            r=1
-#            for g in self.groups:
-#                r=max(r,self.groups[g].depth+1)
-#        return r
-#
-#    @property
-#    def loaded(self):
-#        """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
-#        loaded into memory."""
-#        for f in self.files:
-#            yield isinstance(f,metadataObject)
-#
-#    @property
-#    def lsgrp(self):
-#        """Returns a list of the groups as a generator."""
-#        for k in self.groups.keys():
-#            yield k
-#
-#    @property
-#    def ls(self):
-#        ret=[]
-#        for f in self.files:
-#            if isinstance(f,string_types):
-#                ret.append(f)
-#            elif isinstance(f,metadataObject):
-#                ret.append(f.filename)
-#        return ret
-#
-#    @property
-#    def mindepth(self):
-#        """Gives the minimum number of levels of group below the current objectFolder."""
-#        if len(self.groups)==0:
-#            r=0
-#        else:
-#            r=1E6
-#            for g in self.groups:
-#                r=min(r,self.groups[g].depth+1)
-#        return r
-#
-#    @property
-#    def pattern(self):
-#        return self._pattern
-#
-#    @pattern.setter
-#    def pattern(self,value):
-#        """Sets the filename searching pattern(s) for the :py:class:`Stoner.Core.metadataObject`s."""
-#        if isinstance(value,string_types):
-#            self._pattern=(value,)
-#        elif isinstance(value,re._pattern_type):
-#            self._pattern=(value,)
-#        elif isinstance(value,Iterable):
-#            self._pattern=[x for x in value]
-#        else:
-#            raise ValueError("pattern should be a string, regular expression or iterable object not a {}".format(type(value)))
-#
-#
-#    @property
-#    def type(self):
-#        """Defines the (sub)class of the :py:class:`Stoner.Core.metadataObject` instances."""
-#        return self._type
-#
-#    @type.setter
-#    def type(self,value):
-#        """Ensures that type is a subclass of metadataObject."""
-#        if issubclass(value,metadataObject):
-#            self._type=value
-#        elif isinstance(value,metadataObject):
-#            self._type=value.__class__
-#        else:
-#            raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
-#
-#    #########################################################
-#    ######## Special Methods ################################
-#    #########################################################
-#
-#    def __add__(self,other):
-#        """Implement the addition operator for objectFolder and metadataObjects."""
-#        result=copy(self)
-#        if isinstance(other,objectFolder):
-#            result.files.extend([self.type(f) for f in other.files])
-#            result.groups.update(other.groups)
-#        elif isinstance(other,metadataObject):
-#            result.files.append(self.type(other))
-#        else:
-#            result=NotImplemented
-#        return result
-#
-#    def __delitem__(self,item):
-#        """Deelte and item or a group from the objectFolder
-#
-#        Args:
-#            item(string or int): the Item to be deleted.
-#                If item is an int, then assume that it is a file index
-#                otherwise it is assumed to be a group key
-#        """
-#        if isinstance(item, string_types) and item in self.groups:
-#            del self.groups[item]
-#        elif isinstance(item, int):
-#            del self.files[item]
-#        elif isinstance(item, slice):
-#            indices = item.indices(len(self))
-#            for i in reversed(range(*indices)):
-#                del self.files[i]
-#        else:
-#            return NotImplemented
-#
-#    def __dir__(self):
-#        """Returns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
-#        """
-#        attr=dir(type(self))
-#        attr.extend(list(self.__dict__.keys()))
-#        attr.extend(dir(self._type))
-#        attr=list(set(attr))
-#        return attr
-#
-#
-#    def __get_file_attr__(self,item):
-#        if item in self._file_attrs:
-#            return self._file_attrs[item]
-#        else:
-#            return super(objectFolder,self).__getattribute__(item)
-#
-#
-#    def __getattr__(self, item):
-#        """Handles some special case attributes that provide alternative views of the objectFolder
-#
-#        Args:
-#            item (string): The attribute name being requested
-#
-#        Returns:
-#            Depends on the attribute
-#
-#        """
-#        if not item.startswith("_"):
-#            instance=self._type()
-#            if item in dir(instance): #Something is in our metadataObject type
-#                if callable(getattr(instance,item)): # It's a method
-#                    ret=self.__getattr_proxy(item)
-#                else: # It's a static attribute
-#                    ret=self.__get_file_attr__(item)
-#            else: # Ok, pass back
-#                ret=super(objectFolder,self).__getattribute__(item)
-#        else: # We dpon't intercept private or special methods
-#            ret=super(objectFolder,self).__getattribute__(item)
-#        return ret
-#
-#    def __getattr_proxy(self,item):
-#        """Make a prpoxy call to access a method of the metadataObject like types.
-#
-#        Args:
-#            item (string): Name of method of metadataObject class to be called
-#
-#        Returns:
-#            Either a modifed copy of this objectFolder or a list of return values
-#            from evaluating the method for each file in the Folder.
-#        """
-#        meth=getattr(self._type(),item)
-#        def _wrapper_(*args,**kargs):
-#            """Wraps a call to the metadataObject type for magic method calling.
-#            Note:
-#                This relies on being defined inside the enclosure of the objectFolder method
-#                so we have access to self and item"""
-#            retvals=[]
-#            for ix,f in enumerate(self):
-#                meth=getattr(f,item)
-#                ret=meth(*args,**kargs)
-#                if ret is not f: # method did not returned a modified version of the metadataObject
-#                    retvals.append(ret)
-#                if isinstance(ret,self._type):
-#                    self[ix]=ret
-#            if len(retvals)==0: # If we haven't got anything to retun, return a copy of our objectFolder
-#                retvals=self
-#            return retvals
-#        #Ok that's the wrapper function, now return  it for the user to mess around with.
-#        _wrapper_.__doc__=meth.__doc__
-#        _wrapper_.__name__=meth.__name__
-#        return _wrapper_
-#
-#    def __getitem__(self, i):
-#        """Load and returen metadataObject type objects based on the filenames in self.files
-#
-#        Args:
-#            i(int or slice): The index(eces) of the files to return Can also be a string in which case it is interpreted as one of self.files
-#
-#        Returns:
-#            One or more instances of metadataObject objects
-#
-#        This is the canonical method for producing a metadataObject from a objectFolder. Various substitutions are done as the file is created:
-#        1.  Firstly, the filename is inserted into the metadata key "Loaded From"
-#        2.  Secondly, if the pattern was given as a regular exression then any named matching groups are
-#            interpreted as metadata key-value pairs (where the key will be the name of the capturing
-#            group and the value will be the match to the group. This allows metadata to be imported
-#            from the filename as it is loaded."""""
-#        if isinstance(i,int):
-#            files=self.files[i]
-#            tmp=self.__read__(files)
-#            self.files[i]=tmp
-#            return tmp
-#        elif isinstance(i, string_types): # Ok we've done a objectFolder['filename']
-#            try:
-#                i=self.ls.index(i)
-#                return self.__read__(self.files[i])
-#            except ValueError:
-#                try:
-#                    i=self.basenames.index(i)
-#                except ValueError:
-#                    return self.groups[i]
-#        elif isinstance(i, slice):
-#            indices = i.indices(len(self))
-#            return [self[i] for i in range(*indices)]
-#        elif isinstance(i,tuple):
-#            g=self
-#            for ix in i:
-#                g=g[ix]
-#            return g
-#        else:
-#            return self.groups[i]
-#
-#    def __len__(self):
-#        """Pass through to return the length of the files array
-#
-#        Returns:
-#            len(self.files)"""
-#        return len(self.files)
-#
-#
-#    def __next__(self):
-#        """Iterates over contents of objectFolder.
-#
-#        If :py:attr:`objectFolder.skip_empty` is True, then any members that
-#        either faile to load or have zero length are skipped over."""
-#        for i in range(len(self.files)):
-#            try:
-#                ret=self[i]
-#                if self.skip_empty and len(ret)==0:
-#                    continue
-#            except StonerLoadError:
-#                if self.skip_empty:
-#                    continue
-#            else:
-#                yield ret
-#
-#    def next(elf):
-#        for i in range(len(self.files)):
-#            yield self[i]
-#
-#    def __repr__(self):
-#        """Prints a summary of the objectFolder structure
-#
-#        Returns:
-#            A string representation of the current objectFolder object"""
-#        s="objectFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self.files),len(self.groups))
-#        for g in self.groups: # iterate over groups
-#            r=self.groups[g].__repr__()
-#            for l in r.split("\n"): # indent each line by one tab
-#                s+="\t"+l+"\n"
-#        return s.strip()
-#
-#    def __setattr__(self,name,value):
-#        """Pass through to set the sample attributes."""
-#        if name.startswith("_"): # pass ddirectly through for private attributes
-#            super(objectFolder,self).__setattr__(name,value)
-#        elif name in self.__dict__ and not callable(getattr(self,name,None)):
-#            super(objectFolder,self).__setattr__(name,value)
-#        elif name in dir(self._type()):
-#            self._file_attrs[name]=value
-#        else:
-#            super(objectFolder,self).__setattr__(name,value)
-#
-#
-#    def __setitem__(self,name,value):
-#        """Set a metadataObject or objectFolder backinto the objectFolder.
-#
-#        Args:
-#            name (int or string): The index of the metadataObject or Folder to be replaced.
-#            value (metadataObject or objectFolder): The data to be stored
-#
-#        Returns:
-#            None
-#
-#        The method operates in two modes, depending on whether the supplied value is a :py:class:`Stoner.Core.metadataObject` or :py:class:`objectFolder`.
-#
-#        If the value is a :py:class:`Stoner.Core.metadataObject`, then the corresponding entry in the files attriobute
-#        is written. The name in this case may be either a string or an integer. In the former case, the string is compared
-#        to the :py:attr:`objectFolder.ls`  list of filenames and then to the :py:attr:`objectFolder.basenames` attroibute to
-#        determine which entry should be replaced. If there is no match, then the new metadataObject is imply appended after its
-#        :py:attr:`Stopner.Core.metadataObject.filename` attribute is et to the name parameter. If name is an integer then it is used
-#        simply as a numerioc index into the :py:attr:`objectFolder.files` atttribute.
-#
-#        If the value is a :py:class:`Stoner.Core.objectFolder`, then the name must be a string and is used to index into the
-#        :py:attr:`objectFolder.groups`.
-#        """
-#        if not isinstance(value,(objectFolder,metadataObject)):
-#            raise TypeError("Can only store metadataObject like objects and objectFolders in a objectFolder")
-#        if isinstance(value,metadataObject):
-#            if isinstance(name,int):
-#                self.files[name]=value
-#            elif isinstance(name,string_types):
-#                if name in self.ls:
-#                    self.files[self.ls.index(name)]
-#                elif name in self.basenames:
-#                    self.files[self.basenames.index(name)]
-#                else:
-#                    value.filename=name
-#                    self.files.append(value)
-#            else:
-#                raise KeyError("Cannot workout how to use {} as a key".format(name))
-#        elif isinstance(value,objectFolder):
-#            if isinstance(name,string_types):
-#                self.groups[name]=value
-#            else:
-#                raise KeyError("Cannot use {} to index a group".format(name))
-#
-#    def __sub__(self,other):
-#        """Implements a subtraction operator."""
-#        result=copy(self)
-#        to_del=list()
-#        if isinstance(other,objectFolder):
-#            for f in other.ls:
-#                if f in result.ls:
-#                    to_del.append(result.ls.index(f))
-#            for i in to_del.sort(reverse=True):
-#                del result[i]
-#        elif isinstance(other,metadataObject) and other.filename in result.ls:
-#            del result[result.ls.index(other.filename)]
-#        elif isinstance(other,string_types) and other in result.ls:
-#            del result[result.ls.index(other)]
-#        else:
-#            result=NotImplemented
-#        return result
-#
-#    #######################################################################
-#    ###################### Private Methods ################################
-#    #######################################################################
-#
-#    def _dialog(self, message="Select Folder",  new_directory=True):
-#        """Creates a directory dialog box for working with
-#
-#        Keyword Arguments:
-#            message (string): Message to display in dialog
-#            new_directory (bool): True if allowed to create new directory
-#
-#        Returns:
-#            A directory to be used for the file operation."""
-#        # Wildcard pattern to be used in file dialogs.
-#        if isinstance(self.directory, string_types):
-#            dirname = self.directory
-#        else:
-#            dirname = os.getcwd()
-#        if not self.multifile:
-#            mode="directory"
-#        else:
-#            mode="files"
-#        dlg = get_filedialog(what=mode)
-#        if len(dlg)!=0:
-#            if not self.multifile:
-#                self.directory = dlg
-#                ret=self.directory
-#            else:
-#                ret=None
-#        else:
-#            self.pattern=[path.basename(name) for name in dlg]
-#            self.directory = path.commonprefix(dlg)
-#            ret = self.directory
-#        return ret
-#
-#    def _pathsplit(self,pathstr, maxsplit=1):
-#        """split relative path into list"""
-#        path = [pathstr]
-#        while True:
-#            oldpath = path[:]
-#            path[:1] = list(os.path.split(path[0]))
-#            if path[0] == '':
-#                path = path[1:]
-#            elif path[1] == '':
-#                path = path[:1] + path[2:]
-#            if path == oldpath:
-#                return path
-#            if maxsplit is not None and len(path) > maxsplit:
-#                return path
-#
-#    def _pruner_(self,grp,breadcrumb):
-#        """Removes any empty groups fromthe objectFolder tree."""
-#        if len(grp)==0:
-#            self._pruneable.append(breadcrumb)
-#            ret=True
-#        else:
-#            ret=False
-#        return ret
-#
-#    def __read__(self,f):
-#        """Reads a single filename in and creates an instance of metadataObject.
-#
-#        Args:
-#            f(string or :py:class:`Stoner.Core.metadataObject`): A filename or metadataObject object
-#
-#        Returns:
-#            A metadataObject object
-#
-#        Note:
-#             If self.pattern is a regular expression then use any named groups in it to create matadata from the
-#            filename. If self.read_means is true then create metadata from the mean of the data columns.
-#        """
-#        if isinstance(f,metadataObject):
-#            return f
-#        tmp= self.type(f,**self.extra_args)
-#        if not isinstance(tmp.filename,string_types):
-#            tmp.filename=path.basename(f)
-#        for p in self.pattern:
-#            if isinstance(p,re._pattern_type) and (p.search(tmp.filename) is not None):
-#                m=p.search(tmp.filename)
-#                for k in m.groupdict():
-#                    tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-#        tmp['Loaded from']=tmp.filename
-#        for k in self._file_attrs:
-#            tmp.__setattr__(k,self._file_attrs[k])
-#        return tmp
-#
-#    def _removeDisallowedFilenameChars(filename):
-#        """Utility method to clean characters in filenames
-#
-#        Args:
-#            filename (string): filename to cleanse
-#
-#        Returns:
-#            A filename with non ASCII characters stripped out
-#        """
-#        validFilenameChars = "-_.() %s%s" % (string.ascii_letters, string.digits)
-#        cleanedFilename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore')
-#        return ''.join(c for c in cleanedFilename if c in validFilenameChars)
-#
-#
-#    def _save(self,grp,trail,root=None):
-#        """Save a group of files to disc by calling the save() method on each file. This internal method is called by walk_groups in turn
-#        called from the public save() method. The trail of group keys is used to create a directory tree.
-#
-#        Args:
-#            grp (:py:class:`objectFolder` or :py:calss:`Stoner.metadataObject`): A group or file to save
-#            trail (list of strings): the trail of paths used to get here
-#            root (string or None): a replacement root directory
-#
-#        Returns:
-#            Saved Path
-#        """
-#
-#        trail=[self._removeDisallowedFilenameChars(t) for t in trail]
-#        grp.filename=self._removeDisallowedFilenameChars(grp.filename)
-#        if root is None:
-#            root=self.directory
-#
-#        pth=path.join(root,*trail)
-#        os.makesdirs(pth)
-#        grp.save(path.join(pth,grp.filename))
-#        return grp.filename
-#
-#    def __walk_groups(self,walker,group=False,replace_terminal=False,only_terminal=True,walker_args={},breadcrumb=[]):
-#        """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
-#
-#        Args:
-#            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
-#
-#        Keyword Arguments:
-#            group (bool): (default False) determines whether the wealker function will expect to be given the objectFolder
-#                representing the lowest level group or individual metadataObject objects from the lowest level group
-#            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
-#                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
-#            only_terminal (bool): Only iterate over the files in the group if the group has no sub-groups.
-#            walker_args (dict): a dictionary of static arguments for the walker function.
-#            bbreadcrumb (list of strings): a list of the group names or key values that we've walked through
-#
-#        Notes:
-#            The walker function should have a prototype of the form:
-#                walker(f,list_of_group_names,**walker_args)
-#                where f is either a objectFolder or metadataObject."""
-#        if (len(self.groups)>0):
-#            ret=[]
-#            removeGroups=[]
-#            if replace_terminal:
-#                self.files=[]
-#            for g in self.groups:
-#                bcumb=copy(breadcrumb)
-#                bcumb.append(g)
-#                tmp=self.groups[g].__walk_groups(walker,group=group,replace_terminal=replace_terminal,walker_args=walker_args,breadcrumb=bcumb)
-#                if group and  replace_terminal and isinstance (tmp, metadataObject):
-#                    removeGroups.append(g)
-#                    tmp.filename="{}-{}".format(g,tmp.filename)
-#                    self.files.append(tmp)
-#                    ret.append(tmp)
-#            for g in removeGroups:
-#                del(self.groups[g])
-#        elif len(self.groups)==0 or not terminal_only:
-#            if group:
-#                ret=walker(self,breadcrumb,**walker_args)
-#            else:
-#                ret=[walker(f,breadcrumb,**walker_args) for f in self]
-#        return ret
-#
-#    ##################################################################################
-#    ############# Public Methods #####################################################
-#    ##################################################################################
-#
-#    def add_group(self,key):
-#        """Add a new group to the current Folder with the given key.
-#
-#        Args:
-#            key(string): A hashable value to be used as the dictionary key in the groups dictionary
-#        Returns:
-#            A copy of the objectFolder
-#
-#        Note:
-#            If key already exists in the groups dictionary then no action is taken.
-#
-#        Todo:
-#            Propagate any extra attributes into the groups.
-#        """
-#        if key in self.groups: # do nothing here
-#            pass
-#        else:
-#            self.groups[key]=self.__class__(self.directory, type=self.type, pattern=self.pattern, read_means=self.read_means, nolist=True)
-#            for k in self.__dict__:
-#                if k not in ["files","groups"]:
-#                    self.groups[key].__dict__[k]=self.__dict__[k]
-#            self.groups[key].key=key
-#        return self
-#
-#    def filter(self, filter=None,  invert=False):
-#        """Filter the current set of files by some criterion
-#
-#        Args:
-#            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
-#            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
-#        Returns:
-#            The current objectFolder object"""
-#
-#        files=[]
-#        if isinstance(filter, string_types):
-#            for f in self.files:
-#                if fnmatch.fnmatch(f, filter)  ^ invert:
-#                    files.append(f)
-#        elif isinstance(filter, re._pattern_type):
-#            for f in self.files:
-#                if filter.search(f) is not None:
-#                    files.append(f)
-#        elif filter is None:
-#            raise ValueError("A filter must be defined !")
-#        else:
-#            for i in range(len(self.files)):
-#                x=self[i]
-#                if filter(x)  ^ invert:
-#                    files.append(self.files[i])
-#        self.files=files
-#        return self
-#
-#
-#    def filterout(self, filter):
-#        """Synonym for self.filter(filter,invert=True)
-#
-#        Args:
-#        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
-#
-#        Returns:
-#            The current objectFolder object with the files in the file list filtered."""
-#        return self.filter(filter, invert=True)
-#
-#
-#    def flatten(self, depth=None):
-#        """Compresses all the groups and sub-groups iunto a single flat file list.
-#
-#        Keyword Arguments:
-#            depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
-#
-#        Returns:
-#            A copy of the now flattened DatFolder"""
-#        if isinstance(depth,int):
-#            if self.depth<=depth:
-#                self.flatten()
-#            else:
-#                for g in self.groups:
-#                    self.groups[g].flatten(depth)
-#        else:
-#            for g in self.groups:
-#                self.groups[g].flatten()
-#                self.files.extend(self.groups[g].files)
-#            self.groups={}
-#        return self
-#
-#
-#    def getlist(self, recursive=None, directory=None,flatten=None):
-#        """Scans the current directory, optionally recursively to build a list of filenames
-#
-#        Keyword Arguments:
-#            recursive (bool): Do a walk through all the directories for files
-#            directory (string or False): Either a string path to a new directory or False to open a dialog box or not set in which case existing directory is used.
-#            flatten (bool): After scanning the directory tree, flaten all the subgroupos to make a flat file list. (this is the previous behaviour of
-#            :py:meth:`objectFolder.getlist()`)
-#
-#        Returns:
-#            A copy of the current DataFoder directory with the files stored in the files attribute
-#
-#        getlist() scans a directory tree finding files that match the pattern. By default it will recurse through the entire
-#        directory tree finding sub directories and creating groups in the data folder for each sub directory.
-#        """
-#        self.files=[]
-#        if recursive is None:
-#            recursive=self.recursive
-#        if flatten is None:
-#            flatten=self.flat
-#        if isinstance(directory,  bool) and not directory:
-#            self._dialog()
-#        elif isinstance(directory, string_types):
-#            self.directory=directory
-#            if self.multifile:
-#                self._dialog()
-#        if isinstance(self.directory, bool) and not self.directory:
-#            self._dialog()
-#        elif self.directory is None:
-#            self.directory=os.getcwd()
-#        root=self.directory
-#        dirs=[]
-#        files=[]
-#        for f in os.listdir(root):
-#            if path.isdir(path.join(root, f)):
-#                dirs.append(f)
-#            elif path.isfile(path.join(root, f)):
-#                files.append(f)
-#        for p in self.pattern: # pattern is a list of strings and regeps
-#            if isinstance(p,string_types):
-#                for f in fnmatch.filter(files, p):
-#                    self.files.append(path.join(root, f))
-#                    # Now delete the matched file from the list of candidates
-#                    #This stops us double adding fles that match multiple patterns
-#                    del(files[files.index(f)])
-#            if isinstance(p,re._pattern_type):
-#                matched=[]
-#                # For reg expts we iterate over all files, but we can't delete matched
-#                # files as we go as we're iterating over them - so we store the
-#                # indices and delete them later.
-#                for f in files:
-#                    if p.search(f):
-#                        self.files.append(path.join(root,f))
-#                        matched.append(files.index(f))
-#                matched.sort(reverse=True)
-#                for i in matched: # reverse sort the matching indices to safely delete
-#                    del(files[i])
-#        if recursive:
-#            for d in dirs:
-#                self.add_group(d)
-#                self.groups[d].directory=path.join(root,d)
-#                self.groups[d].getlist(recursive=recursive,flatten=flatten)
-#        if flatten:
-#            self.flatten()
-#        return self
-#
-#
-#    def group(self, key):
-#        """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
-#
-#        Args:
-#            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
-#                takes a single argument x which should be an instance of a metadataObject and returns some vale. If key is a list then the grouping is done recursively for each element
-#                in key.
-#        Returns:
-#            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
-#
-#        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
-#        are generated from the filename are supported."""
-#        self.groups={}
-#        if isinstance(key, list):
-#            next_keys=key[1:]
-#            key=key[0]
-#        else:
-#            next_keys=[]
-#        if isinstance(key, string_types):
-#            k=key
-#            key=lambda x:x[k]
-#        for f in self.ls:
-#            x=self[f]
-#            v=key(x)
-#            self.add_group(v)
-#            self.groups[v].files.append(x)
-#        self.files=[]
-#        if len(next_keys)>0:
-#            for g in self.groups:
-#                self.groups[g].group(next_keys)
-#        return self
-#
-#    def insert(self,index,value):
-#        """Implements the insert method to support MutableSequence.
-#
-#        Parameters:
-#            index (integer): Position before which new value will be inserted.
-#            value (metadataObject, or string): New value to be inserted.
-#
-#        Returns:
-#            Modifield objectFolder"""
-#        if isinstance(value,string_types) or isinstance(value,metadataObject):
-#            self.files.insert(index,value)
-#        else:
-#            raise TypeError("Can't store a {} in a {}".format(type(value),type(self)))
-#        return self
-#
-#
-#
-#    def keys(self):
-#        """An alias for self.lsgrp as a gwenerator."""
-#        for g in self.lsgrp:
-#            yield g
-#
-#
-#    def not_empty(self):
-#        """An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.
-#
-#        Returns the next non-empty DatFile member of the objectFolder.
-#
-#        Note:
-#            not_empty will also silently skip over any cases where loading the metadataObject object will raise
-#            and exception."""
-#        for i in range(len(self)):
-#            try:
-#                d=self[i]
-#            except:
-#                continue
-#            if len(d)==0:
-#                continue
-#            yield(d)
-#
-#    def prune(self):
-#        """Remove any groups from the objectFolder (and subgroups).
-#
-#        Returns:
-#            A copy of thte pruned objectFolder."""
-#        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
-#        self.walk_groups(self._pruner_,group=True)
-#        while len(self._pruneable)!=0:
-#            for p in self._pruneable:
-#                pth=tuple(p[:-1])
-#                item=p[-1]
-#                if len(pth)==0:
-#                    del self[item]
-#                else:
-#                    grp=self[pth]
-#                    del grp[item]
-#            self._pruneable=[]
-#            self.walk_groups(self._pruner_,group=True)
-#        del self._pruneable
-#        return self
-#
-#
-#
-#    def save(self,root=None):
-#        """Save the entire data folder out to disc using the groups as a directory tree,
-#        calling the save method for each file in turn.
-#
-#        Args:
-#            root (string): The root directory to start creating files and subdirectories under. If set to None or not specified, the current folder's
-#                diretory attribute will be used.
-#        Returns:
-#            A list of the saved files
-#        """
-#        return self.walk_groups(self._save,walker_args={"root",root})
-#
-#
-#    def select(self,*args,**kargs):
-#        """A generator that can be used to select particular data files from the objectFolder
-#
-#        Args:
-#            args (various): A single positional argument if present is interpreted as follows:
-#
-#            * If a callable function is given, the entire metadataObject is presented to it.
-#                If it evaluates True then that metadataObject is selected. This allows arbitary select operations
-#            * If a dict is given, then it and the kargs dictionary are merged and used to select the metadataObjects
-#
-#        Keyword Arguments:
-#            kargs (varuous): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
-#                metadata values. The value of the argument is used as follows:
-#
-#            * if is a scalar, then an equality test is carried out
-#            * If is a list then a membership test is carried out
-#            * if it is a tuple of numbers then it is interpreted as a bounds test (t1<=x<t2)
-#
-#        Yields:
-#            A metadataObject that matches the select requirements
-#        """
-#        if len(args)!=0:
-#            arg=args[0]
-#            if callable(arg):
-#                mode="call"
-#            elif isinstance(arg,dict):
-#                kargs.update(arg)
-#                mode="dict"
-#            else:
-#                raise RuntimeError("Bad select specification")
-#        else:
-#            mode="dict"
-#        for f in self:
-#            if mode=="call":
-#                result=arg(f)
-#            elif mode=="dict":
-#                result=True
-#                for k in kargs:
-#                    v=kargs[k]
-#                    if isinstance(v,tuple) and len(v)==2:
-#                        l1=v[0]
-#                        l2=v[1]
-#                        result&=l1<=f[k]<l2
-#                    elif isinstance(v,tuple) and len(v)==1:
-#                        v=v[0]
-#                    if isinstance(v,list):
-#                        result&=f[k] in v
-#                    else:
-#                        result&=f[k]==v
-#            else:
-#                raise RuntimeError("oops what happened here?")
-#            if result:
-#                yield f
-#
-#
-#    def sort(self, key=None, reverse=False):
-#        """Sort the files by some key
-#
-#        Keyword Arguments:
-#            key (string, callable or None): Either a string or a callable function. If a string then this is interpreted as a
-#                metadata key, if callable then it is assumed that this is a a function of one paramater x
-#                that is a :py:class:`Stoner.Core.metadataObject` object and that returns a key value.
-#                If key is not specified (default), then a sort is performed on the filename
-#
-#        reverse (bool): Optionally sort in reverse order
-#
-#        Returns:
-#            A copy of the current objectFolder object"""
-#        if isinstance(key, string_types):
-#            k=[(self[i].get(key),i) for i in range(len(self.files))]
-#            k=sorted(k,reverse=reverse)
-#            self.files=[self.files[y] for (x,y) in k]
-#        elif key is None:
-#            fnames=self.ls
-#            fnames.sort(reverse=reverse)
-#            self.files=[self[f] for f in fnames]
-#        elif isinstance(key,re._pattern_type):
-#            self.files=sorted(self.files,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
-#        else:
-#            self.files=sorted(self.files,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
-#        return self
-#
-#    def unflatten(self):
-#        """Takes a file list an unflattens them according to the file paths.
-#
-#        Returns:
-#            A copy of the objectFolder
-#        """
-#        self.directory=path.commonprefix(self.ls)
-#        if self.directory[-1]!=path.sep:
-#            self.directory=path.dirname(self.directory)
-#        relpaths=[path.relpath(f,self.directory) for f in self.ls]
-#        dels=list()
-#        for i,f in enumerate(relpaths):
-#            grp=path.split(f)[0]
-#            if grp!=f and grp!="":
-#                self.add_group(grp)
-#                self.groups[grp]+=self[i]
-#                dels.append(i)
-#        for i in sorted(dels,reverse=True):
-#            del self[i]
-#        for g in self.groups:
-#            self.groups[g].unflatten()
-#
-#    def walk_groups(self, walker, group=False, replace_terminal=False,only_terminal=True,walker_args={}):
-#        """Walks through a heirarchy of groups and calls walker for each file.
-#
-#        Args:
-#            walker (callable): a callable object that takes either a metadataObject instance or a objectFolder instance.
-#
-#        Keyword Arguments:
-#            group (bool): (default False) determines whether the walker function will expect to be given the objectFolder
-#                representing the lowest level group or individual metadataObject objects from the lowest level group
-#            replace_terminal (bool): if group is True and the walker function returns an instance of metadataObject then the return value is appended
-#                to the files and the group is removed from the current objectFolder. This will unwind the group heirarchy by one level.
-#            obly_terminal(bool): Only execute the walker function on groups that have no sub-groups inside them (i.e. are terminal groups)
-#            walker_args (dict): a dictionary of static arguments for the walker function.
-#
-#        Notes:
-#            The walker function should have a prototype of the form:
-#                walker(f,list_of_group_names,**walker_args)
-#                where f is either a objectFolder or metadataObject."""
-#        return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,only_terminal=only_terminal,walker_args=walker_args,breadcrumb=[])
-#
-#
-#    def zip_groups(self, groups):
-#        """Return a list of tuples of metadataObjects drawn from the specified groups
-#
-#        Args:
-#            groups(list of strings): A list of keys of groups in the Lpy:class:`objectFolder`
-#
-#        ReturnsL
-#            A list of tuples of groups of files: [(grp_1_file_1,grp_2_file_1....grp_n_files_1),(grp_1_file_2,grp_2_file_2....grp_n_file_2)....(grp_1_file_m,grp_2_file_m...grp_n_file_m)]
-#        """
-#        if not isinstance(groups, list):
-#            raise SyntaxError("groups must be a list of groups")
-#        grps=[[y for y in self.groups[x]] for x in groups]
-#        return zip(*grps)
-
-class DataFolder(objectFolder):
+class DataFolder(baseFolder,DiskBssedFolder):
 
 
     def __init__(self,*args,**kargs):
@@ -2426,6 +1565,7 @@ class DataFolder(objectFolder):
 
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})
 
+objectFolder=DataFolder # Just a backwards compatibility shim
 
 class PlotFolder(DataFolder):
     """A subclass of :py:class:`objectFolder` with extra methods for plotting lots of files."""

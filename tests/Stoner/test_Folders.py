@@ -30,11 +30,23 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        pass
+        self.fldr=SF.objectFolder(directory=self.datadir)
 
     def test_Folders(self):
-        fldr=SF.objectFolder(directory=self.datadir,)
-        print(fldr)
+        fldr=self.fldr
+        fl=len(fldr)
+        self.assertEqual(len(os.listdir(self.datadir)),fl,"Failed to initialise DataFolder from sample data")
+        d=Data(np.ones((100,5)))
+        fldr+=d
+        self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
+        fldr2=fldr+fldr
+        self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
+        fldr-="Untitled-0"
+        self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
+        fldr-="New-XRay-Data.dql"
+        self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
+        fldr+="New-XRay-Data.dql"
+        self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
