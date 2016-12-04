@@ -36,6 +36,10 @@ class Folders_test(unittest.TestCase):
         fldr=self.fldr
         fl=len(fldr)
         self.assertEqual(len(os.listdir(self.datadir)),fl,"Failed to initialise DataFolder from sample data")
+    
+    def test_Operators(self):
+        fldr=self.fldr
+        fl=len(fldr)
         d=Data(np.ones((100,5)))
         fldr+=d
         self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
@@ -53,3 +57,4 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
     test.test_Folders()
+    test.test_Operators()

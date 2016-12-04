@@ -517,6 +517,21 @@ class baseFolder(MutableSequence):
             result.flatten()
         return result
         
+    def __iter__(self):
+        """Iterate over objects."""
+        return self
+        
+    def __next__(self):
+        """Python 3.x style iterator function."""
+        for n in self.__names__():
+            yield self.__getter__(n,instantiate=True)
+ 
+    def next(self):
+        """Python 2.7 style iterator function."""
+        for n in self.__names__():
+            yield self.__getter__(n,instantiate=True)
+    
+        
     def __sub__(self,other):
         """Implement the addition operator for baseFolder and metadataObjects."""
         result=deepcopy(self)
@@ -612,6 +627,13 @@ class baseFolder(MutableSequence):
             for l in r.split("\n"): # indent each line by one tab
                 s+="\t"+l+"\n"
         return s.strip()
+        
+    def __reversed__(self):
+        """Create an iterator function that runs backwards through the stored objects."""
+        def reverse_iterator(self):
+            for n in reversed(self.__names__()):
+                yield self.__getter__(n,instantiate=True)
+        return reverse_iterator
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
@@ -711,40 +733,65 @@ class baseFolder(MutableSequence):
         self.groups.clear()
         self.__clear__()
 
-    def get(self,name,default=None):
-        """Return either a sub-group or named object from this folder."""
-        try:
-            ret=self[name]
-        except (KeyError,IndexError):
-            ret=default
-        return ret
-
-    def filter(self, filter=None,  invert=False):
+    def count(self,name):
+        """Provide a count() method like a sequence.
+        
+        Args:
+            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to count matches for.
+            
+        Returns:
+            (int): The number of matching metadataObject instances.
+            
+        If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
+        *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
+        if *name* is a metadataObject, then it matches for an equyality test."""
+        if isinstance(name,string_types):
+            if "*" in name or "?" in name: # globbing pattern
+                return len(fnmatch.filter(self.__names__(),name))
+            else:
+                return self.__names__().count(name)
+        if isinstance(name,re._pattern_type):
+            match=[1 for n in self.__names__() if name.match(n)]
+            return len(match)
+        if isinstance(name,metadataObject):
+            match=[1 for d in self if d==name ]
+            return len(match)
+            
+    def filter(self, filter=None,  invert=False,copy=False):
         """Filter the current set of files by some criterion
 
         Args:
             filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+            
+        Keyword Arguments:
             invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
+            copy (bool): If True, then a new copy of the current baseFolder is made before filtering.
+            
         Returns:
             The current objectFolder object"""
 
         names=[]
+        if copy:
+            result=deepcopy(self)
+        else:
+            result=self
         if isinstance(filter, string_types):
-            for f in self.__names__():
+            for f in result.__names__():
                 if fnmatch.fnmatch(f, filter)  ^ invert:
-                    names.append(f)
+                    names.append(result.__getter__(f))
         elif isinstance(filter, re._pattern_type):
-            for f in self.__names__():
+            for f in result.__names__():
                 if filter.search(f) is not None:
-                    names.append(f)
+                    names.append(result.__getter__(f))
         elif filter is None:
             raise ValueError("A filter must be defined !")
         else:
-            for i,x in enumerate(self):
+            for i,x in enumerate(result):
                 if filter(x)  ^ invert:
-                    names.append(self.files[i])
-        self.files=files
-        return self
+                    names.append(x)
+        result.__clear__()
+        result.extend(names)
+        return result
 
     def filterout(self, filter):
         """Synonym for self.filter(filter,invert=True)
@@ -779,6 +826,14 @@ class baseFolder(MutableSequence):
             self.groups={}
         return self
 
+    def get(self,name,default=None):
+        """Return either a sub-group or named object from this folder."""
+        try:
+            ret=self[name]
+        except (KeyError,IndexError):
+            ret=default
+        return ret
+
     def group(self, key):
         """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
 
@@ -808,6 +863,38 @@ class baseFolder(MutableSequence):
             for g in self.groups:
                 self.groups[g].group(next_keys)
         return self
+        
+    def index(self,name):
+        """Provide an index() method like a sequence.
+        
+        Args:
+            name(str, regexp, or :py:class:`Stoner.Core.metadataObject`): The thing to search for.
+            
+        Returns:
+            (int): The index of the first matching metadataObject instances.
+            
+        If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
+        *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
+        if *name* is a metadataObject, then it matches for an equyality test."""
+        if isinstance(name,string_types):
+            if "*" in name or "?" in name: # globbing pattern
+                m=fnmatch.filter(self.__names__(),name)
+                if len(m)>0:
+                    return self.__names__().index(m[0])
+                else:
+                    raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
+            else:
+                return self.__names__().index(name)
+        if isinstance(name,re._pattern_type):
+            for i,n in enumerate(self.__names__()):
+                if name.match(n): return i
+            else:
+                    raise ValueError("No match for any name of a metadataObject in this baseFolder.")
+        if isinstance(name,metadataObject):
+            for i,n in enumerate(self.__names__()):
+                if name==n: return i
+            else:
+                    raise ValueError("No match for any name of a metadataObject in this baseFolder.")
 
     def insert(self,ix,value):
         """Implements the insert method with the option to append as well."""
