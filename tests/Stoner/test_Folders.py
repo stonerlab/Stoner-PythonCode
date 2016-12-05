@@ -14,6 +14,7 @@ import os.path as path
 import os
 import numpy as np
 import re
+import fnmatch
 from Stoner.compat import *
 import Stoner.Folders as SF
 
@@ -35,8 +36,12 @@ class Folders_test(unittest.TestCase):
     def test_Folders(self):
         fldr=self.fldr
         fl=len(fldr)
+        datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
         self.assertEqual(len(os.listdir(self.datadir)),fl,"Failed to initialise DataFolder from sample data")
-    
+        self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
+        self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
+        self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
+        
     def test_Operators(self):
         fldr=self.fldr
         fl=len(fldr)

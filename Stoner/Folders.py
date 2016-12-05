@@ -140,6 +140,7 @@ class baseFolder(MutableSequence):
         self.groups=regexpDict()
         self.objects=regexpDict()
         self._type=metadataObject
+        self._instance=None
         self.__iface={}
         self._object_attrs=dict()
         self.args=copy(args)
@@ -217,6 +218,12 @@ class baseFolder(MutableSequence):
                 self.insert(i,v)
 
     @property
+    def instance(self):
+        if self._instance is None:
+            self._instance=self._type()
+        return self._instance
+                
+    @property
     def loaded(self):
         """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
         loaded into memory."""
@@ -276,8 +283,10 @@ class baseFolder(MutableSequence):
             self._type=value.__class__
         else:
             raise TypeError("{} os neither a subclass nor instance of metadataObject".format(type(value)))
+        self._instance=None #Reset the instance cache 
 
     ################### Methods for subclasses to override to handle storage #####
+    @run_first
     def __lookup__(self,name):
         """Stub for other classes to implement.
         Parameters:
@@ -286,11 +295,8 @@ class baseFolder(MutableSequence):
         Returns:
             A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
         """
-        for method in self.__iface.get("__lookup__",[]):
-            try:
-                return method(self,name)
-            except NotImplementedError:
-                continue
+        if isinstance(name,int_types):
+            name=self.objects.keys()[name]
         return name
 
     @run_first
@@ -382,7 +388,7 @@ class baseFolder(MutableSequence):
                 raise KeyError("{} is neither a group name nor object name.".format(name))
         elif isinstance(name,int_types):
             if -len(self)<name<len(self):
-                return self.__getter__(self.__lookup__(self.__names__()[name]))
+                return self.__getter__(self.__lookup__(name))
             else:
                 raise IndexError("{} is out of range.".format(name))
         else:
@@ -403,7 +409,7 @@ class baseFolder(MutableSequence):
             self.__setter__(self.__lookup__(name),value)
         if isinstance(name,int_types):
             if -len(self)<name<len(self):
-                self.__setter__(self.__lookup__(self.__names__()[name]),value)
+                self.__setter__(self.__lookup__(name),value)
             else:
                 raise IndexError("{} is out of range".format(name))
         else:
@@ -425,7 +431,7 @@ class baseFolder(MutableSequence):
                 raise KeyError("{} doesn't match either a group or object.".format(name))
         elif isinstance(name,int_types):
             if -len(self)<name<=len(self):
-                self.__deleter__(self.__lookup__(self.__names__()[name]))
+                self.__deleter__(self.__lookup__(name))
             else:
                 raise IndexError("{} is out of range.".format(name))
         else:
@@ -519,7 +525,7 @@ class baseFolder(MutableSequence):
         
     def __iter__(self):
         """Iterate over objects."""
-        return self
+        return self.next()
         
     def __next__(self):
         """Python 3.x style iterator function."""
@@ -556,11 +562,14 @@ class baseFolder(MutableSequence):
             Depends on the attribute
 
         """
-        if hasattr(self,item) or item.startswith("_"): # bypass for local attrs and private attrs
+        try:
             ret=super(baseFolder,self).__getattribute__(item)
-        else:
-            instance=self._type()
-            if hasattr(instance,item): #Something is in our metadataObject type
+        except AttributeError:
+            if item.startswith("_"):
+                raise AttributeError("{} is not an Attribute of {}".ormat(item))
+                
+            instance=self.instance
+            try:
                 if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
@@ -568,8 +577,8 @@ class baseFolder(MutableSequence):
                         ret=self._object_attrs[item]
                     else:
                         ret=getattr(self[0],item,None)
-            else: # Ok, pass back
-                ret=getattr(super(baseFolder,self),item)
+            except AttributeError: # Ok, pass back
+                raise AttributeError("{} is not an Attribute of {} or {}".ormat(item,type(self),type(instance)))
         return ret
 
     def __getattr_proxy(self,item):
@@ -582,7 +591,7 @@ class baseFolder(MutableSequence):
             Either a modifed copy of this objectFolder or a list of return values
             from evaluating the method for each file in the Folder.
         """
-        meth=getattr(self._type(),item,None)
+        meth=getattr(self.instance,item,None)
         def _wrapper_(*args,**kargs):
             """Wraps a call to the metadataObject type for magic method calling.
             Note:
@@ -749,7 +758,7 @@ class baseFolder(MutableSequence):
             if "*" in name or "?" in name: # globbing pattern
                 return len(fnmatch.filter(self.__names__(),name))
             else:
-                return self.__names__().count(name)
+                return self.__names__().count(self.__lookup__(name))
         if isinstance(name,re._pattern_type):
             match=[1 for n in self.__names__() if name.match(n)]
             return len(match)
@@ -884,7 +893,7 @@ class baseFolder(MutableSequence):
                 else:
                     raise ValueError("{} is not a name of a metadataObject in this baseFolder.".format(name))
             else:
-                return self.__names__().index(name)
+                return self.__names__().index(self.__lookup__(name))
         if isinstance(name,re._pattern_type):
             for i,n in enumerate(self.__names__()):
                 if name.match(n): return i
@@ -1304,6 +1313,13 @@ class DiskBssedFolder(object):
             raise NotImplementedError("Unahandled by DisKBasedFolder")
         return result
         
+    def __lookup__(self,name):
+        if isinstance(name,string_types):
+            if self.basenames.count(name)==1:
+                return self.__names__()[self.basenames.index(name)]
+            
+        raise NotImplementedError
+        
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a file on disk.
 
@@ -1319,8 +1335,10 @@ class DiskBssedFolder(object):
         Returns:
             (metadataObject): The metadataObject
         """
-        if not instantiate or not path.exists(name): #If we're not try to instantiate this object then let the parent do the work
+        if not instantiate or not path.exists(name) or not path.exists(path.join(self.directory,name)): #If we're not try to instantiate this object then let the parent do the work
             raise NotImplementedError()
+        if not path.exists(name):
+            name=path.join(self.directory,name)
         if isinstance(self.objects[name],metadataObject):
             return self.objects[name]
         tmp= self.type(name,**self.extra_args)

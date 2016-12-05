@@ -926,7 +926,7 @@ class PlotMixin(object):
             "plotter": plt.plot,
             "show_plot": True,
             "figure": self.__figure,
-            "title": self.filename,
+            "title": os.path.basename(self.filename),
             "save_filename": None,
             "xlabel": self._col_label(self.find_col(c.xcol)),
             "ylabel": self._col_label(self.find_col(c.ycol), True)
@@ -1062,7 +1062,7 @@ class PlotMixin(object):
             "plotter": self.__SurfPlotter,
             "show_plot": True,
             "figure": self.__figure,
-            "title": self.filename,
+            "title": os.path.basename(self.filename),
             "save_filename": None,
             "cmap": cm.jet,
             "rstride": max(1,zdata.shape[0] / 50),
@@ -1185,7 +1185,7 @@ class PlotMixin(object):
                 "plotter": self.__mpl3DQuiver,
                 "show_plot": True,
                 "figure": self.__figure,
-                "title": self.filename,
+                "title": os.path.basename(self.filename),
                 "save_filename": None,
                 "cmap": cm.jet,
                 "color":hsl2rgb((1 + self.q / _np_.pi) / 2, self.r / _np_.max(self.r), (1 + self.w) / 2)/255.0
@@ -1288,7 +1288,7 @@ class PlotMixin(object):
             "plotter": plt.quiver,
             "show_plot": True,
             "figure": self.__figure,
-            "title": self.filename,
+            "title": os.path.basename(self.filename),
             "xlabel": self._col_label(self.find_col(xcol)),
             "ylabel": self._col_label(self.find_col(ycol))
         }
