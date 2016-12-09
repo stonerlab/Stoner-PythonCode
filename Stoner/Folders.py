@@ -23,37 +23,6 @@ from .Core import metadataObject,DataFile
 
 regexp_type=(re._pattern_type,)
 
-def run_first(function):
-    """Decorator to intercept method  call and run the first matching sub-class implementation."""
-    def wrapper(self,*args,**kargs):
-        """Looks for matching names in the interface table and tries them in turn until one executes
-        or finally executes the method given to the decorator."""
-        fname=function.__name__
-        for method in self._baseFolder__iface.get(fname,[]):
-            try:
-                return method(self,*args,**kargs)
-            except NotImplementedError:
-                continue
-        else:
-            return function(self,*args,**kargs)
-    return wrapper
-
-def run_all(function):
-    """Decorator to intercept method  call and run the first matching sub-class implementation."""
-    def wrapper(self,*args,**kargs):
-        """Looks for matching names in the interface table and tries them in turn until one executes
-        or finally executes the method given to the decorator."""
-        fname=function.__name__
-        for method in self._baseFolder__iface.get(fname,[]):
-            try:
-                method(self,*args,**kargs)
-            except NotImplementedError:
-                continue
-        else:
-            function(self,*args,**kargs)
-    return wrapper
-       
-
 class regexpDict(OrderedDict):
     """An ordered dictionary that permits looks up by regular expression."""
     def __init__(self,*args,**kargs):
@@ -121,7 +90,25 @@ class baseFolder(MutableSequence):
         objects(regexptDict): A dictionary of metadataObjects
         _index(list): An index of the keys associated with objects
     """
-    _mro_list=None
+
+    
+    def __new__(cls,*args,**kargs):
+        """The __new__ method is used to create the underlying storage attributes.
+        
+        We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.
+        """
+        self=super(baseFolder,cls).__new__(cls,*args,**kargs)
+        self.debug=kargs.pop("debug",False)
+        self._object_attrs=dict()
+        self._last_name=0
+        self.groups=regexpDict()
+        self.objects=regexpDict()
+        self._instance=None
+        self._object_attrs=dict()
+        self.key=None
+        self._type=metadataObject
+        return self
+        
 
     def __init__(self,*args,**kargs):
         """Initialise the baseFolder.
@@ -134,64 +121,18 @@ class baseFolder(MutableSequence):
                 the mixin classes
             - calls the mixin init methods.
             """
-        self._object_attrs=dict()
-        self._last_name=0
-        self.debug=kargs.get("debug",False)
-        self.groups=regexpDict()
-        self.objects=regexpDict()
-        self._type=metadataObject
-        self._instance=None
-        self.__iface={}
-        self._object_attrs=dict()
         self.args=copy(args)
         self.kargs=copy(kargs)
         #List of routines that define the interface for manipulating the objects stored in the folder
-        interface_routines=["__init__",
-                            "__clone__",
-                            "__getter__",
-                            "__setter__",
-                            "__deleter__",
-                            "__lookup__",
-                            "__names__",
-                            "__clear__",
-                            "__add_core__",
-                            "__sub_core__",
-                            ]
         for k in list(self.kargs.keys()): # Store keyword parameters as attributes
             if not hasattr(self,k) or k in ["type","kargs","args"]:
                 value=kargs.pop(k,None)
                 self.__setattr__(k,value)
                 if self.debug: print("Setting self.{} to {}".format(k,value))
-        for c in self._mro: # Iterate over the multiple inheritance  run order
-            if self.debug: print("Looking at {}".format(c.__name__))
-            if c is baseFolder:
-                continue
-            for method in interface_routines: # Look for methods implemented in a mixin
-                if self.debug: print("Examining {} {}".format(c.__name__,method))
-                if method in c.__dict__:
-                    if self.debug: print("Ok, need a routine to set...")
-                    if method not in self.__iface or not isinstance(self.__iface[method],list):
-                        lst=[]
-                    else:
-                        lst=self.__iface[method]
-                    lst.append(getattr(c,method))
-                    self.__iface[method]=lst
-                    if self.debug: print("{} is now {}".format(method,self.__iface[method]))
-            #Now call the init method of the mixin classes
-            if c.__module__.startswith("Stoner") and not issubclass(c,baseFolder):
-                if self.debug: print("Initing {}".format(c))
-                c.__init__(self)
-
+        super(baseFolder,self).__init__(*args,**kargs)
+                
     ###########################################################################
     ################### Properties of baseFolder ##############################
-
-    @classproperty
-    def _mro(self):
-        _mro_list = []
-        for c in self.__mro__[1:]:
-            if c not in _mro_list:
-                _mro_list.append(c)
-        return _mro_list
 
     @property
     def depth(self):
@@ -286,7 +227,6 @@ class baseFolder(MutableSequence):
         self._instance=None #Reset the instance cache 
 
     ################### Methods for subclasses to override to handle storage #####
-    @run_first
     def __lookup__(self,name):
         """Stub for other classes to implement.
         Parameters:
@@ -294,17 +234,23 @@ class baseFolder(MutableSequence):
 
         Returns:
             A key in whatever form the :py:meth:`baseFolder.__getter__` will accept.
+            
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name,int_types):
             name=self.objects.keys()[name]
         return name
 
-    @run_first
     def __names__(self):
-        """Stub method to return a list of names of all objects that can be indexed for __getter__."""
+        """Stub method to return a list of names of all objects that can be indexed for __getter__.
+        
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        """
+
         return list(self.objects.keys())
 
-    @run_first
     def __getter__(self,name,instantiate=True):
         """Stub method to do whatever is needed to transform a key to a metadataObject.
 
@@ -319,37 +265,57 @@ class baseFolder(MutableSequence):
 
         Returns:
             (metadataObject): The metadataObject
-        """
+
+            Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+
+            
+            """
         return self.objects[name]
 
-    @run_first
     def __setter__(self,name,value):
         """Stub to setting routine to store a metadataObject.
         Parameters:
             name (string) the named object to write - may be an existing or new name
-            value (metadataObject) the value to store."""
+            value (metadataObject) the value to store.
+            
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!            
+            """
         if name is None:
             name=self.make_name()
         self.objects[name]=value
 
-    @run_first
     def __deleter__(self,ix):
         """Deletes an object from the baseFolder.
 
         Parameters:
             ix(str): Index to delete, should be within +- the lengthe length of the folder.
-        """
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+            
+            """
         del self.objects[ix]
 
-    @run_first        
     def __clear__(self):
-        """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored."""
+        """"Clears all stored :py:class:`Stoner.Core.metadataObject` instances stored.
+        
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        
+        """
         for n in self.__names__():
             self.__deleter__(self.__lookup__(n))
 
-    @run_all
     def __clone__(self,other=None):
-        """Do whatever is necessary to copy attributes from self to other."""
+        """Do whatever is necessary to copy attributes from self to other.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        
+        
+        """
         if other is None:
             other=self.__class__()
         other.args=self.args
@@ -358,8 +324,6 @@ class baseFolder(MutableSequence):
         for k in self.kargs:
             if not hasattr(other,k):
                 setattr(other,k,self.kargs[k])
-        for method in self.__iface.get("__clone__",[]):
-            method(self,other)
         return other
 
     ###########################################################################
@@ -385,7 +349,8 @@ class baseFolder(MutableSequence):
                 name=self.__lookup__(name)
                 return self.__getter__(name)
             else:
-                raise KeyError("{} is neither a group name nor object name.".format(name))
+                name=self.__lookup__(name)
+                return self.__getter__(name)
         elif isinstance(name,int_types):
             if -len(self)<name<len(self):
                 return self.__getter__(self.__lookup__(name))
@@ -444,9 +409,12 @@ class baseFolder(MutableSequence):
     def __len__(self):
         return len(self.__names__())
         
-    @run_first
     def __add_core__(self,result,other):
-        """Implements the core logic of the addition operator."""
+        """Implements the core logic of the addition operator.
+
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!  
+        """
         if isinstance(other,baseFolder):
             if issubclass(other.type,self.type):
                 result.extend([f for f in other.files])
@@ -458,10 +426,27 @@ class baseFolder(MutableSequence):
         else:
             result=NotImplemented
         return result
+        
+    def __div_core__(self,result,other):
+        """Implements the divide operator as a grouping function."""
+        if isinstance(other,string_types+(list,tuple)):
+            result.group(other)
+            return result
+        elif isinstance(other,int_types): #Simple decimate
+            for i in range(other):
+                self.add_group("Group {}".format(i))
+            for ix,f in enumerate(self):
+                group=ix%other
+                self.groups["Group {}".format(group)]+=d
+            self.__clear__()
 
-    @run_first
     def __sub_core__(self,result,other):
-        """Implemenets the core logic of the subtraction operator."""
+        """Implemenets the core logic of the subtraction operator.
+        
+        Note:
+            We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
+        
+        """
         if isinstance(other,int_types):
             delname=result.__names__()[other]
             result.__deleter__(delname)
@@ -511,6 +496,14 @@ class baseFolder(MutableSequence):
         result=self.__add_core__(result,other)
         return result
 
+    def __div__(self,other):
+        result=deepcopy(self)
+        return self.__div_core__(result,other)
+
+    def __idiv__(self,other):
+        result=self
+        return self.__div_core__(result,other)
+        
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
         
@@ -566,7 +559,7 @@ class baseFolder(MutableSequence):
             ret=super(baseFolder,self).__getattribute__(item)
         except AttributeError:
             if item.startswith("_"):
-                raise AttributeError("{} is not an Attribute of {}".ormat(item))
+                raise AttributeError("{} is not an Attribute of {}".format(item))
                 
             instance=self.instance
             try:
@@ -630,7 +623,11 @@ class baseFolder(MutableSequence):
 
         Returns:
             A string representation of the current objectFolder object"""
-        s="objectFolder({}) with pattern {} has {} files and {} groups\n".format(self.directory,self.pattern,len(self),len(self.groups))
+        cls=self.__class__.__name__
+        pth=getattr(self,"key")
+        if pth is None:
+            pth=self.directory
+        s="{}({}) with pattern {} has {} files and {} groups\n".format(cls,pth,self.pattern,len(self),len(self.groups))
         for g in self.groups: # iterate over groups
             r=self.groups[g].__repr__()
             for l in r.split("\n"): # indent each line by one tab
@@ -862,7 +859,7 @@ class baseFolder(MutableSequence):
             next_keys=[]
         if isinstance(key, string_types):
             k=key
-            key=lambda x:x[k]
+            key=lambda x:x.metadata.get(k,"None")
         for x in self:
             v=key(x)
             self.add_group(v)
@@ -911,7 +908,7 @@ class baseFolder(MutableSequence):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
-            name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else "object {}".format(len(self))
+            name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else self.make_name()
             i=1
             names=self.__names__()
             while name in names: # Since we're adding a new entry, make sure we have a unique name !
@@ -1222,9 +1219,16 @@ class DiskBssedFolder(object):
                   "readlist":True,
                   }
         for k in defaults:
-            setattr(self,k,self.kargs.get(k,defaults[k]))
+            setattr(self,k,kargs.pop(k,defaults[k]))
         if self.readlist:
             self.getlist()
+        super(DiskBssedFolder,self).__init__(*args,**kargs)
+        
+    def __clone__(self,other=None):
+        """Add something to stop clones from autolisting again."""
+        if other is None:
+            other=self.__class__(readlist=False)
+        return super(DiskBssedFolder,self).__clone__(other=other)
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -1293,15 +1297,6 @@ class DiskBssedFolder(object):
         grp.save(path.join(pth,grp.filename))
         return grp.filename
         
-    def __sub_core__(self,result,other):
-        """Additional logic to check for match to basenames,"""
-        if isinstance(other,string_types):
-            if other in result.basenames and path.join(result.directory,other) in result.ls:
-                other=path.join(result.directory,other)
-                result.__deleter__(other)
-                return result
-        raise NotImplementedError
-
     def __add_core__(self,result,other):
         if isinstance(other,string_types):
             othername=path.join(self.directory,other)
@@ -1310,15 +1305,25 @@ class DiskBssedFolder(object):
             else:
                 raise RuntimeError("{} either does not exist of is already in the folder.".format(othername))
         else:
-            raise NotImplementedError("Unahandled by DisKBasedFolder")
+            return super(DiskBssedFolder,self).__add_core__(result,other)
         return result
+
+    def __sub_core__(self,result,other):
+        """Additional logic to check for match to basenames,"""
+        if isinstance(other,string_types):
+            if other in result.basenames and path.join(result.directory,other) in result.ls:
+                other=path.join(result.directory,other)
+                result.__deleter__(other)
+                return result
+        return super(DiskBssedFolder,self).__sub_core__(result,other)
+
         
     def __lookup__(self,name):
         if isinstance(name,string_types):
             if self.basenames.count(name)==1:
                 return self.__names__()[self.basenames.index(name)]
             
-        raise NotImplementedError
+        return super(DiskBssedFolder,self).__lookup__(name)
         
     def __getter__(self,name,instantiate=True):
         """Loads the specified name from a file on disk.
@@ -1336,7 +1341,7 @@ class DiskBssedFolder(object):
             (metadataObject): The metadataObject
         """
         if not instantiate or not path.exists(name) or not path.exists(path.join(self.directory,name)): #If we're not try to instantiate this object then let the parent do the work
-            raise NotImplementedError()
+            return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
         if not path.exists(name):
             name=path.join(self.directory,name)
         if isinstance(self.objects[name],metadataObject):
@@ -1479,13 +1484,12 @@ class DiskBssedFolder(object):
 
 
 
-class DataFolder(baseFolder,DiskBssedFolder):
+class DataFolder(DiskBssedFolder,baseFolder):
 
 
     def __init__(self,*args,**kargs):
         from Stoner import Data
         self.type=kargs.pop("type",Data)
-        self.read_means=kargs.pop("read_means",False)
         super(DataFolder,self).__init__(*args,**kargs)
 
     def __read__(self,f):
@@ -1661,7 +1665,7 @@ class DataFolder(baseFolder,DiskBssedFolder):
                         setas.append("z")
                         results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zcol[i]])
                         if cols["has_zerr"]:
-                            yerr=cols["zerr"][i]
+                            zerr=cols["zerr"][i]
                             results&=f.column(zerr)
                             results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zerr])
                             setas.append("f")
