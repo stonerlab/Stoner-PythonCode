@@ -86,6 +86,7 @@ class KerrArrayTest(unittest.TestCase):
         keys=self.anim.keys()
         self.anim.save(filename=testfile)
         load=KerrArray(testfile)
+        del load["Loaded from"]
         self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata')
         os.remove(testfile) #tidy up
 

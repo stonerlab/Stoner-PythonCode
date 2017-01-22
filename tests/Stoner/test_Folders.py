@@ -41,6 +41,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
+        self.assertEqual(len(fldr[::2]),round(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
         
     def test_Operators(self):
         fldr=self.fldr

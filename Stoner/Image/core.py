@@ -479,6 +479,17 @@ class KerrArray(np.ndarray,metadataObject):
         img=Image.open(filename,"r")
         fname=filename
         image=np.asarray(img)
+        # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+        # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+        if np.issubdtype(image.dtype,np.integer):
+            bits=np.ceil(np.log2(image.max()))
+            if bits<=8:
+                image=image.astype("uint8")
+            elif bits<=16:
+                image=image.astype("uint16")
+            elif bits<=32:
+                image=image.astype("uint32")
+       
         if 'dtype' not in kwargs.keys():
             kwargs['dtype']='uint16' #defualt output for Kerr microscope
         tmp=typeHintedDict()
@@ -524,9 +535,10 @@ class KerrArray(np.ndarray,metadataObject):
         #first set up temp files to work with
         tmpdir=tempfile.mkdtemp()
         textfile=os.path.join(tmpdir,'tmpfile.txt')
+        stdoutfile=os.path.join(tmpdir,'logfile.txt')
         imagefile=os.path.join(tmpdir,'tmpim.tif')
-        tf=open(textfile,'w') #open a text file to export metadata to temporarily
-        tf.close()
+        with open(textfile,'w') as tf:#open a text file to export metadata to temporarily
+            pass
 
         #process image to make it easier to read
         i=1.0*im / np.max(im) #change to float and normalise
@@ -537,10 +549,11 @@ class KerrArray(np.ndarray,metadataObject):
 
         #call tesseract
         if self.tesseractable:
-            subprocess.call(['tesseract', imagefile, textfile[:-4]]) #adds '.txt' extension itself
-        tf=open(textfile,'r')
-        data=tf.readline()
-        tf.close()
+            with open(stdoutfile,"w") as stdout:
+                subprocess.call(['tesseract', imagefile, textfile[:-4]],stderr=stdout) #adds '.txt' extension itself
+            os.unlink(stdoutfile)
+        with open(textfile,'r') as tf:
+            data=tf.readline()
 
         #delete the temp files
         os.remove(textfile)
@@ -557,7 +570,8 @@ class KerrArray(np.ndarray,metadataObject):
         """Get the length in pixels of the image scale bar"""
         box=(0,419,519,520) #row where scalebar exists
         im=self.crop_image(box=box, copy=True)
-        im=skimage.img_as_float(im)
+        im=im.astype(float)
+        im=(im-im.min())/(im.max()-im.min())
         im=exposure.rescale_intensity(im,in_range=(0.49,0.5)) #saturate black and white pixels
         im=exposure.rescale_intensity(im) #make sure they're black and white
         im=np.diff(im[0]) #1d numpy array, differences

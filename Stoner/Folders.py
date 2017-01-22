@@ -17,6 +17,7 @@ import unicodedata
 import string
 from collections import Iterable,MutableSequence,MutableMapping,OrderedDict
 from inspect import ismethod
+from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile
 
@@ -356,6 +357,8 @@ class baseFolder(MutableSequence):
                 return self.__getter__(self.__lookup__(name))
             else:
                 raise IndexError("{} is out of range.".format(name))
+        elif isinstance(name,slice): #Possibly ought to return another Folder?
+            return [element for element in islice(self,name.start,name.stop,name.step)]
         else:
             raise KeyError("Can't index the baseFolder with {}",format(name))
 
