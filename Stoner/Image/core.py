@@ -550,7 +550,7 @@ class KerrArray(np.ndarray,metadataObject):
         #call tesseract
         if self.tesseractable:
             with open(stdoutfile,"w") as stdout:
-                subprocess.call(['tesseract', imagefile, textfile[:-4]],stderr=stdout) #adds '.txt' extension itself
+                subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
             os.unlink(stdoutfile)
         with open(textfile,'r') as tf:
             data=tf.readline()

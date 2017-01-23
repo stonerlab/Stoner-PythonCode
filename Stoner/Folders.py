@@ -241,6 +241,8 @@ class baseFolder(MutableSequence):
         """
         if isinstance(name,int_types):
             name=self.objects.keys()[name]
+        elif name not in self.__names__():
+            name=None
         return name
 
     def __names__(self):
@@ -272,7 +274,12 @@ class baseFolder(MutableSequence):
 
             
             """
-        return self.objects[name]
+        name=self.__lookup__(name)
+        if not instantiate:
+            return name
+        else:
+            name=self.objects[name]
+        return self._update_from_object_attrs(name)
 
     def __setter__(self,name,value):
         """Stub to setting routine to store a metadataObject.
@@ -335,13 +342,26 @@ class baseFolder(MutableSequence):
         """Try to get either a group or an object.
 
         Parameters:
-            name(str, int): If name is a string then it is checked first against the groups
-                and then against the objects dictionaries - both will fall back to a regular
-                expression if necessary. If name is an int, then the _index attribute is used to
-                find a matching object key.
+            name(str, int,slice): Which objects to return from the folder.
 
         Returns:
             Either a baseFolder instance or a metadataObject instance or raises KeyError
+            
+        How the indexing works depends on the data type of the parameter *name*:
+            
+            - str, regexp
+                Then it is checked first against the groups and then against the objects 
+                dictionaries - both will fall back to a regular expression if necessary. 
+                
+            - int
+                Then the _index attribute is used to find a matching object key.
+                
+            - slice
+                Then a new :py:class:`baseFolder` is constructed by cloning he current one, but without
+                any groups or files. The new :py:class:`baseFolder` is populated with entries 
+                from the current folder according tot he usual slice definition. This has the advantage
+                of not loading the objects in the folder into memory if a :py:class:`DiskBasedFolder` is
+                used.
         """
         if isinstance(name,string_types+regexp_type):
             if name in self.groups:
@@ -358,7 +378,10 @@ class baseFolder(MutableSequence):
             else:
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
-            return [element for element in islice(self,name.start,name.stop,name.step)]
+            other=self.__clone__()
+            for iname in islice(self.__names__(),name.start,name.stop,name.step):
+                other.__setter__(iname,self.__getter__(iname))
+            return other
         else:
             raise KeyError("Can't index the baseFolder with {}",format(name))
 
@@ -500,10 +523,12 @@ class baseFolder(MutableSequence):
         return result
 
     def __div__(self,other):
+        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
         result=deepcopy(self)
         return self.__div_core__(result,other)
 
     def __idiv__(self,other):
+        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
         result=self
         return self.__div_core__(result,other)
         
@@ -648,9 +673,10 @@ class baseFolder(MutableSequence):
         """Pass through to set the sample attributes."""
         if name.startswith("_") or name in ["debug",]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,name) and not callable(getattr(self,name,None)):
+        elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type()):
+            #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
             super(baseFolder,self).__setattr__(name,value)
@@ -659,6 +685,14 @@ class baseFolder(MutableSequence):
 
     ###########################################################################
     ###################### Private Methods ####################################
+
+    def _update_from_object_attrs(self,object):
+        """Updates an object from object_attrs store."""
+        if hasattr(self,"_object_attrs") and isinstance(self._object_attrs,dict):
+            for k in self._object_attrs:
+                setattr(object,k,self._object_attrs[k])
+        return object
+
 
     def _pruner_(self,grp,breadcrumb):
         """Removes any empty groups fromthe objectFolder tree."""
@@ -1343,12 +1377,12 @@ class DiskBssedFolder(object):
         Returns:
             (metadataObject): The metadataObject
         """
-        if not instantiate or not path.exists(name) or not path.exists(path.join(self.directory,name)): #If we're not try to instantiate this object then let the parent do the work
+        try:
             return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
+        except AttributeError:
+            pass
         if not path.exists(name):
             name=path.join(self.directory,name)
-        if isinstance(self.objects[name],metadataObject):
-            return self.objects[name]
         tmp= self.type(name,**self.extra_args)
         if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
             tmp.filename=path.basename(name)
@@ -1367,8 +1401,7 @@ class DiskBssedFolder(object):
                 for h in tmp.column_headers:
                     tmp[h]=_np_.mean(tmp.column(h))
         tmp['Loaded from']=tmp.filename
-        for k in self._object_attrs:
-            tmp.__setattr__(k,self._object_attrs[k])
+        tmp=self._update_from_object_attrs(tmp)
         self.__setter__(name,tmp)
         return tmp
 
