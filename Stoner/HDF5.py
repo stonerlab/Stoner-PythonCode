@@ -69,6 +69,16 @@ class HDF5File(DataFile):
         else:
             self.filename = filename
         if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
+            parts=path.split(filename)
+            filename=parts.pop(0)
+            group=""
+            while len(parts)>0:
+                if not path.exists(path.join(filename,parts[0])):
+                    group="/".join(parts)
+                else:
+                    path.join(filename,parts.pop(0))
+                        
+                    
             with open(filename,"rb") as sniff: # Some code to manaully look for the HDF5 format magic numbers
                 sniff.seek(0,2)
                 size=sniff.tell()
@@ -86,8 +96,12 @@ class HDF5File(DataFile):
                         raise StonerLoadError("Couldn't find the HD5 format singature block")
             try:
                 f = h5py.File(filename, 'r')
+                for grp in group.split("/"):
+                    f=f[grp]
             except IOError:
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
+            except KeyError:
+                raise StonerLoadError("Could not find group {} in file {}".format(group,filename))
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
@@ -282,8 +296,8 @@ class HGXFile(DataFile):
 
 
 
-class HDF5Folder(DataFolder):
-    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a
+class HDF5Folder(object):
+    """A mixin class for :py:class:`Stoner.Folders.DataFolder` that provides a
     method to load and save data from a single HDF5 file with groups.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
@@ -297,8 +311,6 @@ class HDF5Folder(DataFolder):
         """Constructor for the HDF5Folder Class.
         """
         self.File = None
-        self.type = HDF5File
-
         super(HDF5Folder, self).__init__(*args, **kargs)
 
     def _dialog(self, message="Select Folder", new_directory=True, mode='r'):
@@ -370,35 +382,6 @@ class HDF5Folder(DataFolder):
 
         return self
 
-    def __read__(self, f):
-        """Override the _-read method to handle pulling files from the HD5File"""
-        if isinstance(f, DataFile):  # This is an already loaded DataFile
-            tmp = f
-            f = tmp.filename
-        elif isinstance(f, h5py.Group) or isinstance(f, h5py.File):  # This is a HDF5 file or group
-            tmp = HDF5File(f)
-            f = f.name
-        elif isinstance(f, str) or isinstance(
-            f, unicode):  #This sis a string, so see if it maps to a path in the current File
-            if f in self.File and "type" in self.File[f].attrs and self.File[f].attrs["type"] == "HDF5File":
-                tmp = HDF5File(self.File[f])
-            else:  # Otherwise fallback and try to laod from disc
-                tmp = super(HDF5Folder, self).__read__(f)
-        else:
-            raise RuntimeError("Unable to workout how to read from {}".format(f))
-        tmp["Loaded from"] = f
-        if self.read_means:
-            if len(tmp) == 0:
-                pass
-            elif len(tmp) == 1:
-                for h in tmp.column_headers:
-                    tmp[h] = tmp.column(h)[0]
-            else:
-                for h in tmp.column_headers:
-                    tmp[h] = _np_.mean(tmp.column(h))
-
-        return tmp
-
     def save(self, root=None):
         """Saves a load of files to a single HDF5 file, creating groups as it goes.
 
@@ -414,6 +397,7 @@ class HDF5Folder(DataFolder):
         elif isinstance(root, bool) and not root and isinstance(self.File, h5py.File):
             root = self.File.filename
             self.File.close()
+        from .Util import Data
         self.File = h5py.File(root, 'w')
         tmp = self.walk_groups(self._save)
         self.File.file.close()
@@ -439,7 +423,7 @@ class HDF5Folder(DataFolder):
         """
         tmp = self.File
         if not isinstance(f, DataFile):
-            f = DataFile(f)
+            f = Data(f)
         for g in trail:
             if g not in tmp:
                 tmp.create_group(g)

@@ -98,7 +98,10 @@ class baseFolder(MutableSequence):
         
         We do this in __new__ so that the mixin classes can access baseFolders state storage before baseFolder does further __init__() work.
         """
-        self=super(baseFolder,cls).__new__(cls,*args,**kargs)
+        if python_v3:            
+            self=super(baseFolder,cls).__new__(cls)
+        else:
+            self=super(baseFolder,cls).__new__(cls,*args,**kargs)
         self.debug=kargs.pop("debug",False)
         self._object_attrs=dict()
         self._last_name=0
@@ -587,7 +590,7 @@ class baseFolder(MutableSequence):
             ret=super(baseFolder,self).__getattribute__(item)
         except AttributeError:
             if item.startswith("_"):
-                raise AttributeError("{} is not an Attribute of {}".format(item))
+                raise AttributeError("{} is not an Attribute of {}".format(item,self.__class__))
                 
             instance=self.instance
             try:
@@ -671,7 +674,7 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug",]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
