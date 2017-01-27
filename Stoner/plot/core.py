@@ -921,12 +921,16 @@ class PlotMixin(object):
 
         if "template" in kargs: #Catch template in kargs
             self.template=kargs.pop("template")
-
+        try:
+		     title = os.path.basename(self.filename)
+        except TypeError:
+            title = None			 
+		 
         defaults = {
             "plotter": plt.plot,
             "show_plot": True,
             "figure": self.__figure,
-            "title": os.path.basename(self.filename),
+            "title": title,
             "save_filename": None,
             "xlabel": self._col_label(self.find_col(c.xcol)),
             "ylabel": self._col_label(self.find_col(c.ycol), True)
