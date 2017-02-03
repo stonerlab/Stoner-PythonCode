@@ -668,11 +668,11 @@ class objectFolder(MutableSequence):
         files=[]
         if isinstance(filter, string_types):
             for f in self.files:
-                if fnmatch.fnmatch(f, filter)  ^ invert:
+                if fnmatch.fnmatch(f.filename, filter)  ^ invert:
                     files.append(f)
         elif isinstance(filter, re._pattern_type):
             for f in self.files:
-                if filter.search(f) is not None:
+                if filter.search(f.filename) is not None:
                     files.append(f)
         elif filter is None:
             raise ValueError("A filter must be defined !")

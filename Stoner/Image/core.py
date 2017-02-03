@@ -21,7 +21,7 @@ import warnings
 import subprocess #calls to command line
 import skimage
 from copy import deepcopy
-from skimage import exposure,feature,io,measure,\
+from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
 from skimage import img_as_float
@@ -171,6 +171,7 @@ class KerrArray(np.ndarray,metadataObject):
         """
         if obj is None: return
         self.metadata = getattr(obj, 'metadata', None)
+        self.filename = getattr(obj, 'filename', None)
 
     def __array_wrap__(self, out_arr, context=None):
         """see __array_finalize__ for info"""
@@ -201,7 +202,15 @@ class KerrArray(np.ndarray,metadataObject):
     def data(self):
         """alias for image[:]. Equivalence to Stoner.data behaviour"""
         return self[:]
-
+    
+    #@property
+    #def filename(self):
+    #    if 'filename' in self.keys():
+    #        ret=self['filename']
+    #    else:
+    #        ret=None
+    #    return ret
+    
     @property
     def _kfuncs(self):
         """Provide an attribtute that caches the imported KerrArray functions."""
@@ -214,7 +223,7 @@ class KerrArray(np.ndarray,metadataObject):
     def _ski_funcs(self):
         """Provide an attribute that cahces the import sckit-image function names."""
         if self._ski_funcs_proxy is None:
-            _ski_modules=[exposure,feature,io,measure,filters,filters.rank, graph,
+            _ski_modules=[color,exposure,feature,io,measure,filters,filters.rank, graph,
                     util, restoration, morphology, segmentation, transform,
                     viewer]
             self._ski_funcs_proxy={}
