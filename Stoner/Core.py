@@ -1424,7 +1424,7 @@ class DataFile(metadataObject):
 
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
-    patterns=["*.txt","*.tdi"] # Recognised filename patterns
+    _patterns=["*.txt","*.tdi"] # Recognised filename patterns
 
     #mimetypes we match
     mime_type=["text/plain"]
@@ -1663,6 +1663,16 @@ class DataFile(metadataObject):
         else:
             self.data.mask = value
 
+    @classproperty
+    def patterns(self):
+        patterns=self._patterns
+        for cls in self.subclasses:
+            klass=self.subclasses[cls]
+            if klass is DataFile or "patterns" not in klass.__dict__:
+                continue
+            patterns.extend([p for p in klass.patterns if p not in patterns])
+        return patterns
+
     @property
     def records(self):
         """Returns the data as a _np_ structured data array. If columns names are duplicated then they
@@ -1701,7 +1711,7 @@ class DataFile(metadataObject):
         """Sets a new setas assignment by calling the setas object."""
         self._data._setas(value)
 
-    @property
+    @classproperty
     def subclasses(self):
         """Return a list of all in memory subclasses of this DataFile.
         """

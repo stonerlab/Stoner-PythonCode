@@ -1254,7 +1254,7 @@ class AnalysisMixin(object):
             for i,p0 in enumerate(pn): # iterate over every row in the supplied p0 values
                 p0=_lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
-                ret_val[i,:]=self.__lmfit_one(model,ydata,scale_covar,sigma,p0,prefix)
+                ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix)
         return ret_val
 
 

@@ -95,6 +95,7 @@ class KerrArray(np.ndarray,metadataObject):
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
     _kfuncs_proxy=None
+    _reduce_metadata=True
     
 
     #now initialise class
@@ -105,29 +106,19 @@ class KerrArray(np.ndarray,metadataObject):
         to imitate a numpy array as close as possible.
         """
 
-        fname=""
         if isinstance(image,string_types): #we have a filename
-            img=Image.open(image,"r")
-            fname=image
-            image=np.asarray(img)
-            if 'dtype' not in kwargs.keys():
-                kwargs['dtype']='uint16' #defualt output for Kerr microscope
-            tmp=typeHintedDict()
-            for k in img.info:
-                v=img.info[k]
-                if "b'" in v: v=v.strip(" b'")    
-                tmp[k]=v
+            image,tmp=cls._load(image,**kwargs)
         else:
-            tmp=typeHintedDict()
+            tmp=typeHintedDict({"Loaded from":""})
             np.array(image) #try array on image to check it's a valid numpy type
         array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
         array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
         ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata=tmp # Store the metadata from the PNG file into the KerrImage
-        ka.filename=fname
+        ka.metadata.update(tmp) # Store the metadata from the PNG file into the KerrImage
+        ka.filename=tmp["Loaded from"]
         return ka #__init__ called
 
-    def __init__(self, image=[],  reduce_metadata=True,
+    def __init__(self, image=[],
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
         """Create a KerrArray instance with metadata attribute
@@ -152,7 +143,7 @@ class KerrArray(np.ndarray,metadataObject):
             dictionary of extra metadata items you would like adding to your array
         """
         
-        if reduce_metadata:
+        if kwargs.get("reduce_metadata",self._reduce_metadata):
             self.reduce_metadata()
         if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
             for key in metadata.keys():
@@ -543,6 +534,33 @@ class KerrArray(np.ndarray,metadataObject):
             return self.filename
         else:
             return None
+
+    @classmethod
+    def _load(self,filename,**kwargs):
+        """Load an image from a file and return as a 2D array and metadata dictionary."""
+        img=Image.open(filename,"r")
+        fname=filename
+        image=np.asarray(img)
+        # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+        # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+        if np.issubdtype(image.dtype,np.integer):
+            bits=np.ceil(np.log2(image.max()))
+            if bits<=8:
+                image=image.astype("uint8")
+            elif bits<=16:
+                image=image.astype("uint16")
+            elif bits<=32:
+                image=image.astype("uint32")
+       
+        if 'dtype' not in kwargs.keys():
+            kwargs['dtype']='uint16' #defualt output for Kerr microscope
+        tmp=typeHintedDict()
+        for k in img.info:
+            v=img.info[k]
+            if "b'" in v: v=v.strip(" b'")    
+            tmp[k]=v
+        tmp["Loaded from"]=fname
+        return image,tmp 
             
     def _parse_text(self, text, key=None):
         """Attempt to parse text which has been recognised from an image
@@ -579,9 +597,10 @@ class KerrArray(np.ndarray,metadataObject):
         #first set up temp files to work with
         tmpdir=tempfile.mkdtemp()
         textfile=os.path.join(tmpdir,'tmpfile.txt')
+        stdoutfile=os.path.join(tmpdir,'logfile.txt')
         imagefile=os.path.join(tmpdir,'tmpim.tif')
-        tf=open(textfile,'w') #open a text file to export metadata to temporarily
-        tf.close()
+        with open(textfile,'w') as tf:#open a text file to export metadata to temporarily
+            pass
 
         #process image to make it easier to read
         i=1.0*im / np.max(im) #change to float and normalise
@@ -592,10 +611,11 @@ class KerrArray(np.ndarray,metadataObject):
 
         #call tesseract
         if self.tesseractable:
-            subprocess.call(['tesseract', imagefile, textfile[:-4]]) #adds '.txt' extension itself
-        tf=open(textfile,'r')
-        data=tf.readline()
-        tf.close()
+            with open(stdoutfile,"w") as stdout:
+                subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
+            os.unlink(stdoutfile)
+        with open(textfile,'r') as tf:
+            data=tf.readline()
 
         #delete the temp files
         os.remove(textfile)
@@ -612,7 +632,8 @@ class KerrArray(np.ndarray,metadataObject):
         """Get the length in pixels of the image scale bar"""
         box=(0,419,519,520) #row where scalebar exists
         im=self.crop_image(box=box, copy=True)
-        im=skimage.img_as_float(im)
+        im=im.astype(float)
+        im=(im-im.min())/(im.max()-im.min())
         im=exposure.rescale_intensity(im,in_range=(0.49,0.5)) #saturate black and white pixels
         im=exposure.rescale_intensity(im) #make sure they're black and white
         im=np.diff(im[0]) #1d numpy array, differences

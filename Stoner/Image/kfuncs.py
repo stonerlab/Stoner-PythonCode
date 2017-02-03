@@ -87,10 +87,12 @@ def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     refed=KerrArray(ref,get_metadata=False)
     refed=refed.crop_image(box=box)
     refed=refed.filter_image(sigma=1)
+    refed=refed > refed.threshold_otsu()
     refed=refed.corner_fast(threshold=threshold)
 
     imed=cim.clone
     imed=imed.filter_image(sigma=1)
+    imed=imed>imed.threshold_otsu()
     imed=imed.corner_fast(threshold=threshold)
 
     shift,err,phase=feature.register_translation(refed,imed,upsample_factor=upsample_factor)

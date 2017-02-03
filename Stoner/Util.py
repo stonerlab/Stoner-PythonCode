@@ -7,13 +7,12 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 
-from Stoner.compat import *
-from Stoner.Core import DataFile as _DF_
-from Stoner.Analysis import AnalysisMixin as _AF_
-from Stoner.plot import PlotMixin as _PF_
-import Stoner.FileFormats as _SFF_
-from Stoner.Folders import DataFolder as _SF_
-from Stoner.Fit import linear
+from .compat import *
+from .Core import DataFile as _DF_
+from .Analysis import AnalysisMixin as _AF_
+from .plot import PlotMixin as _PF_
+from .Folders import DataFolder as _SF_
+from .Fit import linear
 from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
 from scipy.integrate import trapz
 from scipy.stats import sem
@@ -27,6 +26,7 @@ except ImportError:
 from inspect import isclass
 import re
 from cgi import escape as html_escape
+import Stoner.FileFormats as _SFF_
 
 def tex_escape(text):
     """
@@ -280,15 +280,16 @@ def split_up_down(data, col=None, folder=None):
     elif len(troughs) > 0:  # Fall then rise
         order = False
     else:  #No peaks or troughs so just return a single rising
-        ret=_SF_()
+        ret=_SF_(readlist=False)
         ret+=data
         return ret
     splits = [0, len(a)]
     splits.extend(peaks)
     splits.extend(troughs)
     splits.sort()
+    splits=[int(s) for s in splits]
     if not isinstance(folder, _SF_):  # Create a new DataFolder object
-        output = _SF_()
+        output = _SF_(readlist=False)
     else:
         output = folder
     output.add_group("rising")
@@ -311,7 +312,7 @@ def split_up_down(data, col=None, folder=None):
     for i in range(len(splits)-1):
         working=data.clone
         working.data = data.data[splits[i]:splits[i+1],:]
-        output.groups[risefall[i%2]].files.append(working)
+        output.groups[risefall[i%2]].append(working)
     return output
 
 
@@ -483,7 +484,7 @@ def hysteresis_correct(data, **kargs):
     data = cls(data)
 
     if "setas" in kargs: # Allow us to override the setas variable
-        d.setas=kargs.pop("setas")
+        data.setas=kargs.pop("setas")
 
     #Get xcol and ycols from kargs if specified
     xc = kargs.pop("xcol",data.find_col(data.setas["x"]))
