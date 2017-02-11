@@ -243,7 +243,7 @@ class baseFolder(MutableSequence):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name,int_types):
-            name=self.objects.keys()[name]
+            name=list(self.objects.keys())[name]
         elif name not in self.__names__():
             name=None
         return name
@@ -282,6 +282,8 @@ class baseFolder(MutableSequence):
             return name
         else:
             name=self.objects[name]
+            if not isinstance(name,self._type):
+                raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
 
     def __setter__(self,name,value):
@@ -377,7 +379,7 @@ class baseFolder(MutableSequence):
                 return self.__getter__(name)
         elif isinstance(name,int_types):
             if -len(self)<name<len(self):
-                return self.__getter__(self.__lookup__(name))
+                return self.__getter__(self.__lookup__(name),instantiate=True)
             else:
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
@@ -447,7 +449,11 @@ class baseFolder(MutableSequence):
         if isinstance(other,baseFolder):
             if issubclass(other.type,self.type):
                 result.extend([f for f in other.files])
-                result.groups.update(other.groups)
+                for grp in other.groups:
+                    if grp in self.groups:
+                        result.groups[grp]+=other.groups[grp] # recursively merge groups
+                    else:
+                        result.groups[grp]=copy(other.groups[grp])
             else:
                 raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
         elif isinstance(other,result.type):
@@ -525,15 +531,26 @@ class baseFolder(MutableSequence):
         result=self.__add_core__(result,other)
         return result
 
-    def __div__(self,other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-        result=deepcopy(self)
-        return self.__div_core__(result,other)
+    if python_v3:
+        def __truediv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=deepcopy(self)
+            return self.__div_core__(result,other)
 
-    def __idiv__(self,other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-        result=self
-        return self.__div_core__(result,other)
+        def __itruediv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=self
+            return self.__div_core__(result,other)
+    else:            
+        def __div__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=deepcopy(self)
+            return self.__div_core__(result,other)
+
+        def __idiv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=self
+            return self.__div_core__(result,other)
         
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
@@ -592,15 +609,17 @@ class baseFolder(MutableSequence):
             if item.startswith("_"):
                 raise AttributeError("{} is not an Attribute of {}".format(item,self.__class__))
                 
-            instance=self.instance
             try:
+                instance=super(baseFolder,self).__getattribute__("instance")
                 if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:
                         ret=self._object_attrs[item]
-                    else:
+                    elif len(self)>0:
                         ret=getattr(self[0],item,None)
+                    else:
+                        ret=None
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".ormat(item,type(self),type(instance)))
         return ret
@@ -674,7 +693,7 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups","args","kargs"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
@@ -1382,7 +1401,7 @@ class DiskBssedFolder(object):
         """
         try:
             return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
-        except AttributeError:
+        except (AttributeError,IndexError,KeyError):
             pass
         if not path.exists(name):
             name=path.join(self.directory,name)

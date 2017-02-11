@@ -105,7 +105,6 @@ class CSVFile(DataFile):
 
 class VSMFile(DataFile):
     """Extends DataFile to open VSM Files"""
-
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
@@ -770,21 +769,21 @@ class BNLFile(DataFile):
 
     def __find_lines(self):
         """returns an array of ints [header_line,data_line,scan_line,date_line,motor_line]"""
-        fp = open(self.filename, 'r')
-        self.line_numbers = [0, 0, 0, 0, 0]
-        counter = 0
-        for line in fp:
-            counter += 1
-            if counter == 1 and line[0] != '#':
-                raise StonerLoadError("Not a BNL File ?")
-            if len(line) < 2: continue  #if there's nothing written on the line go to the next
-            elif line[0:2] == '#L': self.line_numbers[0] = counter
-            elif line[0:2] == '#S': self.line_numbers[2] = counter
-            elif line[0:2] == '#D': self.line_numbers[3] = counter
-            elif line[0:2] == '#P': self.line_numbers[4] = counter
-            elif line[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                self.line_numbers[1] = counter
-                break
+        with open(self.filename, 'r') as fp:
+            self.line_numbers = [0, 0, 0, 0, 0]
+            counter = 0
+            for line in fp:
+                counter += 1
+                if counter == 1 and line[0] != '#':
+                    raise StonerLoadError("Not a BNL File ?")
+                if len(line) < 2: continue  #if there's nothing written on the line go to the next
+                elif line[0:2] == '#L': self.line_numbers[0] = counter
+                elif line[0:2] == '#S': self.line_numbers[2] = counter
+                elif line[0:2] == '#D': self.line_numbers[3] = counter
+                elif line[0:2] == '#P': self.line_numbers[4] = counter
+                elif line[0] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                    self.line_numbers[1] = counter
+                    break
 
     def __get_metadata(self):
         """Metadata found is scan number 'Snumber', scan type and parameters 'Stype',

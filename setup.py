@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 import Stoner
 
 def read(fname):
@@ -14,7 +14,7 @@ setup(
     license = "GPLv3",
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",
-    packages=['Stoner'],
+    packages=find_packages(),
     package_dir={'Stoner': 'Stoner'},
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",

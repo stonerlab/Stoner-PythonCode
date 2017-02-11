@@ -3177,7 +3177,7 @@ class DataFile(metadataObject):
                     if self.debug: print("Failed Load: {}".format(e))
                     continue
             else:
-                raise IOError("Ran out of subclasses to try and load as.")
+                raise IOError("Ran out of subclasses to try and load {} as.".format(filename))
         else:
             if filetype is None:
                 test = cls()

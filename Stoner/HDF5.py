@@ -13,6 +13,7 @@ from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
 from .Image.core import KerrArray
 import os.path as path
+import os
 
 
 class HDF5File(DataFile):
@@ -69,7 +70,7 @@ class HDF5File(DataFile):
         else:
             self.filename = filename
         if isinstance(filename, string_types):  #We got a string, so we'll treat it like a file...
-            parts=path.split(filename)
+            parts=filename.split(os.pathsep)
             filename=parts.pop(0)
             group=""
             while len(parts)>0:
@@ -97,7 +98,8 @@ class HDF5File(DataFile):
             try:
                 f = h5py.File(filename, 'r')
                 for grp in group.split("/"):
-                    f=f[grp]
+                    if grp.strip()!="":
+                        f=f[grp]
             except IOError:
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
             except KeyError:
