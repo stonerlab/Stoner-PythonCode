@@ -58,12 +58,7 @@ def adjust_contrast(im, lims=(0.1,0.9), percent=True):
     im=im.rescale_intensity(in_range=(vmin,vmax)) #clip the intensity
     return im
 
-def clip_intensity(im):
-    """clip intensity that lies outside the range allowed by dtype.
-    Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-    are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
-    im=im.rescale_intensity(in_range=util.dtype_limits(im,clip_negative=True))
-    return im
+
 
 def correct_drift(im, ref, threshold=0.005, upsample_factor=50,box=None):
     """Align images to correct for image drift.
@@ -115,6 +110,14 @@ def subtract_image(im, background, contrast=16, clip=True):
     if clip:
         im.clip_intensity()
     return im
+
+def float_and_crop(im):
+    """convert image to float and crop_text
+    Just to group typical functions together
+    """ 
+    k=im.convert_float()
+    k=k.crop_text()
+    return k
     
 def edge_det(filename,threshold1,threshold2):
     '''Detects an edges in an image according to the thresholds 1 and 2.
@@ -310,14 +313,15 @@ def plot_histogram(im):
     hist,bins=im.histogram()
     cum,bins=im.cumulative_distribution()
     cum=cum*np.max(hist)/np.max(cum)
+    plt.figure()
     plt.plot(bins,hist,'k-')
     plt.plot(bins,cum,'r-')
     
 def threshold_minmax(im,threshmin=0.1,threshmax=0.9):
     """returns a boolean array which is thresholded between threshmin and 
-    threshmax"""
+    threshmax (ie True if value is between threshmin and threshmax)"""
     im=im.convert_float()
-    return np.logical_or(im<threshmin, im>threshmax)
+    return np.logical_and(im>threshmin, im<threshmax)
     
 def defect_mask(im, thresh=0.6, corner_thresh=0.05, radius=1, return_extra=False):
     """Tries to create a boolean array which is a mask for typical defects
@@ -386,15 +390,34 @@ def do_nothing(im):
     """exactly what it says on the tin"""
     return im
     
-def imshow(im, fig=None, title=None):
-    """quick plot of image"""
-    if fig is not None:
-        fig=plt.imshow(im, figure=fig, cmap='gray')
+def imshow(im, figure='new', title=None, cmap='gray', **kwargs):
+    """quick plot of image
+    Parameters
+    ----------
+    figure: int, str or matplotlib.figure
+        if int then use figure number given
+        if figure is 'new' then create a new figure
+        if None then use whatever default figure is available"""
+    if figure is not None and isinstance(figure,int):
+        fig=plt.figure(figure)
+        plt.imshow(im, figure=fig, cmap=cmap, **kwargs)
+    elif figure is not None and figure=='new':
+        fig=plt.figure()
+        plt.imshow(im, figure=fig, cmap=cmap, **kwargs)
+    elif figure is not None: #matplotlib.figure instance
+        fig=plt.imshow(im, figure=figure, cmap=cmap, **kwargs)
     else:
-        fig=plt.imshow(im, cmap='gray')
+        fig=plt.imshow(im, cmap=cmap, **kwargs)
     if title is None:
-        plt.title(os.path.split(im['filename'])[1])
+        if 'filename' in im.metadata.keys():
+            plt.title(os.path.split(im['filename'])[1])
+        else:
+            plt.title('')
     else:
         plt.title(title)
     plt.axis('off')
     return fig
+    
+def denoise(im, weight=0.1):
+    """just a rename of the skimage restore function"""
+    return im.denoise_tv_chambolle(weight=weight)

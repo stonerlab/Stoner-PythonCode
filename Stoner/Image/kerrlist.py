@@ -10,15 +10,8 @@ import numpy as np
 import os, sys, time
 from os import path
 from copy import copy
-import PIL #check we have python imaging library plugin
-import skimage
-from skimage.io import ImageCollection
-from skimage.io import imread
-from skimage import filters, feature
-#from skimage import draw,exposure,feature,io,measure,\
-#                    filters,util,restoration,segmentation,\
-#                    transform
-#from skimage.viewer import ImageViewer,CollectionViewer
+
+from skimage.viewer import CollectionViewer
 from Stoner.Folders import objectFolder
 from Stoner.compat import *
 from Stoner.compat import string_types
@@ -104,8 +97,9 @@ class KerrList(objectFolder):
     def apply_all(self, func, *args, **kwargs):
         """Apply a function to all images in list"""
         if isinstance(func,string_types):
-            f=getattr(self,func) # objectFolder handles this for us.
-            f(*args,**kwargs)
+            for i,ka in enumerate(self):
+                f=getattr(self[i],func) #check for KerrArray function
+                self[i]=f(*args,**kwargs)
             retval=self
         elif callable(func):
             retval=[]
@@ -160,7 +154,6 @@ class KerrStack(object):
     as a 3d numpy array. The final axis is the number of images.    
     """
     
-    
     def __init__(self, imagearray, fieldlist=None):
         """3d array stack of images
         Parameters
@@ -170,21 +163,31 @@ class KerrStack(object):
         fieldlist ndarray:
             list of field values
         """
-        self.imagearray=imagearray
-        self.convert_float()
-        if fieldlist is not None:
-            fieldlist=np.array(fieldlist)
-            assert len(fieldlist.shape)==1, 'fieldlist must be 1d'
-            assert fieldlist.shape[0]==imagearray.shape[2], 'fieldlist shape incompatible with image array'
+        if isinstance(imagearray, KerrStack):
+            self.imagearray=imagearray.imagearray
+            self.fields=imagearray.fields
         else:
-            fieldlist=np.arange(imagearray.shape[2])
-        self.fields=fieldlist
-        
+            self.imagearray=imagearray
+            self.convert_float()
+            if fieldlist is not None:
+                fieldlist=np.array(fieldlist)
+                assert len(fieldlist.shape)==1, 'fieldlist must be 1d'
+                assert fieldlist.shape[0]==imagearray.shape[2], 'fieldlist shape incompatible with image array'
+            else:
+                fieldlist=np.arange(imagearray.shape[2])
+            self.fields=fieldlist
+
+    @property
+    def shape(self):
+        """call through to ndarray.shape
+        """
+        return self.imagearray.shape
+    
     def __len__(self):
         return self.imagearray.shape[2]
         
     def __getitem__(self, i):
-        return self.imagearray[:,:,i]
+        return self.imagearray[:,:,i].view(type=KerrArray)
         
     def __setitem__(self, i, value):
         self.imagearray[:,:,i]=value  
@@ -193,16 +196,20 @@ class KerrStack(object):
         """convert array to floats between 0 and 1"""
         for i,im in enumerate(self):
             k=KerrArray(im)
-            k=k.convert_float()
+            k=k.convert_float(clip_negative=True)
             self[i]=np.array(k)
     
     def clone(self):
         return KerrStack(np.copy(self.imagearray), fieldlist=np.copy(self.fields))        
     
-    def subtract(self, background, contrast=16):
-        """subtract a background image from all images in the stack"""
+    def subtract(self, background, contrast=16, clip_intensity=True):
+        """subtract a background image from all images in the stack.
+        If clip_intensity then clip negative intensities to 0"""
         for i,im in enumerate(self):
-            self[i]=contrast*(im-background)+0.5
+            new=contrast*(im-background)+0.5
+            if clip_intensity:
+                new=new.clip_intensity()
+            self[i]=new
     
     def apply_all(self, func, quiet=True, *args, **kwargs):
         """apply function func to all images in the stack
@@ -227,7 +234,14 @@ class KerrStack(object):
                 self[i]=func(im, *args, **kwargs)
             if not quiet:
                 print('.')
-        
+    
+    def show(self):
+        """show a stack of images in a CollectionViewer window"""
+        stackims=[self[i] for i in range(len(self))]
+        cv=CollectionViewer(stackims)
+        cv.show()
+        return cv
+    
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images
     
@@ -255,3 +269,80 @@ class KerrStack(object):
             else:
                 hyst[i,1] = np.average(im)
         return hyst
+        
+    
+    def reverse(self):
+        """reverse the stack order"""
+        for i in reversed(range(len(self))):
+            self.imagearray = self.imagearray[:,:,::-1]
+            
+    def index_to_field(self, index_map):
+        """Convert an image of index values into an image of field values
+        (needs fieldlist to be defined for the stack)
+        """
+        if self.fields is None:
+            raise AttributeError('Field list is not defined in MaskStack')
+        fieldvals=np.take(self.fields, index_map)
+        return KerrArray(fieldvals)
+        
+class MaskStack(KerrStack):
+    """Similar to KerrStack but made for stacks of boolean or binary images
+    """
+    def __init__(self, imagearray, field_list=None):
+        super(MaskStack,self).__init__(imagearray, field_list)
+        self.imagearray=self.imagearray.astype(bool)
+    
+    def switch_index(self, saturation_end=True, saturation_value=True):
+        """Given a stack of boolean masks representing a hystersis loop find
+        the stack index of the saturation field for each pixel.
+        
+        Take the final mask as all switched (or the first mask if saturation_end
+        is False). Work back through the masks taking the first time a pixel 
+        switches as its coercive field (ie the last time it switches before
+        reaching saturation).
+        Elements that start switched at the lowest measured field or never
+        switch are given a zero index.
+        
+        At the moment it's set up to expect masks to be false when the sample is saturated
+        at a high field
+        
+        Parameters
+        ----------
+        saturation_end: bool
+            True if the last image is closest to the fully saturated state. 
+            False if you want the first image
+        saturation_value: bool
+            if True then a pixel value True means that switching has occured
+            (ie magnetic saturation would be all True)
+            
+        Returns
+        -------
+        switch_ind: MxN ndarray of int
+            index that each pixel switches at
+        switch_progession: MxNx(P-1) ndarray of bool
+            stack of masks showing when each pixel saturates
+        
+        """
+        ms=self.clone()
+        if not saturation_end:
+            ms=ms.reverse()
+        switch_ind=np.zeros(ms[0].shape, dtype=int)
+        switch_prog=self.clone()
+        switch_prog.imagearray=np.zeros(
+                    (self.shape[0],self.shape[1],self.shape[2]-1), dtype=bool)
+        switch_prog.fields=switch_prog.fields[0:-1]
+        for m in reversed(range(len(ms)-1)):
+            already_done=np.copy(switch_ind).astype(dtype=bool) #only change switch_ind if it hasn't already
+            condition=np.logical_and( ms[m]!=saturation_value, 
+                                      ms[m+1]==saturation_value )
+            condition=np.logical_and(condition, np.invert(already_done))
+            condition=[condition, np.logical_not(condition)]
+            choice=[np.ones(switch_ind.shape)*m, switch_ind] #index or leave as is
+            switch_ind = np.select(condition, choice)       
+            switch_prog[m]=already_done
+        if not saturation_end:
+            switch_ind=-switch_ind + len(self)-1 #should check this!
+            switch_prog.reverse()
+        switch_ind=KerrArray(switch_ind.astype(int))
+        return switch_ind, switch_prog
+        

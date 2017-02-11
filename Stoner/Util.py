@@ -463,9 +463,9 @@ def hysteresis_correct(data, **kargs):
 
     Keyword Arguments:
         correct_background (bool): Correct for a diamagnetic or paramagnetic background to the hystersis loop
-            also recentres the loop about zero moment.
+            also recentres the loop about zero moment (default True).
         correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric
-            this will remove any offset in filed due to trapped flux
+            this will remove any offset in filed due to trapped flux (default True)
         saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be
             fully saturated. If an integer is given it will use that many data points at the end of the loop.
         xcol (column index): Column with the x data in it
@@ -554,7 +554,9 @@ def hysteresis_correct(data, **kargs):
     if correct_background:
         for d in [data,up,down]:
             d.y = d.y - linear(d.x, *pm)
-
+    else:
+        for d in [up,down]: #need to do these anyway to find Hc and Hsat
+            d.y = d.y - linear(d.x, *pm)
     Hc=[None,None]
     Hc_err=[None,None]
     Hsat=[None,None]
