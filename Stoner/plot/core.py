@@ -922,7 +922,7 @@ class PlotMixin(object):
         if "template" in kargs: #Catch template in kargs
             self.template=kargs.pop("template")
         try:
-		     title = os.path.basename(self.filename)
+            title = os.path.basename(self.filename)
         except TypeError:
             title = None			 
 		 

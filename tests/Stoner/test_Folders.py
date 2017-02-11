@@ -80,6 +80,6 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.setUp()
     test.test_Folders()
     test.test_Operators()
-    f=test.fldr/"Loaded as"
-    print(f)
+    test.fldr/="Loaded as"
+    print(test.fldr)
 

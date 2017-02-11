@@ -10,7 +10,11 @@ from __future__ import print_function
 import numpy as np
 from Stoner.Util import Data
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini,quadratic
-import ConfigParser
+from Stoner.compat import *
+if python_v3:
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 
 class working(Data):
     """Utility class to manipulate data and plot it"""
@@ -26,10 +30,14 @@ class working(Data):
         self.data=tmp.data
         self.vcol=self.find_col(self.setas["x"])
         self.gcol=self.find_col(self.setas["y"])
+        self.filename=tmp.filename
         
         model,p0=cfg_model_from_ini(inifile,data=self)
 
-        config=ConfigParser.SafeConfigParser()
+        if python_v3:
+            config=ConfigParser.ConfigParser()
+        else:
+            config=ConfigParser.SafeConfigParser()
         config.read(inifile)
         self.config=config
 

@@ -2199,13 +2199,14 @@ class DataFile(metadataObject):
         if name in setas_cols:
             ret=self._getattr_col(name)
             if ret is not None: return ret
-        for c in self._mro:
-            if c not in (DataFile,metadataObject):
-                try:
-                    ret = c.__getattr__(self,name)
-                    return ret
-                except AttributeError:
-                    continue
+#        for c in self._mro:
+#            print(self.__class__.__name__)
+#            if c not in (DataFile,metadataObject):
+#                try:
+#                    ret = c.__getattr__(self,name)
+#                    return ret
+#                except AttributeError:
+#                    continue
         if name in dir(self):
             return super(DataFile, self).__getattr__(name)
         elif name in ("_setas", ):  # clearly not setup yet
