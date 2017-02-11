@@ -592,15 +592,17 @@ class baseFolder(MutableSequence):
             if item.startswith("_"):
                 raise AttributeError("{} is not an Attribute of {}".format(item,self.__class__))
                 
-            instance=self.instance
+            instance=self._instance
             try:
                 if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:
                         ret=self._object_attrs[item]
-                    else:
+                    elif len(self)>0:
                         ret=getattr(self[0],item,None)
+                    else:
+                        raise AttributeError
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".ormat(item,type(self),type(instance)))
         return ret
