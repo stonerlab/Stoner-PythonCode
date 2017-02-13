@@ -242,6 +242,7 @@ class AnalysisMixin(object):
 
     def __init__(self,*args,**kargs):
         """Just call super."""
+        super(AnalysisMixin,self).__init__(*args,**kargs)
         if self.debug: print("Done AnlaysisMixin init")
 
     def SG_Filter(self, col=None, points=15, poly=1, order=0, result=None, replace=False, header=None):
@@ -742,7 +743,7 @@ class AnalysisMixin(object):
         retvals=[]
         for i,yc in enumerate(ycol):
 
-            if isinstance(sigma,_np_.ndarray) and sigma.shape>1:
+            if isinstance(sigma,_np_.ndarray) and sigma.shape[0]>1:
                 s=sigma[i]
             else:
                 s=sigma
@@ -1598,13 +1599,12 @@ class AnalysisMixin(object):
             User guide section :ref:`peak_finding`
             """
 
-        if ycol is None:
-            ycol = self.setas._get_cols("ycol")
-            xcol = self.setas._get_cols("xcol")
+        _=self._col_args(scalar=False,xcol=xcol,ycol=ycol)
+        xcol,ycol=_.xcol,_.ycol[0]
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
-        setas=self.setas
+        setas=self.setas.clone
         self.setas=""
         d1 = self.SG_Filter(ycol, width, poly, 1)
         d2 = self.SG_Filter(ycol, 2*width, poly, 2) # 2nd differential requires more smoothing
@@ -1625,15 +1625,15 @@ class AnalysisMixin(object):
         # Ensure we have some X-data
         if xcol == None:
             full_data=True
-            xcol = i
+            xdata = i
 
         elif isinstance(xcol,bool) and not xcol:
             full_data=False
-            xcol = i
+            xdata = i
         else:
             full_data=False
-            xcol = self.column(xcol)
-        xdata = interp1d(i, xcol,kind="cubic")
+            xdata = self.column(xcol)
+        xdata = interp1d(i, xdata,kind="cubic")
 
 
         possible_peaks = _np_.array(_threshold(0, d1, rising=troughs, falling=peaks))
@@ -1643,18 +1643,19 @@ class AnalysisMixin(object):
         possible_peaks=_np_.array([p for ix,p in enumerate(possible_peaks) if abs(curvature[ix])>significance])
         # Sort in order of significance
         if sort:
-            possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_func(possible_peaks))))
+            possible_peaks = _np_.take(possible_peaks, _np_.argsort(_np_.abs(d2_interp(possible_peaks))))
+        
+        xdat=xdata(possible_peaks+index_offset)
 
         if modify:
-            setas=self.setas.clone
-            self.data=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic")
-            self.setas=setas
+            self.data=self.interpolate(xdat,xcol=xcol,kind="cubic")
             ret=self
         elif full_data:
-            ret=self.interpolate(xdata(possible_peaks+index_offset),kind="cubic",xcol=False)
+            ret=self.interpolate(xdat,kind="cubic",xcol=False)
         else:
             ret=xdata(possible_peaks+index_offset)
         self.setas=setas
+        print(setas)
         # Return - but remembering to add back on the offset that we took off due to differentials not working at start and end
         return ret
 

@@ -73,6 +73,9 @@ class Folders_test(unittest.TestCase):
         fldr+="New-XRay-Data.dql"
         self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
         print("Passed 5")
+        fldr/="Loaded as"
+        self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
+        print("Passed 6")
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

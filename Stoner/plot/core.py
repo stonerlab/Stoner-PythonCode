@@ -56,7 +56,17 @@ class PlotMixin(object):
     template = DefaultPlotStyle
     legend = True
     multiple = "common"
-    _public_attrs={
+
+    def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
+        """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
+
+        """
+        super(PlotMixin,self).__init__(*args,**kargs)
+        self.__figure = None
+        self._labels = copy.deepcopy(self.column_headers)
+        self._subplots = []
+        if self.debug: print("Done PlotMixin init")
+        self._public_attrs={
             "fig": (int, mplfig.Figure),
             "labels": list,
             "template": (DefaultPlotStyle,type(DefaultPlotStyle)),
@@ -67,16 +77,6 @@ class PlotMixin(object):
             "ylabel": string_types
     }
 
-    def __init__(self, *args, **kargs):  #Do the import of plt here to speed module load
-        """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
-
-        """
-        self.__figure = None
-        self._labels = copy.deepcopy(self.column_headers)
-        self._subplots = []
-        if "labels" in kargs:
-            self.labels=kargs.pop("labels")
-        if self.debug: print("Done PlotMixin init")
 
 #============================================================================================================================
 #Properties of PlotMixin
@@ -432,12 +432,12 @@ class PlotMixin(object):
 
             Only "fig" is supported in this class - everything else drops through to the parent class
             value (any): The value of the attribute to set.
-    """
-        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
-            object.__setattr__(self,name, value)
-        elif name in dir(super(PlotMixin, self)):
+        """
+        try:
             super(PlotMixin, self).__setattr__(name, value)
-        elif "set_{}".format(name) in dir(plt.Axes):
+        except AttributeError:
+            pass
+        if "set_{}".format(name) in dir(plt.Axes):
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
             ax = self.fig.gca()
@@ -450,8 +450,6 @@ class PlotMixin(object):
                 func(*value)
             plt.figure(tfig.number)
             plt.sca(tax)
-        else:
-            super(PlotMixin, self).__setattr__(name, value)
 
     def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
@@ -758,7 +756,7 @@ class PlotMixin(object):
                     xvals=None,
                     yvals=None,
                     rectang=None,
-                    cmap=plt.cm.jet,
+                    cmap=plt.cm.plasma,
                     show_plot=True,
                     title='',
                     xlabel=None,
@@ -1069,8 +1067,8 @@ class PlotMixin(object):
             "title": os.path.basename(self.filename),
             "save_filename": None,
             "cmap": cm.jet,
-            "rstride": max(1,zdata.shape[0] / 50),
-            "cstride": max(1,zdata.shape[1] / 50)
+            "rstride": int(max(1,zdata.shape[0] / 50)),
+            "cstride": int(max(1,zdata.shape[1] / 50))
         }
         coltypes = {"xlabel": c.xcol, "ylabel": c.ycol, "zlabel": c.zcol}
         for k in coltypes:

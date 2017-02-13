@@ -20,11 +20,11 @@ legend.scatterpoints:3 # number of scatter points
 legend.shadow       :False
 lines.linewidth:1
 lines.markersize:3
-xtick.direction:'in'
+xtick.direction:in
 xtick.labelsize:10
 xtick.major.pad:2
 xtick.major.size:5
-ytick.direction:'in'
+ytick.direction:in
 ytick.labelsize:10
 ytick.major.pad:2
 ytick.major.size:5

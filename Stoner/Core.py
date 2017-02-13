@@ -46,15 +46,15 @@ def copy_into(source,dest):
     Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just
     overwrites the attributes that represent the data in the DataFile.
     """
+    dest.data = source.data.copy()
+    dest.setas=source.setas
     for attr in source._public_attrs:
-        if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data","setas","column_headers","debug"]:
+        if not hasattr(source,attr) or callable(getattr(source,attr)) or attr in ["data"]:
             continue
         try:
             setattr(dest,attr,copy.deepcopy(getattr(source,attr)))
         except NotImplementedError: # Deepcopying failed, so just copy a reference instead
             setattr(dest,attr,getattr(source,attr))
-    dest.data = source.data.copy()
-    dest.data._setas = source.data._setas.clone
     return dest
 
 def isNone(iterator):
@@ -972,7 +972,9 @@ class metadataObject(MutableMapping):
     def __init__(self, *args, **kargs):
         """Initialises the current metadata attribute."""
         metadata=kargs.pop("metadata",None)
-        self.metadata=metadata
+        self._metadata=typeHintedDict()
+        if metadata is not None:
+            self.metadata=metadata
 
     @property
     def metadata(self):
@@ -980,14 +982,12 @@ class metadataObject(MutableMapping):
 
     @metadata.setter
     def metadata(self,value):
-        if value is None and "_metadata" not in self.__dict__:
-            self._metadata=typeHintedDict()
-        elif not isinstance(value,typeHintedDict):
+        if not isinstance(value,typeHintedDict) and isinstance(value,Iterable):
             self._metadata=typeHintedDict(value)
-        else:
+        elif isinstance(value,typeHintedDict):
             self._metadata=value
-
-
+        else:
+            raise TypeError("metadata must be something that can be turned into a dictionary, not a {}".format(type(value)))
 
     def __getitem__(self,name):
         return self.metadata[name]
@@ -1333,6 +1333,8 @@ class DataArray(_ma_.MaskedArray):
 
     @setas.setter
     def setas(self,value):
+        if isinstance(value,_setas):
+            value=value.clone
         setas=self.setas
         setas(value)
 
@@ -1431,6 +1433,18 @@ class DataFile(metadataObject):
 
     _conv_string = _np_.vectorize(lambda x: str(x))
     _conv_float = _np_.vectorize(lambda x: float(x))
+    
+    def __new__(cls, *args,**kargs):
+        """Do some init stuff before the mixins kick in."""
+        self=metadataObject.__new__(cls)
+        self.debug = kargs.pop("debug",False)
+        self._masks = [False]
+        self._filename = None
+        self._public_attrs_real={}
+        super(DataFile,self).__setattr__("_data",DataArray([]))
+        self.column_headers = list()
+        return self
+       
 
     def __init__(self, *args, **kargs):
         """Constructor method for :py:class:`DataFile`.
@@ -1479,11 +1493,16 @@ class DataFile(metadataObject):
         """
         # init instance attributes
         super(DataFile,self).__init__(*args,**kargs) # initialise self.metadata)
-        self.debug = kargs.pop("debug",False)
-        self._masks = [False]
-        super(DataFile,self).__setattr__("_data",DataArray([]))
-        self.filename = None
-        self.column_headers = list()
+        self._public_attrs={
+            "data": _np_.ndarray,
+            "column_headers": list,
+            "setas": (string_types, list),
+            "metadata": typeHintedDict,
+            "debug": bool,
+            "filename": string_types,
+            "mask": (_np_.ndarray, bool),
+            "metadata":typeHintedDict,
+        }
         i = len(args) if len(args) < 2 else 2
         handler = [None, self._init_single, self._init_double, self._init_many][i]
         self.mask = False
@@ -1508,12 +1527,6 @@ class DataFile(metadataObject):
             for k in to_go:
                 del kargs[k]
         if self.debug: print("Done DataFile init")
-#        super(DataFile,self).__init__(*args,**kargs)
-        for c in self._mro: # Call all inits in Stoner mixin classes
-            if c.__module__.startswith("Stoner") and c not in (DataFile,metadataObject) and "__init__" in c.__dict__:
-                if self.debug: print(c)
-                if self.debug: print(self.metadata)
-                c.__init__(self,*args,**kargs)
 
 # Special Methods
 
@@ -1574,6 +1587,13 @@ class DataFile(metadataObject):
     @property
     def _public_attrs(self):
         """Return a dictionary of attributes setable by keyword argument with thier types."""
+        return self._public_attrs_real
+    
+    @_public_attrs.setter
+    def _public_attrs(self,value):
+        """Privaye property to update the list of public attributes."""
+        self._public_attrs_real.update(value)
+
         ret={
             "data": _np_.ndarray,
             "column_headers": list,
@@ -1584,19 +1604,6 @@ class DataFile(metadataObject):
             "mask": (_np_.ndarray, bool),
             "metadata":typeHintedDict,
         }
-        for c in self._mro:
-            if c is not DataFile and "_public_attrs" in c.__dict__:
-                ret.update(c._public_attrs)
-        return ret
-
-    @property
-    def _mro(self):
-        ret=[]
-        for c in self.__class__.__mro__[1:]:
-            if c not in ret:
-                ret.append(c)
-        return ret
-
     @property
     def clone(self):
         """Gets a deep copy of the current DataFile.
@@ -1647,6 +1654,16 @@ class DataFile(metadataObject):
         """Return the _np_ dtype attribute of the data
         """
         return self.data.dtype
+    
+    @property
+    def filename(self):
+        if self._filename is None:
+            self.filename="Untitled"
+        return self._filename
+    
+    @filename.setter
+    def filename(self,filename):
+        self._filename=filename
 
     @property
     def mask(self):
@@ -2105,13 +2122,6 @@ class DataFile(metadataObject):
         """Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.
         """
         attr = dir(type(self))
-        for c in self._mro:
-            attr.extend(dir(c))
-            if hasattr(c,"_public_attrs"):
-                if c is DataFile:
-                    attr.extend(self._public_attrs.keys())
-                else:
-                    attr.extend(c._public_attrs.keys())
         col_check = {"xcol": "x", "xerr": "d", "ycol": "y", "yerr": "e", "zcol": "z", "zerr": "f"}
         for k in col_check:
             if "_setas" not in self.__dict__:
@@ -2195,7 +2205,11 @@ class DataFile(metadataObject):
        """
 
         setas_cols = ("x", "y", "z", "d", "e", "f", "u", "v", "w", "r", "q", "p")
-        if self.debug: print(name)
+        if name!="debug" and self.debug: print(name)
+        try:
+            return super(DataFile, self).__getattr__(name)
+        except AttributeError:
+            pass
         if name in setas_cols:
             ret=self._getattr_col(name)
             if ret is not None: return ret
@@ -2207,16 +2221,11 @@ class DataFile(metadataObject):
 #                    return ret
 #                except AttributeError:
 #                    continue
-        if name in dir(self):
-            return super(DataFile, self).__getattr__(name)
-        elif name in ("_setas", ):  # clearly not setup yet
-            raise KeyError("Tried accessing setas before initialised")
-        else:
-            try:
-                col = self._data._setas.find_col(name)
-                return self.column(col)
-            except (KeyError, IndexError):
-                pass
+        try:
+            col = self._data._setas.find_col(name)
+            return self.column(col)
+        except (KeyError, IndexError):
+            pass
         if name in setas_cols: # Probably tried to use a setas col when it wasn't defined
             raise StonerSetasError("Tried accessing a {} column, but setas is not defined and {} is not a column name either".format(name,name))
         raise AttributeError("{} is not an attribute of DataFile nor a column name".format(name))

@@ -664,11 +664,10 @@ class XRDFile(DataFile):
     # the file load/save dialog boxes.
     patterns=["*.dql"] # Recognised filename patterns
 
-    def __getattr__(self,name):
-        ret=super(XRDFile,self).__getattr__(name)
-        if name=="_public_attrs":
-            ret.update({"four_bounce":bool})
-        return ret
+    def __init__(self,*args,**kargs):
+        """Add a public attribute to XRD File."""
+        super(XRDFile,self).__init__(*args,**kargs)
+        self._public_attrs={"four_bounce":bool}
 
     def _load(self,filename=None,*args, **kargs):
         """Reads an XRD datafile as produced by the Brucker diffractometer
