@@ -2300,7 +2300,7 @@ class DataFile(metadataObject):
 
         Returns:
             Next row"""
-        for r in self.rows(True):
+        for r in self.rows(False):
             yield r
 
     def _load(self, filename, *args, **kargs):

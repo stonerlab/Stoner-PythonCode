@@ -1231,16 +1231,20 @@ class AnalysisMixin(object):
             if isinstance(sigma, index_types):
                 sigma = working[:, self.find_col(sigma)]
             elif isinstance(sigma, (list, tuple)):
-                sigma = _np_.ndarray(sigma)
+                sigma = ma.array(sigma)
             elif isinstance(sigma,_np_.ndarray):
-                pass
+                sigma = ma.array(sigma) #ensure masked
             else:
                 raise RuntimeError("Sigma should have been a column index or list of values")
         elif not isNone(_.yerr):
-            sigma=self.find_col(_.yerr)
+            sigma = working[:, self.find_col(_.yerr)]
         else:
-            sigma = _np_.ones(len(xdata))
+            sigma = ma.ones(len(xdata))
             scale_covar = True
+        mask=np.invert(ydata.mask)
+        sigma = sigma[mask]
+        ydata = ydata[mask] 
+        xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
         xvar = model.independent_vars[0]
         if p0 is None: # We're working off parameter hints, but still need to set the independent var
             p0=dict()
