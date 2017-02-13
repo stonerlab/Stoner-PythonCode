@@ -82,6 +82,10 @@ class regexpDict(OrderedDict):
             return True
         except KeyError:
             return False
+        
+    def has_key(self,name):
+        """"Key is definitely in dictionary as literal"""
+        return super(regexpDict,self).__contains__(name)
 
 class baseFolder(MutableSequence):
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
@@ -243,7 +247,7 @@ class baseFolder(MutableSequence):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
         if isinstance(name,int_types):
-            name=self.objects.keys()[name]
+            name=list(self.objects.keys())[name]
         elif name not in self.__names__():
             name=None
         return name
@@ -265,9 +269,9 @@ class baseFolder(MutableSequence):
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): IF True (default) then always return a metadataObject. If False,
+            instatiate (bool): If True (default) then always return a metadataObject. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                metadataObject.
+                metadataObject. If None, then will return whatever is helf in the object cache, either instance or name.
 
         Returns:
             (metadataObject): The metadataObject
@@ -278,10 +282,14 @@ class baseFolder(MutableSequence):
             
             """
         name=self.__lookup__(name)
-        if not instantiate:
+        if instantiate is None:
+            return self.objects[name]
+        elif not instantiate:
             return name
         else:
             name=self.objects[name]
+            if not isinstance(name,self._type):
+                raise KeyError("{} is not a valid {}".format(name,self._type))
         return self._update_from_object_attrs(name)
 
     def __setter__(self,name,value):
@@ -377,7 +385,7 @@ class baseFolder(MutableSequence):
                 return self.__getter__(name)
         elif isinstance(name,int_types):
             if -len(self)<name<len(self):
-                return self.__getter__(self.__lookup__(name))
+                return self.__getter__(self.__lookup__(name),instantiate=True)
             else:
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
@@ -447,7 +455,11 @@ class baseFolder(MutableSequence):
         if isinstance(other,baseFolder):
             if issubclass(other.type,self.type):
                 result.extend([f for f in other.files])
-                result.groups.update(other.groups)
+                for grp in other.groups:
+                    if grp in self.groups:
+                        result.groups[grp]+=other.groups[grp] # recursively merge groups
+                    else:
+                        result.groups[grp]=copy(other.groups[grp])
             else:
                 raise RuntimeError("Incompatible types ({} must be a subclass of {}) in the two folders.".format(other.type,result.type))
         elif isinstance(other,result.type):
@@ -525,15 +537,26 @@ class baseFolder(MutableSequence):
         result=self.__add_core__(result,other)
         return result
 
-    def __div__(self,other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-        result=deepcopy(self)
-        return self.__div_core__(result,other)
+    if python_v3:
+        def __truediv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=deepcopy(self)
+            return self.__div_core__(result,other)
 
-    def __idiv__(self,other):
-        """The divide operator is a grouping function for a :py:class:`baseFolder`."""
-        result=self
-        return self.__div_core__(result,other)
+        def __itruediv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=self
+            return self.__div_core__(result,other)
+    else:            
+        def __div__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=deepcopy(self)
+            return self.__div_core__(result,other)
+
+        def __idiv__(self,other):
+            """The divide operator is a grouping function for a :py:class:`baseFolder`."""
+            result=self
+            return self.__div_core__(result,other)
         
     def __invert__(self):
         """For a :py:class:`naseFolder`, inverting means either flattening or unflattening the folder.
@@ -592,15 +615,17 @@ class baseFolder(MutableSequence):
             if item.startswith("_"):
                 raise AttributeError("{} is not an Attribute of {}".format(item,self.__class__))
                 
-            instance=self.instance
             try:
+                instance=super(baseFolder,self).__getattribute__("instance")
                 if callable(getattr(instance,item,None)): # It's a method
                     ret=self.__getattr_proxy(item)
                 else: # It's a static attribute
                     if item in self._object_attrs:
                         ret=self._object_attrs[item]
+                    elif len(self)>0:
+                        ret=getattr(instance,item,None)
                     else:
-                        ret=getattr(self[0],item,None)
+                        ret=None
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".ormat(item,type(self),type(instance)))
         return ret
@@ -674,7 +699,7 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups","args","kargs"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
@@ -688,7 +713,7 @@ class baseFolder(MutableSequence):
 
     ###########################################################################
     ###################### Private Methods ####################################
-
+    
     def _update_from_object_attrs(self,object):
         """Updates an object from object_attrs store."""
         if hasattr(self,"_object_attrs") and isinstance(self._object_attrs,dict):
@@ -766,7 +791,7 @@ class baseFolder(MutableSequence):
         Todo:
             Propagate any extra attributes into the groups.
         """
-        if key in self.groups: # do nothing here
+        if self.groups.has_key(key): # do nothing here
             pass
         else:
             new_group=self.__clone__()
@@ -899,10 +924,11 @@ class baseFolder(MutableSequence):
             next_keys=[]
         if isinstance(key, string_types):
             k=key
-            key=lambda x:x.metadata.get(k,"None")
+            key=lambda x:x.get(k,"None")
         for x in self:
             v=key(x)
-            self.add_group(v)
+            if not self.groups.has_key(v):
+                self.add_group(v)
             self.groups[v].append(x)
         self.__clear__()
         if len(next_keys)>0:
@@ -948,11 +974,10 @@ class baseFolder(MutableSequence):
             name=self.__names__()[ix]
             self.__setter__(self.__lookup__(name),value)
         elif ix>=len(self):
-            name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else self.make_name()
+            name= self.make_name(value)
             i=1
             names=self.__names__()
             while name in names: # Since we're adding a new entry, make sure we have a unique name !
-                name=value.filename if hasattr(value,"filename") else value if isinstance(value,string_types) else "object {}".format(len(self))
                 name,ext=os.path.splitext(name)
                 name="{}({}).{}".format(name,i,ext)
                 i+=1
@@ -966,12 +991,18 @@ class baseFolder(MutableSequence):
         """Return the keys used to access the sub-=groups of this folder."""
         return self.groups.keys()
 
-    def make_name(self):
-        name="Untitled-{}".format(self._last_name)
-        while name in self:
-            self._last_name+=1
+    def make_name(self,value=None):
+        """Construct a name from the value object if possible."""
+        if isinstance(value,self.type):
+            return value.filename
+        elif isinstance(value,string_types):
+            return value
+        else:
             name="Untitled-{}".format(self._last_name)
-        return name
+            while name in self:
+                self._last_name+=1
+                name="Untitled-{}".format(self._last_name)
+            return name
             
             
     def pop(self,name=-1,default=None):
@@ -1264,6 +1295,12 @@ class DiskBssedFolder(object):
             self.getlist()
         super(DiskBssedFolder,self).__init__(*args,**kargs)
         
+
+    @property
+    def loaded(self):
+        """Return a dictionary indicating whether an entry in the folder is already loaded or not."""
+        return {n:isinstance(self.__getter__(n,instantiate=None),self.type) for n in self.__names__()}
+
     def __clone__(self,other=None):
         """Add something to stop clones from autolisting again."""
         if other is None:
@@ -1382,7 +1419,7 @@ class DiskBssedFolder(object):
         """
         try:
             return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
-        except AttributeError:
+        except (AttributeError,IndexError,KeyError):
             pass
         if not path.exists(name):
             name=path.join(self.directory,name)

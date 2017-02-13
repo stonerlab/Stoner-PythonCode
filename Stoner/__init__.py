@@ -10,5 +10,5 @@ from .Core import DataFile
 from .Util import Data
 from .Folders import DataFolder
 
-__version_info__ = ('0', '7', '0dev')
+__version_info__ = ('0', '7', 'b1')
 __version__ = '.'.join(__version_info__)

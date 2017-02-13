@@ -6,7 +6,10 @@ Working with Lots of Files
 
 A common case is that you have measured lots of data curves and now have a large stack of data
 files sitting in a tree of folders on disc and now need to process all of them with some code.
-The :py:class:`DataFolder` class is designed to make it easier to process lots of files.
+The :py:mod:`Stoner.Folders` contains classes to make this job easy. The top level class
+:py:class:`DataFolder` is designed to complement the :py:class:`Stoner.Util.Data` as a one stop
+solution for most cases. Like :py:class:`Stoner.Util.Data`, :py:class:`Stoner.Folders.DataFolder` is 
+exported directly from the :py:mod:`Stoner` package.
 
 Building a (virtual) Folder of Data Files
 =========================================
@@ -14,16 +17,21 @@ Building a (virtual) Folder of Data Files
 The first thing you probably want to do is to get a list of data files in a directory
 (possibly including its subdirectories) and probably matching some sort of filename pattern.::
 
-   from Stoner.Folders import DataFolder
+   from Stoner import DataFolder
    f=DataFolder(pattern='*.dat')
 
 In this very simple example, the :py:class:`DataFolder class is imported in the first line and
 then a new instance *f* is created. The optional *pattern* keyword is used to only collect
 the files with a .dat extension. In this example, it is assumed that the files are readable by
-:py:class:`{DataFile`, if they are in some other format then the *type* keyword can be used::
+the :py:class:`Stoner.Util.Data` general class, if they are in some other format then the 'type' keyword can be used::
 
    from Stoner.FileFormats import XRDFile
    f=DataFolder(type=XRDFile,pattern='*.dql')
+   
+Strictly, the class pointed to be a the 'type' keyword should be a sub class of :py:class:`Stoner.Core.metadataObject`
+and should have a constructor that undersatands the initial string parameter to be a filename to load the object from.
+Additional parameters needed for the class's constructor can be passed via a dictionary to the 'extra-args' keyword of the
+:py:class:`DataFolder` constructor.
 
 To specify a particular directory to look in, simply give the directory as the first
 argument - otherwise the current duirectory will be used.::
@@ -34,13 +42,15 @@ If you pass False into the constructor as the first argument then the :py:class:
 display a dialog box to let you choose a directory. If you add a 'multifile=True' keyword argument
 then you can use the dialog box to select multiple individual files.
 
-Any other keyword arguments that are not attributes of :py:class:`DataFolder` are instead passed to the
-constructor for the individual :py:class:`Stoner.Core.DataFile` instances as they are loaded from disc. This,
+It is also possible to have the mean value of each column of data to be calculated and added as metadata as each file
+is loaded. The 'read_means' boolean parameter can enable this.
+
+Setting the 'debug' parameter will cause additional debugging information to be sent as the code runs.
+
+Any other keyword arguments that are not attributes of :py:class:`DataFolder` are instead kept and used to set
+attributes on the individual :py:class:`Stoner.Core.DataFile` instances as they are loaded from disc. This,
 for example, can allow one to set the default :py:attr:`Stoner.Core.DataFile.setas` attribute for each file.
 
-By default the :py:class:`DataFolder` constructor will perform a recursive drectory listing of
-the working folder. Each sub-directory is given a separate *group* within the structure.
-This allows the :py:class:`DataFolder` to logically represent the on-disc layout of the files.
 
 Manipulating the File List in a Folder
 ======================================
@@ -49,16 +59,23 @@ If you don't want the file listing to be recursive, this can be suppressed by us
  keyword argument and the file listing can be suppressed altogether with the *nolist* keyword::
 
    f=DataFolder(pattern='*.dat',recursive=False)
-   f2=DataFolder(nolist=True)
+   f2=DataFolder(readlist=False)
 
 If you don't want to create groups for each sub-directory, then set the keyword parameter
-*flatten* **True**, or call the :py:meth:`DataFolder.flatten` method. You can also use the
+*flat* **True**, or call the :py:meth:`DataFolder.flatten` method. You can also use the
 :py:meth:`DataFolder.prune` method to remove groups (including nested groups) that have
 no data files in them.::
 
 	f.prune()
 	f.flatten()
+    
+You can also use the sotred filenames in a :py:class:`DataFolder` to reconstruct the directory structure as
+groups by using the :py:meth:`DataFolder.unflatten` method. Alternatively the *invert* operator ~ will
+flatten and unflatten a :py:class:`DataFolder`::
 
+    ~f # Flatten (if f has groups) or unflatten (if f has no groups)
+    f.unlatten()
+    
 If you need to combine multiple :py:class:`DataFolder` objects or add :py:class:`Stoner.Core.DataFile`
 objects to an existing :py:class:`DataFolder` then the arithmetic addition operator can be used::
 
@@ -67,6 +84,9 @@ objects to an existing :py:class:`DataFolder` then the arithmetic addition opera
    f=f2+f3
 
     f+=DataFile('/data/test3/special.txt')
+    
+This will firstly combine all the files and then recursively merge the groups. If each :py:class:`DataFolder` instance has the same
+groups, then they are merged with the addition operator.
 
 
 Getting a List of Files
