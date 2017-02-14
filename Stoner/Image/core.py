@@ -161,7 +161,7 @@ class KerrArray(np.ndarray,metadataObject):
         more info and examples
         """
         if obj is None: return
-        self.metadata = getattr(obj, 'metadata', None)
+        self.metadata = getattr(obj, 'metadata', {})
         self.filename = getattr(obj, 'filename', None)
 
     def __array_wrap__(self, out_arr, context=None):

@@ -10,7 +10,7 @@ publication ready figures. The :py:class:`PlotMixin` is included as apart of the
 Quick Plots
 ===========
 
-:py:class:`PlotMixin` is intended to help you make plots that look reasonably good with as little hassle as possible.
+The :py:class:`PlotMixin` class is intended to help you make plots that look reasonably good with as little hassle as possible.
 In common with many graph plotting programmes, it has a concept of declaring columns of data to be used for 'x', 'y' axes and
 for containing error bars. This is done with the :py:attr:`DataFile.setas` attribute (see :ref:`setas` for full details). Once this is done, the plotting
 methods will use these to try to make a sensible plot.::

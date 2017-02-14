@@ -1573,7 +1573,7 @@ class AnalysisMixin(object):
                 action(i, column, self.data[i])
         return self
 
-    def peaks(self, ycol=None, width=None, significance=None, xcol=None, peaks=True, troughs=False, poly=2, sort=False,modify=False):
+    def peaks(self, ycol=None, width=None, significance=None, xcol=None, peaks=True, troughs=False, poly=2, sort=False,modify=False,full_data=True):
         """Locates peaks and/or troughs in a column of data by using SG-differentiation.
 
         Args:
@@ -1592,6 +1592,8 @@ class AnalysisMixin(object):
             troughs (bool): select whether to measure troughs in data (default False)
             sort (bool): Sor the results by significance of peak
             modify (book): If true, then the returned object is a copy of self with only the peaks/troughs left in the data.
+            full_data (bool): If True (default) then all columns of the data at which peaks in the *ycol* column are found. *modify* true implies
+                      *full_data* is also true. If *full_data* is False, then only the x-column values of the peaks are returned.
 
         Returns:
             If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If *modify* is false (default),
@@ -1604,7 +1606,9 @@ class AnalysisMixin(object):
             """
 
         _=self._col_args(scalar=False,xcol=xcol,ycol=ycol)
-        xcol,ycol=_.xcol,_.ycol[0]
+        xcol,ycol=_.xcol,_.ycol
+        if isinstance(ycol,Iterable):
+            ycol=ycol[0]
         if width is None:  # Set Width to be length of data/20
             width = len(self) / 20
         assert poly >= 2, "poly must be at least 2nd order in peaks for checking for significance of peak or trough"
@@ -1624,20 +1628,13 @@ class AnalysisMixin(object):
         elif isinstance(significance, int): # integer significance is inverse to floating
             significance = _np_.max(_np_.abs(d2))/significance # Base an apriori significance on max d2y/dx2 / 20
 
-        i = _np_.arange(len(self))
         d2_interp = interp1d(_np_.arange(len(d2)), d2,kind='cubic')
         # Ensure we have some X-data
-        if xcol == None:
-            full_data=True
-            xdata = i
-
-        elif isinstance(xcol,bool) and not xcol:
-            full_data=False
-            xdata = i
+        if xcol is None:
+            xdata = _np_.arange(len(self))
         else:
-            full_data=False
             xdata = self.column(xcol)
-        xdata = interp1d(i, xdata,kind="cubic")
+        xdata = interp1d(_np_.arange(len(self)), xdata,kind="cubic")
 
 
         possible_peaks = _np_.array(_threshold(0, d1, rising=troughs, falling=peaks))
@@ -1657,9 +1654,8 @@ class AnalysisMixin(object):
         elif full_data:
             ret=self.interpolate(xdat,kind="cubic",xcol=False)
         else:
-            ret=xdata(possible_peaks+index_offset)
+            ret=xdat
         self.setas=setas
-        print(setas)
         # Return - but remembering to add back on the offset that we took off due to differentials not working at start and end
         return ret
 

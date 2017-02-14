@@ -64,7 +64,7 @@ class Folders_test(unittest.TestCase):
         print("Starting....")
         self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
         print("Passed 2")
-        fldr-="Untitled-0"
+        fldr-="Untitled"
         self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
         print("Passed 3")
         fldr-="New-XRay-Data.dql"

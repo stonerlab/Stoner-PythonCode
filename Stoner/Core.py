@@ -1067,6 +1067,8 @@ class DataArray(_ma_.MaskedArray):
         # Finally, we must return the newly created object:
         obj.i=i
         obj.setas._row=_row and len(obj.shape)==1
+        #Set shared mask - stops some deprication warnings
+        obj._shared_mask=True
         return obj
 
     def __array_finalize__(self, obj):
@@ -1401,6 +1403,7 @@ class DataFile(metadataObject):
                            already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`
                            and :py:meth:`Stoner.Core.DataFile.save`.
         mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.
+        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`. 
         patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat")
         priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower
                             priority (!)
@@ -1413,7 +1416,7 @@ class DataFile(metadataObject):
         dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
         T (:py:class:`DataArray`): Transposed version of the data.
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
-                           their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the
+                           their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the
                            string name of the subclass and the class object.
     """
 

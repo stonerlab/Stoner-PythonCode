@@ -140,11 +140,12 @@ class Data(_AF_, _PF_,_DF_):
             y (float): y co-ordinate of the label
             z (float): z co-ordinbate of the label if the current axes are 3D
             prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise,
-                return just the text and don't add to a plot.
+            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
+                      return just the text and don't add to a plot.
 
         Returns:
-            A copy of the current Data instance if text_only is False, otherwise returns the text.
+            
+            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
 
         If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
@@ -271,8 +272,11 @@ def split_up_down(data, col=None, folder=None):
     width = len(a) / 10
     if width % 2 == 0:  # Ensure the window for Satvisky Golay filter is odd
         width += 1
-    peaks = list(a.peaks(col, width,xcol=False, peaks=True, troughs=False))
-    troughs = list(a.peaks(col, width, xcol=False, peaks=False, troughs=True))
+    setas=a.setas.clone
+    a.setas=""
+    peaks = list(a.peaks(col, width,xcol=None, peaks=True, troughs=False,full_data=False))
+    troughs = list(a.peaks(col, width, xcol=None, peaks=False, troughs=True,full_data=False))
+    a.setas=setas
     if len(peaks) > 0 and len(troughs) > 0:  #Ok more than up down here
         order = peaks[0] < troughs[0]
     elif len(peaks) > 0:  #Rise then fall

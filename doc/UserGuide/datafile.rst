@@ -55,8 +55,8 @@ Base Classes and Generic Formats
         but has not been extensively tested.
     :py:class:`Stoner.FileFormats.TDMSFile`
         Loads a file saved in the National Instruments TDMS format
-    :py:class:`Stoner.FileFormats.QDSquidVSMFile`
-        Loads data from a Quantum Design SQUID VSM as used on the I10 Beamline in Diamond and in our labs.
+    :py:class:`Stoner.FileFormats.QDFile`
+        Loads data from various Quantum Design instruments, cincluding PPMS, MPMS and  SQUID VSM.
     :py:class:`Stoner.FileFormats.OVFFile`
         OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0
 
@@ -144,8 +144,8 @@ from disk::
 
    data=Stoner.Core.DataFile()<<open("File on Disk.txt")
 
-Constructing :py:class:`DataFile`s from Scratch
------------------------------------------------
+Constructing :py:class:`DataFile` s from Scratch
+------------------------------------------------------------
 
 The constructor :py:class:`DataFile`, :py:meth:`DataFile.__init__` will try its best to guess what your intention
 was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional

@@ -90,7 +90,7 @@ Instrument Formats
 
     BigBlueFile
     FmokeFile
-    QDSquidVSMFile
+    QDFile
     RigakuFile
     VSMFile
     MokeFile
