@@ -1,0 +1,8 @@
+
+
+TexFormatter.format_data_short
+==================================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: TexFormatter.format_data_short

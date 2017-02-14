@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="TDMSFile.__init__" href="Stoner.FileFormats.TDMSFile.__init__.html" />
     <link rel="prev" title="SPCFile.values" href="Stoner.FileFormats.SPCFile.values.html" /> 
   </head>
@@ -68,7 +69,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.__init__.html#Stoner.FileFormats.TDMSFile.__init__" title="Stoner.FileFormats.TDMSFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.__init__.html#Stoner.FileFormats.TDMSFile.__init__" title="Stoner.FileFormats.TDMSFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>Constructor method for <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.add_column.html#Stoner.FileFormats.TDMSFile.add_column" title="Stoner.FileFormats.TDMSFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
@@ -155,16 +156,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.search.html#Stoner.FileFormats.TDMSFile.search" title="Stoner.FileFormats.TDMSFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.section.html#Stoner.FileFormats.TDMSFile.section" title="Stoner.FileFormats.TDMSFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.section.html#Stoner.FileFormats.TDMSFile.section" title="Stoner.FileFormats.TDMSFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(\*\*kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.setdefault.html#Stoner.FileFormats.TDMSFile.setdefault" title="Stoner.FileFormats.TDMSFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.sort.html#Stoner.FileFormats.TDMSFile.sort" title="Stoner.FileFormats.TDMSFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.sort.html#Stoner.FileFormats.TDMSFile.sort" title="Stoner.FileFormats.TDMSFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.swap_column.html#Stoner.FileFormats.TDMSFile.swap_column" title="Stoner.FileFormats.TDMSFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.swap_column.html#Stoner.FileFormats.TDMSFile.swap_column" title="Stoner.FileFormats.TDMSFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.TDMSFile.unique.html#Stoner.FileFormats.TDMSFile.unique" title="Stoner.FileFormats.TDMSFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
@@ -203,8 +204,14 @@
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></td>
 <td>Return the _np_ dtype attribute of the data</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">filename</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">metadata</span></code></td>
+<td></td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
 <td></td>
@@ -225,7 +232,7 @@
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
-<td>Return a list of all in memory subclasses of this DataFile.</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -251,7 +258,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.FileFormats.TDMSFile.txt"
+      <li><a href="../_sources/classes/Stoner.FileFormats.TDMSFile.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -290,8 +297,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

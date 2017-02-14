@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -57,13 +58,12 @@
 <span class="sd">@author: phygbu</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span> <span class="k">as</span> <span class="n">_DF_</span>
-<span class="kn">from</span> <span class="nn">Stoner.Analysis</span> <span class="k">import</span> <span class="n">AnalyseFile</span> <span class="k">as</span> <span class="n">_AF_</span>
-<span class="kn">from</span> <span class="nn">Stoner.Plot</span> <span class="k">import</span> <span class="n">PlotFile</span> <span class="k">as</span> <span class="n">_PF_</span>
-<span class="kn">import</span> <span class="nn">Stoner.FileFormats</span> <span class="k">as</span> <span class="nn">_SFF_</span>
-<span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
-<span class="kn">from</span> <span class="nn">Stoner.Fit</span> <span class="k">import</span> <span class="n">linear</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span> <span class="k">as</span> <span class="n">_DF_</span>
+<span class="kn">from</span> <span class="nn">.Analysis</span> <span class="k">import</span> <span class="n">AnalysisMixin</span> <span class="k">as</span> <span class="n">_AF_</span>
+<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">PlotMixin</span> <span class="k">as</span> <span class="n">_PF_</span>
+<span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
+<span class="kn">from</span> <span class="nn">.Fit</span> <span class="k">import</span> <span class="n">linear</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span><span class="n">array</span>
 <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">trapz</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">sem</span>
@@ -77,6 +77,7 @@
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">isclass</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">cgi</span> <span class="k">import</span> <span class="n">escape</span> <span class="k">as</span> <span class="n">html_escape</span>
+<span class="kn">import</span> <span class="nn">Stoner.FileFormats</span> <span class="k">as</span> <span class="nn">_SFF_</span>
 
 <div class="viewcode-block" id="tex_escape"><a class="viewcode-back" href="../../functions/Stoner.Util.tex_escape.html#Stoner.Util.tex_escape">[docs]</a><span class="k">def</span> <span class="nf">tex_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -129,8 +130,9 @@
     <span class="k">return</span> <span class="n">ret</span>
 
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.html#Stoner.Util.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">_AF_</span><span class="p">,</span> <span class="n">_PF_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A merged class of AnalyseFile and PlotFile which also has the FielFormats loaded redy for use.</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.html#Stoner.Util.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">_AF_</span><span class="p">,</span> <span class="n">_PF_</span><span class="p">,</span><span class="n">_DF_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`</span>
+<span class="sd">    which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.</span>
 <span class="sd">    This &#39;kitchen-sink&#39; class is intended as a convenience for writing scripts that carry out both plotting and</span>
 <span class="sd">    analysis on data files.&quot;&quot;&quot;</span>
 
@@ -163,7 +165,7 @@
 
         <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
         <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>	<span class="p">)</span>
-        <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot;_label&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
         <span class="n">latex</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">fmt</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span><span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
         <span class="n">escape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
@@ -228,7 +230,7 @@
 
         <span class="k">try</span><span class="p">:</span> <span class="c1"># if the model has an attribute display params then use these as the parameter anmes</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">display_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span><span class="n">model</span><span class="o">.</span><span class="n">display_names</span><span class="p">):</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="s2">&quot;_label&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">display_name</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">display_name</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">pass</span>
 
@@ -313,14 +315,18 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">col</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="n">_AF_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">_</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">_col_args</span><span class="p">()</span>
+        <span class="n">col</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span>
     <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">/</span> <span class="mi">10</span>
     <span class="k">if</span> <span class="n">width</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Ensure the window for Satvisky Golay filter is odd</span>
         <span class="n">width</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-    <span class="n">troughs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">setas</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+    <span class="n">peaks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">troughs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">peaks</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">a</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Ok more than up down here</span>
         <span class="n">order</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">troughs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Rise then fall</span>
@@ -328,15 +334,16 @@
     <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Fall then rise</span>
         <span class="n">order</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1">#No peaks or troughs so just return a single rising</span>
-        <span class="n">ret</span><span class="o">=</span><span class="n">_SF_</span><span class="p">()</span>
+        <span class="n">ret</span><span class="o">=</span><span class="n">_SF_</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">ret</span><span class="o">+=</span><span class="n">data</span>
         <span class="k">return</span> <span class="n">ret</span>
     <span class="n">splits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">peaks</span><span class="p">)</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">troughs</span><span class="p">)</span>
     <span class="n">splits</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">splits</span><span class="o">=</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">_SF_</span><span class="p">):</span>  <span class="c1"># Create a new DataFolder object</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">()</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">_SF_</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">folder</span>
     <span class="n">output</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;rising&quot;</span><span class="p">)</span>
@@ -359,7 +366,7 @@
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">splits</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">working</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">working</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">splits</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">splits</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],:]</span>
-        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">risefall</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working</span><span class="p">)</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">risefall</span><span class="p">[</span><span class="n">i</span><span class="o">%</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">working</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">output</span></div>
 
 
@@ -510,9 +517,9 @@
 
 <span class="sd">    Keyword Arguments:</span>
 <span class="sd">        correct_background (bool): Correct for a diamagnetic or paramagnetic background to the hystersis loop</span>
-<span class="sd">            also recentres the loop about zero moment.</span>
+<span class="sd">            also recentres the loop about zero moment (default True).</span>
 <span class="sd">        correct_H (bool): Finds the co-ercive fields and sets them to be equal and opposite. If the loop is sysmmetric</span>
-<span class="sd">            this will remove any offset in filed due to trapped flux</span>
+<span class="sd">            this will remove any offset in filed due to trapped flux (default True)</span>
 <span class="sd">        saturated_fraction (float): The fraction of the horizontal (field) range where the moment can be assumed to be</span>
 <span class="sd">            fully saturated. If an integer is given it will use that many data points at the end of the loop.</span>
 <span class="sd">        xcol (column index): Column with the x data in it</span>
@@ -531,7 +538,7 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s2">&quot;setas&quot;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span> <span class="c1"># Allow us to override the setas variable</span>
-        <span class="n">d</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;setas&quot;</span><span class="p">)</span>
 
     <span class="c1">#Get xcol and ycols from kargs if specified</span>
     <span class="n">xc</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
@@ -601,7 +608,9 @@
     <span class="k">if</span> <span class="n">correct_background</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">data</span><span class="p">,</span><span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="p">]:</span>
             <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">linear</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">pm</span><span class="p">)</span>
-
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">[</span><span class="n">up</span><span class="p">,</span><span class="n">down</span><span class="p">]:</span> <span class="c1">#need to do these anyway to find Hc and Hsat</span>
+            <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">linear</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">pm</span><span class="p">)</span>
     <span class="n">Hc</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
     <span class="n">Hc_err</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
     <span class="n">Hsat</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
@@ -684,8 +693,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

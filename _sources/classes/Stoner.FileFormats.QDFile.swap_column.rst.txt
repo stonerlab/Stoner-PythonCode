@@ -1,0 +1,8 @@
+
+
+QDFile.swap_column
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.swap_column

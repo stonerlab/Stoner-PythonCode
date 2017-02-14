@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.peaks
+===================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.peaks

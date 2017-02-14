@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.spline
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.spline

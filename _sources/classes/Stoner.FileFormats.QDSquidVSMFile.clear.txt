@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.clear
-=======================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.clear

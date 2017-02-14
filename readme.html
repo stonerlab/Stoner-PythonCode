@@ -17,14 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="index.html" /> 
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -86,19 +88,16 @@ format with more dimensions of data, we suggest you look elsewhere.</p>
 <p><strong>Stoner.Core.DataFile</strong> is the base class for representing individual experimental data sets.
 It provides basic methods to examine and manipulate data, manage metadata and load and save data files.
 It has a large number of sub classes - most of these are in Stoner.FileFormats and are used to handle the loading of specific
-file formats. Two, however, contain additional functionality for writing analysis programs.</p>
-<ul>
+file formats.</p>
+<p>There are also two mxin classes designed to work with DataFile to enable additional functionality for writing analysis programs.</p>
+<ul class="simple">
 <li><dl class="first docutils">
-<dt><strong>Stoner.Analysis.AnalyseFile</strong> provides additional methods for curve-fitting, differentiating, smoothing and carrying out</dt>
-<dd><p class="first last">basic calculations on data.</p>
-</dd>
+<dt><strong>Stoner.Analysis.AnalysisMixin</strong> provides additional methods for curve-fitting, differentiating, smoothing and carrying out</dt>
+<dd>basic calculations on data.</dd>
 </dl>
 </li>
-<li><p class="first"><strong>Stoner.Plot.PlotFile</strong> provides additional routines for plotting data on 2D or 3D plots.</p>
-</li>
+<li><strong>Stoner.plot.PlotMixin</strong> provides additional routines for plotting data on 2D or 3D plots.</li>
 </ul>
-<p>As mentioned above, there are subclasses of <strong>DataFile</strong> in the <strong>Stoner.FileFormats</strong> module that support
-loading many of the common file formats used in our research.</p>
 <p>For rapid development of small scripts, we would recommend the <strong>Stoner.Data</strong> class which is a superclass of the above,
 and provides a &#8216;kitchen-sink&#8217; one stop shop for most of the package&#8217;s functionality.</p>
 </div>
@@ -133,6 +132,8 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <p>Teh current development version is 0.7. Features of 0.7 include</p>
 <blockquote>
 <div><ul class="simple">
+<li>Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin</li>
+<li>Addition of Stoner.Image package to handle image analysis</li>
 <li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a></li>
 <li>DataFolder has an options to skip iterating over empty Data files</li>
 <li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
@@ -183,7 +184,7 @@ file format detection on platforms where this is supported and adds some extra m
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/readme.txt"
+      <li><a href="_sources/readme.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -215,8 +216,8 @@ file format detection on platforms where this is supported and adds some extra m
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

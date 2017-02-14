@@ -1,0 +1,8 @@
+
+
+QDFile.itervalues
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.itervalues

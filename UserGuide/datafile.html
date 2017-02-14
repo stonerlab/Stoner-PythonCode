@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Plotting Data" href="plotfile.html" />
     <link rel="prev" title="Installation of Stoner Package" href="install.html" /> 
   </head>
@@ -101,8 +102,8 @@ Raman spectrometers. This may also work for other instruments that produce spc f
 but has not been extensively tested.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile" title="Stoner.FileFormats.TDMSFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.TDMSFile</span></code></a></dt>
 <dd>Loads a file saved in the National Instruments TDMS format</dd>
-<dt><a class="reference internal" href="../classes/Stoner.FileFormats.QDSquidVSMFile.html#Stoner.FileFormats.QDSquidVSMFile" title="Stoner.FileFormats.QDSquidVSMFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.QDSquidVSMFile</span></code></a></dt>
-<dd>Loads data from a Quantum Design SQUID VSM as used on the I10 Beamline in Diamond and in our labs.</dd>
+<dt><a class="reference internal" href="../classes/Stoner.FileFormats.QDFile.html#Stoner.FileFormats.QDFile" title="Stoner.FileFormats.QDFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.QDFile</span></code></a></dt>
+<dd>Loads data from various Quantum Design instruments, cincluding PPMS, MPMS and  SQUID VSM.</dd>
 <dt><a class="reference internal" href="../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile" title="Stoner.FileFormats.OVFFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.FileFormats.OVFFile</span></code></a></dt>
 <dd>OVF files are output by a variety of micomagnetics simulators. The standard was designed for the OOMMF code. This class will handle rectangualr mesh files with text or binary formats, versions 1.0 and 2.0</dd>
 </dl>
@@ -199,8 +200,8 @@ from disk:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="constructing-py-class-datafile-s-from-scratch">
-<h3>Constructing :py:class:<a href="#id1"><span class="problematic" id="id2">`</span></a>DataFile`s from Scratch<a class="headerlink" href="#constructing-py-class-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="constructing-datafile-s-from-scratch">
+<h3>Constructing <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> s from Scratch<a class="headerlink" href="#constructing-datafile-s-from-scratch" title="Permalink to this headline">¶</a></h3>
 <p>The constructor <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.__init__()</span></code></a> will try its best to guess what your intention
 was in constructing a new instance of a DataFile. First of all a constructor function is called based on the number of positional
 arguments were passed:</p>
@@ -426,28 +427,23 @@ of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#
 <p>all return the same data.</p>
 <p>Whenever the Stoner package needs to refer to a column of data, you cn specify it in a number of ways:-</p>
 <blockquote>
-<div><ol class="arabic">
-<li><p class="first">As an integer where the first column on the left is index 0</p>
-</li>
+<div><ol class="arabic simple">
+<li>As an integer where the first column on the left is index 0</li>
 <li><dl class="first docutils">
 <dt>As a string. if the string matches a column header exactly then the index of that column is returned.</dt>
-<dd><p class="first last">If the string fails to match any column header it is compiled as a regular expression and then that
-is tried as a match. If multiple columns match then only the first is returned.</p>
-</dd>
+<dd>If the string fails to match any column header it is compiled as a regular expression and then that
+is tried as a match. If multiple columns match then only the first is returned.</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>As a regular expression directly - this is similar to the case above with a string, but allows you to pass a pre-compiled regular</dt>
-<dd><p class="first last">expression in directly with any extra options (like case insensitivity flags) set.</p>
-</dd>
+<dd>expression in directly with any extra options (like case insensitivity flags) set.</dd>
 </dl>
 </li>
-<li><p class="first">As a slice object (ee.g. <code class="docutils literal"><span class="pre">0:10:2</span></code>) this is expanded to a list of integers.</p>
-</li>
+<li>As a slice object (ee.g. <code class="docutils literal"><span class="pre">0:10:2</span></code>) this is expanded to a list of integers.</li>
 <li><dl class="first docutils">
 <dt>As a list of any of the above, in which case the column finding routine is called recursively in turn for each element of the list and</dt>
-<dd><p class="first last">the final result would be to use a list of column indices.</p>
-</dd>
+<dd>the final result would be to use a list of column indices.</dd>
 </dl>
 </li>
 </ol>
@@ -764,8 +760,8 @@ In the fourth example, each element in the list is added in turn to <em>d</em>. 
 a column to <em>d</em>. In this case the requirement is that the numpy array has
 the same or fewer rows of data as <em>d</em>.</p>
 </div>
-<div class="section" id="id3">
-<h3>Working with Columns of Data<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h3>Working with Columns of Data<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="changing-individual-columns-of-data">
 <h4>Changing Individual Columns of Data<a class="headerlink" href="#changing-individual-columns-of-data" title="Permalink to this headline">¶</a></h4>
 <p>The <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.data" title="Stoner.Core.DataFile.data"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code></a> attribute is not simply a 2D numpy array, but a special subclass <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, but still
@@ -963,7 +959,7 @@ specifies that the eliminator is a tab character.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#loading-data-from-a-string-or-iterable-object">Loading Data from a string or iterable object</a></li>
-<li><a class="reference internal" href="#constructing-py-class-datafile-s-from-scratch">Constructing :py:class:`DataFile`s from Scratch</a><ul>
+<li><a class="reference internal" href="#constructing-datafile-s-from-scratch">Constructing <code class="docutils literal"><span class="pre">DataFile</span></code> s from Scratch</a><ul>
 <li><a class="reference internal" href="#single-argument-constructor">Single Argument Constructor</a></li>
 <li><a class="reference internal" href="#two-argument-constructor">Two Argument Constructor</a></li>
 <li><a class="reference internal" href="#many-argument-constructor">Many Argument Constructor</a></li>
@@ -1000,7 +996,7 @@ specifies that the eliminator is a tab character.</p>
 </li>
 <li><a class="reference internal" href="#modifying-data">Modifying Data</a><ul>
 <li><a class="reference internal" href="#appending-data">Appending data</a></li>
-<li><a class="reference internal" href="#id3">Working with Columns of Data</a><ul>
+<li><a class="reference internal" href="#id1">Working with Columns of Data</a><ul>
 <li><a class="reference internal" href="#changing-individual-columns-of-data">Changing Individual Columns of Data</a></li>
 <li><a class="reference internal" href="#rearranging-columns-of-data">Rearranging Columns of Data</a></li>
 <li><a class="reference internal" href="#renaming-columns-of-data">Renaming Columns of Data</a></li>
@@ -1026,7 +1022,7 @@ specifies that the eliminator is a tab character.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/UserGuide/datafile.txt"
+      <li><a href="../_sources/UserGuide/datafile.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -1065,8 +1061,8 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

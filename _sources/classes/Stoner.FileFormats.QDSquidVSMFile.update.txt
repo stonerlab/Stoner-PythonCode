@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.update
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.update

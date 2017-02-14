@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contributors and Credits" href="credits.html" />
     <link rel="prev" title="Cookbook" href="cookbook.html" /> 
   </head>
@@ -64,7 +65,7 @@
 From the end-user perspective, the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code></a> class contains several attributes that behave like data types that the user is familiar with:</p>
 <ul class="simple">
 <li>data
-Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, with an extra attribute
+Although this is essentially a numpy array, it is in fact a subclass of a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a>, <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a>, with an extra attribute
 <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.setas" title="Stoner.Core.DataArray.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.setas</span></code></a> that is used to label the columns of data and to track assignments to types of columns (x,y,z etc). As
 <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> can thus track what columns mean in cartersian co-ordinate systems, it can provide an on-the-fly conversion to polar
 co-ordinate sustems. <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> also keeps track of the row numbers of the array and can label its rows with the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray.i" title="Stoner.Core.DataArray.i"><code class="xref py py-attr docutils literal"><span class="pre">DataArray.i</span></code></a>
@@ -171,7 +172,7 @@ strings so that the API documentation is picked up correctly.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/UserGuide/developer.txt"
+      <li><a href="../_sources/UserGuide/developer.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -210,8 +211,8 @@ strings so that the API documentation is picked up correctly.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

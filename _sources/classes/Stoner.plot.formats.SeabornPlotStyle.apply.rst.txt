@@ -1,0 +1,8 @@
+
+
+SeabornPlotStyle.apply
+==========================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: SeabornPlotStyle.apply

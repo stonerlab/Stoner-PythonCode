@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.__init__
+=============================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: DefaultPlotStyle.__init__

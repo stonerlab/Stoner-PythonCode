@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -134,7 +135,7 @@
     <span class="sd">&quot;&quot;&quot;Simple linear function&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span></div>
 
-<div class="viewcode-block" id="cfg_data_from_ini"><a class="viewcode-back" href="../../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini">[docs]</a><span class="k">def</span> <span class="nf">cfg_data_from_ini</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="cfg_data_from_ini"><a class="viewcode-back" href="../../functions/Stoner.Fit.cfg_data_from_ini.html#Stoner.Fit.cfg_data_from_ini">[docs]</a><span class="k">def</span> <span class="nf">cfg_data_from_ini</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read an inifile and load and configure a DataFile from it.</span>
 
 <span class="sd">    Args:</span>
@@ -142,6 +143,7 @@
 
 <span class="sd">    Keyword Arguments:</span>
 <span class="sd">        filename (strig,boolean or None): File to load that contains the data.</span>
+<span class="sd">        **kargs: All other keywords are passed to the Data constructor</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.</span>
@@ -172,7 +174,7 @@
         <span class="n">typ</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">typ_mod</span><span class="p">,</span><span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="n">typ</span><span class="p">])</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">typ</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">typ</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">,</span><span class="s2">&quot;filename&quot;</span><span class="p">):</span>
             <span class="n">filename</span><span class="o">=</span><span class="kc">False</span>
@@ -1178,8 +1180,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

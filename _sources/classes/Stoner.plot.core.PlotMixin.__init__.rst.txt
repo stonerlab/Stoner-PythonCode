@@ -1,0 +1,8 @@
+
+
+PlotMixin.__init__
+===================================
+
+.. currentmodule:: Stoner.plot.core
+
+.. automethod:: PlotMixin.__init__

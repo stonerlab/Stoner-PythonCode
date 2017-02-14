@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.diffsum
+=====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.diffsum

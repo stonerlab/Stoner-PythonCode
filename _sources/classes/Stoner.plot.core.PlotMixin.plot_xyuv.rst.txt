@@ -1,0 +1,8 @@
+
+
+PlotMixin.plot_xyuv
+====================================
+
+.. currentmodule:: Stoner.plot.core
+
+.. automethod:: PlotMixin.plot_xyuv

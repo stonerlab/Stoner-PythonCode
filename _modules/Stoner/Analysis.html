@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -50,10 +51,10 @@
   <h1>Source code for Stoner.Analysis</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Stoner .Analysis provides a subclass of :py:class:`Stoner.Core.DataFile` that has extra analysis routines builtin.</span>
 
-<span class="sd">Provides  :py:class:`AnalyseFile` - DataFile with extra bells and whistles.</span>
+<span class="sd">Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AnalyseFile&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AnalysisMixin&quot;</span><span class="p">]</span>
 
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span><span class="n">isNone</span><span class="p">,</span><span class="n">DataArray</span>
@@ -82,6 +83,7 @@
     <span class="n">_lmfit</span><span class="o">=</span><span class="kc">False</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span> <span class="k">as</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pylab</span> <span class="k">import</span> <span class="o">*</span>
 
 
 <span class="c1">#==========================================================================================================================================</span>
@@ -154,12 +156,15 @@
 
     <span class="n">intr</span><span class="o">=</span><span class="n">interp1d</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">-</span><span class="n">threshold</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
     <span class="n">roots</span><span class="o">=</span><span class="p">[]</span>
-    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sdat</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">expr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">ix</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">ix</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># There&#39;s a root somewhere here !</span>
+    <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sdat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">sdat</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">expr</span><span class="p">(</span><span class="n">x</span><span class="p">):</span> <span class="c1"># There&#39;s a root somewhere here !</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">roots</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newton</span><span class="p">(</span><span class="n">intr</span><span class="p">,</span><span class="n">ix</span><span class="p">))</span>
-            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1"># fell off the end here</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span> <span class="c1"># fell off the end here</span>
                 <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">plot</span><span class="p">(</span><span class="n">sdat</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">sdat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">roots</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_twoD_fit</span><span class="p">(</span><span class="n">xy1</span><span class="p">,</span><span class="n">xy2</span><span class="p">,</span><span class="n">xmode</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span><span class="n">ymode</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span><span class="n">m0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -282,16 +287,16 @@
     <span class="n">transform</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">pd</span><span class="p">)</span>
     <span class="k">return</span>  <span class="n">transform</span><span class="o">.</span><span class="n">T</span>
 
-
-<div class="viewcode-block" id="AnalyseFile"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile">[docs]</a><span class="k">class</span> <span class="nc">AnalyseFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.</span>
-
-<span class="sd">    Note:</span>
-<span class="sd">        There is no separate constructor for this class - it inherits from DataFile</span>
-
+<div class="viewcode-block" id="AnalysisMixin"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin">[docs]</a><span class="k">class</span> <span class="nc">AnalysisMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A mixin calss designed to work with :py:class:`Stoner.Core.DataFile` to provide additional analysis methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AnalyseFile.SG_Filter"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.SG_Filter.html#Stoner.Analysis.AnalyseFile.SG_Filter">[docs]</a>    <span class="k">def</span> <span class="nf">SG_Filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.__init__"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.__init__.html#Stoner.Analysis.AnalysisMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just call super.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AnalysisMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done AnlaysisMixin init&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnalysisMixin.SG_Filter"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.SG_Filter.html#Stoner.Analysis.AnalysisMixin.SG_Filter">[docs]</a>    <span class="k">def</span> <span class="nf">SG_Filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Implements Savitsky-Golay filtering of data for smoothing and differentiating data.</span>
 
 <span class="sd">        Args:</span>
@@ -306,7 +311,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (numpoy array or self): If result is None, a numpy array representing the smoothed or differentiated data is returned.</span>
-<span class="sd">            Otherwise, a copy of the modified AnalyseFile object is returned.</span>
+<span class="sd">            Otherwise, a copy of the modified AnalysisMixin object is returned.</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If col is not specified or is None then the :py:attr:`DataFile.setas` column assignments are used</span>
@@ -317,8 +322,10 @@
 <span class="sd">            User guide section :ref:`smoothing_guide`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">ordinal</span>
+        <span class="n">points</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">points</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#Ensure window length is odd</span>
             <span class="n">points</span> <span class="o">+=</span> <span class="mi">1</span>
+
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">order</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
@@ -505,12 +512,12 @@
     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles the local attributes as well as the inherited ones&quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">AnalyseFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__dir__</span><span class="p">())</span>
+        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">AnalysisMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__dir__</span><span class="p">())</span>
         <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AnalyseFile.add"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.add.html#Stoner.Analysis.AnalyseFile.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.add"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.add.html#Stoner.Analysis.AnalysisMixin.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add one column, number or array (b) to another column (a).</span>
 
 <span class="sd">        Args:</span>
@@ -522,7 +529,7 @@
 <span class="sd">            replace (bool): Replace the a column with the new data</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -552,7 +559,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.apply"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.apply.html#Stoner.Analysis.AnalyseFile.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.apply"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.apply.html#Stoner.Analysis.AnalysisMixin.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Applies the given function to each row in the data set and adds to the data set.</span>
 
 <span class="sd">        Args:</span>
@@ -564,7 +571,7 @@
 <span class="sd">            header (string or None): The new column header (defaults to the name of the function func</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -586,7 +593,7 @@
         <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nc</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.bin"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.bin.html#Stoner.Analysis.AnalyseFile.bin">[docs]</a>    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.bin"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.bin.html#Stoner.Analysis.AnalysisMixin.bin">[docs]</a>    <span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">clone</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Bin x-y data into new values of x with an error bar.</span>
 
 <span class="sd">        Args:</span>
@@ -599,7 +606,7 @@
 <span class="sd">            yerr (index): Column with y-error data if present.</span>
 <span class="sd">            bin_start (float): Manually override the minimum bin value</span>
 <span class="sd">            bin_stop (float): Manually override the maximum bin value</span>
-<span class="sd">            clone (bool): Return a clone of the current AnalyseFile with binned data (True)</span>
+<span class="sd">            clone (bool): Return a clone of the current AnalysisMixin with binned data (True)</span>
 <span class="sd">                          or just the numbers (False).</span>
 
 <span class="sd">        Returns:</span>
@@ -672,7 +679,7 @@
             <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_centres</span><span class="p">,</span> <span class="n">ybin</span><span class="p">,</span> <span class="n">ebin</span><span class="p">,</span> <span class="n">nbins</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.clip"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.clip.html#Stoner.Analysis.AnalyseFile.clip">[docs]</a>    <span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clipper</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.clip"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.clip.html#Stoner.Analysis.AnalysisMixin.clip">[docs]</a>    <span class="k">def</span> <span class="nf">clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clipper</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clips the data based on the column and the clipper value.</span>
 
 <span class="sd">        Args:</span>
@@ -681,7 +688,7 @@
 <span class="sd">                in which case the max and min values in that array will be</span>
 <span class="sd">                used as the clip limits</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            If column is not defined (or is None) the :py:attr:`DataFile.setas` column</span>
@@ -695,13 +702,13 @@
         <span class="bp">self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">del_rows</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">clipper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">clipper</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.curve_fit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.curve_fit.html#Stoner.Analysis.AnalyseFile.curve_fit">[docs]</a>    <span class="k">def</span> <span class="nf">curve_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.curve_fit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit">[docs]</a>    <span class="k">def</span> <span class="nf">curve_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;General curve fitting function passed through from scipy.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            func (callable): The fitting function with the form def f(x,*p) where p is a list of fitting parameters</span>
 <span class="sd">            xcol (index, Iterable): The index of the x-column data to fit. If list or other iterable sends a tuple of x columns to func for N-d fitting.</span>
-<span class="sd">            ycol (index. ;ist of indices or array): The index of the y-column data to fit. If an array, then should be 1D and</span>
+<span class="sd">            ycol (index, list of indices or array): The index of the y-column data to fit. If an array, then should be 1D and</span>
 <span class="sd">                the same length as the data. If ycol is a list of indices then the columns are iterated over in turn, fitting occuring</span>
 <span class="sd">                for each one. In this case the return value is a list of what would be returned for a single column fit.</span>
 
@@ -747,7 +754,7 @@
 
 
 <span class="sd">        See Also:</span>
-<span class="sd">            :py:meth:`Stoner.Analysis.AnalyseFile.lmfit`</span>
+<span class="sd">            :py:meth:`Stoner.Analysis.AnalysisMixin.lmfit`</span>
 <span class="sd">            User guide section :ref:`curve_fit_guide`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -787,7 +794,7 @@
         <span class="n">retvals</span><span class="o">=</span><span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">yc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ycol</span><span class="p">):</span>
 
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">s</span><span class="o">=</span><span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">s</span><span class="o">=</span><span class="n">sigma</span>
@@ -840,7 +847,7 @@
             <span class="n">retvals</span><span class="o">=</span><span class="n">retvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">retvals</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.decompose"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.decompose.html#Stoner.Analysis.AnalyseFile.decompose">[docs]</a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.decompose"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.decompose.html#Stoner.Analysis.AnalysisMixin.decompose">[docs]</a>    <span class="k">def</span> <span class="nf">decompose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">asym</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwords</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Given (x,y) data, decomposes the y part into symmetric and antisymmetric contributions in x.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -851,7 +858,7 @@
 <span class="sd">            replace (bool): Overwrite data with output (true)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ycol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;_startx&quot;</span> <span class="ow">in</span> <span class="n">kwords</span><span class="p">:</span>
@@ -885,7 +892,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.diffsum"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.diffsum.html#Stoner.Analysis.AnalyseFile.diffsum">[docs]</a>    <span class="k">def</span> <span class="nf">diffsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.diffsum"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.diffsum.html#Stoner.Analysis.AnalysisMixin.diffsum">[docs]</a>    <span class="k">def</span> <span class="nf">diffsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate :math:`\\frac{a-b}{a+b}` for the two columns *a* and *b*.</span>
 
 <span class="sd">        Args:</span>
@@ -897,7 +904,7 @@
 <span class="sd">            replace (bool): Replace the a column with the new data</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -929,7 +936,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.divide"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.divide.html#Stoner.Analysis.AnalyseFile.divide">[docs]</a>    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.divide"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.divide.html#Stoner.Analysis.AnalysisMixin.divide">[docs]</a>    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Divide one column (a) by  another column, number or array (b).</span>
 
 <span class="sd">        Args:</span>
@@ -941,7 +948,7 @@
 <span class="sd">            replace (bool): Replace the a column with the new data</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -971,7 +978,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.extrapolate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.extrapolate.html#Stoner.Analysis.AnalyseFile.extrapolate">[docs]</a>    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_x</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.extrapolate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.extrapolate.html#Stoner.Analysis.AnalysisMixin.extrapolate">[docs]</a>    <span class="k">def</span> <span class="nf">extrapolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">new_x</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">overlap</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extrapolate data based on local fit to x,y data.</span>
 
 <span class="sd">        Args:</span>
@@ -995,7 +1002,7 @@
 <span class="sd">            centred about the point and overlap points long will be used to interpolate a value.</span>
 
 <span class="sd">            If *kind* is callable, it should take x values in the first parameter and free fitting parameters as the other</span>
-<span class="sd">            parameters (i.e. as with :py:meth:`AnalyseFile.curve_fit`).</span>
+<span class="sd">            parameters (i.e. as with :py:meth:`AnalysisMixin.curve_fit`).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span><span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1049,7 +1056,7 @@
             <span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.integrate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.integrate.html#Stoner.Analysis.AnalyseFile.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">result_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.integrate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.integrate.html#Stoner.Analysis.AnalysisMixin.integrate">[docs]</a>    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">result_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inegrate a column of data, optionally returning the cumulative integral.</span>
 
 <span class="sd">        Args:</span>
@@ -1101,23 +1108,23 @@
             <span class="n">final</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">final</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">final</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.interpolate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.interpolate.html#Stoner.Analysis.AnalyseFile.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.interpolate"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.interpolate.html#Stoner.Analysis.AnalysisMixin.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newX</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolate a dataset to get a new set of values for a given set of x data.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            ewX (1D array or None): Row indices or X column values to interpolate with. If None, then the</span>
-<span class="sd">            :py:meth:`AnalyseFile.interpolate` returns an interpolation function. Unlike the raw interpolation</span>
+<span class="sd">            :py:meth:`AnalysisMixin.interpolate` returns an interpolation function. Unlike the raw interpolation</span>
 <span class="sd">            function from scipy, this interpolation function will work with MaskedArrays by compressing them</span>
 <span class="sd">            first.</span>
 
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            kind (string): Type of interpolation function to use - does a pass through from numpy. Default is linear.</span>
 <span class="sd">            xcol (index or None): Column index or label that contains the data to use with newX to determine which rows to return. Defaults to None.</span>
-<span class="sd">            replace (bool): If true, then the current AnalyseFile&#39;s data is replaced with the  newly interpolated data and the current AnalyseFile is</span>
+<span class="sd">            replace (bool): If true, then the current AnalysisMixin&#39;s data is replaced with the  newly interpolated data and the current AnalysisMixin is</span>
 <span class="sd">                returned.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            2D numpy array: representing a section of the current object&#39;s data if replace is False(default) or the modofied AnalyseFile if replace is true.</span>
+<span class="sd">            2D numpy array: representing a section of the current object&#39;s data if replace is False(default) or the modofied AnalysisMixin if replace is true.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Returns complete rows of data corresponding to the indices given in newX. if xcol is None, then newX is interpreted as (fractional) row indices.</span>
@@ -1162,7 +1169,7 @@
             <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.lmfit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.lmfit.html#Stoner.Analysis.AnalyseFile.lmfit">[docs]</a>    <span class="k">def</span> <span class="nf">lmfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.lmfit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.lmfit.html#Stoner.Analysis.AnalysisMixin.lmfit">[docs]</a>    <span class="k">def</span> <span class="nf">lmfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Wrapper around lmfit module fitting.</span>
 
 <span class="sd">        Args:</span>
@@ -1192,7 +1199,7 @@
 <span class="sd">            - &quot;full&quot;    a tuple of the fit instance and the row.</span>
 
 <span class="sd">        See Also:</span>
-<span class="sd">            :py:meth:`AnalyseFile.curve_fit`</span>
+<span class="sd">            :py:meth:`AnalysisMixin.curve_fit`</span>
 <span class="sd">            User guide section :ref:`fitting_with_limits`</span>
 
 <span class="sd">        .. note::</span>
@@ -1275,16 +1282,20 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">index_types</span><span class="p">):</span>
                 <span class="n">sigma</span> <span class="o">=</span> <span class="n">working</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">sigma</span><span class="p">)]</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                <span class="n">sigma</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="k">pass</span>
+                <span class="n">sigma</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="c1">#ensure masked</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Sigma should have been a column index or list of values&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="n">isNone</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">):</span>
-            <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">working</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">yerr</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">sigma</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xdata</span><span class="p">))</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xdata</span><span class="p">))</span>
             <span class="n">scale_covar</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">ydata</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">ydata</span> <span class="o">=</span> <span class="n">ydata</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> 
+        <span class="n">xdata</span> <span class="o">=</span> <span class="n">xdata</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="c1">#lmfit doesn&#39;t seem to work well with masked data - here we just delete masked points</span>
         <span class="n">xvar</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">independent_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">p0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># We&#39;re working off parameter hints, but still need to set the independent var</span>
             <span class="n">p0</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
@@ -1299,11 +1310,11 @@
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">p0</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pn</span><span class="p">):</span> <span class="c1"># iterate over every row in the supplied p0 values</span>
                 <span class="n">p0</span><span class="o">=</span><span class="n">_lmfit_p0_dict</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span><span class="n">model</span><span class="p">)</span>
                 <span class="n">p0</span><span class="p">[</span><span class="n">xvar</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdata</span>
-                <span class="n">ret_val</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lmfit_one</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">ydata</span><span class="p">,</span><span class="n">scale_covar</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">p0</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
+                <span class="n">ret_val</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lmfit_one</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span><span class="n">ydata</span><span class="p">,</span><span class="n">scale_covar</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">p0</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret_val</span></div>
 
 
-<div class="viewcode-block" id="AnalyseFile.make_bins"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.make_bins.html#Stoner.Analysis.AnalyseFile.make_bins">[docs]</a>    <span class="k">def</span> <span class="nf">make_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.make_bins"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.make_bins.html#Stoner.Analysis.AnalysisMixin.make_bins">[docs]</a>    <span class="k">def</span> <span class="nf">make_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lin&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Utility method to generate bin boundaries and centres along an axis.</span>
 
 <span class="sd">        Args:</span>
@@ -1372,7 +1383,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Attempting to bin into more bins than there is data.&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">bin_start</span><span class="p">,</span> <span class="n">bin_stop</span><span class="p">,</span> <span class="n">bin_centres</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.max"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.max.html#Stoner.Analysis.AnalyseFile.max">[docs]</a>    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.max"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.max.html#Stoner.Analysis.AnalysisMixin.max">[docs]</a>    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;FInd maximum value and index in a column of data.</span>
 
 <span class="sd">        Args:</span>
@@ -1401,7 +1412,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.mean"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.mean.html#Stoner.Analysis.AnalyseFile.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.mean"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.mean.html#Stoner.Analysis.AnalysisMixin.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;FInd mean value of a data column.</span>
 
 <span class="sd">        Args:</span>
@@ -1433,7 +1444,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.min"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.min.html#Stoner.Analysis.AnalyseFile.min">[docs]</a>    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.min"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.min.html#Stoner.Analysis.AnalysisMixin.min">[docs]</a>    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;FInd minimum value and index in a column of data.</span>
 
 <span class="sd">        Args:</span>
@@ -1463,7 +1474,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_pop_mask</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.multiply"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.multiply.html#Stoner.Analysis.AnalyseFile.multiply">[docs]</a>    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.multiply"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.multiply.html#Stoner.Analysis.AnalysisMixin.multiply">[docs]</a>    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Multiply one column (a) by  another column, number or array (b).</span>
 
 <span class="sd">        Args:</span>
@@ -1475,7 +1486,7 @@
 <span class="sd">            replace (bool): Replace the a column with the new data</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -1506,7 +1517,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.normalise"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.normalise.html#Stoner.Analysis.AnalyseFile.normalise">[docs]</a>    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.normalise"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.normalise.html#Stoner.Analysis.AnalysisMixin.normalise">[docs]</a>    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Normalise data columns by dividing through by a base column value.</span>
 
 <span class="sd">        Args:</span>
@@ -1518,7 +1529,7 @@
 <span class="sd">            header (string or None): The new column header - default is target name(norm)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -1534,7 +1545,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.outlier_detection"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.outlier_detection.html#Stoner.Analysis.AnalyseFile.outlier_detection">[docs]</a>    <span class="k">def</span> <span class="nf">outlier_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">certainty</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.outlier_detection"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.outlier_detection.html#Stoner.Analysis.AnalysisMixin.outlier_detection">[docs]</a>    <span class="k">def</span> <span class="nf">outlier_detection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">certainty</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Function to detect outliers in a column of data.</span>
 
 <span class="sd">        Args:</span>
@@ -1555,7 +1566,7 @@
 <span class="sd">            func (callable): A function that determines if the current row is an outlier.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        outlier_detection will add row numbers of detected outliers to the metadata</span>
 <span class="sd">        of d, also will perform action depending on request eg &#39;mask&#39;, &#39;delete&#39;</span>
@@ -1613,7 +1624,7 @@
                 <span class="n">action</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.peaks"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.peaks.html#Stoner.Analysis.AnalyseFile.peaks">[docs]</a>    <span class="k">def</span> <span class="nf">peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.peaks"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.peaks.html#Stoner.Analysis.AnalysisMixin.peaks">[docs]</a>    <span class="k">def</span> <span class="nf">peaks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">significance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peaks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">troughs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">poly</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">modify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">full_data</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Locates peaks and/or troughs in a column of data by using SG-differentiation.</span>
 
 <span class="sd">        Args:</span>
@@ -1632,9 +1643,11 @@
 <span class="sd">            troughs (bool): select whether to measure troughs in data (default False)</span>
 <span class="sd">            sort (bool): Sor the results by significance of peak</span>
 <span class="sd">            modify (book): If true, then the returned object is a copy of self with only the peaks/troughs left in the data.</span>
+<span class="sd">            full_data (bool): If True (default) then all columns of the data at which peaks in the *ycol* column are found. *modify* true implies</span>
+<span class="sd">                      *full_data* is also true. If *full_data* is False, then only the x-column values of the peaks are returned.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            If *modify* is true, then returns a the AnalyseFile with the data set to just the peaks/troughs. If *modify* is false (default),</span>
+<span class="sd">            If *modify* is true, then returns a the AnalysisMixin with the data set to just the peaks/troughs. If *modify* is false (default),</span>
 <span class="sd">            then the return value depends on *ycol* and *xcol*. If *ycol* is not None and *xcol* is None, then returns conplete rows of</span>
 <span class="sd">            data corresponding to the found peaks/troughs. If *xcol* is not None, or *ycol* is None and *xcol* is None, then</span>
 <span class="sd">            returns a 1D array of the x positions of the peaks/troughs.</span>
@@ -1643,12 +1656,15 @@
 <span class="sd">            User guide section :ref:`peak_finding`</span>
 <span class="sd">            &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">ycol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ycol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;ycol&quot;</span><span class="p">)</span>
-            <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">(</span><span class="s2">&quot;xcol&quot;</span><span class="p">)</span>
+        <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">scalar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">)</span>
+        <span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span><span class="n">_</span><span class="o">.</span><span class="n">ycol</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">width</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Set Width to be length of data/20</span>
             <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">/</span> <span class="mi">20</span>
         <span class="k">assert</span> <span class="n">poly</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;poly must be at least 2nd order in peaks for checking for significance of peak or trough&quot;</span>
+        <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
         <span class="n">d1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">d2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SG_Filter</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">width</span><span class="p">,</span> <span class="n">poly</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="c1"># 2nd differential requires more smoothing</span>
 
@@ -1663,20 +1679,13 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">significance</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span> <span class="c1"># integer significance is inverse to floating</span>
             <span class="n">significance</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span><span class="o">/</span><span class="n">significance</span> <span class="c1"># Base an apriori significance on max d2y/dx2 / 20</span>
 
-        <span class="n">i</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">d2_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d2</span><span class="p">)),</span> <span class="n">d2</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cubic&#39;</span><span class="p">)</span>
         <span class="c1"># Ensure we have some X-data</span>
-        <span class="k">if</span> <span class="n">xcol</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">full_data</span><span class="o">=</span><span class="kc">True</span>
-            <span class="n">xcol</span> <span class="o">=</span> <span class="n">i</span>
-
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
-            <span class="n">full_data</span><span class="o">=</span><span class="kc">False</span>
-            <span class="n">xcol</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">if</span> <span class="n">xcol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">full_data</span><span class="o">=</span><span class="kc">False</span>
-            <span class="n">xcol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
-        <span class="n">xdata</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">xcol</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
+            <span class="n">xdata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)</span>
+        <span class="n">xdata</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)),</span> <span class="n">xdata</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
 
 
         <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_threshold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">rising</span><span class="o">=</span><span class="n">troughs</span><span class="p">,</span> <span class="n">falling</span><span class="o">=</span><span class="n">peaks</span><span class="p">))</span>
@@ -1686,20 +1695,22 @@
         <span class="n">possible_peaks</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">)</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curvature</span><span class="p">[</span><span class="n">ix</span><span class="p">])</span><span class="o">&gt;</span><span class="n">significance</span><span class="p">])</span>
         <span class="c1"># Sort in order of significance</span>
         <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
-            <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2_func</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">))))</span>
+            <span class="n">possible_peaks</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">d2_interp</span><span class="p">(</span><span class="n">possible_peaks</span><span class="p">))))</span>
+        
+        <span class="n">xdat</span><span class="o">=</span><span class="n">xdata</span><span class="p">(</span><span class="n">possible_peaks</span><span class="o">+</span><span class="n">index_offset</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">modify</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdata</span><span class="p">(</span><span class="n">possible_peaks</span><span class="o">+</span><span class="n">index_offset</span><span class="p">),</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdat</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">)</span>
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
         <span class="k">elif</span> <span class="n">full_data</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdata</span><span class="p">(</span><span class="n">possible_peaks</span><span class="o">+</span><span class="n">index_offset</span><span class="p">),</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">xdat</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;cubic&quot;</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">xdata</span><span class="p">(</span><span class="n">possible_peaks</span><span class="o">+</span><span class="n">index_offset</span><span class="p">)</span>
-
+            <span class="n">ret</span><span class="o">=</span><span class="n">xdat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
         <span class="c1"># Return - but remembering to add back on the offset that we took off due to differentials not working at start and end</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.polyfit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.polyfit.html#Stoner.Analysis.AnalyseFile.polyfit">[docs]</a>    <span class="k">def</span> <span class="nf">polyfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<div class="viewcode-block" id="AnalysisMixin.polyfit"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.polyfit.html#Stoner.Analysis.AnalysisMixin.polyfit">[docs]</a>    <span class="k">def</span> <span class="nf">polyfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                 <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                 <span class="n">polynomial_order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
@@ -1744,7 +1755,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">xcol</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">,</span> <span class="n">column_header</span><span class="o">=</span><span class="n">header</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">p</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.scale"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.scale.html#Stoner.Analysis.AnalyseFile.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.scale"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.scale.html#Stoner.Analysis.AnalysisMixin.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Scale the x and y data in this DataFile to match the x and y data in another DataFile.</span>
 
 <span class="sd">        Args:</span>
@@ -1759,12 +1770,12 @@
 <span class="sd">            otherbounds (callable): Used to detemrine the set of (x,y) points in the other data file. Defaults to bounds if not given.</span>
 <span class="sd">            use_estimate (bool or 3x2 array): Specifies whether to estimate an initial transformation value or to use the provided one, or</span>
 <span class="sd">                start with an identity transformation.</span>
-<span class="sd">            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalyseFile (true) or to just return</span>
+<span class="sd">            replace (bool): Whether to map the x,y data to the new co-ordinates and return a copy of this AnalysisMixin (true) or to just return</span>
 <span class="sd">                the results of the scaling.</span>
 <span class="sd">            headers (2-element list or tuple of strings): new column headers to use if replace is True.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Either a copy of the AnalyseFile modified so that the x and y columns match *other* if *replace* is True, or</span>
+<span class="sd">            Either a copy of the AnalysisMixin modified so that the x and y columns match *other* if *replace* is True, or</span>
 <span class="sd">            *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix</span>
 <span class="sd">            giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.</span>
 
@@ -1848,7 +1859,7 @@
             <span class="n">ret</span><span class="o">=</span><span class="n">popt</span><span class="p">,</span><span class="n">perr</span><span class="p">,</span><span class="n">new_data</span>
         <span class="k">return</span> <span class="n">ret</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.smooth"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.smooth.html#Stoner.Analysis.AnalyseFile.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="s2">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.smooth"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.smooth.html#Stoner.Analysis.AnalysisMixin.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">window</span><span class="o">=</span><span class="s2">&quot;boxcar&quot;</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Smooth data by convoluting with a window.</span>
 
 <span class="sd">        Args:</span>
@@ -1864,7 +1875,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (self or array): If result is False, then the return value will be a copy of the smoothed data, otherwise the return value</span>
-<span class="sd">            is a copy of the AnalyseFile object with the smoothed data added,</span>
+<span class="sd">            is a copy of the AnalysisMixin object with the smoothed data added,</span>
 
 <span class="sd">        Notes:</span>
 <span class="sd">            If size is float, then it is necessary to map the X-data to a number of rows and to ensure that the data is evenly spaced in x.</span>
@@ -1916,8 +1927,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="n">yc</span><span class="p">],</span><span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="n">result</span><span class="p">,</span><span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.span"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.span.html#Stoner.Analysis.AnalyseFile.span">[docs]</a>    <span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalyseFile.max` and :py:meth:`AnalyseFile.min`.</span>
+<div class="viewcode-block" id="AnalysisMixin.span"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.span.html#Stoner.Analysis.AnalysisMixin.span">[docs]</a>    <span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a tuple of the maximum and minumum values within the given column and bounds by calling into :py:meth:`AnalysisMixin.max` and :py:meth:`AnalysisMixin.min`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            column (index): Column to look for the maximum in</span>
@@ -1936,7 +1947,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">bounds</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.spline"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.spline.html#Stoner.Analysis.AnalyseFile.spline">[docs]</a>    <span class="k">def</span> <span class="nf">spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.spline"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.spline.html#Stoner.Analysis.AnalysisMixin.spline">[docs]</a>    <span class="k">def</span> <span class="nf">spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Construct a spline through x and y data and replace, add new data or return spline function.</span>
 
 <span class="sd">        Keyword Arguments:</span>
@@ -1954,7 +1965,7 @@
 <span class="sd">            ext (int or str): How to extrapolate, default is &quot;extrapolate&quot;, but can also be &quot;raise&quot;,&quot;zeros&quot; or &quot;const&quot;.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Depending on the value of *replace*, returns a copy of the Analysefile, a 1D numpy array of data or an</span>
+<span class="sd">            Depending on the value of *replace*, returns a copy of the AnalysisMixin, a 1D numpy array of data or an</span>
 <span class="sd">            scipy.interpolate.UniverateSpline object.</span>
 
 <span class="sd">        This is really jsut a pass through to the scipy.interpolate.UnivariateSpline function. Also used in the extrapolate</span>
@@ -1999,8 +2010,8 @@
 
 
 
-<div class="viewcode-block" id="AnalyseFile.split"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.split.html#Stoner.Analysis.AnalyseFile.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Splits the current :py:class:`AnalyseFile` object into multiple :py:class:`AnalyseFile` objects where each one contains the rows</span>
+<div class="viewcode-block" id="AnalysisMixin.split"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.split.html#Stoner.Analysis.AnalysisMixin.split">[docs]</a>    <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Splits the current :py:class:`AnalysisMixin` object into multiple :py:class:`AnalysisMixin` objects where each one contains the rows</span>
 <span class="sd">        from the original object which had the same value of a given column.</span>
 
 <span class="sd">        Args:</span>
@@ -2013,7 +2024,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Stoner.Folders.DataFolder: A :py:class:`Stoner.Folders.DataFolder` object containing the individual</span>
-<span class="sd">            :py:class:`AnalyseFile` objects</span>
+<span class="sd">            :py:class:`AnalysisMixin` objects</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            The function to be of the form f(x,r) where x is a single float value and r is a list of floats representing</span>
@@ -2062,7 +2073,7 @@
             <span class="n">out</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">files</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
         <span class="k">return</span> <span class="n">out</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.stitch"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.stitch.html#Stoner.Analysis.AnalyseFile.stitch">[docs]</a>    <span class="k">def</span> <span class="nf">stitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_overlap</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.stitch"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.stitch.html#Stoner.Analysis.AnalysisMixin.stitch">[docs]</a>    <span class="k">def</span> <span class="nf">stitch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">min_overlap</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;All&quot;</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply a scaling to this data set to make it stich to another dataset.</span>
 
 <span class="sd">        Args:</span>
@@ -2077,7 +2088,7 @@
 <span class="sd">            p0 (iterable): if func is not None then p0 should be the starting values for the stitching function parameters</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: A copy of the current :py:class:`AnalyseFile` with the x and y data columns adjusted to stitch</span>
+<span class="sd">            self: A copy of the current :py:class:`AnalysisMixin` with the x and y data columns adjusted to stitch</span>
 
 <span class="sd">        To stitch the data together, the x and y data in the current data file is transforms so that</span>
 <span class="sd">        :math:`x&#39;=x+A` and :math:`y&#39;=By+C` where :math:`A,B,C` are constants and :math:`(x&#39;,y&#39;)` are close matches to the</span>
@@ -2098,10 +2109,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_col_args</span><span class="p">(</span><span class="n">xcol</span><span class="o">=</span><span class="n">xcol</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="n">ycol</span><span class="p">,</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">])</span>
-        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">(),:]</span>
         <span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">min_overlap</span>
         <span class="n">otherpoints</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">column</span><span class="p">([</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span> <span class="n">_</span><span class="o">.</span><span class="n">ycol</span><span class="p">])</span>
-        <span class="n">otherpoints</span> <span class="o">=</span> <span class="n">otherpoints</span><span class="p">[</span><span class="n">otherpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span>
+        <span class="n">otherpoints</span> <span class="o">=</span> <span class="n">otherpoints</span><span class="p">[</span><span class="n">otherpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">(),:]</span>
         <span class="n">self_second</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">_np_</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">otherpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">overlap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># Calculate the overlap</span>
             <span class="n">lower</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">points</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">_np_</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">otherpoints</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))</span>
@@ -2182,7 +2193,7 @@
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.subtract"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.subtract.html#Stoner.Analysis.AnalyseFile.subtract">[docs]</a>    <span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.subtract"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.subtract.html#Stoner.Analysis.AnalysisMixin.subtract">[docs]</a>    <span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Subtract one column, number or array (b) from another column (a).</span>
 
 <span class="sd">        Args:</span>
@@ -2194,7 +2205,7 @@
 <span class="sd">            replace (bool): Replace the a column with the new data</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            self: The newly modified :py:class:`AnalyseFile`.</span>
+<span class="sd">            self: The newly modified :py:class:`AnalysisMixin`.</span>
 
 <span class="sd">        If a and b are tuples of length two, then the firstelement is assumed to be the value and</span>
 <span class="sd">        the second element an uncertainty in the value. The uncertainties will then be propagated and an</span>
@@ -2225,7 +2236,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">err_data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">err_header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
-<div class="viewcode-block" id="AnalyseFile.threshold"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalyseFile.threshold.html#Stoner.Analysis.AnalyseFile.threshold">[docs]</a>    <span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalysisMixin.threshold"><a class="viewcode-back" href="../../classes/Stoner.Analysis.AnalysisMixin.threshold.html#Stoner.Analysis.AnalysisMixin.threshold">[docs]</a>    <span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Finds partial indices where the data in column passes the threshold, rising or falling.</span>
 
 <span class="sd">        Args:</span>
@@ -2321,6 +2332,15 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="n">DataArray</span><span class="p">):</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span><span class="o">=</span><span class="kc">True</span>
         <span class="k">return</span> <span class="n">ret</span></div></div>
+
+<span class="k">class</span> <span class="nc">AnalyseFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="n">AnalysisMixin</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        There is no separate constructor for this class - it inherits from DataFile</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
 </pre></div>
 
           </div>
@@ -2360,8 +2380,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

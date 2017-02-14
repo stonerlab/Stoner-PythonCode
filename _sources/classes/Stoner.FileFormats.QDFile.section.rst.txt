@@ -1,0 +1,8 @@
+
+
+QDFile.section
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.section

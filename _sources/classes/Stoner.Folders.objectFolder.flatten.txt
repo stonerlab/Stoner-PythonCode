@@ -1,8 +1,0 @@
-
-
-objectFolder.flatten
-===================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.flatten

@@ -1,0 +1,8 @@
+
+
+QDFile.get
+=============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.get

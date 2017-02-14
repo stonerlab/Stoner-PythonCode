@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -96,12 +97,15 @@
 <span class="sd">    Unlike copying or deepcopying a DataFile, this function preserves the class of the destination and just</span>
 <span class="sd">    overwrites the attributes that represent the data in the DataFile.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">_public_attrs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">__dict__</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span> <span class="ow">or</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">,</span><span class="s2">&quot;setas&quot;</span><span class="p">,</span><span class="s2">&quot;column_headers&quot;</span><span class="p">]:</span>
-            <span class="k">continue</span>
-        <span class="n">dest</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
     <span class="n">dest</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">dest</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">clone</span>
+    <span class="n">dest</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">source</span><span class="o">.</span><span class="n">setas</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">_public_attrs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">)</span> <span class="ow">or</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span> <span class="ow">or</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]:</span>
+            <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">)))</span>
+        <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span> <span class="c1"># Deepcopying failed, so just copy a reference instead</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">dest</span>
 
 <div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../functions/Stoner.Core.isNone.html#Stoner.Core.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
@@ -115,7 +119,7 @@
 
     <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -400,8 +404,8 @@
                         <span class="k">pass</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)]</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>  <span class="c1"># Ensure value is now a list</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s2">&quot;.&quot;</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">))))</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">:</span>
@@ -600,13 +604,13 @@
 
 
         <span class="c1">#No longer enforce ordering of yezf - allow them to appear in any order.</span>
-        <span class="n">ycol</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">yerr</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">zcol</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">zerr</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">ucol</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">vcol</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">wcol</span> <span class="o">=</span>  <span class="p">[]</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">yerr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">zcol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">zerr</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">ucol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">vcol</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="n">wcol</span> <span class="o">=</span>  <span class="nb">list</span><span class="p">()</span>
 
         <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">ycol</span><span class="p">,</span><span class="n">yerr</span><span class="p">,</span><span class="n">zcol</span><span class="p">,</span><span class="n">zerr</span><span class="p">,</span><span class="n">ucol</span><span class="p">,</span><span class="n">vcol</span><span class="p">,</span><span class="n">wcol</span><span class="p">]</span>
         <span class="n">letters</span><span class="o">=</span><span class="s2">&quot;yezfuvw&quot;</span>
@@ -742,7 +746,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>  <span class="c1"># Chekc through all the keys and see if they contain</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>  <span class="c1"># Chekc through all the keys and see if they contain</span>
             <span class="c1"># type hints. If they do, move them to the</span>
             <span class="c1"># _typehint dict</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -927,7 +931,10 @@
                 <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span> <span class="c1"># Silently fail</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findtype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">value</span><span class="p">))</span>
@@ -1015,7 +1022,23 @@
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialises the current metadata attribute.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">typeHintedDict</span><span class="p">()</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@metadata</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">typeHintedDict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">typeHintedDict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">=</span><span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;metadata must be something that can be turned into a dictionary, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -1095,6 +1118,8 @@
         <span class="c1"># Finally, we must return the newly created object:</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="n">i</span>
         <span class="n">obj</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">_row</span><span class="o">=</span><span class="n">_row</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+        <span class="c1">#Set shared mask - stops some deprication warnings</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">_shared_mask</span><span class="o">=</span><span class="kc">True</span>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
@@ -1228,7 +1253,7 @@
                     <span class="n">ret</span><span class="o">.</span><span class="n">i</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span>
         <span class="k">elif</span> <span class="n">ret</span><span class="o">.</span><span class="n">ndim</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="c1"># Potentially a single row or single column</span>
             <span class="n">ret</span><span class="o">.</span><span class="n">isrow</span><span class="o">=</span><span class="n">single_row</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">):</span>
                 <span class="n">tmp</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
                 <span class="n">ret</span><span class="o">.</span><span class="n">setas</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
                 <span class="n">tmpcol</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)[</span><span class="n">ix</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
@@ -1355,11 +1380,14 @@
         <span class="sd">&quot;&quot;&quot;Returns an object for setting column assignments.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;_setas&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">=</span><span class="n">_setas</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span>
 
     <span class="nd">@setas</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">setas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">_setas</span><span class="p">):</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">clone</span>
         <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span>
         <span class="n">setas</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
@@ -1438,7 +1466,7 @@
 <span class="sd">        dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.</span>
 <span class="sd">        T (:py:class:`DataArray`): Transposed version of the data.</span>
 <span class="sd">        subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by</span>
-<span class="sd">                           their py:attr:`Stoner.Core.DataFile.priority. Each entry in the list consists of the</span>
+<span class="sd">                           their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the</span>
 <span class="sd">                           string name of the subclass and the class object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1451,13 +1479,25 @@
 
     <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
     <span class="c1"># the file load/save dialog boxes.</span>
-    <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="s2">&quot;*.tdi&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
+    <span class="n">_patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.txt&quot;</span><span class="p">,</span><span class="s2">&quot;*.tdi&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
 
     <span class="c1">#mimetypes we match</span>
     <span class="n">mime_type</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;text/plain&quot;</span><span class="p">]</span>
 
     <span class="n">_conv_string</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="n">_conv_float</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do some init stuff before the mixins kick in.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">=</span><span class="n">metadataObject</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span><span class="o">=</span><span class="p">{}</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;_data&quot;</span><span class="p">,</span><span class="n">DataArray</span><span class="p">([]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+       
 
 <div class="viewcode-block" id="DataFile.__init__"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor method for :py:class:`DataFile`.</span>
@@ -1506,11 +1546,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># init instance attributes</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span> <span class="c1"># initialise self.metadata)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_masks</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;_data&quot;</span><span class="p">,</span><span class="n">DataArray</span><span class="p">([]))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="s2">&quot;column_headers&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+            <span class="s2">&quot;setas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">typeHintedDict</span><span class="p">,</span>
+            <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+            <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
+            <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span><span class="n">typeHintedDict</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="mi">2</span>
         <span class="n">handler</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_single</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_double</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_many</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1520,6 +1565,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Stoner.class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># set public attributes from keywords</span>
             <span class="n">myattrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span>
+            <span class="n">to_go</span><span class="o">=</span><span class="p">[]</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">]):</span>
@@ -1528,8 +1574,12 @@
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">):</span>
                             <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;one of &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">]])</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">myattr</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
-                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> should be </span><span class="si">{}</span><span class="s2"> not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span></div>
+                            <span class="n">typ</span> <span class="o">=</span> <span class="s2">&quot;a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">myattrs</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> should be </span><span class="si">{}</span><span class="s2"> not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])))</span>
+                    <span class="n">to_go</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">to_go</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done DataFile init&quot;</span><span class="p">)</span></div>
 
 <span class="c1"># Special Methods</span>
 
@@ -1590,21 +1640,29 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_public_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a dictionary of attributes setable by keyword argument with thier types.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span>
+    
+    <span class="nd">@_public_attrs</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">_public_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Privaye property to update the list of public attributes.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">ret</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
             <span class="s2">&quot;column_headers&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
             <span class="s2">&quot;setas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
             <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">typeHintedDict</span><span class="p">,</span>
             <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
             <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-            <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
+            <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span><span class="n">typeHintedDict</span><span class="p">,</span>
         <span class="p">}</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets a deep copy of the current DataFile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cloning in DataFile&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">copy_into</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -1649,6 +1707,16 @@
         <span class="sd">&quot;&quot;&quot;Return the _np_ dtype attribute of the data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;Untitled&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span>
+    
+    <span class="nd">@filename</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="o">=</span><span class="n">filename</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1664,6 +1732,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_mask</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@classproperty</span>
+    <span class="k">def</span> <span class="nf">patterns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">patterns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_patterns</span>
+        <span class="k">for</span> <span class="n">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">:</span>
+            <span class="n">klass</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">cls</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">klass</span> <span class="ow">is</span> <span class="n">DataFile</span> <span class="ow">or</span> <span class="s2">&quot;patterns&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">klass</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">patterns</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">klass</span><span class="o">.</span><span class="n">patterns</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">patterns</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1703,7 +1781,7 @@
         <span class="sd">&quot;&quot;&quot;Sets a new setas assignment by calling the setas object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
+    <span class="nd">@classproperty</span>
     <span class="k">def</span> <span class="nf">subclasses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of all in memory subclasses of this DataFile.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -2097,8 +2175,6 @@
         <span class="sd">&quot;&quot;&quot;Reeturns the attributes of the current object by augmenting the keys of self.__dict__ with the attributes that __getattr__ will handle.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">attr</span> <span class="o">=</span> <span class="nb">dir</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-        <span class="n">attr</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;column_headers&#39;</span><span class="p">,</span> <span class="s1">&#39;records&#39;</span><span class="p">,</span> <span class="s1">&#39;clone&#39;</span><span class="p">,</span> <span class="s1">&#39;subclasses&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span> <span class="s1">&#39;mask&#39;</span><span class="p">,</span> <span class="s1">&#39;dict_records&#39;</span><span class="p">,</span> <span class="s1">&#39;setas&#39;</span><span class="p">])</span>
         <span class="n">col_check</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;xerr&quot;</span><span class="p">:</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;ycol&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;yerr&quot;</span><span class="p">:</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;zcol&quot;</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;zerr&quot;</span><span class="p">:</span> <span class="s2">&quot;f&quot;</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">col_check</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;_setas&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
@@ -2182,22 +2258,27 @@
 <span class="sd">       &quot;&quot;&quot;</span>
 
         <span class="n">setas_cols</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;e&quot;</span><span class="p">,</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;u&quot;</span><span class="p">,</span> <span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">!=</span><span class="s2">&quot;debug&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">setas_cols</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getattr_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">ret</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;_setas&quot;</span><span class="p">,</span> <span class="p">):</span>  <span class="c1"># clearly not setup yet</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Tried accessing setas before initialised&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
-            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
-                <span class="k">pass</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_getattr_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">ret</span>
+<span class="c1">#        for c in self._mro:</span>
+<span class="c1">#            print(self.__class__.__name__)</span>
+<span class="c1">#            if c not in (DataFile,metadataObject):</span>
+<span class="c1">#                try:</span>
+<span class="c1">#                    ret = c.__getattr__(self,name)</span>
+<span class="c1">#                    return ret</span>
+<span class="c1">#                except AttributeError:</span>
+<span class="c1">#                    continue</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+            <span class="k">pass</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">setas_cols</span><span class="p">:</span> <span class="c1"># Probably tried to use a setas col when it wasn&#39;t defined</span>
             <span class="k">raise</span> <span class="n">StonerSetasError</span><span class="p">(</span><span class="s2">&quot;Tried accessing a </span><span class="si">{}</span><span class="s2"> column, but setas is not defined and </span><span class="si">{}</span><span class="s2"> is not a column name either&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">name</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not an attribute of DataFile nor a column name&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
@@ -2272,7 +2353,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Next row&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">r</span>
 
 <div class="viewcode-block" id="DataFile._load"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile._load.html#Stoner.Core.DataFile._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -2664,11 +2745,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
 
-    <span class="k">def</span> <span class="nf">_col_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="o">**</span><span class="n">cols</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_col_args</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">scalar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">zcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">wcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">xerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">zerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Utility method that creates an object which has keys  based either on arguments or setas attribute.&quot;&quot;&quot;</span>
+        <span class="n">cols</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;xcol&quot;</span><span class="p">:</span><span class="n">xcol</span><span class="p">,</span><span class="s2">&quot;ycol&quot;</span><span class="p">:</span><span class="n">ycol</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">:</span><span class="n">zcol</span><span class="p">,</span><span class="s2">&quot;ucol&quot;</span><span class="p">:</span><span class="n">ucol</span><span class="p">,</span><span class="s2">&quot;vcol&quot;</span><span class="p">:</span><span class="n">vcol</span><span class="p">,</span><span class="s2">&quot;wcol&quot;</span><span class="p">:</span><span class="n">wcol</span><span class="p">,</span><span class="s2">&quot;xerr&quot;</span><span class="p">:</span><span class="n">xerr</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">:</span><span class="n">yerr</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">:</span><span class="n">zerr</span><span class="p">}</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># Not defined, fallback on setas</span>
+            <span class="k">if</span> <span class="n">isNone</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]):</span> <span class="c1"># Not defined, fallback on setas</span>
                 <span class="k">del</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]:</span> <span class="c1">#False, delete column altogether</span>
                 <span class="k">del</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
@@ -2677,8 +2759,10 @@
             <span class="k">elif</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">ret</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">string_types</span><span class="p">):</span>
                     <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="k">continue</span>
                 <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">],</span><span class="n">Iterable</span><span class="p">):</span>
-                    <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">])</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+                    <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
         <span class="n">ret</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
@@ -3147,14 +3231,16 @@
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Passed Load&quot;</span><span class="p">)</span>
                     <span class="n">failed</span><span class="o">=</span><span class="kc">False</span>
                     <span class="n">test</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Test matadata: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">))</span>
                     <span class="n">copy_into</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Self matadata: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">))</span>
 
                     <span class="k">break</span>
                 <span class="k">except</span> <span class="p">(</span><span class="n">StonerLoadError</span><span class="p">,</span> <span class="ne">UnicodeDecodeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed Load: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                     <span class="k">continue</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Ran out of subclasses to try and load as.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Ran out of subclasses to try and load </span><span class="si">{}</span><span class="s2"> as.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">test</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
@@ -3163,7 +3249,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">data</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
                 <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">filetype</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="o">==</span><span class="s2">&quot;type&quot;</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
                 <span class="n">test</span> <span class="o">=</span> <span class="n">filetype</span><span class="p">()</span>
                 <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
                 <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="n">__name__</span>
@@ -3171,6 +3257,15 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">column_headers</span>
                 <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
+                <span class="n">test</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="n">clone</span>
+                <span class="n">test</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="n">__name__</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">test</span><span class="o">.</span><span class="n">column_headers</span>
+                <span class="n">failed</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">failed</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s2">&quot;Failed to load file&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -3570,8 +3665,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

@@ -1,8 +1,0 @@
-
-
-objectFolder.select
-==================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.select

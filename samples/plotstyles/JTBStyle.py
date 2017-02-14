@@ -1,5 +1,5 @@
 from Stoner import Data
-from Stoner.PlotFormats import JTBPlotStyle
+from Stoner.plot.formats import JTBPlotStyle
 
 d=Data("../sample.txt",setas="xy",template=JTBPlotStyle)
 d.plot()

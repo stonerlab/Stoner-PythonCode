@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.stitch
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.stitch

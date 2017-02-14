@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.new_figure
+===============================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: DefaultPlotStyle.new_figure

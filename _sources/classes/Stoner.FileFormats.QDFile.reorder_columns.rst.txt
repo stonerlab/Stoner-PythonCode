@@ -1,0 +1,8 @@
+
+
+QDFile.reorder_columns
+=========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.reorder_columns

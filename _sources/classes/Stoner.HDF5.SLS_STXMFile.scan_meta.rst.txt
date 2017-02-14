@@ -1,0 +1,8 @@
+
+
+SLS_STXMFile.scan_meta
+==================================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: SLS_STXMFile.scan_meta

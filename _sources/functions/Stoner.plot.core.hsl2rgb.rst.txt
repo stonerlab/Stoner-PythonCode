@@ -1,0 +1,8 @@
+
+
+hsl2rgb
+========================
+
+.. currentmodule:: Stoner.plot.core
+
+.. autofunction:: hsl2rgb

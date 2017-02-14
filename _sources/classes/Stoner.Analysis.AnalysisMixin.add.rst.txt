@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.add
+=================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.add

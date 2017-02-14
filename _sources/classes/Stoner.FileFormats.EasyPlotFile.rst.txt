@@ -1,0 +1,79 @@
+Stoner.FileFormats.EasyPlotFile
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: EasyPlotFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.EasyPlotFile.__init__
+      ~Stoner.FileFormats.EasyPlotFile.add_column
+      ~Stoner.FileFormats.EasyPlotFile.clear
+      ~Stoner.FileFormats.EasyPlotFile.closest
+      ~Stoner.FileFormats.EasyPlotFile.column
+      ~Stoner.FileFormats.EasyPlotFile.columns
+      ~Stoner.FileFormats.EasyPlotFile.count
+      ~Stoner.FileFormats.EasyPlotFile.del_column
+      ~Stoner.FileFormats.EasyPlotFile.del_rows
+      ~Stoner.FileFormats.EasyPlotFile.dir
+      ~Stoner.FileFormats.EasyPlotFile.filter
+      ~Stoner.FileFormats.EasyPlotFile.find_col
+      ~Stoner.FileFormats.EasyPlotFile.get
+      ~Stoner.FileFormats.EasyPlotFile.get_filename
+      ~Stoner.FileFormats.EasyPlotFile.insert_rows
+      ~Stoner.FileFormats.EasyPlotFile.items
+      ~Stoner.FileFormats.EasyPlotFile.iteritems
+      ~Stoner.FileFormats.EasyPlotFile.iterkeys
+      ~Stoner.FileFormats.EasyPlotFile.itervalues
+      ~Stoner.FileFormats.EasyPlotFile.keys
+      ~Stoner.FileFormats.EasyPlotFile.load
+      ~Stoner.FileFormats.EasyPlotFile.pop
+      ~Stoner.FileFormats.EasyPlotFile.popitem
+      ~Stoner.FileFormats.EasyPlotFile.rename
+      ~Stoner.FileFormats.EasyPlotFile.reorder_columns
+      ~Stoner.FileFormats.EasyPlotFile.rolling_window
+      ~Stoner.FileFormats.EasyPlotFile.rows
+      ~Stoner.FileFormats.EasyPlotFile.save
+      ~Stoner.FileFormats.EasyPlotFile.search
+      ~Stoner.FileFormats.EasyPlotFile.section
+      ~Stoner.FileFormats.EasyPlotFile.setdefault
+      ~Stoner.FileFormats.EasyPlotFile.sort
+      ~Stoner.FileFormats.EasyPlotFile.swap_column
+      ~Stoner.FileFormats.EasyPlotFile.unique
+      ~Stoner.FileFormats.EasyPlotFile.update
+      ~Stoner.FileFormats.EasyPlotFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.EasyPlotFile.T
+      ~Stoner.FileFormats.EasyPlotFile.clone
+      ~Stoner.FileFormats.EasyPlotFile.column_headers
+      ~Stoner.FileFormats.EasyPlotFile.data
+      ~Stoner.FileFormats.EasyPlotFile.dict_records
+      ~Stoner.FileFormats.EasyPlotFile.dtype
+      ~Stoner.FileFormats.EasyPlotFile.filename
+      ~Stoner.FileFormats.EasyPlotFile.mask
+      ~Stoner.FileFormats.EasyPlotFile.metadata
+      ~Stoner.FileFormats.EasyPlotFile.mime_type
+      ~Stoner.FileFormats.EasyPlotFile.patterns
+      ~Stoner.FileFormats.EasyPlotFile.priority
+      ~Stoner.FileFormats.EasyPlotFile.records
+      ~Stoner.FileFormats.EasyPlotFile.setas
+      ~Stoner.FileFormats.EasyPlotFile.shape
+      ~Stoner.FileFormats.EasyPlotFile.subclasses
+   
+   

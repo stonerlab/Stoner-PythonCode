@@ -1,0 +1,8 @@
+
+
+PlotMixin.plot_matrix
+======================================
+
+.. currentmodule:: Stoner.plot.core
+
+.. automethod:: PlotMixin.plot_matrix

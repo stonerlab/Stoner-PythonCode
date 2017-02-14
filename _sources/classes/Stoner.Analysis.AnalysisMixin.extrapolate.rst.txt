@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.extrapolate
+=========================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.extrapolate

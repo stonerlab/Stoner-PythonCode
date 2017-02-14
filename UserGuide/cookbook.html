@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Developer’s Guide" href="developer.html" />
     <link rel="prev" title="Working with Lots of Files" href="datafolder.html" /> 
   </head>
@@ -65,8 +66,8 @@ done with the Stoner python module in just a few lines.</p>
 functions.</p>
 <div class="section" id="the-data-class">
 <h3>The <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
-<p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalyseFile.html#Stoner.Analysis.AnalyseFile" title="Stoner.Analysis.AnalyseFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalyseFile</span></code></a> and
-the plotting functions of <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.html#Stoner.Plot.PlotFile" title="Stoner.Plot.PlotFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Plot.PlotFile</span></code></a>. This can be done easily by creating a
+<p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and
+the plotting functions of <code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code>. This can be done easily by creating a
 subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module provides the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a>
 class that does this for you.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
@@ -144,7 +145,7 @@ default, option does no particular scaling. Finally the units keyword allows the
 <span id="id1"></span><h2>Fitting Tricks<a class="headerlink" href="#fitting-tricks" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="fitting-3d-data">
 <h3>Fitting 3D Data<a class="headerlink" href="#fitting-3d-data" title="Permalink to this headline">¶</a></h3>
-<p><code class="xref py py-meth docutils literal"><span class="pre">AnalyseFile.curve_fit()</span></code> can also be used to fit 3D (or higher order) data - i.e. where there are two independent
+<p><a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.curve_fit.html#Stoner.Analysis.AnalysisMixin.curve_fit" title="Stoner.Analysis.AnalysisMixin.curve_fit"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin.curve_fit()</span></code></a> can also be used to fit 3D (or higher order) data - i.e. where there are two independent
 variables. In order to do this, the <em>xcol</em> parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.</p>
@@ -249,7 +250,10 @@ For example:</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../samples/sphere_fit.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/sphere_fit.py">Source code</a>, <a class="reference external" href="../samples/sphere_fit.png">png</a>, <a class="reference external" href="../samples/sphere_fit.hires.png">hires.png</a>, <a class="reference external" href="../samples/sphere_fit.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/sphere_fit.png" src="../_images/sphere_fit.png" />
+</div>
 </div>
 </div>
 <div class="section" id="other-recipies">
@@ -294,8 +298,8 @@ for loop the addition operator is used to add a single row to the temporary
 data. After the <strong>for</strong> loop we set the column headers in <em>t</em> and then insert
 an additional column at the start with the gate voltage values.</p>
 <p>The matrix generated by this code is suitable for feeding directly into
-<a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_matrix.html#Stoner.Plot.PlotFile.plot_matrix" title="Stoner.Plot.PlotFile.plot_matrix"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Plot.PlotFile.plot_matrix()</span></code></a>, however, the same plot could be generated
-directly from the <a class="reference internal" href="../classes/Stoner.Plot.PlotFile.plot_xyz.html#Stoner.Plot.PlotFile.plot_xyz" title="Stoner.Plot.PlotFile.plot_xyz"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Plot.PlotFile.plot_xyz()</span></code></a> method too.</p>
+<code class="xref py py-meth docutils literal"><span class="pre">Stoner.plot.PlotMixin.plot_matrix()</span></code>, however, the same plot could be generated
+directly from the <code class="xref py py-meth docutils literal"><span class="pre">Stoner.plot.PlotMixin.plot_xyz()</span></code> method too.</p>
 </div>
 <div class="section" id="sampling-a-a-3d-surface-function">
 <h3>Sampling a A 3D Surface function<a class="headerlink" href="#sampling-a-a-3d-surface-function" title="Permalink to this headline">¶</a></h3>
@@ -303,12 +307,12 @@ directly from the <a class="reference internal" href="../classes/Stoner.Plot.Plo
 -Y0..y0 and want to quickly get a view of the surface. This problem can be easily done
 by creating a random distribution of (x,y) points, evaluating the function and then
 using the <code class="xref py py-class docutils literal"><span class="pre">PlotFile</span></code> methods to generate the surface.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Plot</span> <span class="k">import</span> <span class="n">PlotFile</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">uniform</span>
 
 <span class="n">samples</span><span class="o">=</span><span class="mi">5000</span>
 
-<span class="n">surf</span><span class="o">=</span><span class="n">PlotFile</span><span class="p">()</span>
+<span class="n">surf</span><span class="o">=</span><span class="n">Data</span><span class="p">()</span>
 <span class="n">surf</span><span class="o">&amp;=</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">X0</span><span class="p">,</span><span class="n">X0</span><span class="p">,</span><span class="n">samples</span><span class="p">)</span>
 <span class="n">surf</span><span class="o">&amp;=</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">Y0</span><span class="p">,</span><span class="n">Y0</span><span class="p">,</span><span class="n">samples</span><span class="p">)</span>
 <span class="n">surf</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span>
@@ -325,7 +329,7 @@ modelling codes, such OOMMF or MuMax. When modelling a 3D system, it is often us
 be able to examine a cross-section of the simulation. The Stoner package provides tools
 to quickly examine the output data:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">OVFFile</span> <span class="c1"># reads OOMMF vector field files</span>
-<span class="kn">import</span> <span class="nn">Stoner.Plot</span>
+<span class="kn">import</span> <span class="nn">Stoner.plot</span>
 <span class="n">p</span><span class="o">=</span><span class="n">SP</span><span class="o">.</span><span class="n">PlotFile</span><span class="p">(</span><span class="s1">&#39;my_simulation.ovf&#39;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyzuvw&quot;</span>
 <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="o">.</span><span class="n">section</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">10.5</span><span class="p">)</span> <span class="c1"># Take a slice inthe xy plane where z is 10.5 nm</span>
@@ -382,7 +386,7 @@ to quickly examine the output data:</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/UserGuide/cookbook.txt"
+      <li><a href="../_sources/UserGuide/cookbook.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -421,8 +425,8 @@ to quickly examine the output data:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

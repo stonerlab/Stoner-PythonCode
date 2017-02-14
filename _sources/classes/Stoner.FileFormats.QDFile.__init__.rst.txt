@@ -1,0 +1,8 @@
+
+
+QDFile.__init__
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.__init__

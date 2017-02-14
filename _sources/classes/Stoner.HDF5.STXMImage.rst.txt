@@ -1,0 +1,23 @@
+Stoner.HDF5.STXMImage
+=====================
+
+.. currentmodule:: Stoner.HDF5
+
+.. autoclass:: STXMImage
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.HDF5.STXMImage._load
+
+   
+   
+
+   
+   
+   

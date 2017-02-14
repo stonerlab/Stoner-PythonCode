@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.rename
-========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.rename

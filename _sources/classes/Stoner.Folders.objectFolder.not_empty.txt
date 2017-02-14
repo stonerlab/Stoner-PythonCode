@@ -1,8 +1,0 @@
-
-
-objectFolder.not_empty
-=====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.not_empty

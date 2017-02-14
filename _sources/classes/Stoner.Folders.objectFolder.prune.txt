@@ -1,8 +1,0 @@
-
-
-objectFolder.prune
-=================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.prune

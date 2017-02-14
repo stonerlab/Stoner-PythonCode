@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.mean
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.mean

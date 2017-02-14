@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner.FileFormats.XRDFile" href="Stoner.FileFormats.XRDFile.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="XRDFile.add_column" href="Stoner.FileFormats.XRDFile.add_column.html" />
     <link rel="prev" title="Stoner.FileFormats.XRDFile" href="Stoner.FileFormats.XRDFile.html" /> 
   </head>
@@ -60,61 +61,8 @@
 <h1>XRDFile.__init__<a class="headerlink" href="#xrdfile-init" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.XRDFile.__init__">
-<code class="descclassname">XRDFile.</code><code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.XRDFile.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.</p>
-<p>various forms are recognised</p>
-<dl class="function">
-<dt>
-<code class="descname">DataFile</code><span class="sig-paren">(</span><em>'filename'</em>, <em>&lt;optional filetype&gt;</em>, <em>&lt;args&gt;</em><span class="sig-paren">)</span></dt>
-<dd><p>Creates the new DataFile object and then executes the <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.load
-method to load data from the given <em>filename</em>.</p>
-</dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descname">DataFile</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span></dt>
-<dd><p>Creates a new DataFile object and assigns the <em>array</em> to the
-<code class="xref py py-attr docutils literal"><span class="pre">DataFile.data</span></code>  attribute.</p>
-</dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descname">DataFile</code><span class="sig-paren">(</span><em>dictionary</em><span class="sig-paren">)</span></dt>
-<dd><p>Creates the new DataFile object. If the dictionary keys are all strigns and the values are all
-numpy D arrays of equal length, then assumes the dictionary represents columns of data and the keys
-are the column titles, otherwise initialises the metadata with :parameter: dictionary.</p>
-</dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descname">DataFile</code><span class="sig-paren">(</span><em>array</em>, <em>dictionary</em><span class="sig-paren">)</span></dt>
-<dd><p>Creates the new DataFile object and does the combination of the
-previous two forms.</p>
-</dd></dl>
-
-<dl class="function">
-<dt>
-<code class="descname">DataFile</code><span class="sig-paren">(</span><em>DataFile</em><span class="sig-paren">)</span></dt>
-<dd><p>Creates the new DataFile object and initialises all data from the
-existing <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> instance. This on the face of it does the same as
-the assignment operator, but is more useful when one or other of the
-DataFile objects is an instance of a sub - class of DataFile</p>
-</dd></dl>
-
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>args</strong> (<em>positional arguments</em>) &#8211; Variable number of arguments that match one of the
-definitions above</li>
-<li><strong>kargs</strong> (<em>keyword Arguments</em>) &#8211; All keyword arguments that match public attributes are
-used to set those public attributes.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<code class="descclassname">XRDFile.</code><code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/FileFormats.html#XRDFile.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.FileFormats.XRDFile.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a public attribute to XRD File.</p>
 </dd></dl>
 
 </div>
@@ -137,7 +85,7 @@ used to set those public attributes.</li>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.FileFormats.XRDFile.__init__.txt"
+      <li><a href="../_sources/classes/Stoner.FileFormats.XRDFile.__init__.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -177,8 +125,8 @@ used to set those public attributes.</li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

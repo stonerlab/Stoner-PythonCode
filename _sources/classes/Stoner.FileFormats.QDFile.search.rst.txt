@@ -1,0 +1,8 @@
+
+
+QDFile.search
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.search

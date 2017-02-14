@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="The Stoner Python Package User Guide" href="ugindex.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Cookbook" href="cookbook.html" />
     <link rel="prev" title="Analysing Data Files" href="analysisfile.html" /> 
   </head>
@@ -59,23 +60,30 @@
 <h1>Working with Lots of Files<a class="headerlink" href="#working-with-lots-of-files" title="Permalink to this headline">¶</a></h1>
 <p>A common case is that you have measured lots of data curves and now have a large stack of data
 files sitting in a tree of folders on disc and now need to process all of them with some code.
-The <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> class is designed to make it easier to process lots of files.</p>
+The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Folders</span></code> contains classes to make this job easy. The top level class
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is designed to complement the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a> as a one stop
+solution for most cases. Like <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>, <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> is
+exported directly from the <code class="xref py py-mod docutils literal"><span class="pre">Stoner</span></code> package.</p>
 <div class="section" id="building-a-virtual-folder-of-data-files">
 <h2>Building a (virtual) Folder of Data Files<a class="headerlink" href="#building-a-virtual-folder-of-data-files" title="Permalink to this headline">¶</a></h2>
 <p>The first thing you probably want to do is to get a list of data files in a directory
 (possibly including its subdirectories) and probably matching some sort of filename pattern.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">DataFolder</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this very simple example, the <code class="xref py py-class docutils literal"><span class="pre">DataFolder</span> <span class="pre">class</span> <span class="pre">is</span> <span class="pre">imported</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">first</span> <span class="pre">line</span> <span class="pre">and</span>
 <span class="pre">then</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">instance</span> <span class="pre">*f*</span> <span class="pre">is</span> <span class="pre">created.</span> <span class="pre">The</span> <span class="pre">optional</span> <span class="pre">*pattern*</span> <span class="pre">keyword</span> <span class="pre">is</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">only</span> <span class="pre">collect</span>
 <span class="pre">the</span> <span class="pre">files</span> <span class="pre">with</span> <span class="pre">a</span> <span class="pre">.dat</span> <span class="pre">extension.</span> <span class="pre">In</span> <span class="pre">this</span> <span class="pre">example,</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">assumed</span> <span class="pre">that</span> <span class="pre">the</span> <span class="pre">files</span> <span class="pre">are</span> <span class="pre">readable</span> <span class="pre">by</span>
-<span class="pre">:py:class:`{DataFile</span></code>, if they are in some other format then the <em>type</em> keyword can be used:</p>
+<span class="pre">the</span> <span class="pre">:py:class:`Stoner.Util.Data</span></code> general class, if they are in some other format then the &#8216;type&#8217; keyword can be used:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">XRDFile</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">XRDFile</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dql&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Strictly, the class pointed to be a the &#8216;type&#8217; keyword should be a sub class of <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code>
+and should have a constructor that undersatands the initial string parameter to be a filename to load the object from.
+Additional parameters needed for the class&#8217;s constructor can be passed via a dictionary to the &#8216;extra-args&#8217; keyword of the
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> constructor.</p>
 <p>To specify a particular directory to look in, simply give the directory as the first
 argument - otherwise the current duirectory will be used.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="s1">&#39;/home/phygbu/Data&#39;</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.tdi&#39;</span><span class="p">)</span>
@@ -84,12 +92,12 @@ argument - otherwise the current duirectory will be used.:</p>
 <p>If you pass False into the constructor as the first argument then the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> will
 display a dialog box to let you choose a directory. If you add a &#8216;multifile=True&#8217; keyword argument
 then you can use the dialog box to select multiple individual files.</p>
-<p>Any other keyword arguments that are not attributes of <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> are instead passed to the
-constructor for the individual <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> instances as they are loaded from disc. This,
+<p>It is also possible to have the mean value of each column of data to be calculated and added as metadata as each file
+is loaded. The &#8216;read_means&#8217; boolean parameter can enable this.</p>
+<p>Setting the &#8216;debug&#8217; parameter will cause additional debugging information to be sent as the code runs.</p>
+<p>Any other keyword arguments that are not attributes of <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> are instead kept and used to set
+attributes on the individual <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> instances as they are loaded from disc. This,
 for example, can allow one to set the default <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> attribute for each file.</p>
-<p>By default the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> constructor will perform a recursive drectory listing of
-the working folder. Each sub-directory is given a separate <em>group</em> within the structure.
-This allows the <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to logically represent the on-disc layout of the files.</p>
 </div>
 <div class="section" id="manipulating-the-file-list-in-a-folder">
 <h2>Manipulating the File List in a Folder<a class="headerlink" href="#manipulating-the-file-list-in-a-folder" title="Permalink to this headline">¶</a></h2>
@@ -97,17 +105,24 @@ This allows the <a class="reference internal" href="../classes/Stoner.Folders.Da
 <dt>If you don&#8217;t want the file listing to be recursive, this can be suppressed by using the <em>recursive</em></dt>
 <dd><p class="first">keyword argument and the file listing can be suppressed altogether with the <em>nolist</em> keyword:</p>
 <div class="last highlight-default"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dat&#39;</span><span class="p">,</span><span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">f2</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">nolist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">f2</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
 </dl>
 <p>If you don&#8217;t want to create groups for each sub-directory, then set the keyword parameter
-<em>flatten</em> <strong>True</strong>, or call the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.flatten()</span></code> method. You can also use the
+<em>flat</em> <strong>True</strong>, or call the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.flatten()</span></code> method. You can also use the
 <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.prune()</span></code> method to remove groups (including nested groups) that have
 no data files in them.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">f</span><span class="o">.</span><span class="n">prune</span><span class="p">()</span>
 <span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can also use the sotred filenames in a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> to reconstruct the directory structure as
+groups by using the <code class="xref py py-meth docutils literal"><span class="pre">DataFolder.unflatten()</span></code> method. Alternatively the <em>invert</em> operator ~ will
+flatten and unflatten a <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">~</span><span class="n">f</span> <span class="c1"># Flatten (if f has groups) or unflatten (if f has no groups)</span>
+<span class="n">f</span><span class="o">.</span><span class="n">unlatten</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If you need to combine multiple <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> objects or add <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>
@@ -119,6 +134,8 @@ objects to an existing <a class="reference internal" href="../classes/Stoner.Fol
  <span class="n">f</span><span class="o">+=</span><span class="n">DataFile</span><span class="p">(</span><span class="s1">&#39;/data/test3/special.txt&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>This will firstly combine all the files and then recursively merge the groups. If each <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> instance has the same
+groups, then they are merged with the addition operator.</p>
 </div>
 <div class="section" id="getting-a-list-of-files">
 <h2>Getting a List of Files<a class="headerlink" href="#getting-a-list-of-files" title="Permalink to this headline">¶</a></h2>
@@ -392,7 +409,7 @@ each and so. This presupposes that the files started of sorted by some suitable 
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/UserGuide/datafolder.txt"
+      <li><a href="../_sources/UserGuide/datafolder.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -431,8 +448,8 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

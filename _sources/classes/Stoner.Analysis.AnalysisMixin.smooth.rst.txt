@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.smooth
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.smooth

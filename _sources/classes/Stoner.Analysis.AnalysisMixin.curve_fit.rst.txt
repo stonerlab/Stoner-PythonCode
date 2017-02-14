@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.curve_fit
+=======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.curve_fit

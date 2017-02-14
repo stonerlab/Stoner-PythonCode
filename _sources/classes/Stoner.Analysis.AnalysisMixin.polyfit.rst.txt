@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.polyfit
+=====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.polyfit

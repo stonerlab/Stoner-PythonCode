@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.lmfit
+===================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.lmfit

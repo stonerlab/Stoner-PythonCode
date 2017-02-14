@@ -1,0 +1,79 @@
+Stoner.FileFormats.FmokeFile
+============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: FmokeFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.FmokeFile.__init__
+      ~Stoner.FileFormats.FmokeFile.add_column
+      ~Stoner.FileFormats.FmokeFile.clear
+      ~Stoner.FileFormats.FmokeFile.closest
+      ~Stoner.FileFormats.FmokeFile.column
+      ~Stoner.FileFormats.FmokeFile.columns
+      ~Stoner.FileFormats.FmokeFile.count
+      ~Stoner.FileFormats.FmokeFile.del_column
+      ~Stoner.FileFormats.FmokeFile.del_rows
+      ~Stoner.FileFormats.FmokeFile.dir
+      ~Stoner.FileFormats.FmokeFile.filter
+      ~Stoner.FileFormats.FmokeFile.find_col
+      ~Stoner.FileFormats.FmokeFile.get
+      ~Stoner.FileFormats.FmokeFile.get_filename
+      ~Stoner.FileFormats.FmokeFile.insert_rows
+      ~Stoner.FileFormats.FmokeFile.items
+      ~Stoner.FileFormats.FmokeFile.iteritems
+      ~Stoner.FileFormats.FmokeFile.iterkeys
+      ~Stoner.FileFormats.FmokeFile.itervalues
+      ~Stoner.FileFormats.FmokeFile.keys
+      ~Stoner.FileFormats.FmokeFile.load
+      ~Stoner.FileFormats.FmokeFile.pop
+      ~Stoner.FileFormats.FmokeFile.popitem
+      ~Stoner.FileFormats.FmokeFile.rename
+      ~Stoner.FileFormats.FmokeFile.reorder_columns
+      ~Stoner.FileFormats.FmokeFile.rolling_window
+      ~Stoner.FileFormats.FmokeFile.rows
+      ~Stoner.FileFormats.FmokeFile.save
+      ~Stoner.FileFormats.FmokeFile.search
+      ~Stoner.FileFormats.FmokeFile.section
+      ~Stoner.FileFormats.FmokeFile.setdefault
+      ~Stoner.FileFormats.FmokeFile.sort
+      ~Stoner.FileFormats.FmokeFile.swap_column
+      ~Stoner.FileFormats.FmokeFile.unique
+      ~Stoner.FileFormats.FmokeFile.update
+      ~Stoner.FileFormats.FmokeFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.FmokeFile.T
+      ~Stoner.FileFormats.FmokeFile.clone
+      ~Stoner.FileFormats.FmokeFile.column_headers
+      ~Stoner.FileFormats.FmokeFile.data
+      ~Stoner.FileFormats.FmokeFile.dict_records
+      ~Stoner.FileFormats.FmokeFile.dtype
+      ~Stoner.FileFormats.FmokeFile.filename
+      ~Stoner.FileFormats.FmokeFile.mask
+      ~Stoner.FileFormats.FmokeFile.metadata
+      ~Stoner.FileFormats.FmokeFile.mime_type
+      ~Stoner.FileFormats.FmokeFile.patterns
+      ~Stoner.FileFormats.FmokeFile.priority
+      ~Stoner.FileFormats.FmokeFile.records
+      ~Stoner.FileFormats.FmokeFile.setas
+      ~Stoner.FileFormats.FmokeFile.shape
+      ~Stoner.FileFormats.FmokeFile.subclasses
+   
+   

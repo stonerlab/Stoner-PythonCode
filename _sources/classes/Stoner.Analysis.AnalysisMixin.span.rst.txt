@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.span
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.span

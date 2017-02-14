@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.divide
+====================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.divide

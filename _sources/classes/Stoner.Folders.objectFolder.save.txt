@@ -1,8 +1,0 @@
-
-
-objectFolder.save
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.save

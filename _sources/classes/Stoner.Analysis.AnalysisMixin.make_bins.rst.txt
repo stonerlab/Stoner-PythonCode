@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.make_bins
+=======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.make_bins

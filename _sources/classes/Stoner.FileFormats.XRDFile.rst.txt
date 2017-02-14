@@ -1,0 +1,80 @@
+Stoner.FileFormats.XRDFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: XRDFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.XRDFile.__init__
+      ~Stoner.FileFormats.XRDFile.add_column
+      ~Stoner.FileFormats.XRDFile.clear
+      ~Stoner.FileFormats.XRDFile.closest
+      ~Stoner.FileFormats.XRDFile.column
+      ~Stoner.FileFormats.XRDFile.columns
+      ~Stoner.FileFormats.XRDFile.count
+      ~Stoner.FileFormats.XRDFile.del_column
+      ~Stoner.FileFormats.XRDFile.del_rows
+      ~Stoner.FileFormats.XRDFile.dir
+      ~Stoner.FileFormats.XRDFile.filter
+      ~Stoner.FileFormats.XRDFile.find_col
+      ~Stoner.FileFormats.XRDFile.get
+      ~Stoner.FileFormats.XRDFile.get_filename
+      ~Stoner.FileFormats.XRDFile.insert_rows
+      ~Stoner.FileFormats.XRDFile.items
+      ~Stoner.FileFormats.XRDFile.iteritems
+      ~Stoner.FileFormats.XRDFile.iterkeys
+      ~Stoner.FileFormats.XRDFile.itervalues
+      ~Stoner.FileFormats.XRDFile.keys
+      ~Stoner.FileFormats.XRDFile.load
+      ~Stoner.FileFormats.XRDFile.pop
+      ~Stoner.FileFormats.XRDFile.popitem
+      ~Stoner.FileFormats.XRDFile.rename
+      ~Stoner.FileFormats.XRDFile.reorder_columns
+      ~Stoner.FileFormats.XRDFile.rolling_window
+      ~Stoner.FileFormats.XRDFile.rows
+      ~Stoner.FileFormats.XRDFile.save
+      ~Stoner.FileFormats.XRDFile.search
+      ~Stoner.FileFormats.XRDFile.section
+      ~Stoner.FileFormats.XRDFile.setdefault
+      ~Stoner.FileFormats.XRDFile.sort
+      ~Stoner.FileFormats.XRDFile.swap_column
+      ~Stoner.FileFormats.XRDFile.to_Q
+      ~Stoner.FileFormats.XRDFile.unique
+      ~Stoner.FileFormats.XRDFile.update
+      ~Stoner.FileFormats.XRDFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.XRDFile.T
+      ~Stoner.FileFormats.XRDFile.clone
+      ~Stoner.FileFormats.XRDFile.column_headers
+      ~Stoner.FileFormats.XRDFile.data
+      ~Stoner.FileFormats.XRDFile.dict_records
+      ~Stoner.FileFormats.XRDFile.dtype
+      ~Stoner.FileFormats.XRDFile.filename
+      ~Stoner.FileFormats.XRDFile.mask
+      ~Stoner.FileFormats.XRDFile.metadata
+      ~Stoner.FileFormats.XRDFile.mime_type
+      ~Stoner.FileFormats.XRDFile.patterns
+      ~Stoner.FileFormats.XRDFile.priority
+      ~Stoner.FileFormats.XRDFile.records
+      ~Stoner.FileFormats.XRDFile.setas
+      ~Stoner.FileFormats.XRDFile.shape
+      ~Stoner.FileFormats.XRDFile.subclasses
+   
+   

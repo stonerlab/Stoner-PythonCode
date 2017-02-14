@@ -1,8 +1,0 @@
-
-
-objectFolder.getlist
-===================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.getlist

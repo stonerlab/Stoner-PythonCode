@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.outlier_detection
+===============================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.outlier_detection

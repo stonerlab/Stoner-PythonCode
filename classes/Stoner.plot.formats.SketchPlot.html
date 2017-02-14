@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.plot.formats.SketchPlot &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SketchPlot.customise" href="Stoner.plot.formats.SketchPlot.customise.html" />
+    <link rel="prev" title="PRBPlotStyle.customise_axes" href="Stoner.plot.formats.PRBPlotStyle.customise_axes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.plot.formats.SketchPlot.customise.html" title="SketchPlot.customise"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.plot.formats.PRBPlotStyle.customise_axes.html" title="PRBPlotStyle.customise_axes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-plot-formats-sketchplot">
+<h1>Stoner.plot.formats.SketchPlot<a class="headerlink" href="#stoner-plot-formats-sketchplot" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.plot.formats.SketchPlot">
+<em class="property">class </em><code class="descclassname">Stoner.plot.formats.</code><code class="descname">SketchPlot</code><span class="sig-paren">(</span><em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/formats.html#SketchPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.formats.SketchPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn on xkcd plot style.</p>
+<p>Implemented as a bit of a joke, but perhaps someone will use this in a real
+presentation one day ?</p>
+<dl class="docutils">
+<dt>Example</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">SketchPlot</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;../sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">SketchPlot</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/plotstyles/SketchStyle.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/SketchStyle.png">png</a>, <a class="reference external" href="../samples/plotstyles/SketchStyle.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/SketchStyle.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/SketchStyle.png" src="../_images/SketchStyle.png" />
+</div>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.plot.formats.SketchPlot.customise.html#Stoner.plot.formats.SketchPlot.customise" title="Stoner.plot.formats.SketchPlot.customise"><code class="xref py py-obj docutils literal"><span class="pre">customise</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.plot.formats.SketchPlot.customise_axes.html#Stoner.plot.formats.SketchPlot.customise_axes" title="Stoner.plot.formats.SketchPlot.customise_axes"><code class="xref py py-obj docutils literal"><span class="pre">customise_axes</span></code></a>(ax,&nbsp;plot)</td>
+<td>Override the default axis configuration</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">stylename</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.plot.formats.PRBPlotStyle.customise_axes.html"
+                        title="previous chapter">PRBPlotStyle.customise_axes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.plot.formats.SketchPlot.customise.html"
+                        title="next chapter">SketchPlot.customise</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.plot.formats.SketchPlot.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.plot.formats.SketchPlot.customise.html" title="SketchPlot.customise"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.plot.formats.PRBPlotStyle.customise_axes.html" title="PRBPlotStyle.customise_axes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

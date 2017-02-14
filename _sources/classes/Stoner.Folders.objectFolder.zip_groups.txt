@@ -1,8 +1,0 @@
-
-
-objectFolder.zip_groups
-======================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.zip_groups

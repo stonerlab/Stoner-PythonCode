@@ -1,0 +1,8 @@
+
+
+PlotMixin.y2
+=============================
+
+.. currentmodule:: Stoner.plot.core
+
+.. automethod:: PlotMixin.y2

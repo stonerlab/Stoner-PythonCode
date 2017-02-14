@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.popitem
-=========================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.popitem

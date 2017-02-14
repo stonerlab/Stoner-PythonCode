@@ -1,8 +1,0 @@
-
-
-objectFolder.filterout
-=====================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.filterout

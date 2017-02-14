@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DataArray.keys" href="Stoner.Core.DataArray.keys.html" />
     <link rel="prev" title="DataFile.unique" href="Stoner.Core.DataFile.unique.html" /> 
   </head>
@@ -60,7 +61,7 @@
 <dl class="class">
 <dt id="Stoner.Core.DataArray">
 <em class="property">class </em><code class="descclassname">Stoner.Core.</code><code class="descname">DataArray</code><a class="reference internal" href="../_modules/Stoner/Core.html#DataArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Core.DataArray" title="Permalink to this definition">¶</a></dt>
-<dd><p>A sub class of <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.11)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
+<dd><p>A sub class of <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.12)"><code class="xref py py-class docutils literal"><span class="pre">numpy.ma.MaskedArray</span></code></a> with a copy of the setas attribute to allow indexing by name.</p>
 <dl class="attribute">
 <dt id="Stoner.Core.DataArray.column_headers">
 <code class="descname">column_headers</code><a class="headerlink" href="#Stoner.Core.DataArray.column_headers" title="Permalink to this definition">¶</a></dt>
@@ -127,7 +128,7 @@ more attractive.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataArray.keys.html#Stoner.Core.DataArray.keys" title="Stoner.Core.DataArray.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
 <td>Return a list of column headers.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataArray.swap_column.html#Stoner.Core.DataArray.swap_column" title="Stoner.Core.DataArray.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataArray.swap_column.html#Stoner.Core.DataArray.swap_column" title="Stoner.Core.DataArray.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
 </tbody>
@@ -184,7 +185,7 @@ more attractive.</p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Core.DataArray.txt"
+      <li><a href="../_sources/classes/Stoner.Core.DataArray.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -223,8 +224,8 @@ more attractive.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

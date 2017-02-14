@@ -1,0 +1,8 @@
+
+
+PlotMixin.inset
+================================
+
+.. currentmodule:: Stoner.plot.core
+
+.. automethod:: PlotMixin.inset

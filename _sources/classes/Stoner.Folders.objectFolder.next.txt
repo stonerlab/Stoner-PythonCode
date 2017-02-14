@@ -1,8 +1,0 @@
-
-
-objectFolder.next
-================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.next

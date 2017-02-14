@@ -1,8 +1,0 @@
-
-
-QDSquidVSMFile.pop
-=====================================
-
-.. currentmodule:: Stoner.FileFormats
-
-.. automethod:: QDSquidVSMFile.pop

@@ -1,0 +1,15 @@
+Stoner.HDF5.mpl_version
+=======================
+
+.. currentmodule:: Stoner.HDF5
+
+.. autoclass:: mpl_version
+
+   
+
+   
+   
+
+   
+   
+   

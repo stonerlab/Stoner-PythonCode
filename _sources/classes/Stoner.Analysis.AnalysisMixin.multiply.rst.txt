@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.multiply
+======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.multiply

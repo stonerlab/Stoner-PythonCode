@@ -1,0 +1,8 @@
+
+
+STXMImage._load
+===========================
+
+.. currentmodule:: Stoner.HDF5
+
+.. automethod:: STXMImage._load

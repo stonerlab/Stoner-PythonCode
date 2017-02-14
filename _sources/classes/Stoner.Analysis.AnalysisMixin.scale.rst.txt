@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.scale
+===================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.scale

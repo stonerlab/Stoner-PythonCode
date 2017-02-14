@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.clip
+==================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.clip

@@ -1,8 +1,0 @@
-
-
-AnalyseFile.peaks
-=================================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.peaks

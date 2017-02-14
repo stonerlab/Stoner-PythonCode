@@ -1,0 +1,79 @@
+Stoner.FileFormats.VSMFile
+==========================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. autoclass:: VSMFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.FileFormats.VSMFile.__init__
+      ~Stoner.FileFormats.VSMFile.add_column
+      ~Stoner.FileFormats.VSMFile.clear
+      ~Stoner.FileFormats.VSMFile.closest
+      ~Stoner.FileFormats.VSMFile.column
+      ~Stoner.FileFormats.VSMFile.columns
+      ~Stoner.FileFormats.VSMFile.count
+      ~Stoner.FileFormats.VSMFile.del_column
+      ~Stoner.FileFormats.VSMFile.del_rows
+      ~Stoner.FileFormats.VSMFile.dir
+      ~Stoner.FileFormats.VSMFile.filter
+      ~Stoner.FileFormats.VSMFile.find_col
+      ~Stoner.FileFormats.VSMFile.get
+      ~Stoner.FileFormats.VSMFile.get_filename
+      ~Stoner.FileFormats.VSMFile.insert_rows
+      ~Stoner.FileFormats.VSMFile.items
+      ~Stoner.FileFormats.VSMFile.iteritems
+      ~Stoner.FileFormats.VSMFile.iterkeys
+      ~Stoner.FileFormats.VSMFile.itervalues
+      ~Stoner.FileFormats.VSMFile.keys
+      ~Stoner.FileFormats.VSMFile.load
+      ~Stoner.FileFormats.VSMFile.pop
+      ~Stoner.FileFormats.VSMFile.popitem
+      ~Stoner.FileFormats.VSMFile.rename
+      ~Stoner.FileFormats.VSMFile.reorder_columns
+      ~Stoner.FileFormats.VSMFile.rolling_window
+      ~Stoner.FileFormats.VSMFile.rows
+      ~Stoner.FileFormats.VSMFile.save
+      ~Stoner.FileFormats.VSMFile.search
+      ~Stoner.FileFormats.VSMFile.section
+      ~Stoner.FileFormats.VSMFile.setdefault
+      ~Stoner.FileFormats.VSMFile.sort
+      ~Stoner.FileFormats.VSMFile.swap_column
+      ~Stoner.FileFormats.VSMFile.unique
+      ~Stoner.FileFormats.VSMFile.update
+      ~Stoner.FileFormats.VSMFile.values
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.FileFormats.VSMFile.T
+      ~Stoner.FileFormats.VSMFile.clone
+      ~Stoner.FileFormats.VSMFile.column_headers
+      ~Stoner.FileFormats.VSMFile.data
+      ~Stoner.FileFormats.VSMFile.dict_records
+      ~Stoner.FileFormats.VSMFile.dtype
+      ~Stoner.FileFormats.VSMFile.filename
+      ~Stoner.FileFormats.VSMFile.mask
+      ~Stoner.FileFormats.VSMFile.metadata
+      ~Stoner.FileFormats.VSMFile.mime_type
+      ~Stoner.FileFormats.VSMFile.patterns
+      ~Stoner.FileFormats.VSMFile.priority
+      ~Stoner.FileFormats.VSMFile.records
+      ~Stoner.FileFormats.VSMFile.setas
+      ~Stoner.FileFormats.VSMFile.shape
+      ~Stoner.FileFormats.VSMFile.subclasses
+   
+   

@@ -1,0 +1,8 @@
+
+
+QDFile.add_column
+====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.add_column

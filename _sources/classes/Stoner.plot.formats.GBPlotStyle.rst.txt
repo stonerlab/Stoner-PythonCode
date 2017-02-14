@@ -1,0 +1,29 @@
+Stoner.plot.formats.GBPlotStyle
+===============================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. autoclass:: GBPlotStyle
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.plot.formats.GBPlotStyle.customise_axes
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.plot.formats.GBPlotStyle.stylename
+   
+   

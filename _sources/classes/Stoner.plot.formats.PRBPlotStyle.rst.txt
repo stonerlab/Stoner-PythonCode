@@ -1,0 +1,30 @@
+Stoner.plot.formats.PRBPlotStyle
+================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. autoclass:: PRBPlotStyle
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.plot.formats.PRBPlotStyle.customise_axes
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.plot.formats.PRBPlotStyle.show_title
+      ~Stoner.plot.formats.PRBPlotStyle.stylename
+   
+   

@@ -17,15 +17,16 @@
         VERSION:     '1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="Stoner Pacakge API Documentation" href="../index.html" />
-    <link rel="up" title="Stoner Package" href="../Stoner.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="OVFFile.__init__" href="Stoner.FileFormats.OVFFile.__init__.html" />
     <link rel="prev" title="TDMSFile.values" href="Stoner.FileFormats.TDMSFile.values.html" /> 
   </head>
@@ -69,7 +70,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.__init__.html#Stoner.FileFormats.OVFFile.__init__" title="Stoner.FileFormats.OVFFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.__init__.html#Stoner.FileFormats.OVFFile.__init__" title="Stoner.FileFormats.OVFFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>Constructor method for <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code>.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.add_column.html#Stoner.FileFormats.OVFFile.add_column" title="Stoner.FileFormats.OVFFile.add_column"><code class="xref py py-obj docutils literal"><span class="pre">add_column</span></code></a>(column_data[,&nbsp;header,&nbsp;index,&nbsp;...])</td>
@@ -156,16 +157,16 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.search.html#Stoner.FileFormats.OVFFile.search" title="Stoner.FileFormats.OVFFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
 <td>Searches in the numerica data part of the file for lines that match and returns  the corresponding rows.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.section.html#Stoner.FileFormats.OVFFile.section" title="Stoner.FileFormats.OVFFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.section.html#Stoner.FileFormats.OVFFile.section" title="Stoner.FileFormats.OVFFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(\*\*kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.setdefault.html#Stoner.FileFormats.OVFFile.setdefault" title="Stoner.FileFormats.OVFFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.sort.html#Stoner.FileFormats.OVFFile.sort" title="Stoner.FileFormats.OVFFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(*order,&nbsp;**kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.sort.html#Stoner.FileFormats.OVFFile.sort" title="Stoner.FileFormats.OVFFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.swap_column.html#Stoner.FileFormats.OVFFile.swap_column" title="Stoner.FileFormats.OVFFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(*swp,&nbsp;**kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.swap_column.html#Stoner.FileFormats.OVFFile.swap_column" title="Stoner.FileFormats.OVFFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.OVFFile.unique.html#Stoner.FileFormats.OVFFile.unique" title="Stoner.FileFormats.OVFFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
@@ -204,8 +205,14 @@
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></td>
 <td>Return the _np_ dtype attribute of the data</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">filename</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">metadata</span></code></td>
+<td></td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
 <td></td>
@@ -226,7 +233,7 @@
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
-<td>Return a list of all in memory subclasses of this DataFile.</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -252,7 +259,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.FileFormats.OVFFile.txt"
+      <li><a href="../_sources/classes/Stoner.FileFormats.OVFFile.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -291,8 +298,8 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Sep 30, 2016.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+      Last updated on Feb 14, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
 </html>

@@ -1,0 +1,8 @@
+
+
+QDFile.rolling_window
+========================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.rolling_window

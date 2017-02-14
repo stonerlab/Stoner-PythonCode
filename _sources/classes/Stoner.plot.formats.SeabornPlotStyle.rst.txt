@@ -1,0 +1,31 @@
+Stoner.plot.formats.SeabornPlotStyle
+====================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. autoclass:: SeabornPlotStyle
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.plot.formats.SeabornPlotStyle.apply
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.plot.formats.SeabornPlotStyle.context
+      ~Stoner.plot.formats.SeabornPlotStyle.palette
+      ~Stoner.plot.formats.SeabornPlotStyle.stylename
+   
+   

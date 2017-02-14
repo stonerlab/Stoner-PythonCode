@@ -1,8 +1,0 @@
-
-
-AnalyseFile.min
-===============================
-
-.. currentmodule:: Stoner.Analysis
-
-.. automethod:: AnalyseFile.min

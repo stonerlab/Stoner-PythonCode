@@ -1,0 +1,8 @@
+
+
+QDFile.clear
+===============================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.clear

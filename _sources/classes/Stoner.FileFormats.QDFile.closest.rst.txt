@@ -1,0 +1,8 @@
+
+
+QDFile.closest
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.closest

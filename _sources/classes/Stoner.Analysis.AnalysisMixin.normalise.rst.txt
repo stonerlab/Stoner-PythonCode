@@ -1,0 +1,8 @@
+
+
+AnalysisMixin.normalise
+=======================================
+
+.. currentmodule:: Stoner.Analysis
+
+.. automethod:: AnalysisMixin.normalise

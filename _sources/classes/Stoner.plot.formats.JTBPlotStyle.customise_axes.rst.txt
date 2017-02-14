@@ -1,0 +1,8 @@
+
+
+JTBPlotStyle.customise_axes
+===============================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: JTBPlotStyle.customise_axes

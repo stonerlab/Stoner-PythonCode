@@ -1,0 +1,25 @@
+Stoner.plot.formats.TexFormatter
+================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. autoclass:: TexFormatter
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.plot.formats.TexFormatter.__call__
+      ~Stoner.plot.formats.TexFormatter.format_data
+      ~Stoner.plot.formats.TexFormatter.format_data_short
+
+   
+   
+
+   
+   
+   

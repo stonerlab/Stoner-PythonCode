@@ -1,0 +1,53 @@
+Stoner.Analysis.AnalysisMixin
+=============================
+
+.. currentmodule:: Stoner.Analysis
+
+.. autoclass:: AnalysisMixin
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Analysis.AnalysisMixin.SG_Filter
+      ~Stoner.Analysis.AnalysisMixin.__init__
+      ~Stoner.Analysis.AnalysisMixin.add
+      ~Stoner.Analysis.AnalysisMixin.apply
+      ~Stoner.Analysis.AnalysisMixin.bin
+      ~Stoner.Analysis.AnalysisMixin.clip
+      ~Stoner.Analysis.AnalysisMixin.curve_fit
+      ~Stoner.Analysis.AnalysisMixin.decompose
+      ~Stoner.Analysis.AnalysisMixin.diffsum
+      ~Stoner.Analysis.AnalysisMixin.divide
+      ~Stoner.Analysis.AnalysisMixin.extrapolate
+      ~Stoner.Analysis.AnalysisMixin.integrate
+      ~Stoner.Analysis.AnalysisMixin.interpolate
+      ~Stoner.Analysis.AnalysisMixin.lmfit
+      ~Stoner.Analysis.AnalysisMixin.make_bins
+      ~Stoner.Analysis.AnalysisMixin.max
+      ~Stoner.Analysis.AnalysisMixin.mean
+      ~Stoner.Analysis.AnalysisMixin.min
+      ~Stoner.Analysis.AnalysisMixin.multiply
+      ~Stoner.Analysis.AnalysisMixin.normalise
+      ~Stoner.Analysis.AnalysisMixin.outlier_detection
+      ~Stoner.Analysis.AnalysisMixin.peaks
+      ~Stoner.Analysis.AnalysisMixin.polyfit
+      ~Stoner.Analysis.AnalysisMixin.scale
+      ~Stoner.Analysis.AnalysisMixin.smooth
+      ~Stoner.Analysis.AnalysisMixin.span
+      ~Stoner.Analysis.AnalysisMixin.spline
+      ~Stoner.Analysis.AnalysisMixin.split
+      ~Stoner.Analysis.AnalysisMixin.stitch
+      ~Stoner.Analysis.AnalysisMixin.subtract
+      ~Stoner.Analysis.AnalysisMixin.threshold
+
+   
+   
+
+   
+   
+   

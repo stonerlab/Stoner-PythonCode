@@ -1,0 +1,8 @@
+
+
+DefaultPlotStyle.customise_axes
+===================================================
+
+.. currentmodule:: Stoner.plot.formats
+
+.. automethod:: DefaultPlotStyle.customise_axes
