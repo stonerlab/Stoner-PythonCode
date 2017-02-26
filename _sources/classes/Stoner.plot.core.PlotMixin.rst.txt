@@ -50,6 +50,7 @@ Stoner.plot.core.PlotMixin
       ~Stoner.plot.core.PlotMixin.multiple
       ~Stoner.plot.core.PlotMixin.no_fmt
       ~Stoner.plot.core.PlotMixin.positional_fmt
+      ~Stoner.plot.core.PlotMixin.showfig
       ~Stoner.plot.core.PlotMixin.subplots
       ~Stoner.plot.core.PlotMixin.template
    

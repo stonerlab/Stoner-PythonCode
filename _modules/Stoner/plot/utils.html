@@ -108,30 +108,19 @@
               <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot data with errors marked by a filled region.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    x, y : arrays</span>
-<span class="sd">        Coordinates of data.</span>
-<span class="sd">    yerr, xerr: [scalar | N, (N, 1), or (2, N) array]</span>
-<span class="sd">        Error for the input data.</span>
-<span class="sd">        - If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.</span>
-<span class="sd">    color : Matplotlib color</span>
-<span class="sd">        Color of line and fill region.</span>
-<span class="sd">    ls : Matplotlib line style</span>
-<span class="sd">        Style of the line</span>
-<span class="sd">    lw : Matplotlib line width, float value in points</span>
-<span class="sd">        Width of the line</span>
-<span class="sd">    alpha : float</span>
-<span class="sd">        Opacity used for plotting.</span>
-<span class="sd">    alpha_fill : float</span>
-<span class="sd">        Opacity of filled region. Note: the actual opacity of the fill is</span>
-<span class="sd">        `alpha * alpha_fill`.</span>
-<span class="sd">    label : str</span>
-<span class="sd">        Label for line.</span>
-<span class="sd">    label_fill : str</span>
-<span class="sd">        Label for filled region.</span>
-<span class="sd">    ax : Axis instance</span>
-<span class="sd">        The plot is drawn on axis `ax`. If `None` the current axis is used</span>
+<span class="sd">    Args:</span>
+<span class="sd">        x, y (arrays): Coordinates of data.</span>
+<span class="sd">        yerr, xerr ([scalar | N, (N, 1), or (2, N) array]): Error for the input data.</span>
+<span class="sd">            - If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.</span>
+<span class="sd">        color (Matplotlib color): Color of line and fill region.</span>
+<span class="sd">        ls (Matplotlib line style): Style of the line</span>
+<span class="sd">        lw (Matplotlib line width, float): Width of the line in points</span>
+<span class="sd">        alpha (float): Opacity used for plotting.</span>
+<span class="sd">        alpha_fill (float): Opacity of filled region. Note: the actual opacity of the fill is</span>
+<span class="sd">            `alpha * alpha_fill`.</span>
+<span class="sd">        label (str): Label for line.</span>
+<span class="sd">        label_fill (str): Label for filled region.</span>
+<span class="sd">        ax (Axis instance): The plot is drawn on axis `ax`. If `None` the current axis is used</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span> <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 
@@ -254,7 +243,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 14, 2017.
+      Last updated on Feb 26, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -1454,6 +1454,7 @@
 <span class="sd">                           already saved to disc. This is the default filename used by the :py:meth:`Stoner.Core.DataFile.load`</span>
 <span class="sd">                           and :py:meth:`Stoner.Core.DataFile.save`.</span>
 <span class="sd">        mask (array of booleans): Returns the current mask applied to the numerical data equivalent to self.data.mask.</span>
+<span class="sd">        mime_type (list of str): The possible mime-types of data files represented by each matching filename pattern in :py:attr:`Datafile.pattern`. </span>
 <span class="sd">        patterns (list): A list of filename extenion glob patterns that matrches the expected filename patterns for a DataFile (*.txt and *.dat&quot;)</span>
 <span class="sd">        priority (int): Used to indicathe order in which subclasses of :py:class:`DataFile` are tried when loading data. A higher number means a lower</span>
 <span class="sd">                            priority (!)</span>
@@ -3665,7 +3666,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 14, 2017.
+      Last updated on Feb 26, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

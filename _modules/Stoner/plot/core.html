@@ -93,13 +93,22 @@
 
 <div class="viewcode-block" id="PlotMixin"><a class="viewcode-back" href="../../../classes/Stoner.plot.core.PlotMixin.html#Stoner.plot.core.PlotMixin">[docs]</a><span class="k">class</span> <span class="nc">PlotMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.</span>
-<span class="sd">    Args:</span>
-<span class="sd">        args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`</span>
-<span class="sd">        kargs (dict):  keyword arguments to pass to \b DataFile.__init__</span>
 
-<span class="sd">    Attributes:</span>
-<span class="sd">        fig (matplotlib.figure): The current figure object being worked with</span>
-<span class="sd">        labels (list of string): List of axis labels as aternates to the column_headers</span>
+<span class="sd">        Args:</span>
+<span class="sd">            args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`</span>
+<span class="sd">            kargs (dict):  keyword arguments to pass to \b DataFile.__init__</span>
+<span class="sd">    </span>
+<span class="sd">        Attributes:</span>
+<span class="sd">            ax (matplotlib.Axes): The current axes on the current figure.</span>
+<span class="sd">            axes (list of matplotlib.Axes): A list of all the axes on the current figure</span>
+<span class="sd">            fig (matplotlib.figure): The current figure object being worked with</span>
+<span class="sd">            fignum (int): The current figure&#39;s number.</span>
+<span class="sd">            labels (list of string): List of axis labels as aternates to the column_headers</span>
+<span class="sd">            showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)</span>
+<span class="sd">            subplots (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.</span>
+<span class="sd">            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">positional_fmt</span> <span class="o">=</span> <span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">semilogx</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">]</span>
@@ -116,6 +125,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># Retains previous behaviour</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done PlotMixin init&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;fig&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
@@ -125,7 +135,8 @@
             <span class="s2">&quot;ylim&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-            <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span>
+            <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
+            <span class="s2">&quot;showfig&quot;</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="p">}</span></div>
 
 
@@ -185,6 +196,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">value</span>
+            
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">showfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        
+    <span class="nd">@showfig</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">showfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">bool</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;showfig should be a boolean value not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="o">=</span><span class="n">value</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subplots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -932,7 +960,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">showfig</span></div>
 
 <div class="viewcode-block" id="PlotMixin.plot_xy"><a class="viewcode-back" href="../../../classes/Stoner.plot.core.PlotMixin.plot_xy.html#Stoner.plot.core.PlotMixin.plot_xy">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Makes a simple X-Y plot of the specified data.</span>
@@ -1077,7 +1105,7 @@
                     <span class="n">loc</span><span class="p">,</span> <span class="n">lab</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">()</span>
                     <span class="n">lab</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lab</span><span class="p">]</span>
                     <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">lab</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">showfig</span></div>
 
 <div class="viewcode-block" id="PlotMixin.plot_xyz"><a class="viewcode-back" href="../../../classes/Stoner.plot.core.PlotMixin.plot_xyz.html#Stoner.plot.core.PlotMixin.plot_xyz">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">zcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().</span>
@@ -1141,11 +1169,12 @@
         <span class="k">if</span> <span class="n">plotter</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__SurfPlotter</span><span class="p">:</span>
             <span class="k">del</span> <span class="p">(</span><span class="n">nonkargs</span><span class="p">[</span><span class="s2">&quot;zlabel&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fix_titles</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">nonkargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">showfig</span></div>
 
 <div class="viewcode-block" id="PlotMixin.plot_xyuv"><a class="viewcode-back" href="../../../classes/Stoner.plot.core.PlotMixin.plot_xyuv.html#Stoner.plot.core.PlotMixin.plot_xyuv">[docs]</a>    <span class="k">def</span> <span class="nf">plot_xyuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Makes an overlaid image and quiver plot.</span>
-<span class="sd">        Args:</span>
+
+<span class="sd">            Args:</span>
 <span class="sd">                xcol (index): Xcolumn index or label</span>
 <span class="sd">                ycol (index): Y column index or label</span>
 <span class="sd">                zcol (index): Z column index or label</span>
@@ -1299,7 +1328,7 @@
                 <span class="n">mlab</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">showfig</span></div>
 
 <div class="viewcode-block" id="PlotMixin.quiver_plot"><a class="viewcode-back" href="../../../classes/Stoner.plot.core.PlotMixin.quiver_plot.html#Stoner.plot.core.PlotMixin.quiver_plot">[docs]</a>    <span class="k">def</span> <span class="nf">quiver_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ucol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Make a 2D Quiver plot from the data.</span>
@@ -1442,7 +1471,7 @@
         <span class="n">rgb</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="o">*</span><span class="n">hls</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
     <span class="k">return</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">rgb</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">)</span></div>
 
-<span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="n">PlotMixin</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1486,7 +1515,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 14, 2017.
+      Last updated on Feb 26, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

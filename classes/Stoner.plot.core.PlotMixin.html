@@ -61,13 +61,31 @@
 <dl class="class">
 <dt id="Stoner.plot.core.PlotMixin">
 <em class="property">class </em><code class="descclassname">Stoner.plot.core.</code><code class="descname">PlotMixin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.core.PlotMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.
-:Parameters: * <strong>args</strong> (<em>tuple</em>) &#8211; Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></a></p>
-<blockquote>
-<div><ul class="simple">
+<dd><p>A mixin class that works with <a class="reference internal" href="Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a> to add additional plotting functionality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<em>tuple</em>) &#8211; Arguements to pass to <a class="reference internal" href="Stoner.Core.DataFile.__init__.html#Stoner.Core.DataFile.__init__" title="Stoner.Core.DataFile.__init__"><code class="xref py py-meth docutils literal"><span class="pre">Stoner.Core.DataFile.__init__()</span></code></a></li>
 <li><strong>kargs</strong> (<em>dict</em>) &#8211; keyword arguments to pass to  DataFile.__init__</li>
 </ul>
-</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.ax">
+<code class="descname">ax</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.ax" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>matplotlib.Axes</em> &#8211; The current axes on the current figure.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.axes">
+<code class="descname">axes</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.axes" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of matplotlib.Axes</em> &#8211; A list of all the axes on the current figure</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="Stoner.plot.core.PlotMixin.fig">
 <code class="descname">fig</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.fig" title="Permalink to this definition">¶</a></dt>
@@ -75,9 +93,33 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.fignum">
+<code class="descname">fignum</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.fignum" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em> &#8211; The current figure&#8217;s number.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="Stoner.plot.core.PlotMixin.labels">
 <code class="descname">labels</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p><em>list of string</em> &#8211; List of axis labels as aternates to the column_headers</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.showfig">
+<code class="descname">showfig</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.showfig" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>bool or None</em> &#8211; Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.subplots">
+<code class="descname">subplots</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.subplots" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list of matplotlib.Axes</em></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.plot.core.PlotMixin.template">
+<code class="descname">template</code><a class="headerlink" href="#Stoner.plot.core.PlotMixin.template" title="Permalink to this definition">¶</a></dt>
+<dd><p><code class="xref py py-class docutils literal"><span class="pre">Sonter.plot.formats.DefaultPlotStyle</span></code> or instance &#8211; A plot style template subclass or object that determines the format and appearance of plots.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -150,16 +192,16 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ax</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.ax" title="Stoner.plot.core.PlotMixin.ax"><code class="xref py py-obj docutils literal"><span class="pre">ax</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.axes" title="Stoner.plot.core.PlotMixin.axes"><code class="xref py py-obj docutils literal"><span class="pre">axes</span></code></a></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.fig" title="Stoner.plot.core.PlotMixin.fig"><code class="xref py py-obj docutils literal"><span class="pre">fig</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">fignum</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.fignum" title="Stoner.plot.core.PlotMixin.fignum"><code class="xref py py-obj docutils literal"><span class="pre">fignum</span></code></a></td>
 <td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.labels" title="Stoner.plot.core.PlotMixin.labels"><code class="xref py py-obj docutils literal"><span class="pre">labels</span></code></a></td>
@@ -177,10 +219,13 @@
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">positional_fmt</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subplots</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.showfig" title="Stoner.plot.core.PlotMixin.showfig"><code class="xref py py-obj docutils literal"><span class="pre">showfig</span></code></a></td>
+<td>Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.subplots" title="Stoner.plot.core.PlotMixin.subplots"><code class="xref py py-obj docutils literal"><span class="pre">subplots</span></code></a></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">template</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.plot.core.PlotMixin.template" title="Stoner.plot.core.PlotMixin.template"><code class="xref py py-obj docutils literal"><span class="pre">template</span></code></a></td>
 <td></td>
 </tr>
 </tbody>
@@ -246,7 +291,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Feb 14, 2017.
+      Last updated on Feb 26, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
