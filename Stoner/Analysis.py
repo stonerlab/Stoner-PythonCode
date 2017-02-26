@@ -2282,7 +2282,7 @@ class AnalysisMixin(object):
             ret.isrow=True
         return ret
 
-class AnalyseFile(DataFile,AnalysisMixin):
+class AnalyseFile(AnalysisMixin,DataFile):
     """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
 
     Note:

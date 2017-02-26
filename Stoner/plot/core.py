@@ -47,8 +47,16 @@ class PlotMixin(object):
         kargs (dict):  keyword arguments to pass to \b DataFile.__init__
 
     Attributes:
+        ax (matplotlib.Axes): The current axes on the current figure.
+        axes (list of matplotlib.Axes): A list of all the axes on the current figure
         fig (matplotlib.figure): The current figure object being worked with
+        fignum (int): The current figure's number.
         labels (list of string): List of axis labels as aternates to the column_headers
+        showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)
+        subplot (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.
+        template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.
+        
+        
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
@@ -65,6 +73,7 @@ class PlotMixin(object):
         self.__figure = None
         self._labels = copy.deepcopy(self.column_headers)
         self._subplots = []
+        self._showfig=True # Retains previous behaviour
         if self.debug: print("Done PlotMixin init")
         self._public_attrs={
             "fig": (int, mplfig.Figure),
@@ -74,7 +83,8 @@ class PlotMixin(object):
             "ylim": tuple,
             "title": string_types,
             "xlabel": string_types,
-            "ylabel": string_types
+            "ylabel": string_types,
+            "showfig": bool
     }
 
 
@@ -134,6 +144,23 @@ class PlotMixin(object):
             self._labels=copy.deepcopy(self.column_headers)
         else:
             self._labels = value
+            
+    @property
+    def showfig(self):
+        """Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."""
+        if self._showfig is None:
+            return None
+        if self._showfig:
+            return self.__figure
+        else:
+            return self
+        
+    @showfig.setter
+    def showfig(self,value):
+        if not (value is None or isinstance(value,bool)):
+            raise AttributeError("showfig should be a boolean value not a {}".format(type(value)))
+        else:
+            self._showfig=value
 
     @property
     def subplots(self):
@@ -881,7 +908,7 @@ class PlotMixin(object):
         plt.show()
         plt.draw()
 
-        return self.__figure
+        return self.showfig
 
     def plot_xy(self, xcol=None, ycol=None, fmt=None, xerr=None, yerr=None, multiple=None, **kargs):
         """Makes a simple X-Y plot of the specified data.
@@ -1026,7 +1053,7 @@ class PlotMixin(object):
                     loc, lab = plt.yticks()
                     lab = [l.get_text() for l in lab]
                     plt.yticks(loc[:-1], lab[:-1])
-        return self.__figure
+        return self.showfig
 
     def plot_xyz(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, projection="3d", **kargs):
         """Plots a surface plot based on rows of X,Y,Z data using matplotlib.pcolor().
@@ -1090,7 +1117,7 @@ class PlotMixin(object):
         if plotter != self.__SurfPlotter:
             del (nonkargs["zlabel"])
         self._fix_titles(0, "none", **nonkargs)
-        return self.__figure
+        return self.showfig
 
     def plot_xyuv(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Makes an overlaid image and quiver plot.
@@ -1248,7 +1275,7 @@ class PlotMixin(object):
                 mlab.show()
             else:
                 plt.show()
-        return self.__figure
+        return self.showfig
 
     def quiver_plot(self, xcol=None, ycol=None, ucol=None, vcol=None, **kargs):
         """Make a 2D Quiver plot from the data.
@@ -1391,7 +1418,7 @@ def hsl2rgb(h, s, l):
         rgb[i,:] = _np_.array(hls_to_rgb(*hls[i]))
     return (255 * rgb).astype('u1')
 
-class PlotFile(DataFile,PlotMixin):
+class PlotFile(PlotMixin,DataFile):
     """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`
 
     """
