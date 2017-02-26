@@ -300,7 +300,7 @@ class DefaultPlotStyle(object):
         return ret, ax
 
     def apply(self):
-        """Scan for all attributes that start templtate_ and build them into a dictionary
+        """Scan for all attributes that start template_ and build them into a dictionary
         to update matplotlib settings with.
         """
         plt.style.use(self.stylesheet)

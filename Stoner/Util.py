@@ -141,7 +141,7 @@ class Data(_AF_, _PF_,_DF_):
             z (float): z co-ordinbate of the label if the current axes are 3D
             prefix (str): The prefix placed ahead of the model parameters in the metadata.
             text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
-                      return just the text and don't add to a plot.
+                return just the text and don't add to a plot.
 
         Returns:
             

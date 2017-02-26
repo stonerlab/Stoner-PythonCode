@@ -44,11 +44,6 @@ def test_is_zip(filename, member=""):
 class ZipFile(DataFile):
     """A sub class of DataFile that sores itself in a zip file.
 
-    Methods:
-        _load(): prorivate method to allow :py:class:`Stoner.Core.DataFile` to load
-                    a file from zip file
-        save(): Save a dataset to an zip file.
-
     If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
     initialises with a blank parent constructor and then loads data, otherwise,
     calls parent constructor.

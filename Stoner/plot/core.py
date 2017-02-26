@@ -42,19 +42,20 @@ except ImportError:
 
 class PlotMixin(object):
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
-    Args:
-        args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
-        kargs (dict):  keyword arguments to pass to \b DataFile.__init__
 
-    Attributes:
-        ax (matplotlib.Axes): The current axes on the current figure.
-        axes (list of matplotlib.Axes): A list of all the axes on the current figure
-        fig (matplotlib.figure): The current figure object being worked with
-        fignum (int): The current figure's number.
-        labels (list of string): List of axis labels as aternates to the column_headers
-        showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)
-        subplot (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.
-        template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.
+        Args:
+            args(tuple): Arguements to pass to :py:meth:`Stoner.Core.DataFile.__init__`
+            kargs (dict):  keyword arguments to pass to \b DataFile.__init__
+    
+        Attributes:
+            ax (matplotlib.Axes): The current axes on the current figure.
+            axes (list of matplotlib.Axes): A list of all the axes on the current figure
+            fig (matplotlib.figure): The current figure object being worked with
+            fignum (int): The current figure's number.
+            labels (list of string): List of axis labels as aternates to the column_headers
+            showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)
+            subplots (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.
+            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.
         
         
     """
@@ -1121,7 +1122,8 @@ class PlotMixin(object):
 
     def plot_xyuv(self, xcol=None, ycol=None, ucol=None, vcol=None, wcol=None, **kargs):
         """Makes an overlaid image and quiver plot.
-        Args:
+
+            Args:
                 xcol (index): Xcolumn index or label
                 ycol (index): Y column index or label
                 zcol (index): Z column index or label

@@ -57,30 +57,19 @@ def errorfill(x, y,
               ax=None, **kargs):
     """Plot data with errors marked by a filled region.
 
-    Parameters
-    ----------
-    x, y : arrays
-        Coordinates of data.
-    yerr, xerr: [scalar | N, (N, 1), or (2, N) array]
-        Error for the input data.
-        - If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.
-    color : Matplotlib color
-        Color of line and fill region.
-    ls : Matplotlib line style
-        Style of the line
-    lw : Matplotlib line width, float value in points
-        Width of the line
-    alpha : float
-        Opacity used for plotting.
-    alpha_fill : float
-        Opacity of filled region. Note: the actual opacity of the fill is
-        `alpha * alpha_fill`.
-    label : str
-        Label for line.
-    label_fill : str
-        Label for filled region.
-    ax : Axis instance
-        The plot is drawn on axis `ax`. If `None` the current axis is used
+    Args:
+        x, y (arrays): Coordinates of data.
+        yerr, xerr ([scalar | N, (N, 1), or (2, N) array]): Error for the input data.
+            - If scalar, then filled region spans `y +/- yerr` or `x +/- xerr`.
+        color (Matplotlib color): Color of line and fill region.
+        ls (Matplotlib line style): Style of the line
+        lw (Matplotlib line width, float): Width of the line in points
+        alpha (float): Opacity used for plotting.
+        alpha_fill (float): Opacity of filled region. Note: the actual opacity of the fill is
+            `alpha * alpha_fill`.
+        label (str): Label for line.
+        label_fill (str): Label for filled region.
+        ax (Axis instance): The plot is drawn on axis `ax`. If `None` the current axis is used
     """
     ax = ax if ax is not None else plt.gca()
 

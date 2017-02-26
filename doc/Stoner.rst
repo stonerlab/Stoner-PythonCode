@@ -37,7 +37,7 @@ Functions
 
 
 :mod:`plot` Package
-====================
+===================
 
 Classes
 -------
@@ -52,6 +52,30 @@ Functions
    :toctree: functions
    :template: funcdocs.rst
    :functions-only:
+   
+:mod:`PlotFormats` Module
+-------------------------
+
+
+Classes
+~~~~~~~
+.. automodsumm:: Stoner.plot.formats
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
+
+See also the stylesheets available in the stylelib directory.
+
+:mod:`plot.utils` Module
+------------------------
+
+Functions
+~~~~~~~~~
+.. automodsumm:: Stoner.plot.utils
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
+
 
 :mod:`Folders` Module
 ======================
@@ -109,29 +133,6 @@ Facility Outputs
     OpenGDAFile
     RasorFile
     SNSFile
-
-:mod:`PlotFormats` Module
-==========================
-
-
-Classes
--------
-.. automodsumm:: Stoner.plot.formats
-   :toctree: classes
-   :template: classdocs.rst
-   :classes-only:
-
-See also the stylesheets available in the stylelib directory.
-
-:mod:`plot.utils` Module
-========================
-
-Functions
----------
-.. automodsumm:: Stoner.plot.utils
-   :toctree: functions
-   :template: funcdocs.rst
-   :functions-only:
 
 :mod:`Fit` Module
 =================
