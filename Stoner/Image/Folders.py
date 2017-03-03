@@ -8,6 +8,7 @@ Created on Mon May 23 12:05:59 2016
 from .core import ImageArray
 from .core import dtype_range
 from Stoner.Core import metadataObject
+from Stoner.Util import Data
 import numpy as np
 from os import path
 import copy
@@ -117,8 +118,9 @@ class ImageFolder(DiskBssedFolder,baseFolder):
                 metadata=[m[0] for m in metadata]
         return metadata
     
-    def imagestack(self):
-        return (ImageStack(self))
+    def kerrstack(self):
+        k = KerrStack(self)
+        return k
       
 class ImageStack(metadataObject):
     """
@@ -180,7 +182,7 @@ class ImageStack(metadataObject):
                         self.append(images[i,:,:].view(type=ImageArray))
             elif isinstance(args[0], (list, ImageFolder)):
                 if isinstance(images, ImageFolder):
-                    images=[i for i in ImageFolder] #take the images from the top group
+                    images=[i for i in images] #take the images from the top group
                 types = [isinstance(i, np.ndarray) for i in images] #this covers ImageArray too
                 if all(types):        
                     for i in images:
@@ -379,7 +381,7 @@ class ImageStack(metadataObject):
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
         are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
         dl=self.dtype_limits(clip_negative=True)
-        self.imarray=np.clip(self.imarray, dl[0], dl[1])
+        np.clip(self.imarray, dl[0], dl[1], out=self.imarray)
     
     def convert_float(self, clip_negative=True):
         """convert the imarray to floating point type normalised to -1 
@@ -443,23 +445,31 @@ class KerrStack(ImageStack):
         super(KerrStack, self).__init__(*args, **kwargs)
         self.convert_float()
         if 'fields' in self.zipallmeta.keys():
-            self.fields = np.array(self.zipallmeta('fields'))
+            self.fields = np.array(self.zipallmeta('field'))
         else:
             self.fields = np.arange(len(self))
     
     def subtract(self, background, contrast=16, clip_intensity=True):
-        """subtract a background image from all images in the stack.
+        """subtract a background image (or index) from all images in the stack.
         If clip_intensity then clip negative intensities to 0
         """
         #could do this an alternative way - quicker but more memory intensive
         #stack backgrounds up into a 3d array and subtract from imarray
         #bg = np.stack([background for _ in range(len(self))], axis=0)
-        for i,im in enumerate(self):
-            new=contrast*(im-background)+0.5
-            if clip_intensity:
-                new=new.clip_intensity()
-            self[i]=new
-    
+        self.convert_float(clip_negative=False)
+        if isinstance(background, int):
+            bg=self[background]
+        bg = bg.view(ImageArray).convert_float(clip_negative=False)
+        bg=np.tile(bg, (len(self),1,1))
+        self.imarray = contrast * (self.imarray - bg) + 0.5
+        if clip_intensity:
+            self.clip_intensity()
+#        for i,im in enumerate(self):
+#            new=contrast*(im-background)+0.5
+#            if clip_intensity:
+#                new=new.clip_intensity()
+#            self[i]=new
+#    
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images
     
@@ -484,7 +494,9 @@ class KerrStack(ImageStack):
                 hyst[i,1] = np.average(im[np.invert(mask[i])])
             else:
                 hyst[i,1] = np.average(im)
-        return Data(hyst)
+        d = Data(hyst, setas='xy')
+        d.column_headers = ['Field', 'Intensity']
+        return d
             
     def index_to_field(self, index_map):
         """Convert an image of index values into an image of field values

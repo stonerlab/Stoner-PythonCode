@@ -54,7 +54,7 @@ dtype_range = {np.bool_: (False, True),
 
     
 class ImageArray(np.ndarray,metadataObject):
-    """Class for manipulating Image images from Evico software.
+    """Class for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
     parameter which is the metadata. This stores information about the image
     in a dictionary object for later retrieval.
