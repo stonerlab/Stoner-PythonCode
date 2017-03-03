@@ -6,7 +6,7 @@ Created on Tue May 03 14:31:14 2016
 
 kermit.py
 
-Implements KerrArray, a class for using and manipulating two tone images such
+Implements ImageArray, a class for using and manipulating two tone images such
 as those produced by Kerr microscopy (with particular emphasis on the Evico
 software images).
 
@@ -53,15 +53,15 @@ dtype_range = {np.bool_: (False, True),
 
 
     
-class KerrArray(np.ndarray,metadataObject):
-    """Class for manipulating Kerr images from Evico software.
+class ImageArray(np.ndarray,metadataObject):
+    """Class for manipulating Image images from Evico software.
     It is built to be almost identical to a numpy array except for one extra
     parameter which is the metadata. This stores information about the image
     in a dictionary object for later retrieval.
     All standard numpy functions should work as normal and casting two types
-    together should yield a KerrArray type (ie. KerrArray+np.ndarray=KerrArray)
+    together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)
 
-    In addition any function from skimage should work and return a KerrArray.
+    In addition any function from skimage should work and return a ImageArray.
     They can be called as eg. im=im.gaussian(sigma=2). Don't include the module
     name, just the function name (ie not filters.gaussian). Also omit the first
     image argument required by skimage.
@@ -73,7 +73,7 @@ class KerrArray(np.ndarray,metadataObject):
     A note on coordinate systems:
     For arrays the indexing is (row, column). However the normal way to index
     an image would be to do (horizontal, vert), which is the opposite.
-    In KerrArray the coordinate system is chosen similar to skimage. y points
+    In ImageArray the coordinate system is chosen similar to skimage. y points
     down x points right and the origin is in the top left corner of the image.
     When indexing the array therefore you need to give it (y,x) coordinates
     for (row, column).
@@ -85,7 +85,7 @@ class KerrArray(np.ndarray,metadataObject):
     y (row)
 
     eg I want the 4th pixel in the horizontal direction and the 10th pixel down
-    from the top I would ask for KerrArray[10,4]
+    from the top I would ask for ImageArray[10,4]
 
     but if I want to translate the image 4 in the x direction and 10 in the y
     I would call im=im.translate((4,10))
@@ -102,7 +102,7 @@ class KerrArray(np.ndarray,metadataObject):
 
     def __new__(cls, image=[], *args, **kwargs):
         """
-        Construct a KerrArray object. We're using __new__ rather than __init__
+        Construct a ImageArray object. We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
 
@@ -114,14 +114,14 @@ class KerrArray(np.ndarray,metadataObject):
         array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
         array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
         ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata.update(tmp) # Store the metadata from the PNG file into the KerrImage
+        ka.metadata.update(tmp) # Store the metadata from the PNG file into the ImageArray
         ka.filename=tmp["Loaded from"]
         return ka #__init__ called
 
     def __init__(self, image=[],
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
-        """Create a KerrArray instance with metadata attribute
+        """Create a ImageArray instance with metadata attribute
 
         Parameters
         ----------
@@ -177,7 +177,7 @@ class KerrArray(np.ndarray,metadataObject):
     @property
     def clone(self):
         """return a copy of the instance"""
-        return KerrArray(np.copy(self),metadata=deepcopy(self.metadata),
+        return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
                                get_metadata=False)
 
     @property
@@ -204,10 +204,10 @@ class KerrArray(np.ndarray,metadataObject):
     
     @property
     def _kfuncs(self):
-        """Provide an attribtute that caches the imported KerrArray functions."""
+        """Provide an attribtute that caches the imported ImageArray functions."""
         if self._kfuncs_proxy is None:
-            from . import kfuncs
-            self._kfuncs_proxy=kfuncs
+            from . import imagefuncs
+            self._kfuncs_proxy=imagefuncs
         return self._kfuncs_proxy
 
     @property
@@ -244,8 +244,8 @@ class KerrArray(np.ndarray,metadataObject):
         mods.reverse()
         for k in mods:
             skimage|=set(self._ski_funcs[k][1])
-        parent=set(dir(super(KerrArray,self)))
-        mine=set(dir(KerrArray))
+        parent=set(dir(super(ImageArray,self)))
+        mine=set(dir(ImageArray))
         return list(skimage|kfuncs|parent|mine)
 
     def __getattr__(self,name):
@@ -282,7 +282,7 @@ class KerrArray(np.ndarray,metadataObject):
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
-            return super(KerrArray,self).__getitem__(index)
+            return super(ImageArray,self).__getitem__(index)
 
 
     def __setitem__(self,index,value):
@@ -290,14 +290,14 @@ class KerrArray(np.ndarray,metadataObject):
         if isinstance(index,string_types):
             self.metadata[index]=value
         else:
-            super(KerrArray,self).__setitem__(index,value)
+            super(ImageArray,self).__setitem__(index,value)
 
     def __delitem__(self,index):
         """Patch indexing of strings to metadata."""
         if isinstance(index,string_types):
             del self.metadata[index]
         else:
-            super(KerrArray,self).__delitem__(index)
+            super(ImageArray,self).__delitem__(index)
 
     def _func_generator(self,workingfunc):
         """generate a function that adds self as the first argument"""
@@ -310,8 +310,8 @@ class KerrArray(np.ndarray,metadataObject):
                 r=Data(r)
                 r.metadata=self.metadata.opy()
                 r.column_headers[0]=workingfunc.__name__
-            elif isinstance(r,np.ndarray) and not isinstance(r,KerrArray): #make sure we return a KerrArray
-                r=r.view(type=KerrArray)
+            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
+                r=r.view(type=ImageArray)
                 r.metadata=self.metadata.copy()
             #NB we might not be returning an ndarray at all here !
             return r
@@ -341,12 +341,12 @@ class KerrArray(np.ndarray,metadataObject):
 
         Returns
         -------
-        view: KerrArray
+        view: ImageArray
             view onto the array
 
         Example
         -------
-        a=KerrArray([[1,2,3],[0,1,2]])
+        a=ImageArray([[1,2,3],[0,1,2]])
         b=a.box(0,1,0,2)
         b[:]=b+1
         print a
@@ -416,7 +416,7 @@ class KerrArray(np.ndarray,metadataObject):
 
         Returns
         -------
-        im: KerrArray
+        im: ImageArray
             cropped image
         """
 
@@ -438,7 +438,7 @@ class KerrArray(np.ndarray,metadataObject):
 
         Returns
         -------
-        im: KerrArray
+        im: ImageArray
             cropped image
         """
         if box is None:
