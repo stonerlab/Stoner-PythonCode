@@ -264,7 +264,9 @@ class ImageArray(np.ndarray,metadataObject):
 
         ret=None
         #first check kermit funcs
-        if name in dir(self._kfuncs):
+        if name.startswith('_'):
+            pass
+        elif name in dir(self._kfuncs):
             workingfunc=getattr(self._kfuncs,name)
             ret=self._func_generator(workingfunc)
         else:

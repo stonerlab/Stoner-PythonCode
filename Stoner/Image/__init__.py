@@ -7,6 +7,7 @@ Created on Fri May 27 09:14:25 2016
 
 __all__=['core']
 from .core import ImageArray
-from .Folders import ImageFolder, ImageStack, KerrStack, MaskStack
+from .folders import ImageFolder
+from .stack import ImageStack, KerrStack, MaskStack
 
 KERR_IM=[0,512,0,672]

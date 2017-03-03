@@ -5,7 +5,7 @@ Created on Fri May 27 17:09:04 2016
 @author: phyrct
 """
 
-from Stoner.Image import KerrArray
+from Stoner.Image import ImageArray
 from Stoner.Core import typeHintedDict
 import numpy as np
 import unittest
@@ -48,20 +48,20 @@ td2=np.array(\
 
 thisdir=path.dirname(__file__)
 
-class KerrArrayTest(unittest.TestCase):
+class ImageArrayTest(unittest.TestCase):
 
     def setUp(self):
-        self.td1=KerrArray(td1)
-        self.td2=KerrArray(td2)
-        self.anim=KerrArray(path.join(thisdir,'coretestdata/im1_annotated.png'),ocr_metadata=True)
-        self.unanim=KerrArray(path.join(thisdir,'coretestdata/im2_noannotations.png'),ocr_metadata=True)
+        self.td1=ImageArray(td1)
+        self.td2=ImageArray(td2)
+        self.anim=ImageArray(path.join(thisdir,'coretestdata/im1_annotated.png'),ocr_metadata=True)
+        self.unanim=ImageArray(path.join(thisdir,'coretestdata/im2_noannotations.png'),ocr_metadata=True)
         self.testdata=(self.td1,self.td2,self.anim,self.unanim)
 
     def test_load(self):
-        t1=KerrArray([1,2,3], metadata={'a':5})
+        t1=ImageArray([1,2,3], metadata={'a':5})
         self.assertTrue(np.array_equal(t1, np.array([1,2,3])), 'Initialising from list failed')
         self.assertTrue(t1.metadata['a']==5, 'Initialising metadata from data failed')
-        t1=KerrArray([1,2,3])
+        t1=ImageArray([1,2,3])
         self.assertTrue(np.array_equal(t1, np.array([1,2,3])))
         #done most checks here, if there was a problem loading a file it would have come up in
         #set up.
@@ -70,7 +70,7 @@ class KerrArrayTest(unittest.TestCase):
         self.td1.metadata['testclone1']='abc'
         self.td1.metadata['testclone2']=345 #add some metadata to check
         td1=self.td1.clone
-        self.assertTrue(isinstance(td1,KerrArray), 'Clone not KerrArray')
+        self.assertTrue(isinstance(td1,ImageArray), 'Clone not ImageArray')
         self.assertTrue(np.array_equal(td1,self.td1.clone),'Clone not replicating elements')
         self.assertTrue(all([k in td1.metadata.keys() for k in \
                     self.td1.metadata.keys()]), 'Clone not replicating metadata')
@@ -85,7 +85,7 @@ class KerrArrayTest(unittest.TestCase):
         testfile=path.join(thisdir,'coretestdata','testsave.png')
         keys=self.anim.keys()
         self.anim.save(filename=testfile)
-        load=KerrArray(testfile)
+        load=ImageArray(testfile)
         del load["Loaded from"]
         self.assertTrue(all([k in keys for k in load.keys()]), 'problem saving metadata')
         os.remove(testfile) #tidy up
@@ -146,7 +146,7 @@ class KerrArrayTest(unittest.TestCase):
         td1=td1.gaussian(sigma=2)
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    #test=KerrArrayTest()
+    #test=ImageArrayTest()
     #test.setUp()
     unittest.main()
 
