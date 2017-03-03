@@ -225,13 +225,20 @@ class ImageStack(metadataObject):
         """
         return copy.deepcopy(self)
     
+    def __iter__(self):
+        return self.__next__()
+    
+    def __next__(self):
+        for i in range(len(self)):
+            yield self[i]
+    
     def _update_commonkeys(self):
         """update self._commonkeys
         common keys in self.allmeta
         """
         keys = set(self.allmeta[0].keys())
-        for m in self._allmeta:
-            self._commonkeys = keys | set(m.keys()) #union
+        for m in self.allmeta:
+            self._commonkeys = keys & set(m.keys()) #intersection
     
     def _update_zipallmeta(self):
         """list of metadata items for each common key
@@ -397,7 +404,7 @@ class ImageStack(metadataObject):
         if clip_negative:
             self.clip_intensity()
 
-    def apply_all(self, func, quiet=True, funcargs=[], funckwargs={}):
+    def apply_all(self, *args, **kwargs):
         """apply function func to all images in the stack
         Parameters
         ----------
@@ -408,16 +415,18 @@ class ImageStack(metadataObject):
         funcargs, funckwargs
             arguments for the function
         """
+        args = list(args)
+        func = args.pop(0)
+        quiet = kwargs.pop('quiet', False)
         if isinstance(func, string_types):
             for i, im in enumerate(self):
-                k=ImageArray(im)
-                f=getattr(k,func)
+                f=getattr(im,func)
                 self[i]=f(*args,**kwargs)
                 if not quiet:
                     print('.')
         elif hasattr(func, '__call__'):
             for i, im in enumerate(self):
-                self[i]=func(im, *funcargs, **funckwargs)
+                self[i]=func(im, *args, **kwargs)
             if not quiet:
                 print('.')
     
@@ -504,7 +513,7 @@ class KerrStack(ImageStack):
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
     
-    def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50,box=None):
+    def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
         
         Parameters
@@ -514,8 +523,9 @@ class KerrStack(ImageStack):
         Other parameters see ImageArray.correct_drift
         """
         ref=self[refindex]
-        self.imarray=self.apply_all('correct_drift', ref,
-                 threshold=threshold,upsample_factor=upsample_factor,box=box)
+        self.apply_all('correct_drift', ref, threshold=threshold,
+                     upsample_factor=upsample_factor, box=box)
+                               
     
 class MaskStack(KerrStack):
     """Similar to ImageStack but made for stacks of boolean or binary images
