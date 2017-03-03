@@ -626,8 +626,10 @@ class baseFolder(MutableSequence):
                         ret=getattr(instance,item,None)
                     else:
                         ret=None
+                    if ret==None:
+                        raise AttributeError
             except AttributeError: # Ok, pass back
-                raise AttributeError("{} is not an Attribute of {} or {}".ormat(item,type(self),type(instance)))
+                raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
         return ret
 
     def __getattr_proxy(self,item):
@@ -1271,7 +1273,7 @@ class DiskBssedFolder(object):
 
         directory (str): The root directory on disc for the folder - by default this is the current working directory.
 
-        multiple (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
+        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.
         
         readlist (bool): Whether to read the directory immediately on creation. Default is True
         
@@ -1286,14 +1288,15 @@ class DiskBssedFolder(object):
                   "recursive":True,
                   "flat":False,
                   "directory":os.getcwd(),
-                  "multiple":False,
+                  "multifile":False,
                   "readlist":True,
                   }
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
+        super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
         if self.readlist:
-            self.getlist()
-        super(DiskBssedFolder,self).__init__(*args,**kargs)
+            self.getlist(directory=args[0])
+        
         
 
     @property
