@@ -3,7 +3,6 @@ dask>=0.14.0
 decorator>=4.0.11
 enum34>=1.1.6
 filemagic>=1.6
-functools32>=3.2.3.post2
 h5py>=2.6.0
 lmfit>=0.9.5
 matplotlib>=2.0.0
