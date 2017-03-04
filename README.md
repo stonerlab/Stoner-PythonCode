@@ -130,7 +130,7 @@ Recent Changes
 Development Version
 -------------------
 
-Teh current development version is 0.7. Features of 0.7 include
+The current development version is 0.7. Features of 0.7 include
 
 > -   Replace older AnalyseFile and PlotFile with mixin based versions
 >     AnalysisMixin and PlotMixin
@@ -141,6 +141,17 @@ Teh current development version is 0.7. Features of 0.7 include
 
 Online documentation for the development version can be found on the
 [githib repository pages](http://gb119.github.io/Stoner-PythonCode)
+
+### Build Status
+
+Travis CI is used to test the development branch to see if it passes the
+current unit tests. The current status is: .. image::
+<https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master>
+:target: <https://travis-ci.org/gb119/Stoner-PythonCode>
+
+### Citing the Stoner Package
+
+You can cite the Stoner package via its doi:
 
 [![image](https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg)](https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode)
 
