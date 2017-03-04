@@ -60,29 +60,43 @@ def _average_list(listob):
     
 
 class ImageStack(metadataObject):
-    """
+    """:py:class:`Stoner.Image.stack.ImageStack` is a 3d numpy array stack of images.
+
     This is used to deal with a stack of images with identical dimensions
     as a 3d numpy array - more efficient than the folder based methods in ImageFolder
     for iterating etc. The first axis is the number of images. Images are added
-    and deleted through list type methods ImageStack.append, ImageStack.insert
+    and deleted through list type methods ImageStack.append, ImageStack.insert.
+    
+    Images can be accessed through ImageStack[i]
+    Metadata through ImageStack['key']
+    images should be added or removed using the list like methods append, insert, del
+    
+    Attributes:
+        imarray(np.ndarray): 
+            the 3d stack of images
+        allmeta(list): 
+            list of metadata stored for each image
+        zipallmeta(dict): 
+            a dictionary of all common metadata items zipped into lists
+        clone(ImageStack): 
+            copy of self
+        shape(tuple): 
+            pass through to imarray.shape
     """
         
     def __init__(self, *args, **kargs):
-        """Implements the basic logic for the ImageStack
-        kargs:
+        """Constructor for :py:class:`Stoner.Image.stack.ImageStack`
+        Args:
+            (str, ndarray (3d or 2d), ImageFolder, ImageStack, list of array type):
+                Various forms recognised. Will try to create as expected!
+        Keyword Arguments:
             metadata: extra info to retain beyond the image metadata
             metadata_info: descriptor of how to add the individual image
                       metadata to the main metadata parameter.
                       'list': lists the metadata for each of the common keys
                       'average': attempts to save the average value of each meta key
             copyarray: whether to copy the image given in args[0]
-        Attributes:
-            imarray: the 3d stack of images
-            allmeta: list of metadata for each image
-            zipallmeta: a dictionary of all common metadata items zipped into lists
-            clone: copy of self
-            shape: pass through to imarray.shape
-                      
+                              
         """
         super(ImageStack, self).__init__(  \
                     metadata=kargs.pop('metadata',None)) #initialise metadata
@@ -142,6 +156,8 @@ class ImageStack(metadataObject):
     
     @property
     def imarray(self):
+        """The main array storing the images
+        """
         return self._imarray
     
     @imarray.setter
@@ -154,6 +170,7 @@ class ImageStack(metadataObject):
     
     @property
     def allmeta(self):
+        """List of complete metadata for each image in ImageStack"""
         return self._allmeta
     
     @allmeta.setter
@@ -163,7 +180,7 @@ class ImageStack(metadataObject):
         
     @property
     def clone(self):
-        """Produce a copy of self
+        """Return a copy of self
         """
         return copy.deepcopy(self)
     
@@ -264,8 +281,21 @@ class ImageStack(metadataObject):
         return ret
         
     def slice_metadata(self, key, values_only=True):
-        """return a list of metadata from each image given the key or a list of 
-        keys. If values_only then return a list of values, else return a dictionary entry"""
+        """List of metadata values for each image given key.
+        
+        Return a list of metadata from each image given the key or a list of 
+        keys. If values_only then return a list of values, else return a dictionary entry
+        
+        Arg:
+            key(str, list, tuple):
+                the key or list of keys to return values for
+        Keyword Arguments:
+            values_only(bool):
+                whether to return values only (list, default) or a dictionary type
+        Returns:
+            (list,dict):
+                sliced metadata. Form depending on values_only
+        """
         if isinstance(key, string_types):
             if values_only:
                 ret = self.zipallmeta[key]
@@ -283,7 +313,14 @@ class ImageStack(metadataObject):
         return ret
     
     def append(self, item):
-        """append an image array"""
+        """Append an image array
+        
+        Append an image to the end of the stack and update allmeta
+        Arg:
+            item(ndarray or ImageArray):
+                array of same shape as other images in stack
+        """
+                
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -297,7 +334,17 @@ class ImageStack(metadataObject):
             self.imarray = np.append(self.imarray, np.array([item]), axis=0)                
     
     def insert(self, index, item):
-        """insert an image array at index"""
+        """Insert an image array at index
+        
+        Insert an image into the stack at index and update allmeta.
+        
+        Args:
+            index(int):
+                index for insertion
+            item(ndarray or ImageArray):
+                array of same shape as other images in stack
+        """
+        
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -309,16 +356,14 @@ class ImageStack(metadataObject):
 
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of imarray dtype.
-        Parameters
-        ----------
-        clip_negative : bool, optional
-            If True, clip the negative range (i.e. return 0 for min intensity)
-            even if the image dtype allows negative values.
-            The default behavior (None) is equivalent to True.
-        Returns
-        -------
-        imin, imax : tuple
-            Lower and upper intensity limits.
+        
+        Keyword Arguments:
+            clip_negative(bool):
+                If True, clip the negative range (i.e. return 0 for min intensity)
+                even if the image dtype allows negative values.
+        Returns:
+            (imin,imax) (tuple):
+                Lower and upper intensity limits.
         """
         imin, imax = dtype_range[self.imarray.dtype.type]
         if clip_negative:
@@ -326,15 +371,20 @@ class ImageStack(metadataObject):
         return imin, imax
     
     def clip_intensity(self):
-        """clip intensity that lies outside the range allowed by dtype.
+        """Clip intensity that lies outside the range allowed by dtype.
+        
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
+        are changed to 0. (Numpy should limit the range on arrays of int dtypes."""
         dl=self.dtype_limits(clip_negative=True)
         np.clip(self.imarray, dl[0], dl[1], out=self.imarray)
     
     def convert_float(self, clip_negative=True):
-        """convert the imarray to floating point type normalised to -1 
-        to 1. If clip_negative then clip intensities below 0 to 0.
+        """Convert the imarray to floating point type normalised to -1 to 1. 
+        If clip_negative then clip intensities below 0 to 0.
+        
+        Keyword Arguments:
+            clip_negative(bool):
+                whether to clip intensities
         """
         if self.imarray.dtype.kind=='f': #already float
             pass
@@ -347,15 +397,16 @@ class ImageStack(metadataObject):
             self.clip_intensity()
 
     def apply_all(self, *args, **kargs):
-        """apply function func to all images in the stack
-        Parameters
-        ----------
-        func: string or callable
-            if string it must be a function reachable by ImageArray
-        quiet: bool
-            if False print '.' for every iteration
-        funcargs, funckargs
-            arguments for the function
+        """apply function to all images in the stack
+        
+        Args:
+            func(string or callable):
+                if string it must be a function reachable by ImageArray
+            quiet(bool):
+                if False print '.' for every iteration
+        
+        Note:
+            Further args, kargs are passed through to the function
         """
         args = list(args)
         func = args.pop(0)
@@ -372,8 +423,34 @@ class ImageStack(metadataObject):
             if not quiet:
                 print('.')
     
+    def subtract(self, background, contrast=16, clip_intensity=True):
+        """Subtract a background image (or index) from all images in the stack.
+        
+        The formula used is new = (ImageArray - background) * contrast + 0.5
+        If clip_intensity then clip negative intensities to 0. Array is always
+        converted to float for this method.
+        
+        Arg:
+            background(int or 2d np.ndarray):
+                the background image to subtract. If int is given this is used
+                as an index on the stack.
+        Keyword Arguments:
+            contrast(int):
+                Default 16. Magnifies the subtraction
+            clip_intensity(bool):
+                whether to clip the image intensities in range (0,1) after subtraction
+        """
+        self.convert_float(clip_negative=False)
+        if isinstance(background, int):
+            bg=self[background]
+        bg = bg.view(ImageArray).convert_float(clip_negative=False)
+        bg=np.tile(bg, (len(self),1,1))
+        self.imarray = contrast * (self.imarray - bg) + 0.5
+        if clip_intensity:
+            self.clip_intensity()
+            
     def show(self):
-        """show a stack of images in a skimage CollectionViewer window"""
+        """Show the stack of images in a skimage CollectionViewer window"""
         #stackims=[self[i] for i in range(len(self))]
         cv=CollectionViewer(self)
         cv.show()
@@ -384,47 +461,36 @@ class ImageStack(metadataObject):
         raise NotImplemented
 
 class KerrStack(ImageStack):
-    """add some functionality to ImageStack particular to Kerr images
+    """:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds
+    some functionality particular to Kerr images.
+    
+    Attributes:
+        fields(list):
+            list of applied fields in stack. This is the most important metadata
+            for things like hysteresis.    
     """
         
     def __init__(self, *args, **kargs):
-        """
-        Attributes:
-            fields: if fields is in metadata this is a slice of the fields values
-                     in a numpy array otherwise it is just arange(len(self))
-        """
         super(KerrStack, self).__init__(*args, **kargs)
         self.convert_float()
         if 'fields' in self.zipallmeta.keys():
             self.fields = np.array(self.zipallmeta('field'))
         else:
             self.fields = np.arange(len(self))
-    
-    def subtract(self, background, contrast=16, clip_intensity=True):
-        """subtract a background image (or index) from all images in the stack.
-        If clip_intensity then clip negative intensities to 0
-        """
-        self.convert_float(clip_negative=False)
-        if isinstance(background, int):
-            bg=self[background]
-        bg = bg.view(ImageArray).convert_float(clip_negative=False)
-        bg=np.tile(bg, (len(self),1,1))
-        self.imarray = contrast * (self.imarray - bg) + 0.5
-        if clip_intensity:
-            self.clip_intensity()
 #    
     def hysteresis(self, mask=None):
         """Make a hysteresis loop of the average intensity in the given images
     
-        Parameters
-        ----------
-        mask: boolean array of same size as an image, or list of masks for each image
-            if True then don't include that area in the hysteresis
+        Keyword Argument:
+            mask(ndarray or list):
+                boolean array of same size as an image or imarray or list of 
+                masks for each image. If True then don't include that area in 
+                the intensity averaging.
     
         Returns
         -------
-        hyst: nx2 np.ndarray
-            fields, intensities, 2 column numpy array
+        hyst(Data):
+            'Field', 'Intensity', 2 column array
         """     
         hyst=np.column_stack((self.fields,np.zeros(len(self))))
         for i in range(len(self)):
@@ -450,11 +516,16 @@ class KerrStack(ImageStack):
     def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
         """Align images to correct for image drift.
         
-        Parameters
-        ----------
-        refindex: int or str
-            index or name of the reference image to use for zero drift
-        Other parameters see ImageArray.correct_drift
+        Pass through to ImageArray.corret_drift.
+        
+        Arg:
+            refindex: int or str
+                index or name of the reference image to use for zero drift
+        Keyword Arguments:
+            threshold(float): see ImageArray.correct_drift
+            upsample_factor(int): see ImageArray.correct_drift
+            box: see ImageArray.correct_drift
+            
         """
         ref=self[refindex]
         self.apply_all('correct_drift', ref, threshold=threshold,
@@ -482,21 +553,19 @@ class MaskStack(KerrStack):
         At the moment it's set up to expect masks to be false when the sample is saturated
         at a high field
         
-        Parameters
-        ----------
-        saturation_end: bool
-            True if the last image is closest to the fully saturated state. 
-            False if you want the first image
-        saturation_value: bool
-            if True then a pixel value True means that switching has occured
-            (ie magnetic saturation would be all True)
+        Keyword Arguments:
+            saturation_end(bool):
+                True if the last image is closest to the fully saturated state. 
+                False if you want the first image
+            saturation_value(bool):
+                if True then a pixel value True means that switching has occured
+                (ie magnetic saturation would be all True)
             
-        Returns
-        -------
-        switch_ind: MxN ndarray of int
-            index that each pixel switches at
-        switch_progession: MxNx(P-1) ndarray of bool
-            stack of masks showing when each pixel saturates
+        Returns:
+            switch_ind: MxN ndarray of int
+                index that each pixel switches at
+            switch_progession: MxNx(P-1) ndarray of bool
+                stack of masks showing when each pixel saturates
         
         """
         ms=self.clone
