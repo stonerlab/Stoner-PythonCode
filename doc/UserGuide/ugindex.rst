@@ -15,6 +15,7 @@
    Plotting Data <plotfile>
    Manipulating and Analysing Data <analysisfile>
    Working with Lots of Data Files <datafolder>
+   Working with images <image>
    Cookbook <cookbook>
    Developing and Extending <developer>
    Credits <credits>
