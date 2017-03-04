@@ -145,9 +145,9 @@ Online documentation for the development version can be found on the
 ### Build Status
 
 Travis CI is used to test the development branch to see if it passes the
-current unit tests. The current status is: .. image::
-<https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master>
-:target: <https://travis-ci.org/gb119/Stoner-PythonCode>
+current unit tests. The current status is:
+
+[![image](https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master)](https://travis-ci.org/gb119/Stoner-PythonCode)
 
 ### Citing the Stoner Package
 

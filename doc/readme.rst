@@ -111,6 +111,7 @@ Build Status
 ~~~~~~~~~~~~
 
 Travis CI is used to test the development branch to see if it passes the current unit tests. The current status is:
+
 .. image:: https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master
     :target: https://travis-ci.org/gb119/Stoner-PythonCode
 
