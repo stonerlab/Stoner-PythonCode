@@ -16,7 +16,9 @@ before_install:
   - sudo ln -s /run/shm /dev/shm
 # Install packages
 install:
-  - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib h5py blist pillow numba scikit-image
+  - conda install --yes python=$TRAVIS_PYTHON_VERSION
+  - conda install --yes numpy numpy scipy matplotlib h5py
+  - conda install --yes blist pillow numba scikit-image
   - conda install --yes -c neutronpy lmfit
   - pip install filemagic
   - pip install .
