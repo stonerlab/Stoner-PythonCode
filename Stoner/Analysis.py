@@ -14,7 +14,7 @@ from scipy.signal import get_window,convolve
 from scipy.interpolate import interp1d, InterpolatedUnivariateSpline, UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
-from inspect import getargspec,isclass
+from inspect import isclass
 from collections import Iterable
 try:  #Allow lmfit to be optional
     import lmfit
@@ -33,6 +33,10 @@ except ImportError:
 import sys
 from copy import deepcopy as copy
 from matplotlib.pylab import *
+if python_v3:
+    from inspect import getfullargspec as getargspec
+else:
+    from inspect import getargspec
 
 
 #==========================================================================================================================================
@@ -2125,7 +2129,7 @@ class AnalysisMixin(object):
         assert len(set1) == len(set2), "The number of points in the overlap are different in the two data sets"
 
         def transform(set1, *p):
-            m = len(set1) / 2
+            m = int(len(set1) / 2)
             x = set1[:m]
             y = set1[m:]
             tmp = func(x, y, *p)

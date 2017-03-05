@@ -65,6 +65,7 @@ class CSVFile(DataFile):
             try:
                 tmp = header_string.index(header_delim)
             except ValueError:
+                linecache.clearcache()
                 raise StonerLoadError("No Delimiters in header line")
             column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
@@ -73,6 +74,7 @@ class CSVFile(DataFile):
             try:
                 data_line.index(data_delim)
             except ValueError:
+                linecache.clearcache()
                 raise StonerLoadError("No delimiters in data lines")
 
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
@@ -690,6 +692,7 @@ class XRDFile(DataFile):
         sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
         f = fileinput.FileInput(self.filename)  # Read filename linewise
         if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
+            f.close()
             raise StonerLoadError("File Format Not Recognized !")
         drive = 0
         for line in f:  #for each line
@@ -913,9 +916,11 @@ class FmokeFile(DataFile):
         try:
             value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
         except:
+            f.close()
             raise StonerLoadError("Not an FMOKE file?")
         label = [x.strip() for x in bytes2str(f.readline()).split('\t')]
         if label[0] != "Header:":
+            f.close()
             raise StonerLoadError("Not a Focussed MOKE file !")
         del (label[0])
         for k, v in zip(label, value):
@@ -923,6 +928,7 @@ class FmokeFile(DataFile):
         column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
         self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
         self.column_headers=column_headers
+        f.close()
         return self
 
 
@@ -1469,10 +1475,10 @@ class PinkLibFile(DataFile):
                     tmp=line.strip('#').split(':')
                     self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
             column_headers = f[header_line].strip('#\t ').split('\t')
-            data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
-            self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
-            if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
-                self.setas(x='T (C)', y='R (Ohm)')
+        data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
+        self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
+        if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
+            self.setas(x='T (C)', y='R (Ohm)')
         self.column_headers=column_headers
         return self
 
@@ -1507,6 +1513,10 @@ class KermitPNGFile(DataFile):
         try:
             img=PIL.Image.open(self.filename,"r")
         except IOError:
+            try:
+                img.close()
+            except:
+                pass
             raise StonerLoadError("Unable to read as a PNG file.")
 
         for k in img.info:

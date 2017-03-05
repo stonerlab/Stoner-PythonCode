@@ -10,8 +10,9 @@ def transform(r,q,p):
     z=r*cos(q)
     return x,y,z
 
-def sphere((x,y,z),a,b,c,r):
+def sphere(coords,a,b,c,r):
     """Returns zero if (x,y,z) lies on a sphere centred at (a,b,c) with radius r."""
+    x,y,z=coords
     return (x-a)**2+(y-b)**2+(z-c)**2-r**2
 
 # Create some points approximately spherical distribution

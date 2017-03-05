@@ -538,7 +538,18 @@ class KerrArray(np.ndarray,metadataObject):
     @classmethod
     def _load(self,filename,**kwargs):
         """Load an image from a file and return as a 2D array and metadata dictionary."""
-        img=Image.open(filename,"r")
+        if filename is None or not filename:
+            self.get_filename('r')
+        else:
+            self.filename = filename
+        try:
+            img=Image.open(filename,"r")
+        except IOError:
+            try:
+                img.close()
+            except:
+                pass
+            raise StonerLoadError("Unable to read as a PNG file.")
         fname=filename
         image=np.asarray(img)
         # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
@@ -560,6 +571,7 @@ class KerrArray(np.ndarray,metadataObject):
             if "b'" in v: v=v.strip(" b'")    
             tmp[k]=v
         tmp["Loaded from"]=fname
+        img.close()
         return image,tmp 
             
     def _parse_text(self, text, key=None):

@@ -101,26 +101,31 @@ class ZipFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-
-        if isinstance(self.filename, zf.ZipFile):
-            if not self.filename.fp:
-                other = zf.ZipFile(self.filename.filename, "r")
+        try:
+            if isinstance(self.filename, zf.ZipFile):
+                if not self.filename.fp:
+                    other = zf.ZipFile(self.filename.filename, "r")
+                    close_me = True
+                else:
+                    other = self.filename
+                    close_me = False
+                member = other.namelist()[0]
+            elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename):
+                other = zf.ZipFile(self.filename, "a")
+                member = other.namelist()[0]
+                close_me = True
+            elif isinstance(self.filename, string_types) and test_is_zip(self.filename):
+                other, member = test_is_zip(other)
+                other = zf.ZipFile(other, "r")
                 close_me = True
             else:
-                other = self.filename
-                close_me = False
-            member = other.namelist()[0]
-        elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename):
-            other = zf.ZipFile(self.filename, "a")
-            member = other.namelist()[0]
-            close_me = True
-        elif isinstance(self.filename, string_types) and test_is_zip(self.filename):
-            other, member = test_is_zip(other)
-            other = zf.ZipFile(other, "r")
-            close_me = True
-        else:
-            raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
-
+                raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
+        except:
+            try:
+                other.close()
+            except:
+                pass
+            raise StonerLoadError("{} does  not appear to be a valid zip file".format(self.filename))
 #Ok we can try reading now
         self._extract(other, member)
         if close_me:
@@ -140,43 +145,49 @@ class ZipFile(DataFile):
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
 
-        if isinstance(filename, string_types):  #We;ve got a string filename
-            if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
-                zipfile, member = test_is_zip(filename)
-                zipfile = zf.ZipFile(zipfile, "a")
-                close_me = True
-            elif path.exists(filename):  # The fiule exists but isn't a zip file
-                raise IOError("{} Should either be a zip file or a new zip file".format(filename))
-            else:  # Path doesn't exist, use extension of file part to find where the zip file should be
-                parts = path.split(filename)
-                for i, part in enumerate(parts):
-                    if path.splitext(part)[1].lower() == ".zip":
-                        break
+        try:
+            if isinstance(filename, string_types):  #We;ve got a string filename
+                if test_is_zip(filename):  # We can find an existing zip file somewhere in the filename
+                    zipfile, member = test_is_zip(filename)
+                    zipfile = zf.ZipFile(zipfile, "a")
+                    close_me = True
+                elif path.exists(filename):  # The fiule exists but isn't a zip file
+                    raise IOError("{} Should either be a zip file or a new zip file".format(filename))
+                else:  # Path doesn't exist, use extension of file part to find where the zip file should be
+                    parts = path.split(filename)
+                    for i, part in enumerate(parts):
+                        if path.splitext(part)[1].lower() == ".zip":
+                            break
+                    else:
+                        raise IOError("Can't figure out where the zip file is in {}".format(filename))
+                    zipfile = zf.ZipExtFile(path.join(*parts[:i + 1]), "w")
+                    close_me = True
+                    member = path.join(*parts[i + 1:])
+            elif isinstance(filename, zf.ZipFile):  #Handle\ zipfile instance, opening if necessary
+                if not filename.fp:
+                    filename = zf.ZipFile(filename.filename, 'a')
+                    close_me = True
                 else:
-                    raise IOError("Can't figure out where the zip file is in {}".format(filename))
-                zipfile = zf.ZipExtFile(path.join(*parts[:i + 1]), "w")
-                close_me = True
-                member = path.join(*parts[i + 1:])
-        elif isinstance(filename, zf.ZipFile):  #Handle\ zipfile instance, opening if necessary
-            if not filename.fp:
-                filename = zf.ZipFile(filename.filename, 'a')
-                close_me = True
-            else:
-                close_me = False
-            zipfile = filename
-            member = ""
-
-        if member == "":  # Is our file object a bare zip file - if so create a default member name
-            if len(zipfile.listname()) > 0:
-                member = zipfile.listname()[1]
-            else:
-                member = "DataFile.txt"
-
-        zipfile.writestr(member, str(self))
-        if close_me:
-            zipfile.close()
+                    close_me = False
+                zipfile = filename
+                member = ""
+    
+            if member == "":  # Is our file object a bare zip file - if so create a default member name
+                if len(zipfile.listname()) > 0:
+                    member = zipfile.listname()[1]
+                else:
+                    member = "DataFile.txt"
+    
+            zipfile.writestr(member, str(self))
+            if close_me:
+                zipfile.close()
+        except Exception as e:
+            try:
+                zipfile.close()
+            except:
+                pass
+            raise IOError("Error saving zipfile\n{}".format(e))
         return self
-
 
 class ZipFolder(DataFolder):
     """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a
@@ -190,7 +201,7 @@ class ZipFolder(DataFolder):
         """
         self.File = None
         self.type = ZipFile
-
+        close_me=False
         if len(args) > 1:
             if isinstance(args[0], string_types) and zf.is_zipfile(args[0]):
                 this.File = zf.ZipFile(args[0], "a")
@@ -201,6 +212,7 @@ class ZipFolder(DataFolder):
                     this.File = zf.ZipFile(args[0].filename, "a")
 
         super(ZipFolder, self).__init__(*args, **kargs)
+
 
     def _dialog(self, message="Select Folder", new_directory=True, mode='r'):
         """Creates a file dialog box for working with
