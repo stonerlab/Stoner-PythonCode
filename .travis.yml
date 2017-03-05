@@ -1,3 +1,8 @@
+notifications:
+  email:
+    on_success: change # default: change
+    on_failure: change # default: always
+    
 language: python
 python:
   - "2.7"
@@ -6,7 +11,6 @@ python:
 
 # Setup anaconda
 install:
-  - sudo apt-get update
   - sudo apt-get install tesseract-ocr
   # We do this conditionally because it saves us some downloading if the
   # version is the same.

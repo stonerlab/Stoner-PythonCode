@@ -23,6 +23,7 @@ class DocSamples_test(unittest.TestCase):
         
     def test_scripts(self):
         """Import each of the sample scripts in turn and see if they ran without error"""
+        failures=[]
         for ix,filename in enumerate(self.scripts):
             script=filename[:-3]
             print("Trying script {}: {}".format(ix,filename))
@@ -32,7 +33,8 @@ class DocSamples_test(unittest.TestCase):
                 plt.close("all")
             except Exception as e:
                 print("Failed with\n{}".format(format_exc()))
-                self.assertTrue(False,"Script file {} failed with {}".format(filename,e))
+                failures.append("Script file {} failed with {}".format(filename,e))
+        self.assertTrue(len(failures)==0,"\n".join(failures))
                 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=DocSamples_test("test_scripts")

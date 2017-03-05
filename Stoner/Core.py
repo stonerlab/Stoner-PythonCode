@@ -1194,10 +1194,14 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
+                if len(ix)>0 and isinstance(ix[-1],Iterable):
+                    ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i,_np_.ndarray):
-                    ret.i=self.i[ix[0]]
+                if isinstance(self.i,_np_.ndarray) and len(ix)>0:
+                    if isinstance(ix[0],(Iterable,int)):
+                        ret.i=self.i[ix[0]]
+                    else:
+                        ret.i=0
                 else:
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
