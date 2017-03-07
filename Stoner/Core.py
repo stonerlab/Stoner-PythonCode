@@ -1240,6 +1240,11 @@ class DataArray(_ma_.MaskedArray):
         super(DataArray,self).__setitem__(ix,val)
 
     @property
+    def _(self):
+        """Return the DataArray as a normal numpy array for those operations that need this"""
+        return _ma_.getdata(self)
+    
+    @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
