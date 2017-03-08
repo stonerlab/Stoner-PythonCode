@@ -13,7 +13,7 @@ software images).
 Images from the Evico software are 2D arrays of 16bit unsigned integers.
 
 """
-
+import warnings
 import numpy as np
 import os
 import tempfile
@@ -555,13 +555,14 @@ class KerrArray(np.ndarray,metadataObject):
         # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
         # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
         if np.issubdtype(image.dtype,np.integer):
-            bits=np.ceil(np.log2(image.max()))
-            if bits<=8:
-                image=image.astype("uint8")
-            elif bits<=16:
-                image=image.astype("uint16")
-            elif bits<=32:
-                image=image.astype("uint32")
+            with warnings.catch_warnings():
+                bits=np.ceil(np.log2(image.max()))
+                if bits<=8:
+                    image=image.astype("uint8")
+                elif bits<=16:
+                    image=image.astype("uint16")
+                elif bits<=32:
+                    image=image.astype("uint32")
        
         if 'dtype' not in kwargs.keys():
             kwargs['dtype']='uint16' #defualt output for Kerr microscope
