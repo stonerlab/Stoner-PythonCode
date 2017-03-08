@@ -6,25 +6,23 @@ Created on Tue May 03 14:31:14 2016
 
 kermit.py
 
-Implements KerrArray, a class for using and manipulating two tone images such
+Implements ImageArray, a class for using and manipulating two tone images such
 as those produced by Kerr microscopy (with particular emphasis on the Evico
 software images).
 
 Images from the Evico software are 2D arrays of 16bit unsigned integers.
 
 """
-import warnings
+
 import numpy as np
 import os
 import tempfile
 import warnings
 import subprocess #calls to command line
-import skimage
 from copy import deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
-from skimage import img_as_float
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
@@ -53,19 +51,31 @@ dtype_range = {np.bool_: (False, True),
 
 
     
-class KerrArray(np.ndarray,metadataObject):
-    """Class for manipulating Kerr images from Evico software.
+class ImageArray(np.ndarray,metadataObject):
+    """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class
+    with a metadata parameter and pass through to skimage methods. 
+    
+    ImageArray is for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
     parameter which is the metadata. This stores information about the image
     in a dictionary object for later retrieval.
     All standard numpy functions should work as normal and casting two types
-    together should yield a KerrArray type (ie. KerrArray+np.ndarray=KerrArray)
+    together should yield a ImageArray type (ie. ImageArray+np.ndarray=ImageArray)
 
-    In addition any function from skimage should work and return a KerrArray.
+    In addition any function from skimage should work and return a ImageArray.
     They can be called as eg. im=im.gaussian(sigma=2). Don't include the module
     name, just the function name (ie not filters.gaussian). Also omit the first
     image argument required by skimage.
-
+    
+    Attributes:
+        metadata (dict):
+            dictionary of metadata for the image
+        clone (self):
+            copy of self
+        max_box (tuple):
+            coordinate extent (xmin,xmax,ymin,ymax)
+            
+        
     For clarity it should be noted that any function will not alter the current
     instance, it will clone it first then return the clone after performing the
     function on it.
@@ -73,7 +83,7 @@ class KerrArray(np.ndarray,metadataObject):
     A note on coordinate systems:
     For arrays the indexing is (row, column). However the normal way to index
     an image would be to do (horizontal, vert), which is the opposite.
-    In KerrArray the coordinate system is chosen similar to skimage. y points
+    In ImageArray the coordinate system is chosen similar to skimage. y points
     down x points right and the origin is in the top left corner of the image.
     When indexing the array therefore you need to give it (y,x) coordinates
     for (row, column).
@@ -85,7 +95,7 @@ class KerrArray(np.ndarray,metadataObject):
     y (row)
 
     eg I want the 4th pixel in the horizontal direction and the 10th pixel down
-    from the top I would ask for KerrArray[10,4]
+    from the top I would ask for ImageArray[10,4]
 
     but if I want to translate the image 4 in the x direction and 10 in the y
     I would call im=im.translate((4,10))
@@ -102,7 +112,7 @@ class KerrArray(np.ndarray,metadataObject):
 
     def __new__(cls, image=[], *args, **kwargs):
         """
-        Construct a KerrArray object. We're using __new__ rather than __init__
+        Construct a ImageArray object. We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
 
@@ -114,33 +124,34 @@ class KerrArray(np.ndarray,metadataObject):
         array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
         array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
         ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata.update(tmp) # Store the metadata from the PNG file into the KerrImage
+        ka.metadata.update(tmp) # Store the metadata from the PNG file into the ImageArray
         ka.filename=tmp["Loaded from"]
         return ka #__init__ called
 
     def __init__(self, image=[],
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
-        """Create a KerrArray instance with metadata attribute
+        """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
+        Create a ImageArray instance with metadata attribute
 
-        Parameters
-        ----------
-        image: string or numpy array initiator
-            If a filename is given it will try to load the image from memory
-            Otherwise it will call np.array(image) on the object so an array or
-            list is suitable
-        reduce_metadata: bool
-            if True reduce the metadata to useful bits and do some processing on it          
-        convert_float: bool
-            if True convert the image to float values between 0 and 1 (necessary 
-            for some forms of processing)
-        ocr_metadata: bool
-            whether to try to use optical character recognition to get the 
-            metadata from the image (necessary for images taken pre 06/2016)
-        field_only: bool
-            if ocr_metadata is true, get field only (bit faster)
-        metadata: dict
-            dictionary of extra metadata items you would like adding to your array
+        Args:
+            image: string or numpy array initiator
+                If a filename is given it will try to load the image from memory
+                Otherwise it will call np.array(image) on the object so an array or
+                list is suitable
+        Keyword Arguments:
+            reduce_metadata: bool
+                if True reduce the metadata to useful bits and do some processing on it          
+            convert_float: bool
+                if True convert the image to float values between 0 and 1 (necessary 
+                for some forms of processing)
+            ocr_metadata: bool
+                whether to try to use optical character recognition to get the 
+                metadata from the image (necessary for images taken pre 06/2016)
+            field_only: bool
+                if ocr_metadata is true, get field only (bit faster)
+            metadata: dict
+                dictionary of extra metadata items you would like adding to your array
         """
         
         if kwargs.get("reduce_metadata",self._reduce_metadata):
@@ -177,7 +188,7 @@ class KerrArray(np.ndarray,metadataObject):
     @property
     def clone(self):
         """return a copy of the instance"""
-        return KerrArray(np.copy(self),metadata=deepcopy(self.metadata),
+        return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
                                get_metadata=False)
 
     @property
@@ -204,10 +215,10 @@ class KerrArray(np.ndarray,metadataObject):
     
     @property
     def _kfuncs(self):
-        """Provide an attribtute that caches the imported KerrArray functions."""
+        """Provide an attribtute that caches the imported ImageArray functions."""
         if self._kfuncs_proxy is None:
-            from . import kfuncs
-            self._kfuncs_proxy=kfuncs
+            from . import imagefuncs
+            self._kfuncs_proxy=imagefuncs
         return self._kfuncs_proxy
 
     @property
@@ -244,8 +255,8 @@ class KerrArray(np.ndarray,metadataObject):
         mods.reverse()
         for k in mods:
             skimage|=set(self._ski_funcs[k][1])
-        parent=set(dir(super(KerrArray,self)))
-        mine=set(dir(KerrArray))
+        parent=set(dir(super(ImageArray,self)))
+        mine=set(dir(ImageArray))
         return list(skimage|kfuncs|parent|mine)
 
     def __getattr__(self,name):
@@ -264,7 +275,9 @@ class KerrArray(np.ndarray,metadataObject):
 
         ret=None
         #first check kermit funcs
-        if name in dir(self._kfuncs):
+        if name.startswith('_'):
+            pass
+        elif name in dir(self._kfuncs):
             workingfunc=getattr(self._kfuncs,name)
             ret=self._func_generator(workingfunc)
         else:
@@ -282,7 +295,7 @@ class KerrArray(np.ndarray,metadataObject):
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
-            return super(KerrArray,self).__getitem__(index)
+            return super(ImageArray,self).__getitem__(index)
 
 
     def __setitem__(self,index,value):
@@ -290,14 +303,14 @@ class KerrArray(np.ndarray,metadataObject):
         if isinstance(index,string_types):
             self.metadata[index]=value
         else:
-            super(KerrArray,self).__setitem__(index,value)
+            super(ImageArray,self).__setitem__(index,value)
 
     def __delitem__(self,index):
         """Patch indexing of strings to metadata."""
         if isinstance(index,string_types):
             del self.metadata[index]
         else:
-            super(KerrArray,self).__delitem__(index)
+            super(ImageArray,self).__delitem__(index)
 
     def _func_generator(self,workingfunc):
         """generate a function that adds self as the first argument"""
@@ -310,8 +323,8 @@ class KerrArray(np.ndarray,metadataObject):
                 r=Data(r)
                 r.metadata=self.metadata.opy()
                 r.column_headers[0]=workingfunc.__name__
-            elif isinstance(r,np.ndarray) and not isinstance(r,KerrArray): #make sure we return a KerrArray
-                r=r.view(type=KerrArray)
+            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
+                r=r.view(type=ImageArray)
                 r.metadata=self.metadata.copy()
             #NB we might not be returning an ndarray at all here !
             return r
@@ -321,6 +334,33 @@ class KerrArray(np.ndarray,metadataObject):
         return gen_func
 
 
+    @classmethod
+    def _load(self,filename,**kwargs):
+        """Load an image from a file and return as a 2D array and metadata dictionary."""
+        img=Image.open(filename,"r")
+        fname=filename
+        image=np.asarray(img)
+        # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+        # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+        if np.issubdtype(image.dtype,np.integer):
+            bits=np.ceil(np.log2(image.max()))
+            if bits<=8:
+                image=image.astype("uint8")
+            elif bits<=16:
+                image=image.astype("uint16")
+            elif bits<=32:
+                image=image.astype("uint32")
+       
+        if 'dtype' not in kwargs.keys():
+            kwargs['dtype']='uint16' #defualt output for Kerr microscope
+        tmp=typeHintedDict()
+        for k in img.info:
+            v=img.info[k]
+            if "b'" in v: v=v.strip(" b'")    
+            tmp[k]=v
+        tmp["Loaded from"]=fname
+        return image,tmp 
+    
 #==============================================================
 #Now any other useful bits
 #==============================================================
@@ -332,44 +372,39 @@ class KerrArray(np.ndarray,metadataObject):
         (the natural extension of this is using masked arrays for arbitrary
         areas, yet to be implemented)
 
-        Parameters
-        ----------
-        xmin int
-        xmax int
-        ymin int
-        ymax int
+        Args:
+            xmin int
+            xmax int
+            ymin int
+            ymax int
 
-        Returns
-        -------
-        view: KerrArray
-            view onto the array
+        Returns:
+            view (ImageArray):
+                view onto the array
 
-        Example
-        -------
-        a=KerrArray([[1,2,3],[0,1,2]])
-        b=a.box(0,1,0,2)
-        b[:]=b+1
-        print a
-        #result:
-        [[2,3,3],[1,2,2]]
+        Example:
+            a=ImageArray([[1,2,3],[0,1,2]])
+            b=a.box(0,1,0,2)
+            b[:]=b+1
+            print a
+            #result:
+            [[2,3,3],[1,2,2]]
         """
         sub=(xmin,xmax,ymin,ymax)
         return self.crop_image(box=sub,copy=False)
     
-    def dtype_limits(self, clip_negative=None):
+    def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
-        Parameters
-        ----------
-        image : ndarray
-            Input image.
-        clip_negative : bool, optional
-            If True, clip the negative range (i.e. return 0 for min intensity)
-            even if the image dtype allows negative values.
-            The default behavior (None) is equivalent to True.
-        Returns
-        -------
-        imin, imax : tuple
-            Lower and upper intensity limits.
+        
+        Args:
+            image(ndarray):
+                Input image.
+            clip_negative(bool):
+                If True, clip the negative range (i.e. return 0 for min intensity)
+                even if the image dtype allows negative values.
+        Returns:
+            (imin, imax : tuple)
+                Lower and upper intensity limits.
         """
         if clip_negative is None:
             clip_negative = True
@@ -379,11 +414,19 @@ class KerrArray(np.ndarray,metadataObject):
         return imin, imax
     
     def convert_float(self, clip_negative=True):
-        """return the image converted to floating point type normalised to -1 
+        """Return the image converted to floating point type normalised to -1 
         to 1. If clip_negative then clip intensities below 0 to 0.
         Unfortunately there is no easy way to convert the type in
         place self.astype(np.float64,copy=False) doesn't
-        work for different memory block sizes so a new array is produced"""
+        work for different memory block sizes so a new array is produced
+        
+        Args:
+            clip_negative(bool):
+                If True, clip the negative range (i.e. return 0 for min intensity)
+                even if the image dtype allows negative values.
+        Returns:
+            :py:class:`Stoner.Image.core.ImageArray`
+        """
         if self.dtype.kind=='f': #already float
             ret=self
         else:
@@ -397,49 +440,35 @@ class KerrArray(np.ndarray,metadataObject):
     def clip_intensity(self):
         """clip intensity that lies outside the range allowed by dtype.
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes"""
+        are changed to 0. (Numpy should limit the range on arrays of int dtypes
+        
+        Returns:
+            :py:class:`Stoner.Image.core.ImageArray`
+        """
         dl=self.dtype_limits(clip_negative=True)
         ret=self.rescale_intensity(in_range=dl)
         return ret
     
     def convert_int(self):
-        """convert the image to uint16 (the format used by Evico)"""
-        return self.img_as_uint()
-
-    def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image
-
-        Parameters
-        ----------
-        copy: bool
-            Whether to return a copy of the data or the original data
-
-        Returns
-        -------
-        im: KerrArray
-            cropped image
+        """convert the image to uint16 (the format used by Evico)
+        Returns:
+            :py:class:`Stoner.Image.core.ImageArray`
         """
-
-        assert self.shape==AN_IM_SIZE or self.shape==IM_SIZE, \
-                'Need a full sized Kerr image to crop' #check it's a normal image
-        crop=(0,IM_SIZE[1],0,IM_SIZE[0])
-        return self.crop_image(box=crop, copy=copy)
-
+        return self.img_as_uint()
+    
     def crop_image(self, box=None, copy=True):
         """Crop the image.
         Crops to the box given. Returns the cropped image.
 
-        Parameters
-        ----------
-        box: array or list of type int:
-            [xmin,xmax,ymin,ymax]
-        copy: bool
-            whether to return a copy of the array or a view of the original object
+        KeywordArguments:
+            box(array or list of type int):
+                [xmin,xmax,ymin,ymax]
+            copy(bool):
+                whether to return a copy of the array or a view of the original object
 
-        Returns
-        -------
-        im: KerrArray
-            cropped image
+        Returns:
+            (ImageArray):
+                cropped image
         """
         if box is None:
             box=draw_rectangle(im)
@@ -449,33 +478,6 @@ class KerrArray(np.ndarray,metadataObject):
             im=im.clone  #this is now a new memory location
         return im
 
-    def reduce_metadata(self):
-        """Reduce the metadata down to a few useful pieces and do a bit of 
-        processing.
-        Returns the new metadata typeHintedDict
-        """
-        
-        newmet={}
-        useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
-                    'Contrast Shift','HorizontalFieldOfView','Images to Average',
-                    'Lens','Magnification','Substraction Std']
-        if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
-            return self.metadata #we've not got a standard Labview output, not safe to reduce
-        for key in useful_keys:
-            if key in self.keys():
-                newmet[key]=self[key]
-        newmet['field']=newmet.pop('X-B-2d') #rename
-        if 'Substraction Std' in self.keys():
-            newmet['subtraction']=newmet.pop('Substraction Std')
-        if 'Averaging' in self.keys():
-            if self['Averaging']: #averaging was on
-                newmet['Averaging']=newmet.pop('Images to Average')
-            else:
-                newmet['Averaging']=1
-                newmet.pop('Images to Average')
-        self.metadata=typeHintedDict(newmet)
-        return self.metadata
-    
     def save(self, filename=None):
         """Saves the image into the file 'filename', compatible with png.
 
@@ -484,10 +486,7 @@ class KerrArray(np.ndarray,metadataObject):
                 None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If 
                 filename is False then a file dialog is forced.
-
-        Returns:
-            self: The current :py:class:`DataFile` object
-                """
+        """
         if filename is None:
             filename = self.filename
         if filename in (None, '') or (isinstance(filename, bool) and not filename):
@@ -508,7 +507,7 @@ class KerrArray(np.ndarray,metadataObject):
         """Creates a file dialog box for loading or saving ~b DataFile objects.
 
         Args:
-            mode (string): The mode of the file operation  'r' or 'w'
+            mode(string): The mode of the file operation  'r' or 'w'
 
         Returns:
             A filename to be used for the file operation."""
@@ -534,47 +533,54 @@ class KerrArray(np.ndarray,metadataObject):
             return self.filename
         else:
             return None
+    
+    #to do: should probably subclass the functions below       
+    def crop_text(self, copy=False):
+        """Crop the bottom text area from a standard Kermit image
 
-    @classmethod
-    def _load(self,filename,**kwargs):
-        """Load an image from a file and return as a 2D array and metadata dictionary."""
-        if filename is None or not filename:
-            self.get_filename('r')
-        else:
-            self.filename = filename
-        try:
-            img=Image.open(filename,"r")
-        except IOError:
-            try:
-                img.close()
-            except:
-                pass
-            raise StonerLoadError("Unable to read as a PNG file.")
-        fname=filename
-        image=np.asarray(img)
-        # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-        # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-        if np.issubdtype(image.dtype,np.integer):
-            with warnings.catch_warnings():
-                bits=np.ceil(np.log2(image.max()))
-                if bits<=8:
-                    image=image.astype("uint8")
-                elif bits<=16:
-                    image=image.astype("uint16")
-                elif bits<=32:
-                    image=image.astype("uint32")
-       
-        if 'dtype' not in kwargs.keys():
-            kwargs['dtype']='uint16' #defualt output for Kerr microscope
-        tmp=typeHintedDict()
-        for k in img.info:
-            v=img.info[k]
-            if "b'" in v: v=v.strip(" b'")    
-            tmp[k]=v
-        tmp["Loaded from"]=fname
-        img.close()
-        return image,tmp 
-            
+        KeywordArguments:
+            copy(bool):
+                Whether to return a copy of the data or the original data
+
+        Returns:
+        (ImageArray):
+            cropped image
+        """
+
+        assert self.shape==AN_IM_SIZE or self.shape==IM_SIZE, \
+                'Need a full sized Kerr image to crop' #check it's a normal image
+        crop=(0,IM_SIZE[1],0,IM_SIZE[0])
+        return self.crop_image(box=crop, copy=copy)
+
+    def reduce_metadata(self):
+        """Reduce the metadata down to a few useful pieces and do a bit of 
+        processing.
+        
+        Returns:
+            (:py:class:`typeHintedDict`): the new metadata 
+        """
+        
+        newmet={}
+        useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
+                    'Contrast Shift','HorizontalFieldOfView','Images to Average',
+                    'Lens','Magnification','Substraction Std']
+        if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
+            return self.metadata #we've not got a standard Labview output, not safe to reduce
+        for key in useful_keys:
+            if key in self.keys():
+                newmet[key]=self[key]
+        newmet['field']=newmet.pop('X-B-2d') #rename
+        if 'Substraction Std' in self.keys():
+            newmet['subtraction']=newmet.pop('Substraction Std')
+        if 'Averaging' in self.keys():
+            if self['Averaging']: #averaging was on
+                newmet['Averaging']=newmet.pop('Images to Average')
+            else:
+                newmet['Averaging']=1
+                newmet.pop('Images to Average')
+        self.metadata=typeHintedDict(newmet)
+        return self.metadata
+                
     def _parse_text(self, text, key=None):
         """Attempt to parse text which has been recognised from an image
         if key is given specific hints may be applied"""
@@ -663,15 +669,13 @@ class KerrArray(np.ndarray,metadataObject):
         Install tesseract from
         https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
 
-        Parameters
-        ----------
-        field_only: bool
-            only try to return a field value
+        KeywordArguments:
+            field_only(bool):
+                only try to return a field value
 
-        Returns
-        -------
-        metadata: dict
-            updated metadata dictionary
+        Returns:
+            metadata: dict
+                updated metadata dictionary
         """
         if self.shape!=AN_IM_SIZE:
             pass #can't do anything without an annotated image
@@ -710,7 +714,3 @@ class KerrArray(np.ndarray,metadataObject):
         if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
             self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
-
-
-
-
