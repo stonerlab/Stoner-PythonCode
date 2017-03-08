@@ -11,7 +11,7 @@ import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
-from .Image.core import KerrArray
+from .Image.core import ImageArray
 import os.path as path
 import os
 
@@ -510,7 +510,7 @@ class SLS_STXMFile(DataFile):
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             
-class STXMImage(KerrArray):
+class STXMImage(ImageArray):
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
 
     _reduce_metadata=False

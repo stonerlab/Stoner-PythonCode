@@ -32,7 +32,7 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.objectFolder(directory=self.datadir)
+        self.fldr=SF.objectFolder(self.datadir)
 
     def test_Folders(self):
         fldr=self.fldr

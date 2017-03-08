@@ -19,10 +19,13 @@ knownkeys = ['Averaging', 'Comment:', 'Contrast Shift', 'HorizontalFieldOfView',
 knownfieldvals = [-233.432852, -238.486666, -243.342465, -248.446173, 
                   -253.297813, -258.332918, -263.340476, -268.20511]
 
+testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
+
 class ImageFolderTest(unittest.TestCase):
 
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
+        self.td.sort()
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
@@ -59,4 +62,6 @@ class ImageFolderTest(unittest.TestCase):
 if __name__=="__main__":
     #t=ImageFolder(testdir)
     #ti=KerrStack(t)
-    unittest.main()
+    test=ImageFolderTest("test_load")
+    test.setUp()
+    test.test_load()
