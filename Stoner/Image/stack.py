@@ -475,6 +475,33 @@ class ImageStack(metadataObject):
     def save(self, fname):
         """probably should save in hdf5 format"""
         raise NotImplemented
+        
+    def stddev(self, weights=None):
+        """calculate weighted standard deviation for stack
+        This is a biased standard deviation, may not be appropriate for small sample sizes
+        """
+        avs = self.stack_average(weights=weights)
+        avs = np.tile(avs, (len(self),1,1)) #make it the same size as imarray
+        sumsqrdev = np.sum(weights*(self.imarray - avs)**2,axis=0)
+        result = np.sqrt(sumsqrdev/(np.sum(weights, axis=0))) 
+        return result.view(ImageArray)
+    
+    def stderr(self, weights=None):
+        """Standard error in the stack average
+        """
+        serr = self.stddev(weights=weights)/np.sqrt(self.shape[0])
+        return serr
+
+    def average(self, weights=None):
+        """Get an array of average pixel values for the stack.
+        Pass through to numpy average        
+        Returns:
+            average(ImageArray):
+                average values
+        """                   
+        average = np.average(self.imarray, axis=0, weights=weights)
+        return average.view(ImageArray)        
+
 
 class KerrStack(ImageStack):
     """:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds
@@ -645,7 +672,29 @@ class KerrStack(ImageStack):
             ei={'switch_index':si, 'switch_array':sp, 'masks':masks}
             return Hcmap, ei
         return Hcmap
-    
+
+    def average_Hcmap(self, weights=None, ignore_zeros=False):
+        """Get an array of average pixel values for the stack.
+        Return average of pixel values in the stack.
+        
+        Keyword arguments:
+            ignore zeros(bool):
+                Weight zero values in an image as 0 in the averaging.
+        
+        Returns:
+            average(ImageArray):
+                average values
+        """
+        if ignore_zeros:
+            weights=self.clone
+            weights.imarray = weights.imarray.astype(bool).astype(int) #1 if Hc isn't zero, zero otherwise
+            condition=np.sum(weights,axis=0)==0 #stop zero division error
+            for m in range(self.shape[0]):
+                weights[m] = np.select([condition, np.logical_not(condition)],
+                                 [np.ones_like(weights[m]),weights[m]])
+            #weights means we only account for non-zero values in average                     
+        average = np.average(self.imarray, axis=0, weights=weights)
+        return average.view(ImageArray)    
     
 class MaskStack(KerrStack):
     """Similar to ImageStack but made for stacks of boolean or binary images
