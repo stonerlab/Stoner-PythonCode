@@ -334,7 +334,7 @@ class ImageArray(np.ndarray,metadataObject):
         return gen_func
 
 
-        @classmethod
+    @classmethod
     def _load(self,filename,**kwargs):
         """Load an image from a file and return as a 2D array and metadata dictionary."""
         img=Image.open(filename,"r")
