@@ -44,7 +44,10 @@ class regexpDict(OrderedDict):
         if super(regexpDict,self).__contains__(name):
             return name
         if isinstance(name,string_types):
-            nm=re.compile(name)
+            try:
+                nm=re.compile(name)
+            except:
+                nm=name
         elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
             return list(self.keys())[name]
         else:
@@ -137,7 +140,10 @@ class baseFolder(MutableSequence):
                 value=kargs.pop(k,None)
                 self.__setattr__(k,value)
                 if self.debug: print("Setting self.{} to {}".format(k,value))
-        super(baseFolder,self).__init__(*args,**kargs)
+        if python_v3:
+            super(baseFolder,self).__init__()
+        else:
+            super(baseFolder,self).__init__(*args,**kargs)
                 
     ###########################################################################
     ################### Properties of baseFolder ##############################
@@ -701,11 +707,11 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups","args","kargs"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type()):
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getaatr(self._type,name))):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
@@ -1174,7 +1180,12 @@ class baseFolder(MutableSequence):
         elif isinstance(key,re._pattern_type):
             new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
         else:
-            new_order=sorted(self,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+            order=range(len(self))
+            if python_v3:
+                new_order=sorted(order,key=lambda x:key(self[x]), reverse=reverse)
+            else:
+                new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+            new_order=[self.__names__()[i] for i in new_order]
         self.__clear__()
         self.extend(new_order)
         return self
@@ -1278,19 +1289,26 @@ class DiskBssedFolder(object):
         readlist (bool): Whether to read the directory immediately on creation. Default is True
         
         """
+        
+    _defaults={"type":None,
+              "extra_args":dict(),
+              "pattern":["*.*"],
+              "read_means":False,
+              "recursive":True,
+              "flat":False,
+              "directory":None,
+              "multifile":False,
+              "readlist":True,
+              }
+
 
     def __init__(self,*args,**kargs):
         from Stoner import Data
-        defaults={"type":Data,
-                  "extra_args":dict(),
-                  "pattern":["*.*"],
-                  "read_means":False,
-                  "recursive":True,
-                  "flat":False,
-                  "directory":os.getcwd(),
-                  "multifile":False,
-                  "readlist":True,
-                  }
+        defaults=copy(self._defaults)
+        if "directory" in defaults and defaults["directory"] is None:
+            defaults["directory"]=os.getcwd()
+        if "type" in defaults and defaults["type"] is None:
+            defaults["type"]=Data
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
@@ -1492,7 +1510,7 @@ class DiskBssedFolder(object):
         if recursive is None:
             recursive=self.recursive
         if flatten is None:
-            flatten=self.flat
+            flatten=getattr(self,"flat",False) #ImageFolders don't have flat because it clashes with a numpy attribute
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):

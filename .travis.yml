@@ -34,6 +34,7 @@ install:
   - conda install --yes blist pillow numba scikit-image
   - conda install --yes -c neutronpy lmfit
   - pip install filemagic
+  - pip install coveralls
   - pip install .
 
 before_script:
@@ -42,4 +43,7 @@ before_script:
   - sleep 3
 
 # command to run tests
-script: make test
+script: coverage run --source=Stoner setup.py test
+
+after_success:
+  coveralls
