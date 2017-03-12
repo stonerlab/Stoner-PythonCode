@@ -102,22 +102,25 @@ class ZipFile(DataFile):
         else:
             self.filename = filename
         try:
-            if isinstance(self.filename, zf.ZipFile):
-                if not self.filename.fp:
+            if isinstance(self.filename, zf.ZipFile): # Loading from an ZipFile
+                if not self.filename.fp: # Open zipfile if necessarry
                     other = zf.ZipFile(self.filename.filename, "r")
                     close_me = True
-                else:
+                else: #Zip file is already open
                     other = self.filename
                     close_me = False
                 member = other.namelist()[0]
-            elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename):
+                solo_file=len(other.namelist())==1
+            elif isinstance(self.filename, string_types) and zf.is_zipfile(self.filename): #filename is a string that is a zip file
                 other = zf.ZipFile(self.filename, "a")
                 member = other.namelist()[0]
                 close_me = True
-            elif isinstance(self.filename, string_types) and test_is_zip(self.filename):
+                solo_file=len(other.namelist())==1
+            elif isinstance(self.filename, string_types) and test_is_zip(self.filename): #Filename is something buried in a zipfile
                 other, member = test_is_zip(other)
                 other = zf.ZipFile(other, "r")
                 close_me = True
+                solo_file=len(other.namelist())==1
             else:
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
         except:
@@ -130,6 +133,8 @@ class ZipFile(DataFile):
         self._extract(other, member)
         if close_me:
             other.close()
+        if solo_file:
+            self.filename=str(filename)
         return self
 
     def save(self, filename=None,compression=zf.ZIP_DEFLATED):

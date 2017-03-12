@@ -19,6 +19,8 @@ from Stoner.Core  import DataFile
 import Stoner.HDF5 as SH
 import Stoner.Zip as SZ
 
+import warnings
+
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
@@ -53,6 +55,8 @@ class FileFormats_test(unittest.TestCase):
                 self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=FileFormats_test("test_loaders")
-    test.setUp()
-    test.test_loaders()
+    with warnings.catch_warnings():
+        warnings.simplefilter("always")
+        test=FileFormats_test("test_loaders")
+        test.setUp()
+        test.test_loaders()

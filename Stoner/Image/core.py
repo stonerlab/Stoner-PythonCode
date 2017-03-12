@@ -337,28 +337,28 @@ class ImageArray(np.ndarray,metadataObject):
     @classmethod
     def _load(self,filename,**kwargs):
         """Load an image from a file and return as a 2D array and metadata dictionary."""
-        img=Image.open(filename,"r")
-        fname=filename
-        image=np.asarray(img)
-        # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-        # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-        if np.issubdtype(image.dtype,np.integer):
-            bits=np.ceil(np.log2(image.max()))
-            if bits<=8:
-                image=image.astype("uint8")
-            elif bits<=16:
-                image=image.astype("uint16")
-            elif bits<=32:
-                image=image.astype("uint32")
-       
-        if 'dtype' not in kwargs.keys():
-            kwargs['dtype']='uint16' #defualt output for Kerr microscope
-        tmp=typeHintedDict()
-        for k in img.info:
-            v=img.info[k]
-            if "b'" in v: v=v.strip(" b'")    
-            tmp[k]=v
-        tmp["Loaded from"]=fname
+        with Image.open(filename,"r") as img:
+            fname=filename
+            image=np.asarray(img)
+            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+            if np.issubdtype(image.dtype,np.integer):
+                bits=np.ceil(np.log2(image.max()))
+                if bits<=8:
+                    image=image.astype("uint8")
+                elif bits<=16:
+                    image=image.astype("uint16")
+                elif bits<=32:
+                    image=image.astype("uint32")
+           
+            if 'dtype' not in kwargs.keys():
+                kwargs['dtype']='uint16' #defualt output for Kerr microscope
+            tmp=typeHintedDict()
+            for k in img.info:
+                v=img.info[k]
+                if "b'" in v: v=v.strip(" b'")    
+                tmp[k]=v
+            tmp["Loaded from"]=fname
         return image,tmp 
     
 #==============================================================
@@ -626,7 +626,7 @@ class ImageArray(np.ndarray,metadataObject):
         i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
         i=exposure.rescale_intensity(i) #make sure they're black and white
         i=transform.rescale(i, 5.0) #rescale to get more pixels on text
-        io.imsave(imagefile,i,plugin='pil') #python imaging library will save according to file extension
+        io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
 
         #call tesseract
         if self.tesseractable:

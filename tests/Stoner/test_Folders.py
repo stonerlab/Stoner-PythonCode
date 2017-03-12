@@ -18,6 +18,7 @@ import fnmatch
 from Stoner.compat import *
 import Stoner.Folders as SF
 import Stoner.HDF5 as SH
+import Stoner.Zip as SZ
 
 from Stoner import Data
 
@@ -60,9 +61,11 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
+        fldr.flatten()
         
     def test_Properties(self):
         fldr=self.fldr
+        fldr/="Loaded as"
         fldr["QDFile"].group("Byapp")
         self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
         self.assertEqual(fldr.depth,2,"depth attribute failed.")
@@ -70,6 +73,7 @@ class Folders_test(unittest.TestCase):
         fldr+=Data()
         self.assertEqual(len(fldr.loaded),2,"loaded attribute failed")
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-2,"not_empty attribute failed.")
+        fldr-="Untitled"
         
         
         

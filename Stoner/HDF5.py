@@ -101,16 +101,31 @@ class HDF5File(DataFile):
                     if grp.strip()!="":
                         f=f[grp]
             except IOError:
+                try:
+                    f.file.close()
+                except:
+                    pass
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
             except KeyError:
+                try:
+                    f.file.close()
+                except:
+                    pass
                 raise StonerLoadError("Could not find group {} in file {}".format(group,filename))
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
+            try:
+                f.file.close()
+            except:
+                pass
             raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" not in f.attrs or bytes2str(
             f.attrs["type"]) != "HDF5File":  #Ensure that if we have a type attribute it tells us we're the right type !
-            f.file.close()
+            try:
+                f.file.close()
+            except:
+                pass
             raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data = f["data"]
         if _np_.product(_np_.array(data.shape)) > 0:
@@ -231,22 +246,15 @@ class HGXFile(DataFile):
                     raise StonerLoadError("Couldn't find the HD5 format singature block")
 
         try:
-            f=h5py.File(filename)
-            if "current" in f and "config" in f["current"]:
-                pass
-            else:
-                f.close()
-                raise StonerLoadError("Looks like an unexpected HDF layout!.")
+            with h5py.File(filename) as f:
+                if "current" in f and "config" in f["current"]:
+                    pass
+                else:
+                    raise StonerLoadError("Looks like an unexpected HDF layout!.")
+                self.scan_group(f["current"],"")
+                self.main_data(f["current"]["data"])
         except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
-        else:
-            f.close()
-
-        with h5py.File(self.filename, "r") as f:
-            self.scan_group(f["current"],"")
-            self.main_data(f["current"]["data"])
-
-
         return self
 
     def scan_group(self,grp,pth):

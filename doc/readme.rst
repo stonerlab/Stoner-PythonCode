@@ -117,7 +117,7 @@ The current status is:
     :target: https://travis-ci.org/gb119/Stoner-PythonCode
 
 .. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
-:target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+    :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
 
 
 Citing the Stoner Package
