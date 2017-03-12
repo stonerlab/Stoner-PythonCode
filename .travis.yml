@@ -12,7 +12,6 @@ python:
 # Setup anaconda
 install:
   - sudo apt-get install tesseract-ocr
-  - sudo apt-get install zlib
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
