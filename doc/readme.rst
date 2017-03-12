@@ -110,10 +110,15 @@ Online documentation for the development version can be found on the `githib rep
 Build Status
 ~~~~~~~~~~~~
 
-Travis CI is used to test the development branch to see if it passes the current unit tests. The current status is:
+Travis CI is used to test the development branch to see if it passes the current unit tests and coveralls.io handles the unit test coverage reporting. 
+The current status is:
 
 .. image:: https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master
     :target: https://travis-ci.org/gb119/Stoner-PythonCode
+
+.. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
+:target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+
 
 Citing the Stoner Package
 ~~~~~~~~~~~~~~~~~~~~~~~~~
