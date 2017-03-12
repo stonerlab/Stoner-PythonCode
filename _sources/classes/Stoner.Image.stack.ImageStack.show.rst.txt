@@ -1,0 +1,8 @@
+
+
+ImageStack.show
+==================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: ImageStack.show

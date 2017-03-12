@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Image.folders &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.Image.folders</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon May 23 12:05:59 2016</span>
+
+<span class="sd">@author: phyrct</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">dtype_range</span>
+<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">metadataObject</span>
+<span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
+<span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBssedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
+
+
+<span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">img_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ImageFolder"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder">[docs]</a><span class="k">class</span> <span class="nc">ImageFolder</span><span class="p">(</span><span class="n">DiskBssedFolder</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ImageFolder is designed to behave pretty much like DataFolder but with</span>
+<span class="sd">    functions and loaders appropriate for image based files.</span>
+<span class="sd">    </span>
+<span class="sd">        Attributes:</span>
+<span class="sd">        type (:py:class:`Stoner.Image.core.ImageArray`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Util.Data`)</span>
+
+<span class="sd">        extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.</span>
+
+<span class="sd">        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then</span>
+<span class="sd">            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.</span>
+
+<span class="sd">        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in</span>
+<span class="sd">            grouping files where one column of data contains a constant value for the experimental state. Default is False</span>
+
+<span class="sd">        recursive (bool): Specifies whether to search recurisvely in a whole directory tree. Default is True.</span>
+
+<span class="sd">        flatten (bool): Specify where to present subdirectories as spearate groups in the folder (False) or as a single group (True). Default is False.</span>
+<span class="sd">            The :py:meth:`DiskBasedFolder.flatten` method has the equivalent effect and :py:meth:`DiskBasedFolder.unflatten` reverses it.</span>
+
+<span class="sd">        directory (str): The root directory on disc for the folder - by default this is the current working directory.</span>
+
+<span class="sd">        multifile (boo): Whether to select individual files manually that are not (necessarily) in  a common directory structure.</span>
+<span class="sd">        </span>
+<span class="sd">        readlist (bool): Whether to read the directory immediately on creation. Default is True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ImageFolder.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.__init__.html#Stoner.Image.folders.ImageFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the ImageFolder. Mostly a pass</span>
+<span class="sd">        through to the :py:class:`Stoner.Folders.baseFolder` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;pattern&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span><span class="s2">&quot;*.png&quot;</span><span class="p">)</span>
+        <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;flat&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">[</span><span class="s2">&quot;flat&quot;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+        
+    
+<div class="viewcode-block" id="ImageFolder.loadgroup"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.loadgroup.html#Stoner.Image.folders.ImageFolder.loadgroup">[docs]</a>    <span class="k">def</span> <span class="nf">loadgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load all files from this group into memory&quot;&quot;&quot;</span>
+        <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+    
+<div class="viewcode-block" id="ImageFolder.slice_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.slice_metadata.html#Stoner.Image.folders.ImageFolder.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the</span>
+<span class="sd">        top level group</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            key(string or list of strings):</span>
+<span class="sd">                if given then only return the item(s) requested from the metadata</span>
+<span class="sd">            values_only(bool):</span>
+<span class="sd">                if given only return tuples of the dictionary values. Mostly useful</span>
+<span class="sd">                when given a single key string</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            ret(list of dict, tuple or values):</span>
+<span class="sd">                depending on values_only returns the sliced dictionaries or tuples/</span>
+<span class="sd">                values of the items</span>
+<span class="sd">            </span>
+<span class="sd">        To do: </span>
+<span class="sd">            this should probably be a func in baseFolder and should use have</span>
+<span class="sd">            recursive options (build a dictionary of metadata values). And probably</span>
+<span class="sd">            options to extract other parts of objects (first row or whatever).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">metadata</span><span class="o">=</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span> <span class="c1">#this can take some time if it&#39;s loading in the images</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">key</span><span class="o">=</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">met</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]),</span> <span class="s1">&#39;key requested not in item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">values_only</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
+                <span class="n">metadata</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">met</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="c1">#single key</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="p">[</span><span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">metadata</span></div>
+    
+<div class="viewcode-block" id="ImageFolder.stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.stack.html#Stoner.Image.folders.ImageFolder.stack">[docs]</a>    <span class="k">def</span> <span class="nf">stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a KerrStack of the images in the current group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">KerrStack</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">KerrStack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">k</span></div></div>
+      
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Mar 12, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

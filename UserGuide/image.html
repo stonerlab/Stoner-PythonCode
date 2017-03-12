@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Working with Images &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Cookbook" href="cookbook.html" />
+    <link rel="prev" title="Working with Lots of Files" href="datafolder.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="datafolder.html" title="Working with Lots of Files"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" accesskey="U">The Stoner Python Package User Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="working-with-images">
+<h1>Working with Images<a class="headerlink" href="#working-with-images" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="loading-an-image">
+<h2>Loading an Image<a class="headerlink" href="#loading-an-image" title="Permalink to this headline">¶</a></h2>
+<p>Stoner now has classes available to work with data images. The class is inspired by skimage has pass through
+ability to most of the skimage functions. The images also have a metadata parameter similar to DataFile. To
+load an image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageArray</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="s1">&#39;my_image.png&#39;</span><span class="p">)</span>
+<span class="n">im2</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;myarray&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>ImageArray is designed to act much like a 2d numpy array but with the extra metadata parameter.</p>
+</div>
+<div class="section" id="examining-and-manipulating-the-imagearray">
+<h2>Examining and manipulating the ImageArray<a class="headerlink" href="#examining-and-manipulating-the-imagearray" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="local-functions-and-properties">
+<h3>Local functions and properties<a class="headerlink" href="#local-functions-and-properties" title="Permalink to this headline">¶</a></h3>
+<p>Typical start functions might be to convert the image into floating point form which is more precise than
+integer format and crop the image:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span> <span class="c1">#(xmin, xmax, ymin, ymax)</span>
+<span class="n">copyofim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#behaviour similar to data file</span>
+</pre></div>
+</div>
+<p>Set a metadata item:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="p">[</span><span class="s1">&#39;mymeta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>Then view parts of the array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="p">[:,</span><span class="mi">10</span><span class="p">:</span><span class="mi">50</span><span class="p">]</span>
+<span class="n">im</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="n">im</span><span class="o">.</span><span class="n">imshow</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Note that as with numpy arrays im[:,10:50] is a view onto the same memory space, so if you change stuff with this it will
+change in the ImageArray.</p>
+</div>
+<div class="section" id="further-functions">
+<h3>Further functions<a class="headerlink" href="#further-functions" title="Permalink to this headline">¶</a></h3>
+<p>Any functions called for that are not in the main class are searched for in imagefuncs and then passed through
+to the skimage library.</p>
+<p>Further functions that could be useful:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="o">.</span><span class="n">threshold_minmax</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">)</span> <span class="c1">#returns a binary image</span>
+<span class="n">im</span><span class="o">.</span><span class="n">plot_histogram</span><span class="p">()</span> <span class="c1">#plot a histogram of the pixel intensities</span>
+<span class="n">im</span><span class="o">.</span><span class="n">level_image</span><span class="p">()</span> <span class="c1">#flatten a skewed image</span>
+<span class="n">im</span><span class="o">.</span><span class="n">subtract_image</span><span class="p">(</span><span class="n">otherim</span><span class="p">)</span> <span class="c1">#subtract another image and enhance contrast</span>
+<span class="n">im</span><span class="o">.</span><span class="n">correct_drift</span><span class="p">(</span><span class="n">otherim</span><span class="p">)</span> <span class="c1">#translate image to line up with other im</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="skimage-functions">
+<h3>skimage functions<a class="headerlink" href="#skimage-functions" title="Permalink to this headline">¶</a></h3>
+<p>If we still haven&#8217;t had a hit the function is passed through to the skimage library and our image
+is given in as the first argument. For example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span><span class="o">.</span><span class="n">threshold_otsu</span><span class="p">(</span><span class="n">nbins</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span> <span class="c1">#pass through to skimage.filters.threshold_otsu</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Working with Images</a><ul>
+<li><a class="reference internal" href="#loading-an-image">Loading an Image</a></li>
+<li><a class="reference internal" href="#examining-and-manipulating-the-imagearray">Examining and manipulating the ImageArray</a><ul>
+<li><a class="reference internal" href="#local-functions-and-properties">Local functions and properties</a></li>
+<li><a class="reference internal" href="#further-functions">Further functions</a></li>
+<li><a class="reference internal" href="#skimage-functions">skimage functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="datafolder.html"
+                        title="previous chapter">Working with Lots of Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cookbook.html"
+                        title="next chapter">Cookbook</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/UserGuide/image.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cookbook.html" title="Cookbook"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="datafolder.html" title="Working with Lots of Files"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="ugindex.html" >The Stoner Python Package User Guide</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Mar 12, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

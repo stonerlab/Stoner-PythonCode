@@ -1,0 +1,8 @@
+
+
+ImageArray.crop_text
+======================================
+
+.. currentmodule:: Stoner.Image.core
+
+.. automethod:: ImageArray.crop_text

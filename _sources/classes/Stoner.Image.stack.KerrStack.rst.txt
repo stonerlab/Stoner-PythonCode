@@ -1,0 +1,26 @@
+Stoner.Image.stack.KerrStack
+============================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. autoclass:: KerrStack
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Image.stack.KerrStack.__init__
+      ~Stoner.Image.stack.KerrStack.correct_drifts
+      ~Stoner.Image.stack.KerrStack.hysteresis
+      ~Stoner.Image.stack.KerrStack.index_to_field
+
+   
+   
+
+   
+   
+   

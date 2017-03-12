@@ -1,0 +1,688 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Image.stack &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for Stoner.Image.stack</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon May 23 12:05:59 2016</span>
+
+<span class="sd">@author: phyrct</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">dtype_range</span>
+<span class="kn">from</span> <span class="nn">.folders</span> <span class="k">import</span> <span class="n">ImageFolder</span>
+<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">metadataObject</span>
+<span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
+
+
+<span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">img_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_average_list</span><span class="p">(</span><span class="n">listob</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Average a list of items picking an appropriate average given the type.</span>
+<span class="sd">    If no appropriate average is found None will be returned.</span>
+<span class="sd">    if listob contains nested lists or dicts of numbers then try to average</span>
+<span class="sd">    individual items within the lists/keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">==</span><span class="nb">type</span><span class="p">(</span><span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">]):</span>
+        <span class="k">return</span> <span class="kc">None</span> <span class="c1">#all of the list isn&#39;t the same type</span>
+    <span class="n">typex</span> <span class="o">=</span> <span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">long</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">listob</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">listob</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">listob</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span> <span class="c1">#probably incompatible array sizes</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span><span class="nb">list</span><span class="p">)):</span> <span class="c1">#recursively go through sub lists averaging values</span>
+        <span class="n">nl</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">listob</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="n">_average_list</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">nl</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="c1">#recursively go through dictionary keys averaging values</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">typex</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_average_list</span><span class="p">([</span><span class="n">listob</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typex</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="n">typex</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">listob</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">listob</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#all the same text return that string</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">ret</span>
+    
+
+<div class="viewcode-block" id="ImageStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack">[docs]</a><span class="k">class</span> <span class="nc">ImageStack</span><span class="p">(</span><span class="n">metadataObject</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Image.stack.ImageStack` is a 3d numpy array stack of images.</span>
+
+<span class="sd">    This is used to deal with a stack of images with identical dimensions</span>
+<span class="sd">    as a 3d numpy array - more efficient than the folder based methods in ImageFolder</span>
+<span class="sd">    for iterating etc. The first axis is the number of images. Images are added</span>
+<span class="sd">    and deleted through list type methods ImageStack.append, ImageStack.insert.</span>
+<span class="sd">    </span>
+<span class="sd">    Images can be accessed through ImageStack[i]</span>
+<span class="sd">    Metadata through ImageStack[&#39;key&#39;]</span>
+<span class="sd">    images should be added or removed using the list like methods append, insert, del</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        imarray(np.ndarray): </span>
+<span class="sd">            the 3d stack of images</span>
+<span class="sd">        allmeta(list): </span>
+<span class="sd">            list of metadata stored for each image</span>
+<span class="sd">        zipallmeta(dict): </span>
+<span class="sd">            a dictionary of all common metadata items zipped into lists</span>
+<span class="sd">        clone(ImageStack): </span>
+<span class="sd">            copy of self</span>
+<span class="sd">        shape(tuple): </span>
+<span class="sd">            pass through to imarray.shape</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+<div class="viewcode-block" id="ImageStack.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.__init__.html#Stoner.Image.stack.ImageStack.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor for :py:class:`Stoner.Image.stack.ImageStack`</span>
+<span class="sd">        Args:</span>
+<span class="sd">            (str, ndarray (3d or 2d), ImageFolder, ImageStack, list of array type):</span>
+<span class="sd">                Various forms recognised. Will try to create as expected!</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            metadata: extra info to retain beyond the image metadata</span>
+<span class="sd">            metadata_info: descriptor of how to add the individual image</span>
+<span class="sd">                      metadata to the main metadata parameter.</span>
+<span class="sd">                      &#39;list&#39;: lists the metadata for each of the common keys</span>
+<span class="sd">                      &#39;average&#39;: attempts to save the average value of each meta key</span>
+<span class="sd">            copyarray: whether to copy the image given in args[0]</span>
+<span class="sd">                              </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>  \
+                    <span class="n">metadata</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">))</span> <span class="c1">#initialise metadata</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#lock on adhoc imarray adjustments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#A list of metadata dicts extracted from the input images,</span>
+                          <span class="c1">#if just a 3d numpy array is given this will be empty.</span>
+                          <span class="c1">#this is for easy reconstruction if we want to get images </span>
+                          <span class="c1">#back out of ImageStack</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#dict of allmeta in list form (only keys that </span>
+                                <span class="c1">#are common to all images are retained)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;metadata_info&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">)</span>
+        <span class="n">copyarray</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;copyarray&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#metadata fields that are common to all images        </span>
+        <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;metadata_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ImageFolder</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1">#add arrays later</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">images</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">ImageStack</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">copyarray</span><span class="p">:</span>
+                    <span class="n">images</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">clone</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">images</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1">#try for a folder name</span>
+                <span class="n">ims</span> <span class="o">=</span> <span class="n">ImageFolder</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ims</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ImageStack takes a 2 or 3d numpy array. Array of shape </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span> <span class="c1">#one image given</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">copyarray</span><span class="p">:</span>
+                        <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">ImageFolder</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">ImageFolder</span><span class="p">):</span>
+                    <span class="n">images</span><span class="o">=</span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span> <span class="c1">#take the images from the top group</span>
+                <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span> <span class="c1">#this covers ImageArray too</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">types</span><span class="p">):</span>        
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">images</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">))</span> <span class="c1">#new memory space used for array </span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad input for ImageStack </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+               <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad input for ImageStack </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>         </div>
+             
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;call through to ndarray.shape</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The main array storing the images</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imarray</span>
+    
+    <span class="nd">@imarray</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">!=</span><span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad shape </span><span class="si">{}</span><span class="s1"> for imarray&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Update imarray using append and insert methods&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_imarray</span> <span class="o">=</span> <span class="n">arr</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">allmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of complete metadata for each image in ImageStack&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allmeta</span>
+    
+    <span class="nd">@allmeta</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">allmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allmeta</span><span class="o">=</span><span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a copy of self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">_update_commonkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;update self._commonkeys</span>
+<span class="sd">        common keys in self.allmeta</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="c1">#intersection</span>
+    
+    <span class="k">def</span> <span class="nf">_update_zipallmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;list of metadata items for each common key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_commonkeys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">]</span>
+        
+    <span class="k">def</span> <span class="nf">_update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>     
+        <span class="sd">&quot;&quot;&quot;update the metadata from allmeta according to the specifications in </span>
+<span class="sd">        metadata_info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_zipallmeta</span><span class="p">()</span>
+        <span class="n">mi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span>
+        <span class="k">for</span> <span class="n">cm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mi</span><span class="o">==</span><span class="s1">&#39;list&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">cm</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">cm</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">mi</span><span class="o">==</span><span class="s1">&#39;average&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">cm</span><span class="p">]</span> <span class="o">=</span> <span class="n">_average_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">cm</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">mi</span><span class="o">==</span><span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">cm</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;metadata_info can&#39;t take all keywords yet&quot;</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata and an index to a single </span>
+<span class="sd">        ImageArray&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[</span><span class="n">index</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">index</span><span class="o">.</span><span class="n">stop</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Patch string index through to metadata. All other set operations</span>
+<span class="sd">        to be handled by insert, append and del.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;setitem recieved type </span><span class="si">{}</span><span class="s1">, expected 2d array type.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[</span><span class="n">index</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata and index to single image</span>
+<span class="sd">        and slice to multiple image&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">[</span><span class="n">index</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">start</span><span class="p">,</span><span class="n">index</span><span class="o">.</span><span class="n">stop</span><span class="p">):</span>
+                <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="n">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ret</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>
+        
+<div class="viewcode-block" id="ImageStack.slice_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.slice_metadata.html#Stoner.Image.stack.ImageStack.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List of metadata values for each image given key.</span>
+<span class="sd">        </span>
+<span class="sd">        Return a list of metadata from each image given the key or a list of </span>
+<span class="sd">        keys. If values_only then return a list of values, else return a dictionary entry</span>
+<span class="sd">        </span>
+<span class="sd">        Arg:</span>
+<span class="sd">            key(str, list, tuple):</span>
+<span class="sd">                the key or list of keys to return values for</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            values_only(bool):</span>
+<span class="sd">                whether to return values only (list, default) or a dictionary type</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (list,dict):</span>
+<span class="sd">                sliced metadata. Form depending on values_only</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">values_only</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">key</span><span class="p">]}</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">values_only</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="n">k</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">k</span><span class="p">]})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;slice_metadata does not except input of type </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+    
+<div class="viewcode-block" id="ImageStack.append"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.append.html#Stoner.Image.stack.ImageStack.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Append an image array</span>
+<span class="sd">        </span>
+<span class="sd">        Append an image to the end of the stack and update allmeta</span>
+<span class="sd">        Arg:</span>
+<span class="sd">            item(ndarray or ImageArray):</span>
+<span class="sd">                array of same shape as other images in stack</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+                
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;append expects array type, </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;append accepts an array of shape </span><span class="si">{}</span><span class="s1">, array of shape </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="c1">#array empty so far</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="p">])</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>                </div>
+    
+<div class="viewcode-block" id="ImageStack.insert"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.insert.html#Stoner.Image.stack.ImageStack.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert an image array at index</span>
+<span class="sd">        </span>
+<span class="sd">        Insert an image into the stack at index and update allmeta.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            index(int):</span>
+<span class="sd">                index for insertion</span>
+<span class="sd">            item(ndarray or ImageArray):</span>
+<span class="sd">                array of same shape as other images in stack</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;append expects array type, </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;append accepts an array of shape </span><span class="si">{}</span><span class="s1">, array of shape </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_metadata</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">item</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImageStack.dtype_limits"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.dtype_limits.html#Stoner.Image.stack.ImageStack.dtype_limits">[docs]</a>    <span class="k">def</span> <span class="nf">dtype_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return intensity limits, i.e. (min, max) tuple, of imarray dtype.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            clip_negative(bool):</span>
+<span class="sd">                If True, clip the negative range (i.e. return 0 for min intensity)</span>
+<span class="sd">                even if the image dtype allows negative values.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (imin,imax) (tuple):</span>
+<span class="sd">                Lower and upper intensity limits.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span> <span class="o">=</span> <span class="n">dtype_range</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">clip_negative</span><span class="p">:</span>
+            <span class="n">imin</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span></div>
+    
+<div class="viewcode-block" id="ImageStack.clip_intensity"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.clip_intensity.html#Stoner.Image.stack.ImageStack.clip_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clip intensity that lies outside the range allowed by dtype.</span>
+<span class="sd">        </span>
+<span class="sd">        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels</span>
+<span class="sd">        are changed to 0. (Numpy should limit the range on arrays of int dtypes.&quot;&quot;&quot;</span>
+        <span class="n">dl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_limits</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">dl</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">out</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ImageStack.convert_float"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.convert_float.html#Stoner.Image.stack.ImageStack.convert_float">[docs]</a>    <span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert the imarray to floating point type normalised to -1 to 1. </span>
+<span class="sd">        If clip_negative then clip intensities below 0 to 0.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            clip_negative(bool):</span>
+<span class="sd">                whether to clip intensities</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="c1">#already float</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_limits</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">new</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">new</span><span class="o">=</span><span class="n">new</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">new</span>
+        <span class="k">if</span> <span class="n">clip_negative</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ImageStack.apply_all"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.apply_all.html#Stoner.Image.stack.ImageStack.apply_all">[docs]</a>    <span class="k">def</span> <span class="nf">apply_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;apply function to all images in the stack</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            func(string or callable):</span>
+<span class="sd">                if string it must be a function reachable by ImageArray</span>
+<span class="sd">            quiet(bool):</span>
+<span class="sd">                if False print &#39;.&#39; for every iteration</span>
+<span class="sd">        </span>
+<span class="sd">        Note:</span>
+<span class="sd">            Further args, kargs are passed through to the function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">quiet</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;quiet&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="n">f</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">func</span><span class="p">)</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">im</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">func</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ImageStack.subtract"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.subtract.html#Stoner.Image.stack.ImageStack.subtract">[docs]</a>    <span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">background</span><span class="p">,</span> <span class="n">contrast</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">clip_intensity</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtract a background image (or index) from all images in the stack.</span>
+<span class="sd">        </span>
+<span class="sd">        The formula used is new = (ImageArray - background) * contrast + 0.5</span>
+<span class="sd">        If clip_intensity then clip negative intensities to 0. Array is always</span>
+<span class="sd">        converted to float for this method.</span>
+<span class="sd">        </span>
+<span class="sd">        Arg:</span>
+<span class="sd">            background(int or 2d np.ndarray):</span>
+<span class="sd">                the background image to subtract. If int is given this is used</span>
+<span class="sd">                as an index on the stack.</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            contrast(int):</span>
+<span class="sd">                Default 16. Magnifies the subtraction</span>
+<span class="sd">            clip_intensity(bool):</span>
+<span class="sd">                whether to clip the image intensities in range (0,1) after subtraction</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert_float</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">background</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">bg</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">background</span><span class="p">]</span>
+        <span class="n">bg</span> <span class="o">=</span> <span class="n">bg</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span><span class="o">.</span><span class="n">convert_float</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">bg</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">bg</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">-</span> <span class="n">bg</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
+        <span class="k">if</span> <span class="n">clip_intensity</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">()</span></div>
+            
+<div class="viewcode-block" id="ImageStack.show"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Show the stack of images in a skimage CollectionViewer window&quot;&quot;&quot;</span>
+        <span class="c1">#stackims=[self[i] for i in range(len(self))]</span>
+        <span class="n">cv</span><span class="o">=</span><span class="n">CollectionViewer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">cv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cv</span>  </div>
+
+<div class="viewcode-block" id="ImageStack.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;probably should save in hdf5 format&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span></div></div>
+
+<div class="viewcode-block" id="KerrStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.html#Stoner.Image.stack.KerrStack">[docs]</a><span class="k">class</span> <span class="nc">KerrStack</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds</span>
+<span class="sd">    some functionality particular to Kerr images.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        fields(list):</span>
+<span class="sd">            list of applied fields in stack. This is the most important metadata</span>
+<span class="sd">            for things like hysteresis.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+<div class="viewcode-block" id="KerrStack.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.__init__.html#Stoner.Image.stack.KerrStack.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;fields&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+<span class="c1">#    </span>
+<div class="viewcode-block" id="KerrStack.hysteresis"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.hysteresis.html#Stoner.Image.stack.KerrStack.hysteresis">[docs]</a>    <span class="k">def</span> <span class="nf">hysteresis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a hysteresis loop of the average intensity in the given images</span>
+<span class="sd">    </span>
+<span class="sd">        Keyword Argument:</span>
+<span class="sd">            mask(ndarray or list):</span>
+<span class="sd">                boolean array of same size as an image or imarray or list of </span>
+<span class="sd">                masks for each image. If True then don&#39;t include that area in </span>
+<span class="sd">                the intensity averaging.</span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        hyst(Data):</span>
+<span class="sd">            &#39;Field&#39;, &#39;Intensity&#39;, 2 column array</span>
+<span class="sd">        &quot;&quot;&quot;</span>     
+        <span class="n">hyst</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                <span class="n">hyst</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+                <span class="n">hyst</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">))])</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span><span class="nb">list</span><span class="p">)):</span>
+                <span class="n">hyst</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="n">i</span><span class="p">])])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hyst</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">hyst</span><span class="p">,</span> <span class="n">setas</span><span class="o">=</span><span class="s1">&#39;xy&#39;</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Field&#39;</span><span class="p">,</span> <span class="s1">&#39;Intensity&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+            
+<div class="viewcode-block" id="KerrStack.index_to_field"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.index_to_field.html#Stoner.Image.stack.KerrStack.index_to_field">[docs]</a>    <span class="k">def</span> <span class="nf">index_to_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_map</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert an image of index values into an image of field values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fieldvals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">index_map</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">fieldvals</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="KerrStack.correct_drifts"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.correct_drifts.html#Stoner.Image.stack.KerrStack.correct_drifts">[docs]</a>    <span class="k">def</span> <span class="nf">correct_drifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refindex</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Align images to correct for image drift.</span>
+<span class="sd">        </span>
+<span class="sd">        Pass through to ImageArray.corret_drift.</span>
+<span class="sd">        </span>
+<span class="sd">        Arg:</span>
+<span class="sd">            refindex: int or str</span>
+<span class="sd">                index or name of the reference image to use for zero drift</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            threshold(float): see ImageArray.correct_drift</span>
+<span class="sd">            upsample_factor(int): see ImageArray.correct_drift</span>
+<span class="sd">            box: see ImageArray.correct_drift</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ref</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">refindex</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;correct_drift&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                     <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span></div></div>
+                               
+    
+<div class="viewcode-block" id="MaskStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.html#Stoner.Image.stack.MaskStack">[docs]</a><span class="k">class</span> <span class="nc">MaskStack</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Similar to ImageStack but made for stacks of boolean or binary images</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MaskStack.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.__init__.html#Stoner.Image.stack.MaskStack.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MaskStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="MaskStack.switch_index"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.switch_index.html#Stoner.Image.stack.MaskStack.switch_index">[docs]</a>    <span class="k">def</span> <span class="nf">switch_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saturation_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saturation_value</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Given a stack of boolean masks representing a hystersis loop find</span>
+<span class="sd">        the stack index of the saturation field for each pixel.</span>
+<span class="sd">        </span>
+<span class="sd">        Take the final mask as all switched (or the first mask if saturation_end</span>
+<span class="sd">        is False). Work back through the masks taking the first time a pixel </span>
+<span class="sd">        switches as its coercive field (ie the last time it switches before</span>
+<span class="sd">        reaching saturation).</span>
+<span class="sd">        Elements that start switched at the lowest measured field or never</span>
+<span class="sd">        switch are given a zero index.</span>
+<span class="sd">        </span>
+<span class="sd">        At the moment it&#39;s set up to expect masks to be false when the sample is saturated</span>
+<span class="sd">        at a high field</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            saturation_end(bool):</span>
+<span class="sd">                True if the last image is closest to the fully saturated state. </span>
+<span class="sd">                False if you want the first image</span>
+<span class="sd">            saturation_value(bool):</span>
+<span class="sd">                if True then a pixel value True means that switching has occured</span>
+<span class="sd">                (ie magnetic saturation would be all True)</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            switch_ind: MxN ndarray of int</span>
+<span class="sd">                index that each pixel switches at</span>
+<span class="sd">            switch_progession: MxNx(P-1) ndarray of bool</span>
+<span class="sd">                stack of masks showing when each pixel saturates</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">saturation_end</span><span class="p">:</span>
+            <span class="n">ms</span><span class="o">=</span><span class="nb">reversed</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+        <span class="n">switch_ind</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">switch_prog</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">switch_prog</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">switch_prog</span><span class="o">.</span><span class="n">fields</span><span class="o">=</span><span class="n">switch_prog</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+            <span class="n">already_done</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">switch_ind</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span> <span class="c1">#only change switch_ind if it hasn&#39;t already</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span> <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">!=</span><span class="n">saturation_value</span><span class="p">,</span> 
+                                      <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">saturation_value</span> <span class="p">)</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">already_done</span><span class="p">))</span>
+            <span class="n">condition</span><span class="o">=</span><span class="p">[</span><span class="n">condition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">condition</span><span class="p">)]</span>
+            <span class="n">choice</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">switch_ind</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">m</span><span class="p">,</span> <span class="n">switch_ind</span><span class="p">]</span> <span class="c1">#index or leave as is</span>
+            <span class="n">switch_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">choice</span><span class="p">)</span>       
+            <span class="n">switch_prog</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">=</span><span class="n">already_done</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">saturation_end</span><span class="p">:</span>
+            <span class="n">switch_ind</span><span class="o">=-</span><span class="n">switch_ind</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1">#should check this!</span>
+            <span class="n">switch_prog</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">switch_ind</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">(</span><span class="n">switch_ind</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">switch_ind</span><span class="p">,</span> <span class="n">switch_prog</span></div></div>
+        
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Mar 12, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

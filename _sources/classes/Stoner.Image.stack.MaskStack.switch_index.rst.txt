@@ -1,0 +1,8 @@
+
+
+MaskStack.switch_index
+=========================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: MaskStack.switch_index

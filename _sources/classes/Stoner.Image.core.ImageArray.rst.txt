@@ -1,0 +1,43 @@
+Stoner.Image.core.ImageArray
+============================
+
+.. currentmodule:: Stoner.Image.core
+
+.. autoclass:: ImageArray
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Image.core.ImageArray.__init__
+      ~Stoner.Image.core.ImageArray._load
+      ~Stoner.Image.core.ImageArray.box
+      ~Stoner.Image.core.ImageArray.clip_intensity
+      ~Stoner.Image.core.ImageArray.convert_float
+      ~Stoner.Image.core.ImageArray.convert_int
+      ~Stoner.Image.core.ImageArray.crop_image
+      ~Stoner.Image.core.ImageArray.crop_text
+      ~Stoner.Image.core.ImageArray.dtype_limits
+      ~Stoner.Image.core.ImageArray.ocr_metadata
+      ~Stoner.Image.core.ImageArray.reduce_metadata
+      ~Stoner.Image.core.ImageArray.save
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Image.core.ImageArray.clone
+      ~Stoner.Image.core.ImageArray.data
+      ~Stoner.Image.core.ImageArray.max_box
+      ~Stoner.Image.core.ImageArray.tesseractable
+   
+   

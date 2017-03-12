@@ -1,0 +1,8 @@
+
+
+KerrStack.hysteresis
+=======================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: KerrStack.hysteresis

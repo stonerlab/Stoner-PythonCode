@@ -1,0 +1,8 @@
+
+
+ImageStack.append
+====================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: ImageStack.append

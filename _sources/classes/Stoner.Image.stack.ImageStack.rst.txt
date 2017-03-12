@@ -1,0 +1,42 @@
+Stoner.Image.stack.ImageStack
+=============================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. autoclass:: ImageStack
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Image.stack.ImageStack.__init__
+      ~Stoner.Image.stack.ImageStack.append
+      ~Stoner.Image.stack.ImageStack.apply_all
+      ~Stoner.Image.stack.ImageStack.clip_intensity
+      ~Stoner.Image.stack.ImageStack.convert_float
+      ~Stoner.Image.stack.ImageStack.dtype_limits
+      ~Stoner.Image.stack.ImageStack.insert
+      ~Stoner.Image.stack.ImageStack.save
+      ~Stoner.Image.stack.ImageStack.show
+      ~Stoner.Image.stack.ImageStack.slice_metadata
+      ~Stoner.Image.stack.ImageStack.subtract
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Image.stack.ImageStack.allmeta
+      ~Stoner.Image.stack.ImageStack.clone
+      ~Stoner.Image.stack.ImageStack.imarray
+      ~Stoner.Image.stack.ImageStack.shape
+   
+   

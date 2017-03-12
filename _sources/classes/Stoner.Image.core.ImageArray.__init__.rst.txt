@@ -1,0 +1,8 @@
+
+
+ImageArray.__init__
+=====================================
+
+.. currentmodule:: Stoner.Image.core
+
+.. automethod:: ImageArray.__init__

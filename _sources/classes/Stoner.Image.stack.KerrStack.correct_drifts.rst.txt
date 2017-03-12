@@ -1,0 +1,8 @@
+
+
+KerrStack.correct_drifts
+===========================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: KerrStack.correct_drifts

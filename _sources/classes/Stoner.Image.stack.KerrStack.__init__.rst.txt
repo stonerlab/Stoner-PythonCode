@@ -1,0 +1,8 @@
+
+
+KerrStack.__init__
+=====================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: KerrStack.__init__
