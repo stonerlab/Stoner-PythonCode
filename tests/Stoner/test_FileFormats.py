@@ -50,7 +50,7 @@ class FileFormats_test(unittest.TestCase):
                 try:
                     del d
                     fname=path.join(self.datadir,f)
-                    d=Data(fname,debug=Fa;se)
+                    d=Data(fname,debug=False)
                 except Exception as e:
                     self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),str(e)))
                 self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
