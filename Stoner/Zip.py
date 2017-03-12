@@ -53,6 +53,9 @@ class ZipFile(DataFile):
 
     priority = 32
     patterns = ["*.zip"]
+    
+    mime_type=["application/zip"]
+
 
     def __init__(self, *args, **kargs):
         """Constructor to catch initialising with an h5py.File or h5py.Group

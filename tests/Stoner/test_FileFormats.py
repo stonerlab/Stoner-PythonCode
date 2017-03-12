@@ -40,10 +40,6 @@ class FileFormats_test(unittest.TestCase):
             #return None # skip this completely at this time
         else:
             skip_files=[]
-        d=SZ.ZipFile(dbug=True)
-        d._load(os.path.join(self.datadir,"ZipFile_Example.zip"))
-        print(d.column_headers)
-        print("*"*80)
 
         for i,f in enumerate(os.listdir(self.datadir)):
             if f.strip().lower() in skip_files: # Known bad files to load
@@ -54,7 +50,7 @@ class FileFormats_test(unittest.TestCase):
                 try:
                     del d
                     fname=path.join(self.datadir,f)
-                    d=Data(fname,debug=True)
+                    d=Data(fname,debug=Fa;se)
                 except Exception as e:
                     self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),str(e)))
                 self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
