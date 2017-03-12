@@ -20,6 +20,7 @@ import numpy as _np_
 from .Core import DataFile,StonerLoadError
 from .Folders import DataFolder
 import os.path as path
+from traceback import format_exc
 
 
 def test_is_zip(filename, member=""):
@@ -123,12 +124,13 @@ class ZipFile(DataFile):
                 solo_file=len(other.namelist())==1
             else:
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
-        except:
+        except Exception as e:
+            print(format_exc())
             try:
                 other.close()
             except:
                 pass
-            raise StonerLoadError("{} does  not appear to be a valid zip file".format(self.filename))
+            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,format_exc()))
 #Ok we can try reading now
         self._extract(other, member)
         if close_me:

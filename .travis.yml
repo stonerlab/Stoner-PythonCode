@@ -33,7 +33,6 @@ install:
   - conda install --yes numpy numpy scipy matplotlib h5py
   - conda install --yes blist pillow numba scikit-image
   - conda install --yes -c neutronpy lmfit
-  - conda install --yes zlib
   - pip install filemagic
   - pip install coveralls
   - pip install .
