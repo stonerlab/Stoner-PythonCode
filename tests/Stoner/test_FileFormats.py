@@ -40,6 +40,8 @@ class FileFormats_test(unittest.TestCase):
             #return None # skip this completely at this time
         else:
             skip_files=[]
+        d=Data()
+        print(d.subclasses)
         for i,f in enumerate(os.listdir(self.datadir)):
             if f.strip().lower() in skip_files: # Known bad files to load
                 print("Skipping {}".format(f))
