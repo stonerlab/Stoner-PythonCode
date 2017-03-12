@@ -97,6 +97,17 @@ class baseFolder(MutableSequence):
         groups(regexpDict): A dictionary of similar baseFolder instances
         objects(regexptDict): A dictionary of metadataObjects
         _index(list): An index of the keys associated with objects
+        
+    Properties:
+        depth (int): The maximum number of levels of nested groups in the folder
+        files (list of str or metadataObject): the indivdual objects or their names if they are not loaded
+        instance (metadataObject): an empty instance of the data type stored in the folder
+        loaded (generator of (str name, metadataObject value): iterate over only the loaded into memory items of the folder
+        ls (list of str): the names of the objects in the folder, loaded or not
+        lsgrp (list of str): the names of all the groups in the folder
+        mindepth (int): the minimum level of nesting groups in the folder.
+        not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
+        type (subclass of metadtaObject): the class of objects sotred in this folder
     """
 
     
@@ -112,8 +123,8 @@ class baseFolder(MutableSequence):
         self.debug=kargs.pop("debug",False)
         self._object_attrs=dict()
         self._last_name=0
-        self.groups=regexpDict()
-        self.objects=regexpDict()
+        self._groups=regexpDict()
+        self._objects=regexpDict()
         self._instance=None
         self._object_attrs=dict()
         self.key=None
@@ -162,7 +173,7 @@ class baseFolder(MutableSequence):
     @property
     def files(self):
         """Return an iterator of potentially unloaded named objects."""
-        return [self.__getter__(i,instantiate=False) for i in range(len(self))]
+        return [self.__getter__(i,instantiate=None) for i in range(len(self))]
 
     @files.setter
     def files(self,value):
@@ -171,6 +182,17 @@ class baseFolder(MutableSequence):
             self.__clear__()
             for i,v in enumerate(value):
                 self.insert(i,v)
+                
+    @property
+    def groups(self):
+        return self._groups
+    
+    @groups.setter
+    def groups(self,value):
+        if not isinstance(value,regexpDict):
+            self._groups=regexpDict(value)
+        else:
+            self._groups=value
 
     @property
     def instance(self):
@@ -183,7 +205,9 @@ class baseFolder(MutableSequence):
         """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
         loaded into memory."""
         for f in self.__names__():
-            yield isinstance(self.__getter__(f,instantiate=False),metadataObject)
+            val=self.__getter__(f,instantiate=None)
+            if isinstance(val,self.type):
+                return f,val
 
     @property
     def ls(self):
@@ -223,6 +247,18 @@ class baseFolder(MutableSequence):
             if len(d)==0:
                 continue
             yield(d)
+
+    @property
+    def objects(self):
+        return self._objects
+    
+    @objects.setter
+    def objects(self,value):
+        if not isinstance(value,regexpDict):
+            self._objects=regexpDict(value)
+        else:
+            self._objects=value
+
 
     @property
     def type(self):
@@ -413,9 +449,9 @@ class baseFolder(MutableSequence):
         if isinstance(name,string_types):
             if isinstance(value,baseFolder):
                 self.groups[name]=value
-        else:
-            self.__setter__(self.__lookup__(name),value)
-        if isinstance(name,int_types):
+            else:
+                self.__setter__(self.__lookup__(name),value)
+        elif isinstance(name,int_types):
             if -len(self)<name<len(self):
                 self.__setter__(self.__lookup__(name),value)
             else:
@@ -1316,12 +1352,6 @@ class DiskBssedFolder(object):
             self.getlist(directory=args[0])
         
         
-
-    @property
-    def loaded(self):
-        """Return a dictionary indicating whether an entry in the folder is already loaded or not."""
-        return {n:isinstance(self.__getter__(n,instantiate=None),self.type) for n in self.__names__()}
-
     def __clone__(self,other=None):
         """Add something to stop clones from autolisting again."""
         if other is None:

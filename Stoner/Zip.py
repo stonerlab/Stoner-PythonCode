@@ -90,7 +90,7 @@ class ZipFile(DataFile):
         """
         tmp = DataFile()
         info = archive.getinfo(member)
-        data = archive.read(info)
+        data = bytes2str(archive.read(info)) # In Python 3 this would be a bytes
         self.__init__(tmp << data)
         self.filename = path.join(archive.filename, member)
         return self
@@ -132,7 +132,7 @@ class ZipFile(DataFile):
             other.close()
         return self
 
-    def save(self, filename=None):
+    def save(self, filename=None,compression=zf.ZIP_DEFLATED):
         """Overrides the save method to allow ZipFile to be written out to disc (as a mininmalist output)
 
         Args:
@@ -160,9 +160,9 @@ class ZipFile(DataFile):
                             break
                     else:
                         raise IOError("Can't figure out where the zip file is in {}".format(filename))
-                    zipfile = zf.ZipExtFile(path.join(*parts[:i + 1]), "w")
+                    zipfile = zf.ZipFile(path.join(*parts[:i + 1]), "w",compression=zf.compression,allowZip64=True)
                     close_me = True
-                    member = path.join(*parts[i + 1:])
+                    member = path.join(".",*parts[i + 1:])
             elif isinstance(filename, zf.ZipFile):  #Handle\ zipfile instance, opening if necessary
                 if not filename.fp:
                     filename = zf.ZipFile(filename.filename, 'a')
@@ -173,8 +173,8 @@ class ZipFile(DataFile):
                 member = ""
     
             if member == "":  # Is our file object a bare zip file - if so create a default member name
-                if len(zipfile.listname()) > 0:
-                    member = zipfile.listname()[1]
+                if len(zipfile.namelist()) > 0:
+                    member = zipfile.namelist()[1]
                 else:
                     member = "DataFile.txt"
     

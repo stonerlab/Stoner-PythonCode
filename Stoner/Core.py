@@ -2414,7 +2414,10 @@ class DataFile(metadataObject):
         """
         newdata = DataFile()
         if isinstance(other, string_types):
-            lines = itertools.imap(lambda x: x, other.splitlines())
+            if python_v3:
+                lines = map(lambda x: x, other.splitlines())
+            else:
+                lines = itertools.imap(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
         elif isinstance(other, Iterable):
             newdata.__read_iterable(other)
@@ -2466,10 +2469,12 @@ class DataFile(metadataObject):
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
 
-        if "next" in dir(reader):
+        if "next" in dir(reader): # Python v2 iterator
             readline = reader.next
-        elif "readline" in dir(reader):
+        elif "readline" in dir(reader): #Filelike iterator
             readline = reader.readline
+        elif "__next__" in dir(reader):# Python v3 iterator
+            readline = reader.__next__
         else:
             raise AttributeError("No method to read a line in {}".format(reader))
         row = readline().split('\t')
