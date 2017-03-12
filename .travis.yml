@@ -12,6 +12,7 @@ python:
 # Setup anaconda
 install:
   - sudo apt-get install tesseract-ocr
+  - sudo apt-get install zlib
   # We do this conditionally because it saves us some downloading if the
   # version is the same.
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -33,6 +34,7 @@ install:
   - conda install --yes numpy numpy scipy matplotlib h5py
   - conda install --yes blist pillow numba scikit-image
   - conda install --yes -c neutronpy lmfit
+  - conda install --yes zlib
   - pip install filemagic
   - pip install coveralls
   - pip install .
