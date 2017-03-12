@@ -689,7 +689,7 @@ class XRDFile(DataFile):
         else:
             self.filename = filename
         sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
-        with fileinput.FileInput(self.filename) as f: # Read filename linewise
+        with open(self.filename) as f: # Read filename linewise
             if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
                 raise StonerLoadError("File Format Not Recognized !")
             drive = 0
@@ -910,7 +910,7 @@ class FmokeFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        with fileinput.FileInput(self.filename, mode="rb") as f:
+        with open(self.filename, mode="rb") as f:
             try:
                 value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
             except:

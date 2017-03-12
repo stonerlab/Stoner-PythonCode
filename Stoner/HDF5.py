@@ -142,13 +142,13 @@ class HDF5File(DataFile):
             raise StonerLoadError("Couldn't work out where my column headers were !")
         for i in metadata.attrs:
             self[i] = metadata.attrs[i]
-        if "filename" in f.attrs:
-            self.filename = f.attrs["filename"]
-        elif isinstance(f, h5py.Group):
-            self.filename = f.name
+        if isinstance(f, h5py.Group):
+            if f.name!="/":
+                self.filename = os.path.join(f.file.filename,f.name)
+            else:
+                self.filename = os.path.realpath(f.file.filename)
         else:
-            self.filename = f.file.filename
-
+            self.filename = os.path.realpath(f.filename)
         if isinstance(filename, string_types):
             f.file.close()
         return self

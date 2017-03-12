@@ -239,14 +239,11 @@ class baseFolder(MutableSequence):
         Note:
             not_empty will also silently skip over any cases where loading the metadataObject object will raise
             and exception."""
-        for i in range(len(self)):
-            try:
-                d=self[i]
-            except:
-                continue
+        for d in self:
             if len(d)==0:
                 continue
-            yield(d)
+            else:
+                yield(d)
 
     @property
     def objects(self):
@@ -291,7 +288,7 @@ class baseFolder(MutableSequence):
         if isinstance(name,int_types):
             name=list(self.objects.keys())[name]
         elif name not in self.__names__():
-            name=None
+            name=self._objects.__lookup__(name)
         return name
 
     def __names__(self):
@@ -1472,7 +1469,7 @@ class DiskBssedFolder(object):
             return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
-        if not path.exists(name):
+        if name is not None and not path.exists(name):
             name=path.join(self.directory,name)
         tmp= self.type(name,**self.extra_args)
         if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):

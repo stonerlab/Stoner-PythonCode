@@ -33,9 +33,10 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.objectFolder(self.datadir)
+        self.fldr=SF.DataFolder(self.datadir)
 
     def test_Folders(self):
+        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
@@ -46,6 +47,7 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr[::2]),round(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
         
     def test_Operators(self):
+        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
         d=Data(np.ones((100,5)))
@@ -64,6 +66,7 @@ class Folders_test(unittest.TestCase):
         fldr.flatten()
         
     def test_Properties(self):
+        self.setUp()
         fldr=self.fldr
         fldr/="Loaded as"
         fldr["QDFile"].group("Byapp")
@@ -72,7 +75,7 @@ class Folders_test(unittest.TestCase):
         fldr.flatten()
         fldr+=Data()
         self.assertEqual(len(fldr.loaded),2,"loaded attribute failed")
-        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-2,"not_empty attribute failed.")
+        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
         fldr-="Untitled"
         
         
