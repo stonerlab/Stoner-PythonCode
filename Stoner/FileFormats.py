@@ -264,7 +264,10 @@ class QDFile(DataFile):
                 elif "," not in line:
                     raise StonerLoadError("No data in file!")
                 parts = [x.strip() for x in line.split(',')]
-                if parts[0] == "INFO":
+                if parts[1].split(":")[0]=="SEQUENCE FILE":                
+                    key = parts[1].split(":")[0].title()
+                    value = parts[1].split(":")[1]
+                elif parts[0] == "INFO":
                     if parts[1]=="APPNAME":
                         parts[1],parts[2]=parts[2],parts[1]
                     if len(parts)>2:
