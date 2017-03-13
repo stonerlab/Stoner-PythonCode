@@ -261,6 +261,8 @@ class QDFile(DataFile):
                     break
                 elif line.startswith(";"):
                     continue
+                elif line == "":
+                    continue
                 elif "," not in line:
                     raise StonerLoadError("No data in file!")
                 parts = [x.strip() for x in line.split(',')]
