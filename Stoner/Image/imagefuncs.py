@@ -108,7 +108,7 @@ def subtract_image(im, background, contrast=16, clip=True):
     im=im.convert_float()
     im=contrast*(im-background)+0.5
     if clip:
-        im.clip_intensity()
+        im=im.clip_intensity()
     return im
 
 def float_and_crop(im):

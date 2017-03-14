@@ -18,6 +18,8 @@ from skimage.viewer import CollectionViewer
 from Stoner.compat import *
 from Stoner.compat import string_types
 
+IM_SIZE=(512,672) #Standard Kerr image size
+AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
 def _load_ImageArray(f,img_num=0, **kargs):
     return ImageArray(f, **kargs)
@@ -112,7 +114,6 @@ class ImageStack(metadataObject):
         copyarray = kargs.pop('copyarray', False)
         self._commonkeys = [] #metadata fields that are common to all images        
         self['metadata_info'] = self.metadata_info
-        print(isinstance(args[0], ImageFolder))
         if len(args)==0:
             pass  #add arrays later
         else:
@@ -123,7 +124,8 @@ class ImageStack(metadataObject):
                 for k, v in images.__dict__.items():
                     setattr(self, k, v)
             elif isinstance(images, string_types): #try for a folder name
-                ims = ImageFolder(images)
+                pattern = kargs.get('pattern', '*.png')
+                ims = ImageFolder(images, pattern=pattern)
                 for i in ims:
                     self.append(i)
             elif isinstance(images, np.ndarray):
@@ -448,7 +450,21 @@ class ImageStack(metadataObject):
         self.imarray = contrast * (self.imarray - bg) + 0.5
         if clip_intensity:
             self.clip_intensity()
-            
+    
+    def crop_stack(self, box):
+        """Crop the imagestack.
+        Crops to the box given
+
+        Args:
+            box(array or list of type int):
+                [xmin,xmax,ymin,ymax]
+
+        Returns:
+            (ImageStack):
+                cropped images
+        """
+        self.imarray = self.imarray[:,box[2]:box[3],box[0]:box[1]]
+        
     def show(self):
         """Show the stack of images in a skimage CollectionViewer window"""
         #stackims=[self[i] for i in range(len(self))]
@@ -473,8 +489,8 @@ class KerrStack(ImageStack):
     def __init__(self, *args, **kargs):
         super(KerrStack, self).__init__(*args, **kargs)
         self.convert_float()
-        if 'fields' in self.zipallmeta.keys():
-            self.fields = np.array(self.zipallmeta('field'))
+        if 'field' in self.zipallmeta.keys():
+            self.fields = np.array(self.zipallmeta['field'])
         else:
             self.fields = np.arange(len(self))
 #    
@@ -530,7 +546,106 @@ class KerrStack(ImageStack):
         ref=self[refindex]
         self.apply_all('correct_drift', ref, threshold=threshold,
                      upsample_factor=upsample_factor, box=box)
-                               
+    
+    def reverse(self):
+        """Reverse the image order
+        """
+        self.imarray = self.imarray[::-1,:,:]
+        self.fields = self.fields[::-1]
+                              
+    def denoise_thresh(self, denoise_weight=0.1, thresh=0.5, invert=False):
+        """apply denoise then threshold images.
+        Return a new MaskStack.
+        True for values greater than thresh, False otherwise
+        else return True for values between thresh and 1"""
+        masks=self.clone
+        masks.apply_all('denoise', weight=0.1)
+        masks.apply_all('threshold_minmax', threshmin=thresh, 
+                        threshmax=np.max(masks.imarray))        
+        masks=MaskStack(masks)
+        if invert:
+            masks.imarray = np.invert(masks.imarray)
+        return masks
+    
+    def find_threshold(self, testim=None, mask=None):
+        """Try to find the threshold value at which the image switches. Takes
+        it as the median value of the testim. Masks values
+        where the difference is less than tolerance in case part of the image is
+        irrelevant.
+        """
+        if testim is None:
+            testim = self[len(self)/2]
+        else:
+            testim = self[testim]
+        if mask is None:
+            med = np.median(testim)
+        else:
+            med = np.median(np.ravel(testim[np.invert(mask)]))
+        return med
+        
+    def stable_mask(self, tolerance=1e-2, comparison = None):
+        """Produce a mask of areas of the image that are changing little over the
+        stack. comparison is an optional tuple that gives the index of two images
+        to compare, otherwise first and last used. tolerance is the difference
+        tolerance"""
+        mask = np.zeros(ks[0].shape, dtype=bool)
+        mask[abs(ks[-1]-ks[0])<tolerance] = True
+        return mask
+    
+    def crop_text(self, copy=False):
+        """Crop the bottom text area from a standard Kermit image stack
+        Returns:
+        (self):
+            cropped image
+        """
+
+        assert self[0].shape==AN_IM_SIZE or self[0].shape==IM_SIZE, \
+                'Need a full sized Kerr image to crop' #check it's a normal image
+        crop=(0,IM_SIZE[1],0,IM_SIZE[0])
+        self.crop_stack(box=crop)
+    
+    def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=False, 
+              saturation_end=True, saturation_white=True, extra_info=False):
+        """produce a map of the switching field at every pixel in the stack.
+        It needs the stack to start saturated one way and end saturated the other way.
+        
+        Keyword Arguments:
+            threshold(float):
+                the threshold value for the intensity switching. This will need to 
+                be tuned for each stack
+            correct_drift(bol):
+                whether to correct drift on the image stack before proceding
+            baseimage(int or ImageArray):
+                we use drift correction from the baseimage.
+            saturation_end(bool):
+                last image in stack is closest to saturation 
+            saturation_white(bool):
+                bright pixels are saturated dark pixels are not yet switched
+            quiet: bool
+                choose wether to output status updates as print messages
+            extra_info(bool):
+                choose whether to return intermediate calculation steps as an extra dictionary        
+        Returns:
+            (ImageArray): The map of field values for switching of each pixel in the stack
+        """
+        ks=self.clone
+        if isinstance(baseimage,int):
+            baseimage = self[baseimage].clone
+        elif isinstance(baseimage,np.ndarray):
+            baseimage = baseimage.view(ImageArray)
+        if correct_drift:
+            ks.apply_all('correct_drift', ref=baseimage, quiet=quiet)
+            if not quiet: print('drift correct done')
+        masks = self.denoise_thresh(denoise_weight=0.1, thresh=threshold, invert=not(saturation_white))
+        if not quiet: print 'thresholding done'  
+        si,sp = masks.switch_index(saturation_end=saturation_end)       
+        Hcmap=ks.index_to_field(si)
+        Hcmap[Hcmap==ks.fields[0]]=0 #not switching does not give us a Hc value
+        if extra_info:
+            ei={'switch_index':si, 'switch_array':sp, 'masks':masks}
+            return Hcmap, ei
+        return Hcmap
+    
     
 class MaskStack(KerrStack):
     """Similar to ImageStack but made for stacks of boolean or binary images
@@ -570,16 +685,19 @@ class MaskStack(KerrStack):
         """
         ms=self.clone
         if not saturation_end:
-            ms=reversed(ms)
+            ms = ms.reverse()
+        #arr1 = ms[0].astype(float) #find out whether True is at begin or end
+        #arr2 = ms[-1].astype(float)
+        #if np.average(arr1)>np.average(arr2): #OK so it's bright at the start
+        if not saturation_value:
+            self.imarray = np.invert(ms.imarray) #Now it's bright (True) at end
         switch_ind=np.zeros(ms[0].shape, dtype=int)
         switch_prog=self.clone
-        switch_prog.imarray=np.zeros(
-                    (self.shape[0]-1,self.shape[1],self.shape[2]), dtype=bool)
-        switch_prog.fields=switch_prog.fields[0:-1]
-        for m in reversed(range(len(ms)-1)):
+        switch_prog.imarray=np.zeros(self.shape, dtype=bool)
+        del(switch_prog[-1])
+        for m in reversed(range(len(ms)-1)): #go from saturation backwards
             already_done=np.copy(switch_ind).astype(dtype=bool) #only change switch_ind if it hasn't already
-            condition=np.logical_and( ms[m]!=saturation_value, 
-                                      ms[m+1]==saturation_value )
+            condition=np.logical_and( ms[m]!=True, ms[m+1]==True )
             condition=np.logical_and(condition, np.invert(already_done))
             condition=[condition, np.logical_not(condition)]
             choice=[np.ones(switch_ind.shape)*m, switch_ind] #index or leave as is
@@ -590,4 +708,3 @@ class MaskStack(KerrStack):
             switch_prog.reverse()
         switch_ind=ImageArray(switch_ind.astype(int))
         return switch_ind, switch_prog
-        
