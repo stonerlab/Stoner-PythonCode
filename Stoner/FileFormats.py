@@ -21,6 +21,10 @@ from datetime import datetime
 import numpy.ma as ma
 
 import PIL
+import PIL.PngImagePlugin as png
+#Expand png size limits as we have big text blocks full of metadata
+png.MAX_TEXT_CHUNK=2**22
+png.MAX_TEXT_MEMORY=2**28
 
 from .Core import DataFile,StonerLoadError
 from .pyTDMS import read as tdms_read
@@ -65,6 +69,7 @@ class CSVFile(DataFile):
             try:
                 tmp = header_string.index(header_delim)
             except ValueError:
+                linecache.clearcache()
                 raise StonerLoadError("No Delimiters in header line")
             column_headers = [x.strip() for x in header_string.split(header_delim)]
         else:
@@ -73,10 +78,12 @@ class CSVFile(DataFile):
             try:
                 data_line.index(data_delim)
             except ValueError:
+                linecache.clearcache()
                 raise StonerLoadError("No delimiters in data lines")
 
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=data_delim, skip_header=data_line)
         self.column_headers=column_headers
+        linecache.clearcache()
         return self
 
     def save(self, filename, deliminator=','):
@@ -94,12 +101,13 @@ class CSVFile(DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamWriter = csv.writer(open(filename, 'w'), delimiter=deliminator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
         i = 0
         spamWriter.writerow(self.column_headers)
         while i < self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i += 1
+        self.filename=filename
         return self
 
 
@@ -258,10 +266,15 @@ class QDFile(DataFile):
                     break
                 elif line.startswith(";"):
                     continue
+                elif line == "":
+                    continue
                 elif "," not in line:
                     raise StonerLoadError("No data in file!")
                 parts = [x.strip() for x in line.split(',')]
-                if parts[0] == "INFO":
+                if parts[1].split(":")[0]=="SEQUENCE FILE":                
+                    key = parts[1].split(":")[0].title()
+                    value = parts[1].split(":")[1]
+                elif parts[0] == "INFO":
                     if parts[1]=="APPNAME":
                         parts[1],parts[2]=parts[2],parts[1]
                     if len(parts)>2:
@@ -530,13 +543,11 @@ class TDMSFile(DataFile):
         else:
             self.filename = filename
         # Open the file and read the main file header and unpack into a dict
-        f = open(self.filename, "rb")  # Read filename linewise
-        try:
-            assert f.read(4) == b"TDSm"
-        except AssertionError:
-            f.close()
-            raise StonerLoadError('Not a TDMS File')
-        f.close()
+        with open(self.filename, "rb") as f:  # Read filename linewise
+            try:
+                assert f.read(4) == b"TDSm"
+            except AssertionError:
+                raise StonerLoadError('Not a TDMS File')
         try:
             (metadata, data) = tdms_read(self.filename)
         except:
@@ -688,40 +699,39 @@ class XRDFile(DataFile):
         else:
             self.filename = filename
         sh = re.compile(r'\[(.+)\]')  # Regexp to grab section name
-        f = fileinput.FileInput(self.filename)  # Read filename linewise
-        if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
-            raise StonerLoadError("File Format Not Recognized !")
-        drive = 0
-        for line in f:  #for each line
-            m = sh.search(line)
-            if m:  # This is a new section
-                section = m.group(1)
-                if section == "Drive":  #If this is a Drive section we need to know which Drive Section it is
-                    section = section + str(drive)
-                    drive = drive + 1
-                elif section == "Data":  # Data section contains the business but has a redundant first line
-                    if python_v3:
-                        f.readline()
-                    else:
-                        f.next()
-                for line in f:  #Now start reading lines in this section...
-                    if line.strip(
-                    ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
-                        break
-                    elif section=="Data": # In the Data section read lines of data value,vale
-                        parts=line.split(',')
-                        angle=parts[0].strip()
-                        counts=parts[1].strip()
-                        dataline=_np_.array([float(angle), float(counts)])
-                        self.data=_np_.append(self.data, dataline)
-                    else: # Other sections contain metadata
-                        parts=line.split('=')
-                        key=parts[0].strip()
-                        data=parts[1].strip()
-                        self[section+":"+key]=self.metadata.string_to_type(data) # Keynames in main metadata are section:key - use theDataFile magic to do type determination
-        column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
-
-        f.close()# Cleanup
+        with open(self.filename) as f: # Read filename linewise
+            if f.readline().strip() != ";RAW4.00":  # Check we have the corrrect fileformat
+                raise StonerLoadError("File Format Not Recognized !")
+            drive = 0
+            for line in f:  #for each line
+                m = sh.search(line)
+                if m:  # This is a new section
+                    section = m.group(1)
+                    if section == "Drive":  #If this is a Drive section we need to know which Drive Section it is
+                        section = section + str(drive)
+                        drive = drive + 1
+                    elif section == "Data":  # Data section contains the business but has a redundant first line
+                        if python_v3:
+                            f.readline()
+                        else:
+                            f.next()
+                    for line in f:  #Now start reading lines in this section...
+                        if line.strip(
+                        ) == "":  # A blank line marks the end of the section, so go back to the outer loop which will handle a new section
+                            break
+                        elif section=="Data": # In the Data section read lines of data value,vale
+                            parts=line.split(',')
+                            angle=parts[0].strip()
+                            counts=parts[1].strip()
+                            dataline=_np_.array([float(angle), float(counts)])
+                            self.data=_np_.append(self.data, dataline)
+                        else: # Other sections contain metadata
+                            parts=line.split('=')
+                            key=parts[0].strip()
+                            data=parts[1].strip()
+                            self[section+":"+key]=self.metadata.string_to_type(data) # Keynames in main metadata are section:key - use theDataFile magic to do type determination
+            column_headers=['Angle', 'Counts'] # Assume the columns were Angles and Counts
+    
         self.data=_np_.reshape(self.data, (-1, 2))
         self.setas="xy"
         self.four_bounce=self["HardwareConfiguration:Monochromator"]==1
@@ -835,6 +845,7 @@ class BNLFile(DataFile):
         """
         self.filename = filename
         self.__parse_BNL_data()  #call an internal function rather than put it in load function
+        linecache.clearcache
         return self
 
 
@@ -909,20 +920,22 @@ class FmokeFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
-        f = fileinput.FileInput(self.filename, mode="rb")  # Read filename linewise
-        try:
-            value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
-        except:
-            raise StonerLoadError("Not an FMOKE file?")
-        label = [x.strip() for x in bytes2str(f.readline()).split('\t')]
-        if label[0] != "Header:":
-            raise StonerLoadError("Not a Focussed MOKE file !")
-        del (label[0])
-        for k, v in zip(label, value):
-            self.metadata[k] = v  # Create metatdata from first 2 lines
-        column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
-        self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
-        self.column_headers=column_headers
+        with open(self.filename, mode="rb") as f:
+            try:
+                value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
+            except:
+                f.close()
+                raise StonerLoadError("Not an FMOKE file?")
+            label = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+            if label[0] != "Header:":
+                f.close()
+                raise StonerLoadError("Not a Focussed MOKE file !")
+            del (label[0])
+            for k, v in zip(label, value):
+                self.metadata[k] = v  # Create metatdata from first 2 lines
+            column_headers = [x.strip() for x in bytes2str(f.readline()).split('\t')]
+            self.data = _np_.genfromtxt(f, dtype='float', delimiter='\t', invalid_raise=False)
+            self.column_headers=column_headers
         return self
 
 
@@ -1334,6 +1347,7 @@ class LSTemperatureFile(DataFile):
                 line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
                 f.write("{}\r\n".format(line))
+        self.filename=filename
         return self
 
 
@@ -1469,10 +1483,10 @@ class PinkLibFile(DataFile):
                     tmp=line.strip('#').split(':')
                     self.metadata[tmp[0].strip()] = ':'.join(tmp[1:]).strip()
             column_headers = f[header_line].strip('#\t ').split('\t')
-            data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
-            self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
-            if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
-                self.setas(x='T (C)', y='R (Ohm)')
+        data = _np_.genfromtxt(self.filename, dtype='float', delimiter='\t', invalid_raise=False, comments='#')
+        self.data=data[:,0:-2] #Deal with an errant tab at the end of each line
+        if _np_.all([h in column_headers for h in ('T (C)', 'R (Ohm)')]):
+            self.setas(x='T (C)', y='R (Ohm)')
         self.column_headers=column_headers
         return self
 
@@ -1505,14 +1519,13 @@ class KermitPNGFile(DataFile):
         else:
             self.filename = filename
         try:
-            img=PIL.Image.open(self.filename,"r")
+            with PIL.Image.open(self.filename,"r") as img:
+                for k in img.info:
+                    self.metadata[k]=img.info[k]
+                self.data=_np_.asarray(img)
         except IOError:
             raise StonerLoadError("Unable to read as a PNG file.")
 
-        for k in img.info:
-            self.metadata[k]=img.info[k]
-        self.data=_np_.asarray(img)
-        img.close()
         return self
 
     def save(self, filename=None):
@@ -1533,10 +1546,11 @@ class KermitPNGFile(DataFile):
 
         metadata=PIL.PngImagePlugin.PngInfo()
         for k in self.metadata:
-            parts=self.metadata.exort(k).split("=")
+            parts=self.metadata.export(k).split("=")
             key=parts[0]
-            val=re.escape("=".join(parts[1:]))
+            val=str2bytes("=".join(parts[1:]))
             metadata.add_text(key,val)
         img=PIL.Image.fromarray(self.data)
-        img.save(self.filename,"ong",pnginfo=metadata)
+        img.save(filename,"png",pnginfo=metadata)
+        self.filename=filename
         return self

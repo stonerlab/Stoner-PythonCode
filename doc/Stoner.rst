@@ -53,7 +53,7 @@ Functions
    :template: funcdocs.rst
    :functions-only:
    
-:mod:`PlotFormats` Module
+:mod:`plot.formats` Module
 -------------------------
 
 
@@ -197,9 +197,56 @@ Functions
 
 
 Subpackages
------------
+===========
 
-.. toctree::
+:mod:`Image` Package
+--------------------
 
-    Stoner.Image
+Classes
+~~~~~~~
+.. automodsumm:: Stoner.Image.core
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
 
+Functions
+~~~~~~~~~
+.. automodsumm:: Stoner.Image.core
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
+
+:mod:`Image.folders` Package
+---------------------------
+
+Classes
+~~~~~~~
+.. automodsumm:: Stoner.Image.folders
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
+
+Functions
+~~~~~~~~~
+.. automodsumm:: Stoner.Image.folders
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
+
+:mod:`Image.stack` Package
+---------------------------
+
+Classes
+~~~~~~~
+.. automodsumm:: Stoner.Image.stack
+   :toctree: classes
+   :template: classdocs.rst
+   :classes-only:
+
+Functions
+~~~~~~~~~
+.. automodsumm:: Stoner.Image.stack
+   :toctree: functions
+   :template: funcdocs.rst
+   :functions-only:
+   

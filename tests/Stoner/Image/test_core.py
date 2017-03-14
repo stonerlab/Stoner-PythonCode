@@ -13,6 +13,8 @@ import sys
 from os import path
 import os
 
+import warnings
+
 #data arrays for testing - some useful small images for tests
 
 td1=np.array(\
@@ -148,7 +150,14 @@ class ImageArrayTest(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     #test=ImageArrayTest()
     #test.setUp()
-    unittest.main()
+    with warnings.catch_warnings():
+#        warnings.simplefilter("ignore")
+        test=ImageArrayTest("test_load")
+        test.setUp()
+        for attr in dir(test):
+            if attr.startswith("test_"):
+                print(attr)
+                getattr(test,attr)()
 
 
 

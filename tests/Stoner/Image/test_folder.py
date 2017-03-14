@@ -19,10 +19,13 @@ knownkeys = ['Averaging', 'Comment:', 'Contrast Shift', 'HorizontalFieldOfView',
 knownfieldvals = [-233.432852, -238.486666, -243.342465, -248.446173, 
                   -253.297813, -258.332918, -263.340476, -268.20511]
 
+testdir=os.path.join(os.path.dirname(__file__),"coretestdata","testims")
+
 class ImageFolderTest(unittest.TestCase):
 
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
+        self.td.sort(key=lambda x:os.path.getmtime(x.filename))
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
@@ -49,8 +52,8 @@ class ImageFolderTest(unittest.TestCase):
     
     def test_kerrstack(self):
         ks=KerrStack(self.ks)
-        ks.subtract(0)
-        self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed')
+        print(ks.imarray.shape)
+        self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray)))
         d=ks.hysteresis()
         self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')
         self.assertTrue(d.data.shape==(len(ks),2), 'hysteresis didnt return correct shape')
@@ -59,4 +62,7 @@ class ImageFolderTest(unittest.TestCase):
 if __name__=="__main__":
     #t=ImageFolder(testdir)
     #ti=KerrStack(t)
-    unittest.main()
+    test=ImageFolderTest("test_kerrstack")
+    test.setUp()
+    test.test_kerrstack()
+    test.test_load()

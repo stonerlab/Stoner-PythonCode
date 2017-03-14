@@ -1194,10 +1194,14 @@ class DataArray(_ma_.MaskedArray):
                 ret.isrow=single_row
                 ret.setas=self.setas.clone
                 ret.column_headers=copy.copy(self.column_headers)
-                ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
+                if len(ix)>0 and isinstance(ix[-1],Iterable):
+                    ret.column_headers=list(_np_.array(ret.column_headers)[ix[-1]])
                 # Sort out whether we need an array of row labels
-                if isinstance(self.i,_np_.ndarray):
-                    ret.i=self.i[ix[0]]
+                if isinstance(self.i,_np_.ndarray) and len(ix)>0:
+                    if isinstance(ix[0],(Iterable,int)):
+                        ret.i=self.i[ix[0]]
+                    else:
+                        ret.i=0
                 else:
                     ret.i=self.i
         elif ret.ndim==1: # Potentially a single row or single column
@@ -1235,6 +1239,11 @@ class DataArray(_ma_.MaskedArray):
 
         super(DataArray,self).__setitem__(ix,val)
 
+    @property
+    def _(self):
+        """Return the DataArray as a normal numpy array for those operations that need this"""
+        return _ma_.getdata(self)
+    
     @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
@@ -2405,7 +2414,10 @@ class DataFile(metadataObject):
         """
         newdata = DataFile()
         if isinstance(other, string_types):
-            lines = itertools.imap(lambda x: x, other.splitlines())
+            if python_v3:
+                lines = map(lambda x: x, other.splitlines())
+            else:
+                lines = itertools.imap(lambda x: x, other.splitlines())
             newdata.__read_iterable(lines)
         elif isinstance(other, Iterable):
             newdata.__read_iterable(other)
@@ -2457,10 +2469,12 @@ class DataFile(metadataObject):
     def __read_iterable(self, reader):
         """Internal method to read a string representation of py:class:`DataFile` in line by line."""
 
-        if "next" in dir(reader):
+        if "next" in dir(reader): # Python v2 iterator
             readline = reader.next
-        elif "readline" in dir(reader):
+        elif "readline" in dir(reader): #Filelike iterator
             readline = reader.readline
+        elif "__next__" in dir(reader):# Python v3 iterator
+            readline = reader.__next__
         else:
             raise AttributeError("No method to read a line in {}".format(reader))
         row = readline().split('\t')
@@ -3326,7 +3340,7 @@ class DataFile(metadataObject):
             else:
                 yield row
 
-    def save(self, filename=None):
+    def save(self, filename=None,as_loaded=False):
         """Saves a string representation of the current DataFile object into the file 'filename'.
 
         Args:
@@ -3334,6 +3348,9 @@ class DataFile(metadataObject):
                 None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If f
                 ilename is False then a file dialog is forced.
+            as_loaded (bool,str): If True, then the *Loaded as* key is inspected to see what the original
+                class of the DataFile was and then this class' save method is used to save the data. If a str then
+                the keyword value is interpreted as the name of a subclass of the the current DataFile.
 
         Returns:
             self: The current :py:class:`DataFile` object
@@ -3343,6 +3360,21 @@ class DataFile(metadataObject):
         if filename is None or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
+        if as_loaded:
+            if isinstance(as_loaded,bool) and "Loaded as" in self: # Use the Loaded as key to find a different save routine
+                cls=self.subclasses[self["Loaded as"]]
+            elif isinstance(as_loaded,string_types) and as_loaded in self.subclasses:
+                cls=self.subclasses[as_loaded]
+            else:
+                raise ValueError("{} cannot be interpreted as a valid sub class of {} so cannot be used to save this data".format(as_loaded,type(self)))
+            ret=cls(self).save(filename)
+            self.filename=ret.filename
+            return self
+        # Normalise the extension to ensure it's something we like...
+        filename,ext=os.path.splitext(filename)
+        if "*.{}".format(ext) not in DataFile.patterns:
+            ext=DataFile.patterns[0][2:]
+        filename="{}.{}".format(filename,ext)
         header = ["TDI Format 1.5"]
         header.extend(self.column_headers[:self.data.shape[1]])
         header = "\t".join(header)
@@ -3357,10 +3389,10 @@ class DataFile(metadataObject):
             mdtext = _np_.append(mdtext, _np_.zeros(len(self) - len(mdtext), dtype=str))
         data_out = _np_.column_stack([mdtext, self.data])
         fmt = ["%s"] * data_out.shape[1]
-        with open(filename, 'w') as f:
+        with open(filename, 'wb') as f:
             _np_.savetxt(f, data_out, fmt=fmt, header=header, delimiter="\t", comments="")
             for k in mdremains:
-                f.write(self.metadata.export(k) + "\n")
+                f.write(str2bytes(self.metadata.export(k) + "\n"))
 
         self.filename = filename
         return self

@@ -17,7 +17,6 @@ from scipy.interpolate import griddata
 import os
 
 import platform
-from inspect import getargspec
 import copy
 from collections import Iterable
 from colorsys import hls_to_rgb
@@ -39,6 +38,13 @@ try: # Check we've got 3D plotting
     _3D=True
 except ImportError:
     _3D=False
+
+if python_v3:
+    from inspect import getfullargspec
+    getargspec=lambda x:getfullargspec(x)[0:4]
+else:
+    from inspect import getargspec
+
 
 class PlotMixin(object):
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.

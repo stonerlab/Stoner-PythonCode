@@ -11,7 +11,7 @@ import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
-from .Image.core import KerrArray
+from .Image.core import ImageArray
 import os.path as path
 import os
 
@@ -101,16 +101,31 @@ class HDF5File(DataFile):
                     if grp.strip()!="":
                         f=f[grp]
             except IOError:
+                try:
+                    f.file.close()
+                except:
+                    pass
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
             except KeyError:
+                try:
+                    f.file.close()
+                except:
+                    pass
                 raise StonerLoadError("Could not find group {} in file {}".format(group,filename))
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
             f = filename
         else:
+            try:
+                f.file.close()
+            except:
+                pass
             raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" not in f.attrs or bytes2str(
             f.attrs["type"]) != "HDF5File":  #Ensure that if we have a type attribute it tells us we're the right type !
-            f.file.close()
+            try:
+                f.file.close()
+            except:
+                pass
             raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data = f["data"]
         if _np_.product(_np_.array(data.shape)) > 0:
@@ -119,7 +134,7 @@ class HDF5File(DataFile):
             self.data = [[]]
         metadata = f.require_group('metadata')
         if "column_headers" in f.attrs:
-            self.column_headers = f.attrs["column_headers"].astype("U")
+            self.column_headers = [x.decode("utf8") for x in f.attrs["column_headers"]]
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -127,13 +142,13 @@ class HDF5File(DataFile):
             raise StonerLoadError("Couldn't work out where my column headers were !")
         for i in metadata.attrs:
             self[i] = metadata.attrs[i]
-        if "filename" in f.attrs:
-            self.filename = f.attrs["filename"]
-        elif isinstance(f, h5py.Group):
-            self.filename = f.name
+        if isinstance(f, h5py.Group):
+            if f.name!="/":
+                self.filename = os.path.join(f.file.filename,f.name)
+            else:
+                self.filename = os.path.realpath(f.file.filename)
         else:
-            self.filename = f.file.filename
-
+            self.filename = os.path.realpath(f.filename)
         if isinstance(filename, string_types):
             f.file.close()
         return self
@@ -174,13 +189,19 @@ class HDF5File(DataFile):
                 except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split('=')
                     metadata[parts[0]] = "=".join(parts[1:])
-            f.attrs["column_headers"] = self.column_headers
+            f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
             f.attrs["type"] = "HDF5File"
         except Exception as e:
             if isinstance(h5file, str):
                 f.file.close()
             raise e
+        if isinstance(f,h5py.File):
+            self.filename=f.filename
+        elif isinstance(f,h5py.Group):
+            self.filename=f.file.filename
+        else:
+            self.filename=h5file
         if isinstance(h5file, string_types):
             f.file.close()
 
@@ -231,22 +252,15 @@ class HGXFile(DataFile):
                     raise StonerLoadError("Couldn't find the HD5 format singature block")
 
         try:
-            f=h5py.File(filename)
-            if "current" in f and "config" in f["current"]:
-                pass
-            else:
-                f.close()
-                raise StonerLoadError("Looks like an unexpected HDF layout!.")
+            with h5py.File(filename) as f:
+                if "current" in f and "config" in f["current"]:
+                    pass
+                else:
+                    raise StonerLoadError("Looks like an unexpected HDF layout!.")
+                self.scan_group(f["current"],"")
+                self.main_data(f["current"]["data"])
         except IOError:
             raise StonerLoadError("Looks like an unexpected HDF layout!.")
-        else:
-            f.close()
-
-        with h5py.File(self.filename, "r") as f:
-            self.scan_group(f["current"],"")
-            self.main_data(f["current"]["data"])
-
-
         return self
 
     def scan_group(self,grp,pth):
@@ -510,7 +524,7 @@ class SLS_STXMFile(DataFile):
         for attr in group.attrs:
             self.metadata["{}.{}".format(root,attr)]=group.attrs[attr]
             
-class STXMImage(KerrArray):
+class STXMImage(ImageArray):
     """An instance of KerrArray that will load itself from a Swiss Light Source STXM image"""
 
     _reduce_metadata=False

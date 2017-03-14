@@ -48,7 +48,7 @@ if __vi__[0] == 2:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
             return funcs[what](**opts)
-
+        
 elif __vi__[0] == 3:
     string_types = (str, )
     int_types=(int,)
@@ -86,6 +86,8 @@ elif __vi__[0] == 3:
         else:
             return funcs[what](**opts)
 
+
+
 index_types = string_types + (int, _pattern_type)
 from distutils.version import LooseVersion
 
@@ -105,4 +107,5 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
+
 

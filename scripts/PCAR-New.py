@@ -143,7 +143,7 @@ class working(Data):
             ret.column_headers[-1]="$\\chi^2$"
             ret.labels=ret.column_headers
             plots=list(range(0,ix*2+1,2))
-            errors=list(range(1,ix*2+1,2))
+            errors=list(range(1,ix*2+2,2))
             plots.append(ix*2+2)
             plots.remove(fixed)
             errors.remove(fixed+1)

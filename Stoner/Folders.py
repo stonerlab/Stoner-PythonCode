@@ -44,7 +44,10 @@ class regexpDict(OrderedDict):
         if super(regexpDict,self).__contains__(name):
             return name
         if isinstance(name,string_types):
-            nm=re.compile(name)
+            try:
+                nm=re.compile(name)
+            except:
+                nm=name
         elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
             return list(self.keys())[name]
         else:
@@ -94,6 +97,17 @@ class baseFolder(MutableSequence):
         groups(regexpDict): A dictionary of similar baseFolder instances
         objects(regexptDict): A dictionary of metadataObjects
         _index(list): An index of the keys associated with objects
+        
+    Properties:
+        depth (int): The maximum number of levels of nested groups in the folder
+        files (list of str or metadataObject): the indivdual objects or their names if they are not loaded
+        instance (metadataObject): an empty instance of the data type stored in the folder
+        loaded (generator of (str name, metadataObject value): iterate over only the loaded into memory items of the folder
+        ls (list of str): the names of the objects in the folder, loaded or not
+        lsgrp (list of str): the names of all the groups in the folder
+        mindepth (int): the minimum level of nesting groups in the folder.
+        not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
+        type (subclass of metadtaObject): the class of objects sotred in this folder
     """
 
     
@@ -109,8 +123,8 @@ class baseFolder(MutableSequence):
         self.debug=kargs.pop("debug",False)
         self._object_attrs=dict()
         self._last_name=0
-        self.groups=regexpDict()
-        self.objects=regexpDict()
+        self._groups=regexpDict()
+        self._objects=regexpDict()
         self._instance=None
         self._object_attrs=dict()
         self.key=None
@@ -137,7 +151,10 @@ class baseFolder(MutableSequence):
                 value=kargs.pop(k,None)
                 self.__setattr__(k,value)
                 if self.debug: print("Setting self.{} to {}".format(k,value))
-        super(baseFolder,self).__init__(*args,**kargs)
+        if python_v3:
+            super(baseFolder,self).__init__()
+        else:
+            super(baseFolder,self).__init__(*args,**kargs)
                 
     ###########################################################################
     ################### Properties of baseFolder ##############################
@@ -156,7 +173,7 @@ class baseFolder(MutableSequence):
     @property
     def files(self):
         """Return an iterator of potentially unloaded named objects."""
-        return [self.__getter__(i,instantiate=False) for i in range(len(self))]
+        return [self.__getter__(i,instantiate=None) for i in range(len(self))]
 
     @files.setter
     def files(self,value):
@@ -165,6 +182,17 @@ class baseFolder(MutableSequence):
             self.__clear__()
             for i,v in enumerate(value):
                 self.insert(i,v)
+                
+    @property
+    def groups(self):
+        return self._groups
+    
+    @groups.setter
+    def groups(self,value):
+        if not isinstance(value,regexpDict):
+            self._groups=regexpDict(value)
+        else:
+            self._groups=value
 
     @property
     def instance(self):
@@ -177,7 +205,9 @@ class baseFolder(MutableSequence):
         """An iterator that indicates wether the contents of the :py:class:`Stoner.Folders.objectFolder` has been
         loaded into memory."""
         for f in self.__names__():
-            yield isinstance(self.__getter__(f,instantiate=False),metadataObject)
+            val=self.__getter__(f,instantiate=None)
+            if isinstance(val,self.type):
+                return f,val
 
     @property
     def ls(self):
@@ -209,14 +239,23 @@ class baseFolder(MutableSequence):
         Note:
             not_empty will also silently skip over any cases where loading the metadataObject object will raise
             and exception."""
-        for i in range(len(self)):
-            try:
-                d=self[i]
-            except:
-                continue
+        for d in self:
             if len(d)==0:
                 continue
-            yield(d)
+            else:
+                yield(d)
+
+    @property
+    def objects(self):
+        return self._objects
+    
+    @objects.setter
+    def objects(self,value):
+        if not isinstance(value,regexpDict):
+            self._objects=regexpDict(value)
+        else:
+            self._objects=value
+
 
     @property
     def type(self):
@@ -249,7 +288,7 @@ class baseFolder(MutableSequence):
         if isinstance(name,int_types):
             name=list(self.objects.keys())[name]
         elif name not in self.__names__():
-            name=None
+            name=self._objects.__lookup__(name)
         return name
 
     def __names__(self):
@@ -407,9 +446,9 @@ class baseFolder(MutableSequence):
         if isinstance(name,string_types):
             if isinstance(value,baseFolder):
                 self.groups[name]=value
-        else:
-            self.__setter__(self.__lookup__(name),value)
-        if isinstance(name,int_types):
+            else:
+                self.__setter__(self.__lookup__(name),value)
+        elif isinstance(name,int_types):
             if -len(self)<name<len(self):
                 self.__setter__(self.__lookup__(name),value)
             else:
@@ -701,11 +740,11 @@ class baseFolder(MutableSequence):
 
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
-        if name.startswith("_") or name in ["debug","groups","args","kargs"]: # pass ddirectly through for private attributes
+        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type()):
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getaatr(self._type,name))):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
@@ -1174,7 +1213,12 @@ class baseFolder(MutableSequence):
         elif isinstance(key,re._pattern_type):
             new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
         else:
-            new_order=sorted(self,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+            order=range(len(self))
+            if python_v3:
+                new_order=sorted(order,key=lambda x:key(self[x]), reverse=reverse)
+            else:
+                new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), reverse=reverse)
+            new_order=[self.__names__()[i] for i in new_order]
         self.__clear__()
         self.extend(new_order)
         return self
@@ -1278,19 +1322,26 @@ class DiskBssedFolder(object):
         readlist (bool): Whether to read the directory immediately on creation. Default is True
         
         """
+        
+    _defaults={"type":None,
+              "extra_args":dict(),
+              "pattern":["*.*"],
+              "read_means":False,
+              "recursive":True,
+              "flat":False,
+              "directory":None,
+              "multifile":False,
+              "readlist":True,
+              }
+
 
     def __init__(self,*args,**kargs):
         from Stoner import Data
-        defaults={"type":Data,
-                  "extra_args":dict(),
-                  "pattern":["*.*"],
-                  "read_means":False,
-                  "recursive":True,
-                  "flat":False,
-                  "directory":os.getcwd(),
-                  "multifile":False,
-                  "readlist":True,
-                  }
+        defaults=copy(self._defaults)
+        if "directory" in defaults and defaults["directory"] is None:
+            defaults["directory"]=os.getcwd()
+        if "type" in defaults and defaults["type"] is None:
+            defaults["type"]=Data
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
@@ -1298,12 +1349,6 @@ class DiskBssedFolder(object):
             self.getlist(directory=args[0])
         
         
-
-    @property
-    def loaded(self):
-        """Return a dictionary indicating whether an entry in the folder is already loaded or not."""
-        return {n:isinstance(self.__getter__(n,instantiate=None),self.type) for n in self.__names__()}
-
     def __clone__(self,other=None):
         """Add something to stop clones from autolisting again."""
         if other is None:
@@ -1424,7 +1469,7 @@ class DiskBssedFolder(object):
             return super(DiskBssedFolder,self).__getter__(name,instantiate=instantiate)
         except (AttributeError,IndexError,KeyError):
             pass
-        if not path.exists(name):
+        if name is not None and not path.exists(name):
             name=path.join(self.directory,name)
         tmp= self.type(name,**self.extra_args)
         if not hasattr(tmp,"filename") or not isinstance(tmp.filename,string_types):
@@ -1492,7 +1537,7 @@ class DiskBssedFolder(object):
         if recursive is None:
             recursive=self.recursive
         if flatten is None:
-            flatten=self.flat
+            flatten=getattr(self,"flat",False) #ImageFolders don't have flat because it clashes with a numpy attribute
         if isinstance(directory,  bool) and not directory:
             self._dialog()
         elif isinstance(directory, string_types):

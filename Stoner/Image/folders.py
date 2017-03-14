@@ -56,6 +56,8 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         """
         kargs["pattern"]=kargs.get("pattern","*.png")
         kargs["type"]=kargs.get("type",ImageArray)
+        if "flat" in self._defaults:
+            del self._defaults["flat"]
         super(ImageFolder,self).__init__(*args,**kargs)
         
     

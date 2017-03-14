@@ -97,7 +97,7 @@ Recent Changes
 Development Version
 -------------------
 
-Teh current development version is 0.7. Features of 0.7 include
+The current development version is 0.7. Features of 0.7 include
 
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
     *   Addition of Stoner.Image package to handle image analysis
@@ -106,6 +106,24 @@ Teh current development version is 0.7. Features of 0.7 include
     *  Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
 
 Online documentation for the development version can be found on the `githib repository pages`_
+
+Build Status
+~~~~~~~~~~~~
+
+Travis CI is used to test the development branch to see if it passes the current unit tests and coveralls.io handles the unit test coverage reporting. 
+The current status is:
+
+.. image:: https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master
+    :target: https://travis-ci.org/gb119/Stoner-PythonCode
+
+.. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
+    :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+
+
+Citing the Stoner Package
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can cite the Stoner package via its doi:
 
 .. image:: https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg
    :target: https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode

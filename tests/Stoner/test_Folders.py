@@ -18,6 +18,7 @@ import fnmatch
 from Stoner.compat import *
 import Stoner.Folders as SF
 import Stoner.HDF5 as SH
+import Stoner.Zip as SZ
 
 from Stoner import Data
 
@@ -32,50 +33,53 @@ class Folders_test(unittest.TestCase):
     datadir=path.join(pth,"sample-data")
 
     def setUp(self):
-        self.fldr=SF.objectFolder(directory=self.datadir)
+        self.fldr=SF.DataFolder(self.datadir)
 
     def test_Folders(self):
+        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
-        print("fldr={}".format(fldr))
-        print("fl={}".format(fl))
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
-        print("datfiles={}".format(datfiles))
         self.assertEqual(len(os.listdir(self.datadir)),fl,"Failed to initialise DataFolder from sample data")
-        print("Passed 1")
         self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
-        print("Passed 2")
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
-        print("passed 3")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
-        print("Passed 4")
         self.assertEqual(len(fldr[::2]),round(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
-        print("Passed 5")
         
     def test_Operators(self):
+        self.setUp()
         fldr=self.fldr
         fl=len(fldr)
         d=Data(np.ones((100,5)))
         fldr+=d
-        print("Starting 2")
         self.assertEqual(fl+1,len(fldr),"Failed += operator on DataFolder")
-        print("Passed 1")
         fldr2=fldr+fldr
-        print("Starting....")
         self.assertEqual((fl+1)*2,len(fldr2),"Failed + operator with DataFolder on DataFolder")
-        print("Passed 2")
         fldr-="Untitled"
         self.assertEqual(len(fldr),fl,"Failed to remove Untitled-0 from DataFolder by name.")
-        print("Passed 3")
         fldr-="New-XRay-Data.dql"
         self.assertEqual(fl-1,len(fldr),"Failed to remove NEw Xray data by name.")
-        print("Passed 4")
         fldr+="New-XRay-Data.dql"
         self.assertEqual(len(fldr),fl,"Failed += oeprator with string on DataFolder")
-        print("Passed 5")
         fldr/="Loaded as"
         self.assertEqual(len(fldr["QDFile"]),4,"Failoed to group folder by Loaded As metadata with /= opeator.")
-        print("Passed 6")
+        fldr.flatten()
+        
+    def test_Properties(self):
+        self.setUp()
+        fldr=self.fldr
+        fldr/="Loaded as"
+        fldr["QDFile"].group("Byapp")
+        self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
+        self.assertEqual(fldr.depth,2,"depth attribute failed.")
+        fldr.flatten()
+        fldr+=Data()
+        self.assertEqual(len(fldr.loaded),2,"loaded attribute failed")
+        self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
+        fldr-="Untitled"
+        
+        
+        
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
@@ -83,6 +87,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.setUp()
     test.test_Folders()
     test.test_Operators()
-    test.fldr/="Loaded as"
-    print(test.fldr)
+    test.test_Properties()
 

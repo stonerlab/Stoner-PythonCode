@@ -12,12 +12,16 @@ import os.path as path
 import os
 import numpy as np
 import re
+import tempfile
 from Stoner.compat import *
 
 from Stoner import Data
 from Stoner.Core  import DataFile
 import Stoner.HDF5 as SH
 import Stoner.Zip as SZ
+
+import warnings
+from traceback import format_exc
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
@@ -38,7 +42,12 @@ class FileFormats_test(unittest.TestCase):
             #return None # skip this completely at this time
         else:
             skip_files=[]
-        for i,f in enumerate(os.listdir(self.datadir)):
+            
+        tmpdir=tempfile.mkdtemp()
+        print("Exporting to {}".format(tmpdir))
+        incfiles=os.listdir(self.datadir)
+
+        for i,f in enumerate(incfiles):
             if f.strip().lower() in skip_files: # Known bad files to load
                 print("Skipping {}".format(f))
                 continue
@@ -48,11 +57,25 @@ class FileFormats_test(unittest.TestCase):
                     del d
                     fname=path.join(self.datadir,f)
                     d=Data(fname,debug=False)
+                    self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(fname))
+                    if "save" in d.subclasses[d["Loaded as"]].__dict__:
+                        print("Checking save routine for {}".format(d["Loaded as"]))
+                        pth=os.path.join(tmpdir,f)
+                        name,ext=os.path.splitext(pth)
+                        pth2="{}-2.{}".format(name,ext)
+                        d.save(pth,as_loaded=True)
+                        self.assertTrue(os.path.exists(pth) or os.path.exists(d.filename),"Failed to save as {}".format(pth))
+                        os.remove(d.filename)
+                        d.save(pth2,as_loaded=d["Loaded as"])
+                        self.assertTrue(os.path.exists(pth2) or os.path.exists(d.filename),"Failed to save as {}".format(pth))
+                        os.remove(d.filename)
                 except Exception as e:
-                    self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),str(e)))
-                self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(path.join(self.datadir,f)))
+                    self.assertTrue(False,"Failed in loading <{}>\n{}".format(path.join(self.datadir,f),format_exc()))
+        os.rmdir(tmpdir)
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=FileFormats_test("test_loaders")
-    test.setUp()
-    test.test_loaders()
+    with warnings.catch_warnings():
+        warnings.simplefilter("always")
+        test=FileFormats_test("test_loaders")
+        test.setUp()
+        test.test_loaders()
