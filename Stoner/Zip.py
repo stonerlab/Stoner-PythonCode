@@ -127,6 +127,8 @@ class ZipFile(DataFile):
                 solo_file=len(other.namelist())==1
             else:
                 raise StonerLoadError("{} does  not appear to be a real zip file".format(self.filename))
+        except StonerLoadError as e:
+            raise e
         except Exception as e:
             print(format_exc())
             try:
@@ -170,9 +172,9 @@ class ZipFile(DataFile):
                             break
                     else:
                         raise IOError("Can't figure out where the zip file is in {}".format(filename))
-                    zipfile = zf.ZipFile(path.join(*parts[:i + 1]), "w",compression=zf.compression,allowZip64=True)
+                    zipfile = zf.ZipFile(path.join(*parts[:i + 1]), "w",compression,True)
                     close_me = True
-                    member = path.join(".",*parts[i + 1:])
+                    member = path.join("/",*parts[i + 1:])
             elif isinstance(filename, zf.ZipFile):  #Handle\ zipfile instance, opening if necessary
                 if not filename.fp:
                     filename = zf.ZipFile(filename.filename, 'a')
@@ -182,21 +184,24 @@ class ZipFile(DataFile):
                 zipfile = filename
                 member = ""
     
-            if member == "":  # Is our file object a bare zip file - if so create a default member name
+            if member == "" or member =="/":  # Is our file object a bare zip file - if so create a default member name
                 if len(zipfile.namelist()) > 0:
-                    member = zipfile.namelist()[1]
+                    member = zipfile.namelist()[-1]
+                    self.filename=os.path.join(filename,member)
                 else:
                     member = "DataFile.txt"
+                    self.filename=filename
     
-            zipfile.writestr(member, str(self))
+            zipfile.writestr(member, str2bytes(str(self)))
             if close_me:
                 zipfile.close()
         except Exception as e:
+            error=format_exc()
             try:
                 zipfile.close()
             except:
                 pass
-            raise IOError("Error saving zipfile\n{}".format(e))
+            raise IOError("Error saving zipfile\n{}".format(error))
         return self
 
 class ZipFolder(DataFolder):

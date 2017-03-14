@@ -134,7 +134,7 @@ class HDF5File(DataFile):
             self.data = [[]]
         metadata = f.require_group('metadata')
         if "column_headers" in f.attrs:
-            self.column_headers = f.attrs["column_headers"].astype("U")
+            self.column_headers = [x.decode("utf8") for x in f.attrs["column_headers"]]
             if isinstance(self.column_headers, string_types):
                 self.column_headers = self.metadata.string_to_type(self.column_headers)
             self.column_headers = [bytes2str(x) for x in self.column_headers]
@@ -189,13 +189,19 @@ class HDF5File(DataFile):
                 except TypeError:  # We get this for trying to store a bad data type - fallback to metadata export to string
                     parts = self.metadata.export(k).split('=')
                     metadata[parts[0]] = "=".join(parts[1:])
-            f.attrs["column_headers"] = self.column_headers
+            f.attrs["column_headers"] = [x.encode("utf8") for x in self.column_headers]
             f.attrs["filename"] = self.filename
             f.attrs["type"] = "HDF5File"
         except Exception as e:
             if isinstance(h5file, str):
                 f.file.close()
             raise e
+        if isinstance(f,h5py.File):
+            self.filename=f.filename
+        elif isinstance(f,h5py.Group):
+            self.filename=f.file.filename
+        else:
+            self.filename=h5file
         if isinstance(h5file, string_types):
             f.file.close()
 

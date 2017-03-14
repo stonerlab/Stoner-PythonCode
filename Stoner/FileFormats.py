@@ -21,6 +21,10 @@ from datetime import datetime
 import numpy.ma as ma
 
 import PIL
+import PIL.PngImagePlugin as png
+#Expand png size limits as we have big text blocks full of metadata
+png.MAX_TEXT_CHUNK=2**22
+png.MAX_TEXT_MEMORY=2**28
 
 from .Core import DataFile,StonerLoadError
 from .pyTDMS import read as tdms_read
@@ -97,12 +101,13 @@ class CSVFile(DataFile):
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
             filename = self.__file_dialog('w')
-        spamWriter = csv.writer(open(filename, 'wb'), delimiter=deliminator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamWriter = csv.writer(open(filename, 'w'), delimiter=deliminator, quotechar='"', quoting=csv.QUOTE_MINIMAL)
         i = 0
         spamWriter.writerow(self.column_headers)
         while i < self.data.shape[0]:
             spamWriter.writerow(self.data[i,:])
             i += 1
+        self.filename=filename
         return self
 
 
@@ -1337,6 +1342,7 @@ class LSTemperatureFile(DataFile):
                 line = "\t".join(["{:<10.8f}".format(n) for n in self.data[i]])
                 f.write("{}\t".format(i))
                 f.write("{}\r\n".format(line))
+        self.filename=filename
         return self
 
 
@@ -1535,10 +1541,11 @@ class KermitPNGFile(DataFile):
 
         metadata=PIL.PngImagePlugin.PngInfo()
         for k in self.metadata:
-            parts=self.metadata.exort(k).split("=")
+            parts=self.metadata.export(k).split("=")
             key=parts[0]
-            val=re.escape("=".join(parts[1:]))
+            val=str2bytes("=".join(parts[1:]))
             metadata.add_text(key,val)
         img=PIL.Image.fromarray(self.data)
-        img.save(self.filename,"ong",pnginfo=metadata)
+        img.save(filename,"png",pnginfo=metadata)
+        self.filename=filename
         return self
