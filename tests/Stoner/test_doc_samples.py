@@ -33,8 +33,9 @@ class DocSamples_test(unittest.TestCase):
                 code=import_module(script)
                 plt.close("all")
             except Exception as e:
-                print("Failed with\n{}".format(format_exc()))
-                failures.append("Script file {} failed with {}".format(filename,e))
+                v=format_exc()
+                print("Failed with\n{}".format(v))
+                failures.append("Script file {} failed with {}".format(filename,v))
         self.assertTrue(len(failures)==0,"\n".join(failures))
                 
 if __name__=="__main__": # Run some tests manually to allow debugging
