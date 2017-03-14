@@ -25,6 +25,7 @@ class DocSamples_test(unittest.TestCase):
         """Import each of the sample scripts in turn and see if they ran without error"""
         failures=[]
         for ix,filename in enumerate(self.scripts):
+            os.chdir(self.datadir)
             script=filename[:-3]
             print("Trying script {}: {}".format(ix,filename))
             try:
