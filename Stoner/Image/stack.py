@@ -500,7 +500,25 @@ class ImageStack(metadataObject):
                 average values
         """                   
         average = np.average(self.imarray, axis=0, weights=weights)
-        return average.view(ImageArray)        
+        return average.view(ImageArray)
+
+    def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
+        """Align images to correct for image drift.
+        
+        Pass through to ImageArray.corret_drift.
+        
+        Arg:
+            refindex: int or str
+                index or name of the reference image to use for zero drift
+        Keyword Arguments:
+            threshold(float): see ImageArray.correct_drift
+            upsample_factor(int): see ImageArray.correct_drift
+            box: see ImageArray.correct_drift
+            
+        """
+        ref=self[refindex]
+        self.apply_all('correct_drift', ref, threshold=threshold,
+                     upsample_factor=upsample_factor, box=box)        
 
 
 class KerrStack(ImageStack):
@@ -556,24 +574,6 @@ class KerrStack(ImageStack):
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
     
-    def correct_drifts(self, refindex, threshold=0.005, upsample_factor=50, box=None):
-        """Align images to correct for image drift.
-        
-        Pass through to ImageArray.corret_drift.
-        
-        Arg:
-            refindex: int or str
-                index or name of the reference image to use for zero drift
-        Keyword Arguments:
-            threshold(float): see ImageArray.correct_drift
-            upsample_factor(int): see ImageArray.correct_drift
-            box: see ImageArray.correct_drift
-            
-        """
-        ref=self[refindex]
-        self.apply_all('correct_drift', ref, threshold=threshold,
-                     upsample_factor=upsample_factor, box=box)
-    
     def reverse(self):
         """Reverse the image order
         """
@@ -615,8 +615,8 @@ class KerrStack(ImageStack):
         stack. comparison is an optional tuple that gives the index of two images
         to compare, otherwise first and last used. tolerance is the difference
         tolerance"""
-        mask = np.zeros(ks[0].shape, dtype=bool)
-        mask[abs(ks[-1]-ks[0])<tolerance] = True
+        mask = np.zeros(self[0].shape, dtype=bool)
+        mask[abs(self[-1]-self[0])<tolerance] = True
         return mask
     
     def crop_text(self, copy=False):
