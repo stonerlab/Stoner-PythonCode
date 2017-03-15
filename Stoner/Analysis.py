@@ -748,7 +748,12 @@ class AnalysisMixin(object):
         for i,yc in enumerate(ycol):
 
             if isinstance(sigma,_np_.ndarray) and sigma.shape[0]>1:
-                s=sigma[i]
+                if sigma.shape[0]==len(ycol):
+                    s=sigma[i]
+                elif len(sigma.shape)==2 and sigma.shape[1]==len(ycol):
+                    s=sigma[:,i]
+                else:
+                    s=sigma # probably this will fail!
             else:
                 s=sigma
 
@@ -763,6 +768,8 @@ class AnalysisMixin(object):
                 popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
                 ret = (popt,pcov,infodict,mesg,ier)
             else:
+                if s is not None:
+                    print(s.shape)
                 popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
             perr=_np_.sqrt(_np_.diag(pcov))
             if result is not None:
@@ -1846,7 +1853,7 @@ class AnalysisMixin(object):
         if isinstance(size,float):
             interp_data=True
             xl,xh=self.span(_.xcol)
-            size=_np_.ceil((size/(xh-xl))*len(self))
+            size=int(_np_.ceil((size/(xh-xl))*len(self)))
             nx=_np_.linspace(xl,xh,len(self))
             data=self.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
             self["Smoothing window size"]=size
