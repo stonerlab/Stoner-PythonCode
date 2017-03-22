@@ -34,7 +34,8 @@ class ImageFolderTest(unittest.TestCase):
         self.assertTrue(len(self.td)==len(os.listdir(testdir)), "Didn't find all the images")
         self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed')
         self.assertTrue(all([k in self.td[0].metadata.keys() for k in knownkeys]), 'Metadata from get item failed')
-        self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')
+        test_vals=self.td.slice_metadata(key='field',values_only=True)
+        self.assertTrue(test_vals==knownfieldvals, 'slice metadata failed {}!={}'.format(test_vals,knownfieldvals))
     
     def test_clone(self):
         c=self.ks.clone
@@ -64,5 +65,6 @@ if __name__=="__main__":
     #ti=KerrStack(t)
     test=ImageFolderTest("test_kerrstack")
     test.setUp()
+    test.test_load()
     test.test_kerrstack()
     test.test_load()

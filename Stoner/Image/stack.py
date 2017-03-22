@@ -664,7 +664,7 @@ class KerrStack(ImageStack):
             ks.apply_all('correct_drift', ref=baseimage, quiet=quiet)
             if not quiet: print('drift correct done')
         masks = self.denoise_thresh(denoise_weight=0.1, thresh=threshold, invert=not(saturation_white))
-        if not quiet: print 'thresholding done'  
+        if not quiet: print('thresholding done')  
         si,sp = masks.switch_index(saturation_end=saturation_end)       
         Hcmap=ks.index_to_field(si)
         Hcmap[Hcmap==ks.fields[0]]=0 #not switching does not give us a Hc value
