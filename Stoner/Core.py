@@ -368,6 +368,13 @@ class _setas(object):
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
 
+    def __getattr__(self,name):
+        """Try to see if attribute name is a key in self.cols and return that instead."""
+        if name in self.cols:
+            return self.cols[name]
+        else:
+            return super(_setas,self).__getattr__(name)
+
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
 
@@ -508,7 +515,7 @@ class _setas(object):
             else:
                 col = self.find_col(possible)
         elif isinstance(col, slice):
-            indices = col.indices(_np_.shape(self.data)[1])
+            indices = col.indices(self.shape[1])
             col = range(*indices)
             col = self.find_col(col)
         elif isinstance(col, Iterable):
@@ -1113,6 +1120,8 @@ class DataArray(_ma_.MaskedArray):
             "v": "vcol",
             "w": "wcol",
         }
+        if name in self.setas.cols:
+            return self.setas.__getattr__(name)
         if name not in col_check:
             return super(DataArray,self).__getattribute__(name)
         indexer=[slice(0,dim,1) for ix,dim in enumerate(self.shape)]
@@ -1243,12 +1252,12 @@ class DataArray(_ma_.MaskedArray):
     def _(self):
         """Return the DataArray as a normal numpy array for those operations that need this"""
         return _ma_.getdata(self)
-    
+     
     @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
-
+    
     @isrow.setter
     def isrow(self,value):
         """Set whether this object is a single row or not."""
@@ -1422,11 +1431,21 @@ class DataFile(metadataObject):
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
             row with keys dervied from column headers.
+        dims (int): When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
         dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
         T (:py:class:`DataArray`): Transposed version of the data.
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
                            their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the
                            string name of the subclass and the class object.
+        xcol (int): If a column has been designated as containing *x* values, this will return the index of that column
+        xerr (int): Similarly to :py:attr:`DataFile.xcol` but for the x-error value column.
+        ycol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y value columns.
+        yerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y error value columns.
+        zcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z value columns.
+        zerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z error value columns.
+        ucol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the u (x-axis direction cosine) columns.
+        vcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the v (y-axis direction cosine) columns.
+        wcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the w (z-axis direction cosine) columns.
     """
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1660,6 +1679,11 @@ class DataFile(metadataObject):
         """Return the data as a dictionary of single columns with column headers for the keys.
         """
         return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+
+    @property
+    def dims(self):
+        """An alias for self.data.axes"""
+        return self.data.axes
 
     @property
     def dtype(self):
@@ -2065,7 +2089,7 @@ class DataFile(metadataObject):
         if cols["axes"]==2:
             swaps=zip(["ycol","yerr"],["x","d"])
         elif cols["axes"]>=3:
-            awaps=zip(["ycol","zcol","yerr","zerr"],["z","x","f","d"])
+            swaps=zip(["ycol","zcol","yerr","zerr"],["z","x","f","d"])
         setas[cols["xcol"]]="y"
         if cols["has_xerr"]:
             setas[cols["xerr"]]="e"
@@ -2225,14 +2249,10 @@ class DataFile(metadataObject):
         if name in setas_cols:
             ret=self._getattr_col(name)
             if ret is not None: return ret
-#        for c in self._mro:
-#            print(self.__class__.__name__)
-#            if c not in (DataFile,metadataObject):
-#                try:
-#                    ret = c.__getattr__(self,name)
-#                    return ret
-#                except AttributeError:
-#                    continue
+        if name in self.setas.cols:
+            ret=self.setas.cols[name]
+            if ret is not None and ret!=[]:
+                return ret
         try:
             col = self._data._setas.find_col(name)
             return self.column(col)

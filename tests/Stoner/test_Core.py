@@ -11,12 +11,12 @@ import sys
 import os.path as path
 import numpy as np
 import re
-from numpy import any,all
+from numpy import any,all,sqrt
 
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
-from Stoner import Data
+from Stoner import Data,__home__
 
 class Datatest(unittest.TestCase):
 
@@ -25,6 +25,20 @@ class Datatest(unittest.TestCase):
 
     def setUp(self):
         self.d=Data(path.join(path.dirname(__file__),"CoreTest.dat"),setas="xy")
+        self.d2=Data(path.join(__home__,"..","sample-data","TDI_Format_RT.txt"))
+        self.d3=Data(path.join(__home__,"..","sample-data","New-XRay-Data.dql"))
+        
+        
+    def test_constructor(self):
+        """Constructor Tests"""
+        d=Data()
+        self.assertTrue(d.shape==(1,0),"Bare constructor failed")
+        d=Data(self.d)
+        self.assertTrue(np.all(d.data==self.d.data),"Constructor from DataFile failed")
+        d=Data([np.ones(100),np.zeros(100)])
+        self.assertTrue(d.shape==(100,2),"Constructor from iterable list of nd array failed")
+        d=Data([np.ones(100),np.zeros(100)],["X","Y"])
+        self.assertTrue(d.column_headers==["X","Y"],"Failed to set column headers in constructor")
 
     def test_column(self):
         for i,c in enumerate(self.d.column_headers):
@@ -75,6 +89,9 @@ class Datatest(unittest.TestCase):
         self.assertTrue(all(self.d.x==self.d.column(0)),"x attribute quick access not right.")
         self.assertTrue(all(self.d.y==self.d.column(1)),"y attribute not right.")
         self.assertTrue(all(self.d.q==np.arctan2(self.d.data[:,0],self.d.data[:,1])),"Calculated theta attribute not right.")
+        self.assertTrue(all(sqrt(self.d[:,0]**2+self.d[:,1]**2)==self.d.r),"Calculated r attribute not right.")
+        self.assertTrue(self.d2.records._[5]["Column 2"]==self.d2.data[5,2],"Records and as array attributes problem")
+
 
     def test_setas(self):
         #Check readback of setas
@@ -111,6 +128,7 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
         self.assertEqual(len(self.d.dir()),5,"Failed meta data directory listing ({})".format(len(self.d.dir())))
+        self.assertEqual(len(self.d3["Temperature"]),7,"Regular experssion metadata search failed")
 
 
     def test_dir(self):
@@ -155,6 +173,18 @@ class Datatest(unittest.TestCase):
         self.assertTrue(d.shape[1]==1,"Column division failed")
         self.assertTrue(len(d.setas)==d.shape[1],"Column removal messed up setas")
         self.assertTrue(len(d.column_headers)==d.shape[1],"Column removal messed up column headers")
+        e=self.d.clone
+        f=self.d2.clone
+        g=e+f
+        self.assertTrue(g.shape==(1776,2),"Add of 2 column and 3 column failed")
+        g=f+e
+        self.assertTrue(g.shape==(1776,3),"Add of 3 column and 2 column failed.")
+        g=e&f
+        h=f&e
+        self.assertTrue(g.shape==h.shape,"Anding unequal column lengths faile!")
+        e=~self.d
+        self.assertTrue(e.setas[0]=="y","failed to invert setas columns")
+        f.setas="xyz"
 
     def test_methods(self):
         d=self.d.clone
@@ -172,9 +202,42 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.all(d.data[:,-1]==np.ones(len(d))),"Didn't add the new column to the end of the data.")
         self.assertTrue(len(d.column_headers)==len(self.d.column_headers)+1,"Column headers isn't bigger by one")
         self.assertTrue(d.column_headers==self.d.column_headers+["added",],"Column header not added correctly")
+        e=d.clone
+        d.swap_column([(0,1),(0,2)])
+        self.assertTrue(d.column_headers==[e.column_headers[x] for x in [2,0,1]],"Swap column test failed: {}".format(d.column_headers))
+        e=self.d(setas="yx")
+        self.assertTrue(e.shape==self.d.shape and e.setas[0]=="y","Failed on a DataFile.__call__ test")
+        self.assertEqual(len(repr(self.d).split("\n")),102,"Failed to do repr function")
+        e=self.d.clone
+        e=e.add_column(e.x,header=e.column_headers[0])
+        e.del_column(duplicates=True)
+        self.assertTrue(e.shape==(100,2),"Deleting duplicate columns failed")
+        e=self.d2.clone
+#        e.reorder_columns([2,0,1]) #Column reordering fails!
+#        self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
+        
+    def test_setas_metadata(self):
+        d=self.d.clone
+        d.setas="xyz"
+        self.assertEqual(repr(d.setas),"['x', 'y']","setas __repr__ failure {}".format(repr(d.setas)))
+        self.assertEqual(d.find_col(slice(5)),[0,1],"findcol with a slice failed {}".format(d.find_col(slice(5))))
+        d=self.d2.clone
+        d.setas="xyz"
+        self.assertTrue(d["Column 2",5]==d[5,"Column 2"],"Indexing with mixed integer and string failed.")
+        self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")        
+        d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
+        self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
+        
+        
+        
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Datatest("test_operators")
     test.setUp()
+    test.test_constructor()
+    test.test_attributes()
     test.test_operators()
+    test.test_methods()
+    test.test_setas_metadata()
+    
