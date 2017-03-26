@@ -564,12 +564,14 @@ class ImageArray(np.ndarray,metadataObject):
         newmet={}
         useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
                     'Contrast Shift','HorizontalFieldOfView','Images to Average',
-                    'Lens','Magnification','Substraction Std']
+                    'Lens','Magnification.__text__','Substraction Std']
         if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
             return self.metadata #we've not got a standard Labview output, not safe to reduce
         for key in useful_keys:
-            if key in self.keys():
+            try:
                 newmet[key]=self[key]
+            except KeyError:
+                pass
         newmet['field']=newmet.pop('X-B-2d') #rename
         if 'Substraction Std' in self.keys():
             newmet['subtraction']=newmet.pop('Substraction Std')

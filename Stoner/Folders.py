@@ -19,76 +19,11 @@ from collections import Iterable,MutableSequence,MutableMapping,OrderedDict
 from inspect import ismethod
 from itertools import islice
 import matplotlib.pyplot as plt
-from .Core import metadataObject,DataFile
+from .Core import metadataObject,DataFile,regexpDict
 
 
 regexp_type=(re._pattern_type,)
 
-class regexpDict(OrderedDict):
-    """An ordered dictionary that permits looks up by regular expression."""
-    def __init__(self,*args,**kargs):
-        super(regexpDict,self).__init__(*args,**kargs)
-
-    def __lookup__(self,name):
-        """Lookup name and find a matching key or raise KeyError.
-
-        Parameters:
-            name (str, re._pattern_type): The name to be searched for
-
-        Returns:
-            Canonical key matching the specified name.
-
-        Raises:
-            KeyError: if no key matches name.
-        """
-        if super(regexpDict,self).__contains__(name):
-            return name
-        if isinstance(name,string_types):
-            try:
-                nm=re.compile(name)
-            except:
-                nm=name
-        elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
-            return list(self.keys())[name]
-        else:
-            nm=name
-        if isinstance(nm,re._pattern_type):
-            for n in self.keys():
-                if nm.match(n):
-                        return n
-
-        raise KeyError("{} is not a match to any key.".format(name))
-
-
-    def __getitem__(self,name):
-        """Adds a lookup via regular expression when retrieving items."""
-        return super(regexpDict,self).__getitem__(self.__lookup__(name))
-
-    def __setitem__(self,name,value):
-        """Overwrites any matching key, or if not found adds a new key."""
-        try:
-            key=self.__lookup__(name)
-        except KeyError:
-            if not isinstance(name,string_types):
-                raise KeyError("{} is not a match to any key.".format(name))
-            key=name
-        OrderedDict.__setitem__(self, key, value)
-
-    def __delitem__(self,name):
-        """Deletes keys that match by regular expression as well as exact matches"""
-        super(regexpDict,self).__delitem__(self.__lookup__(name))
-
-    def __contains__(self,name):
-        """Returns True if name either is an exact key or matches when interpreted as a regular experssion."""
-        try:
-            name=self.__lookup__(name)
-            return True
-        except KeyError:
-            return False
-        
-    def has_key(self,name):
-        """"Key is definitely in dictionary as literal"""
-        return super(regexpDict,self).__contains__(name)
 
 class baseFolder(MutableSequence):
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.

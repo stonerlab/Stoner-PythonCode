@@ -6,17 +6,11 @@ Created on Mon May 23 12:05:59 2016
 """
 
 from .core import ImageArray
-from .core import dtype_range
-from Stoner.Core import metadataObject
-from Stoner.Util import Data
-import numpy as np
-from os import path
-import copy
 
-from skimage.viewer import CollectionViewer
 from Stoner.Folders import DiskBssedFolder, baseFolder
 from Stoner.compat import *
-from Stoner.compat import string_types
+
+from collections import Iterable
 
 
 def _load_ImageArray(f,img_num=0, **kargs):
@@ -88,7 +82,12 @@ class ImageFolder(DiskBssedFolder,baseFolder):
 
         metadata=[k.metadata for k in self] #this can take some time if it's loading in the images
         if isinstance(key, string_types):
-            key=[key]
+            key=metadata[0].__lookup__(key,multiple=True)
+        elif isinstance(key,Iterable):
+            newkey=[]
+            for k in key:
+                newkey.extnd(metadata[0].__lookup__(k,multiple=True))
+            key=newkey
         if isinstance(key, list):
             for i,met in enumerate(metadata):
                 assert all([k in met for k in key]), 'key requested not in item {}'.format(i)

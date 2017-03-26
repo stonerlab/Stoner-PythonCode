@@ -213,8 +213,8 @@ class Datatest(unittest.TestCase):
         e.del_column(duplicates=True)
         self.assertTrue(e.shape==(100,2),"Deleting duplicate columns failed")
         e=self.d2.clone
-#        e.reorder_columns([2,0,1]) #Column reordering fails!
-#        self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
+        e.reorder_columns([2,0,1])
+        self.assertTrue(e.column_headers==[self.d2.column_headers[x] for x in [2,0,1]],"Failed to reorder columns: {}".format(e.column_headers))
         
     def test_setas_metadata(self):
         d=self.d.clone
@@ -227,9 +227,6 @@ class Datatest(unittest.TestCase):
         self.assertEqual(d.metadata.type(["User","Timestamp"]),['String', 'String'],"Metadata.type with slice failed")        
         d.data["Column 2",:]=np.zeros(len(d)) #TODO make this work with d["Column 2",:] as well
         self.assertTrue(d.z.max()==0.0 and d.z.min()==0.0,"Failed to set Dataarray using string indexing")
-        
-        
-        
 
 
 if __name__=="__main__": # Run some tests manually to allow debugging

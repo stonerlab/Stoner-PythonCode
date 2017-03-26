@@ -626,7 +626,85 @@ class _evaluatable(object):
     pass
 
 
-class typeHintedDict(sorteddict):
+class regexpDict(sorteddict):
+    """An ordered dictionary that permits looks up by regular expression."""
+    def __init__(self,*args,**kargs):
+        super(regexpDict,self).__init__(*args,**kargs)
+
+    def __lookup__(self,name,multiple=False):
+        """Lookup name and find a matching key or raise KeyError.
+
+        Parameters:
+            name (str, re._pattern_type): The name to be searched for
+            
+        Keyword Arguments:
+            multiple (bool): Return a singl entry ()default, False) or multiple entries
+
+        Returns:
+            Canonical key matching the specified name.
+
+        Raises:
+            KeyError: if no key matches name.
+        """
+        ret=None
+        try: #name directly as key
+            super(regexpDict,self).__getitem__(name)
+            ret=name
+        except KeyError: #Fall back to regular expression lookup           
+            if isinstance(name,string_types):
+                try:
+                    nm=re.compile(name)
+                except:
+                    nm=name
+            elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
+                ret=list(self.keys())[name]
+            else:
+                nm=name
+            if isinstance(nm,re._pattern_type):
+                ret=[n for n in self.keys() if nm.match(n)]
+        if ret is None or isinstance(ret,Iterable) and len(ret)==0:
+            raise KeyError("{} is not a match to any key.".format(name))
+        else:
+            if multiple: #sort out returing multiple entries or not
+                if not isinstance(ret,list):
+                    ret=[ret]
+            else:
+                if isinstance(ret,list):
+                    ret=ret[0]
+            return ret
+
+    def __getitem__(self,name):
+        """Adds a lookup via regular expression when retrieving items."""
+        return super(regexpDict,self).__getitem__(self.__lookup__(name))
+
+    def __setitem__(self,name,value):
+        """Overwrites any matching key, or if not found adds a new key."""
+        try:
+            key=self.__lookup__(name)
+        except KeyError:
+            if not isinstance(name,string_types):
+                raise KeyError("{} is not a match to any key.".format(name))
+            key=name
+        super(regexpDict,self).__setitem__(key, value)
+
+    def __delitem__(self,name):
+        """Deletes keys that match by regular expression as well as exact matches"""
+        super(regexpDict,self).__delitem__(self.__lookup__(name))
+
+    def __contains__(self,name):
+        """Returns True if name either is an exact key or matches when interpreted as a regular experssion."""
+        try:
+            name=self.__lookup__(name)
+            return True
+        except KeyError:
+            return False
+        
+    def has_key(self,name):
+        """"Key is definitely in dictionary as literal"""
+        return super(regexpDict,self).__contains__(name)
+
+
+class typeHintedDict(regexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -861,11 +939,18 @@ class typeHintedDict(sorteddict):
         Returns:
             metadata value
         """
+        key=name
         (name, typehint) = self._get_name_(name)
-        value = super(typeHintedDict, self).__getitem__(name)
+        name=self.__lookup__(name,True)
+        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
-            value = self.__mungevalue(typehint, value)
-        return value
+            value = [self.__mungevalue(typehint, v) for v in value]
+        if len(value)==0:
+            raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
+        elif len(value)==1:
+            return value[0]
+        else:
+            return {k:v for k,v in zip(name,value)}
 
     def __setitem__(self, name, value):
         """Provides a method to set an item in the dict, checking the key for
@@ -901,6 +986,8 @@ class typeHintedDict(sorteddict):
         Args:
             name (string): The keyname to be deleted"""
         name = self._get_name_(name)[0]
+        name=self.__lookup__(name)
+
         del (self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
@@ -3283,14 +3370,20 @@ class DataFile(metadataObject):
         Returns:
             self: A copy of the modified :py:class:`DataFile` object"""
         if headers_too:
-            self.column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+            column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+        else:
+            column_headers=self.column_headers
         if setas_too:
-            self.setas = [self.setas[self.find_col(x)] for x in cols]
+            setas = [self.setas[self.find_col(x)] for x in cols]
+        else:
+            setas=self.setas.clone
 
         newdata = _np_.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
         for col in cols:
             newdata = _np_.append(newdata, _np_.atleast_2d(self.data[:, self.find_col(col)]), axis=0)
         self.data = DataArray(_np_.transpose(newdata))
+        self.setas=setas
+        self.column_headers=column_headers
         return self
 
     def rolling_window(self, window=7, wrap=True, exclude_centre=False):
