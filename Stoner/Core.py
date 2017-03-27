@@ -3408,9 +3408,9 @@ class DataFile(metadataObject):
                 raise ValueError(
                     "Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd")
 
-        hw = (window - 1) / 2
+        hw = int((window - 1) / 2)
         if exclude_centre:
-            hc = (exclude_centre - 1) / 2
+            hc = int((exclude_centre - 1) / 2)
 
         for i in range(len(self)):
             if i < hw:
