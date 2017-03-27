@@ -25,7 +25,7 @@ class ImageFolderTest(unittest.TestCase):
 
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
-        self.td.sort(key=lambda x:os.path.getmtime(x.filename))
+        self.td=self.td.sort(key=lambda x:x.filename.lower())
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
