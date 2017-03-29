@@ -111,24 +111,84 @@ class ImageArray(np.ndarray,metadataObject):
 
     #now initialise class
 
-    def __new__(cls, image=[], *args, **kwargs):
+    def __new__(cls, *args, **kargs):
         """
         Construct a ImageArray object. We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
-
-        if isinstance(image,string_types): #we have a filename
-            image,tmp=cls._load(image,**kwargs)
+        
+        def _load(cls,filename,**array_args):
+            """Load an image from a file and return as a ImageArray."""
+            if filename.endswith('.npy'):
+                image = np.load(filename)
+                image = np.array(image, **array_args).view(cls)
+            else:        
+                with Image.open(filename,'r') as img:
+                    image=np.asarray(img).view(cls)
+                    # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+                    # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+                    if np.issubdtype(image.dtype,np.integer):
+                        bits=np.ceil(np.log2(image.max()))
+                        if bits<=8:
+                            image=image.astype("uint8")
+                        elif bits<=16:
+                            image=image.astype("uint16")
+                        elif bits<=32:
+                            image=image.astype("uint32")
+                    for k in img.info:
+                        v=img.info[k]
+                        if "b'" in v: v=v.strip(" b'")    
+                        image.metadata[k]=v
+            image.metadata["Loaded from"]=filename
+            return image
+    
+        if len(args) not in [0,1]:
+            raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
+        array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
+        array_args = {k:kargs.pop(k) for k in array_args_keys if k in kargs.keys()}
+        user_metadata = kargs.pop('metadata',{})
+        asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
+        if len(args)==0:
+            ret = np.empty((0,0), dtype=float).view(cls)
+            ret.metadata.update(metadata)
+            return ret       
+        arg = args[0]
+        loadfromfile=False
+        if isinstance(arg, np.ndarray):
+            # numpy array or ImageArray
+            ret = arg.view(ImageArray)
+        elif isinstance(arg, bool) and not arg:
+            patterns=(('png', '*.png'), ('npy','*.npy'))
+            arg = get_filedialog(what='r',filetypes=patterns)
+            if len(arg)==0:
+                raise ValueError('No file given')
+            else:
+                loadfromfile=True
+        elif isinstance(arg, string_types) or loadfromfile:
+            # Filename- load datafile
+            ret = _load(cls, arg, **array_args)
+            if asfloat and ret.dtype.kind!='f': #convert to float type in place
+                dl = dtype_range[ret.dtype.type]
+                ret = np.array(ret, dtype=np.float64).view(cls)
+                ret = ret / float(dl[1])
+        elif isinstance(arg, ImageFile):
+            #extract the image
+            ret = arg.image
         else:
-            tmp=typeHintedDict({"Loaded from":""})
-            np.array(image) #try array on image to check it's a valid numpy type
-        array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
-        array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
-        ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata.update(tmp) # Store the metadata from the PNG file into the ImageArray
-        ka.filename=tmp["Loaded from"]
-        return ka #__init__ called
+            try:  #try converting to a numpy array (eg a list type)
+                arg = np.asarray(arg, **array_args).view(cls)
+            except ValueError: #ok couldn't load from iterable, we're done
+                raise SyntaxError("No constructor for {}".format(type(arg)))
+        if 'Loaded from:' not in ret.metadata.keys():
+            ret.metadata['Loaded from']=''
+        ret.filename = ret.metadata['Loaded from']
+        ret.metadata.update(user_metadata)
+        return ret
 
+    
+
+                
+                
     def __init__(self, image=[],
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
@@ -336,31 +396,7 @@ class ImageArray(np.ndarray,metadataObject):
 
 
     @classmethod
-    def _load(self,filename,**kwargs):
-        """Load an image from a file and return as a 2D array and metadata dictionary."""
-        with Image.open(filename,"r") as img:
-            fname=filename
-            image=np.asarray(img)
-            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-            if np.issubdtype(image.dtype,np.integer):
-                bits=np.ceil(np.log2(image.max()))
-                if bits<=8:
-                    image=image.astype("uint8")
-                elif bits<=16:
-                    image=image.astype("uint16")
-                elif bits<=32:
-                    image=image.astype("uint32")
-           
-            if 'dtype' not in kwargs.keys():
-                kwargs['dtype']='uint16' #defualt output for Kerr microscope
-            tmp=typeHintedDict()
-            for k in img.info:
-                v=img.info[k]
-                if "b'" in v: v=v.strip(" b'")    
-                tmp[k]=v
-            tmp["Loaded from"]=fname
-        return image,tmp 
+     
     
 #==============================================================
 #Now any other useful bits
@@ -715,3 +751,28 @@ class ImageArray(np.ndarray,metadataObject):
         if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
             self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
+
+class ImageFile(metadataObject):
+    def __init__(self, *args, **kargs):
+            #for image file
+        self._public_attrs={
+                "metadata": typeHintedDict,
+                "filename": string_types,
+        self.metadata["Stoner.class"] = self.__class__.__name__
+        
+        if len(kargs) > 0:  # set public attributes from keywords
+                myattrs = self._public_attrs
+                to_go=[]
+                for k in kargs:
+                    if k in myattrs:
+                        if isinstance(kargs[k], myattrs[k]):
+                            self.__setattr__(k, kargs[k])
+                        else:
+                            if isinstance(myattrs[k], tuple):
+                                typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
+                            else:
+                                typ = "a {}".format(type(myattrs[k]))
+                            raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
+                        to_go.append(k)
+                for k in to_go:
+                    del kargs[k]
