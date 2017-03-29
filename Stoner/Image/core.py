@@ -430,6 +430,76 @@ class ImageArray(np.ndarray,metadataObject):
         sub=(xmin,xmax,ymin,ymax)
         return self.crop_image(box=sub,copy=False)
     
+    def crop_image(self, box=None, copy=True):
+        """Crop the image.
+        Crops to the box given. Returns the cropped image.
+
+        KeywordArguments:
+            box(array or list of type int):
+                [xmin,xmax,ymin,ymax]
+            copy(bool):
+                whether to return a copy of the array or a view of the original object
+
+        Returns:
+            (ImageArray):
+                cropped image
+        """
+        if box is None:
+            box=draw_rectangle(im)
+        im=self[box[2]:box[3],box[0]:box[1]] #this is a view onto the
+                                                    #same memory slots as self
+        if copy:
+            im=im.clone  #this is now a new memory location
+        return im
+    def box(self, *args):
+        """alias for crop
+        """
+        return self.crop(*args)
+
+    def crop(self, *args, **kargs):
+        """Crop the image. This is essentially like taking a view onto the array
+        but uses image x,y coords (x,y --> col,row)
+        Returns a view according to the coords given. If box is None it will
+        allow the user to select a rectangle. If a tuple is given with None
+        included then max extent is used for that coord (analagous to slice).
+        If copy then return a copy of self with the cropped image.
+        
+        Args:
+            box(tuple) or 4 separate args:
+                (xmin,xmax,ymin,ymax)
+        Keyword Arguments:
+            copy(bool):
+                If True return a copy of ImageFile with the cropped image
+        Returns:
+            (ImageFile):
+                with cropped image
+        
+        Example:
+            a=ImageFile(np.arange(12).reshape(3,4))
+            
+            a.crop(1,3,None,None)
+        """
+        if len(args) not in (1,4):
+            raise ValueError('crop accepts 1 or 4 arguments, {} given.'.format(len(args)))
+        if len(args)==1:
+            box = args[0]
+            if box is None: #experimental
+                print('Select crop area')
+                box = self.draw_rectangle(box)
+            elif isinstance(box, (tuple,list)) and len(box)==4:
+                pass
+            else:
+                raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
+        else:
+            box = tuple(args)
+        for i,item in enumerate(box): #replace None with max extent
+            if item is None:
+                box[i]=self.max_box[i]
+        ret = self[box[2]:box[3],box[0]:box[1]]   
+        if 'copy' in kargs.keys() and kargs['copy']:
+            ret = ret.clone
+        return ret
+    
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
         
@@ -449,42 +519,6 @@ class ImageArray(np.ndarray,metadataObject):
         if clip_negative:
             imin = 0
         return imin, imax
-    
-    def convert_float(self, clip_negative=True):
-        """Return the image converted to floating point type normalised to -1 
-        to 1. If clip_negative then clip intensities below 0 to 0.
-        Unfortunately there is no easy way to convert the type in
-        place self.astype(np.float64,copy=False) doesn't
-        work for different memory block sizes so a new array is produced
-        
-        Args:
-            clip_negative(bool):
-                If True, clip the negative range (i.e. return 0 for min intensity)
-                even if the image dtype allows negative values.
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
-        """
-        if self.dtype.kind=='f': #already float
-            ret=self
-        else:
-            dl=self.dtype_limits(clip_negative=False)
-            ret=self.astype(np.float64)
-            ret=ret/float(dl[1])
-        if clip_negative and np.min(ret)<0:
-            ret=ret.clip_intensity()
-        return ret
-                  
-    def clip_intensity(self):
-        """clip intensity that lies outside the range allowed by dtype.
-        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes
-        
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
-        """
-        dl=self.dtype_limits(clip_negative=True)
-        ret=self.rescale_intensity(in_range=dl)
-        return ret
     
     def convert_int(self):
         """convert the image to uint16 (the format used by Evico)
@@ -522,6 +556,13 @@ class ImageArray(np.ndarray,metadataObject):
            raise RuntimeError('Attempting to normalise an array with only 0 values')
         ret = ret / norm
         return ret
+
+    def clip_intensity(self):
+        """prefer ImageArray.normalise 
+        clip_intensity for back compatibility
+        """
+        ret = self.asfloat(normalise=True, clip_negative=True)
+        return ret
     
     def convert_float(self, clip_negative=True):
         """back compatability. asfloat preferred"""
@@ -535,8 +576,8 @@ class ImageArray(np.ndarray,metadataObject):
         self[self<0] = 0
     
     def asuint(self):
-        """convert the image to unsigned integer format. Can be useful for saving but 
-        may result in loss of precision. Pass through to skiamge img_as_uint
+        """convert the image to unsigned integer format. May raise warnings 
+        about loss of precision. Pass through to skiamge img_as_uint
         """
         ret = ImageArray(img_as_uint(self))
         return ret
@@ -544,28 +585,6 @@ class ImageArray(np.ndarray,metadataObject):
     def convert_int(self):
         """back compatability. asuint preferred"""
         self.asuint()
-    
-    def crop_image(self, box=None, copy=True):
-        """Crop the image.
-        Crops to the box given. Returns the cropped image.
-
-        KeywordArguments:
-            box(array or list of type int):
-                [xmin,xmax,ymin,ymax]
-            copy(bool):
-                whether to return a copy of the array or a view of the original object
-
-        Returns:
-            (ImageArray):
-                cropped image
-        """
-        if box is None:
-            box=draw_rectangle(im)
-        im=self[box[2]:box[3],box[0]:box[1]] #this is a view onto the
-                                                    #same memory slots as self
-        if copy:
-            im=im.clone  #this is now a new memory location
-        return im
 
     def save(self, filename=None):
         """Saves the image into the file 'filename', compatible with png.
@@ -591,7 +610,37 @@ class ImageArray(np.ndarray,metadataObject):
         s=self.convert_int()
         im=Image.fromarray(s.astype('uint32'),mode='I')
         im.save(filename,pnginfo=meta)     
+        
+    def __file_dialog(self, mode):
+        """Creates a file dialog box for loading or saving ~b ImageFile objects.
 
+        Args:
+            mode(string): The mode of the file operation  'r' or 'w'
+
+        Returns:
+            A filename to be used for the file operation."""
+        # Wildcard pattern to be used in file dialogs.
+
+        patterns=(('png', '*.png'))
+
+        if self.filename is not None:
+            filename = os.path.basename(self.filename)
+            dirname = os.path.dirname(self.filename)
+        else:
+            filename = ""
+            dirname = ""
+        if "r" in mode:
+            mode = "file"
+        elif "w" in mode:
+            mode = "save"
+        else:
+            mode = "directory"
+        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
+        if len(dlg) != 0:
+            self.filename = dlg
+            return self.filename
+        else:
+            return None
 
 class KerrArray(ImageArray):
     """A mixin class to work with ImageFile for Kerr specific image functions.
