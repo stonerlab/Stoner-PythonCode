@@ -24,6 +24,7 @@ from copy import deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
+from skimage import img_as_float,convert,img_as_uint
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
@@ -31,10 +32,6 @@ from Stoner import Data
 from Stoner.compat import * # Some things to help with Python2 and Python3 compatibility
 
 
-
-GRAY_RANGE=(0,65535)  #2^16
-IM_SIZE=(512,672) #Standard Kerr image size
-AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
 dtype_range = {np.bool_: (False, True), 
                np.bool8: (False, True),
@@ -401,60 +398,16 @@ class ImageArray(np.ndarray,metadataObject):
 #==============================================================
 #Now any other useful bits
 #==============================================================
-    def box(self, xmin, xmax, ymin, ymax):
-        """essentially an alias for crop but always returns a view onto
-        the array rather than a copy (ie copy=False). Useful for if you
-        want to do something to a partial area of an image.
-        Equivalent to im[ymin,ymax,xmin,xmax]
-        (the natural extension of this is using masked arrays for arbitrary
-        areas, yet to be implemented)
 
-        Args:
-            xmin int
-            xmax int
-            ymin int
-            ymax int
-
-        Returns:
-            view (ImageArray):
-                view onto the array
-
-        Example:
-            a=ImageArray([[1,2,3],[0,1,2]])
-            b=a.box(0,1,0,2)
-            b[:]=b+1
-            print a
-            #result:
-            [[2,3,3],[1,2,2]]
-        """
-        sub=(xmin,xmax,ymin,ymax)
-        return self.crop_image(box=sub,copy=False)
     
-    def crop_image(self, box=None, copy=True):
-        """Crop the image.
-        Crops to the box given. Returns the cropped image.
-
-        KeywordArguments:
-            box(array or list of type int):
-                [xmin,xmax,ymin,ymax]
-            copy(bool):
-                whether to return a copy of the array or a view of the original object
-
-        Returns:
-            (ImageArray):
-                cropped image
-        """
-        if box is None:
-            box=draw_rectangle(im)
-        im=self[box[2]:box[3],box[0]:box[1]] #this is a view onto the
-                                                    #same memory slots as self
-        if copy:
-            im=im.clone  #this is now a new memory location
-        return im
-    def box(self, *args):
+    def box(self, *args, **kargs):
         """alias for crop
         """
-        return self.crop(*args)
+        return self.crop(*args, **kargs)
+    
+    def crop_image(self, *args, **kargs):
+        """back compatability"""
+        return self.crop(*args, **kargs)
 
     def crop(self, *args, **kargs):
         """Crop the image. This is essentially like taking a view onto the array
@@ -479,7 +432,9 @@ class ImageArray(np.ndarray,metadataObject):
             
             a.crop(1,3,None,None)
         """
-        if len(args) not in (1,4):
+        if len(args)==0 and 'box' in kargs.keys():
+            args = kargs['box'] #back compatability
+        elif len(args) not in (1,4):
             raise ValueError('crop accepts 1 or 4 arguments, {} given.'.format(len(args)))
         if len(args)==1:
             box = args[0]
