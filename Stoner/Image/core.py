@@ -492,6 +492,58 @@ class ImageArray(np.ndarray,metadataObject):
             :py:class:`Stoner.Image.core.ImageArray`
         """
         return self.img_as_uint()
+        
+    def asfloat(self, normalise=False, clip_negative=False):
+        """Return the image converted to floating point type.
+        If currently an int type then floats will be automatically normalised.
+        If currently a float type then will normalise if normalise.
+        If currently an unsigned int type then image will be in range 0,1        
+        Keyword Arguments:
+            normalise(bool):
+                normalise the image to -1,1
+            clip_negative(bool):
+                clip negative intensity to 0
+        """
+        self.image = ImageArray(img_as_float(self))
+        if normalise:
+            self.normalise()
+        if clip_negative:
+            self.clip_negative()
+    
+    def normalise(self):
+        """Normalise the image to -1,1.
+        """
+        if self.dtype.kind != 'f':
+            ret  = self.asfloat(normalise=False) #bit dodgy here having normalise in asfloat
+        else:
+            ret = self
+        norm=np.linalg.norm(ret)
+        if norm==0: 
+           raise RuntimeError('Attempting to normalise an array with only 0 values')
+        ret = ret / norm
+        return ret
+    
+    def convert_float(self, clip_negative=True):
+        """back compatability. asfloat preferred"""
+        self.asfloat(normalise=False, clip_negative=clip_negative)
+              
+    def clip_negative(self):
+        """Clip negative pixels to 0.
+        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
+        are changed to 0.
+        """
+        self[self<0] = 0
+    
+    def asuint(self):
+        """convert the image to unsigned integer format. Can be useful for saving but 
+        may result in loss of precision. Pass through to skiamge img_as_uint
+        """
+        ret = ImageArray(img_as_uint(self))
+        return ret
+    
+    def convert_int(self):
+        """back compatability. asuint preferred"""
+        self.asuint()
     
     def crop_image(self, box=None, copy=True):
         """Crop the image.
@@ -538,40 +590,58 @@ class ImageArray(np.ndarray,metadataObject):
             meta.add_text(k,v)
         s=self.convert_int()
         im=Image.fromarray(s.astype('uint32'),mode='I')
-        im.save(filename,pnginfo=meta)
+        im.save(filename,pnginfo=meta)     
 
-    def __file_dialog(self, mode):
-        """Creates a file dialog box for loading or saving ~b DataFile objects.
 
-        Args:
-            mode(string): The mode of the file operation  'r' or 'w'
+class KerrArray(ImageArray):
+    """A mixin class to work with ImageFile for Kerr specific image functions.
+    """
+    GRAY_RANGE=(0,65535)  #2^16
+    IM_SIZE=(512,672) #Standard Kerr image size
+    AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
+    #useful_keys are metadata keys that we'd usually like to keep from a 
+    #standard kerr output.
+    useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
+        'Contrast Shift','HorizontalFieldOfView','Images to Average',
+        'Lens','Magnification','Substraction Std']
+    _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that
+                                           #it is a standard file output
+               
+    def __init__(self,*args,**kargs):
+        """
+        Keyword Arguments:
+            reduce_metadata(bool):
+                if True reduce the metadata to useful bits and do some processing on it          
+            asfloat(bool)
+                if True convert the image to float values between 0 and 1 (necessary 
+                for some forms of processing)
+            crop_text(bool):
+                whether to crop the bottom text area from the image
+            ocr_metadata(bool):
+                whether to try to use optical character recognition to get the 
+                metadata from the image (necessary for images taken pre 06/2016
+                and so far field from hysteresis images)
+            field_only(bool):
+                if ocr_metadata is true, get field only (bit faster)
+        """
+        kerrdefaults = {'ocr_metadata':False,
+                        'field_only':False,
+                        'reduce_metadata':True,
+                        'asfloat':True,
+                        'crop_text':True}
+        self.kerrargs={}
+        for k, v in kerrdefaults:
+            self.kerrargs[k] = kargs.pop(k, v) 
+        super(KerrMixin,self).__init__(*args,**kargs)
+        if self.kerrargs['reduce_metadata']:
+            self.reduce_metadata()
+        if self.kerrargs['ocr_metadata']:
+            self.ocr_metadata(field_only=self.kerrargs['field_only']) 
+        if self.kerrargs['asfloat']:
+            self.asfloat()
+        if self.kerrargs['crop_text']:
+            self.crop_text()
 
-        Returns:
-            A filename to be used for the file operation."""
-        # Wildcard pattern to be used in file dialogs.
-
-        patterns=(('png', '*.png'))
-
-        if self.filename is not None:
-            filename = os.path.basename(self.filename)
-            dirname = os.path.dirname(self.filename)
-        else:
-            filename = ""
-            dirname = ""
-        if "r" in mode:
-            mode = "file"
-        elif "w" in mode:
-            mode = "save"
-        else:
-            mode = "directory"
-        dlg = get_filedialog(what=mode, initialdir=dirname, initialfile=filename, filetypes=patterns)
-        if len(dlg) != 0:
-            self.filename = dlg
-            return self.filename
-        else:
-            return None
-    
-    #to do: should probably subclass the functions below       
     def crop_text(self, copy=False):
         """Crop the bottom text area from a standard Kermit image
 
@@ -751,7 +821,7 @@ class ImageArray(np.ndarray,metadataObject):
         if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
             self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
-
+            
 class ImageFile(metadataObject):
     def __init__(self, *args, **kargs):
             #for image file
