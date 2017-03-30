@@ -102,16 +102,15 @@ class ImageArray(np.ndarray,metadataObject):
 
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
-    _kfuncs_proxy=None
-    _reduce_metadata=True
-    
+    _kfuncs_proxy=None  
 
     #now initialise class
 
     def __new__(cls, *args, **kargs):
         """
-        Construct a ImageArray object. We're using __new__ rather than __init__
-        to imitate a numpy array as close as possible.
+        Construct an ImageArray object. 
+        We're using __new__ rather than __init__ to imitate a numpy array as 
+        close as possible.
         """
         
         def _load(cls,filename,**array_args):
@@ -173,7 +172,7 @@ class ImageArray(np.ndarray,metadataObject):
             ret = arg.image
         else:
             try:  #try converting to a numpy array (eg a list type)
-                arg = np.asarray(arg, **array_args).view(cls)
+                ret = np.asarray(arg, **array_args).view(cls)
             except ValueError: #ok couldn't load from iterable, we're done
                 raise SyntaxError("No constructor for {}".format(type(arg)))
         if 'Loaded from:' not in ret.metadata.keys():
@@ -182,56 +181,20 @@ class ImageArray(np.ndarray,metadataObject):
         ret.metadata.update(user_metadata)
         return ret
 
-    
-
-                
-                
-    def __init__(self, image=[],
-                     ocr_metadata=False, field_only=False,
-                                 metadata=None, **kwargs):
-        """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
-        Create a ImageArray instance with metadata attribute
-
-        Args:
-            image: string or numpy array initiator
-                If a filename is given it will try to load the image from memory
-                Otherwise it will call np.array(image) on the object so an array or
-                list is suitable
-        Keyword Arguments:
-            reduce_metadata: bool
-                if True reduce the metadata to useful bits and do some processing on it          
-            convert_float: bool
-                if True convert the image to float values between 0 and 1 (necessary 
-                for some forms of processing)
-            ocr_metadata: bool
-                whether to try to use optical character recognition to get the 
-                metadata from the image (necessary for images taken pre 06/2016)
-            field_only: bool
-                if ocr_metadata is true, get field only (bit faster)
-            metadata: dict
-                dictionary of extra metadata items you would like adding to your array
-        """
-        
-        if kwargs.get("reduce_metadata",self._reduce_metadata):
-            self.reduce_metadata()
-        if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
-            for key in metadata.keys():
-                self.metadata[key] = metadata[key]
-        if isinstance(image,string_types):
-            self.metadata['filename']=image
-            self.filename=image
-        if ocr_metadata:
-            self.ocr_metadata(field_only=field_only) #update metadat 
-
     def __array_finalize__(self, obj):
         """__array_finalize__ and __array_wrap__ are necessary functions when
         subclassing numpy.ndarray to fix some behaviours. See
         http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
         more info and examples
+        Defaults below are only set when constructing an array using view
+        eg np.arange(10).view(ImageArray). Otherwise file and metadata
+        attributes are just copied over. (Any other attributes are lost
+        so im[:,3:6] would lose any extra attributes other than filename and
+        metadata) If we'd like to keep these attributes it would be easy, just
+        need a dict of extra attributes and default values.
         """
-        if obj is None: return
-        self.metadata = getattr(obj, 'metadata', {})
-        self.filename = getattr(obj, 'filename', None)
+        self.metadata = getattr(obj, 'metadata', TypeHintedDict({}))
+        self.filename = getattr(obj, 'filename', '')
 
     def __array_wrap__(self, out_arr, context=None):
         """see __array_finalize__ for info"""
@@ -291,17 +254,7 @@ class ImageArray(np.ndarray,metadataObject):
                 self._ski_funcs_proxy[mod.__name__] = (mod, dir(mod))
         return self._ski_funcs_proxy
         
-    @property
-    def tesseractable(self):
-        """Do a test call to tesseract to see if it is there and cache the result."""
-        if hasattr(self,"_tesseractable"):
-            return self._tesseractable
-        try:
-            ret=subprocess.call(["tesseract","-v"])
-        except:
-            ret = -1
-        self._tesseractable=ret==0
-        return ret==0
+
 
 #==============================================================
 #function generator
@@ -391,10 +344,7 @@ class ImageArray(np.ndarray,metadataObject):
 
         return gen_func
 
-
-    @classmethod
-     
-    
+   
 #==============================================================
 #Now any other useful bits
 #==============================================================
@@ -645,7 +595,56 @@ class KerrArray(ImageArray):
             self.asfloat()
         if self.kerrargs['crop_text']:
             self.crop_text()
+    
+        def __init__(self, image=[],
+                     ocr_metadata=False, field_only=False,
+                                 metadata=None, **kwargs):
+        """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
+        Create a ImageArray instance with metadata attribute
 
+        Args:
+            image: string or numpy array initiator
+                If a filename is given it will try to load the image from memory
+                Otherwise it will call np.array(image) on the object so an array or
+                list is suitable
+        Keyword Arguments:
+            reduce_metadata: bool
+                if True reduce the metadata to useful bits and do some processing on it          
+            convert_float: bool
+                if True convert the image to float values between 0 and 1 (necessary 
+                for some forms of processing)
+            ocr_metadata: bool
+                whether to try to use optical character recognition to get the 
+                metadata from the image (necessary for images taken pre 06/2016)
+            field_only: bool
+                if ocr_metadata is true, get field only (bit faster)
+            metadata: dict
+                dictionary of extra metadata items you would like adding to your array
+        """
+        
+        if kwargs.get("reduce_metadata",self._reduce_metadata):
+            self.reduce_metadata()
+        if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
+            for key in metadata.keys():
+                self.metadata[key] = metadata[key]
+        if isinstance(image,string_types):
+            self.metadata['filename']=image
+            self.filename=image
+        if ocr_metadata:
+            self.ocr_metadata(field_only=field_only) #update metadat 
+            
+    @property
+    def tesseractable(self):
+        """Do a test call to tesseract to see if it is there and cache the result."""
+        if hasattr(self,"_tesseractable"):
+            return self._tesseractable
+        try:
+            ret=subprocess.call(["tesseract","-v"])
+        except:
+            ret = -1
+        self._tesseractable=ret==0
+        return ret==0
+    
     def crop_text(self, copy=False):
         """Crop the bottom text area from a standard Kermit image
 
