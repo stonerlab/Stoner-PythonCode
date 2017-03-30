@@ -18,13 +18,12 @@ Images from the Evico software are 2D arrays of 16bit unsigned integers.
 import numpy as np
 import os
 import tempfile
-import warnings
 import subprocess #calls to command line
 from copy import deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
-from skimage import img_as_float,convert,img_as_uint
+from skimage import img_as_float,img_as_uint
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
@@ -104,7 +103,7 @@ class ImageArray(np.ndarray,metadataObject):
     _ski_funcs_proxy=None
     _kfuncs_proxy=None
     #extra attributes for class beyond standard numpy ones
-    _extra_attributes_default = {'metadata': TypeHintedDict({}),
+    _extra_attributes_default = {'metadata': typeHintedDict({}),
                                  'filename': ''}
 
     #now initialise class
@@ -144,16 +143,20 @@ class ImageArray(np.ndarray,metadataObject):
         if len(args) not in [0,1]:
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
         array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
-        array_args = {k:kargs.pop(k) for k in array_args_keys if k in kargs.keys()}
+        array_args = {k:kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.pop('metadata',{})
         asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
+        
         if len(args)==0:
             ret = np.empty((0,0), dtype=float).view(cls)
-            ret.metadata.update(metadata)
+            ret.metadata.update(user_metadata)
             return ret       
+        
         arg = args[0]
         loadfromfile=False
-        if isinstance(arg, np.ndarray):
+        if isinstance(arg, cls):
+            ret = arg           
+        elif isinstance(arg, np.ndarray):
             # numpy array or ImageArray
             ret = arg.view(ImageArray)
         elif isinstance(arg, bool) and not arg:
@@ -197,7 +200,7 @@ class ImageArray(np.ndarray,metadataObject):
         """
         self._extra_attributes = getattr(obj, '_extra_attributes', 
                                     ImageArray._extra_attributes_default)
-        for k,v in _extra_attributes:
+        for k,v in self._extra_attributes:
             if hasattr(obj, k):
                 setattr(self, k, obj.k)
             else:
@@ -273,7 +276,7 @@ class ImageArray(np.ndarray,metadataObject):
     def max_box(self):
         """return the coordinate extent (xmin,xmax,ymin,ymax)"""
         box=(0,self.shape[1],0,self.shape[0])
-        return (0,self.shape[1],0,self.shape[0])
+        return box
 
     @property
     def data(self):
@@ -357,11 +360,31 @@ class ImageArray(np.ndarray,metadataObject):
             raise AttributeError('No attribute found of name {}'.format(name))
         return ret
     
+    def _func_generator(self,workingfunc):
+        """generate a function that adds self as the first argument"""
+
+        def gen_func(*args, **kwargs):
+            r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
+            if isinstance(r,Data):
+                pass #Data return is ok
+            elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
+                r=Data(r)
+                r.metadata=self.metadata.copy()
+                r.column_headers[0]=workingfunc.__name__
+            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
+                r=r.view(type=ImageArray)
+                r.metadata=self.metadata.copy()
+            #NB we might not be returning an ndarray at all here !
+            return r
+        gen_func.__doc__=workingfunc.__doc__
+        gen_func.__name__=workingfunc.__name__
+        return gen_func 
+    
     def __setattr__(self, name, value):
         super(ImageArray, self).__setattr__(name, value)
          #add attribute to those for copying in array_finalize. use value as
          #defualt.
-        _extra_attributes.update({name:value})
+        self._extra_attributes.update({name:value})
         
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
@@ -385,26 +408,6 @@ class ImageArray(np.ndarray,metadataObject):
         else:
             super(ImageArray,self).__delitem__(index)
 
-    def _func_generator(self,workingfunc):
-        """generate a function that adds self as the first argument"""
-
-        def gen_func(*args, **kwargs):
-            r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
-            if isinstance(r,Data):
-                pass #Data return is ok
-            elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
-                r=Data(r)
-                r.metadata=self.metadata.copy()
-                r.column_headers[0]=workingfunc.__name__
-            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
-                r=r.view(type=ImageArray)
-                r.metadata=self.metadata.copy()
-            #NB we might not be returning an ndarray at all here !
-            return r
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
-
-        return gen_func   
 #==============================================================
 #Now any other useful bits
 #==============================================================
@@ -486,13 +489,6 @@ class ImageArray(np.ndarray,metadataObject):
         if clip_negative:
             imin = 0
         return imin, imax
-    
-    def convert_int(self):
-        """convert the image to uint16 (the format used by Evico)
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
-        """
-        return self.img_as_uint()
         
     def asfloat(self, normalise=False, clip_negative=False):
         """Return the image converted to floating point type.
@@ -820,7 +816,7 @@ class KerrArray(ImageArray):
             metadata: dict
                 updated metadata dictionary
         """
-        if self.shape!=AN_IM_SIZE:
+        if self.shape!=KerrArray.AN_IM_SIZE:
             pass #can't do anything without an annotated image
 
         #now we have to crop the image to the various text areas and try tesseract
@@ -852,33 +848,86 @@ class KerrArray(ImageArray):
             if type(metadata['ocr_scalebar_length_microns'])==float:
                 metadata['ocr_microns_per_pixel']=metadata['ocr_scalebar_length_microns']/sb_length
                 metadata['ocr_pixels_per_micron']=1/metadata['ocr_microns_per_pixel']
-                metadata['ocr_field_of_view_microns']=np.array(IM_SIZE)*metadata['ocr_microns_per_pixel']
+                metadata['ocr_field_of_view_microns']=np.array(KerrArray.IM_SIZE)*metadata['ocr_microns_per_pixel']
             self.metadata.update(metadata)
         if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
             self.metadata['ocr_field']=np.nan  #didn't read the field properly
         return self.metadata
             
-class ImageFile(metadataObject):
+class ImageFile(object):
+    """Analagous to DataFile this contains metadata and an image attribute which
+    is an ImageArray type which subclasses numpy ndarray and adds lots of extra
+    image specific processing functions. 
+    
+    The ImageFile owned attribute is image. All other calls including metadata
+    are passed through to ImageArray (so no need to inherit from metadataObject).
+    
+    Almost all calls to ImageFile are passed through to the underlying ImageArray
+    logic and ImageArray can be used as a standalone class.
+    However because ImageArray subclasses an ndarray it is not possible to enter
+    it in place. All attributes return an array instance which needs to be reassigned.
+    ImageFile owns image and so can change in place.
+    The penalty is that numpy ufuncs don't return ImageFile type
+    
+    so can do:
+    imfile.asfloat() #imagefile.image is updated to float type
+    however need to do:
+    imfile.image = np.abs(imfile.image)
+    
+    whereas for imarray:
+    need to do:
+    imarray = imagearray.asfloat()
+    but:
+    np.abs(imarray) #returns ImageArray type
+    """
+    
     def __init__(self, *args, **kargs):
-            #for image file
-        self._public_attrs={
-                "metadata": typeHintedDict,
-                "filename": string_types,
-        self.metadata["Stoner.class"] = self.__class__.__name__
+        """Mostly a pass through to ImageArray constructor.
+        Local attribute is image. All other attributes and calls are passed
+        through to image attribute.
+        """
+        self.image = ImageArray(*args, **kargs)
+    
+    @property
+    def image(self):
+        return self._image
+    
+    @image.setter
+    def image(self, v):
+        self._image = ImageArray(v)
+    
+    def __getitem__(self, n):
+        return self.image.__getitem__(n)
+   
+    def __setitem__(self, n, v):
+        self.image.__setitem__(n,v)
+    
+    def __delitem__(self, n):
+        self.image.__delitem__(n)
+    
+    def __getattr__(self, n):
+        if isinstance(n, stringtypes):
+            ret = getattr(self.image, n)
+        else:
+            ret = getattr(self.image, n)
+            if hasattr(ret, '__call__'): #we have a method
+                ret = self._func_generator(ret) #modiy so that we can change image in place
+        return ret
         
-        if len(kargs) > 0:  # set public attributes from keywords
-                myattrs = self._public_attrs
-                to_go=[]
-                for k in kargs:
-                    if k in myattrs:
-                        if isinstance(kargs[k], myattrs[k]):
-                            self.__setattr__(k, kargs[k])
-                        else:
-                            if isinstance(myattrs[k], tuple):
-                                typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
-                            else:
-                                typ = "a {}".format(type(myattrs[k]))
-                            raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
-                        to_go.append(k)
-                for k in to_go:
-                    del kargs[k]
+    def _func_generator(self, workingfunc):
+        """ImageFile generator. If function called returns ImageArray type then
+        use that to set image attribute, otherwise return given output.
+        """
+        def gen_func(*args, **kargs):
+            r = workingfunc(*args, **kargs)
+            if isinstance(r,ImageArray):
+                self.image = r
+            else:
+                return r
+        
+        gen_func.__doc__=workingfunc.__doc__
+        gen_func.__name__=workingfunc.__name__
+        return gen_func            
+    
+    def __setattr__(self, n, v):
+        setattr(self.image, n, v)
