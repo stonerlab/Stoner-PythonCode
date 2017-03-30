@@ -141,10 +141,6 @@ class ImageArray(np.ndarray,metadataObject):
             image.metadata["Loaded from"]=filename
             return image
         
-        #extra attributes of the class beyond the normal numpy ones with 
-        #default values
-        _extra_attributes = 
-        
         if len(args) not in [0,1]:
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
         array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
@@ -272,51 +268,6 @@ class ImageArray(np.ndarray,metadataObject):
     
     def __getattr__(self,name):
         """run when asking for an attribute that doesn't exist yet. It
-        looks first in numpy funcs and does those as expected on the image.
-        If still no joy it goes to skimage functions 
-        for a match. skimage functions can be called by module_func notation
-        with the underscore sep eg exposure_rescale_intensity, or it can simply
-        be the function with no module given in which case the entire directory
-        is searched and the first hit is returned.
-        If it finds it it returns a copy of the function that automatically adds
-        the image as the first argument.
-        Note that the skimage function named must take image array as the
-        first argument
-
-        It would be nice to use numpy ufuncs to make ImageFile behave more
-        like a numpy array, however it's not well supported yet.Might be possible
-        from numpy version 1.9? Can't get it to work though. 
-        https://docs.scipy.org/doc/numpy/neps/ufunc-overrides.html
-        https://groups.google.com/forum/#!topic/astropy-dev/Pozeui6yaEw
-        """
-
-        ret=None
-        if name.startswith('_'):
-            raise AttributeError('No attribute found of name {}'.format(name))
-        try: #pass through to numpy funcs
-            ret=getattr(self.image, name)
-        except AttributeError:
-            pass
-        if '_' in name: #ok we might have a skimage module_function request
-            t=name.split('_')
-            t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
-            t = [t[0],t[1]]
-            if t[0] in self._ski_funcs.keys():
-                if t[1] in self._ski_funcs[t[0]][1]:
-                    workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
-                    ret=self._func_generator(workingfunc)
-        if ret is None: #Ok maybe just a request for an skimage func, no module
-            for key in self._ski_funcs.keys(): #now look in skimage funcs
-                if name in self._ski_funcs[key][1]:
-                    workingfunc=getattr(self._ski_funcs[key][0],name)
-                    ret=self._func_generator(workingfunc)
-                    break
-        if ret is None:
-            raise AttributeError('No attribute found of name {}'.format(name))
-        return ret
-    
-    def __getattr__(self,name):
-        """run when asking for an attribute that doesn't exist yet. It
         looks first in imagefuncs.py then in skimage functions for a match. If
         it finds it it returns a copy of the function that automatically adds
         the image as the first argument.
@@ -358,8 +309,9 @@ class ImageArray(np.ndarray,metadataObject):
     
     def __setattr__(self, name, value):
         super(ImageArray, self).__setattr__(name, value)
-        _extra_attributes.update({name:value}) #add attribute to those ready
-                                              #for copying in array_finalize.
+         #add attribute to those for copying in array_finalize. use value as
+         #defualt.
+        _extra_attributes.update({name:value})
         
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
@@ -402,9 +354,7 @@ class ImageArray(np.ndarray,metadataObject):
         gen_func.__doc__=workingfunc.__doc__
         gen_func.__name__=workingfunc.__name__
 
-        return gen_func
-
-   
+        return gen_func   
 #==============================================================
 #Now any other useful bits
 #==============================================================
@@ -428,14 +378,16 @@ class ImageArray(np.ndarray,metadataObject):
         If copy then return a copy of self with the cropped image.
         
         Args:
-            box(tuple) or 4 separate args:
+            box(tuple) or 4 separate args or None:
                 (xmin,xmax,ymin,ymax)
+                If None image will be shown and user will be asked to select
+                a box (bit experimental)
         Keyword Arguments:
             copy(bool):
                 If True return a copy of ImageFile with the cropped image
         Returns:
-            (ImageFile):
-                with cropped image
+            (ImageArray):
+                view or copy of array asked for
         
         Example:
             a=ImageFile(np.arange(12).reshape(3,4))
@@ -551,31 +503,41 @@ class ImageArray(np.ndarray,metadataObject):
         """back compatability. asuint preferred"""
         self.asuint()
 
-    def save(self, filename=None):
-        """Saves the image into the file 'filename', compatible with png.
+    def save(self, filename=None, fmt='png'):
+        """Saves the image into the file 'filename'. Metadata will be preserved 
+        in .png format.
+        fmt can be 'png' or 'npy' or 'both' which will save the file in that format.
+        metadata is lost in .npy format but data is converted to integer format
+        for png so that definition can be lost and negative values are clipped.
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
                 None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If 
                 filename is False then a file dialog is forced.
+            
         """
+        if fmt not in ['png','npy','both']:
+            raise ValueError('fmt must be "png" or "npy" or "both"')
         if filename is None:
             filename = self.filename
         if filename in (None, '') or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
-        if filename[-4:]!='.png':
-            filename=filename+'.png' #must save as a png type
-        meta=PngImagePlugin.PngInfo()
-        info=self.metadata.export_all()
-        info=[i.split('=') for i in info]
-        for k,v in info:        
-            meta.add_text(k,v)
-        s=self.convert_int()
-        im=Image.fromarray(s.astype('uint32'),mode='I')
-        im.save(filename,pnginfo=meta)     
-        
+        if fmt in ['png', 'both']:
+            pngname = os.path.splitext(filename)[0] + '.png'
+            meta=PngImagePlugin.PngInfo()
+            info=self.metadata.export_all()
+            info=[i.split('=') for i in info]
+            for k,v in info:        
+                meta.add_text(k,v)
+            s=self.convert_int()
+            im=Image.fromarray(s.astype('uint32'),mode='I')
+            im.save(pngname,pnginfo=meta)
+        if fmt in ['npy', 'both']:
+            npyname = os.path.splitext(filename)[0] + '.npy'
+            np.save(npyname, self)
+    
     def __file_dialog(self, mode):
         """Creates a file dialog box for loading or saving ~b ImageFile objects.
 
