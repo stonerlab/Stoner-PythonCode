@@ -208,6 +208,56 @@ class ImageArray(np.ndarray,metadataObject):
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
+    def __init__(self, *args, **kwargs):
+        """Constructor method for :py:class:`ImageArray`.
+
+        various forms are recognised
+
+        .. py:function:: ImageArray('filename')
+            :noindex:
+
+            Creates the new ImageArray object and then loads data from the 
+            given *filename*.
+
+        .. py:function:: ImageArray(array)
+            :noindex:
+
+            Creates a new ImageArray object and assigns the *array*.
+            
+        .. py:function:: ImageArray(ImageFile)
+            :noindex:
+
+            Creates a new ImageArray object and assigns the *array* using
+            the ImageFile.image property.
+
+
+        .. py:function:: ImageArray(ImageArray)
+            :noindex:
+
+            Creates the new ImageArray object and initialises all data from the
+            existing :py:class:`ImageArray` instance. This on the face of it does the same as
+            the assignment operator, but is more useful when one or other of the
+            ImageArray objects is an instance of a sub - class of ImageArray
+        
+        .. py:function:: ImageArray(bool)
+            :noindex:
+
+           if arg[0] is bool and False then open a file dialog to locate the
+           file to open.
+            
+        Args:
+            arg (positional arguments): an argument that matches one of the
+                definitions above
+        Keyword Arguments: All keyword arguments that match public attributes are
+                used to set those public attributes eg metadata.
+                
+                asfloat(bool):
+                    if True  and loading the image from file, convert the image 
+                    to float values between 0 and 1 (necessary for some forms 
+                    of processing)
+        """
+        super(ImageArray, self).__init__(*args, **kwargs)
+        
 #==============================================================
 # Propety Accessor Functions
 #==============================================================r
@@ -570,14 +620,14 @@ class ImageArray(np.ndarray,metadataObject):
             return None
 
 class KerrArray(ImageArray):
-    """A mixin class to work with ImageFile for Kerr specific image functions.
+    """A subclass for Kerr microscopy specific image functions.
     """
     GRAY_RANGE=(0,65535)  #2^16
     IM_SIZE=(512,672) #Standard Kerr image size
     AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
     #useful_keys are metadata keys that we'd usually like to keep from a 
     #standard kerr output.
-    useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
+    _useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
         'Contrast Shift','HorizontalFieldOfView','Images to Average',
         'Lens','Magnification','Substraction Std']
     _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that
@@ -585,6 +635,8 @@ class KerrArray(ImageArray):
                
     def __init__(self,*args,**kargs):
         """
+        Constructor for KerrArray which subclasses ImageArray. Extra keyword
+        arguments accepted are given below.
         Keyword Arguments:
             reduce_metadata(bool):
                 if True reduce the metadata to useful bits and do some processing on it          
@@ -605,55 +657,18 @@ class KerrArray(ImageArray):
                         'reduce_metadata':True,
                         'asfloat':True,
                         'crop_text':True}
-        self.kerrargs={}
+        kerrargs={}
         for k, v in kerrdefaults:
-            self.kerrargs[k] = kargs.pop(k, v) 
-        super(KerrMixin,self).__init__(*args,**kargs)
-        if self.kerrargs['reduce_metadata']:
+            kerrargs[k] = kargs.pop(k, v) 
+        super(KerrArray,self).__init__(*args,**kargs)
+        if kerrargs['reduce_metadata']:
             self.reduce_metadata()
-        if self.kerrargs['ocr_metadata']:
-            self.ocr_metadata(field_only=self.kerrargs['field_only']) 
-        if self.kerrargs['asfloat']:
+        if kerrargs['ocr_metadata']:
+            self.ocr_metadata(field_only=kerrargs['field_only']) 
+        if kerrargs['asfloat']:
             self.asfloat()
-        if self.kerrargs['crop_text']:
+        if kerrargs['crop_text']:
             self.crop_text()
-    
-        def __init__(self, image=[],
-                     ocr_metadata=False, field_only=False,
-                                 metadata=None, **kwargs):
-        """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
-        Create a ImageArray instance with metadata attribute
-
-        Args:
-            image: string or numpy array initiator
-                If a filename is given it will try to load the image from memory
-                Otherwise it will call np.array(image) on the object so an array or
-                list is suitable
-        Keyword Arguments:
-            reduce_metadata: bool
-                if True reduce the metadata to useful bits and do some processing on it          
-            convert_float: bool
-                if True convert the image to float values between 0 and 1 (necessary 
-                for some forms of processing)
-            ocr_metadata: bool
-                whether to try to use optical character recognition to get the 
-                metadata from the image (necessary for images taken pre 06/2016)
-            field_only: bool
-                if ocr_metadata is true, get field only (bit faster)
-            metadata: dict
-                dictionary of extra metadata items you would like adding to your array
-        """
-        
-        if kwargs.get("reduce_metadata",self._reduce_metadata):
-            self.reduce_metadata()
-        if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
-            for key in metadata.keys():
-                self.metadata[key] = metadata[key]
-        if isinstance(image,string_types):
-            self.metadata['filename']=image
-            self.filename=image
-        if ocr_metadata:
-            self.ocr_metadata(field_only=field_only) #update metadat 
             
     @property
     def tesseractable(self):
@@ -679,10 +694,9 @@ class KerrArray(ImageArray):
             cropped image
         """
 
-        assert self.shape==AN_IM_SIZE or self.shape==IM_SIZE, \
-                'Need a full sized Kerr image to crop' #check it's a normal image
-        crop=(0,IM_SIZE[1],0,IM_SIZE[0])
-        return self.crop_image(box=crop, copy=copy)
+        if self.shape!=KerrArray.AN_IM_SIZE and self.shape!=KerrArray.IM_SIZE:
+                raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
+        return self.crop(None, None, None, KerrArray.IM_SIZE[0])
 
     def reduce_metadata(self):
         """Reduce the metadata down to a few useful pieces and do a bit of 
@@ -693,12 +707,9 @@ class KerrArray(ImageArray):
         """
         
         newmet={}
-        useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
-                    'Contrast Shift','HorizontalFieldOfView','Images to Average',
-                    'Lens','Magnification','Substraction Std']
-        if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
+        if not all([k in self.keys() for k in KerrArray._test_keys]):
             return self.metadata #we've not got a standard Labview output, not safe to reduce
-        for key in useful_keys:
+        for key in KerrArray._useful_keys:
             if key in self.keys():
                 newmet[key]=self[key]
         newmet['field']=newmet.pop('X-B-2d') #rename
