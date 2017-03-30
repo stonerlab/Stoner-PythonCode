@@ -102,7 +102,10 @@ class ImageArray(np.ndarray,metadataObject):
 
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
-    _kfuncs_proxy=None  
+    _kfuncs_proxy=None
+    #extra attributes for class beyond standard numpy ones
+    _extra_attributes_default = {'metadata': TypeHintedDict({}),
+                                 'filename': ''}
 
     #now initialise class
 
@@ -137,7 +140,11 @@ class ImageArray(np.ndarray,metadataObject):
                         image.metadata[k]=v
             image.metadata["Loaded from"]=filename
             return image
-    
+        
+        #extra attributes of the class beyond the normal numpy ones with 
+        #default values
+        _extra_attributes = 
+        
         if len(args) not in [0,1]:
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
         array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
@@ -175,10 +182,11 @@ class ImageArray(np.ndarray,metadataObject):
                 ret = np.asarray(arg, **array_args).view(cls)
             except ValueError: #ok couldn't load from iterable, we're done
                 raise SyntaxError("No constructor for {}".format(type(arg)))
+        #all constructors call array_finalise so metadata is now initialised
         if 'Loaded from:' not in ret.metadata.keys():
             ret.metadata['Loaded from']=''
         ret.filename = ret.metadata['Loaded from']
-        ret.metadata.update(user_metadata)
+        ret.metadata.update(user_metadata)        
         return ret
 
     def __array_finalize__(self, obj):
@@ -187,21 +195,22 @@ class ImageArray(np.ndarray,metadataObject):
         http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
         more info and examples
         Defaults below are only set when constructing an array using view
-        eg np.arange(10).view(ImageArray). Otherwise file and metadata
-        attributes are just copied over. (Any other attributes are lost
-        so im[:,3:6] would lose any extra attributes other than filename and
-        metadata) If we'd like to keep these attributes it would be easy, just
-        need a dict of extra attributes and default values.
+        eg np.arange(10).view(ImageArray). Otherwise filename and metadata
+        attributes are just copied over (plus any other attributes set in 
+        _extra_attributes).
         """
-        self.metadata = getattr(obj, 'metadata', TypeHintedDict({}))
-        self.filename = getattr(obj, 'filename', '')
+        _extra_attributes = getattr(obj, '_extra_attributes', 
+                                    ImageArray._extra_attributes_default)
+        for k,v in _extra_attributes:
+            if hasattr(obj, k):
+                setattr(self, k, obj.k)
+            else:
+                setattr(self, k, v)
 
     def __array_wrap__(self, out_arr, context=None):
         """see __array_finalize__ for info"""
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
-
-
 
 #==============================================================
 # Propety Accessor Functions
@@ -209,8 +218,7 @@ class ImageArray(np.ndarray,metadataObject):
     @property
     def clone(self):
         """return a copy of the instance"""
-        return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
-                               get_metadata=False)
+        return ImageArray(np.copy(self),metadata=deepcopy(self.metadata))
 
     @property
     def max_box(self):
@@ -300,7 +308,12 @@ class ImageArray(np.ndarray,metadataObject):
         if ret is None:
             raise AttributeError('No attribute found of name {}'.format(name))
         return ret
-
+    
+    def __setattr__(self, name, value):
+        super(ImageArray, self).__setattr__(name, value)
+        _extra_attributes.update({name:value}) #add attribute to those ready
+                                              #for copying in array_finalize.
+        
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
         if isinstance(index,string_types):
