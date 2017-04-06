@@ -5,7 +5,7 @@ Created on Fri May 27 17:09:04 2016
 @author: phyrct
 """
 
-from Stoner.Image import ImageArray
+from Stoner.Image import ImageArray, KerrArray, ImageFile
 from Stoner.Core import typeHintedDict
 import numpy as np
 import unittest
@@ -55,14 +55,24 @@ class ImageArrayTest(unittest.TestCase):
     def setUp(self):
         self.td1=ImageArray(td1)
         self.td2=ImageArray(td2)
-        self.anim=ImageArray(path.join(thisdir,'coretestdata/im1_annotated.png'),ocr_metadata=True)
-        self.unanim=ImageArray(path.join(thisdir,'coretestdata/im2_noannotations.png'),ocr_metadata=True)
+        self.anim=ImageArray(path.join(thisdir,'coretestdata/im1_annotated.png'))
+        self.unanim=ImageArray(path.join(thisdir,'coretestdata/im2_noannotations.png'))
         self.testdata=(self.td1,self.td2,self.anim,self.unanim)
 
     def test_load(self):
-        t1=ImageArray([1,2,3], metadata={'a':5})
-        self.assertTrue(np.array_equal(t1, np.array([1,2,3])), 'Initialising from list failed')
+        #from ImageArray
+        ia = self.td1.clone
+        t3 = ImageArray(ia)
+        self.assertTrue(ia.base is t3 or t3.base is ia, 'no overlap on creating ImageArray from ImageArray')
+        #from ImageFile
+        imfi = ImageFile(t3)
+        t4 = ImageArray(imfi)
+        self.assertTrue(np.array_equal(t4, imfi.image), 'Initialising from ImageFile failed')
+        #from list
+        t1=ImageArray([[1,3],[3,2],[4,3]], metadata={'a':5}, asfloat=True)
+        self.assertTrue(np.array_equal(t1, np.array([[1,3],[3,2],[4,3]])), 'Initialising from list failed')
         self.assertTrue(t1.metadata['a']==5, 'Initialising metadata from data failed')
+        self.assertTrue(t1.dtype.kind == 'f', 'Initialising asfloat failed')
         t1=ImageArray([1,2,3])
         self.assertTrue(np.array_equal(t1, np.array([1,2,3])))
         #done most checks here, if there was a problem loading a file it would have come up in
