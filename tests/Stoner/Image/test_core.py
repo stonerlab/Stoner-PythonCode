@@ -17,82 +17,120 @@ import warnings
 
 #data arrays for testing - some useful small images for tests
 
-td1=np.array(\
-[[ 0.,  0.,  1.,  0.,  0.],
- [ 0.,  1.,  1.,  1.,  0.],
- [ 1.,  1.,  2.,  1.,  1.],
- [ 0.,  1.,  1.,  1.,  0.],
- [ 0.,  0.,  1.,  0.,  0.]])
-
-"""
-[[ 0.  0.  0.  0.  0.]
- [ 0.  1.  1.  1.  0.]
- [ 0.  1.  2.  1.  0.]
- [ 0.  1.  1.  1.  0.]
- [ 0.  0.  0.  0.  0.]]
-"""
-
-
-td2=np.array(\
-[[ 0.,  0.,  0.,  0.,  0., 1.5],
- [ 1.,  0,  1.,  1.,  0., 0.],
- [ 1.,  0,  0.,  2.5,  1., 0],
- [ 0.,  1,  0.,  1.,  0., 0],
- [ 0.,  0.,  0.,  0.,  0., 0]])
-
-"""
- [[ 0.   0.   0.   0.   0.   1.5]
-  [ 1.   0.   1.   1.   0.   0. ]
-  [ 1.   0.   0.   2.5  1.   0. ]
-  [ 0.   1.   0.   1.   0.   0. ]
-  [ 0.   0.   0.   0.   0.   0. ]]
-"""
-
 thisdir=path.dirname(__file__)
+
+def share_memory(arr1, arr2):
+    """Check if two numpy arrays share memory"""
+    return arr1.base is arr2 or arr2.base is arr1
 
 class ImageArrayTest(unittest.TestCase):
 
     def setUp(self):
-        self.td1=ImageArray(td1)
-        self.td2=ImageArray(td2)
-        self.anim=ImageArray(path.join(thisdir,'coretestdata/im1_annotated.png'))
-        self.unanim=ImageArray(path.join(thisdir,'coretestdata/im2_noannotations.png'))
-        self.testdata=(self.td1,self.td2,self.anim,self.unanim)
-
-    def test_load(self):
+        #random array shape 3,4
+        self.arr = np.array([[ 0.41674764,  0.66100043,  0.91755303,  0.33796703],
+                                  [ 0.06017535,  0.1440342 ,  0.34441777,  0.9915282 ],
+                                  [ 0.2984083 ,  0.9167951 ,  0.73820304,  0.7655299 ]])
+        self.imarr = ImageArray(np.copy(self.arr))
+        self.imarrfile = ImageArray(os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
+    
+    #####test loading with different datatypes  ####
+        
+    def test_load_from_array(self):
+        #from array
+        self.assertTrue(np.array_equal(self.imarr,self.arr))
+        #int type
+        imarr = ImageArray(arange(12).reshape(3,4))
+        self.assertTrue(imarr.dtype==np.dtype('int32'))        
+    
+    def test_load_from_ImageArray(self):
         #from ImageArray
-        ia = self.td1.clone
-        t3 = ImageArray(ia)
-        self.assertTrue(ia.base is t3 or t3.base is ia, 'no overlap on creating ImageArray from ImageArray')
-        #from ImageFile
-        imfi = ImageFile(t3)
-        t4 = ImageArray(imfi)
-        self.assertTrue(np.array_equal(t4, imfi.image), 'Initialising from ImageFile failed')
-        #from list
-        t1=ImageArray([[1,3],[3,2],[4,3]], metadata={'a':5}, asfloat=True)
-        self.assertTrue(np.array_equal(t1, np.array([[1,3],[3,2],[4,3]])), 'Initialising from list failed')
-        self.assertTrue(t1.metadata['a']==5, 'Initialising metadata from data failed')
-        self.assertTrue(t1.dtype.kind == 'f', 'Initialising asfloat failed')
-        t1=ImageArray([1,2,3])
-        self.assertTrue(np.array_equal(t1, np.array([1,2,3])))
-        #done most checks here, if there was a problem loading a file it would have come up in
-        #set up.
+        t = ImageArray(self.imarr)
+        self.assertFalse(share_memory(self.imarr, t), 'no overlap on creating ImageArray from ImageArray')
+    
+    def test_load_from_png(self):
+        subpath = 'coretestdata/im1_annotated.png'
+        fpath = path.join(thisdir, subpath)
+        anim=ImageArray(fpath)
+        self.assertTrue(anim.metadata['Loaded from'] == fpath)
+        cwd = os.getcwd()
+        os.chdir(thisdir)
+        anim = ImageArray(subpath)
+        #check full path is in loaded from metadata
+        self.assertTrue(anim.metadata['Loaded from'] == fpath, 'Full path not in metadata')
+        os.chdir(cwd)
+   
+    def test_load_from_ImageFile(self):
+        #uses the ImageFile.im attribute to set up ImageArray. Memory overlaps
+        imfi = ImageFile(self.arr)
+        imarr = ImageArray(imfi)
+        self.assertTrue(np.array_equal(imarr, imfi.image), 'Initialising from ImageFile failed')
+        self.assertTrue(share_memory(imarr, imfi.image))
+    
+    def test_load_from_list(self):
+        t=ImageArray([[1,3],[3,2],[4,3]])
+        self.assertTrue(np.array_equal(t, np.array([[1,3],[3,2],[4,3]])), 'Initialising from list failed')
+    
+    def test_load_1d_data(self):
+        t=ImageArray(np.arange(10)/10.0)
+        self.assertTrue(len(t.shape)==2) #converts to 2d
+    
+    def test_load_no_args(self):
+        #Should be a 2d empty array
+        t=ImageArray()
+        self.assertTrue(len(t.shape)==2)
+        self.assertTrue(t.size==0)
+    
+    def test_load_bad_data(self):
+        #dictionary
+        self.assertRaises(ValueError, ImageArray.__init__, {'a':1})
+        #3d numpy array
+        self.assertRaises(ValueError, ImageArray.__init__, np.arange(27).reshape(3,3,3))
+        #bad filename
+        self.assertRaises(ValueError, ImageArray.__init__, 'sillyfile.xyz')
+        
+    def test_load_kwargs(self):
+        #metadata keyword arg
+        t=ImageArray(self.arr, metadata={'a':5, 'b':7})
+        self.assertTrue('a' in t.metdata.keys() and 'b' in t.metadata.keys())
+        self.assertTrue(t.metadata['a']==5)
+        #asfloat
+        t=ImageArray(np.arange(12).reshape(3,4), asfloat=True)
+        self.assertTrue(t.dtype == np.float64, 'Initialising asfloat failed')
+        self.assertTrue('Loaded from' in t.metadata.keys(), 'Loaded from should always be in metadata')
+    
+    #####test attributes ##
+    
+    def test_filename(self):
+        self.assertTrue(self.imarr.filename == '')
+        self.assertTrue(self.imarrfile.filename == os.path.join(thisdir, 'coretestdata/im1_annotated.png'))
 
     def test_clone(self):
-        self.td1.metadata['testclone1']='abc'
-        self.td1.metadata['testclone2']=345 #add some metadata to check
-        td1=self.td1.clone
-        self.assertTrue(isinstance(td1,ImageArray), 'Clone not ImageArray')
-        self.assertTrue(np.array_equal(td1,self.td1.clone),'Clone not replicating elements')
-        self.assertTrue(all([k in td1.metadata.keys() for k in \
-                    self.td1.metadata.keys()]), 'Clone not replicating metadata')
-        self.assertFalse(td1.base is self.td1 or self.td1.base is td1, 'memory overlap on clone') #formal check
-        td1[0,0]=10  #easier check
-        self.assertTrue(td1[0,0]!=self.td1[0,0], 'memory overlap on clone (first element)')
-        self.assertTrue('testclone' not in self.td1.metadata.keys(), 'problem with test func')
-        td1.metadata['testclone']='abc'
-        self.assertTrue('testclone' not in self.td1.metadata.keys(), 'memory overlap for metadata on clone')
-
+        self.imarr['abc'] = 123 #add some metadata
+        self.imarr['nested'] = [1,2,3] #add some nested metadata to check deepcopy
+        c = self.imarr.clone
+        self.assertTrue(isinstance(c,ImageArray), 'Clone not ImageArray')
+        self.assertTrue(np.array_equal(c,self.imarr),'Clone not replicating elements')
+        self.assertTrue(all([k in c.metadata.keys() for k in \
+                    self.imarr.metadata.keys()]), 'Clone not replicating metadata')
+        self.assertFalse(share_memory(c, self.imarr), 'memory overlap on clone') #formal check
+        self.imarr['bcd'] = 234
+        self.assertTrue('bcd' not in c.metadata.keys(), 'memory overlap for metadata on clone')
+        self.imarr['nested'][0] = 2
+        self.assertTrue(self.imarr['nested'][0] != c['nested'][0])
+    
+    def test_metadata(self):
+        self.assertTrue(isinstance(self.imarr.metadata,typeHintedDict))
+        self.imarr['testmeta']='abc'
+        self.assertTrue(td1['testmeta']=='abc', 'Couldn\'t change metadata')
+        del(td1['testmeta'])
+        self.assertTrue('testmeta' not in td1.keys(),'Couldn\'t delete metadata')
+        #bad data
+        self.imarr.metadata=(1,2,3) #check it won't let you do this        
+        
+    ### test numpy like creation behaviour #
+    def test_creationfromview(self):
+        
+    
     def test_save(self):
         testfile=path.join(thisdir,'coretestdata','testsave.png')
         keys=self.anim.keys()
@@ -120,28 +158,7 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(t[1,1]==(self.td1[1,1]+1),
                         'box does not have same memory space as original array')
 
-    def test_metadata(self):
-        #this incidently tests get_metadata too
-        if not self.anim.tesseractable:
-            print("#"*80)
-            print("Skipping test that uses tesseract.")
-            return None
-        m=self.anim.metadata
-        self.assertTrue(all((m['ocr_average']=='on,8x',
-                            m['ocr_date']=='09/03/16',
-                            m['ocr_field'] == 148.63)), 'Misread metadata')
-        keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
-                          'filename', 'ocr_microns_per_pixel', 'ocr_pixels_per_micron')
-        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load')
-        m_un=self.unanim.metadata
-        self.assertTrue('ocr_field' not in m_un.keys(), 'Unannotated image has wrong metadata')
-        self.assertTrue(isinstance(self.td1.metadata,typeHintedDict),
-                            'Metadata not a typeHintedDict')
-        td1=self.td1.clone
-        td1['testmeta']='abc'
-        self.assertTrue(td1['testmeta']=='abc', 'Couldn\'t change metadata')
-        del(td1['testmeta'])
-        self.assertTrue('testmeta' not in td1.keys(),'Couldn\'t delete metadata')
+    
 
     def test_crop_image(self):
         td1=self.td1.clone
@@ -157,6 +174,26 @@ class ImageArrayTest(unittest.TestCase):
         td1=td1.img_as_float() #test skimage
         td1=td1.gaussian(sigma=2)
 
+#class KerrArrayTest(unittest.TestCase):
+#    
+#    def test_tesseract_ocr(self):
+#        #this incidently tests get_metadata too
+#        if not self.anim.tesseractable:
+#            print("#"*80)
+#            print("Skipping test that uses tesseract.")
+#            return None
+#        m=self.anim.metadata
+#        self.assertTrue(all((m['ocr_average']=='on,8x',
+#                            m['ocr_date']=='09/03/16',
+#                            m['ocr_field'] == 148.63)), 'Misread metadata')
+#        keys=('ocr_scalebar_length_pixels', 'ocr_field_of_view_microns',
+#                          'filename', 'ocr_microns_per_pixel', 'ocr_pixels_per_micron')
+#        self.assertTrue(all([k in m.keys() for k in keys]), 'some part of the metadata didn\'t load')
+#        m_un=self.unanim.metadata
+#        self.assertTrue('ocr_field' not in m_un.keys(), 'Unannotated image has wrong metadata')
+        
+        
+        
 if __name__=="__main__": # Run some tests manually to allow debugging
     #test=ImageArrayTest()
     #test.setUp()
