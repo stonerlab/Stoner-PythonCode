@@ -128,9 +128,18 @@ class ImageArrayTest(unittest.TestCase):
         self.imarr.metadata=(1,2,3) #check it won't let you do this        
         
     ### test numpy like creation behaviour #
-    def test_creationfromview(self):
-        
-    
+    def test_user_attributes(self):
+        self.imarr.abc = 'new att'
+        self.assertTrue(hasattr(self.imarr, 'abc'))
+        t = ImageArray(self.imarr)
+        self.assertTrue(hasattr(t, 'abc'), 'problem copying new attributes')
+        t = self.imarr.vew(ImageArray) #check array_finalize copies attribute over
+        self.assertTrue(hasattr(t, 'abc'))
+        t = self.imarr * np.random.rand(self.imarr.shape)
+        self.assertTrue(isinstance(t, ImageArray), 'problem with ufuncs')
+        self.assertTrue(hasattr(t, 'abc'))
+
+    #####  test functionality  ##
     def test_save(self):
         testfile=path.join(thisdir,'coretestdata','testsave.png')
         keys=self.anim.keys()
@@ -169,7 +178,6 @@ class ImageArrayTest(unittest.TestCase):
         self.assertFalse(c.base is td1, 'crop didn\'t copy image')
 
     def test_other_funcs(self):
-        td1=self.td1.clone
         td1=td1.level_image() #test kfuncs
         td1=td1.img_as_float() #test skimage
         td1=td1.gaussian(sigma=2)
