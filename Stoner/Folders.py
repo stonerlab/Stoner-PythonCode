@@ -64,6 +64,7 @@ class baseFolder(MutableSequence):
         self._object_attrs=dict()
         self.key=None
         self._type=metadataObject
+        self._instance_attrs=set()
         return self
         
 
@@ -310,13 +311,17 @@ class baseFolder(MutableSequence):
         
         """
         if other is None:
-            other=self.__class__()
+            return deepcopy(self)
         other.args=self.args
         other.kargs=self.kargs
         other.type=self.type
         for k in self.kargs:
             if not hasattr(other,k):
                 setattr(other,k,self.kargs[k])
+        for k in self._instance_attrs:
+            setattr(other,k,getattr(self,k))
+        other.groups=deepcopy(self.groups)
+        other.objects=deepcopy(self.objects)
         return other
 
     ###########################################################################
@@ -570,8 +575,6 @@ class baseFolder(MutableSequence):
         result=self
         result=self.__sub_core__(result,other)
         return result
-
-        
         
     def __getattr__(self, item):
         """Handles some special case attributes that provide alternative views of the objectFolder
@@ -673,6 +676,19 @@ class baseFolder(MutableSequence):
                 yield self.__getter__(n,instantiate=True)
         return reverse_iterator
 
+    def __delattr__(self,name):
+        """Handles removing an attribute from the folder, including proxied attributes."""
+        if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
+            raise AttrobuteError("{} is a protected attribute and may not be deleted!".format(name))
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getaatr(self._type,name))):
+            #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
+            del self._object_attrs[name]
+        elif name in self._instance_attrs:
+            del self._instance_attrs[name]
+            super(baseFolder,self).__delattr__(name,value)
+        else:
+            raise AttributeError("Unrecognised attribute {}".format(name))
+
     def __setattr__(self,name,value):
         """Pass through to set the sample attributes."""
         if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
@@ -683,6 +699,7 @@ class baseFolder(MutableSequence):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
+            self._instance_attrs.add(name)
             super(baseFolder,self).__setattr__(name,value)
 
 
@@ -1288,6 +1305,9 @@ class DiskBssedFolder(object):
         """Add something to stop clones from autolisting again."""
         if other is None:
             other=self.__class__(readlist=False)
+        for arg in self._defaults:
+            if hasattr(self,arg):
+                setattr(other,arg,getattr(self,arg))
         return super(DiskBssedFolder,self).__clone__(other=other)
 
     def _dialog(self, message="Select Folder",  new_directory=True):

@@ -83,8 +83,8 @@ class Folders_test(unittest.TestCase):
          self.fldr=SF.DataFolder(self.datadir, pattern='*.txt')
          self.fldr.abc = 123 #add an attribute
          t = self.fldr.__clone__()
-         self.assertTrue(t.pattern=='*.txt', 'pattern didnt copy over')
-         self.assertTrue(hasattr(t, abc), 'user attribute didnt copy over')
+         self.assertTrue(t.pattern==['*.txt'], 'pattern didnt copy over')
+         self.assertTrue(hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over')
          self.assertTrue(isinstance(t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
         
 
@@ -92,8 +92,8 @@ class Folders_test(unittest.TestCase):
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
-    test.test_Folders()
-    test.test_Operators()
-    test.test_Properties()
+#    test.test_Folders()
+#    test.test_Operators()
+#    test.test_Properties()
     test.test_clone()
 
