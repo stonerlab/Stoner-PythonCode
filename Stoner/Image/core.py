@@ -168,6 +168,8 @@ class ImageArray(np.ndarray,metadataObject):
                 loadfromfile=True
         elif isinstance(arg, string_types) or loadfromfile:
             # Filename- load datafile
+            if not os.path.exists(arg):
+                raise ValueError('File path does not exist {}'.format(arg))
             ret = _load(cls, arg, **array_args)
             if asfloat and ret.dtype.kind!='f': #convert to float type in place
                 dl = dtype_range[ret.dtype.type]
@@ -180,9 +182,9 @@ class ImageArray(np.ndarray,metadataObject):
             try:  #try converting to a numpy array (eg a list type)
                 ret = np.asarray(arg, **array_args).view(cls)
             except ValueError: #ok couldn't load from iterable, we're done
-                raise SyntaxError("No constructor for {}".format(type(arg)))
+                raise ValueError("No constructor for {}".format(type(arg)))
         #all constructors call array_finalise so metadata is now initialised
-        if 'Loaded from:' not in ret.metadata.keys():
+        if 'Loaded from' not in ret.metadata.keys():
             ret.metadata['Loaded from']=''
         ret.filename = ret.metadata['Loaded from']
         ret.metadata.update(user_metadata)        
@@ -207,7 +209,8 @@ class ImageArray(np.ndarray,metadataObject):
                 setattr(self, k, v)
 
     def __array_wrap__(self, out_arr, context=None):
-        """see __array_finalize__ for info"""
+        """see __array_finalize__ for info. This is for if ImageArray is called 
+        via ufuncs. array_finalize is called after"""
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
