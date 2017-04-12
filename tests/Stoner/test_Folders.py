@@ -40,7 +40,8 @@ class Folders_test(unittest.TestCase):
         fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
-        self.assertEqual(len(os.listdir(self.datadir)),fl,"Failed to initialise DataFolder from sample data")
+        length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])
+        self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data")
         self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
@@ -77,8 +78,14 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(len(fldr.loaded),2,"loaded attribute failed")
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
         fldr-="Untitled"
-        
-        
+                
+    def test_clone(self):
+         self.fldr=SF.DataFolder(self.datadir, pattern='*.txt')
+         self.fldr.abc = 123 #add an attribute
+         t = self.fldr.__clone__()
+         self.assertTrue(t.pattern=='*.txt', 'pattern didnt copy over')
+         self.assertTrue(hasattr(t, abc), 'user attribute didnt copy over')
+         self.assertTrue(isinstance(t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
         
 
 
@@ -88,4 +95,5 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.test_Folders()
     test.test_Operators()
     test.test_Properties()
+    test.test_clone()
 

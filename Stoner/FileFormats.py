@@ -306,8 +306,13 @@ class QDFile(DataFile):
                 
             if python_v3:
                 column_headers = f.readline().strip().split(',')
+                if ',' not in f.readline():
+                    assert False
+                    raise StonerLoadError("No data in file!")
             else:
                 column_headers = f.next().strip().split(',')
+                if ',' not in f.next():
+                    raise StonerLoadError("No data in file!")
         self.data = _np_.genfromtxt(self.filename, dtype='float', delimiter=',', invalid_raise=False, skip_header=i + 2)
         self.column_headers=column_headers
         s=self.setas
