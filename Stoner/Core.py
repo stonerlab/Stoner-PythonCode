@@ -368,6 +368,13 @@ class _setas(object):
             raise ValueError("Set as column string ended with a number")
         self.cols.update(self._get_cols())
 
+    def __getattr__(self,name):
+        """Try to see if attribute name is a key in self.cols and return that instead."""
+        if name in self.cols:
+            return self.cols[name]
+        else:
+            return super(_setas,self).__getattr__(name)
+
     def __getitem__(self, name):
         """Permit the setas attribute to be treated like either a list or a dictionary.
 
@@ -508,7 +515,7 @@ class _setas(object):
             else:
                 col = self.find_col(possible)
         elif isinstance(col, slice):
-            indices = col.indices(_np_.shape(self.data)[1])
+            indices = col.indices(self.shape[1])
             col = range(*indices)
             col = self.find_col(col)
         elif isinstance(col, Iterable):
@@ -619,7 +626,85 @@ class _evaluatable(object):
     pass
 
 
-class typeHintedDict(sorteddict):
+class regexpDict(sorteddict):
+    """An ordered dictionary that permits looks up by regular expression."""
+    def __init__(self,*args,**kargs):
+        super(regexpDict,self).__init__(*args,**kargs)
+
+    def __lookup__(self,name,multiple=False):
+        """Lookup name and find a matching key or raise KeyError.
+
+        Parameters:
+            name (str, re._pattern_type): The name to be searched for
+            
+        Keyword Arguments:
+            multiple (bool): Return a singl entry ()default, False) or multiple entries
+
+        Returns:
+            Canonical key matching the specified name.
+
+        Raises:
+            KeyError: if no key matches name.
+        """
+        ret=None
+        try: #name directly as key
+            super(regexpDict,self).__getitem__(name)
+            ret=name
+        except KeyError: #Fall back to regular expression lookup           
+            if isinstance(name,string_types):
+                try:
+                    nm=re.compile(name)
+                except:
+                    nm=name
+            elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
+                ret=list(self.keys())[name]
+            else:
+                nm=name
+            if isinstance(nm,re._pattern_type):
+                ret=[n for n in self.keys() if nm.match(n)]
+        if ret is None or isinstance(ret,Iterable) and len(ret)==0:
+            raise KeyError("{} is not a match to any key.".format(name))
+        else:
+            if multiple: #sort out returing multiple entries or not
+                if not isinstance(ret,list):
+                    ret=[ret]
+            else:
+                if isinstance(ret,list):
+                    ret=ret[0]
+            return ret
+
+    def __getitem__(self,name):
+        """Adds a lookup via regular expression when retrieving items."""
+        return super(regexpDict,self).__getitem__(self.__lookup__(name))
+
+    def __setitem__(self,name,value):
+        """Overwrites any matching key, or if not found adds a new key."""
+        try:
+            key=self.__lookup__(name)
+        except KeyError:
+            if not isinstance(name,string_types):
+                raise KeyError("{} is not a match to any key.".format(name))
+            key=name
+        super(regexpDict,self).__setitem__(key, value)
+
+    def __delitem__(self,name):
+        """Deletes keys that match by regular expression as well as exact matches"""
+        super(regexpDict,self).__delitem__(self.__lookup__(name))
+
+    def __contains__(self,name):
+        """Returns True if name either is an exact key or matches when interpreted as a regular experssion."""
+        try:
+            name=self.__lookup__(name)
+            return True
+        except KeyError:
+            return False
+        
+    def has_key(self,name):
+        """"Key is definitely in dictionary as literal"""
+        return super(regexpDict,self).__contains__(name)
+
+
+class typeHintedDict(regexpDict):
     """Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.
 
     The CM Physics Group at Leeds makes use of a standard file format that closely matches
@@ -854,11 +939,18 @@ class typeHintedDict(sorteddict):
         Returns:
             metadata value
         """
+        key=name
         (name, typehint) = self._get_name_(name)
-        value = super(typeHintedDict, self).__getitem__(name)
+        name=self.__lookup__(name,True)
+        value = [super(typeHintedDict, self).__getitem__(nm) for nm in name]
         if typehint is not None:
-            value = self.__mungevalue(typehint, value)
-        return value
+            value = [self.__mungevalue(typehint, v) for v in value]
+        if len(value)==0:
+            raise KeyError("{} is not a valid key even when interpreted as a sregular expression!".format(key))
+        elif len(value)==1:
+            return value[0]
+        else:
+            return {k:v for k,v in zip(name,value)}
 
     def __setitem__(self, name, value):
         """Provides a method to set an item in the dict, checking the key for
@@ -894,6 +986,8 @@ class typeHintedDict(sorteddict):
         Args:
             name (string): The keyname to be deleted"""
         name = self._get_name_(name)[0]
+        name=self.__lookup__(name)
+
         del (self._typehints[name])
         super(typeHintedDict, self).__delitem__(name)
 
@@ -1113,6 +1207,8 @@ class DataArray(_ma_.MaskedArray):
             "v": "vcol",
             "w": "wcol",
         }
+        if name in self.setas.cols:
+            return self.setas.__getattr__(name)
         if name not in col_check:
             return super(DataArray,self).__getattribute__(name)
         indexer=[slice(0,dim,1) for ix,dim in enumerate(self.shape)]
@@ -1243,12 +1339,12 @@ class DataArray(_ma_.MaskedArray):
     def _(self):
         """Return the DataArray as a normal numpy array for those operations that need this"""
         return _ma_.getdata(self)
-    
+     
     @property
     def isrow(self):
         """Defines whether this is a single row or a column if 1D."""
         return self._setas._row
-
+    
     @isrow.setter
     def isrow(self,value):
         """Set whether this object is a single row or not."""
@@ -1422,11 +1518,21 @@ class DataFile(metadataObject):
         clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.
         dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one
             row with keys dervied from column headers.
+        dims (int): When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set
         dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.
         T (:py:class:`DataArray`): Transposed version of the data.
         subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by
                            their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the
                            string name of the subclass and the class object.
+        xcol (int): If a column has been designated as containing *x* values, this will return the index of that column
+        xerr (int): Similarly to :py:attr:`DataFile.xcol` but for the x-error value column.
+        ycol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y value columns.
+        yerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y error value columns.
+        zcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z value columns.
+        zerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z error value columns.
+        ucol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the u (x-axis direction cosine) columns.
+        vcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the v (y-axis direction cosine) columns.
+        wcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the w (z-axis direction cosine) columns.
     """
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1660,6 +1766,11 @@ class DataFile(metadataObject):
         """Return the data as a dictionary of single columns with column headers for the keys.
         """
         return _np_.array([dict(zip(self.column_headers, r)) for r in self.rows()])
+
+    @property
+    def dims(self):
+        """An alias for self.data.axes"""
+        return self.data.axes
 
     @property
     def dtype(self):
@@ -2065,7 +2176,7 @@ class DataFile(metadataObject):
         if cols["axes"]==2:
             swaps=zip(["ycol","yerr"],["x","d"])
         elif cols["axes"]>=3:
-            awaps=zip(["ycol","zcol","yerr","zerr"],["z","x","f","d"])
+            swaps=zip(["ycol","zcol","yerr","zerr"],["z","x","f","d"])
         setas[cols["xcol"]]="y"
         if cols["has_xerr"]:
             setas[cols["xerr"]]="e"
@@ -2225,14 +2336,10 @@ class DataFile(metadataObject):
         if name in setas_cols:
             ret=self._getattr_col(name)
             if ret is not None: return ret
-#        for c in self._mro:
-#            print(self.__class__.__name__)
-#            if c not in (DataFile,metadataObject):
-#                try:
-#                    ret = c.__getattr__(self,name)
-#                    return ret
-#                except AttributeError:
-#                    continue
+        if name in self.setas.cols:
+            ret=self.setas.cols[name]
+            if ret is not None and ret!=[]:
+                return ret
         try:
             col = self._data._setas.find_col(name)
             return self.column(col)
@@ -3263,14 +3370,20 @@ class DataFile(metadataObject):
         Returns:
             self: A copy of the modified :py:class:`DataFile` object"""
         if headers_too:
-            self.column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+            column_headers = [self.column_headers[self.find_col(x)] for x in cols]
+        else:
+            column_headers=self.column_headers
         if setas_too:
-            self.setas = [self.setas[self.find_col(x)] for x in cols]
+            setas = [self.setas[self.find_col(x)] for x in cols]
+        else:
+            setas=self.setas.clone
 
         newdata = _np_.atleast_2d(self.data[:, self.find_col(cols.pop(0))])
         for col in cols:
             newdata = _np_.append(newdata, _np_.atleast_2d(self.data[:, self.find_col(col)]), axis=0)
         self.data = DataArray(_np_.transpose(newdata))
+        self.setas=setas
+        self.column_headers=column_headers
         return self
 
     def rolling_window(self, window=7, wrap=True, exclude_centre=False):
@@ -3295,9 +3408,9 @@ class DataFile(metadataObject):
                 raise ValueError(
                     "Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd")
 
-        hw = (window - 1) / 2
+        hw = int((window - 1) / 2)
         if exclude_centre:
-            hc = (exclude_centre - 1) / 2
+            hc = int((exclude_centre - 1) / 2)
 
         for i in range(len(self)):
             if i < hw:

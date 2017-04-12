@@ -1553,6 +1553,11 @@ class AnalysisMixin(object):
         and *row* is the data for the row.
 
         In all cases the indices of the outlier rows are added to the ;outlier' metadata.
+        
+    Example
+        .. plot:: samples/outlier.py
+            :include-source:
+
 
         """
 

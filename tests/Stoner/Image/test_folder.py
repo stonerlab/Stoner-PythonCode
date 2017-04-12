@@ -14,7 +14,7 @@ from os import path
 import os
 
 knownkeys = ['Averaging', 'Comment:', 'Contrast Shift', 'HorizontalFieldOfView', 
-             'Lens', 'Loaded from', 'Magnification', 'MicronsPerPixel', 'field', 
+             'Lens', 'Loaded from', 'Magnification', 'MicronsPerPixel', 'field: units', 
              'field: units', 'filename', 'subtraction']
 knownfieldvals = [-233.432852, -238.486666, -243.342465, -248.446173, 
                   -253.297813, -258.332918, -263.340476, -268.20511]
@@ -25,7 +25,7 @@ class ImageFolderTest(unittest.TestCase):
 
     def setUp(self):
         self.td = ImageFolder(testdir, pattern='*.png')
-        self.td.sort(key=lambda x:os.path.getmtime(x.filename))
+        self.td=self.td.sort(key=lambda x:x.filename.lower())
         self.ks = ImageStack(testdir)
         self.ks = ImageStack(self.td) #load in two ways
         self.assertTrue(len(self.ks)==len(os.listdir(testdir)))
@@ -33,8 +33,9 @@ class ImageFolderTest(unittest.TestCase):
     def test_load(self):
         self.assertTrue(len(self.td)==len(os.listdir(testdir)), "Didn't find all the images")
         self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed')
-        self.assertTrue(all([k in self.td[0].metadata.keys() for k in knownkeys]), 'Metadata from get item failed')
-        self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')
+        self.assertTrue(all([k in self.td[0].metadata for k in knownkeys]), 'Metadata from get item failed')
+        test_vals=self.td.slice_metadata(key='field',values_only=True)
+        self.assertTrue(test_vals==knownfieldvals, 'slice metadata failed {}!={}'.format(test_vals,knownfieldvals))
     
     def test_clone(self):
         c=self.ks.clone
@@ -64,5 +65,6 @@ if __name__=="__main__":
     #ti=KerrStack(t)
     test=ImageFolderTest("test_kerrstack")
     test.setUp()
+    test.test_load()
     test.test_kerrstack()
     test.test_load()
