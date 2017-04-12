@@ -650,12 +650,13 @@ class regexpDict(sorteddict):
         try: #name directly as key
             super(regexpDict,self).__getitem__(name)
             ret=name
-        except KeyError: #Fall back to regular expression lookup           
+        except KeyError: #Fall back to regular expression lookup
+            nm=name           
             if isinstance(name,string_types):
                 try:
                     nm=re.compile(name)
                 except:
-                    nm=name
+                    pass
             elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
                 ret=list(self.keys())[name]
             else:

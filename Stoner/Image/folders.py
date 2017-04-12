@@ -58,7 +58,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
     def loadgroup(self):
         """Load all files from this group into memory"""
         [None for _ in self]
-    
+        
     def slice_metadata(self, key=None, values_only=False):
         """Return a list of the metadata dictionaries for each item/file in the
         top level group

@@ -45,7 +45,7 @@ class FileFormats_test(unittest.TestCase):
             
         tmpdir=tempfile.mkdtemp()
         print("Exporting to {}".format(tmpdir))
-        incfiles=os.listdir(self.datadir)
+        incfiles=[x for x in os.listdir(self.datadir) if os.path.isfile(x)]
 
         for i,f in enumerate(incfiles):
             if f.strip().lower() in skip_files: # Known bad files to load

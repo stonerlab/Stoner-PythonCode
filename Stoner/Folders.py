@@ -143,7 +143,7 @@ class baseFolder(MutableSequence):
         for f in self.__names__():
             val=self.__getter__(f,instantiate=None)
             if isinstance(val,self.type):
-                return f,val
+                yield f,val
 
     @property
     def ls(self):
@@ -302,7 +302,7 @@ class baseFolder(MutableSequence):
         for n in self.__names__():
             self.__deleter__(self.__lookup__(n))
 
-    def __clone__(self,other=None):
+    def __clone__(self,other=None,attrs_only=False):
         """Do whatever is necessary to copy attributes from self to other.
 
         Note:
@@ -320,8 +320,9 @@ class baseFolder(MutableSequence):
                 setattr(other,k,self.kargs[k])
         for k in self._instance_attrs:
             setattr(other,k,getattr(self,k))
-        other.groups=deepcopy(self.groups)
-        other.objects=deepcopy(self.objects)
+        if not attrs_only:
+            other.groups=deepcopy(self.groups)
+            other.objects=deepcopy(self.objects)
         return other
 
     ###########################################################################
@@ -368,7 +369,7 @@ class baseFolder(MutableSequence):
             else:
                 raise IndexError("{} is out of range.".format(name))
         elif isinstance(name,slice): #Possibly ought to return another Folder?
-            other=self.__clone__()
+            other=self.__clone__(attrs_only=True)
             for iname in islice(self.__names__(),name.start,name.stop,name.step):
                 other.__setter__(iname,self.__getter__(iname))
             return other
@@ -787,7 +788,7 @@ class baseFolder(MutableSequence):
         if self.groups.has_key(key): # do nothing here
             pass
         else:
-            new_group=self.__clone__()
+            new_group=self.__clone__(attrs_only=True)
             self.groups[key]=new_group
             self.groups[key].key=key
         return self
@@ -1104,7 +1105,7 @@ class baseFolder(MutableSequence):
             "endsswith":lambda k,v:str(v).endswith(k),
             "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
         }
-        result=self.__clone__
+        result=self.__clone__(attrs_only=True)
         if recurse:
             gkargs={}
             gkargs.update(kargs)
@@ -1140,6 +1141,31 @@ class baseFolder(MutableSequence):
         """Return or set a subgroup or named object."""
         self[k]=self.get(k,d)
         return self[k]
+    
+    def slice_metadata(self, key):
+        """Return an array of the metadata values for each item/file in the
+        top level group
+
+        Args:
+            key(str, regexp or list of str): the meta data key(s) to return
+
+        Returns:
+            (array of metadata): If single key is given and is an exact match then
+                returns an array of the matching values. If the key results in a regular
+                expression match, then returns an array of dictionaries of all matching keys. If key is a
+                list ir other iterable, then return a 2D array where each column corresponds to one of the keys.
+            
+        TODO:
+            Add options to recurse through all groups? Put back RCT's values only functionality?
+        """
+        ret=None
+        if isinstance(key, string_types+regexp_type):
+            ret=_np_.array([d[key] for d in self])
+        elif isinstance(key,Iterable):
+            ret=_np_.column_stack([self.slice_metadata(k) for k in key])
+        if ret is None:
+            raise KeyError("{} not recognised for sliceing metadata".format(key))
+        return ret
 
     def sort(self, key=None, reverse=False):
         """Sort the files by some key
@@ -1301,14 +1327,14 @@ class DiskBssedFolder(object):
             self.getlist(directory=args[0])
         
         
-    def __clone__(self,other=None):
+    def __clone__(self,other=None,attrs_only=False):
         """Add something to stop clones from autolisting again."""
         if other is None:
             other=self.__class__(readlist=False)
         for arg in self._defaults:
             if hasattr(self,arg):
                 setattr(other,arg,getattr(self,arg))
-        return super(DiskBssedFolder,self).__clone__(other=other)
+        return super(DiskBssedFolder,self).__clone__(other=other,attrs_only=attrs_only)
 
     def _dialog(self, message="Select Folder",  new_directory=True):
         """Creates a directory dialog box for working with
@@ -1559,6 +1585,17 @@ class DiskBssedFolder(object):
             A list of the saved files
         """
         return self.walk_groups(self._save,walker_args={"root",root})
+    
+    def unload(self,name):
+        """Removes the instance from memory without losing the name in the Folder.
+        
+        Args:
+            name(string or int): Specifies the entry to unload from memeory.
+            
+        Returns:
+            (DataFolder): returns a copy of itself."""
+        self.__setter__(name,None)
+        return self
 
 
 
