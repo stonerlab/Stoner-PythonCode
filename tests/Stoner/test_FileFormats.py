@@ -45,7 +45,8 @@ class FileFormats_test(unittest.TestCase):
             
         tmpdir=tempfile.mkdtemp()
         print("Exporting to {}".format(tmpdir))
-        incfiles=[x for x in os.listdir(self.datadir) if os.path.isfile(x)]
+        print("Data files {}".format(self.datadir))
+        incfiles=[x for x in os.listdir(self.datadir) if os.path.isfile(os.path.join(self.datadir,x)) and not x.endswith("tdms_index")]
 
         for i,f in enumerate(incfiles):
             if f.strip().lower() in skip_files: # Known bad files to load
@@ -74,8 +75,6 @@ class FileFormats_test(unittest.TestCase):
         os.rmdir(tmpdir)
 
 if __name__=="__main__": # Run some tests manually to allow debugging
-    with warnings.catch_warnings():
-        warnings.simplefilter("always")
-        test=FileFormats_test("test_loaders")
-        test.setUp()
-        test.test_loaders()
+    test=FileFormats_test("test_loaders")
+    test.setUp()
+    test.test_loaders()
