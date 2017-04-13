@@ -16,6 +16,7 @@ import re
 import os
 import csv
 import numpy as _np_
+from numpy import NaN
 import numpy.ma as _ma_
 import copy
 import os.path as path

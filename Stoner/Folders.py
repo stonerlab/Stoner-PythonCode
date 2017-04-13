@@ -1285,6 +1285,8 @@ class DiskBssedFolder(object):
         pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then
             any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.
 
+        exclude (str or regexp): A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to exclude all tdms index files.
+
         read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in
             grouping files where one column of data contains a constant value for the experimental state. Default is False
 
@@ -1304,6 +1306,7 @@ class DiskBssedFolder(object):
     _defaults={"type":None,
               "extra_args":dict(),
               "pattern":["*.*"],
+              "exclude":["*.tdms_index"],
               "read_means":False,
               "recursive":True,
               "flat":False,
@@ -1537,6 +1540,22 @@ class DiskBssedFolder(object):
                 dirs.append(f)
             elif path.isfile(path.join(root, f)):
                 files.append(f)
+        for p in self.exclude: #Remove excluded files
+            if isinstance(p,string_types):
+                for f in list(fnmatch.filter(files,p)):
+                    del files[files.index(f)]
+            if isinstance(p,re._pattern_type):
+                matched=[]
+                # For reg expts we iterate over all files, but we can't delete matched
+                # files as we go as we're iterating over them - so we store the
+                # indices and delete them later.
+                for f in files:
+                    if p.search(f):
+                        matched.append(files.index(f))
+                matched.sort(reverse=True)
+                for i in matched: # reverse sort the matching indices to safely delete
+                    del(files[i])
+                
         for p in self.pattern: # pattern is a list of strings and regeps
             if isinstance(p,string_types):
                 for f in fnmatch.filter(files, p):

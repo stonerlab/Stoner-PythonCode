@@ -15,6 +15,7 @@ import os
 import numpy as np
 import re
 import fnmatch
+from numpy import ceil
 from Stoner.compat import *
 import Stoner.Folders as SF
 import Stoner.HDF5 as SH
@@ -40,12 +41,12 @@ class Folders_test(unittest.TestCase):
         fldr=self.fldr
         fl=len(fldr)
         datfiles=fnmatch.filter(os.listdir(self.datadir),"*.dat")
-        length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])
+        length = len([i for i in os.listdir(self.datadir) if path.isfile(os.path.join(self.datadir,i))])-1 # don't coiunt TDMS index
         self.assertEqual(length,fl,"Failed to initialise DataFolder from sample data")
         self.assertEqual(fldr.index(fldr[-1].filename),fl-1,"Failed to index back on filename")
         self.assertEqual(fldr.count(fldr[-1].filename),1,"Failed to count filename with string")
         self.assertEqual(fldr.count("*.dat"),len(datfiles),"Count with a glob pattern failed")
-        self.assertEqual(len(fldr[::2]),round(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
+        self.assertEqual(len(fldr[::2]),ceil(len(fldr)/2.0),"Failed to get the correct number of elements in a folder slice")
         
     def test_Operators(self):
         self.setUp()
@@ -80,8 +81,18 @@ class Folders_test(unittest.TestCase):
         fldr-="Untitled"
         
     def test_methods(self):
-        sliced=np.array(['MDAASCIIFile', 'BNLFile', 'DataFile', 'DataFile', 'MokeFile',
-       'EasyPlotFile', 'DataFile', 'DataFile', 'DataFile'])
+        sliced=np.array(['MDAASCIIFile',
+                         'BNLFile',
+                         'DataFile',
+                         'DataFile',
+                         'DataFile',
+                         'MokeFile',
+                         'DataFile',
+                         'DataFile',
+                         'EasyPlotFile',
+                         'DataFile',
+                         'DataFile',
+                         'DataFile'])
         self.fldr=SF.DataFolder(self.datadir, pattern='*.txt').sort()
         self.assertTrue(np.all(self.fldr.slice_metadata("Loaded as")==sliced),"Slicing metadata failed to work.")
 

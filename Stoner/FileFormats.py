@@ -27,7 +27,6 @@ png.MAX_TEXT_CHUNK=2**22
 png.MAX_TEXT_MEMORY=2**28
 
 from .Core import DataFile,StonerLoadError
-from .pyTDMS import read as tdms_read
 
 
 class CSVFile(DataFile):
@@ -518,53 +517,6 @@ class SPCFile(DataFile):
             if len(self.column_headers) == 2:
                 self.setas = "xy"
             return self
-
-
-class TDMSFile(DataFile):
-    """A first stab at writing a file that will import TDMS files"""
-
-    #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
-    #   .. note::
-    #      Subclasses with priority<=32 should make some positive identification that they have the right
-    #      file type before attempting to read data.
-    priority=16 # Makes a positive ID of its file contents
-    #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
-    # the file load/save dialog boxes.
-    patterns=["*.tdms"] # Recognised filename patterns
-
-
-    def _load(self, filename=None, *args, **kargs):
-        """TDMS file loader routine.
-
-        Args:
-            filename (string or bool): File to load. If None then the existing filename is used,
-                if False, then a file dialog will be used.
-
-        Returns:
-            A copy of the itself after loading the data.
-            """
-        if filename is None or not filename:
-            self.get_filename('r')
-        else:
-            self.filename = filename
-        # Open the file and read the main file header and unpack into a dict
-        with open(self.filename, "rb") as f:  # Read filename linewise
-            try:
-                assert f.read(4) == b"TDSm"
-            except AssertionError:
-                raise StonerLoadError('Not a TDMS File')
-        try:
-            (metadata, data) = tdms_read(self.filename)
-        except:
-            raise StonerLoadError("TDMS File failed to load")
-        for key in metadata:
-            self.metadata[key] = metadata[key]
-        column_headers = list()
-        for column in data:
-            nd = data[column]
-            self.add_column(nd, header=column)
-        return self
-
 
 class RigakuFile(DataFile):
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
@@ -1559,3 +1511,68 @@ class KermitPNGFile(DataFile):
         img.save(filename,"png",pnginfo=metadata)
         self.filename=filename
         return self
+
+try: #Optional tdms support
+    from nptdms import TdmsFile
+    
+    class TDMSFile(DataFile):
+        """A first stab at writing a file that will import TDMS files"""
+    
+        #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
+        #   .. note::
+        #      Subclasses with priority<=32 should make some positive identification that they have the right
+        #      file type before attempting to read data.
+        priority=16 # Makes a positive ID of its file contents
+        #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
+        # the file load/save dialog boxes.
+        patterns=["*.tdms"] # Recognised filename patterns
+    
+    
+        def _load(self, filename=None, *args, **kargs):
+            """TDMS file loader routine.
+    
+            Args:
+                filename (string or bool): File to load. If None then the existing filename is used,
+                    if False, then a file dialog will be used.
+    
+            Returns:
+                A copy of the itself after loading the data.
+                """
+            if filename is None or not filename:
+                self.get_filename('r')
+            else:
+                self.filename = filename
+            # Open the file and read the main file header and unpack into a dict
+            try:
+                f=TdmsFile(self.filename)
+                       
+                column_headers=[]
+                data=_np_.array([])
+                        
+                
+                for grp in f.objects.keys():
+                    if grp=="/":
+                        pass #skip the rooot group
+                    elif grp=="/'TDI Format 1.5'":
+                        metadata=f.object("TDI Format 1.5")
+                        for k,v in metadata.properties.items():
+                            self.metadata[k]=self.metadata.string_to_type(str(v))
+                    else:
+                        if f.objects[grp].has_data:
+                            chnl=grp.split("/")[-1]
+                            chnl.strip().strip("'")
+                            column_headers.append(chnl)
+                            if data.size==0:
+                                data=f.objects[grp].data
+                            else:
+                                data=_np_.column_stack([data,f.objects[grp].data])
+                self.data=data
+                self.column_headers=column_headers                       
+            except Exception as e:
+                from traceback import format_exc
+                raise StonerLoadError('Not a TDMS File \n{}'.format(format_exc()))
+            
+            return self
+
+except ImportError:
+    pass

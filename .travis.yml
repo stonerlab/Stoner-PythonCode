@@ -35,6 +35,7 @@ install:
   - conda install --yes -c neutronpy lmfit
   - pip install filemagic
   - pip install coveralls
+  - pip install npTDMS
   - pip install .
 
 before_script:
