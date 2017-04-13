@@ -1,0 +1,8 @@
+
+
+ImageStack.correct_drifts
+============================================
+
+.. currentmodule:: Stoner.Image.stack
+
+.. automethod:: ImageStack.correct_drifts

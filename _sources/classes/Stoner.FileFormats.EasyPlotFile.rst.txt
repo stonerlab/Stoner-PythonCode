@@ -64,6 +64,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.column_headers
       ~Stoner.FileFormats.EasyPlotFile.data
       ~Stoner.FileFormats.EasyPlotFile.dict_records
+      ~Stoner.FileFormats.EasyPlotFile.dims
       ~Stoner.FileFormats.EasyPlotFile.dtype
       ~Stoner.FileFormats.EasyPlotFile.filename
       ~Stoner.FileFormats.EasyPlotFile.mask

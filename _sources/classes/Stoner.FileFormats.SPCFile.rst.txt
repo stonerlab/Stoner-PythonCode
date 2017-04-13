@@ -64,6 +64,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.column_headers
       ~Stoner.FileFormats.SPCFile.data
       ~Stoner.FileFormats.SPCFile.dict_records
+      ~Stoner.FileFormats.SPCFile.dims
       ~Stoner.FileFormats.SPCFile.dtype
       ~Stoner.FileFormats.SPCFile.filename
       ~Stoner.FileFormats.SPCFile.mask

@@ -63,33 +63,33 @@
 <dt id="Stoner.Analysis.AnalysisMixin.outlier_detection">
 <code class="descclassname">AnalysisMixin.</code><code class="descname">outlier_detection</code><span class="sig-paren">(</span><em>column=None</em>, <em>window=7</em>, <em>certainty=3.0</em>, <em>action='mask'</em>, <em>width=1</em>, <em>func=None</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Analysis.html#AnalysisMixin.outlier_detection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Analysis.AnalysisMixin.outlier_detection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to detect outliers in a column of data.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>column</strong> (<em>column index</em>) &#8211; defaults to the current y set column.</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
-<li><strong>window</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; data window for anomoly detection</li>
-<li><strong>certainty</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; eg 3 detects data 3 standard deviations from average</li>
-<li><strong>action</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a><em> or </em><a class="reference external" href="https://docs.python.org/2/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; what to do with outlying points, options are
-* &#8216;mask&#8217; outlier points are masked (default)
-* &#8216;mask row&#8217; outlier rows are masked
-* &#8216;delete&#8217;  outlier rows are deleted
-* callable  the value of the action keyword is called with the outlier row
-* anything else defaults to do nothing.</li>
-<li><strong>width</strong> (<em>odd integer</em>) &#8211; Number of rows that an outliing spike could occupy. Defaults to 1.</li>
-<li><strong>func</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; A function that determines if the current row is an outlier.</li>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><dl class="first last docutils">
+<dt>column(column index), specifing column for outlier detection. If not set,</dt>
+<dd>defaults to the current y set column.</dd>
+</dl>
+</dd>
+<dt>Keyword Arguments:</dt>
+<dd><p class="first">window(int): data window for anomoly detection
+certainty(float): eg 3 detects data 3 standard deviations from average
+action(str or callable): what to do with outlying points, options are</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;mask&#8217; outlier points are masked (default)</li>
+<li>&#8216;mask row&#8217; outlier rows are masked</li>
+<li>&#8216;delete&#8217;  outlier rows are deleted</li>
+<li>callable  the value of the action keyword is called with the outlier row</li>
+<li>anything else defaults to do nothing.</li>
 </ul>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> &#8211; The newly modified <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</div></blockquote>
+<p class="last">width(odd integer): Number of rows that an outliing spike could occupy. Defaults to 1.
+func (callable): A function that determines if the current row is an outlier.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>self: The newly modified <a class="reference internal" href="Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">AnalysisMixin</span></code></a>.</dd>
+</dl>
 <p>outlier_detection will add row numbers of detected outliers to the metadata
 of d, also will perform action depending on request eg &#8216;mask&#8217;, &#8216;delete&#8217;
 (any other action defaults to doing nothing).</p>
@@ -111,6 +111,31 @@ data average.</p>
 <p>where <em>i</em> is the number of the outlier row, <em>column</em> the same value as above
 and <em>row</em> is the data for the row.</p>
 <p>In all cases the indices of the outlier rows are added to the ;outlier&#8217; metadata.</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>Example</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">201</span><span class="p">)</span>
+<span class="n">y</span><span class="o">=</span><span class="mf">0.01</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span>
+
+<span class="n">i</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">scale</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)),</span><span class="n">column_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;y&quot;</span><span class="p">],</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b.&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;raw data&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">outlier_detection</span><span class="p">(</span><span class="n">window</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;r-&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Outliers removed&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Outlier detection test&quot;</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/outlier.py">Source code</a>, <a class="reference external" href="../samples/outlier.png">png</a>, <a class="reference external" href="../samples/outlier.hires.png">hires.png</a>, <a class="reference external" href="../samples/outlier.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/outlier.png" src="../_images/outlier.png" />
+</div>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -173,7 +198,7 @@ and <em>row</em> is the data for the row.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

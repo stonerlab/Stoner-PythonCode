@@ -64,6 +64,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.column_headers
       ~Stoner.FileFormats.RasorFile.data
       ~Stoner.FileFormats.RasorFile.dict_records
+      ~Stoner.FileFormats.RasorFile.dims
       ~Stoner.FileFormats.RasorFile.dtype
       ~Stoner.FileFormats.RasorFile.filename
       ~Stoner.FileFormats.RasorFile.mask

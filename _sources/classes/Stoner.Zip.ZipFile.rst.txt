@@ -26,6 +26,7 @@ Stoner.Zip.ZipFile
 
    .. autosummary::
    
+      ~Stoner.Zip.ZipFile.mime_type
       ~Stoner.Zip.ZipFile.patterns
       ~Stoner.Zip.ZipFile.priority
    

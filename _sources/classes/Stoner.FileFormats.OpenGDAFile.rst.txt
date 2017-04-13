@@ -64,6 +64,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.column_headers
       ~Stoner.FileFormats.OpenGDAFile.data
       ~Stoner.FileFormats.OpenGDAFile.dict_records
+      ~Stoner.FileFormats.OpenGDAFile.dims
       ~Stoner.FileFormats.OpenGDAFile.dtype
       ~Stoner.FileFormats.OpenGDAFile.filename
       ~Stoner.FileFormats.OpenGDAFile.mask

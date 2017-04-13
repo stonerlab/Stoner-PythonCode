@@ -64,6 +64,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.column_headers
       ~Stoner.FileFormats.BigBlueFile.data
       ~Stoner.FileFormats.BigBlueFile.dict_records
+      ~Stoner.FileFormats.BigBlueFile.dims
       ~Stoner.FileFormats.BigBlueFile.dtype
       ~Stoner.FileFormats.BigBlueFile.filename
       ~Stoner.FileFormats.BigBlueFile.mask

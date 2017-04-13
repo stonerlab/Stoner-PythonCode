@@ -64,6 +64,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.column_headers
       ~Stoner.FileFormats.OVFFile.data
       ~Stoner.FileFormats.OVFFile.dict_records
+      ~Stoner.FileFormats.OVFFile.dims
       ~Stoner.FileFormats.OVFFile.dtype
       ~Stoner.FileFormats.OVFFile.filename
       ~Stoner.FileFormats.OVFFile.mask

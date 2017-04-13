@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>KerrStack.correct_drifts &#8212; Stoner Pacakge API Documentation</title>
+    <title>ImageStack.average &#8212; Stoner Pacakge API Documentation</title>
     
     <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -27,8 +27,8 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="KerrStack.hysteresis" href="Stoner.Image.stack.KerrStack.hysteresis.html" />
-    <link rel="prev" title="KerrStack.__init__" href="Stoner.Image.stack.KerrStack.__init__.html" /> 
+    <link rel="next" title="ImageStack.clip_intensity" href="Stoner.Image.stack.ImageStack.clip_intensity.html" />
+    <link rel="prev" title="ImageStack.apply_all" href="Stoner.Image.stack.ImageStack.apply_all.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -41,14 +41,14 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.hysteresis.html" title="KerrStack.hysteresis"
+          <a href="Stoner.Image.stack.ImageStack.clip_intensity.html" title="ImageStack.clip_intensity"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.__init__.html" title="KerrStack.__init__"
+          <a href="Stoner.Image.stack.ImageStack.apply_all.html" title="ImageStack.apply_all"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.Image.stack.KerrStack.html" accesskey="U">Stoner.Image.stack.KerrStack</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="Stoner.Image.stack.ImageStack.html" accesskey="U">Stoner.Image.stack.ImageStack</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -57,35 +57,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="kerrstack-correct-drifts">
-<h1>KerrStack.correct_drifts<a class="headerlink" href="#kerrstack-correct-drifts" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="imagestack-average">
+<h1>ImageStack.average<a class="headerlink" href="#imagestack-average" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
-<dt id="Stoner.Image.stack.KerrStack.correct_drifts">
-<code class="descclassname">KerrStack.</code><code class="descname">correct_drifts</code><span class="sig-paren">(</span><em>refindex</em>, <em>threshold=0.005</em>, <em>upsample_factor=50</em>, <em>box=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#KerrStack.correct_drifts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.KerrStack.correct_drifts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Align images to correct for image drift.</p>
-<p>Pass through to ImageArray.corret_drift.</p>
-<dl class="docutils">
-<dt>Arg:</dt>
-<dd><dl class="first last docutils">
-<dt>refindex: int or str</dt>
-<dd>index or name of the reference image to use for zero drift</dd>
-</dl>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; see ImageArray.correct_drift</li>
-<li><strong>upsample_factor</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; see ImageArray.correct_drift</li>
-<li><strong>box</strong> &#8211; see ImageArray.correct_drift</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dt id="Stoner.Image.stack.ImageStack.average">
+<code class="descclassname">ImageStack.</code><code class="descname">average</code><span class="sig-paren">(</span><em>weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/stack.html#ImageStack.average"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.stack.ImageStack.average" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an array of average pixel values for the stack.
+Pass through to numpy average
+:returns: <em>average(ImageArray)</em> &#8211;     average values</p>
 </dd></dl>
 
 </div>
@@ -100,15 +79,15 @@
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.stack.KerrStack.__init__.html"
-                        title="previous chapter">KerrStack.__init__</a></p>
+  <p class="topless"><a href="Stoner.Image.stack.ImageStack.apply_all.html"
+                        title="previous chapter">ImageStack.apply_all</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Image.stack.KerrStack.hysteresis.html"
-                        title="next chapter">KerrStack.hysteresis</a></p>
+  <p class="topless"><a href="Stoner.Image.stack.ImageStack.clip_intensity.html"
+                        title="next chapter">ImageStack.clip_intensity</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../_sources/classes/Stoner.Image.stack.KerrStack.correct_drifts.rst.txt"
+      <li><a href="../_sources/classes/Stoner.Image.stack.ImageStack.average.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -136,19 +115,19 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.hysteresis.html" title="KerrStack.hysteresis"
+          <a href="Stoner.Image.stack.ImageStack.clip_intensity.html" title="ImageStack.clip_intensity"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.__init__.html" title="KerrStack.__init__"
+          <a href="Stoner.Image.stack.ImageStack.apply_all.html" title="ImageStack.apply_all"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="Stoner.Image.stack.KerrStack.html" >Stoner.Image.stack.KerrStack</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="Stoner.Image.stack.ImageStack.html" >Stoner.Image.stack.ImageStack</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

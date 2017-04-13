@@ -61,18 +61,25 @@
 <h1>MokeFile.save<a class="headerlink" href="#mokefile-save" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.FileFormats.MokeFile.save">
-<code class="descclassname">MokeFile.</code><code class="descname">save</code><span class="sig-paren">(</span><em>filename=None</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.MokeFile.save" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MokeFile.</code><code class="descname">save</code><span class="sig-paren">(</span><em>filename=None</em>, <em>as_loaded=False</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.MokeFile.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string, bool or None</em>) &#8211; Filename to save data as, if this is
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<em>string, bool or None</em>) &#8211; Filename to save data as, if this is
 None then the current filename for the object is used
 If this is not set, then then a file dialog is used. If f
-ilename is False then a file dialog is forced.</td>
+ilename is False then a file dialog is forced.</li>
+<li><strong>as_loaded</strong> (<em>bool,str</em>) &#8211; If True, then the <em>Loaded as</em> key is inspected to see what the original
+class of the DataFile was and then this class&#8217; save method is used to save the data. If a str then
+the keyword value is interpreted as the name of a subclass of the the current DataFile.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>self</em> &#8211; The current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>self</em> &#8211; The current <code class="xref py py-class docutils literal"><span class="pre">DataFile</span></code> object</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -138,7 +145,7 @@ ilename is False then a file dialog is forced.</td>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

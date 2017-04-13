@@ -64,6 +64,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.column_headers
       ~Stoner.FileFormats.BNLFile.data
       ~Stoner.FileFormats.BNLFile.dict_records
+      ~Stoner.FileFormats.BNLFile.dims
       ~Stoner.FileFormats.BNLFile.dtype
       ~Stoner.FileFormats.BNLFile.filename
       ~Stoner.FileFormats.BNLFile.mask

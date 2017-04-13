@@ -150,7 +150,7 @@
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SPCFile.rows.html#Stoner.FileFormats.SPCFile.rows" title="Stoner.FileFormats.SPCFile.rows"><code class="xref py py-obj docutils literal"><span class="pre">rows</span></code></a>([not_masked])</td>
 <td>Generator method that will iterate over rows of data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SPCFile.save.html#Stoner.FileFormats.SPCFile.save" title="Stoner.FileFormats.SPCFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.SPCFile.save.html#Stoner.FileFormats.SPCFile.save" title="Stoner.FileFormats.SPCFile.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename,&nbsp;as_loaded])</td>
 <td>Saves a string representation of the current DataFile object into the file &#8216;filename&#8217;.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.SPCFile.search.html#Stoner.FileFormats.SPCFile.search" title="Stoner.FileFormats.SPCFile.search"><code class="xref py py-obj docutils literal"><span class="pre">search</span></code></a>(xcol,&nbsp;value[,&nbsp;columns,&nbsp;accuracy])</td>
@@ -201,37 +201,40 @@
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">dict_records</span></code></td>
 <td>Return the data as a dictionary of single columns with column headers for the keys.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">dims</span></code></td>
+<td>An alias for self.data.axes</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">dtype</span></code></td>
 <td>Return the _np_ dtype attribute of the data</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">filename</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">filename</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mask</span></code></td>
 <td>Returns the mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">metadata</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">metadata</span></code></td>
 <td></td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">mime_type</span></code></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">patterns</span></code></td>
 <td><em>pattern (list of str)</em> &#8211; A list of file extensions that might contain this type of file. Used to construct</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">priority</span></code></td>
 <td><em>priority (int)</em> &#8211; is the load order for the class, smaller numbers are tried before larger numbers.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">records</span></code></td>
 <td>Returns the data as a _np_ structured data array.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">setas</span></code></td>
 <td>Get the list of column assignments.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">shape</span></code></td>
 <td>Pass through the numpy shape attribute of the data.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">subclasses</span></code></td>
 <td></td>
 </tr>
 </tbody>
@@ -297,7 +300,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -57,17 +57,11 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
-<span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">dtype_range</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">metadataObject</span>
-<span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">os</span> <span class="k">import</span> <span class="n">path</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">from</span> <span class="nn">skimage.viewer</span> <span class="k">import</span> <span class="n">CollectionViewer</span>
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBssedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 
 <span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">img_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
@@ -115,7 +109,7 @@
 <div class="viewcode-block" id="ImageFolder.loadgroup"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.loadgroup.html#Stoner.Image.folders.ImageFolder.loadgroup">[docs]</a>    <span class="k">def</span> <span class="nf">loadgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load all files from this group into memory&quot;&quot;&quot;</span>
         <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
-    
+        
 <div class="viewcode-block" id="ImageFolder.slice_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.slice_metadata.html#Stoner.Image.folders.ImageFolder.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the</span>
 <span class="sd">        top level group</span>
@@ -139,7 +133,12 @@
 
         <span class="n">metadata</span><span class="o">=</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span> <span class="c1">#this can take some time if it&#39;s loading in the images</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-            <span class="n">key</span><span class="o">=</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">newkey</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="n">newkey</span><span class="o">.</span><span class="n">extnd</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">newkey</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">met</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metadata</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="n">met</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]),</span> <span class="s1">&#39;key requested not in item </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -197,7 +196,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

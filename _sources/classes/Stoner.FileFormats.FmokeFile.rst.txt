@@ -64,6 +64,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.column_headers
       ~Stoner.FileFormats.FmokeFile.data
       ~Stoner.FileFormats.FmokeFile.dict_records
+      ~Stoner.FileFormats.FmokeFile.dims
       ~Stoner.FileFormats.FmokeFile.dtype
       ~Stoner.FileFormats.FmokeFile.filename
       ~Stoner.FileFormats.FmokeFile.mask

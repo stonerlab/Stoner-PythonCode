@@ -64,6 +64,7 @@ Stoner.FileFormats.QDFile
       ~Stoner.FileFormats.QDFile.column_headers
       ~Stoner.FileFormats.QDFile.data
       ~Stoner.FileFormats.QDFile.dict_records
+      ~Stoner.FileFormats.QDFile.dims
       ~Stoner.FileFormats.QDFile.dtype
       ~Stoner.FileFormats.QDFile.filename
       ~Stoner.FileFormats.QDFile.mask

@@ -64,6 +64,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.column_headers
       ~Stoner.FileFormats.MokeFile.data
       ~Stoner.FileFormats.MokeFile.dict_records
+      ~Stoner.FileFormats.MokeFile.dims
       ~Stoner.FileFormats.MokeFile.dtype
       ~Stoner.FileFormats.MokeFile.filename
       ~Stoner.FileFormats.MokeFile.mask

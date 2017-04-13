@@ -69,6 +69,8 @@
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
 
+<span class="n">IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Standard Kerr image size</span>
+<span class="n">AN_IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">554</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Kerr image with annotation not cropped</span>
 
 <span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">img_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -163,7 +165,6 @@
         <span class="n">copyarray</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;copyarray&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#metadata fields that are common to all images        </span>
         <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;metadata_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span>
-        <span class="nb">print</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ImageFolder</span><span class="p">))</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
             <span class="k">pass</span>  <span class="c1">#add arrays later</span>
         <span class="k">else</span><span class="p">:</span>
@@ -174,7 +175,8 @@
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">images</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span> <span class="c1">#try for a folder name</span>
-                <span class="n">ims</span> <span class="o">=</span> <span class="n">ImageFolder</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+                <span class="n">pattern</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="s1">&#39;*.png&#39;</span><span class="p">)</span>
+                <span class="n">ims</span> <span class="o">=</span> <span class="n">ImageFolder</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="n">pattern</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ims</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -499,7 +501,21 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">contrast</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">-</span> <span class="n">bg</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span>
         <span class="k">if</span> <span class="n">clip_intensity</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">()</span></div>
-            
+    
+<div class="viewcode-block" id="ImageStack.crop_stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.crop_stack.html#Stoner.Image.stack.ImageStack.crop_stack">[docs]</a>    <span class="k">def</span> <span class="nf">crop_stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Crop the imagestack.</span>
+<span class="sd">        Crops to the box given</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            box(array or list of type int):</span>
+<span class="sd">                [xmin,xmax,ymin,ymax]</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (ImageStack):</span>
+<span class="sd">                cropped images</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[:,</span><span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></div>
+        
 <div class="viewcode-block" id="ImageStack.show"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Show the stack of images in a skimage CollectionViewer window&quot;&quot;&quot;</span>
         <span class="c1">#stackims=[self[i] for i in range(len(self))]</span>
@@ -509,7 +525,52 @@
 
 <div class="viewcode-block" id="ImageStack.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;probably should save in hdf5 format&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="bp">NotImplemented</span></div></div>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span></div>
+        
+<div class="viewcode-block" id="ImageStack.stddev"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.stddev.html#Stoner.Image.stack.ImageStack.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;calculate weighted standard deviation for stack</span>
+<span class="sd">        This is a biased standard deviation, may not be appropriate for small sample sizes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">avs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack_average</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+        <span class="n">avs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">avs</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="c1">#make it the same size as imarray</span>
+        <span class="n">sumsqrdev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">-</span> <span class="n">avs</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sumsqrdev</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)))</span> 
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ImageStack.stderr"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.stderr.html#Stoner.Image.stack.ImageStack.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Standard error in the stack average</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">serr</span></div>
+
+<div class="viewcode-block" id="ImageStack.average"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.average.html#Stoner.Image.stack.ImageStack.average">[docs]</a>    <span class="k">def</span> <span class="nf">average</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array of average pixel values for the stack.</span>
+<span class="sd">        Pass through to numpy average        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            average(ImageArray):</span>
+<span class="sd">                average values</span>
+<span class="sd">        &quot;&quot;&quot;</span>                   
+        <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImageStack.correct_drifts"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.correct_drifts.html#Stoner.Image.stack.ImageStack.correct_drifts">[docs]</a>    <span class="k">def</span> <span class="nf">correct_drifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refindex</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Align images to correct for image drift.</span>
+<span class="sd">        </span>
+<span class="sd">        Pass through to ImageArray.corret_drift.</span>
+<span class="sd">        </span>
+<span class="sd">        Arg:</span>
+<span class="sd">            refindex: int or str</span>
+<span class="sd">                index or name of the reference image to use for zero drift</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            threshold(float): see ImageArray.correct_drift</span>
+<span class="sd">            upsample_factor(int): see ImageArray.correct_drift</span>
+<span class="sd">            box: see ImageArray.correct_drift</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ref</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">refindex</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;correct_drift&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
+                     <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span>        </div></div>
+
 
 <div class="viewcode-block" id="KerrStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.html#Stoner.Image.stack.KerrStack">[docs]</a><span class="k">class</span> <span class="nc">KerrStack</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds</span>
@@ -524,8 +585,8 @@
 <div class="viewcode-block" id="KerrStack.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.__init__.html#Stoner.Image.stack.KerrStack.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
-        <span class="k">if</span> <span class="s1">&#39;fields&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">(</span><span class="s1">&#39;field&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="s1">&#39;field&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 <span class="c1">#    </span>
@@ -564,24 +625,127 @@
         <span class="n">fieldvals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">index_map</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">fieldvals</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="KerrStack.correct_drifts"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.correct_drifts.html#Stoner.Image.stack.KerrStack.correct_drifts">[docs]</a>    <span class="k">def</span> <span class="nf">correct_drifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">refindex</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">upsample_factor</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Align images to correct for image drift.</span>
-<span class="sd">        </span>
-<span class="sd">        Pass through to ImageArray.corret_drift.</span>
-<span class="sd">        </span>
-<span class="sd">        Arg:</span>
-<span class="sd">            refindex: int or str</span>
-<span class="sd">                index or name of the reference image to use for zero drift</span>
-<span class="sd">        Keyword Arguments:</span>
-<span class="sd">            threshold(float): see ImageArray.correct_drift</span>
-<span class="sd">            upsample_factor(int): see ImageArray.correct_drift</span>
-<span class="sd">            box: see ImageArray.correct_drift</span>
-<span class="sd">            </span>
+<div class="viewcode-block" id="KerrStack.reverse"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.reverse.html#Stoner.Image.stack.KerrStack.reverse">[docs]</a>    <span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reverse the image order</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">ref</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">refindex</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;correct_drift&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-                     <span class="n">upsample_factor</span><span class="o">=</span><span class="n">upsample_factor</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">)</span></div></div>
-                               
+        <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+                              
+<div class="viewcode-block" id="KerrStack.denoise_thresh"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.denoise_thresh.html#Stoner.Image.stack.KerrStack.denoise_thresh">[docs]</a>    <span class="k">def</span> <span class="nf">denoise_thresh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">denoise_weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;apply denoise then threshold images.</span>
+<span class="sd">        Return a new MaskStack.</span>
+<span class="sd">        True for values greater than thresh, False otherwise</span>
+<span class="sd">        else return True for values between thresh and 1&quot;&quot;&quot;</span>
+        <span class="n">masks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">masks</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;denoise&#39;</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">masks</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;threshold_minmax&#39;</span><span class="p">,</span> <span class="n">threshmin</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> 
+                        <span class="n">threshmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">masks</span><span class="o">.</span><span class="n">imarray</span><span class="p">))</span>        
+        <span class="n">masks</span><span class="o">=</span><span class="n">MaskStack</span><span class="p">(</span><span class="n">masks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">invert</span><span class="p">:</span>
+            <span class="n">masks</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">masks</span><span class="o">.</span><span class="n">imarray</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">masks</span></div>
+    
+<div class="viewcode-block" id="KerrStack.find_threshold"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.find_threshold.html#Stoner.Image.stack.KerrStack.find_threshold">[docs]</a>    <span class="k">def</span> <span class="nf">find_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Try to find the threshold value at which the image switches. Takes</span>
+<span class="sd">        it as the median value of the testim. Masks values</span>
+<span class="sd">        where the difference is less than tolerance in case part of the image is</span>
+<span class="sd">        irrelevant.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">testim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">testim</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">testim</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">testim</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">med</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">testim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">med</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">testim</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">mask</span><span class="p">)]))</span>
+        <span class="k">return</span> <span class="n">med</span></div>
+        
+<div class="viewcode-block" id="KerrStack.stable_mask"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.stable_mask.html#Stoner.Image.stack.KerrStack.stable_mask">[docs]</a>    <span class="k">def</span> <span class="nf">stable_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">comparison</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Produce a mask of areas of the image that are changing little over the</span>
+<span class="sd">        stack. comparison is an optional tuple that gives the index of two images</span>
+<span class="sd">        to compare, otherwise first and last used. tolerance is the difference</span>
+<span class="sd">        tolerance&quot;&quot;&quot;</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">mask</span><span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">&lt;</span><span class="n">tolerance</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">mask</span></div>
+    
+<div class="viewcode-block" id="KerrStack.crop_text"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.crop_text.html#Stoner.Image.stack.KerrStack.crop_text">[docs]</a>    <span class="k">def</span> <span class="nf">crop_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Crop the bottom text area from a standard Kermit image stack</span>
+<span class="sd">        Returns:</span>
+<span class="sd">        (self):</span>
+<span class="sd">            cropped image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">assert</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="n">AN_IM_SIZE</span> <span class="ow">or</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="n">IM_SIZE</span><span class="p">,</span> \
+                <span class="s1">&#39;Need a full sized Kerr image to crop&#39;</span> <span class="c1">#check it&#39;s a normal image</span>
+        <span class="n">crop</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crop_stack</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">crop</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="KerrStack.HcMap"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.HcMap.html#Stoner.Image.stack.KerrStack.HcMap">[docs]</a>    <span class="k">def</span> <span class="nf">HcMap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">correct_drift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">baseimage</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
+              <span class="n">saturation_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">saturation_white</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">extra_info</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;produce a map of the switching field at every pixel in the stack.</span>
+<span class="sd">        It needs the stack to start saturated one way and end saturated the other way.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            threshold(float):</span>
+<span class="sd">                the threshold value for the intensity switching. This will need to </span>
+<span class="sd">                be tuned for each stack</span>
+<span class="sd">            correct_drift(bol):</span>
+<span class="sd">                whether to correct drift on the image stack before proceding</span>
+<span class="sd">            baseimage(int or ImageArray):</span>
+<span class="sd">                we use drift correction from the baseimage.</span>
+<span class="sd">            saturation_end(bool):</span>
+<span class="sd">                last image in stack is closest to saturation </span>
+<span class="sd">            saturation_white(bool):</span>
+<span class="sd">                bright pixels are saturated dark pixels are not yet switched</span>
+<span class="sd">            quiet: bool</span>
+<span class="sd">                choose wether to output status updates as print messages</span>
+<span class="sd">            extra_info(bool):</span>
+<span class="sd">                choose whether to return intermediate calculation steps as an extra dictionary        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (ImageArray): The map of field values for switching of each pixel in the stack</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ks</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseimage</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
+            <span class="n">baseimage</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">baseimage</span><span class="p">]</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">baseimage</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">baseimage</span> <span class="o">=</span> <span class="n">baseimage</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">correct_drift</span><span class="p">:</span>
+            <span class="n">ks</span><span class="o">.</span><span class="n">apply_all</span><span class="p">(</span><span class="s1">&#39;correct_drift&#39;</span><span class="p">,</span> <span class="n">ref</span><span class="o">=</span><span class="n">baseimage</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;drift correct done&#39;</span><span class="p">)</span>
+        <span class="n">masks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">denoise_thresh</span><span class="p">(</span><span class="n">denoise_weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">thresh</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">invert</span><span class="o">=</span><span class="ow">not</span><span class="p">(</span><span class="n">saturation_white</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;thresholding done&#39;</span><span class="p">)</span>  
+        <span class="n">si</span><span class="p">,</span><span class="n">sp</span> <span class="o">=</span> <span class="n">masks</span><span class="o">.</span><span class="n">switch_index</span><span class="p">(</span><span class="n">saturation_end</span><span class="o">=</span><span class="n">saturation_end</span><span class="p">)</span>       
+        <span class="n">Hcmap</span><span class="o">=</span><span class="n">ks</span><span class="o">.</span><span class="n">index_to_field</span><span class="p">(</span><span class="n">si</span><span class="p">)</span>
+        <span class="n">Hcmap</span><span class="p">[</span><span class="n">Hcmap</span><span class="o">==</span><span class="n">ks</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">=</span><span class="mi">0</span> <span class="c1">#not switching does not give us a Hc value</span>
+        <span class="k">if</span> <span class="n">extra_info</span><span class="p">:</span>
+            <span class="n">ei</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;switch_index&#39;</span><span class="p">:</span><span class="n">si</span><span class="p">,</span> <span class="s1">&#39;switch_array&#39;</span><span class="p">:</span><span class="n">sp</span><span class="p">,</span> <span class="s1">&#39;masks&#39;</span><span class="p">:</span><span class="n">masks</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">Hcmap</span><span class="p">,</span> <span class="n">ei</span>
+        <span class="k">return</span> <span class="n">Hcmap</span></div>
+
+<div class="viewcode-block" id="KerrStack.average_Hcmap"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.average_Hcmap.html#Stoner.Image.stack.KerrStack.average_Hcmap">[docs]</a>    <span class="k">def</span> <span class="nf">average_Hcmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get an array of average pixel values for the stack.</span>
+<span class="sd">        Return average of pixel values in the stack.</span>
+<span class="sd">        </span>
+<span class="sd">        Keyword arguments:</span>
+<span class="sd">            ignore zeros(bool):</span>
+<span class="sd">                Weight zero values in an image as 0 in the averaging.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            average(ImageArray):</span>
+<span class="sd">                average values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">ignore_zeros</span><span class="p">:</span>
+            <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+            <span class="n">weights</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">weights</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="c1">#1 if Hc isn&#39;t zero, zero otherwise</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="c1">#stop zero division error</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">weights</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">condition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">condition</span><span class="p">)],</span>
+                                 <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">m</span><span class="p">]),</span><span class="n">weights</span><span class="p">[</span><span class="n">m</span><span class="p">]])</span>
+            <span class="c1">#weights means we only account for non-zero values in average                     </span>
+        <span class="n">average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">average</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>    </div></div>
     
 <div class="viewcode-block" id="MaskStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.html#Stoner.Image.stack.MaskStack">[docs]</a><span class="k">class</span> <span class="nc">MaskStack</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Similar to ImageStack but made for stacks of boolean or binary images</span>
@@ -621,16 +785,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">saturation_end</span><span class="p">:</span>
-            <span class="n">ms</span><span class="o">=</span><span class="nb">reversed</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+            <span class="n">ms</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="c1">#arr1 = ms[0].astype(float) #find out whether True is at begin or end</span>
+        <span class="c1">#arr2 = ms[-1].astype(float)</span>
+        <span class="c1">#if np.average(arr1)&gt;np.average(arr2): #OK so it&#39;s bright at the start</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">saturation_value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">imarray</span><span class="p">)</span> <span class="c1">#Now it&#39;s bright (True) at end</span>
         <span class="n">switch_ind</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="n">switch_prog</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
-        <span class="n">switch_prog</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-                    <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-        <span class="n">switch_prog</span><span class="o">.</span><span class="n">fields</span><span class="o">=</span><span class="n">switch_prog</span><span class="o">.</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">switch_prog</span><span class="o">.</span><span class="n">imarray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">del</span><span class="p">(</span><span class="n">switch_prog</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span> <span class="c1">#go from saturation backwards</span>
             <span class="n">already_done</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">switch_ind</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span> <span class="c1">#only change switch_ind if it hasn&#39;t already</span>
-            <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span> <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">!=</span><span class="n">saturation_value</span><span class="p">,</span> 
-                                      <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">saturation_value</span> <span class="p">)</span>
+            <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span> <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">!=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ms</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span> <span class="p">)</span>
             <span class="n">condition</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">already_done</span><span class="p">))</span>
             <span class="n">condition</span><span class="o">=</span><span class="p">[</span><span class="n">condition</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">condition</span><span class="p">)]</span>
             <span class="n">choice</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">switch_ind</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">m</span><span class="p">,</span> <span class="n">switch_ind</span><span class="p">]</span> <span class="c1">#index or leave as is</span>
@@ -641,7 +808,6 @@
             <span class="n">switch_prog</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
         <span class="n">switch_ind</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">(</span><span class="n">switch_ind</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">switch_ind</span><span class="p">,</span> <span class="n">switch_prog</span></div></div>
-        
 </pre></div>
 
           </div>
@@ -681,7 +847,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

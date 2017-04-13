@@ -115,28 +115,43 @@ images should be added or removed using the list like methods append, insert, de
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.apply_all.html#Stoner.Image.stack.ImageStack.apply_all" title="Stoner.Image.stack.ImageStack.apply_all"><code class="xref py py-obj docutils literal"><span class="pre">apply_all</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>apply function to all images in the stack</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.clip_intensity.html#Stoner.Image.stack.ImageStack.clip_intensity" title="Stoner.Image.stack.ImageStack.clip_intensity"><code class="xref py py-obj docutils literal"><span class="pre">clip_intensity</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.average.html#Stoner.Image.stack.ImageStack.average" title="Stoner.Image.stack.ImageStack.average"><code class="xref py py-obj docutils literal"><span class="pre">average</span></code></a>([weights])</td>
+<td>Get an array of average pixel values for the stack.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.clip_intensity.html#Stoner.Image.stack.ImageStack.clip_intensity" title="Stoner.Image.stack.ImageStack.clip_intensity"><code class="xref py py-obj docutils literal"><span class="pre">clip_intensity</span></code></a>()</td>
 <td>Clip intensity that lies outside the range allowed by dtype.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.convert_float.html#Stoner.Image.stack.ImageStack.convert_float" title="Stoner.Image.stack.ImageStack.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.convert_float.html#Stoner.Image.stack.ImageStack.convert_float" title="Stoner.Image.stack.ImageStack.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
 <td>Convert the imarray to floating point type normalised to -1 to 1.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.dtype_limits.html#Stoner.Image.stack.ImageStack.dtype_limits" title="Stoner.Image.stack.ImageStack.dtype_limits"><code class="xref py py-obj docutils literal"><span class="pre">dtype_limits</span></code></a>([clip_negative])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.correct_drifts.html#Stoner.Image.stack.ImageStack.correct_drifts" title="Stoner.Image.stack.ImageStack.correct_drifts"><code class="xref py py-obj docutils literal"><span class="pre">correct_drifts</span></code></a>(refindex[,&nbsp;threshold,&nbsp;...])</td>
+<td>Align images to correct for image drift.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.crop_stack.html#Stoner.Image.stack.ImageStack.crop_stack" title="Stoner.Image.stack.ImageStack.crop_stack"><code class="xref py py-obj docutils literal"><span class="pre">crop_stack</span></code></a>(box)</td>
+<td>Crop the imagestack.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.dtype_limits.html#Stoner.Image.stack.ImageStack.dtype_limits" title="Stoner.Image.stack.ImageStack.dtype_limits"><code class="xref py py-obj docutils literal"><span class="pre">dtype_limits</span></code></a>([clip_negative])</td>
 <td>Return intensity limits, i.e.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.insert.html#Stoner.Image.stack.ImageStack.insert" title="Stoner.Image.stack.ImageStack.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a>(index,&nbsp;item)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.insert.html#Stoner.Image.stack.ImageStack.insert" title="Stoner.Image.stack.ImageStack.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a>(index,&nbsp;item)</td>
 <td>Insert an image array at index</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save" title="Stoner.Image.stack.ImageStack.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save" title="Stoner.Image.stack.ImageStack.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname)</td>
 <td>probably should save in hdf5 format</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show" title="Stoner.Image.stack.ImageStack.show"><code class="xref py py-obj docutils literal"><span class="pre">show</span></code></a>()</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show" title="Stoner.Image.stack.ImageStack.show"><code class="xref py py-obj docutils literal"><span class="pre">show</span></code></a>()</td>
 <td>Show the stack of images in a skimage CollectionViewer window</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.slice_metadata.html#Stoner.Image.stack.ImageStack.slice_metadata" title="Stoner.Image.stack.ImageStack.slice_metadata"><code class="xref py py-obj docutils literal"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;values_only])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.slice_metadata.html#Stoner.Image.stack.ImageStack.slice_metadata" title="Stoner.Image.stack.ImageStack.slice_metadata"><code class="xref py py-obj docutils literal"><span class="pre">slice_metadata</span></code></a>(key[,&nbsp;values_only])</td>
 <td>List of metadata values for each image given key.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.subtract.html#Stoner.Image.stack.ImageStack.subtract" title="Stoner.Image.stack.ImageStack.subtract"><code class="xref py py-obj docutils literal"><span class="pre">subtract</span></code></a>(background[,&nbsp;contrast,&nbsp;clip_intensity])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.stddev.html#Stoner.Image.stack.ImageStack.stddev" title="Stoner.Image.stack.ImageStack.stddev"><code class="xref py py-obj docutils literal"><span class="pre">stddev</span></code></a>([weights])</td>
+<td>calculate weighted standard deviation for stack</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.stderr.html#Stoner.Image.stack.ImageStack.stderr" title="Stoner.Image.stack.ImageStack.stderr"><code class="xref py py-obj docutils literal"><span class="pre">stderr</span></code></a>([weights])</td>
+<td>Standard error in the stack average</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.ImageStack.subtract.html#Stoner.Image.stack.ImageStack.subtract" title="Stoner.Image.stack.ImageStack.subtract"><code class="xref py py-obj docutils literal"><span class="pre">subtract</span></code></a>(background[,&nbsp;contrast,&nbsp;clip_intensity])</td>
 <td>Subtract a background image (or index) from all images in the stack.</td>
 </tr>
 </tbody>
@@ -223,7 +238,7 @@ images should be added or removed using the list like methods append, insert, de
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

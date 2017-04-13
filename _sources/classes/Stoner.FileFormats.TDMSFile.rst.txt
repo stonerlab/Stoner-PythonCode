@@ -64,6 +64,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.column_headers
       ~Stoner.FileFormats.TDMSFile.data
       ~Stoner.FileFormats.TDMSFile.dict_records
+      ~Stoner.FileFormats.TDMSFile.dims
       ~Stoner.FileFormats.TDMSFile.dtype
       ~Stoner.FileFormats.TDMSFile.filename
       ~Stoner.FileFormats.TDMSFile.mask

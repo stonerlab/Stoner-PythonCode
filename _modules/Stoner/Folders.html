@@ -70,76 +70,11 @@
 <span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">ismethod</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">metadataObject</span><span class="p">,</span><span class="n">DataFile</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">metadataObject</span><span class="p">,</span><span class="n">DataFile</span><span class="p">,</span><span class="n">regexpDict</span>
 
 
 <span class="n">regexp_type</span><span class="o">=</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">,)</span>
 
-<span class="k">class</span> <span class="nc">regexpDict</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An ordered dictionary that permits looks up by regular expression.&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Lookup name and find a matching key or raise KeyError.</span>
-
-<span class="sd">        Parameters:</span>
-<span class="sd">            name (str, re._pattern_type): The name to be searched for</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Canonical key matching the specified name.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            KeyError: if no key matches name.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__contains__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">name</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">nm</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">nm</span><span class="o">=</span><span class="n">name</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span> <span class="c1">#We can do this because we&#39;re an OrderedDict!</span>
-            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">nm</span><span class="o">=</span><span class="n">name</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">nm</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-                        <span class="k">return</span> <span class="n">n</span>
-
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a lookup via regular expression when retrieving items.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Overwrites any matching key, or if not found adds a new key.&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-            <span class="n">key</span><span class="o">=</span><span class="n">name</span>
-        <span class="n">OrderedDict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deletes keys that match by regular expression as well as exact matches&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns True if name either is an exact key or matches when interpreted as a regular experssion.&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        
-    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;Key is definitely in dictionary as literal&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__contains__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">baseFolder</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</span>
@@ -180,6 +115,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="o">=</span><span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="o">=</span><span class="n">metadataObject</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span>
         
 
@@ -258,7 +194,7 @@
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
             <span class="n">val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">f</span><span class="p">,</span><span class="n">val</span>
+                <span class="k">yield</span> <span class="n">f</span><span class="p">,</span><span class="n">val</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -290,14 +226,11 @@
 <span class="sd">        Note:</span>
 <span class="sd">            not_empty will also silently skip over any cases where loading the metadataObject object will raise</span>
 <span class="sd">            and exception.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">continue</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="k">yield</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">objects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -342,7 +275,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span>
             <span class="n">name</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
-            <span class="n">name</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_objects</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">name</span>
 
     <span class="k">def</span> <span class="nf">__names__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -420,7 +353,7 @@
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__deleter__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">__clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Do whatever is necessary to copy attributes from self to other.</span>
 
 <span class="sd">        Note:</span>
@@ -429,13 +362,18 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">other</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">other</span><span class="o">.</span><span class="n">args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span>
         <span class="n">other</span><span class="o">.</span><span class="n">kargs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kargs</span>
         <span class="n">other</span><span class="o">.</span><span class="n">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">k</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">kargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">attrs_only</span><span class="p">:</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">groups</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+            <span class="n">other</span><span class="o">.</span><span class="n">objects</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">objects</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">other</span>
 
     <span class="c1">###########################################################################</span>
@@ -482,7 +420,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is out of range.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="nb">slice</span><span class="p">):</span> <span class="c1">#Possibly ought to return another Folder?</span>
-            <span class="n">other</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">()</span>
+            <span class="n">other</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">iname</span> <span class="ow">in</span> <span class="n">islice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">(),</span><span class="n">name</span><span class="o">.</span><span class="n">start</span><span class="p">,</span><span class="n">name</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span><span class="n">name</span><span class="o">.</span><span class="n">step</span><span class="p">):</span>
                 <span class="n">other</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">iname</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">iname</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">other</span>
@@ -689,8 +627,6 @@
         <span class="n">result</span><span class="o">=</span><span class="bp">self</span>
         <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__sub_core__</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">other</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
-
-        
         
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles some special case attributes that provide alternative views of the objectFolder</span>
@@ -792,6 +728,19 @@
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">reverse_iterator</span>
 
+    <span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handles removing an attribute from the folder, including proxied attributes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span><span class="s2">&quot;args&quot;</span><span class="p">,</span><span class="s2">&quot;kargs&quot;</span><span class="p">,</span><span class="s2">&quot;objects&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="p">]:</span> <span class="c1"># pass ddirectly through for private attributes</span>
+            <span class="k">raise</span> <span class="n">AttrobuteError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is a protected attribute and may not be deleted!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_type&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">getaatr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">name</span><span class="p">))):</span>
+            <span class="c1">#If we&#39;re tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Pass through to set the sample attributes.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span><span class="s2">&quot;args&quot;</span><span class="p">,</span><span class="s2">&quot;kargs&quot;</span><span class="p">,</span><span class="s2">&quot;objects&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="p">]:</span> <span class="c1"># pass ddirectly through for private attributes</span>
@@ -802,6 +751,7 @@
             <span class="c1">#If we&#39;re tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
 
@@ -889,7 +839,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="c1"># do nothing here</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">()</span>
+            <span class="n">new_group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="n">new_group</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="o">=</span><span class="n">key</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -1206,7 +1156,7 @@
             <span class="s2">&quot;endsswith&quot;</span><span class="p">:</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
             <span class="s2">&quot;iendsswith&quot;</span><span class="p">:</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">:</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">k</span><span class="o">.</span><span class="n">upper</span><span class="p">()),</span>
         <span class="p">}</span>
-        <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span>
+        <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">recurse</span><span class="p">:</span>
             <span class="n">gkargs</span><span class="o">=</span><span class="p">{}</span>
             <span class="n">gkargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kargs</span><span class="p">)</span>
@@ -1242,6 +1192,31 @@
         <span class="sd">&quot;&quot;&quot;Return or set a subgroup or named object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return an array of the metadata values for each item/file in the</span>
+<span class="sd">        top level group</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key(str, regexp or list of str): the meta data key(s) to return</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (array of metadata): If single key is given and is an exact match then</span>
+<span class="sd">                returns an array of the matching values. If the key results in a regular</span>
+<span class="sd">                expression match, then returns an array of dictionaries of all matching keys. If key is a</span>
+<span class="sd">                list ir other iterable, then return a 2D array where each column corresponds to one of the keys.</span>
+<span class="sd">            </span>
+<span class="sd">        TODO:</span>
+<span class="sd">            Add options to recurse through all groups? Put back RCT&#39;s values only functionality?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="o">+</span><span class="n">regexp_type</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_metadata</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not recognised for sliceing metadata&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sort the files by some key</span>
@@ -1403,11 +1378,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">getlist</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         
         
-    <span class="k">def</span> <span class="nf">__clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__clone__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add something to stop clones from autolisting again.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">other</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">readlist</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DiskBssedFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defaults</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">arg</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">arg</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">arg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DiskBssedFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">other</span><span class="o">=</span><span class="n">other</span><span class="p">,</span><span class="n">attrs_only</span><span class="o">=</span><span class="n">attrs_only</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Select Folder&quot;</span><span class="p">,</span>  <span class="n">new_directory</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates a directory dialog box for working with</span>
@@ -1523,7 +1501,7 @@
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DiskBssedFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="n">instantiate</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span><span class="ne">IndexError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
             <span class="k">pass</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
             <span class="n">name</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
         <span class="n">tmp</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
@@ -1658,6 +1636,17 @@
 <span class="sd">            A list of the saved files</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;root&quot;</span><span class="p">,</span><span class="n">root</span><span class="p">})</span>
+    
+    <span class="k">def</span> <span class="nf">unload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes the instance from memory without losing the name in the Folder.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name(string or int): Specifies the entry to unload from memeory.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            (DataFolder): returns a copy of itself.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
 
 
 
@@ -1940,7 +1929,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

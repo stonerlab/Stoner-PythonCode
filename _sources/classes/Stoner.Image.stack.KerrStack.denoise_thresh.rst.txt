@@ -1,8 +1,8 @@
 
 
-KerrStack.correct_drifts
+KerrStack.denoise_thresh
 ===========================================
 
 .. currentmodule:: Stoner.Image.stack
 
-.. automethod:: KerrStack.correct_drifts
+.. automethod:: KerrStack.denoise_thresh

@@ -49,7 +49,8 @@
           <div class="body" role="main">
             
   <h1>Source code for Stoner.Image.core</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Tue May 03 14:31:14 2016</span>
 
@@ -614,12 +615,14 @@
         <span class="n">newmet</span><span class="o">=</span><span class="p">{}</span>
         <span class="n">useful_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">,</span><span class="s1">&#39;field: units&#39;</span><span class="p">,</span><span class="s1">&#39;MicronsPerPixel&#39;</span><span class="p">,</span><span class="s1">&#39;Comment:&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;Contrast Shift&#39;</span><span class="p">,</span><span class="s1">&#39;HorizontalFieldOfView&#39;</span><span class="p">,</span><span class="s1">&#39;Images to Average&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Lens&#39;</span><span class="p">,</span><span class="s1">&#39;Magnification&#39;</span><span class="p">,</span><span class="s1">&#39;Substraction Std&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;Lens&#39;</span><span class="p">,</span><span class="s1">&#39;Magnification.__text__&#39;</span><span class="p">,</span><span class="s1">&#39;Substraction Std&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">,</span><span class="s1">&#39;field: units&#39;</span><span class="p">]]):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="c1">#we&#39;ve not got a standard Labview output, not safe to reduce</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">useful_keys</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
                 <span class="n">newmet</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
         <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">)</span> <span class="c1">#rename</span>
         <span class="k">if</span> <span class="s1">&#39;Substraction Std&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;subtraction&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Substraction Std&#39;</span><span class="p">)</span>
@@ -804,7 +807,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

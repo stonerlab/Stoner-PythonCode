@@ -419,6 +419,13 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Set as column string ended with a number&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_cols</span><span class="p">())</span>
 
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Try to see if attribute name is a key in self.cols and return that instead.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_setas</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Permit the setas attribute to be treated like either a list or a dictionary.</span>
 
@@ -559,7 +566,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">possible</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
-            <span class="n">indices</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">col</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">indices</span><span class="p">)</span>
             <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
@@ -670,7 +677,86 @@
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="typeHintedDict"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict">[docs]</a><span class="k">class</span> <span class="nc">typeHintedDict</span><span class="p">(</span><span class="n">sorteddict</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">regexpDict</span><span class="p">(</span><span class="n">sorteddict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An ordered dictionary that permits looks up by regular expression.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__lookup__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Lookup name and find a matching key or raise KeyError.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            name (str, re._pattern_type): The name to be searched for</span>
+<span class="sd">            </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            multiple (bool): Return a singl entry ()default, False) or multiple entries</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Canonical key matching the specified name.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KeyError: if no key matches name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span><span class="o">=</span><span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span> <span class="c1">#name directly as key</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">name</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#Fall back to regular expression lookup</span>
+            <span class="n">nm</span><span class="o">=</span><span class="n">name</span>           
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">nm</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span> <span class="c1">#We can do this because we&#39;re an OrderedDict!</span>
+                <span class="n">ret</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nm</span><span class="o">=</span><span class="n">name</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nm</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+                <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">nm</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">multiple</span><span class="p">:</span> <span class="c1">#sort out returing multiple entries or not</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="p">[</span><span class="n">ret</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds a lookup via regular expression when retrieving items.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrites any matching key, or if not found adds a new key.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a match to any key.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+            <span class="n">key</span><span class="o">=</span><span class="n">name</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deletes keys that match by regular expression as well as exact matches&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns True if name either is an exact key or matches when interpreted as a regular experssion.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        
+    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;Key is definitely in dictionary as literal&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__contains__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="typeHintedDict"><a class="viewcode-back" href="../../classes/Stoner.Core.typeHintedDict.html#Stoner.Core.typeHintedDict">[docs]</a><span class="k">class</span> <span class="nc">typeHintedDict</span><span class="p">(</span><span class="n">regexpDict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Extends a :py:class:`blist.sorteddict` to include type hints of what each key contains.</span>
 
 <span class="sd">    The CM Physics Group at Leeds makes use of a standard file format that closely matches</span>
@@ -905,11 +991,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            metadata value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">name</span>
         <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">typehint</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">typehint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">value</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__mungevalue</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid key even when interpreted as a sregular expression!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)}</span>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provides a method to set an item in the dict, checking the key for</span>
@@ -945,6 +1038,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            name (string): The keyname to be deleted&quot;&quot;&quot;</span>
         <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_name_</span><span class="p">(</span><span class="n">name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
         <span class="k">del</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_typehints</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">typeHintedDict</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
@@ -1164,6 +1259,8 @@
             <span class="s2">&quot;v&quot;</span><span class="p">:</span> <span class="s2">&quot;vcol&quot;</span><span class="p">,</span>
             <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="s2">&quot;wcol&quot;</span><span class="p">,</span>
         <span class="p">}</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">col_check</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DataArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="n">indexer</span><span class="o">=</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
@@ -1294,12 +1391,12 @@
     <span class="k">def</span> <span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the DataArray as a normal numpy array for those operations that need this&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ma_</span><span class="o">.</span><span class="n">getdata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-    
+     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">isrow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Defines whether this is a single row or a column if 1D.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">_row</span>
-
+    
     <span class="nd">@isrow</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">isrow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set whether this object is a single row or not.&quot;&quot;&quot;</span>
@@ -1473,11 +1570,21 @@
 <span class="sd">        clone (DataFile): Creates a deep copy of the :py:class`DataFile` object.</span>
 <span class="sd">        dict_records (array of dictionaries): View the data as an array or dictionaries where each dictionary represnets one</span>
 <span class="sd">            row with keys dervied from column headers.</span>
+<span class="sd">        dims (int): When data columns are set as x,y,z etc. returns the number of dimensions implied in the data set</span>
 <span class="sd">        dtype (numpoy dtype): Returns the datatype stored in the :py:attr:`DataFile.data` attribute.</span>
 <span class="sd">        T (:py:class:`DataArray`): Transposed version of the data.</span>
 <span class="sd">        subclasses (list): Returns a list of all the subclasses of DataFile currently in memory, sorted by</span>
 <span class="sd">                           their py:attr:`Stoner.Core.DataFile.priority`. Each entry in the list consists of the</span>
 <span class="sd">                           string name of the subclass and the class object.</span>
+<span class="sd">        xcol (int): If a column has been designated as containing *x* values, this will return the index of that column</span>
+<span class="sd">        xerr (int): Similarly to :py:attr:`DataFile.xcol` but for the x-error value column.</span>
+<span class="sd">        ycol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y value columns.</span>
+<span class="sd">        yerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the y error value columns.</span>
+<span class="sd">        zcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z value columns.</span>
+<span class="sd">        zerr (list of int): Similarly to :py:attr:`DataFile.xcol` but for the z error value columns.</span>
+<span class="sd">        ucol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the u (x-axis direction cosine) columns.</span>
+<span class="sd">        vcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the v (y-axis direction cosine) columns.</span>
+<span class="sd">        wcol (list of int): Similarly to :py:attr:`DataFile.xcol` but for the w (z-axis direction cosine) columns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1711,6 +1818,11 @@
         <span class="sd">&quot;&quot;&quot;Return the data as a dictionary of single columns with column headers for the keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rows</span><span class="p">()])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;An alias for self.data.axes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">axes</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -2116,7 +2228,7 @@
         <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;axes&quot;</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
             <span class="n">swaps</span><span class="o">=</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">],[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;d&quot;</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;axes&quot;</span><span class="p">]</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">:</span>
-            <span class="n">awaps</span><span class="o">=</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">],[</span><span class="s2">&quot;z&quot;</span><span class="p">,</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">,</span><span class="s2">&quot;d&quot;</span><span class="p">])</span>
+            <span class="n">swaps</span><span class="o">=</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;ycol&quot;</span><span class="p">,</span><span class="s2">&quot;zcol&quot;</span><span class="p">,</span><span class="s2">&quot;yerr&quot;</span><span class="p">,</span><span class="s2">&quot;zerr&quot;</span><span class="p">],[</span><span class="s2">&quot;z&quot;</span><span class="p">,</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="s2">&quot;f&quot;</span><span class="p">,</span><span class="s2">&quot;d&quot;</span><span class="p">])</span>
         <span class="n">setas</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xcol&quot;</span><span class="p">]]</span><span class="o">=</span><span class="s2">&quot;y&quot;</span>
         <span class="k">if</span> <span class="n">cols</span><span class="p">[</span><span class="s2">&quot;has_xerr&quot;</span><span class="p">]:</span>
             <span class="n">setas</span><span class="p">[</span><span class="n">cols</span><span class="p">[</span><span class="s2">&quot;xerr&quot;</span><span class="p">]]</span><span class="o">=</span><span class="s2">&quot;e&quot;</span>
@@ -2276,14 +2388,10 @@
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">setas_cols</span><span class="p">:</span>
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_getattr_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">ret</span>
-<span class="c1">#        for c in self._mro:</span>
-<span class="c1">#            print(self.__class__.__name__)</span>
-<span class="c1">#            if c not in (DataFile,metadataObject):</span>
-<span class="c1">#                try:</span>
-<span class="c1">#                    ret = c.__getattr__(self,name)</span>
-<span class="c1">#                    return ret</span>
-<span class="c1">#                except AttributeError:</span>
-<span class="c1">#                    continue</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">cols</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">!=</span><span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">ret</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">_setas</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
@@ -3314,14 +3422,20 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            self: A copy of the modified :py:class:`DataFile` object&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">headers_too</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+            <span class="n">column_headers</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">column_headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span>
         <span class="k">if</span> <span class="n">setas_too</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+            <span class="n">setas</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">setas</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span>
 
         <span class="n">newdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">cols</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))])</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
             <span class="n">newdata</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_col</span><span class="p">(</span><span class="n">col</span><span class="p">)]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">newdata</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setas</span><span class="o">=</span><span class="n">setas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">column_headers</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="DataFile.rolling_window"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.rolling_window.html#Stoner.Core.DataFile.rolling_window">[docs]</a>    <span class="k">def</span> <span class="nf">rolling_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclude_centre</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -3346,9 +3460,9 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;Window must be at least two bigger than the number of rows exluded from the centre, bigger than 3 and odd&quot;</span><span class="p">)</span>
 
-        <span class="n">hw</span> <span class="o">=</span> <span class="p">(</span><span class="n">window</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">hw</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">window</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">exclude_centre</span><span class="p">:</span>
-            <span class="n">hc</span> <span class="o">=</span> <span class="p">(</span><span class="n">exclude_centre</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">hc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">exclude_centre</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">hw</span><span class="p">:</span>
@@ -3391,7 +3505,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">row</span></div>
 
-<div class="viewcode-block" id="DataFile.save"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="DataFile.save"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.save.html#Stoner.Core.DataFile.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">as_loaded</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves a string representation of the current DataFile object into the file &#39;filename&#39;.</span>
 
 <span class="sd">        Args:</span>
@@ -3399,6 +3513,9 @@
 <span class="sd">                None then the current filename for the object is used</span>
 <span class="sd">                If this is not set, then then a file dialog is used. If f</span>
 <span class="sd">                ilename is False then a file dialog is forced.</span>
+<span class="sd">            as_loaded (bool,str): If True, then the *Loaded as* key is inspected to see what the original</span>
+<span class="sd">                class of the DataFile was and then this class&#39; save method is used to save the data. If a str then</span>
+<span class="sd">                the keyword value is interpreted as the name of a subclass of the the current DataFile.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            self: The current :py:class:`DataFile` object</span>
@@ -3408,6 +3525,21 @@
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>
             <span class="c1"># now go and ask for one</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">as_loaded</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span><span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;Loaded as&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span> <span class="c1"># Use the Loaded as key to find a different save routine</span>
+                <span class="n">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;Loaded as&quot;</span><span class="p">]]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span> <span class="n">as_loaded</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">:</span>
+                <span class="n">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subclasses</span><span class="p">[</span><span class="n">as_loaded</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> cannot be interpreted as a valid sub class of </span><span class="si">{}</span><span class="s2"> so cannot be used to save this data&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">as_loaded</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">cls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="n">ret</span><span class="o">.</span><span class="n">filename</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="c1"># Normalise the extension to ensure it&#39;s something we like...</span>
+        <span class="n">filename</span><span class="p">,</span><span class="n">ext</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;*.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+            <span class="n">ext</span><span class="o">=</span><span class="n">DataFile</span><span class="o">.</span><span class="n">patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">ext</span><span class="p">)</span>
         <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TDI Format 1.5&quot;</span><span class="p">]</span>
         <span class="n">header</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
         <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
@@ -3422,10 +3554,10 @@
             <span class="n">mdtext</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mdtext</span><span class="p">,</span> <span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">mdtext</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">))</span>
         <span class="n">data_out</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">mdtext</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
         <span class="n">fmt</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">data_out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">_np_</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">data_out</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">mdremains</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">str2bytes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -3680,7 +3812,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

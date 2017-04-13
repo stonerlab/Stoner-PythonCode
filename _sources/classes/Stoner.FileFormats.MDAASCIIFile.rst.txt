@@ -64,6 +64,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.column_headers
       ~Stoner.FileFormats.MDAASCIIFile.data
       ~Stoner.FileFormats.MDAASCIIFile.dict_records
+      ~Stoner.FileFormats.MDAASCIIFile.dims
       ~Stoner.FileFormats.MDAASCIIFile.dtype
       ~Stoner.FileFormats.MDAASCIIFile.filename
       ~Stoner.FileFormats.MDAASCIIFile.mask

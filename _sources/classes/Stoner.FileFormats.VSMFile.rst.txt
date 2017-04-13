@@ -64,6 +64,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.column_headers
       ~Stoner.FileFormats.VSMFile.data
       ~Stoner.FileFormats.VSMFile.dict_records
+      ~Stoner.FileFormats.VSMFile.dims
       ~Stoner.FileFormats.VSMFile.dtype
       ~Stoner.FileFormats.VSMFile.filename
       ~Stoner.FileFormats.VSMFile.mask

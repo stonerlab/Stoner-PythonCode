@@ -64,6 +64,7 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.column_headers
       ~Stoner.FileFormats.LSTemperatureFile.data
       ~Stoner.FileFormats.LSTemperatureFile.dict_records
+      ~Stoner.FileFormats.LSTemperatureFile.dims
       ~Stoner.FileFormats.LSTemperatureFile.dtype
       ~Stoner.FileFormats.LSTemperatureFile.filename
       ~Stoner.FileFormats.LSTemperatureFile.mask

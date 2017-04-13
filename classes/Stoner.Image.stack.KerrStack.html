@@ -27,7 +27,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="KerrStack.__init__" href="Stoner.Image.stack.KerrStack.__init__.html" />
+    <link rel="next" title="KerrStack.HcMap" href="Stoner.Image.stack.KerrStack.HcMap.html" />
     <link rel="prev" title="ImageStack.subtract" href="Stoner.Image.stack.ImageStack.subtract.html" /> 
   </head>
   <body role="document">
@@ -41,7 +41,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.__init__.html" title="KerrStack.__init__"
+          <a href="Stoner.Image.stack.KerrStack.HcMap.html" title="KerrStack.HcMap"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="Stoner.Image.stack.ImageStack.subtract.html" title="ImageStack.subtract"
@@ -77,17 +77,35 @@ for things like hysteresis.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.__init__.html#Stoner.Image.stack.KerrStack.__init__" title="Stoner.Image.stack.KerrStack.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.HcMap.html#Stoner.Image.stack.KerrStack.HcMap" title="Stoner.Image.stack.KerrStack.HcMap"><code class="xref py py-obj docutils literal"><span class="pre">HcMap</span></code></a>([threshold,&nbsp;correct_drift,&nbsp;baseimage,&nbsp;...])</td>
+<td>produce a map of the switching field at every pixel in the stack.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.__init__.html#Stoner.Image.stack.KerrStack.__init__" title="Stoner.Image.stack.KerrStack.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.correct_drifts.html#Stoner.Image.stack.KerrStack.correct_drifts" title="Stoner.Image.stack.KerrStack.correct_drifts"><code class="xref py py-obj docutils literal"><span class="pre">correct_drifts</span></code></a>(refindex[,&nbsp;threshold,&nbsp;...])</td>
-<td>Align images to correct for image drift.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.average_Hcmap.html#Stoner.Image.stack.KerrStack.average_Hcmap" title="Stoner.Image.stack.KerrStack.average_Hcmap"><code class="xref py py-obj docutils literal"><span class="pre">average_Hcmap</span></code></a>([weights,&nbsp;ignore_zeros])</td>
+<td>Get an array of average pixel values for the stack.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.crop_text.html#Stoner.Image.stack.KerrStack.crop_text" title="Stoner.Image.stack.KerrStack.crop_text"><code class="xref py py-obj docutils literal"><span class="pre">crop_text</span></code></a>([copy])</td>
+<td>Crop the bottom text area from a standard Kermit image stack</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.denoise_thresh.html#Stoner.Image.stack.KerrStack.denoise_thresh" title="Stoner.Image.stack.KerrStack.denoise_thresh"><code class="xref py py-obj docutils literal"><span class="pre">denoise_thresh</span></code></a>([denoise_weight,&nbsp;thresh,&nbsp;invert])</td>
+<td>apply denoise then threshold images.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.find_threshold.html#Stoner.Image.stack.KerrStack.find_threshold" title="Stoner.Image.stack.KerrStack.find_threshold"><code class="xref py py-obj docutils literal"><span class="pre">find_threshold</span></code></a>([testim,&nbsp;mask])</td>
+<td>Try to find the threshold value at which the image switches.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.hysteresis.html#Stoner.Image.stack.KerrStack.hysteresis" title="Stoner.Image.stack.KerrStack.hysteresis"><code class="xref py py-obj docutils literal"><span class="pre">hysteresis</span></code></a>([mask])</td>
 <td>Make a hysteresis loop of the average intensity in the given images</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.index_to_field.html#Stoner.Image.stack.KerrStack.index_to_field" title="Stoner.Image.stack.KerrStack.index_to_field"><code class="xref py py-obj docutils literal"><span class="pre">index_to_field</span></code></a>(index_map)</td>
 <td>Convert an image of index values into an image of field values</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.reverse.html#Stoner.Image.stack.KerrStack.reverse" title="Stoner.Image.stack.KerrStack.reverse"><code class="xref py py-obj docutils literal"><span class="pre">reverse</span></code></a>()</td>
+<td>Reverse the image order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.stack.KerrStack.stable_mask.html#Stoner.Image.stack.KerrStack.stable_mask" title="Stoner.Image.stack.KerrStack.stable_mask"><code class="xref py py-obj docutils literal"><span class="pre">stable_mask</span></code></a>([tolerance,&nbsp;comparison])</td>
+<td>Produce a mask of areas of the image that are changing little over the stack.</td>
 </tr>
 </tbody>
 </table>
@@ -108,8 +126,8 @@ for things like hysteresis.</p>
   <p class="topless"><a href="Stoner.Image.stack.ImageStack.subtract.html"
                         title="previous chapter">ImageStack.subtract</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Stoner.Image.stack.KerrStack.__init__.html"
-                        title="next chapter">KerrStack.__init__</a></p>
+  <p class="topless"><a href="Stoner.Image.stack.KerrStack.HcMap.html"
+                        title="next chapter">KerrStack.HcMap</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -141,7 +159,7 @@ for things like hysteresis.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.stack.KerrStack.__init__.html" title="KerrStack.__init__"
+          <a href="Stoner.Image.stack.KerrStack.HcMap.html" title="KerrStack.HcMap"
              >next</a> |</li>
         <li class="right" >
           <a href="Stoner.Image.stack.ImageStack.subtract.html" title="ImageStack.subtract"
@@ -152,7 +170,7 @@ for things like hysteresis.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Mar 12, 2017.
+      Last updated on Apr 13, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -65,6 +65,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.column_headers
       ~Stoner.FileFormats.RigakuFile.data
       ~Stoner.FileFormats.RigakuFile.dict_records
+      ~Stoner.FileFormats.RigakuFile.dims
       ~Stoner.FileFormats.RigakuFile.dtype
       ~Stoner.FileFormats.RigakuFile.filename
       ~Stoner.FileFormats.RigakuFile.mask
