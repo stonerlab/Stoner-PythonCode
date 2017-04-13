@@ -88,7 +88,6 @@ class Folders_test(unittest.TestCase):
                          'DataFile',
                          'MokeFile',
                          'DataFile',
-                         'DataFile',
                          'EasyPlotFile',
                          'DataFile',
                          'DataFile',
