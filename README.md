@@ -85,9 +85,11 @@ Online documentation for the development version can be found on the [githib rep
 
 Travis CI is used to test the development branch to see if it passes the current unit tests and coveralls.io handles the unit test coverage reporting. The current status is:
 
-![image](https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master%0A%20:target:%20https://travis-ci.org/gb119/Stoner-PythonCode)
+[![Build Status](https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master)](https://travis-ci.org/gb119/Stoner-PythonCode)
 
-![image](https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master%0A%20:target:%20https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master)](https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master)
+
+[![Code Health](https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat)](https://landscape.io/github/gb119/Stoner-PythonCode/master)
 
 ### Citing the Stoner Package
 
