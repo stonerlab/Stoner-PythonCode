@@ -33,7 +33,7 @@ install:
   - conda install --yes numpy numpy scipy matplotlib h5py
   - conda install --yes blist pillow numba scikit-image
   - conda install --yes -c neutronpy lmfit
-  - pip install filemagic
+  #- pip install filemagic filemagic a bit flaky on travis?
   - pip install coveralls
   - pip install npTDMS
   - pip install .
