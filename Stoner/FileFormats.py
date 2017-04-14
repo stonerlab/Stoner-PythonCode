@@ -1527,6 +1527,7 @@ try: #Optional tdms support
         # the file load/save dialog boxes.
         patterns=["*.tdms"] # Recognised filename patterns
     
+        mime_type="application/octet-stream"
     
         def _load(self, filename=None, *args, **kargs):
             """TDMS file loader routine.
