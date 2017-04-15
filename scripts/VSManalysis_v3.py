@@ -38,7 +38,7 @@ class VSMAnalysis(Data):
         H_max=max(self.column('H_vsm'))
         for m in self.find_col(['m (emu)','Mvol','Mmass','X','Y']): #Correct for all lockin derived signals
             self.filter(lambda r:r[0]>threshold*H_max,['H_vsm'])  #Mask out only the max filed data
-            coeff,covar=self.curve_fit(Linear,'Time',m) # Do linear fit wrt to time
+            coeff,_=self.curve_fit(Linear,'Time',m) # Do linear fit wrt to time
             self.mask=False #Now we work with all the data
             correct_m=self.column(m)-Linear(self.column('Time'),*coeff) # calculate corrected data
             self.data[:,m]=correct_m #and push it back
@@ -53,9 +53,9 @@ class VSMAnalysis(Data):
         from Stoner.FittingFuncs import Linear
         H_max=max(self.column('H_vsm'))
         H_min=min(self.columns('H_vsm'))
-        for m in self.find_col('m (emu)','Mvol','Mmass','X','Y'):
+        for m in self.find_col(['m (emu)','Mvol','Mmass','X','Y']):
             self.filter(lambda r:r[0]>H_max*threshold,['H_vsm']) # mask out everything expcet max field data
-            pcoeff,covar=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
+            pcoeff,_=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
             self.filter(lambda r:r[0]<H_min*threshold,['H_vsm']) #mask out everything except min field data
             ncoeff,covar=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
             coeff=(pcoeff+ncoeff)/2.0 # Average the co-=fficients of the two fits
@@ -70,8 +70,8 @@ class VSMAnalysis(Data):
         mask=self.mask
         self.mask=numpy.zeros(self.shape)
         self.mask[1:h_m,:]=True
-        hc_p=self.threshold('m (emu)',0.0,xcol='H_vsm')
-        hc_m=self.threshold('m (emu)',0.0,False,True,xcol='H_vsm')
+        hc_p=self.threshold(0.0,col='m (emu)',xcol='H_vsm')
+        hc_m=self.threshold(0.0, col='m (emu)',rising=False,falling=True,xcol='H_vsm')
         self.mask=mask
         return (hc_m,hc_p)
 
@@ -82,16 +82,7 @@ class VSMAnalysis(Data):
         mask=self.mask
         self.mask=numpy.zeros(self.shape)
         self.mask[1:h_m,:]=True
-        br_p=self.threshold('H_vsm',0.0,xcol='m (emu)')
-        br_m=self.threshold('H_vsm',0.0,False,True,xcol='m (emu)')
+        br_p=self.threshold(0.0,col='H_vsm',xcol='m (emu)')
+        br_m=self.threshold(0.0,col='H_vsm',rising=False,false=True,xcol='m (emu)')
         self.mask=mask
         return (br_m,br_p)
-
-
-
-
-
-
-
-
-

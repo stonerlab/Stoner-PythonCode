@@ -6,8 +6,10 @@ already split but that should be ok for an update.
 from __future__ import print_function
 
 import os
-import re
 import Stoner
+from Stoner.compat import python_v3
+if python_v3:
+    raw_input=input
 import numpy as np
 
 #Get file open ###############
@@ -36,13 +38,13 @@ for line in mainFP:
         writeFP=open(str(counter)+'.bnl','w')
         counter+=1
     if line[0:2]!='#C':
-      writeFP.write(line)
-    """ignore #C statements which are usually abort and rarely useful, they come
-    after data and before the next #S"""
+        writeFP.write(line)
+        # ignore #C statements which are usually abort and rarely useful, they come
+        # after data and before the next #S"""
 writeFP.close()
 mainFP.close()
 
-'''test files'''
+# test files
 filelist=os.listdir(os.getcwd())
 filelist.pop(0)
 print('Testing files with Stoner:')

@@ -15,12 +15,11 @@ Created on Tue Jan 13 16:39:51 2015
 from Stoner.compat import *
 import zipfile as zf
 import zlib
-import itertools
-import numpy as _np_
 from .Core import DataFile,StonerLoadError
 from .Folders import DataFolder
 import os.path as path
 from traceback import format_exc
+import numpy as _np_
 
 
 def test_is_zip(filename, member=""):
@@ -68,7 +67,7 @@ class ZipFile(DataFile):
                 elif "file" not in kargs:
                     kargs["file"] = other.namelist()[0]
                 if kargs["file"] not in other.namelist():
-                    raise StonerLoadError("File {} not found in zip file {}".format(name, other.filename))
+                    raise StonerLoadError("File {} not found in zip file {}".format(kargs["name"], other.filename))
                 #Ok, by this point we have a zipfile which has a file in it. Construct ourselves and then load
                 super(ZipFile, self).__init__(**kargs)
                 self._extract(other, kargs["file"])
@@ -132,10 +131,11 @@ class ZipFile(DataFile):
         except Exception as e:
             print(format_exc())
             try:
+                exc=format_exc()
                 other.close()
-            except:
+            except Exception:
                 pass
-            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,format_exc()))
+            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,exc()))
 #Ok we can try reading now
         self._extract(other, member)
         if close_me:
@@ -187,7 +187,7 @@ class ZipFile(DataFile):
             if member == "" or member =="/":  # Is our file object a bare zip file - if so create a default member name
                 if len(zipfile.namelist()) > 0:
                     member = zipfile.namelist()[-1]
-                    self.filename=os.path.join(filename,member)
+                    self.filename=path.join(filename,member)
                 else:
                     member = "DataFile.txt"
                     self.filename=filename
@@ -195,11 +195,11 @@ class ZipFile(DataFile):
             zipfile.writestr(member, str2bytes(str(self)))
             if close_me:
                 zipfile.close()
-        except Exception as e:
+        except Exception:
             error=format_exc()
             try:
                 zipfile.close()
-            except:
+            except Exception:
                 pass
             raise IOError("Error saving zipfile\n{}".format(error))
         return self
@@ -219,12 +219,12 @@ class ZipFolder(DataFolder):
         close_me=False
         if len(args) > 1:
             if isinstance(args[0], string_types) and zf.is_zipfile(args[0]):
-                this.File = zf.ZipFile(args[0], "a")
+                self.File = zf.ZipFile(args[0], "a")
             elif isinstance(args[0], zf.ZipFile):
                 if args[0].fp:
-                    this.File = args[0]
+                    self.File = args[0]
                 else:
-                    this.File = zf.ZipFile(args[0].filename, "a")
+                    self.File = zf.ZipFile(args[0].filename, "a")
 
         super(ZipFolder, self).__init__(*args, **kargs)
 
@@ -294,7 +294,7 @@ class ZipFolder(DataFolder):
             raise IOError("{} does not appear to be zip file!".format(directory))
         #At this point directory contains an open h5py.File object, or possibly a group
         self.files = directory.namelist()
-        if flaten is None or not flatten:
+        if flatten is None or not flatten:
             self.unflatten()
         if close_me:
             directory.close()
@@ -325,7 +325,7 @@ class ZipFolder(DataFolder):
                     tmp[h] = tmp.column(h)[0]
             else:
                 for h in tmp.column_headers:
-                    tmp[h] = numpy.mean(tmp.column(h))
+                    tmp[h] = _np_.mean(tmp.column(h))
 
         return tmp
 

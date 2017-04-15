@@ -12,6 +12,8 @@ from re import _pattern_type
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 
+__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version"]
+
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
     range = xrange
@@ -89,7 +91,6 @@ elif __vi__[0] == 3:
 
 
 index_types = string_types + (int, _pattern_type)
-from distutils.version import LooseVersion
 
 class ClassPropertyDescriptor(object):
 
@@ -107,5 +108,3 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
-
-
