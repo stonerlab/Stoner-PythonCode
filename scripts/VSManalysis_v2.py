@@ -19,6 +19,9 @@ print("Analysis program for VSM files" \
        "\n\n\n")
 print('Please wait while program loads...\n')
 import Stoner
+from Stoner.compat import python_v3
+if python_v3:
+    raw_input=input
 import numpy as np
 import matplotlib.pyplot as plot
 plot.ion() #put the plotting in interactive mode
@@ -43,14 +46,13 @@ def driftEliminator(data,N):
     """Function takes off a linear drift of m with time from the data."""
     maxHarg=int(np.argmax(data[:len(data[:,0])/2,1]))
     finalHarg=int(len(data[:,1])-1)
-    '''linear fit to saturated data (+- N points from max field and final field)
-    '''
+    #linear fit to saturated data (+- N points from max field and final field)
     finalFit=np.polyfit(data[finalHarg-N:finalHarg,1],data[finalHarg-N:finalHarg,2],1)
     firstFit=np.polyfit(data[maxHarg-N:maxHarg+N,1],data[maxHarg-N:maxHarg+N,2],1)
     pt=np.zeros((2,2))
     pt[0]=[data[maxHarg,0],firstFit[0]*data[maxHarg,1]+firstFit[1]] #(time,m) at max field
     pt[1]=[data[finalHarg,0],finalFit[0]*data[finalHarg,1]+finalFit[1]]
-    '''Delete drift'''
+    #Delete drift
     for i in range(len(data[:,0])):
         data[i,2]=data[i,2]-(pt[1,1]-pt[0,1])/(pt[1,0]-pt[0,0])*(data[i,0]-pt[0,0])
     return data
@@ -60,7 +62,7 @@ def shift(data,N):
     is zero (uses the average y value of all the saturated points given to determine upper and lower bounds of curve"""
     maxHarg=int(np.argmax(data[:len(data[:,0])/2,1]))  #gives the data index of maximum field (in the first half of the data
     minHarg=int(np.argmin(data[:,1]))
-    '''average saturated data (+- N points from max/min field)'''
+    #average saturated data (+- N points from max/min field)
     highAve=np.average(data[(maxHarg-N):(maxHarg+N),2])
     lowAve=np.average(data[minHarg-N:minHarg+N,2])
     data[:,2]=data[:,2]-(highAve+lowAve)/2.0
@@ -71,12 +73,12 @@ def diamagBackgroundRem(data,N):
     maxHarg=int(np.argmax(data[:len(data[:,0])/2,1]))
     minHarg=int(np.argmin(data[:,1]))
 
-    '''linear fit to saturated data (+- N points from max/min field)'''
+    #linear fit to saturated data (+- N points from max/min field)
     highFit=np.polyfit(data[maxHarg-N:maxHarg+N,1],data[maxHarg-N:maxHarg+N,2],1)
     lowFit=np.polyfit(data[minHarg-N:minHarg+N,1],data[minHarg-N:minHarg+N,2],1)
     '''  Average grad   '''
     fitGrad=(highFit[0]+lowFit[0])/2
-    '''  Delete linear grad from all data    '''
+    #Delete linear grad from all data
     data[:,2]=data[:,2]-(fitGrad*data[:,1])
     return data
 
@@ -158,9 +160,9 @@ while(True):
         except ValueError:
             try: Data=Stoner.TDIFile('EditedFiles/'+pathsplit[0]+'_edit.txt'); break
             except ValueError:
-               timeout+=1     #if get 5 files unreadable in a row then finish the program
-               print('Could not read file ',path)
-               if timeout<=5: break
+                timeout+=1     #if get 5 files unreadable in a row then finish the program
+                print('Could not read file ',path)
+                if timeout<=5: break
     fw.close()
     while(True):
         plotmH(Data)

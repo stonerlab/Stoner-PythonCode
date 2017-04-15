@@ -26,7 +26,7 @@ class Plugin(Template):
         '''
         try:
             datafile=Data(str(filename),debug=True) # does all the hard work here
-        except Exception, e:
+        except Exception as e:
             ShowWarningDialog(self.parent, 'Could not load the file: ' +\
                     filename + ' \nPlease check the format.\n\n Stoner.Data'\
                     + ' gave the following error:\n'  +  str(e))

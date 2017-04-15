@@ -16,6 +16,10 @@ CHANGE THE FOLDER NAME BEFORE RUNNING
 from PIL import Image
 import os
 from Stoner import DataFolder
+from Stoner.compat import python_v3
+
+if python_v3:
+    raw_input=input
 
 #CHANGE THE FOLDER NAME BEFORE RUNNING!  #####################################
 folder=r'C:\Users\phyrct\KermitData\test2'
@@ -63,19 +67,19 @@ sizebefore=-1
 if get_sizes:
     sizebefore=get_size(start_path=folder)
 
-print 'found files for compression:'
-print 'folder: {}'.format(folder)
-print 'no. of files: {}'.format(dflen)
-print 'size before: {}'.format(sizebefore)
+print('found files for compression:')
+print('folder: {}'.format(folder))
+print('no. of files: {}'.format(dflen))
+print('size before: {}'.format(sizebefore))
 raw_input('Enter to continue')
 
 for i,fname in enumerate(df.ls):
-    print '{}% complete'.format(i/float(dflen)*100)
+    print('{}% complete'.format(i/float(dflen)*100))
     try:    
         im=Image.open(fname)
         pngsave(im, fname)
     except:
-        print 'Could not compress file {}'.format(fname)
+        print('Could not compress file {}'.format(fname))
         q=raw_input('Would you like to continue (y/n)?')
         if q!='y':
             raise RuntimeError('Could not compress file {}'.format(fname))
@@ -83,5 +87,5 @@ for i,fname in enumerate(df.ls):
 sizeafter=-1
 if get_sizes:
     sizeafter=get_size(start_path=folder)
-print 'size after: {}'.format(sizeafter)
-print 'compression: {}'.format(sizeafter/float(sizebefore))
+print('size after: {}'.format(sizeafter))
+print('compression: {}'.format(sizeafter/float(sizebefore)))
