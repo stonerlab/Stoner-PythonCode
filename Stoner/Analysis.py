@@ -32,7 +32,7 @@ except ImportError:
     _lmfit=False
 import sys
 from copy import deepcopy as copy
-from matplotlib.pylab import *
+#from matplotlib.pylab import * #Surely not?
 if python_v3:
     from inspect import getfullargspec as getargspec
 else:
@@ -62,8 +62,8 @@ def _lmfit_p0_dict(p0,model):
         p0={k:p0[k].value for k in p0}
     if not isinstance(p0, dict):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-        p0.update(kargs)
-        p0={p0[k] for k in model.param_names}
+    p0.update(kargs)
+    p0={p0[k] for k in model.param_names}
     return p0
 
 def _outlier(row, column, window, metric):
@@ -114,7 +114,7 @@ def _threshold(threshold, data, rising=True, falling=False):
         if expr(x): # There's a root somewhere here !
             try:
                 roots.append(newton(intr,ix))
-            except ValueError as err: # fell off the end here
+            except ValueError: # fell off the end here
                 pass
     if len(roots)==0:
         plot(sdat[:,0],sdat[:,1])
@@ -186,7 +186,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
             p0[i]=m0[u,v]
             default=m0
     else:
-        raise RuntimeError("m0 starting matrix should be a numpy array of size (2,3) not".format(m0))
+        raise RuntimeError("m0 starting matrix should be a numpy array of size (2,3) not {}".format(m0))
 
     result=_np_.zeros(len(xy1))
 
@@ -285,10 +285,6 @@ class AnalysisMixin(object):
                 col = (cols["xcol"], cols["ycol"][0])
             else:
                 col = cols["ycol"][0]
-        if isinstance(col,tuple):
-            ycol=col[1]
-        else:
-            ycol=col
         if isinstance(col, (list, tuple)):
             data = self.column(list(col)).T
             ddata = savgol_filter(data, window_length=points, polyorder=poly, deriv=order, mode="interp")
@@ -438,11 +434,11 @@ class AnalysisMixin(object):
         previous = _np_.roll(current, 1)
         index = _np_.arange(len(current))
         sdat = _np_.column_stack((index, current, previous))
-        if rising == True and falling == False:
+        if rising and not falling:
             expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
-        elif rising == True and falling == True:
+        elif rising and falling:
             expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
-        elif rising == False and falling == True:
+        elif not rising and falling:
             expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
         else:
             expr = lambda x: False
@@ -541,7 +537,7 @@ class AnalysisMixin(object):
                 else:
                     ret = ret[0]
             nc[r.i] = ret
-        if header == None:
+        if header is None:
             header = func.__name__
         self = self.add_column(nc, header=header, index=col)
         return self
@@ -1717,7 +1713,7 @@ class AnalysisMixin(object):
             if header is None:
                 header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
                                                                      ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, header=self.column(xcol)), index=result, replace=replace, column_header=header)
+            self.add_column(_np_.polyval(p, x=self.column(xcol)), index=result, replace=replace, column_header=header)
         return p
 
     def scale(self,other,xcol=None,ycol=None,**kargs):
@@ -1801,7 +1797,7 @@ class AnalysisMixin(object):
             mid=len(xdat)/2
             try: # may go wrong if three points are co-linear
                 m0=GetAffineTransform(xy1[[0,mid,-1],:],xy2[[0,mid,-1],:])
-            except Exception as e: # So use an idnetify transformation instead
+            except Exception: # So use an idnetify transformation instead
                 m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
             m0=use_estimate
@@ -2085,7 +2081,7 @@ class AnalysisMixin(object):
         elif isinstance(overlap, int) and overlap > 0:
             if self_second:
                 lower = points[0, 0]
-                upper = pints[0, overlap]
+                upper = points[0, overlap]
             else:
                 lower = points[0, -overlap - 1]
                 upper = points[0, -1]
@@ -2256,7 +2252,7 @@ class AnalysisMixin(object):
                 ch=ret[0].column_headers
                 retval.setas=setas
                 retval.column_headers=ch
-                retval.i=ri
+                retval.i=ret[0].i
             else: #Either xcol was None so we got indices or we got a specified column back
                 if xcol is not None: # Specific column
                     retval.column_headers=[self.column_headers[self.find_col(xcol)]]

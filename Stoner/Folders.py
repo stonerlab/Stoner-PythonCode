@@ -15,8 +15,7 @@ import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
 import string
-from collections import Iterable,MutableSequence,MutableMapping,OrderedDict
-from inspect import ismethod
+from collections import Iterable,MutableSequence,OrderedDict
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict
@@ -456,7 +455,7 @@ class baseFolder(MutableSequence):
         elif isinstance(other,int_types): #Simple decimate
             for i in range(other):
                 self.add_group("Group {}".format(i))
-            for ix,f in enumerate(self):
+            for ix,d in enumerate(self):
                 group=ix%other
                 self.groups["Group {}".format(group)]+=d
             self.__clear__()
@@ -604,7 +603,7 @@ class baseFolder(MutableSequence):
                         ret=getattr(instance,item,None)
                     else:
                         ret=None
-                    if ret==None:
+                    if ret is None:
                         raise AttributeError
             except AttributeError: # Ok, pass back
                 raise AttributeError("{} is not an Attribute of {} or {}".format(item,type(self),type(instance)))
@@ -649,7 +648,7 @@ class baseFolder(MutableSequence):
         for k, v in self.__dict__.items():
             try:
                 setattr(result, k, deepcopy(v, memo))
-            except:
+            except Exception:
                 setattr(result, k, copy(v))                
         return result
 
@@ -680,13 +679,13 @@ class baseFolder(MutableSequence):
     def __delattr__(self,name):
         """Handles removing an attribute from the folder, including proxied attributes."""
         if name.startswith("_") or name in ["debug","groups","args","kargs","objects","key"]: # pass ddirectly through for private attributes
-            raise AttrobuteError("{} is a protected attribute and may not be deleted!".format(name))
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getaatr(self._type,name))):
+            raise AttributeError("{} is a protected attribute and may not be deleted!".format(name))
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getattr(self._type,name))):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             del self._object_attrs[name]
         elif name in self._instance_attrs:
             del self._instance_attrs[name]
-            super(baseFolder,self).__delattr__(name,value)
+            super(baseFolder,self).__delattr__(name)
         else:
             raise AttributeError("Unrecognised attribute {}".format(name))
 
@@ -696,7 +695,7 @@ class baseFolder(MutableSequence):
             super(baseFolder,self).__setattr__(name,value)
         elif hasattr(self,name) and not callable(getattr(self,name,None)): #If we recognise this our own attribute, then just set it
             super(baseFolder,self).__setattr__(name,value)
-        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getaatr(self._type,name))):
+        elif hasattr(self,"_object_attrs") and hasattr(self,"_type") and name in dir(self._type() and not callable(getattr(self._type,name))):
             #If we're tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.
             self._object_attrs[name]=value
         else:
@@ -708,12 +707,12 @@ class baseFolder(MutableSequence):
     ###########################################################################
     ###################### Private Methods ####################################
     
-    def _update_from_object_attrs(self,object):
+    def _update_from_object_attrs(self,obj):
         """Updates an object from object_attrs store."""
         if hasattr(self,"_object_attrs") and isinstance(self._object_attrs,dict):
             for k in self._object_attrs:
-                setattr(object,k,self._object_attrs[k])
-        return object
+                setattr(obj,k,self._object_attrs[k])
+        return obj
 
 
     def _pruner_(self,grp,breadcrumb):
@@ -725,7 +724,7 @@ class baseFolder(MutableSequence):
             ret=False
         return ret
 
-    def __walk_groups(self,walker,group=False,replace_terminal=False,only_terminal=True,walker_args={},breadcrumb=[]):
+    def __walk_groups(self,walker,group=False,replace_terminal=False,only_terminal=True,walker_args=None,breadcrumb=None):
         """"Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we've already visited.
 
         Args:
@@ -744,6 +743,8 @@ class baseFolder(MutableSequence):
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a objectFolder or metadataObject."""
+        breadcrumb={} if breadcrumb is none else breadcrumb
+        walker_args = {} if walker_args is None else walker_args
         if (len(self.groups)>0):
             ret=[]
             removeGroups=[]
@@ -785,7 +786,7 @@ class baseFolder(MutableSequence):
         Todo:
             Propagate any extra attributes into the groups.
         """
-        if self.groups.has_key(key): # do nothing here
+        if key in self.groups: # do nothing here
             pass
         else:
             new_group=self.__clone__(attrs_only=True)
@@ -826,7 +827,8 @@ class baseFolder(MutableSequence):
         """Filter the current set of files by some criterion
 
         Args:
-            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
+                metadataObject and evaluates True or False
             
         Keyword Arguments:
             invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
@@ -851,7 +853,7 @@ class baseFolder(MutableSequence):
         elif filter is None:
             raise ValueError("A filter must be defined !")
         else:
-            for i,x in enumerate(result):
+            for x in result:
                 if filter(x)  ^ invert:
                     names.append(x)
         result.__clear__()
@@ -862,7 +864,8 @@ class baseFolder(MutableSequence):
         """Synonym for self.filter(filter,invert=True)
 
         Args:
-        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False
+        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
+            metadataObject and evaluates True or False
 
         Returns:
             The current objectFolder object with the files in the file list filtered."""
@@ -903,14 +906,14 @@ class baseFolder(MutableSequence):
         """Take the files and sort them into a series of separate objectFolder objects according to the value of the key
 
         Args:
-            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then
-                takes a single argument x which should be an instance of a metadataObject and returns some vale. If key is a list then the grouping is done recursively for each element
-                in key.
+            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of 
+                metadata in each file. If a callable function then takes a single argument x which should be an instance of a metadataObject and returns 
+                some vale. If key is a list then the grouping is done recursively for each element in key.
         Returns:
             A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
 
-        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that
-        are generated from the filename are supported."""
+        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group 
+        with key None. Metadata keys that are generated from the filename are supported."""
         if isinstance(key, list):
             next_keys=key[1:]
             key=key[0]
@@ -954,13 +957,11 @@ class baseFolder(MutableSequence):
         if isinstance(name,re._pattern_type):
             for i,n in enumerate(self.__names__()):
                 if name.match(n): return i
-            else:
-                    raise ValueError("No match for any name of a metadataObject in this baseFolder.")
+            raise ValueError("No match for any name of a metadataObject in this baseFolder.")
         if isinstance(name,metadataObject):
             for i,n in enumerate(self.__names__()):
                 if name==n: return i
-            else:
-                    raise ValueError("No match for any name of a metadataObject in this baseFolder.")
+            raise ValueError("No match for any name of a metadataObject in this baseFolder.")
 
     def insert(self,ix,value):
         """Implements the insert method with the option to append as well."""
@@ -1189,7 +1190,10 @@ class baseFolder(MutableSequence):
             fnames.sort(reverse=reverse)
             new_order=[self.__getter__(name,instantiate=False) for name in fnames]
         elif isinstance(key,re._pattern_type):
-            new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
+            if python_v3:
+                new_order=sorted(self,key=lambda x:key.match(x).groups(), reverse=reverse)
+            else:
+                new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), reverse=reverse)
         else:
             order=range(len(self))
             if python_v3:
