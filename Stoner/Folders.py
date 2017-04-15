@@ -743,7 +743,7 @@ class baseFolder(MutableSequence):
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
                 where f is either a objectFolder or metadataObject."""
-        breadcrumb={} if breadcrumb is none else breadcrumb
+        breadcrumb={} if breadcrumb is None else breadcrumb
         walker_args = {} if walker_args is None else walker_args
         if (len(self.groups)>0):
             ret=[]

@@ -116,8 +116,6 @@ def _threshold(threshold, data, rising=True, falling=False):
                 roots.append(newton(intr,ix))
             except ValueError: # fell off the end here
                 pass
-    if len(roots)==0:
-        plot(sdat[:,0],sdat[:,1])
     return _np_.array(roots)
 
 def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
@@ -1248,7 +1246,7 @@ class AnalysisMixin(object):
         else:
             sigma = ma.ones(len(xdata))
             scale_covar = True
-        mask=np.invert(ydata.mask)
+        mask=_np_.invert(ydata.mask)
         sigma = sigma[mask]
         ydata = ydata[mask] 
         xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
@@ -1858,7 +1856,7 @@ class AnalysisMixin(object):
             nx=_np_.linspace(xl,xh,len(self))
             data=self.interpolate(nx,kind="linear",xcol=_.xcol,replace=False)
             self["Smoothing window size"]=size
-        elif isinstance(size,(int,long)):
+        elif isinstance(size,int_types):
             data=copy(self.data)
             interp_data=False
         else:
