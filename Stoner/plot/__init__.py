@@ -1,6 +1,6 @@
 """Stoner.plot sub-package - contains classes and functions for visuallising data."""
 from .core import PlotMixin,hsl2rgb
-from .core import PlotFile and _PF_
+from .core import PlotFile as _PF_
 __all__ = ["PlotMixin","hsl2rgb","formats","utils"]
 def PlotFile(*args,**kargs):
     """Wrapper to raise DepricationWarning."""
