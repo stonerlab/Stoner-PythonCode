@@ -57,7 +57,7 @@ class FileFormats_test(unittest.TestCase):
                 try:
                     del d
                     fname=path.join(self.datadir,f)
-                    d=Data(fname,debug=True)
+                    d=Data(fname,debug=False)
                     self.assertTrue(isinstance(d,DataFile),"Failed to load {} correctly.".format(fname))
                     if "save" in d.subclasses[d["Loaded as"]].__dict__:
                         print("Checking save routine for {}".format(d["Loaded as"]))
