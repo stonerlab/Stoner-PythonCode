@@ -69,7 +69,7 @@ t.plot_xy(r"$m^2$",r"$sin^2\theta$", 'ro',label="Peak Position")
 t.xlabel="Fringe $m^2$"
 t.ylabel=r"$sin^2\theta$"
 t.title=""
-plt.legend(loc="upper left")
+t.legend(loc="upper left")
 t.draw()
 pyplot.sca(t.axes[0])
 # Get the wavelength from the metadata

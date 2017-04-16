@@ -9,10 +9,14 @@ Sample script for fitting BlochGrueneisen function to a data file
 from __future__ import print_function
 
 from Stoner.Util import Data,format_error
+from Stoner.compat import python_v3
 from Stoner.Fit import blochGrueneisen
 from numpy import sqrt,diag,append,any,isnan
 from matplotlib.pyplot import text
 import re
+
+if python_v3:
+    raw_input=input
 
 def bg_wrapper(T,tD,r0,A):
     return blochGrueneisen(T,tD,r0,A,5)
@@ -75,4 +79,3 @@ d.plot_xy(t_col,[r_col,"Bloch"],["ro","b-"],label=["Data",r"$Bloch-Gr\"ueisen Fi
 d.xlabel="Temperature (K)"
 d.ylabel="Resistance ($\Omega$)"
 text(0.05,0.65,annotation,transform=d.axes[0].transAxes)
-

@@ -30,7 +30,6 @@ except ImportError:
     ModelFit = None
     Parameters = None
     _lmfit=False
-import sys
 from copy import deepcopy as copy
 #from matplotlib.pylab import * #Surely not?
 if python_v3:
@@ -94,11 +93,11 @@ def _threshold(threshold, data, rising=True, falling=False):
     previous = _np_.roll(current, 1)
     index = _np_.arange(len(current))
     sdat = _np_.column_stack((index, current, previous))
-    if rising == True and falling == False:
+    if rising and not falling:
         expr = lambda x: (x[1] >= threshold) & (x[2] < threshold)
-    elif rising == True and falling == True:
+    elif rising and falling:
         expr = lambda x: ((x[1] >= threshold) & (x[2] < threshold)) | ((x[1] <= threshold) & (x[2] > threshold))
-    elif rising == False and falling == True:
+    elif falling and not rising:
         expr = lambda x: (x[1] <= threshold) & (x[2] > threshold)
     else:
         expr = lambda x: False
@@ -164,7 +163,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     xunknowns=len(xvarp[xmode])
     yunknowns=len(yvarp[ymode])
     if xunknowns+yunknowns==0: # shortcircuit for the trivial case
-        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),funcs["fixed"]
+        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),lambda x:x]
 
     mapping=xvarp[xmode]+yvarp[ymode]
     mapping=[m for m in mapping if m!=[]] # remove empty mappings

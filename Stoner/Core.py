@@ -1759,7 +1759,10 @@ class DataFile(metadataObject):
             raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
         if not isinstance(nv,DataArray):
             nv = DataArray(nv)
-            nv._setas=self._data._setas.clone
+            try:
+                nv._setas=self._data._setas.clone
+            except AttributeError:
+                nv._setas=_setas()
         nv._setas.shape=nv.shape
         self._data=nv
 
@@ -1860,7 +1863,7 @@ class DataFile(metadataObject):
         subclasses = {x: (x.priority,x.__name__) for x in itersubclasses(DataFile)}
         ret = OrderedDict()
         ret["DataFile"] = DataFile
-        for cls, priority in sorted(list(subclasses.items()), key=lambda c: c[1]):
+        for cls, _ in sorted(list(subclasses.items()), key=lambda c: c[1]):
             ret[cls.__name__] = cls
         return ret
 
@@ -2163,7 +2166,7 @@ class DataFile(metadataObject):
         """Actually do the subtraction."""
         if isinstance(other, (slice, int_types)) or callable(other):
             newdata.del_rows(other)
-        elif isinstance(other, list) and (all_type(other,int_types) or all_type(bool)):
+        elif isinstance(other, list) and (all_type(other,int_types) or all_type(other,bool)):
             newdata.del_rows(other)
         else:
             newdata = NotImplemented
@@ -2217,7 +2220,7 @@ class DataFile(metadataObject):
                         if isinstance(myattrs[k], tuple):
                             typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
                         else:
-                            typ = "a {}".format(type(myattr[k]))
+                            typ = "a {}".format(type(myattrs[k]))
                         raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
 
         return new_d
@@ -2451,9 +2454,9 @@ class DataFile(metadataObject):
                 reader = csv.reader(datafile, dialect=_tab_delimited())
                 row = next(reader)
                 if row[0].strip() == "TDI Format 1.5":
-                    format = 1.5
+                    fmt = 1.5
                 elif row[0].strip() == "TDI Format=Text 1.0":
-                    format = 1.0
+                    fmt = 1.0
                 else:
                     raise StonerLoadError("Not a TDI File")
             except:
@@ -2498,6 +2501,7 @@ class DataFile(metadataObject):
             self.data = _np_.atleast_2d(_np_.array([]))
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
             self.column_headers=col_headers_tmp
+         self["TDI Format"]=fmt
 
     def __len__(self):
         """Return the length of the data.
@@ -2588,9 +2592,9 @@ class DataFile(metadataObject):
             raise AttributeError("No method to read a line in {}".format(reader))
         row = readline().split('\t')
         if row[0].strip() == "TDI Format 1.5":
-            format = 1.5
+            fmt = 1.5
         elif row[0].strip() == "TDI Format=Text 1.0":
-            format = 1.0
+            fmt = 1.0
         else:
             raise RuntimeError("Not a TDI File")
         col_headers_tmp = [x.strip() for x in row[1:]]
@@ -2620,6 +2624,7 @@ class DataFile(metadataObject):
         self.column_headers = ["Column {}".format(i) for i in range(cols)]
         for i in range(len(col_headers_tmp)):
             self.column_headers[i] = col_headers_tmp[i]
+		self["TDI Format"]=fmt
 
     def __reduce_ex__(self, p):
         return (DataFile, (), self.__getstate__())
@@ -2746,10 +2751,10 @@ class DataFile(metadataObject):
             elif value.shape[1] == self.data.shape[0]:
                 value = value.T
             else:
-                raise RuntimeErrpr("Value to be assigned to data columns is the wrong shape!")
+                raise RuntimeError("Value to be assigned to data columns is the wrong shape!")
             for i, ix in enumerate(self.find_col(self.setas[name], force_list=True)):
                 self.data[:, ix] = value[:, i]
-        elif isinstance(value, indices):
+        elif isinstance(value, index_types):
             self._set_setas({name: value})
 
     def __setitem__(self, name, value):
