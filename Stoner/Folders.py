@@ -1720,7 +1720,7 @@ class DataFolder(DiskBssedFolder,baseFolder):
             row=_np_.array([])
             for d in group:
                 for m in ok_data:
-                    row=_np_.append(row,_np_array(d[m]))
+                    row=_np_.append(row,_np_.array(d[m]))
                 results+=row
 
             return results

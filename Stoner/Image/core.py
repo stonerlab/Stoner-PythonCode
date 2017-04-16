@@ -111,12 +111,14 @@ class ImageArray(np.ndarray,metadataObject):
 
     #now initialise class
 
-    def __new__(cls, image=[], *args, **kwargs):
+    def __new__(cls, image=None, *args, **kwargs):
         """
         Construct a ImageArray object. We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
 
+        if image is None:
+        	    image=list()
         if isinstance(image,string_types): #we have a filename
             image,tmp=cls._load(image,**kwargs)
         else:
@@ -129,7 +131,7 @@ class ImageArray(np.ndarray,metadataObject):
         ka.filename=tmp["Loaded from"]
         return ka #__init__ called
 
-    def __init__(self, image=[],
+    def __init__(self, image=None,
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
         """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
@@ -154,7 +156,9 @@ class ImageArray(np.ndarray,metadataObject):
             metadata: dict
                 dictionary of extra metadata items you would like adding to your array
         """
-        
+        if image is None:
+        	image=[]
+                
         if kwargs.get("reduce_metadata",self._reduce_metadata):
             self.reduce_metadata()
         if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):

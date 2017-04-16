@@ -420,7 +420,7 @@ class PlotMixin(object):
             plt.draw()
             plt.show()
         if "save_filename" in kargs and kargs["save_filename"] is not None:
-            plt.savefig(str(nonkargs["save_filename"]))
+            plt.savefig(str(kargs["save_filename"]))
 
     def __getattr__(self, name):
         """Attribute accessor.
@@ -712,7 +712,7 @@ class PlotMixin(object):
         if len(Z.shape) == 2:
             Z = cmap(Z)
         elif len(Z.shape) != 3:
-            raise RunetimeError("Z Data has a bad shape: {}".format(Z.shape))
+            raise RuntimeError("Z Data has a bad shape: {}".format(Z.shape))
         xmin = _np_.min(X.ravel())
         xmax = _np_.max(X.ravel())
         ymin = _np_.min(Y.ravel())
@@ -751,13 +751,13 @@ class PlotMixin(object):
         elif isinstance(width, float) and 0 < width <= 1:
             width = "{}%".format(width * 100)
         elif not isinstance(width, string_types):
-            raise RuntimeErroror("didn't Recognize width specification {}".format(width))
+            raise RuntimeError("didn't Recognize width specification {}".format(width))
         if isinstance(height, int):
             height = "{}%".format(height)
         elif isinstance(height, float) and 0 < height <= 1:
             height = "{}%".format(height * 100)
         elif not isinstance(height, string_types):
-            raise RuntimeErroror("didn't Recognize width specification {}".format(width))
+            raise RuntimeError("didn't Recognize width specification {}".format(width))
         if parent is None:
             parent = plt.gca()
         return inset_locator.inset_axes(parent, width, height, loc, **kargs)
@@ -803,7 +803,8 @@ class PlotMixin(object):
             Args:
                 xvals (index, list or numpy.array): Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
                 yvals (int or list): Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
-                rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix
+                rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of 
+                	columns) of data to be used for the z0data matrix
 
             Keyword Arguments:
                 cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
@@ -812,7 +813,8 @@ class PlotMixin(object):
                 xlabel (string) X axes label. Deafult is None - guess from xvals or metadata
                 ylabel (string): Y axes label, Default is None - guess from metadata
                 zlabel (string): Z axis label, Default is None - guess from metadata
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
+                	always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
 
@@ -879,15 +881,15 @@ class PlotMixin(object):
 
         #This is the same as for the plot_xyz routine'
         if isinstance(figure, int):
-            figure, ax = self.template.new_figure(figure)
+            figure, _ = self.template.new_figure(figure)
         elif isinstance(figure, bool) and not figure:
-            figure, ax = self.template.new_figure(None)
+            figure, _ = self.template.new_figure(None)
         elif isinstance(figure, mplfig.Figure):
-            figure, ax = self.template.new_figure(figure.number)
+            figure, _ = self.template.new_figure(figure.number)
         elif isinstance(self.__figure, mplfig.Figure):
             figure = self.__figure
         else:
-            figure, ax = self.template.new_figure(None, projection="3d")
+            figure, - = self.template.new_figure(None, projection="3d")
         self.__figure = figure
         if show_plot == True:
             plt.ion()
@@ -1016,15 +1018,15 @@ class PlotMixin(object):
             c.ycol = [c.ycol]
         if len(c.ycol) > 1:
             if multiple == "panels":
-                self.__figure, ax = plt.subplots(nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0})
+                self.__figure, _ = plt.subplots(nrows=len(c.ycol), sharex=True, gridspec_kw={"hspace": 0})
             elif multiple == "subplots":
                 m = int(_np_.floor(_np_.sqrt(len(c.ycol))))
                 n = int(_np_.ceil(len(c.ycol) / m))
-                self.__figure, ax = plt.subplots(nrows=m, ncols=n)
+                self.__figure, _ = plt.subplots(nrows=m, ncols=n)
             else:
-                self.__figure, ax = self._fix_fig(self.__figure)
+                self.__figure, _ = self._fix_fig(self.__figure)
         else:
-            self.__figure, ax = self._fix_fig(nonkargs["figure"])
+            self.__figure, _ = self._fix_fig(nonkargs["figure"])
         for ix in range(len(c.ycol)):
             if multiple != "common":
                 nonkargs["ylabel"] = self._col_label(self.find_col(c.ycol[ix]))
@@ -1071,14 +1073,16 @@ class PlotMixin(object):
                 zcol (index): Z column index or label
 
             Keyword Arguments:
-                shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate these from the data provided
+                shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate 
+                	these from the data provided
                 xlim (tuple): Defines the x-axis limits and grid of the data to be plotted
                 ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted
                 cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
                 show_plot (bool): True Turns on interactive plot control
                 title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 save_filename (string): Filename used to save the plot
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
+                	always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
                 projection (string or None): Whether to use a 3D projection or regular 2D axes (deault is 3D)
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
@@ -1141,7 +1145,8 @@ class PlotMixin(object):
                 show_plot (bool): True Turns on interactive plot control
                 title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 save_filename (string): Filename used to save the plot
-                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
+                	always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
                 """
@@ -1188,7 +1193,8 @@ class PlotMixin(object):
                 colors (column index or numpy array): Values used to map the colors of the resultant file.
                 mode (string): glyph type, default is "cone"
                 scale_factor(float): Scale-size of glyphs.
-                figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.
+                figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, 
+                	otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
 
@@ -1337,7 +1343,7 @@ class PlotMixin(object):
 
         kargs, nonkargs = self._fix_kargs(None, defaults, otherkargs=otherkargs, **kargs)
         plotter = nonkargs["plotter"]
-        self.__figure, ax = self._fix_fig(nonkargs["figure"])
+        self.__figure, _ = self._fix_fig(nonkargs["figure"])
         fig = plotter(self.column(self.find_col(xcol)), self.column(self.find_col(ycol)),
                       self.column(self.find_col(ucol)), self.column(self.find_col(vcol)), **kargs)
         self._fix_titles(0, "non", **nonkargs)
@@ -1359,7 +1365,7 @@ class PlotMixin(object):
         As well as passing through to the plyplot routine of the same name, this
         function maintains a list of the current sub-plot axes via the subplots attribute.
         """
-        fig, ax = self.template.new_figure(self.__figure.number)
+        _, ax = self.template.new_figure(self.__figure.number)
         sp = plt.subplot(*args, **kargs)
         if len(args) == 1:
             rows = args[0] // 100
@@ -1409,7 +1415,6 @@ def hsl2rgb(h, s, l):
     Returns:
         2D array (Mx3) of unsigned 8bit integers
         """
-    w = _np_.where
     if isinstance(h, float):
         h = _np_.array([h])
     if isinstance(s, float):

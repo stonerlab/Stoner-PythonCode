@@ -11,6 +11,7 @@ import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
+from .Util import Data
 from .Image.core import ImageArray
 import os.path as path
 import os
@@ -533,4 +534,3 @@ class STXMImage(ImageArray):
     def _load(self,filename):
         d=SLS_STXMFile(filename)
         return d.data,d.metadata
-    

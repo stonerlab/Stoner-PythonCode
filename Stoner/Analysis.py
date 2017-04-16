@@ -163,7 +163,7 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     xunknowns=len(xvarp[xmode])
     yunknowns=len(yvarp[ymode])
     if xunknowns+yunknowns==0: # shortcircuit for the trivial case
-        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),lambda x:x]
+        return _np_.array([[1,0],[1,0]]),_np_.zeros((2,2)),lambda x:x])
 
     mapping=xvarp[xmode]+yvarp[ymode]
     mapping=[m for m in mapping if m!=[]] # remove empty mappings
