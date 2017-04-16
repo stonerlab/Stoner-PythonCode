@@ -10,3 +10,6 @@ ignore-patterns:
 python-targets:
   - 2
   - 3
+pylin:
+  disable:
+    - protected-access
