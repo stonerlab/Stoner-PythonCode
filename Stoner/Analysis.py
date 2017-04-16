@@ -62,7 +62,7 @@ def _lmfit_p0_dict(p0,model):
         p0={k:p0[k].value for k in p0}
     if not isinstance(p0, dict):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
-    p0={p0[k] for k in model.param_names}
+    #p0={p0[k] for k in model.param_names}
     return p0
 
 def _outlier(row, column, window, metric):
