@@ -15,6 +15,7 @@ i.e. the parameters are expanded to separate arguements.
 from Stoner.compat import *
 from Stoner.Core import DataFile
 import numpy as _np_
+from io import IOBase
 from scipy.special import digamma
 try:
     from lmfit import Model
@@ -111,7 +112,7 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     from Stoner.Util import Data
     if isinstance(inifile,string_types):
         config.read(inifile)
-    elif isinstance(inifile,file):
+    elif isinstance(inifile,IOBase):
         config.readfp(inifile)
     if not config.has_section("Data"):
         raise RuntimeError("Configuration file lacks a [Data] section to describe data.")
@@ -181,7 +182,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
     config = ConfigParser.SafeConfigParser()
     if isinstance(inifile,string_types):
         config.read(inifile)
-    elif isinstance(inifile,file):
+    elif isinstance(inifile,IOBase):
         config.readfp(inifile)
 
     if model is None: # Check to see if config file specified a model
@@ -1062,7 +1063,7 @@ def kittelEquation(H,gamma,M_s,H_k):
     Returns:
         Reesonance peak frequencies in Hz
     """
-    return (consts.mu0*gamme/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
+    return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 class KittelEquation(Model):
     """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
@@ -1084,7 +1085,7 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
-        M_s=(_np_.pi*data/consts.mu0)/H-H
+        M_s=(_np_.pi*data/consts.mu0)/x-x
 
         pars = self.make_params(gamma=2, M_s=M_s, H_k=0.0)
         return update_param_vals(pars, self.prefix, **kwargs)
