@@ -273,17 +273,8 @@ class _setas(object):
     @shape.setter
     def shape(self,value):
     	value-tuple(value)
-		if len(value)==2:
+        if len(value)==2:
             self._shape=tuple(value)
-#        if len(value)==0:
-#            c=0
-#        elif len(value)>=2:  # Force setas annd acolumn_headers to match shape
-#            c=value[1]
-#        elif len(value)==1:
-#            if self._row:
-#                c=value[0]
-#            else:
-#                c=1
         else:
             raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
 
