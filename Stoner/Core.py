@@ -273,7 +273,7 @@ class _setas(object):
     @shape.setter
     def shape(self,value):
         value=tuple(value)
-        if len(value)==2:
+        if 1<=len(value)<=2:
             self._shape=tuple(value)
         else:
             raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
