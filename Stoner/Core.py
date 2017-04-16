@@ -2624,7 +2624,7 @@ class DataFile(metadataObject):
         self.column_headers = ["Column {}".format(i) for i in range(cols)]
         for i in range(len(col_headers_tmp)):
             self.column_headers[i] = col_headers_tmp[i]
-		self["TDI Format"]=fmt
+        self["TDI Format"]=fmt
 
     def __reduce_ex__(self, p):
         return (DataFile, (), self.__getstate__())
