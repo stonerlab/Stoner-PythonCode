@@ -8,9 +8,9 @@ Created on Tue Oct 08 20:14:34 2013
 """
 
 from .compat import *
-import .Core  as _SC_
-import .Analysis as _SA_
-import .plot  as _SP_
+import Stoner.Core  as _SC_
+import Stoner.Analysis as _SA_
+import Stoner.plot  as _SP_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
