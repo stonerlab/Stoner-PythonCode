@@ -2,11 +2,9 @@ doc-warnings: true
 test-warnings: false
 strictness: medium
 max-line-length: 160
-uses:
-	
+#uses:	
 autodetect: true
-requirements:
-
+#requirements:
 ignore-patterns:
   - ^.*kgui\.py$
 python-targets:
