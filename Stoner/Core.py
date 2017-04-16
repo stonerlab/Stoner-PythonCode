@@ -2501,7 +2501,7 @@ class DataFile(metadataObject):
             self.data = _np_.atleast_2d(_np_.array([]))
         if len(self.data.shape) >= 2 and self.data.shape[1] > 0:
             self.column_headers=col_headers_tmp
-         self["TDI Format"]=fmt
+        self["TDI Format"]=fmt
 
     def __len__(self):
         """Return the length of the data.
