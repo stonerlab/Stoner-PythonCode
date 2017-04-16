@@ -8,9 +8,9 @@ Created on Tue Oct 08 20:14:34 2013
 """
 
 from .compat import *
-from .Core import DataFile as _DF_
-from .Analysis import AnalysisMixin as _AF_
-from .plot import PlotMixin as _PF_
+import .Core  as _SC_
+import .Analysis as _SA_
+import .plot  as _SP_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
@@ -79,7 +79,7 @@ def _up_down(data):
     return ret
 
 
-class Data(_AF_, _PF_,_DF_):
+class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
     which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
