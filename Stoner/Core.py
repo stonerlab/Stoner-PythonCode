@@ -272,7 +272,7 @@ class _setas(object):
 
     @shape.setter
     def shape(self,value):
-    	value-tuple(value)
+        value-tuple(value)
         if len(value)==2:
             self._shape=tuple(value)
         else:
