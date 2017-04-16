@@ -1,3 +1,4 @@
+"""Use curve_fit to fit a plane to some data."""
 from __future__ import print_function
 from Stoner import Data
 from numpy.random import normal
@@ -32,4 +33,3 @@ txt+="\n".join([d.format("plane:{}".format(k),latex=True) for k in ["a","b","c"]
 ax=plt.gca(projection="3d")
 ax.text(15,5,-50,txt)
 d.draw()
-

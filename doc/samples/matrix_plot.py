@@ -1,3 +1,4 @@
+"""Plot data defined on a matrix."""
 from Stoner import Data
 import numpy as np
 

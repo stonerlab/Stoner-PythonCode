@@ -1,3 +1,4 @@
+"""Fit a sphere with curve_fit."""
 from Stoner import Data
 from numpy import sin,cos,pi,column_stack,zeros_like,sqrt,diag,ones_like,meshgrid,linspace
 from numpy.random import normal,uniform

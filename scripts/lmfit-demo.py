@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Demo of new Stoner.Analysis.AnalyseFile.lmfit
 Created on Thu Oct 02 21:17:41 2014
