@@ -889,7 +889,7 @@ class PlotMixin(object):
         elif isinstance(self.__figure, mplfig.Figure):
             figure = self.__figure
         else:
-            figure, - = self.template.new_figure(None, projection="3d")
+            figure, _ = self.template.new_figure(None, projection="3d")
         self.__figure = figure
         if show_plot == True:
             plt.ion()
