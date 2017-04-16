@@ -127,7 +127,7 @@ class Datatest(unittest.TestCase):
         self.assertEqual(self.d["Float"],1.0)
         self.assertEqual(self.d["Test"],self.d.metadata["Test"])
         self.assertEqual(self.d.metadata._typehints["Int"],"I32")
-        self.assertEqual(len(self.d.dir()),5,"Failed meta data directory listing ({})".format(len(self.d.dir())))
+        self.assertEqual(len(self.d.dir()),6,"Failed meta data directory listing ({})".format(len(self.d.dir())))
         self.assertEqual(len(self.d3["Temperature"]),7,"Regular experssion metadata search failed")
 
 
@@ -237,4 +237,3 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.test_operators()
     test.test_methods()
     test.test_setas_metadata()
-    

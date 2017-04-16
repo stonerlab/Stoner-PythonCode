@@ -218,11 +218,11 @@ class _setas(object):
 
     @property
     def clone(self):
-            new = _setas()
-            for attr in self.__dict__:
-                if not callable(self.__dict__[attr]):
-                    new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
-            return new
+        new = _setas()
+        for attr in self.__dict__:
+            if not callable(self.__dict__[attr]):
+                new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
+        return new
 
     @property
     def cols(self):
@@ -272,16 +272,18 @@ class _setas(object):
 
     @shape.setter
     def shape(self,value):
-        self._shape=tuple(value)
-        if len(value)==0:
-            c=0
-        elif len(value)>=2:  # Force setas annd acolumn_headers to match shape
-            c=value[1]
-        elif len(value)==1:
-            if self._row:
-                c=value[0]
-            else:
-                c=1
+    	value-tuple(value)
+		if len(value)==2:
+            self._shape=tuple(value)
+#        if len(value)==0:
+#            c=0
+#        elif len(value)>=2:  # Force setas annd acolumn_headers to match shape
+#            c=value[1]
+#        elif len(value)==1:
+#            if self._row:
+#                c=value[0]
+#            else:
+#                c=1
         else:
             raise AttributeError("shape attribute should be a 2-tuple not a {}-tuple".format(len(value)))
 
@@ -1261,7 +1263,7 @@ class DataArray(_ma_.MaskedArray):
             else:
                 ix=(self._setas.find_col(ix),)
         if isinstance(ix,(int_types,slice)):
-                ix=(ix,)
+            ix=(ix,)
         elif isinstance(ix,tuple) and len(ix)>0 and isinstance(ix[-1],string_types): # index still has a string type in it
             ix=list(ix)
             ix[-1]=self._setas.find_col(ix[-1])
@@ -1492,7 +1494,7 @@ class DataArray(_ma_.MaskedArray):
             if headers_too:
                 self._setas.column_headers[col1], self._setas.column_headers[col2] = self._setas.column_headers[col2], self._setas.column_headers[col1]
             if setas_too:
-                 self._setas[col1], self._setas[col2] = self._setas[col2], self._setas[col1]
+                self._setas[col1], self._setas[col2] = self._setas[col2], self._setas[col1]
         else:
             raise TypeError("Swap parameter must be either a tuple or a \
             list of tuples")
@@ -1551,8 +1553,8 @@ class DataFile(metadataObject):
     #mimetypes we match
     mime_type=["text/plain"]
 
-    _conv_string = _np_.vectorize(lambda x: str(x))
-    _conv_float = _np_.vectorize(lambda x: float(x))
+    _conv_string = _np_.vectorize(str)
+    _conv_float = _np_.vectorize(float)
     
     def __new__(cls, *args,**kargs):
         """Do some init stuff before the mixins kick in."""
@@ -1621,7 +1623,6 @@ class DataFile(metadataObject):
             "debug": bool,
             "filename": string_types,
             "mask": (_np_.ndarray, bool),
-            "metadata":typeHintedDict,
         }
         i = len(args) if len(args) < 2 else 2
         handler = [None, self._init_single, self._init_double, self._init_many][i]
@@ -1722,7 +1723,6 @@ class DataFile(metadataObject):
             "debug": bool,
             "filename": string_types,
             "mask": (_np_.ndarray, bool),
-            "metadata":typeHintedDict,
         }
     @property
     def clone(self):
@@ -1759,10 +1759,7 @@ class DataFile(metadataObject):
             raise ValueError("DataFile.data should be no more than 2 dimensional not shape {}", format(nv.shape))
         if not isinstance(nv,DataArray):
             nv = DataArray(nv)
-            try:
-                nv._setas=self._data._setas.clone
-            except AttributeError:
-                nv._setas=_setas()
+            nv._setas=getattr(self,"_data")._setas.clone
         nv._setas.shape=nv.shape
         self._data=nv
 
@@ -2710,7 +2707,7 @@ class DataFile(metadataObject):
         elif isinstance(value, (list, _np_.ndarray)):
             ix = _np_.zeros(len(self), dtype=bool)
             for v in value:
-                ix = _np_.logical_or(ix, self.__search_index(xcol, v))
+                ix = _np_.logical_or(ix, self.__search_index(xcol, v),accuracy)
         elif callable(value):
             ix = _np_.array([value(r[x],r) for r in self], dtype=bool)
         else:
@@ -2723,7 +2720,8 @@ class DataFile(metadataObject):
         Args:
             name (string): Name of attribute to set. Details of possible attributes below:
 
-        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object to nask where we pass each row to the function and use the return reult as the mask
+        - mask Passes through to the mask attribute of self.data (which is a numpy masked array). Also handles the case where you pass a callable object 
+            to nask where we pass each row to the function and use the return reult as the mask
         - data Ensures that the :py:attr:`data` attribute is always a :py:class:`numpy.ma.maskedarray`
         """
 
