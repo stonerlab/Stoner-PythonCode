@@ -13,7 +13,7 @@ import Stoner.Analysis as _SA_
 import Stoner.plot  as _SP_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
-from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
+from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array #pylint: disable=redefined-builtin
 from scipy.stats import sem
 from sys import float_info
 try:
@@ -25,7 +25,7 @@ except ImportError:
 from inspect import isclass
 import re
 from cgi import escape as html_escape
-import Stoner.FileFormats as _SFF_
+import Stoner.FileFormats as _SFF_ # pylint: disable=unused-import
 
 def tex_escape(text):
     """
@@ -88,7 +88,7 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
     """
 
     def format(self,key,**kargs):
-        """Return the contents of key pretty formatted using :py:func:`format_error`.
+        r"""Return the contents of key pretty formatted using :py:func:`format_error`.
 
         Args:
             fmt (str): Specify the output format, opyions are:
@@ -102,9 +102,9 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
                 to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
                 i.e. mantissa and exponent format is used.
             units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-                prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
             prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-                inside the math-mode markers, but not embedded in \\mathrm.
+                inside the math-mode markers, but not embedded in \mathrm.
 
         Returns:
             A pretty string representation.
@@ -173,10 +173,10 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
                 prefix=model.prefix+":"
 
         if x is None:
-            xl,xr=self.xlim()
+            xl,xr=self.xlim() # pylint: disable=not-callable
             x=(xr-xl)*0.75+xl
         if y is None:
-            yb,yt=self.ylim()
+            yb,yt=self.ylim() # pylint: disable=not-callable
             y=0.5*(yt-yb)+yb
 
         try: # if the model has an attribute display params then use these as the parameter anmes
@@ -203,7 +203,7 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
 
 
 def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, skip=0):
-    """Splits the DataFile data into several files where the column \b col is either rising or falling
+    """Splits the DataFile data into several files where the column *col* is either rising or falling
 
     Args:
         data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
@@ -255,7 +255,7 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
 
 
 def split_up_down(data, col=None, folder=None):
-    """Splits the DataFile data into several files where the column \b col is either rising or falling
+    """Splits the DataFile data into several files where the column *col* is either rising or falling
 
     Args:
         data (:py:class:`Stoner.Core.DataFile`): object containign the data to be sorted
@@ -299,17 +299,7 @@ def split_up_down(data, col=None, folder=None):
         output = folder
     output.add_group("rising")
     output.add_group("falling")
-    """ old code, bug when unequal number of rising/falling sections
-    for i in range(1, len(splits), 2):
-        working1 = data.clone
-        working2 = data.clone
-        working1.data = data.data[splits[i - 1]:splits[i],:]
-        working2.data = data.data[splits[i]:splits[i + 1],:]
-        if not order:
-            (working1, working2) = (working2, working1)
-        output.groups["rising"].files.append(working1)
-        output.groups["falling"].files.append(working2)
-    """
+
     if order:
         risefall=["rising","falling"]
     else:

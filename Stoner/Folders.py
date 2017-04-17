@@ -1,7 +1,8 @@
 """
- FStoner.Folders : Classes for working collections of data files
+Stoner.Folders : Classes for working collections of data files
+==============================================================
 
- Classes:
+Classes:
      :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
 __all__ = ["objectFolder","DataFolder","PlotFolder"]
@@ -68,7 +69,7 @@ class baseFolder(MutableSequence):
 
     def __init__(self,*args,**kargs):
         """Initialise the baseFolder.
-
+        
         Notes:
             - Creates empty groups and objects stres
             - Sets all keyword arguments as attributes unless otherwise overwriting an existing attribute
@@ -76,7 +77,7 @@ class baseFolder(MutableSequence):
             - iterates over the multuiple inheritance tree and eplaces any interface methods with ones from
                 the mixin classes
             - calls the mixin init methods.
-            """
+        """
         self.args=copy(args)
         self.kargs=copy(kargs)
         #List of routines that define the interface for manipulating the objects stored in the folder
@@ -119,10 +120,12 @@ class baseFolder(MutableSequence):
                 
     @property
     def groups(self):
+        """Subfolders are held in an ordered dictionary of groups."""
         return self._groups
     
     @groups.setter
     def groups(self,value):
+        """Ensure groups gets set as a :py:class:`regexpDict`"""
         if not isinstance(value,regexpDict):
             self._groups=regexpDict(value)
         else:
@@ -130,6 +133,7 @@ class baseFolder(MutableSequence):
 
     @property
     def instance(self):
+        """A default instance of the type of object in the folder."""
         if self._instance is None:
             self._instance=self._type()
         return self._instance
@@ -145,6 +149,7 @@ class baseFolder(MutableSequence):
 
     @property
     def ls(self):
+        """List just the names of the objects in the folder."""
         return self.__names__()
 
     @property
@@ -181,10 +186,12 @@ class baseFolder(MutableSequence):
 
     @property
     def objects(self):
+        """The objects in the folder are stored in a :py:class:`regexpDict`."""
         return self._objects
     
     @objects.setter
     def objects(self,value):
+        """Ensure we keep the objects in a :py:class:`regexpDict`."""
         if not isinstance(value,regexpDict):
             self._objects=regexpDict(value)
         else:
@@ -231,7 +238,6 @@ class baseFolder(MutableSequence):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
         """
-
         return list(self.objects.keys())
 
     def __getter__(self,name,instantiate=True):
@@ -253,7 +259,7 @@ class baseFolder(MutableSequence):
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
 
             
-            """
+        """
         name=self.__lookup__(name)
         if instantiate is None:
             return self.objects[name]
@@ -273,7 +279,7 @@ class baseFolder(MutableSequence):
             
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!            
-            """
+        """
         if name is None:
             name=self.make_name()
         self.objects[name]=value
@@ -287,7 +293,7 @@ class baseFolder(MutableSequence):
         Note:
             We're in the base class here, so we don't call super() if we can't handle this, then we're stuffed!
             
-            """
+        """
         del self.objects[ix]
 
     def __clear__(self):
@@ -422,6 +428,7 @@ class baseFolder(MutableSequence):
         return name in self.groups or name in self.__names__()
 
     def __len__(self):
+        """Allow len(:py:class:`baseFolder`) works as expected."""
         return len(self.__names__())
         
     def __add_core__(self,result,other):
@@ -623,7 +630,8 @@ class baseFolder(MutableSequence):
             """Wraps a call to the metadataObject type for magic method calling.
             Note:
                 This relies on being defined inside the enclosure of the objectFolder method
-                so we have access to self and item"""
+                so we have access to self and item
+            """
             retvals=[]
             for ix,f in enumerate(self):
                 meth=getattr(f,item,None)
@@ -641,6 +649,7 @@ class baseFolder(MutableSequence):
         return _wrapper_
 
     def __deepcopy__(self, memo):
+        """Provides support for copy.deepcopy to work."""
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result
@@ -656,7 +665,8 @@ class baseFolder(MutableSequence):
         """Prints a summary of the objectFolder structure
 
         Returns:
-            A string representation of the current objectFolder object"""
+            A string representation of the current objectFolder object
+        """
         cls=self.__class__.__name__
         pth=getattr(self,"key")
         if pth is None:
@@ -741,7 +751,8 @@ class baseFolder(MutableSequence):
         Notes:
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
-                where f is either a objectFolder or metadataObject."""
+                where f is either a objectFolder or metadataObject.
+        """
         breadcrumb={} if breadcrumb is None else breadcrumb
         walker_args = {} if walker_args is None else walker_args
         if (len(self.groups)>0):
@@ -809,7 +820,8 @@ class baseFolder(MutableSequence):
             
         If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
         *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-        if *name* is a metadataObject, then it matches for an equyality test."""
+        if *name* is a metadataObject, then it matches for an equyality test.
+        """
         if isinstance(name,string_types):
             if "*" in name or "?" in name: # globbing pattern
                 return len(fnmatch.filter(self.__names__(),name))
@@ -822,7 +834,7 @@ class baseFolder(MutableSequence):
             match=[1 for d in self if d==name ]
             return len(match)
             
-    def filter(self, filter=None,  invert=False,copy=False):
+    def filter(self, filter=None,  invert=False,copy=False): # pylint: disable=redefined-builtin
         """Filter the current set of files by some criterion
 
         Args:
@@ -834,8 +846,8 @@ class baseFolder(MutableSequence):
             copy (bool): If True, then a new copy of the current baseFolder is made before filtering.
             
         Returns:
-            The current objectFolder object"""
-
+            The current objectFolder object
+        """
         names=[]
         if copy:
             result=deepcopy(self)
@@ -859,15 +871,16 @@ class baseFolder(MutableSequence):
         result.extend(names)
         return result
 
-    def filterout(self, filter):
+    def filterout(self, filter): # pylint: disable=redefined-builtin
         """Synonym for self.filter(filter,invert=True)
-
+        
         Args:
         filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
             metadataObject and evaluates True or False
-
+        
         Returns:
-            The current objectFolder object with the files in the file list filtered."""
+            The current objectFolder object with the files in the file list filtered.
+        """
         return self.filter(filter, invert=True)
 
     def flatten(self, depth=None):
@@ -877,7 +890,8 @@ class baseFolder(MutableSequence):
             depth )(int or None): Only flatten ub-=groups that are within (*depth* of the deepest level.
 
         Returns:
-            A copy of the now flattened DatFolder"""
+            A copy of the now flattened DatFolder
+        """
         if isinstance(depth,int):
             if self.depth<=depth:
                 self.flatten()
@@ -912,7 +926,8 @@ class baseFolder(MutableSequence):
             A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files
 
         If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group 
-        with key None. Metadata keys that are generated from the filename are supported."""
+        with key None. Metadata keys that are generated from the filename are supported.
+        """
         if isinstance(key, list):
             next_keys=key[1:]
             key=key[0]
@@ -943,7 +958,8 @@ class baseFolder(MutableSequence):
             
         If *name* is a string, then matching is based on either exact matches of the name, or if it includes a * or ? then the basis of a globbing match.
         *name* may also be a regular expressiuon, in which case matches are made on the basis of  the match with the name of the metadataObject. Finally,
-        if *name* is a metadataObject, then it matches for an equyality test."""
+        if *name* is a metadataObject, then it matches for an equyality test.
+        """
         if isinstance(name,string_types):
             if "*" in name or "?" in name: # globbing pattern
                 m=fnmatch.filter(self.__names__(),name)
@@ -1016,8 +1032,8 @@ class baseFolder(MutableSequence):
         """Remove any groups from the objectFolder (and subgroups).
 
         Returns:
-            A copy of thte pruned objectFolder."""
-
+            A copy of thte pruned objectFolder.
+        """
         self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
         self.walk_groups(self._pruner_,group=True)
         while len(self._pruneable)!=0:
@@ -1179,7 +1195,8 @@ class baseFolder(MutableSequence):
         reverse (bool): Optionally sort in reverse order
 
         Returns:
-            A copy of the current objectFolder object"""
+            A copy of the current objectFolder object
+        """
         if isinstance(key, string_types):
             k=[(x.get(key),i) for x,i in enumerate(self)]
             k=sorted(k,reverse=reverse)
@@ -1279,6 +1296,7 @@ class baseFolder(MutableSequence):
         return zip(*grps)
 
 class DiskBssedFolder(object):
+    
     """A Mixin class that implmenets reading metadataObjects from disc.
     
     Attributes:
@@ -1321,6 +1339,7 @@ class DiskBssedFolder(object):
 
 
     def __init__(self,*args,**kargs):
+        """Additional consutor for DiskbasedFolders"""
         from Stoner import Data
         defaults=copy(self._defaults)
         if "directory" in defaults and defaults["directory"] is None:
@@ -1351,7 +1370,8 @@ class DiskBssedFolder(object):
             new_directory (bool): True if allowed to create new directory
 
         Returns:
-            A directory to be used for the file operation."""
+            A directory to be used for the file operation.
+        """
         # Wildcard pattern to be used in file dialogs.
         if not self.multifile:
             mode="directory"
@@ -1406,6 +1426,7 @@ class DiskBssedFolder(object):
         return grp.filename
         
     def __add_core__(self,result,other):
+        """Additional logic for the add olperator."""
         if isinstance(other,string_types):
             othername=path.join(self.directory,other)
             if path.exists(othername) and othername not in result:
@@ -1427,6 +1448,7 @@ class DiskBssedFolder(object):
 
         
     def __lookup__(self,name):
+        """Addional logic for the looking up names."""
         if isinstance(name,string_types):
             if self.basenames.count(name)==1:
                 return self.__names__()[self.basenames.index(name)]
@@ -1486,6 +1508,7 @@ class DiskBssedFolder(object):
 
     @property
     def pattern(self):
+        """Provide support for getting the pattern attribute."""
         return self._pattern
 
     @pattern.setter
@@ -1611,7 +1634,8 @@ class DiskBssedFolder(object):
             name(string or int): Specifies the entry to unload from memeory.
             
         Returns:
-            (DataFolder): returns a copy of itself."""
+            (DataFolder): returns a copy of itself.
+        """
         self.__setter__(name,None)
         return self
 
