@@ -1209,15 +1209,15 @@ class baseFolder(MutableSequence):
             if python_v3:
                 new_order=sorted(self,key=lambda x:key.match(x).groups(), reverse=reverse)
             else:
-                new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(),key.match(y).groups()), 
-                                 reverse=reverse)  # NOQA pylint: disable=undefined-variable
+                new_order=sorted(self,cmp=lambda x, y:cmp(key.match(x).groups(), # NOQA pylint: disable=undefined-variable
+                                 key.match(y).groups()), reverse=reverse)  
         else:
             order=range(len(self))
             if python_v3:
                 new_order=sorted(order,key=lambda x:key(self[x]), reverse=reverse)
             else:
-                new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]), key(self[y])), 
-                                 reverse=reverse)  # NOQA pylint: disable=undefined-variable
+                new_order=sorted(order,cmp=lambda x, y:cmp(key(self[x]),  # NOQA pylint: disable=undefined-variable 
+                                 key(self[y])), reverse=reverse)  
             new_order=[self.__names__()[i] for i in new_order]
         self.__clear__()
         self.extend(new_order)

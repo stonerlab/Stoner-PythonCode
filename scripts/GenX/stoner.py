@@ -1,7 +1,8 @@
-''' <h1>Experimental Stonerlab DataFile</h1>
+"""Experimental Stonerlab DataFile
+
 Hacked up version of the default data loader plugin that uses the Stoner package classes to
 read in data files. Supports loading from the Brucker D8
-'''
+"""
 
 import numpy as np
 import wx
@@ -13,17 +14,21 @@ from plugins.data_loader_framework import Template
 from plugins.utils import ShowErrorDialog, ShowWarningDialog, ShowInfoDialog
 
 class Plugin(Template):
+    
+    """Plugin class from GenX."""
+    
     def __init__(self, parent):
+        """Housekeeping"""
         Template.__init__(self, parent)
         self.x_col = 'Angle'
         self.y_col = 'Counts'
         self.e_col = 'Counts'
 
     def LoadData(self, data_item_number, filename):
-        '''LoadData(self, data_item_number, filename) --> none
+        """LoadData(self, data_item_number, filename) --> none
 
         Loads the data from filename into the data_item_number.
-        '''
+        """
         try:
             datafile=Data(str(filename),debug=True) # does all the hard work here
         except Exception as e:
@@ -66,11 +71,11 @@ class Plugin(Template):
             self.SendUpdateDataEvent()
 
     def SettingsDialog(self):
-        '''SettingsDialog(self) --> None
+        """SettingsDialog(self) --> None
 
         This function should - if necessary implement a dialog box
         that allows the user set import settings for example.
-        '''
+        """
         col_values = {'x': self.x_col,'y': self.y_col,'y error': self.e_col,'format':self.format}
         dlg = SettingsDialog(self.parent, col_values)
         if dlg.ShowModal() == wx.ID_OK:
@@ -82,8 +87,11 @@ class Plugin(Template):
 
 
 class SettingsDialog(wx.Dialog):
+    
+    """Plugin Settings dialog class."""
 
     def __init__(self, parent, col_values):
+        """Housekeeping."""
         wx.Dialog.__init__(self, parent, -1, 'Data loader settings')
 
         box_sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -132,12 +140,14 @@ class SettingsDialog(wx.Dialog):
         self.Layout()
 
     def GetColumnValues(self):
+        """Read the data column headings."""
         values = {}
         for key in self.col_controls:
             values[key] = self.col_controls[key].GetValue()
         return values
 
     def GetMiscValues(self):
+        """Initialise other dialog values."""
         values = {}
         for key in self.misc_controls:
             val = self.misc_controls[key].GetValue()

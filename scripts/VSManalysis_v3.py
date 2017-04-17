@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-VSM Analysis v3
+"""VSM Analysis v3
+
 Created on Sat Aug 24 20:18:05 2013
 
 @author: Gavin Burnell
@@ -11,6 +11,7 @@ import numpy
 from Stoner import Data
 
 class VSMAnalysis(Data):
+    
     """A mixin of AnalyseFile and VSMFile so we can easily load and process the Data
     """
 
@@ -29,10 +30,16 @@ class VSMAnalysis(Data):
         return self
 
     def correct_drift(self,threshold=0.95):
-        """Masks out data that isn't above threshold*maximum field and fits a straight line to
+        """Corrects for drift in the signal.
+        
+        Masks out data that isn't above threshold*maximum field and fits a straight line to
         Moment(Time) and then subtracts this from the data.
-        @param threshold fraction of the maximum field to look at to work out drift in time.
-        @return the current object with a new corrected moment.
+        
+        Args:
+            threshold (float): fraction of the maximum field to look at to work out drift in time.
+        
+        Returns:
+            the current object with a new corrected moment.
         """
         from Stoner.FittingFuncs import Linear
         H_max=max(self.column('H_vsm'))
@@ -44,11 +51,17 @@ class VSMAnalysis(Data):
             self.data[:,m]=correct_m #and push it back
 
     def remove_diamagnetism_and_offset(self,threshold=0.85):
-        """Fits straight lines to the upper and lower parts of the curve (within
+        """Removes a diamagnetic component from the data.
+        
+        Fits straight lines to the upper and lower parts of the curve (within
         threshold of the extreme fields) and uses this to remove diamangeteic omponents
         and recentre the loop
-        @param threshold Fraction of maximum/minimum  field to assume is saturated
-        @return a copy of self with the corrections applied
+        
+        Args:
+            threshold (float): Fraction of maximum/minimum  field to assume is saturated
+        
+        ReturnsL
+            a copy of self with the corrections applied
         """
         from Stoner.FittingFuncs import Linear
         H_max=max(self.column('H_vsm'))
@@ -64,8 +77,7 @@ class VSMAnalysis(Data):
         return self
 
     def find_Hc(self):
-        """Uses thresholding and interpolation to find fields for zero crossing moments.
-        """
+        """Uses thresholding and interpolation to find fields for zero crossing moments."""
         h_m=int(self.peaks('H_vsm',15)[0])
         mask=self.mask
         self.mask=numpy.zeros(self.shape)
@@ -76,8 +88,7 @@ class VSMAnalysis(Data):
         return (hc_m,hc_p)
 
     def find_Br(self):
-        """Uses thresholding and interpolation to find moments for zero crossing fields.
-        """
+        """Uses thresholding and interpolation to find moments for zero crossing fields."""
         h_m=int(self.peaks('H_vsm',15)[0])
         mask=self.mask
         self.mask=numpy.zeros(self.shape)

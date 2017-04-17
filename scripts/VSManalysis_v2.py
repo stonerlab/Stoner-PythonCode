@@ -1,4 +1,6 @@
-"""Author: Rowan Temple.     Date:11/2011
+"""VSM Analysis Code example v2
+
+Author: Rowan Temple.     Date:11/2011
 
 ***YOU CANNOT RUN THIS FILE WITHIN IDLE! You must run it in a command window. (matplotlib interactive
 thing gets mixed up from within IDLE.)***

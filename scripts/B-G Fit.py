@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 21 19:51:28 2014
-
 Sample script for fitting BlochGrueneisen function to a data file
 
 @author: phygbu
@@ -19,10 +17,12 @@ if python_v3:
     raw_input=input
 
 def bg_wrapper(T,tD,r0,A):
+    """Fit wrapper."""
     return blochGrueneisen(T,tD,r0,A,5)
 
 
 def select_col(data,message):
+    """Select the column with the data."""
     print("Unable to guess column")
     for i,col in enumerate(data.column_headers):
         print("{} : {}".format(i,col))

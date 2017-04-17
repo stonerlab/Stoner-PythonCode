@@ -93,6 +93,15 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 Recent Changes
 ==============
 
+Current PyPi Version
+--------------------
+
+The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start
+making beta packages available. The current version is:
+
+.. image:: https://badge.fury.io/py/Stoner.svg
+   :target: https://badge.fury.io/py/Stoner
+
 Development Version
 -------------------
 

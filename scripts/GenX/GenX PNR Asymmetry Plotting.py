@@ -9,17 +9,11 @@ Script to produce plots from GenX output
 
 import numpy as np
 import matplotlib.pyplot as plt
-import Stoner.Core as SC
-import Stoner.Analysis as SA
-import Stoner.Plot as SP
-from Stoner import DataFolder
+from Stoner import DataFolder,Data
 
 
-class WorkingFile(SA.AnalyseFile,SP.PlotFile):
-    """Mixin of PlotFile and AnalyseFile fir both sets of functions"""
-    pass
 
-f=DataFolder(directory=False,pattern="*.dat",type=WorkingFile)
+f=DataFolder(directory=False,pattern="*.dat",type=Data)
 f.sort('dataset')
 up=f[2]
 up&=f[1]

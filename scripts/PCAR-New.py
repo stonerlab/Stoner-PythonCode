@@ -1,7 +1,6 @@
 """Python  script for Analysing PCAR data using Stoner classes and lmfit
 
 Gavin Burnell g.burnell@leeds.ac.uk
-
 """
 from __future__ import print_function
 
@@ -10,16 +9,18 @@ from __future__ import print_function
 import numpy as np
 from Stoner.Util import Data
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini,quadratic
-from Stoner.compat import *
+from Stoner.compat import python_v3
 if python_v3:
     import configparser as ConfigParser
 else:
     import ConfigParser
 
 class working(Data):
+    
     """Utility class to manipulate data and plot it"""
 
     def __init__(self,*args,**kargs):
+        """Setup the fitting code."""
         super(working,self).__init__(*args,**kargs)
         inifile=__file__.replace(".py",".ini")
 
@@ -51,8 +52,7 @@ class working(Data):
         self.p0=p0
 
     def Discard(self):
-        """Optionally throw out some high bias data."""
-        
+        """Optionally throw out some high bias data."""        
         discard=self.config.has_option("Data","dicard") and self.config.getboolean("Data",'discard')
         if discard:
             v_limit=self.config.get("Data",'v_limit')
@@ -67,14 +67,13 @@ class working(Data):
 
         Use either a simple normalisation constant or go fancy and try to use a background function.
         """
-
         if self.config.has_option("Options", "normalise") and self.config.getboolean("Options", "normalise"):
             print("Normalising Data")
             Gn=self.config.getfloat("Data", 'Normal_conductance')
             v_scale=self.config.getfloat("Data", "v_scale")
             if self.config.has_option("Options", "fancy_normaliser") and self.config.getboolean("Options", "fancy_normaliser"):
-                vmax, vp=self.max(self.vcol)
-                vmin, vp=self.min(self.vcol)
+                vmax, _ =self.max(self.vcol)
+                vmin, _ =self.min(self.vcol)
                 p, pv=self.curve_fit(quadratic, bounds=lambda x, y:(x>0.9*vmax) or (x<0.9*vmin))
                 print("Fitted normal conductance background of G="+str(p[0])+"V^2 +"+str(p[1])+"V+"+str(p[2]))
                 self["normalise.coeffs"]=p
@@ -88,7 +87,7 @@ class working(Data):
 
     def offset_correct(self):
         """Centre the data - look for peaks and troughs within 5 of the initial delta value
-            take the average of these and then subtract it.
+        take the average of these and then subtract it.
         """
         if self.config.has_option("Options", "remove_offset") and self.config.getboolean("Options", "remove_offset"):
             print("Doing offset correction")
@@ -127,6 +126,7 @@ class working(Data):
             ret.data=fit
             ret.metadata=self.metadata
             prefix=ret["lmfit.prefix"][-1]
+            ix=0
             for ix,p in enumerate(self.model.param_names):
                 if "{}{} label".format(prefix,p) in self:
                     label=self["{}{} label".format(prefix,p)]

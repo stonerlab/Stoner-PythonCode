@@ -1,7 +1,8 @@
-"""Created 08/2011 Rowan Temple
-Splits Brookhaven files up into seperate scan files and
-dumps them in a folder 'BNLSplitFiles'. Will overwrite any files
-already split but that should be ok for an update.
+"""Splits Brookhaven files up into seperate scan files and dumps them in a folder 'BNLSplitFiles'.
+
+R.C.Temple
+
+Will overwrite any files already split but that should be ok for an update.
 """
 from __future__ import print_function
 

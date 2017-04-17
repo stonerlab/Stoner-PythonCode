@@ -1,9 +1,9 @@
- # A very quick and dirty Kiessig Fringe Analysis code
- # Gavin Burnell 28/12/2010
- # $log$
- #
- # TODO: Imp,ement an error bar on the uncertainity by understanding the significance of the covariance terms
-
+ """A very quick and dirty Kiessig Fringe Analysis code
+ 
+ Gavin Burnell 28/12/2010
+ 
+  TODO: Implement an error bar on the uncertainity by understanding the significance of the covariance terms
+"""
 from Stoner import Data
 from Stoner.Fit import Linear
 from Stoner.Util import format_error

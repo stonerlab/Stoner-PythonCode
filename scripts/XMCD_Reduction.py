@@ -1,3 +1,4 @@
+"""Simple XMCD Data reduction example."""
 from __future__ import print_function
 # Normaliser with Stoner module
 import Stoner.Folders as SF
@@ -113,6 +114,7 @@ def asym(grp,trail,**kargs):
     return ret
 
 def collate(grp,trail,**kargs):
+    """Gather all the data up again."""
     grp.sort()
     final=Data()
     final.add_column(grp[0].column('Energy'),'Energy')

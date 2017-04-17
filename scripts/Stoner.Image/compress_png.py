@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Oct 13 12:21:36 2016
-
-@author: phyrct
-
 Script for compressing png images using PIL optimize.
 
 Given the folder it will compress all files in all the subfolders. This 
@@ -36,8 +32,9 @@ def get_size(start_path = '.'):
     return total_size
 
 def pngsave(im, filename):
-    """save a PNG with PIL preserving metadata. Thanks to blog 
-    http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
+    """save a PNG with PIL preserving metadata. 
+    
+    Thanks to blog http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
     for code"""
     
     # these can be automatically added to Image.info dict                                                                              
