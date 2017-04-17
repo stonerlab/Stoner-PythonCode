@@ -16,9 +16,9 @@ __all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
-    range = xrange  # pylint:disable=redefined-builtin, undefined-variable
-    string_types = (str, unicode) # pylint: disable=undefined-variable
-    int_types=(int,long) # pylint: disable=undefined-variable
+    range = xrange  # pylint:disable=redefined-builtin, undefined-variable, F821
+    string_types = (str, unicode) # pylint: disable=undefined-variable, F821
+    int_types=(int,long) # pylint: disable=undefined-variable, F821
     python_v3 = False
 
     #|Define symbvols for equivalence to Python 3
@@ -56,11 +56,11 @@ elif __vi__[0] == 3:
     python_v3 = True
 
     def str2bytes(s):
-        "Encode a unicode string into UTF-8."
+        """Encode a unicode string into UTF-8."""
         return bytes(str(s), "utf-8")
 
     def bytes2str(b):
-        "Decode byte string back to univcode."
+        """Decode byte string back to univcode."""
         if isinstance(b, bytes):
             return b.decode("utf-8", "ignore")
         else:
@@ -89,7 +89,6 @@ elif __vi__[0] == 3:
             raise RuntimeError("Unable to recognise required file dialog type:{}".format(what))
         else:
             return funcs[what](**opts)
-
 
 
 index_types = string_types + int_types +(_pattern_type,)
