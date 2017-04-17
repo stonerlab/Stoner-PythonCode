@@ -7,6 +7,7 @@ is run last.
 
 Eacg class should implement a load() method and optionally a save() method.
 """
+
 from __future__ import print_function
 from .compat import *
 import linecache
@@ -30,6 +31,7 @@ from .Core import DataFile,StonerLoadError
 
 
 class CSVFile(DataFile):
+    
     """A subclass of DataFiule for loading generic deliminated text fiules without metadata."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -111,7 +113,9 @@ class CSVFile(DataFile):
 
 
 class VSMFile(DataFile):
+    
     """Extends DataFile to open VSM Files"""
+    
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
@@ -192,6 +196,7 @@ class VSMFile(DataFile):
 
 
 class BigBlueFile(CSVFile):
+    
     """Extends CSVFile to load files from BigBlue"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -226,6 +231,7 @@ class BigBlueFile(CSVFile):
         return self
 
 class QDFile(DataFile):
+    
     """Extends DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -322,6 +328,7 @@ class QDFile(DataFile):
         return self
 
 class OpenGDAFile(DataFile):
+    
     """Extends DataFile to load files from RASOR"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -370,11 +377,14 @@ class OpenGDAFile(DataFile):
 
 
 class RasorFile(OpenGDAFile):
+    
     """Just an alias for OpenGDAFile"""
+    
     pass
 
 
 class SPCFile(DataFile):
+    
     """Extends DataFile to load SPC files from Raman"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -519,6 +529,7 @@ class SPCFile(DataFile):
             return self
 
 class RigakuFile(DataFile):
+    
     """Loads a .ras file as produced by Rigaku X-ray diffractormeters"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -621,6 +632,7 @@ class RigakuFile(DataFile):
 
 
 class XRDFile(DataFile):
+    
     """Loads Files from a Brucker D8 Discovery X-Ray Diffractometer"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -704,6 +716,7 @@ class XRDFile(DataFile):
 
 
 class BNLFile(DataFile):
+    
     """
     Creates BNLFile a subclass of DataFile that caters for files in the SPEC format given
     by BNL (specifically u4b beamline but hopefully generalisable).
@@ -714,6 +727,7 @@ class BNLFile(DataFile):
     them, a separate python script has been written for this and should be found
     in data/Python/PythonCode/scripts.
     """
+    
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
     #   .. note::
@@ -807,6 +821,7 @@ class BNLFile(DataFile):
 
 
 class MokeFile(DataFile):
+    
     """Class that extgends DataFile to load files from the Leeds MOKE system."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -852,6 +867,7 @@ class MokeFile(DataFile):
 
 
 class FmokeFile(DataFile):
+    
     """Extends DataFile to open Fmoke Files"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -897,6 +913,7 @@ class FmokeFile(DataFile):
 
 
 class GenXFile(DataFile):
+    
     """Extends DataFile for GenX Exported data."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -946,6 +963,7 @@ class GenXFile(DataFile):
 
 
 class SNSFile(DataFile):
+    
     """This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from
     BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.
 
@@ -1015,6 +1033,7 @@ class SNSFile(DataFile):
 
 
 class OVFFile(DataFile):
+    
     """A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.
 
     OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported"""
@@ -1118,6 +1137,7 @@ class OVFFile(DataFile):
 
 
 class MDAASCIIFile(DataFile):
+    
     """Reads files generated from the APS."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1208,6 +1228,7 @@ class MDAASCIIFile(DataFile):
 
 
 class LSTemperatureFile(DataFile):
+    
     """A class that reads and writes Lakeshore Temperature Calibration Curves.
 
 .. warning::
@@ -1309,6 +1330,7 @@ class LSTemperatureFile(DataFile):
 
 
 class EasyPlotFile(DataFile):
+    
     """A class that will extract as much as it can from an EasyPlot save File."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1400,6 +1422,7 @@ class EasyPlotFile(DataFile):
             self.column_headers[col] = parts[1]
 
 class PinkLibFile(DataFile):
+    
     """Extends DataFile to load files from MdV's PINK library - as used by the GMR anneal rig."""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1448,6 +1471,7 @@ class PinkLibFile(DataFile):
         return self
 
 class KermitPNGFile(DataFile):
+    
     """Loads PNG files with additional metadata embedded in them and extracts as metadata"""
 
     #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.
@@ -1516,6 +1540,7 @@ try: #Optional tdms support
     from nptdms import TdmsFile
     
     class TDMSFile(DataFile):
+        
         """A first stab at writing a file that will import TDMS files"""
     
         #: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.

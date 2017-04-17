@@ -100,12 +100,12 @@ class PlotMixin(object):
 
     @property
     def ax(self):
-        "Return the current axis number."
+        """Return the current axis number."""
         return self.axes.index(self.fig.gca())
 
     @ax.setter
     def ax(self,value):
-        "Change the current axis number."
+        """Change the current axis number."""
         if isinstance(value, int) and 0 <= value < len(self.axes):
             self.fig.sca(self.axes[value])
         else:
@@ -113,7 +113,7 @@ class PlotMixin(object):
 
     @property
     def axes(self):
-        "Return  the current axes object."
+        """Return  the current axes object."""
         if isinstance(self.__figure, mplfig.Figure):
             ret = self.__figure.axes
         else:
@@ -122,12 +122,12 @@ class PlotMixin(object):
 
     @property
     def fig(self):
-        "Get the current figure."
+        """Get the current figure."""
         return self.__figure
 
     @fig.setter
     def fig(self,value):
-        "Set the current figure."
+        """Set the current figure."""
         if isinstance(value,plt.Figure):
             self.__figure = value
             self.__figure, ax = self.template.new_figure(value.number)
@@ -141,19 +141,19 @@ class PlotMixin(object):
 
     @property
     def fignum(self):
-        "Return the current figure number."
+        """Return the current figure number."""
         return self.__figure.number
 
     @property
     def labels(self):
-        "Return the labels for the plot columns"
+        """Return the labels for the plot columns"""
         if len(self._labels) < len(self.column_headers):
             self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
         return self._labels
 
     @labels.setter
     def labels(self,value):
-        "Set the labels for the plot columns."
+        """Set the labels for the plot columns."""
         if value is None:
             self._labels=copy.deepcopy(self.column_headers)
         else:
@@ -161,7 +161,7 @@ class PlotMixin(object):
             
     @property
     def showfig(self):
-        "Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."
+        """Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."""
         if self._showfig is None:
             return None
         if self._showfig:
@@ -171,7 +171,7 @@ class PlotMixin(object):
         
     @showfig.setter
     def showfig(self,value):
-        "Force a figure to be displayed."
+        """Force a figure to be displayed."""
         if not (value is None or isinstance(value,bool)):
             raise AttributeError("showfig should be a boolean value not a {}".format(type(value)))
         else:
@@ -179,7 +179,7 @@ class PlotMixin(object):
 
     @property
     def subplots(self):
-        "Return the subplot instances."
+        """Return the subplot instances."""
         if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
             self._subplots = self.__figure.axes
         return self._subplots
@@ -187,14 +187,14 @@ class PlotMixin(object):
 
     @property
     def template(self):
-        "Return the current plot template."
+        """Return the current plot template."""
         if not hasattr(self,"_template"):
             self.template=DefaultPlotStyle()
         return self._template
 
     @template.setter
     def template(self,value):
-        "Set the current template."
+        """Set the current template."""
         if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
             value = value()
         if isinstance(value, DefaultPlotStyle):

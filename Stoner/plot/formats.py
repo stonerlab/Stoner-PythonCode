@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-"""
-
-Plot Templates module - contains classes that style plots for Stoner.plot and pyplot
+"""Plot Templates module - contains classes that style plots for Stoner.plot and pyplot
 Created on Fri Feb 07 19:57:30 2014
 
 @author: Gavin Burnell
 """
+
 __all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
 from Stoner.compat import *
 import matplotlib as mpl
@@ -27,8 +26,10 @@ import numpy as _np_
 
 
 class TexFormatter(Formatter):
-    """An axis tick label formatter that emits Tex formula mode code
-    so that large numbers are registered as \\times 10^{power}
+    
+    """An axis tick label formatter that emits Tex formula mode code.
+    
+    Formating is set so that large numbers are registered as \\times 10^{power}
     rather than ysing E notation."""
 
     def __call__(self, value, pos=None):
@@ -54,9 +55,12 @@ class TexFormatter(Formatter):
 
 
 class TexEngFormatter(EngFormatter):
-    """An axis tick label formatter that emits Tex formula mode code
-    so that large numbers are registered as \\times 10^{power}
-    rather than ysing E notation."""
+    
+    """An axis tick label formatter that emits Tex formula mode code.
+    
+    Formatting is set so that large numbers are registered as with SI prefixes
+    rather than ysing E notation.
+    """
 
     prefix = {
         3: "k",
@@ -93,6 +97,7 @@ class TexEngFormatter(EngFormatter):
 
 
 class DefaultPlotStyle(object):
+    
     """Produces a default plot style.
 
     To produce alternative plot styles, create subclasses of this plot. Either override or
@@ -115,16 +120,17 @@ class DefaultPlotStyle(object):
             :include-source:
 
     """
-    """Internal class attributes."""
+    
+    #Internal class attributes.
     _inches_per_pt = 1.0 / 72.27  # Convert pt to inch
     _mm_per_inch = 25.4
     _golden_mean = (_np_.sqrt(5) - 1.0) / 2.0  # Aesthetic ratio
-    """Settings for this figure type. All instance attributes which start template_
-    will be used. Once the leading template_ is stripped, all _ characters are replaced
-    with . and then the attributes are mapped to a dictionary and used to update the rcParams
-    dictionary
+    
+    #Settings for this figure type. All instance attributes which start template_
+    #will be used. Once the leading template_ is stripped, all _ characters are replaced
+    #with . and then the attributes are mapped to a dictionary and used to update the rcParams
+    #dictionary
 
-    """
     show_xlabel = True
     show_ylabel = True
     show_zlabel = True
@@ -237,11 +243,13 @@ class DefaultPlotStyle(object):
 
     @stylesheet.setter
     def stylesheet(self,value):
+        """Just stop the stylesheet from being set."""
         raise AttributeError("Can't set the stylesheet value, this is dervied from the stylename aatribute.")
 
 
     def update(self, **kargs):
         """Update the template with new attributes from keyword arguments.
+        
         Keyword arguments may be supplied to set default parameters. Any Matplotlib rc parameter
         may be specified, with .'s replaced with _ and )_ replaced with __.
         """
@@ -300,15 +308,15 @@ class DefaultPlotStyle(object):
         return ret, ax
 
     def apply(self):
-        """Scan for all attributes that start template_ and build them into a dictionary
-        to update matplotlib settings with.
-        """
+        """Scan for all attributes that start template_ and build them into a dictionary to update matplotlib settings with."""
         plt.style.use(self.stylesheet)
 
         self.customise()
 
     def customise(self):
-        """This method is supplied for sub classes to override to provide additional
+        """Hook to customise plot.
+        
+        This method is supplied for sub classes to override to provide additional
         plot customisation after the rc paramaters are updated from the class and
         instance attributes."""
         pass
@@ -351,7 +359,6 @@ class DefaultPlotStyle(object):
             multiple (string): how to handle multiple subplots
             plot (Stoner.plot.PlotMixin): The PlotMixin boject we're working with
         """
-
         if multiple in self.subplot_settings:
             if ix == 0:
                 i = 0
@@ -377,6 +384,7 @@ class DefaultPlotStyle(object):
             pass
 
 class GBPlotStyle(DefaultPlotStyle):
+    
     """Template developed for Gavin's plotting.
 
     This is largely an experimental class for trying things out rather than
@@ -388,6 +396,7 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
     """
+    
     xformatter = TexEngFormatter
     yformatter = TexEngFormatter
     stylename = "GBStyle"
@@ -405,32 +414,37 @@ class GBPlotStyle(DefaultPlotStyle):
 
 
 class JTBPlotStyle(DefaultPlotStyle):
+    
     """Template class for Joe's Plot settings.
 
     Example
         .. plot:: samples/plotstyles/JTBStyle.py
             :include-source:
 
-"""
+    """
 
     show_title = False
     stylename = "JTB"
 
     def customise_axes(self, ax, plot):
+        """Override the default axis configuration (or not)"""
         pass
 
 
 class JTBinsetStyle(DefaultPlotStyle):
+    
     """Template class for Joe's Plot settings."""
 
     show_title = False
     stylename = "JTBinset"
 
     def customise_axes(self, ax, plot):
+        """Override the default axis configuration (or not)"""
         pass
 
 
 class ThesisPlotStyle(DefaultPlotStyle):
+    
     """Template class for Joe's Plot settings."""
 
     show_title = False
@@ -438,20 +452,24 @@ class ThesisPlotStyle(DefaultPlotStyle):
 
 
 class PRBPlotStyle(DefaultPlotStyle):
+    
     """A figure Style for making figures for Phys Rev * Jounrals.
 
     Example
         .. plot:: samples/plotstyles/PRBStyle.py
             :include-source:
     """
+    
     show_title = False
     stylename = "PRB"
 
     def customise_axes(self, ax, plot):
+        """Override the default axis configuration."""
         ax.locator_params(tight=True, nbins=4)
 
 
 class SketchPlot(DefaultPlotStyle):
+    
     """Turn on xkcd plot style.
 
     Implemented as a bit of a joke, but perhaps someone will use this in a real
@@ -463,9 +481,11 @@ class SketchPlot(DefaultPlotStyle):
 
 
     """
+    
     stylename = "sketch"
 
     def customise(self):
+        """Force on xkcd style."""
         plt.xkcd()
 
     def customise_axes(self, ax, plot):
@@ -492,6 +512,7 @@ class SketchPlot(DefaultPlotStyle):
 if SEABORN: # extra classes if we have seaborn available
 
     class SeabornPlotStyle(DefaultPlotStyle):
+        
         """A plotdtyle that makes use of the seaborn plotting package to make visually attractive plots.
 
         Attributes:
@@ -504,17 +525,18 @@ if SEABORN: # extra classes if we have seaborn available
                 :include-source:
         """
 
-
         _stylename=None
         _context=None
         _palette=None
 
         @property
         def context(self):
+            """Provide context getter."""
             return self._context
 
         @context.setter
         def context(self,name):
+            """Limit context to allowed values."""
             if name in ["paper", "notebook", "talk", "poster"]:
                 self._context=name
             else:
@@ -522,10 +544,12 @@ if SEABORN: # extra classes if we have seaborn available
 
         @property
         def palette(self):
+            """Provide palette getter."""
             return self._palette
 
         @context.setter
         def palette(self,name):
+            """Force palette to take allowed values."""
             try:
                 with sns.color_palette(name):
                     pass
@@ -535,10 +559,12 @@ if SEABORN: # extra classes if we have seaborn available
 
         @property
         def stylename(self):
+            """Provide getter for stylename."""
             return self._stylename
 
         @stylename.setter
         def stylename(self,name):
+            """Force stylename to take allowed values only."""
             if name in ["darkgrid", "whitegrid", "dark", "white", "ticks"]:
                 self._stylename=name
             else:

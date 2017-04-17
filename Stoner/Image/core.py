@@ -181,7 +181,7 @@ class ImageArray(np.ndarray,metadataObject):
         self.filename = getattr(obj, 'filename', None)
 
     def __array_wrap__(self, out_arr, context=None):
-        "see __array_finalize__ for info"
+        """see __array_finalize__ for info"""
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
@@ -192,13 +192,13 @@ class ImageArray(np.ndarray,metadataObject):
 #==============================================================r
     @property
     def clone(self):
-        "return a copy of the instance"
+        """return a copy of the instance"""
         return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
                                get_metadata=False)
 
     @property
     def max_box(self):
-        "return the coordinate extent (xmin,xmax,ymin,ymax)"
+        """return the coordinate extent (xmin,xmax,ymin,ymax)"""
         try:
             box=(0,self.shape[1],0,self.shape[0])
         except IndexError: #1d array
@@ -207,7 +207,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     @property
     def data(self):
-        "alias for image[:]. Equivalence to Stoner.data behaviour"
+        """alias for image[:]. Equivalence to Stoner.data behaviour"""
         return self[:]
     
     #@property
@@ -220,7 +220,7 @@ class ImageArray(np.ndarray,metadataObject):
     
     @property
     def _kfuncs(self):
-        "Provide an attribtute that caches the imported ImageArray functions."
+        """Provide an attribtute that caches the imported ImageArray functions."""
         if self._kfuncs_proxy is None:
             from . import imagefuncs
             self._kfuncs_proxy=imagefuncs
@@ -228,7 +228,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     @property
     def _ski_funcs(self):
-        "Provide an attribute that cahces the import sckit-image function names."
+        """Provide an attribute that cahces the import sckit-image function names."""
         if self._ski_funcs_proxy is None:
             _ski_modules=[color,exposure,feature,io,measure,filters,filters.rank, graph,
                     util, restoration, morphology, segmentation, transform,
@@ -240,7 +240,7 @@ class ImageArray(np.ndarray,metadataObject):
         
     @property
     def tesseractable(self):
-        "Do a test call to tesseract to see if it is there and cache the result."
+        """Do a test call to tesseract to see if it is there and cache the result."""
         if hasattr(self,"_tesseractable"):
             return getattr(self,"_tesseractable")
         try:
@@ -254,7 +254,7 @@ class ImageArray(np.ndarray,metadataObject):
 #function generator
 #==============================================================
     def __dir__(self):
-        "Implement code for dir()"
+        """Implement code for dir()"""
         kfuncs=set(dir(self._kfuncs))
         skimage=set()
         mods=list(self._ski_funcs.keys())
@@ -298,7 +298,7 @@ class ImageArray(np.ndarray,metadataObject):
         return ret
 
     def __getitem__(self,index):
-        "Patch indexing of strings to metadata."
+        """Patch indexing of strings to metadata."""
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
@@ -306,21 +306,21 @@ class ImageArray(np.ndarray,metadataObject):
 
 
     def __setitem__(self,index,value):
-        "Patch string index through to metadata."
+        """Patch string index through to metadata."""
         if isinstance(index,string_types):
             self.metadata[index]=value
         else:
             super(ImageArray,self).__setitem__(index,value)
 
     def __delitem__(self,index):
-        "Patch indexing of strings to metadata."
+        """Patch indexing of strings to metadata."""
         if isinstance(index,string_types):
             del self.metadata[index]
         else:
             super(ImageArray,self).__delitem__(index)
 
     def _func_generator(self,workingfunc):
-        "generate a function that adds self as the first argument"
+        """generate a function that adds self as the first argument"""
 
         def gen_func(*args, **kwargs):
             r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
@@ -343,7 +343,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     @classmethod
     def _load(self,filename,**kwargs):
-        "Load an image from a file and return as a 2D array and metadata dictionary."
+        """Load an image from a file and return as a 2D array and metadata dictionary."""
         with Image.open(filename,"r") as img:
             fname=filename
             image=np.asarray(img)
@@ -595,7 +595,7 @@ class ImageArray(np.ndarray,metadataObject):
         return self.metadata
                 
     def _parse_text(self, text, key=None):
-        "Attempt to parse text which has been recognised from an image if key is given specific hints may be applied"
+        """Attempt to parse text which has been recognised from an image if key is given specific hints may be applied"""
         #print '{} before processsing: \'{}\''.format(key,data)
 
         #strip any internal white space
@@ -661,7 +661,7 @@ class ImageArray(np.ndarray,metadataObject):
         return data
 
     def _get_scalebar(self):
-        "Get the length in pixels of the image scale bar"
+        """"Get the length in pixels of the image scale bar"""
         box=(0,419,519,520) #row where scalebar exists
         im=self.crop_image(box=box, copy=True)
         im=im.astype(float)

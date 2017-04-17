@@ -153,17 +153,17 @@ class ImageStack(metadataObject):
              
     @property
     def shape(self):
-        "call through to ndarray.shape"
+        """call through to ndarray.shape"""
         return self.imarray.shape
     
     @property
     def imarray(self):
-        "The main array storing the images"
+        """The main array storing the images"""
         return self._imarray
     
     @imarray.setter
     def imarray(self, arr):
-        "Set the main array for the image."
+        """Set the main array for the image."""
         if len(arr.shape)!=3:
             raise ValueError('Bad shape {} for imarray'.format(arr.shape))
         if arr.shape[0] != self._len:
@@ -172,7 +172,7 @@ class ImageStack(metadataObject):
     
     @property
     def allmeta(self):
-        "List of complete metadata for each image in ImageStack"
+        """List of complete metadata for each image in ImageStack"""
         return self._allmeta
     
     @allmeta.setter
@@ -182,20 +182,20 @@ class ImageStack(metadataObject):
         
     @property
     def clone(self):
-        "Return a copy of self"
+        """Return a copy of self"""
         return copy.deepcopy(self)
     
     def __iter__(self):
-        "Iterating method."
+        """Iterating method."""
         return self.__next__()
     
     def __next__(self):
-        "Python 3 style iterator interface."
+        """Python 3 style iterator interface."""
         for i in range(len(self)):
             yield self[i]
     
     def _update_commonkeys(self):
-        "update self._commonkeys common keys in self.allmeta"
+        """update self._commonkeys common keys in self.allmeta"""
         if len(self._allmeta)>0:
             keys = set(self.allmeta[0].keys())
             for m in self.allmeta:
@@ -204,13 +204,13 @@ class ImageStack(metadataObject):
             self._commonkeys = set()
     
     def _update_zipallmeta(self):
-        "list of metadata items for each common key"
+        """list of metadata items for each common key"""
         self._update_commonkeys()
         for k in self._commonkeys:
             self.zipallmeta[k] = [i[k] for i in self.allmeta]
         
     def _update_metadata(self):     
-        "update the metadata from allmeta according to the specifications in  metadata_info"
+        """update the metadata from allmeta according to the specifications in  metadata_info"""
         self._update_zipallmeta()
         mi = self.metadata_info
         for cm in self._commonkeys:
@@ -227,7 +227,7 @@ class ImageStack(metadataObject):
                 raise NotImplementedError("metadata_info can't take all keywords yet")
         
     def __getitem__(self,index):
-        "Patch indexing of strings to metadata and an index to a single ImageArray"
+        """Patch indexing of strings to metadata and an index to a single ImageArray"""
         if isinstance(index,string_types):
             return self.metadata[index]
         elif isinstance(index, int):
@@ -240,7 +240,7 @@ class ImageStack(metadataObject):
         return super(ImageStack,self).__getitem__(index)
         
     def __setitem__(self,index,value):
-        "Patch string index through to metadata. All other set operations to be handled by insert, append and del."
+        """Patch string index through to metadata. All other set operations to be handled by insert, append and del."""
         if isinstance(index,string_types):
             self.metadata[index]=value
         elif isinstance(index,int):
@@ -253,7 +253,7 @@ class ImageStack(metadataObject):
             super(ImageStack,self).__setitem__(index,value)
 
     def __delitem__(self,index):
-        "Patch indexing of strings to metadata and index to single image and slice to multiple image"
+        """Patch indexing of strings to metadata and index to single image and slice to multiple image"""
         if isinstance(index,string_types):
             del self.metadata[index]
         elif isinstance(index, int):
@@ -268,11 +268,11 @@ class ImageStack(metadataObject):
             super(ImageStack,self).__delitem__(index)
             
     def __len__(self):
-        "Define a length for the array."
+        """Define a length for the array."""
         return self.imarray.shape[0]
 
     def __deepcopy__(self, memo):
-        "Support copy.deepcopy."
+        """Support copy.deepcopy."""
         cls = self.__class__
         ret = cls.__new__(cls)
         memo[id(self)] = ret
@@ -465,14 +465,14 @@ class ImageStack(metadataObject):
         self.imarray = self.imarray[:,box[2]:box[3],box[0]:box[1]]
         
     def show(self):
-        "Show the stack of images in a skimage CollectionViewer window"
+        """Show the stack of images in a skimage CollectionViewer window"""
         #stackims=[self[i] for i in range(len(self))]
         cv=CollectionViewer(self)
         cv.show()
         return cv  
 
     def save(self, fname):
-        "probably should save in hdf5 format"
+        """probably should save in hdf5 format"""
         raise NotImplementedError
         
     def stddev(self, weights=None):
@@ -487,7 +487,7 @@ class ImageStack(metadataObject):
         return result.view(ImageArray)
     
     def stderr(self, weights=None):
-        "Standard error in the stack average"
+        """Standard error in the stack average"""
         serr = self.stddev(weights=weights)/np.sqrt(self.shape[0])
         return serr
 
@@ -569,12 +569,12 @@ class KerrStack(ImageStack):
         return d
             
     def index_to_field(self, index_map):
-        "Convert an image of index values into an image of field values"
+        """Convert an image of index values into an image of field values"""
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
     
     def reverse(self):
-        "Reverse the image order"
+        """Reverse the image order"""
         self.imarray = self.imarray[::-1,:,:]
         self.fields = self.fields[::-1]
                               
@@ -703,7 +703,7 @@ class KerrStack(ImageStack):
     
 class MaskStack(KerrStack):
     
-    "Similar to ImageStack but made for stacks of boolean or binary images"
+    """Similar to ImageStack but made for stacks of boolean or binary images"""
     
     def __init__(self, *args, **kargs):
         super(MaskStack,self).__init__(*args, **kargs)
