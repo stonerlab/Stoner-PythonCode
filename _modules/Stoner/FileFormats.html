@@ -78,7 +78,6 @@
 <span class="n">png</span><span class="o">.</span><span class="n">MAX_TEXT_MEMORY</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">28</span>
 
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span><span class="n">StonerLoadError</span>
-<span class="kn">from</span> <span class="nn">.pyTDMS</span> <span class="k">import</span> <span class="n">read</span> <span class="k">as</span> <span class="n">tdms_read</span>
 
 
 <div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
@@ -569,53 +568,6 @@
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">setas</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
             <span class="k">return</span> <span class="bp">self</span></div>
-
-
-<div class="viewcode-block" id="TDMSFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile">[docs]</a><span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A first stab at writing a file that will import TDMS files&quot;&quot;&quot;</span>
-
-    <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
-    <span class="c1">#   .. note::</span>
-    <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
-    <span class="c1">#      file type before attempting to read data.</span>
-    <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c1"># Makes a positive ID of its file contents</span>
-    <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
-    <span class="c1"># the file load/save dialog boxes.</span>
-    <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.tdms&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
-
-
-    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;TDMS file loader routine.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            filename (string or bool): File to load. If None then the existing filename is used,</span>
-<span class="sd">                if False, then a file dialog will be used.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A copy of the itself after loading the data.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>  <span class="c1"># Read filename linewise</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="n">b</span><span class="s2">&quot;TDSm&quot;</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s1">&#39;Not a TDMS File&#39;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span> <span class="n">tdms_read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s2">&quot;TDMS File failed to load&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="n">nd</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">nd</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">column</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span></div>
-
 
 <div class="viewcode-block" id="RigakuFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RigakuFile.html#Stoner.FileFormats.RigakuFile">[docs]</a><span class="k">class</span> <span class="nc">RigakuFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Loads a .ras file as produced by Rigaku X-ray diffractormeters&quot;&quot;&quot;</span>
@@ -1610,6 +1562,72 @@
         <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;png&quot;</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
         <span class="k">return</span> <span class="bp">self</span>
+
+<span class="k">try</span><span class="p">:</span> <span class="c1">#Optional tdms support</span>
+    <span class="kn">from</span> <span class="nn">nptdms</span> <span class="k">import</span> <span class="n">TdmsFile</span>
+    
+<div class="viewcode-block" id="TDMSFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile">[docs]</a>    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A first stab at writing a file that will import TDMS files&quot;&quot;&quot;</span>
+    
+        <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
+        <span class="c1">#   .. note::</span>
+        <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
+        <span class="c1">#      file type before attempting to read data.</span>
+        <span class="n">priority</span><span class="o">=</span><span class="mi">16</span> <span class="c1"># Makes a positive ID of its file contents</span>
+        <span class="c1">#: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct</span>
+        <span class="c1"># the file load/save dialog boxes.</span>
+        <span class="n">patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*.tdms&quot;</span><span class="p">]</span> <span class="c1"># Recognised filename patterns</span>
+    
+        <span class="n">mime_type</span><span class="o">=</span><span class="s2">&quot;application/octet-stream&quot;</span>
+    
+        <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;TDMS file loader routine.</span>
+<span class="sd">    </span>
+<span class="sd">            Args:</span>
+<span class="sd">                filename (string or bool): File to load. If None then the existing filename is used,</span>
+<span class="sd">                    if False, then a file dialog will be used.</span>
+<span class="sd">    </span>
+<span class="sd">            Returns:</span>
+<span class="sd">                A copy of the itself after loading the data.</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="c1"># Open the file and read the main file header and unpack into a dict</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">=</span><span class="n">TdmsFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+                       
+                <span class="n">column_headers</span><span class="o">=</span><span class="p">[]</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+                        
+                
+                <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">grp</span><span class="o">==</span><span class="s2">&quot;/&quot;</span><span class="p">:</span>
+                        <span class="k">pass</span> <span class="c1">#skip the rooot group</span>
+                    <span class="k">elif</span> <span class="n">grp</span><span class="o">==</span><span class="s2">&quot;/&#39;TDI Format 1.5&#39;&quot;</span><span class="p">:</span>
+                        <span class="n">metadata</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">object</span><span class="p">(</span><span class="s2">&quot;TDI Format 1.5&quot;</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">string_to_type</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+                            <span class="n">chnl</span><span class="o">=</span><span class="n">grp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">chnl</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)</span>
+                            <span class="n">column_headers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chnl</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">data</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">data</span><span class="p">,</span><span class="n">f</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="n">grp</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="n">data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="o">=</span><span class="n">column_headers</span>                       
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">traceback</span> <span class="k">import</span> <span class="n">format_exc</span>
+                <span class="k">raise</span> <span class="n">StonerLoadError</span><span class="p">(</span><span class="s1">&#39;Not a TDMS File </span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_exc</span><span class="p">()))</span>
+            
+            <span class="k">return</span> <span class="bp">self</span></div>
+
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
 </pre></div>
 
           </div>
@@ -1649,7 +1667,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

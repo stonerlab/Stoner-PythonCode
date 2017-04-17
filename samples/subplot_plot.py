@@ -1,3 +1,4 @@
+"Independent sub plots for multiple y data."
 from Stoner import Data
 p=Data("sample.txt",setas="xyy")
 # Quick plot

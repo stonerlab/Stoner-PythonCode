@@ -1,3 +1,4 @@
+"Detect outlying points from a lione."
 from Stoner import Data
 import numpy as np
 

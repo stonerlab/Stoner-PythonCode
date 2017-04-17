@@ -1,8 +1,8 @@
+"USe curve_fit to fit a straight line."
 from Stoner import Data
-import numpy as np
-from numpy.random import normal
 
 def linear(x,m,c):
+    """Straight line function."""
     return m*x+c
 
 d=Data("curve_fit_data.dat",setas="xye")

@@ -61,7 +61,7 @@
 <h1>PlotMixin.plot_matrix<a class="headerlink" href="#plotmixin-plot-matrix" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.plot.core.PlotMixin.plot_matrix">
-<code class="descclassname">PlotMixin.</code><code class="descname">plot_matrix</code><span class="sig-paren">(</span><em>xvals=None</em>, <em>yvals=None</em>, <em>rectang=None</em>, <em>cmap=&lt;matplotlib.colors.ListedColormap object at 0x0000000005AD9C50&gt;</em>, <em>show_plot=True</em>, <em>title=''</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>zlabel=None</em>, <em>figure=None</em>, <em>plotter=None</em>, <em>**kwords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.core.PlotMixin.plot_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">PlotMixin.</code><code class="descname">plot_matrix</code><span class="sig-paren">(</span><em>xvals=None</em>, <em>yvals=None</em>, <em>rectang=None</em>, <em>cmap=&lt;matplotlib.colors.ListedColormap object&gt;</em>, <em>show_plot=True</em>, <em>title=''</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>zlabel=None</em>, <em>figure=None</em>, <em>plotter=None</em>, <em>**kwords</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/plot/core.html#PlotMixin.plot_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.plot.core.PlotMixin.plot_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots a surface plot by assuming that the current dataset represents a regular matrix of points.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -70,7 +70,8 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>xvals</strong> (<em>index, list or numpy.array</em>) &#8211; Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data</li>
 <li><strong>yvals</strong> (<em>int or list</em>) &#8211; Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats</li>
-<li><strong>rectang</strong> (<em>tuple</em>) &#8211; a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of columns) of data to be used for the z0data matrix</li>
+<li><strong>rectang</strong> (<em>tuple</em>) &#8211; a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of
+columns) of data to be used for the z0data matrix</li>
 </ul>
 </td>
 </tr>
@@ -82,7 +83,8 @@
 <li><strong>xlabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; </li>
 <li><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Y axes label, Default is None - guess from metadata</li>
 <li><strong>zlabel</strong> (<a class="reference external" href="https://docs.python.org/2/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; Z axis label, Default is None - guess from metadata</li>
-<li><strong>figure</strong> (<em>matplotlib figure</em>) &#8211; Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is always used, otherwise it will default to using the last figure used by this DataFile object.</li>
+<li><strong>figure</strong> (<em>matplotlib figure</em>) &#8211; Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is
+always used, otherwise it will default to using the last figure used by this DataFile object.</li>
 <li><strong>plotter</strong> (<a class="reference external" href="https://docs.python.org/2/library/functions.html#callable" title="(in Python v2.7)"><em>callable</em></a>) &#8211; Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx</li>
 <li><strong>kwords</strong> (<a class="reference external" href="https://docs.python.org/2/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A dictionary of other keyword arguments to pass into the plot function.</li>
 </ul>
@@ -155,7 +157,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

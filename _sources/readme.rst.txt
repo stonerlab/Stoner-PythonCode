@@ -13,8 +13,7 @@ API Reference guide. The `github repository`_ also contains some example scripts
 Getting this Code
 ==================
 
-The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
-the Enthought Tools Suite packages.
+The *Stoner* package requires numpy >=1.8, scipy >=0.14, matplotlib >=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS and numba
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
 However, this can by installed with the usual tools such as *easy_install* or *pip*.
@@ -101,6 +100,7 @@ The current development version is 0.7. Features of 0.7 include
 
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
     *   Addition of Stoner.Image package to handle image analysis
+    *   Refactor DataFolder to use Mixin classes
     *   DataFolder now defaults to using :py:class:`Stoner.Util.Data`
     *   DataFolder has an options to skip iterating over empty Data files
     *  Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
@@ -114,10 +114,14 @@ Travis CI is used to test the development branch to see if it passes the current
 The current status is:
 
 .. image:: https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master
-    :target: https://travis-ci.org/gb119/Stoner-PythonCode
+   :target: https://travis-ci.org/gb119/Stoner-PythonCode
 
 .. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
-    :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+   :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+    
+.. image:: https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/gb119/Stoner-PythonCode/master
+   :alt: Code Health
 
 
 Citing the Stoner Package

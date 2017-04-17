@@ -58,14 +58,13 @@
 <span class="sd">@author: phygbu</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span> <span class="k">as</span> <span class="n">_DF_</span>
-<span class="kn">from</span> <span class="nn">.Analysis</span> <span class="k">import</span> <span class="n">AnalysisMixin</span> <span class="k">as</span> <span class="n">_AF_</span>
-<span class="kn">from</span> <span class="nn">.plot</span> <span class="k">import</span> <span class="n">PlotMixin</span> <span class="k">as</span> <span class="n">_PF_</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">bytes2str</span><span class="p">,</span><span class="n">int_types</span>
+<span class="kn">import</span> <span class="nn">Stoner.Core</span>  <span class="k">as</span> <span class="nn">_SC_</span>
+<span class="kn">import</span> <span class="nn">Stoner.Analysis</span> <span class="k">as</span> <span class="nn">_SA_</span>
+<span class="kn">import</span> <span class="nn">Stoner.plot</span>  <span class="k">as</span> <span class="nn">_SP_</span>
 <span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span> <span class="k">as</span> <span class="n">_SF_</span>
 <span class="kn">from</span> <span class="nn">.Fit</span> <span class="k">import</span> <span class="n">linear</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">log10</span><span class="p">,</span> <span class="n">floor</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">argmax</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span><span class="n">array</span>
-<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">trapz</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">sem</span>
 <span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">float_info</span>
 <span class="k">try</span><span class="p">:</span>
@@ -106,7 +105,7 @@
         <span class="s1">&#39;&lt;&#39;</span><span class="p">:</span> <span class="s1">r&#39;\textless&#39;</span><span class="p">,</span>
         <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="s1">r&#39;\textgreater&#39;</span><span class="p">,</span>
     <span class="p">}</span>
-    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">unicode</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">bytes2str</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">conv</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="p">))))</span>
     <span class="k">return</span> <span class="n">regex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">match</span><span class="p">:</span> <span class="n">conv</span><span class="p">[</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()],</span> <span class="n">text</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">_up_down</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -130,11 +129,14 @@
     <span class="k">return</span> <span class="n">ret</span>
 
 
-<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.html#Stoner.Util.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">_AF_</span><span class="p">,</span> <span class="n">_PF_</span><span class="p">,</span><span class="n">_DF_</span><span class="p">):</span>
+<div class="viewcode-block" id="Data"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.html#Stoner.Util.Data">[docs]</a><span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">_SA_</span><span class="o">.</span><span class="n">AnalysisMixin</span><span class="p">,</span><span class="n">_SP_</span><span class="o">.</span><span class="n">PlotMixin</span><span class="p">,</span><span class="n">_SC_</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`</span>
-<span class="sd">    which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.</span>
+<span class="sd">    </span>
+<span class="sd">    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.</span>
 <span class="sd">    This &#39;kitchen-sink&#39; class is intended as a convenience for writing scripts that carry out both plotting and</span>
-<span class="sd">    analysis on data files.&quot;&quot;&quot;</span>
+<span class="sd">    analysis on data files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Data.format"><a class="viewcode-back" href="../../classes/Stoner.Util.Data.format.html#Stoner.Util.Data.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the contents of key pretty formatted using :py:func:`format_error`.</span>
@@ -162,7 +164,6 @@
 <span class="sd">        the units are self[&quot;key units&quot;] or &quot;&quot;.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
         <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>	<span class="p">)</span>
         <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
@@ -276,7 +277,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">folder</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spliton</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span><span class="n">long</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spliton</span><span class="p">,</span> <span class="n">int_types</span><span class="o">+</span><span class="p">(</span><span class="nb">float</span><span class="p">,)):</span>
         <span class="n">spl</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">spliton</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="n">col</span><span class="p">,</span><span class="n">rising</span><span class="o">=</span><span class="n">rising</span><span class="p">,</span><span class="n">falling</span><span class="o">=</span><span class="n">falling</span><span class="p">,</span><span class="n">all_vals</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">spliton</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;peaks&#39;</span><span class="p">,</span><span class="s1">&#39;troughs&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]:</span>
@@ -394,7 +395,6 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
     <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -496,7 +496,8 @@
 <span class="sd">        value (int): Number to be written as an ordinal string</span>
 
 <span class="sd">    Return:</span>
-<span class="sd">        Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.&quot;&quot;&quot;</span>
+<span class="sd">        Ordinal String such as &#39;1st&#39;,&#39;2nd&#39; etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span>
 
@@ -531,8 +532,7 @@
 <span class="sd">        The original loop with the x and y columns replaced with corrected data and extra metadata added to give the</span>
 <span class="sd">        background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_DF_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">_SC_</span><span class="o">.</span><span class="n">DataFile</span><span class="p">):</span>
         <span class="n">cls</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">cls</span> <span class="o">=</span> <span class="n">Data</span>
@@ -694,7 +694,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -1,3 +1,4 @@
+"Add an inset to a plot."
 from Stoner import Data
 p=Data("sample.txt",setas="xy")
 p.plot()

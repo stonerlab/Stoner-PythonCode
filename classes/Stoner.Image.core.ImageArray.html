@@ -60,9 +60,8 @@
 <h1>Stoner.Image.core.ImageArray<a class="headerlink" href="#stoner-image-core-imagearray" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Image.core.ImageArray">
-<em class="property">class </em><code class="descclassname">Stoner.Image.core.</code><code class="descname">ImageArray</code><span class="sig-paren">(</span><em>image=[]</em>, <em>ocr_metadata=False</em>, <em>field_only=False</em>, <em>metadata=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray" title="Permalink to this definition">¶</a></dt>
-<dd><p><a class="reference internal" href="#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a> is a numpy array like class
-with a metadata parameter and pass through to skimage methods.</p>
+<em class="property">class </em><code class="descclassname">Stoner.Image.core.</code><code class="descname">ImageArray</code><span class="sig-paren">(</span><em>image=None</em>, <em>ocr_metadata=False</em>, <em>field_only=False</em>, <em>metadata=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a> is a numpy array like class with a metadata parameter and pass through to skimage methods.</p>
 <p>ImageArray is for manipulating images stored as a 2d numpy array.
 It is built to be almost identical to a numpy array except for one extra
 parameter which is the metadata. This stores information about the image
@@ -127,13 +126,13 @@ I would call im=im.translate((4,10))</p>
 <td>Load an image from a file and return as a 2D array and metadata dictionary.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.box.html#Stoner.Image.core.ImageArray.box" title="Stoner.Image.core.ImageArray.box"><code class="xref py py-obj docutils literal"><span class="pre">box</span></code></a>(xmin,&nbsp;xmax,&nbsp;ymin,&nbsp;ymax)</td>
-<td>essentially an alias for crop but always returns a view onto</td>
+<td>Crop the data to a box.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.clip_intensity.html#Stoner.Image.core.ImageArray.clip_intensity" title="Stoner.Image.core.ImageArray.clip_intensity"><code class="xref py py-obj docutils literal"><span class="pre">clip_intensity</span></code></a>()</td>
 <td>clip intensity that lies outside the range allowed by dtype.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_float.html#Stoner.Image.core.ImageArray.convert_float" title="Stoner.Image.core.ImageArray.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
-<td>Return the image converted to floating point type normalised to -1 to 1.</td>
+<td>Return the image converted to floating point type normalised to -1  to 1.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_int.html#Stoner.Image.core.ImageArray.convert_int" title="Stoner.Image.core.ImageArray.convert_int"><code class="xref py py-obj docutils literal"><span class="pre">convert_int</span></code></a>()</td>
 <td>convert the image to uint16 (the format used by Evico)</td>
@@ -240,7 +239,7 @@ I would call im=im.translate((4,10))</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -62,6 +62,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
 <span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span>
+<span class="kn">from</span> <span class="nn">.Util</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">.Image.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -584,7 +585,6 @@
 <div class="viewcode-block" id="STXMImage._load"><a class="viewcode-back" href="../../classes/Stoner.HDF5.STXMImage._load.html#Stoner.HDF5.STXMImage._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
         <span class="n">d</span><span class="o">=</span><span class="n">SLS_STXMFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">d</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">d</span><span class="o">.</span><span class="n">metadata</span></div></div>
-    
 </pre></div>
 
           </div>
@@ -624,7 +624,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

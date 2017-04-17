@@ -1,3 +1,4 @@
+"Scale data to stitch it together."
 from Stoner import Data
 
 from Stoner.Util import format_error

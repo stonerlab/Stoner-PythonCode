@@ -58,8 +58,7 @@ API Reference guide. The <a class="reference external" href="http://www.github.c
 </div>
 <div class="section" id="getting-this-code">
 <h1>Getting this Code<a class="headerlink" href="#getting-this-code" title="Permalink to this headline">¶</a></h1>
-<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, numba  lmfit, filemagic, and blist. Experimental code also makes use of
-the Enthought Tools Suite packages.</p>
+<p>The <em>Stoner</em> package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS and numba</p>
 <p>Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit.
 However, this can by installed with the usual tools such as <em>easy_install</em> or <em>pip</em>.</p>
 <div class="highlight-sh"><div class="highlight"><pre><span></span>easy_install lmfit
@@ -134,6 +133,7 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 <div><ul class="simple">
 <li>Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin</li>
 <li>Addition of Stoner.Image package to handle image analysis</li>
+<li>Refactor DataFolder to use Mixin classes</li>
 <li>DataFolder now defaults to using <a class="reference internal" href="classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a></li>
 <li>DataFolder has an options to skip iterating over empty Data files</li>
 <li>Further improvements to <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">Stoner.Core.DataFile.setas</span></code></a> handline.</li>
@@ -146,6 +146,7 @@ The contents of this package are licensed under the terms of the GNU Public Lice
 The current status is:</p>
 <a class="reference external image-reference" href="https://travis-ci.org/gb119/Stoner-PythonCode"><img alt="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" src="https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master"><img alt="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" src="https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://landscape.io/github/gb119/Stoner-PythonCode/master"><img alt="Code Health" src="https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat" /></a>
 </div>
 <div class="section" id="citing-the-stoner-package">
 <h3>Citing the Stoner Package<a class="headerlink" href="#citing-the-stoner-package" title="Permalink to this headline">¶</a></h3>
@@ -231,7 +232,7 @@ file format detection on platforms where this is supported and adds some extra m
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

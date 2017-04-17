@@ -1,3 +1,4 @@
+"Example plot using experimental GBStyle"
 from Stoner import Data
 from Stoner.plot.formats import GBPlotStyle
 

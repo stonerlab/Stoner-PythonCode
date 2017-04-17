@@ -55,9 +55,8 @@
 <span class="sd"> Classes:</span>
 <span class="sd">     :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;objectFolder&quot;</span><span class="p">,</span><span class="s2">&quot;DataFolder&quot;</span><span class="p">,</span><span class="s2">&quot;PlotFolder&quot;</span><span class="p">]</span>
-<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">int_types</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">get_filedialog</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
@@ -66,8 +65,7 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span><span class="n">deepcopy</span>
 <span class="kn">import</span> <span class="nn">unicodedata</span>
 <span class="kn">import</span> <span class="nn">string</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span><span class="n">MutableSequence</span><span class="p">,</span><span class="n">MutableMapping</span><span class="p">,</span><span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="k">import</span> <span class="n">ismethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span><span class="n">MutableSequence</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">islice</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">metadataObject</span><span class="p">,</span><span class="n">DataFile</span><span class="p">,</span><span class="n">regexpDict</span>
@@ -77,6 +75,7 @@
 
 
 <span class="k">class</span> <span class="nc">baseFolder</span><span class="p">(</span><span class="n">MutableSequence</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</span>
 
 <span class="sd">    Attributes:</span>
@@ -95,7 +94,6 @@
 <span class="sd">        not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length</span>
 <span class="sd">        type (subclass of metadtaObject): the class of objects sotred in this folder</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     
     <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The __new__ method is used to create the underlying storage attributes.</span>
@@ -507,7 +505,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">int_types</span><span class="p">):</span> <span class="c1">#Simple decimate</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_group</span><span class="p">(</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span><span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="n">group</span><span class="o">=</span><span class="n">ix</span><span class="o">%</span><span class="n">other</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">[</span><span class="s2">&quot;Group </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group</span><span class="p">)]</span><span class="o">+=</span><span class="n">d</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
@@ -655,7 +653,7 @@
                         <span class="n">ret</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="n">item</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">ret</span><span class="o">=</span><span class="kc">None</span>
-                    <span class="k">if</span> <span class="n">ret</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">AttributeError</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1"># Ok, pass back</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not an Attribute of </span><span class="si">{}</span><span class="s2"> or </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">item</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="nb">type</span><span class="p">(</span><span class="n">instance</span><span class="p">)))</span>
@@ -700,7 +698,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">memo</span><span class="p">))</span>
-            <span class="k">except</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>                
         <span class="k">return</span> <span class="n">result</span>
 
@@ -731,13 +729,13 @@
     <span class="k">def</span> <span class="nf">__delattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Handles removing an attribute from the folder, including proxied attributes.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;debug&quot;</span><span class="p">,</span><span class="s2">&quot;groups&quot;</span><span class="p">,</span><span class="s2">&quot;args&quot;</span><span class="p">,</span><span class="s2">&quot;kargs&quot;</span><span class="p">,</span><span class="s2">&quot;objects&quot;</span><span class="p">,</span><span class="s2">&quot;key&quot;</span><span class="p">]:</span> <span class="c1"># pass ddirectly through for private attributes</span>
-            <span class="k">raise</span> <span class="n">AttrobuteError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is a protected attribute and may not be deleted!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_type&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">getaatr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">name</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is a protected attribute and may not be deleted!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_type&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">name</span><span class="p">))):</span>
             <span class="c1">#If we&#39;re tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instance_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;Unrecognised attribute </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
@@ -747,7 +745,7 @@
             <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="kc">None</span><span class="p">)):</span> <span class="c1">#If we recognise this our own attribute, then just set it</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">baseFolder</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_type&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">getaatr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">name</span><span class="p">))):</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_type&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_type</span><span class="p">,</span><span class="n">name</span><span class="p">))):</span>
             <span class="c1">#If we&#39;re tracking the object attributes and have a type set, then we can store this for adding to all loaded objects on read.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
@@ -759,12 +757,12 @@
     <span class="c1">###########################################################################</span>
     <span class="c1">###################### Private Methods ####################################</span>
     
-    <span class="k">def</span> <span class="nf">_update_from_object_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_from_object_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Updates an object from object_attrs store.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_object_attrs&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">:</span>
-                <span class="nb">setattr</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
-        <span class="k">return</span> <span class="nb">object</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_object_attrs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">obj</span>
 
 
     <span class="k">def</span> <span class="nf">_pruner_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">grp</span><span class="p">,</span><span class="n">breadcrumb</span><span class="p">):</span>
@@ -776,7 +774,7 @@
             <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
         <span class="k">return</span> <span class="n">ret</span>
 
-    <span class="k">def</span> <span class="nf">__walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{},</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="k">def</span> <span class="nf">__walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">breadcrumb</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;&quot;Actually implements the walk_groups method,m but adds the breadcrumb list of groups that we&#39;ve already visited.</span>
 
 <span class="sd">        Args:</span>
@@ -795,6 +793,8 @@
 <span class="sd">            The walker function should have a prototype of the form:</span>
 <span class="sd">                walker(f,list_of_group_names,**walker_args)</span>
 <span class="sd">                where f is either a objectFolder or metadataObject.&quot;&quot;&quot;</span>
+        <span class="n">breadcrumb</span><span class="o">=</span><span class="p">{}</span> <span class="k">if</span> <span class="n">breadcrumb</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">breadcrumb</span>
+        <span class="n">walker_args</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">walker_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">walker_args</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
             <span class="n">ret</span><span class="o">=</span><span class="p">[]</span>
             <span class="n">removeGroups</span><span class="o">=</span><span class="p">[]</span>
@@ -836,7 +836,7 @@
 <span class="sd">        Todo:</span>
 <span class="sd">            Propagate any extra attributes into the groups.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="c1"># do nothing here</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span> <span class="c1"># do nothing here</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">new_group</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__clone__</span><span class="p">(</span><span class="n">attrs_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -877,7 +877,8 @@
         <span class="sd">&quot;&quot;&quot;Filter the current set of files by some criterion</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False</span>
+<span class="sd">            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a </span>
+<span class="sd">                metadataObject and evaluates True or False</span>
 <span class="sd">            </span>
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition</span>
@@ -902,7 +903,7 @@
         <span class="k">elif</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A filter must be defined !&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">filter</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="o">^</span> <span class="n">invert</span><span class="p">:</span>
                     <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">__clear__</span><span class="p">()</span>
@@ -913,7 +914,8 @@
         <span class="sd">&quot;&quot;&quot;Synonym for self.filter(filter,invert=True)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a metadataObject and evaluates True or False</span>
+<span class="sd">        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a </span>
+<span class="sd">            metadataObject and evaluates True or False</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The current objectFolder object with the files in the file list filtered.&quot;&quot;&quot;</span>
@@ -954,14 +956,14 @@
         <span class="sd">&quot;&quot;&quot;Take the files and sort them into a series of separate objectFolder objects according to the value of the key</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of metadata in each file. If a callable function then</span>
-<span class="sd">                takes a single argument x which should be an instance of a metadataObject and returns some vale. If key is a list then the grouping is done recursively for each element</span>
-<span class="sd">                in key.</span>
+<span class="sd">            key (string or callable or list): Either a simple string or callable function or a list. If a string then it is interpreted as an item of </span>
+<span class="sd">                metadata in each file. If a callable function then takes a single argument x which should be an instance of a metadataObject and returns </span>
+<span class="sd">                some vale. If key is a list then the grouping is done recursively for each element in key.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            A copy of the current objectFolder object in which the groups attribute is a dictionary of objectFolder objects with sub lists of files</span>
 
-<span class="sd">        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group with key None. Metadata keys that</span>
-<span class="sd">        are generated from the filename are supported.&quot;&quot;&quot;</span>
+<span class="sd">        If ne of the grouping metadata keys does not exist in one file then no exception is raised - rather the fiiles will be returned into the group </span>
+<span class="sd">        with key None. Metadata keys that are generated from the filename are supported.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">next_keys</span><span class="o">=</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
             <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1005,13 +1007,11 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()):</span>
                 <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="k">return</span> <span class="n">i</span>
-            <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">metadataObject</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__names__</span><span class="p">()):</span>
                 <span class="k">if</span> <span class="n">name</span><span class="o">==</span><span class="n">n</span><span class="p">:</span> <span class="k">return</span> <span class="n">i</span>
-            <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No match for any name of a metadataObject in this baseFolder.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements the insert method with the option to append as well.&quot;&quot;&quot;</span>
@@ -1240,7 +1240,10 @@
             <span class="n">fnames</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
             <span class="n">new_order</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__getter__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">instantiate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">fnames</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
-            <span class="n">new_order</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">cmp</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="nb">cmp</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span><span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
+                <span class="n">new_order</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_order</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">cmp</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span><span class="nb">cmp</span><span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">(),</span><span class="n">key</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">order</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">python_v3</span><span class="p">:</span>
@@ -1290,7 +1293,7 @@
         <span class="sd">&quot;&quot;&quot;Return the sub-groups of this folder.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">replace_terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">walker</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">replace_terminal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Walks through a heirarchy of groups and calls walker for each file.</span>
 
 <span class="sd">        Args:</span>
@@ -1307,8 +1310,9 @@
 <span class="sd">        Notes:</span>
 <span class="sd">            The walker function should have a prototype of the form:</span>
 <span class="sd">                walker(f,list_of_group_names,**walker_args)</span>
-<span class="sd">                where f is either a objectFolder or metadataObject.&quot;&quot;&quot;</span>
-
+<span class="sd">                where f is either a objectFolder or metadataObject.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">walker_args</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span> <span class="k">if</span> <span class="n">walker_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">walker_args</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__walk_groups</span><span class="p">(</span><span class="n">walker</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span><span class="n">replace_terminal</span><span class="o">=</span><span class="n">replace_terminal</span><span class="p">,</span><span class="n">only_terminal</span><span class="o">=</span><span class="n">only_terminal</span><span class="p">,</span><span class="n">walker_args</span><span class="o">=</span><span class="n">walker_args</span><span class="p">,</span><span class="n">breadcrumb</span><span class="o">=</span><span class="p">[])</span>
 
     <span class="k">def</span> <span class="nf">zip_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
@@ -1336,6 +1340,8 @@
 <span class="sd">        pattern (str or regexp): A filename globbing pattern that matches the contents of the folder. If a regular expression is provided then</span>
 <span class="sd">            any named groups are used to construct additional metadata entryies from the filename. Default is *.* to match all files with an extension.</span>
 
+<span class="sd">        exclude (str or regexp): A filename globbing pattern that matches files to exclude from the folder.  Default is *.tdms_index to exclude all tdms index files.</span>
+
 <span class="sd">        read_means (bool): IF true, additional metatdata keys are added that return the mean value of each column of the data. This can hep in</span>
 <span class="sd">            grouping files where one column of data contains a constant value for the experimental state. Default is False</span>
 
@@ -1355,6 +1361,7 @@
     <span class="n">_defaults</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span>
               <span class="s2">&quot;extra_args&quot;</span><span class="p">:</span><span class="nb">dict</span><span class="p">(),</span>
               <span class="s2">&quot;pattern&quot;</span><span class="p">:[</span><span class="s2">&quot;*.*&quot;</span><span class="p">],</span>
+              <span class="s2">&quot;exclude&quot;</span><span class="p">:[</span><span class="s2">&quot;*.tdms_index&quot;</span><span class="p">],</span>
               <span class="s2">&quot;read_means&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
               <span class="s2">&quot;recursive&quot;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span>
               <span class="s2">&quot;flat&quot;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span>
@@ -1397,10 +1404,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            A directory to be used for the file operation.&quot;&quot;&quot;</span>
         <span class="c1"># Wildcard pattern to be used in file dialogs.</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
-            <span class="n">dirname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">multifile</span><span class="p">:</span>
             <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;directory&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1443,7 +1446,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Saved Path</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">trail</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_removeDisallowedFilenameChars</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trail</span><span class="p">]</span>
         <span class="n">grp</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_removeDisallowedFilenameChars</span><span class="p">(</span><span class="n">grp</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">root</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1588,6 +1590,22 @@
                 <span class="n">dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">f</span><span class="p">)):</span>
                 <span class="n">files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">:</span> <span class="c1">#Remove excluded files</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">files</span><span class="p">,</span><span class="n">p</span><span class="p">)):</span>
+                    <span class="k">del</span> <span class="n">files</span><span class="p">[</span><span class="n">files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+                <span class="n">matched</span><span class="o">=</span><span class="p">[]</span>
+                <span class="c1"># For reg expts we iterate over all files, but we can&#39;t delete matched</span>
+                <span class="c1"># files as we go as we&#39;re iterating over them - so we store the</span>
+                <span class="c1"># indices and delete them later.</span>
+                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                        <span class="n">matched</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+                <span class="n">matched</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">matched</span><span class="p">:</span> <span class="c1"># reverse sort the matching indices to safely delete</span>
+                    <span class="k">del</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pattern</span><span class="p">:</span> <span class="c1"># pattern is a list of strings and regeps</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -1748,7 +1766,7 @@
             <span class="n">row</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">ok_data</span><span class="p">:</span>
-                    <span class="n">row</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">_np_array</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">m</span><span class="p">]))</span>
+                    <span class="n">row</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">m</span><span class="p">]))</span>
                 <span class="n">results</span><span class="o">+=</span><span class="n">row</span>
 
             <span class="k">return</span> <span class="n">results</span>
@@ -1929,7 +1947,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

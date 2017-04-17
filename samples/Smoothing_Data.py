@@ -1,3 +1,4 @@
+"Smoothing Data methods example."
 from Stoner import Data
 import matplotlib.pyplot as plt
 

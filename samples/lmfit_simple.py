@@ -1,3 +1,4 @@
+"Simple use of lmfit to fit data."
 from Stoner import Data
 from numpy import linspace,exp,random
 
@@ -19,5 +20,3 @@ d.plot(fmt="b-")
 text=r"$y=A+Be^{-x/C}$"+"\n\n"
 text+="\n".join([d.format(k,latex=True) for k in ["Model:A","Model:B","Model:C"]])
 d.text(5,4,text)
-
-

@@ -66,6 +66,7 @@
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">IOBase</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">digamma</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">lmfit</span> <span class="k">import</span> <span class="n">Model</span>
@@ -162,7 +163,7 @@
     <span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
         <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">inifile</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">IOBase</span><span class="p">):</span>
         <span class="n">config</span><span class="o">.</span><span class="n">readfp</span><span class="p">(</span><span class="n">inifile</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">has_section</span><span class="p">(</span><span class="s2">&quot;Data&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Configuration file lacks a [Data] section to describe data.&quot;</span><span class="p">)</span>
@@ -232,7 +233,7 @@
     <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="o">.</span><span class="n">SafeConfigParser</span><span class="p">()</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
         <span class="n">config</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">inifile</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">file</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inifile</span><span class="p">,</span><span class="n">IOBase</span><span class="p">):</span>
         <span class="n">config</span><span class="o">.</span><span class="n">readfp</span><span class="p">(</span><span class="n">inifile</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># Check to see if config file specified a model</span>
@@ -1113,7 +1114,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Reesonance peak frequencies in Hz</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="o">*</span><span class="n">gamme</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="o">+</span><span class="n">M_s</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="p">(</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="o">*</span><span class="n">gamma</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">_np_</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">H</span><span class="o">+</span><span class="n">H_k</span><span class="o">+</span><span class="n">M_s</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="KittelEquation"><a class="viewcode-back" href="../../classes/Stoner.Fit.KittelEquation.html#Stoner.Fit.KittelEquation">[docs]</a><span class="k">class</span> <span class="nc">KittelEquation</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Kittel Equation for finding ferromagnetic resonance peak in frequency with field.</span>
@@ -1135,7 +1136,7 @@
 
 <div class="viewcode-block" id="KittelEquation.guess"><a class="viewcode-back" href="../../classes/Stoner.Fit.KittelEquation.guess.html#Stoner.Fit.KittelEquation.guess">[docs]</a>    <span class="k">def</span> <span class="nf">guess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H&quot;&quot;&quot;</span>
-        <span class="n">M_s</span><span class="o">=</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">data</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="p">)</span><span class="o">/</span><span class="n">H</span><span class="o">-</span><span class="n">H</span>
+        <span class="n">M_s</span><span class="o">=</span><span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">data</span><span class="o">/</span><span class="n">consts</span><span class="o">.</span><span class="n">mu0</span><span class="p">)</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">x</span>
 
         <span class="n">pars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_params</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">M_s</span><span class="o">=</span><span class="n">M_s</span><span class="p">,</span> <span class="n">H_k</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">update_param_vals</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
@@ -1180,7 +1181,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 13, 2017.
+      Last updated on Apr 17, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
