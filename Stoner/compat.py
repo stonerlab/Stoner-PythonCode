@@ -16,9 +16,9 @@ __all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
-    range = xrange  # pylint:disable=redefined-builtin, undefined-variable
-    string_types = (str, unicode) # pylint: disable=undefined-variable
-    int_types=(int,long) # pylint: disable=undefined-variable
+    range = xrange  # pylint:disable=redefined-builtin, undefined-name
+    string_types = (str, unicode) # pylint: disable=undefined-name
+    int_types=(int,long) # pylint: disable=undefined-name
     python_v3 = False
 
     #|Define symbvols for equivalence to Python 3
