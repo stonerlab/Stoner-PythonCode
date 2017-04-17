@@ -1,4 +1,4 @@
-"""Detect peaks in a dataset."""
+"Detect peaks in a dataset."
 
 from Stoner import Data
 

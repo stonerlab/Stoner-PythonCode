@@ -1,9 +1,8 @@
-"""Use curve_fit to fit a plane to some data."""
+"Use curve_fit to fit a plane to some data."
 from __future__ import print_function
 from Stoner import Data
 from numpy.random import normal
 from numpy import linspace,meshgrid,column_stack
-from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.cm as cmap
 import matplotlib.pyplot as plt
 

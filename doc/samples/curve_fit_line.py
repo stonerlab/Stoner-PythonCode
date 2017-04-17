@@ -1,4 +1,4 @@
-"""USe curve_fit to fit a straight line."""
+"USe curve_fit to fit a straight line."
 from Stoner import Data
 
 def linear(x,m,c):

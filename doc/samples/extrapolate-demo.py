@@ -1,4 +1,4 @@
-"""Extrapolate data example."""
+"Extrapolate data example."
 from Stoner import Data
 from numpy import linspace
 from numpy.random import normal

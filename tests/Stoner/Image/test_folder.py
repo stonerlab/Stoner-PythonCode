@@ -53,7 +53,6 @@ class ImageFolderTest(unittest.TestCase):
     
     def test_kerrstack(self):
         ks=KerrStack(self.ks)
-        print(ks.imarray.shape)
         self.assertTrue(np.min(ks.imarray)==0.0 and np.max(ks.imarray)==1.0, 'KerrStack subtract failed min,max: {},{}'.format(np.min(ks.imarray),np.max(ks.imarray)))
         d=ks.hysteresis()
         self.assertTrue(isinstance(d, Data), 'hysteresis didnt return Data')

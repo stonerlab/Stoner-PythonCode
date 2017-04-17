@@ -16,16 +16,14 @@ __all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
-    range = xrange
-    string_types = (str, unicode)
-    int_types=(int,long)
+    range = xrange  # pylint:disable=redefined-builtin, undefined-variable
+    string_types = (str, unicode) # pylint: disable=undefined-variable
+    int_types=(int,long) # pylint: disable=undefined-variable
     python_v3 = False
 
-    def str2bytes(s):
-        return str(s)
-
-    def bytes2str(b):
-        return str(b)
+    #|Define symbvols for equivalence to Python 3
+    str2bytes = str
+    bytes2str = str
 
     def get_filedialog(what="file", **opts):
         """Wrapper around Tk file dialog to mange creating file dialogs in a cross platform way.
@@ -35,7 +33,8 @@ if __vi__[0] == 2:
             **opts (dict): Arguments to pass through to the underlying dialog function.
 
         Returns:
-            A file name or directory or list of files. """
+            A file name or directory or list of files. 
+        """
         from Tkinter import Tk
         import tkFileDialog as filedialog
         r = Tk()
@@ -57,9 +56,11 @@ elif __vi__[0] == 3:
     python_v3 = True
 
     def str2bytes(s):
+        "Encode a unicode string into UTF-8."
         return bytes(str(s), "utf-8")
 
     def bytes2str(b):
+        "Decode byte string back to univcode."
         if isinstance(b, bytes):
             return b.decode("utf-8", "ignore")
         else:
@@ -73,7 +74,8 @@ elif __vi__[0] == 3:
             **opts (dict): Arguments to pass through to the underlying dialog function.
 
         Returns:
-            A file name or directory or list of files. """
+            A file name or directory or list of files. 
+        """
         from tkinter import Tk, filedialog
         r = Tk()
         r.withdraw()
@@ -90,9 +92,11 @@ elif __vi__[0] == 3:
 
 
 
-index_types = string_types + (int, _pattern_type)
+index_types = string_types + int_types +(_pattern_type,)
 
 class ClassPropertyDescriptor(object):
+    """Supports adding class properties.
+    """
 
     def __init__(self, fget, fset=None):
         self.fget = fget
@@ -104,6 +108,8 @@ class ClassPropertyDescriptor(object):
         return self.fget.__get__(obj, klass)()
 
 def classproperty(func):
+    """Define a property to be a class property and not an instance property.
+    """
     if not isinstance(func, (classmethod, staticmethod)):
         func = classmethod(func)
 

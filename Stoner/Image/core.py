@@ -18,7 +18,6 @@ Images from the Evico software are 2D arrays of 16bit unsigned integers.
 import numpy as np
 import os
 import tempfile
-import warnings
 import subprocess #calls to command line
 from copy import deepcopy
 from skimage import color,exposure,feature,io,measure,\
@@ -28,7 +27,7 @@ from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
 from Stoner import Data
-from Stoner.compat import * # Some things to help with Python2 and Python3 compatibility
+from Stoner.compat import string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
 
 
 
@@ -53,8 +52,8 @@ dtype_range = {np.bool_: (False, True),
 
     
 class ImageArray(np.ndarray,metadataObject):
-    """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class
-    with a metadata parameter and pass through to skimage methods. 
+    
+    """:py:class:`Stoner.Image.core.ImageArray` is a numpy array like class with a metadata parameter and pass through to skimage methods. 
     
     ImageArray is for manipulating images stored as a 2d numpy array.
     It is built to be almost identical to a numpy array except for one extra
@@ -112,13 +111,13 @@ class ImageArray(np.ndarray,metadataObject):
     #now initialise class
 
     def __new__(cls, image=None, *args, **kwargs):
-        """
-        Construct a ImageArray object. We're using __new__ rather than __init__
+        """        Construct a ImageArray object. 
+        
+        We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
-
         if image is None:
-        	    image=list()
+                image=list()
         if isinstance(image,string_types): #we have a filename
             image,tmp=cls._load(image,**kwargs)
         else:
@@ -135,6 +134,7 @@ class ImageArray(np.ndarray,metadataObject):
                      ocr_metadata=False, field_only=False,
                                  metadata=None, **kwargs):
         """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
+        
         Create a ImageArray instance with metadata attribute
 
         Args:
@@ -157,7 +157,7 @@ class ImageArray(np.ndarray,metadataObject):
                 dictionary of extra metadata items you would like adding to your array
         """
         if image is None:
-        	image=[]
+            image=[]
                 
         if kwargs.get("reduce_metadata",self._reduce_metadata):
             self.reduce_metadata()
@@ -171,9 +171,9 @@ class ImageArray(np.ndarray,metadataObject):
             self.ocr_metadata(field_only=field_only) #update metadat 
 
     def __array_finalize__(self, obj):
-        """__array_finalize__ and __array_wrap__ are necessary functions when
-        subclassing numpy.ndarray to fix some behaviours. See
-        http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
+        """__array_finalize__ and __array_wrap__ are necessary functions when subclassing numpy.ndarray to fix some behaviours. 
+        
+        See http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
         more info and examples
         """
         if obj is None: return
@@ -181,7 +181,7 @@ class ImageArray(np.ndarray,metadataObject):
         self.filename = getattr(obj, 'filename', None)
 
     def __array_wrap__(self, out_arr, context=None):
-        """see __array_finalize__ for info"""
+        "see __array_finalize__ for info"
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
@@ -192,22 +192,22 @@ class ImageArray(np.ndarray,metadataObject):
 #==============================================================r
     @property
     def clone(self):
-        """return a copy of the instance"""
+        "return a copy of the instance"
         return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
                                get_metadata=False)
 
     @property
     def max_box(self):
-        """return the coordinate extent (xmin,xmax,ymin,ymax)"""
+        "return the coordinate extent (xmin,xmax,ymin,ymax)"
         try:
             box=(0,self.shape[1],0,self.shape[0])
         except IndexError: #1d array
             box=(0,1,0,self.shape[0])
-        return (0,self.shape[1],0,self.shape[0])
+        return box
 
     @property
     def data(self):
-        """alias for image[:]. Equivalence to Stoner.data behaviour"""
+        "alias for image[:]. Equivalence to Stoner.data behaviour"
         return self[:]
     
     #@property
@@ -220,7 +220,7 @@ class ImageArray(np.ndarray,metadataObject):
     
     @property
     def _kfuncs(self):
-        """Provide an attribtute that caches the imported ImageArray functions."""
+        "Provide an attribtute that caches the imported ImageArray functions."
         if self._kfuncs_proxy is None:
             from . import imagefuncs
             self._kfuncs_proxy=imagefuncs
@@ -228,7 +228,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     @property
     def _ski_funcs(self):
-        """Provide an attribute that cahces the import sckit-image function names."""
+        "Provide an attribute that cahces the import sckit-image function names."
         if self._ski_funcs_proxy is None:
             _ski_modules=[color,exposure,feature,io,measure,filters,filters.rank, graph,
                     util, restoration, morphology, segmentation, transform,
@@ -240,12 +240,12 @@ class ImageArray(np.ndarray,metadataObject):
         
     @property
     def tesseractable(self):
-        """Do a test call to tesseract to see if it is there and cache the result."""
+        "Do a test call to tesseract to see if it is there and cache the result."
         if hasattr(self,"_tesseractable"):
-            return self._tesseractable
+            return getattr(self,"_tesseractable")
         try:
             ret=subprocess.call(["tesseract","-v"])
-        except:
+        except Exception:
             ret = -1
         self._tesseractable=ret==0
         return ret==0
@@ -254,6 +254,7 @@ class ImageArray(np.ndarray,metadataObject):
 #function generator
 #==============================================================
     def __dir__(self):
+        "Implement code for dir()"
         kfuncs=set(dir(self._kfuncs))
         skimage=set()
         mods=list(self._ski_funcs.keys())
@@ -265,8 +266,9 @@ class ImageArray(np.ndarray,metadataObject):
         return list(skimage|kfuncs|parent|mine)
 
     def __getattr__(self,name):
-        """run when asking for an attribute that doesn't exist yet. It
-        looks first in kermit funcs then in skimage functions for a match. If
+        """run when asking for an attribute that doesn't exist yet. 
+        
+        It looks first in kermit funcs then in skimage functions for a match. If
         it finds it it returns a copy of the function that automatically adds
         the image as the first argument.
         Note that numpy is already subclassed so numpy funcs are highest on the
@@ -276,8 +278,8 @@ class ImageArray(np.ndarray,metadataObject):
 
         An alternative nested attribute system could be something like
         http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
-        might be cool sometime."""
-
+        might be cool sometime.
+        """
         ret=None
         #first check kermit funcs
         if name.startswith('_'):
@@ -296,7 +298,7 @@ class ImageArray(np.ndarray,metadataObject):
         return ret
 
     def __getitem__(self,index):
-        """Patch indexing of strings to metadata."""
+        "Patch indexing of strings to metadata."
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
@@ -304,21 +306,21 @@ class ImageArray(np.ndarray,metadataObject):
 
 
     def __setitem__(self,index,value):
-        """Patch string index through to metadata."""
+        "Patch string index through to metadata."
         if isinstance(index,string_types):
             self.metadata[index]=value
         else:
             super(ImageArray,self).__setitem__(index,value)
 
     def __delitem__(self,index):
-        """Patch indexing of strings to metadata."""
+        "Patch indexing of strings to metadata."
         if isinstance(index,string_types):
             del self.metadata[index]
         else:
             super(ImageArray,self).__delitem__(index)
 
     def _func_generator(self,workingfunc):
-        """generate a function that adds self as the first argument"""
+        "generate a function that adds self as the first argument"
 
         def gen_func(*args, **kwargs):
             r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
@@ -341,7 +343,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     @classmethod
     def _load(self,filename,**kwargs):
-        """Load an image from a file and return as a 2D array and metadata dictionary."""
+        "Load an image from a file and return as a 2D array and metadata dictionary."
         with Image.open(filename,"r") as img:
             fname=filename
             image=np.asarray(img)
@@ -370,7 +372,9 @@ class ImageArray(np.ndarray,metadataObject):
 #Now any other useful bits
 #==============================================================
     def box(self, xmin, xmax, ymin, ymax):
-        """essentially an alias for crop but always returns a view onto
+        """Crop the data to a box.
+        
+        Essentially an alias for crop but always returns a view onto
         the array rather than a copy (ie copy=False). Useful for if you
         want to do something to a partial area of an image.
         Equivalent to im[ymin,ymax,xmin,xmax]
@@ -419,8 +423,9 @@ class ImageArray(np.ndarray,metadataObject):
         return imin, imax
     
     def convert_float(self, clip_negative=True):
-        """Return the image converted to floating point type normalised to -1 
-        to 1. If clip_negative then clip intensities below 0 to 0.
+        """Return the image converted to floating point type normalised to -1  to 1. 
+        
+        If clip_negative then clip intensities below 0 to 0.
         Unfortunately there is no easy way to convert the type in
         place self.astype(np.float64,copy=False) doesn't
         work for different memory block sizes so a new array is produced
@@ -444,6 +449,7 @@ class ImageArray(np.ndarray,metadataObject):
                   
     def clip_intensity(self):
         """clip intensity that lies outside the range allowed by dtype.
+        
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
         are changed to 0. (Numpy should limit the range on arrays of int dtypes
         
@@ -456,6 +462,7 @@ class ImageArray(np.ndarray,metadataObject):
     
     def convert_int(self):
         """convert the image to uint16 (the format used by Evico)
+        
         Returns:
             :py:class:`Stoner.Image.core.ImageArray`
         """
@@ -463,6 +470,7 @@ class ImageArray(np.ndarray,metadataObject):
     
     def crop_image(self, box=None, copy=True):
         """Crop the image.
+        
         Crops to the box given. Returns the cropped image.
 
         KeywordArguments:
@@ -551,7 +559,6 @@ class ImageArray(np.ndarray,metadataObject):
         (ImageArray):
             cropped image
         """
-
         assert self.shape==AN_IM_SIZE or self.shape==IM_SIZE, \
                 'Need a full sized Kerr image to crop' #check it's a normal image
         crop=(0,IM_SIZE[1],0,IM_SIZE[0])
@@ -564,7 +571,6 @@ class ImageArray(np.ndarray,metadataObject):
         Returns:
             (:py:class:`typeHintedDict`): the new metadata 
         """
-        
         newmet={}
         useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
                     'Contrast Shift','HorizontalFieldOfView','Images to Average',
@@ -589,8 +595,7 @@ class ImageArray(np.ndarray,metadataObject):
         return self.metadata
                 
     def _parse_text(self, text, key=None):
-        """Attempt to parse text which has been recognised from an image
-        if key is given specific hints may be applied"""
+        "Attempt to parse text which has been recognised from an image if key is given specific hints may be applied"
         #print '{} before processsing: \'{}\''.format(key,data)
 
         #strip any internal white space
@@ -608,7 +613,7 @@ class ImageArray(np.ndarray,metadataObject):
         if key in ['ocr_field','ocr_scalebar_length_microns']:
             try:
                 text=float(text)
-            except:
+            except Exception:
                 pass #leave it as string
         #print '{} after processsing: \'{}\''.format(key,data)
 
@@ -616,10 +621,11 @@ class ImageArray(np.ndarray,metadataObject):
 
     def _tesseract_image(self, im, key):
         """ocr image with tesseract tool.
+        
         im is the cropped image containing just a bit of text
         key is the metadata key we're trying to find, it may give a
-        hint for parsing the text generated."""
-
+        hint for parsing the text generated.
+        """
         #first set up temp files to work with
         tmpdir=tempfile.mkdtemp()
         textfile=os.path.join(tmpdir,'tmpfile.txt')
@@ -655,7 +661,7 @@ class ImageArray(np.ndarray,metadataObject):
         return data
 
     def _get_scalebar(self):
-        """Get the length in pixels of the image scale bar"""
+        "Get the length in pixels of the image scale bar"
         box=(0,419,519,520) #row where scalebar exists
         im=self.crop_image(box=box, copy=True)
         im=im.astype(float)

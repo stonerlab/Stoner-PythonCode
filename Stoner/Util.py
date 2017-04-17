@@ -7,14 +7,13 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 
-from .compat import *
+from .compat import bytes2str,int_types
 import Stoner.Core  as _SC_
 import Stoner.Analysis as _SA_
 import Stoner.plot  as _SP_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
 from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array
-from scipy.integrate import trapz
 from scipy.stats import sem
 from sys import float_info
 try:
@@ -55,7 +54,7 @@ def tex_escape(text):
         '<': r'\textless',
         '>': r'\textgreater',
     }
-    regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+    regex = re.compile('|'.join(re.escape(bytes2str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
     return regex.sub(lambda match: conv[match.group()], text)
 
 def _up_down(data):
@@ -80,10 +79,13 @@ def _up_down(data):
 
 
 class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
+    
     """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
-    which also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
+    
+    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
     This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
-    analysis on data files."""
+    analysis on data files.
+    """
 
     def format(self,key,**kargs):
         """Return the contents of key pretty formatted using :py:func:`format_error`.
@@ -111,7 +113,6 @@ class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
         the units are self["key units"] or "".
 
         """
-
         mode=kargs.pop("mode","float")
         units=kargs.pop("units",self.get(key+" units","")	)
         prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
@@ -225,7 +226,7 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
     else:
         output = folder
 
-    if isinstance(spliton, (int,long,float)):
+    if isinstance(spliton, int_types+(float,)):
         spl=d.threshold(threshold=float(spliton),col=col,rising=rising,falling=falling,all_vals=True)
 
     elif spliton in ['peaks','troughs','both']:
@@ -343,7 +344,6 @@ def format_error(value, error, **kargs):
     Returns:
         String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
     """
-
     mode=kargs.pop("mode","float")
     units=kargs.pop("units","")
     prefix=kargs.pop("prefix","")
@@ -445,7 +445,8 @@ def ordinal(value):
         value (int): Number to be written as an ordinal string
 
     Return:
-        Ordinal String such as '1st','2nd' etc."""
+        Ordinal String such as '1st','2nd' etc.
+    """
     if not isinstance(value, int):
         raise ValueError
 
@@ -480,7 +481,6 @@ def hysteresis_correct(data, **kargs):
         The original loop with the x and y columns replaced with corrected data and extra metadata added to give the
         background suceptibility, offset in moment, co-ercive fields and saturation magnetisation.
     """
-
     if isinstance(data, _SC_.DataFile):
         cls = data.__class__
     else:

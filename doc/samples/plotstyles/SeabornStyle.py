@@ -1,3 +1,4 @@
+"Example plot style using Seaborn plot styling template."
 from Stoner import Data
 from Stoner.plot.formats import SeabornPlotStyle
 

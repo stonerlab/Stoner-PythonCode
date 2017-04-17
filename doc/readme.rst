@@ -114,10 +114,14 @@ Travis CI is used to test the development branch to see if it passes the current
 The current status is:
 
 .. image:: https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master
-    :target: https://travis-ci.org/gb119/Stoner-PythonCode
+   :target: https://travis-ci.org/gb119/Stoner-PythonCode
 
 .. image:: https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master
-    :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+   :target: https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master
+    
+.. image:: https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/gb119/Stoner-PythonCode/master
+   :alt: Code Health
 
 
 Citing the Stoner Package

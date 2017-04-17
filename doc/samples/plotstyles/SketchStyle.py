@@ -1,3 +1,4 @@
+"Example plot in XKCD comic style SketchPlot template."
 from Stoner import Data
 from Stoner.plot.formats import SketchPlot    
 

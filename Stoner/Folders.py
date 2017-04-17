@@ -4,9 +4,8 @@
  Classes:
      :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
-
 __all__ = ["objectFolder","DataFolder","PlotFolder"]
-from .compat import *
+from .compat import python_v3,int_types,string_types,get_filedialog
 import os
 import re
 import os.path as path
@@ -15,7 +14,7 @@ import numpy as _np_
 from copy import copy,deepcopy
 import unicodedata
 import string
-from collections import Iterable,MutableSequence,OrderedDict
+from collections import Iterable,MutableSequence
 from itertools import islice
 import matplotlib.pyplot as plt
 from .Core import metadataObject,DataFile,regexpDict
@@ -25,6 +24,7 @@ regexp_type=(re._pattern_type,)
 
 
 class baseFolder(MutableSequence):
+    
     """A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.
 
     Attributes:
@@ -43,7 +43,6 @@ class baseFolder(MutableSequence):
         not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
         type (subclass of metadtaObject): the class of objects sotred in this folder
     """
-
     
     def __new__(cls,*args,**kargs):
         """The __new__ method is used to create the underlying storage attributes.
@@ -1243,7 +1242,7 @@ class baseFolder(MutableSequence):
         """Return the sub-groups of this folder."""
         return self.groups.values()
 
-    def walk_groups(self, walker, group=False, replace_terminal=False,only_terminal=True,walker_args={}):
+    def walk_groups(self, walker, group=False, replace_terminal=False,only_terminal=True,walker_args=None):
         """Walks through a heirarchy of groups and calls walker for each file.
 
         Args:
@@ -1260,8 +1259,9 @@ class baseFolder(MutableSequence):
         Notes:
             The walker function should have a prototype of the form:
                 walker(f,list_of_group_names,**walker_args)
-                where f is either a objectFolder or metadataObject."""
-
+                where f is either a objectFolder or metadataObject.
+        """
+        walker_args=dict() if walker_args is None else walker_args
         return self.__walk_groups(walker,group=group,replace_terminal=replace_terminal,only_terminal=only_terminal,walker_args=walker_args,breadcrumb=[])
 
     def zip_groups(self, groups):
@@ -1353,10 +1353,6 @@ class DiskBssedFolder(object):
         Returns:
             A directory to be used for the file operation."""
         # Wildcard pattern to be used in file dialogs.
-        if isinstance(self.directory, string_types):
-            dirname = self.directory
-        else:
-            dirname = os.getcwd()
         if not self.multifile:
             mode="directory"
         else:
@@ -1399,7 +1395,6 @@ class DiskBssedFolder(object):
         Returns:
             Saved Path
         """
-
         trail=[self._removeDisallowedFilenameChars(t) for t in trail]
         grp.filename=self._removeDisallowedFilenameChars(grp.filename)
         if root is None:

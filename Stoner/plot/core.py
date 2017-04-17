@@ -1,14 +1,15 @@
-"""         Stoner.plot Subpackage
-            ======================
+"""Stoner.plot Subpackage
+======================
 
 Provides the a class to facilitate easier plotting of Stoner Data:
 
 Classes:
     PlotMixin - A class that uses matplotlib to plot data
 """
+
 __all__ = ["PlotMixin","hsl2rgb"]
-from Stoner.compat import *
-from Stoner.Core import DataFile, _attribute_store, copy_into,isNone,all_type
+from Stoner.compat import python_v3,string_types,index_types
+from Stoner.Core import DataFile, _attribute_store, isNone
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -28,7 +29,6 @@ if os.name == "posix" and platform.system() == "Darwin":
 from matplotlib import pyplot as plt
 from matplotlib import figure as mplfig
 from matplotlib import cm
-import matplotlib.colors as colors
 
 try: # Check we've got 3D plotting
     from mpl_toolkits.mplot3d import Axes3D
@@ -47,6 +47,7 @@ else:
 
 
 class PlotMixin(object):
+    
     """A mixin class that works with :py:class:`Stoner.Core.DataFile` to add additional plotting functionality.
 
         Args:
@@ -61,14 +62,12 @@ class PlotMixin(object):
             labels (list of string): List of axis labels as aternates to the column_headers
             showfig (bool or None): Controls whether plot functions return a copy of the figure (True), the DataFile (False) or Nothing (None)
             subplots (list of matplotlib.Axes) - essentially the same as :py:attr:`PlotMixin.axes` but ensures that the list of subplots is synchronised to the number fo Axes.
-            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.
-        
-        
+            template (:py:class:`Sonter.plot.formats.DefaultPlotStyle` or instance): A plot style template subclass or object that determines the format and appearance of plots.          
     """
 
     positional_fmt = [plt.plot, plt.semilogx, plt.semilogy, plt.loglog]
     no_fmt = [errorfill]
-    template = DefaultPlotStyle
+    _template = DefaultPlotStyle()
     legend = True
     multiple = "common"
 
@@ -101,10 +100,12 @@ class PlotMixin(object):
 
     @property
     def ax(self):
+        "Return the current axis number."
         return self.axes.index(self.fig.gca())
 
     @ax.setter
     def ax(self,value):
+        "Change the current axis number."
         if isinstance(value, int) and 0 <= value < len(self.axes):
             self.fig.sca(self.axes[value])
         else:
@@ -112,6 +113,7 @@ class PlotMixin(object):
 
     @property
     def axes(self):
+        "Return  the current axes object."
         if isinstance(self.__figure, mplfig.Figure):
             ret = self.__figure.axes
         else:
@@ -120,10 +122,12 @@ class PlotMixin(object):
 
     @property
     def fig(self):
+        "Get the current figure."
         return self.__figure
 
     @fig.setter
     def fig(self,value):
+        "Set the current figure."
         if isinstance(value,plt.Figure):
             self.__figure = value
             self.__figure, ax = self.template.new_figure(value.number)
@@ -137,16 +141,19 @@ class PlotMixin(object):
 
     @property
     def fignum(self):
+        "Return the current figure number."
         return self.__figure.number
 
     @property
     def labels(self):
+        "Return the labels for the plot columns"
         if len(self._labels) < len(self.column_headers):
             self._labels.extend(copy.deepcopy(self.column_headers[len(self._labels):]))
         return self._labels
 
     @labels.setter
     def labels(self,value):
+        "Set the labels for the plot columns."
         if value is None:
             self._labels=copy.deepcopy(self.column_headers)
         else:
@@ -154,7 +161,7 @@ class PlotMixin(object):
             
     @property
     def showfig(self):
-        """Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."""
+        "Returns either the current figure or self or None, depeding on whether the attribute is True or False or None."
         if self._showfig is None:
             return None
         if self._showfig:
@@ -164,6 +171,7 @@ class PlotMixin(object):
         
     @showfig.setter
     def showfig(self,value):
+        "Force a figure to be displayed."
         if not (value is None or isinstance(value,bool)):
             raise AttributeError("showfig should be a boolean value not a {}".format(type(value)))
         else:
@@ -171,6 +179,7 @@ class PlotMixin(object):
 
     @property
     def subplots(self):
+        "Return the subplot instances."
         if self.__figure is not None and len(self.__figure.axes) > len(self._subplots):
             self._subplots = self.__figure.axes
         return self._subplots
@@ -178,12 +187,14 @@ class PlotMixin(object):
 
     @property
     def template(self):
+        "Return the current plot template."
         if not hasattr(self,"_template"):
-            self.template=DefaultPlotStyle
+            self.template=DefaultPlotStyle()
         return self._template
 
     @template.setter
     def template(self,value):
+        "Set the current template."
         if type(value) == type(object) and issubclass(value, DefaultPlotStyle):
             value = value()
         if isinstance(value, DefaultPlotStyle):
@@ -487,10 +498,10 @@ class PlotMixin(object):
 
     def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
         """Appends a column of data or inserts a column to a datafile instance.
-
+    
         Args:
             column_data (:py:class:`numpy.array` or list or callable): Data to append or insert or a callable function that will generate new data
-
+    
         Keyword Arguments:
             column_header (string): The text to set the column header to,
                 if not supplied then defaults to 'col#'
@@ -498,14 +509,14 @@ class PlotMixin(object):
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
-
+    
         Returns:
             A :py:class:`DataFile` instance with the additonal column inserted.
-
+    
         Note:
             Like most :py:class:`DataFile` methods, this method operates in-place in that it also modifies
-            the original DataFile Instance as well as returning it."""
-
+            the original DataFile Instance as well as returning it.
+        """
         # Call the parent method and then update this label
         super(PlotMixin,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
         #Mostly this is duplicating the parent method
@@ -585,7 +596,8 @@ class PlotMixin(object):
             figure A matplotlib figure or figure number
 
         Returns:
-            The current \b Stoner.plot.PlotMixin instance"""
+            The current \b Stoner.plot.PlotMixin instance
+        """
         if figure is None:
             figure, ax = self.template.new_figure(None,projection=projection,**kargs)
         elif isinstance(figure, int):
@@ -612,7 +624,6 @@ class PlotMixin(object):
             ReturnsL
                 X,Y,Z three two dimensional arrays of the co-ordinates of the interpolated data
         """
-
         if None in (xcol, ycol, zcol):
             if "_startx" in kargs:
                 startx = kargs["_startx"]
@@ -733,8 +744,8 @@ class PlotMixin(object):
             kargs (dictionary): all other keywords are passed through to inset_locator.inset_axes
 
         Returns:
-            A new set of axes"""
-
+            A new set of axes
+        """
         locations = ['best', 'upper right', 'upper left', 'lower left', 'lower right', 'right', 'center left',
                      'center right', 'lower center', 'upper center', 'center']
         locations2 = ['best', 'top right', 'top left', 'bottom left', 'bottom right', 'outside', 'leftside',
@@ -804,7 +815,7 @@ class PlotMixin(object):
                 xvals (index, list or numpy.array): Either a column index or name or a list or numpytarray of column values. The default (None) uses the first column of data
                 yvals (int or list): Either a row index or a list or numpy array of row values. The default (None) uses the column_headings interpreted as floats
                 rectang (tuple):  a tuple of either 2 or 4 elements representing either the origin (row,column) or size (origin, number of rows, number of 
-                	columns) of data to be used for the z0data matrix
+                    columns) of data to be used for the z0data matrix
 
             Keyword Arguments:
                 cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
@@ -814,12 +825,13 @@ class PlotMixin(object):
                 ylabel (string): Y axes label, Default is None - guess from metadata
                 zlabel (string): Z axis label, Default is None - guess from metadata
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
-                	always used, otherwise it will default to using the last figure used by this DataFile object.
+                    always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kwords (dict): A dictionary of other keyword arguments to pass into the plot function.
 
             Returns:
-                The matplotib figure with the data plotted"""
+                The matplotib figure with the data plotted
+        """
         # Sortout yvals values
         if isinstance(yvals, int):  #  Int means we're sepcifying a data row
             if rectang is None:  # we need to intitialise the rectang
@@ -948,7 +960,6 @@ class PlotMixin(object):
 
         Returns:
             A matplotlib.figure isntance
-
         """
         c = self._fix_cols(xcol=xcol, ycol=ycol, xerr=xerr, yerr=yerr, multi_y=True, **kargs)
         (kargs["xerr"], kargs["yerr"]) = (c.xerr, c.yerr)
@@ -958,8 +969,8 @@ class PlotMixin(object):
         try:
             title = os.path.basename(self.filename)
         except TypeError:
-            title = None			 
-		 
+            title = None             
+         
         defaults = {
             "plotter": plt.plot,
             "show_plot": True,
@@ -1074,7 +1085,7 @@ class PlotMixin(object):
 
             Keyword Arguments:
                 shape (tuple): Defines the shape of the surface (i.e. the number of X and Y value. If not procided or None, then the routine will attempt to calculate 
-                	these from the data provided
+                    these from the data provided
                 xlim (tuple): Defines the x-axis limits and grid of the data to be plotted
                 ylim (tuple) Defines the Y-axis limits and grid of the data data to be plotted
                 cmap (matplotlib colour map): Surface colour map - defaults to the jet colour map
@@ -1082,7 +1093,7 @@ class PlotMixin(object):
                 title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 save_filename (string): Filename used to save the plot
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
-                	always used, otherwise it will default to using the last figure used by this DataFile object.
+                    always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
                 projection (string or None): Whether to use a 3D projection or regular 2D axes (deault is 3D)
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
@@ -1146,10 +1157,10 @@ class PlotMixin(object):
                 title (string): Optional parameter that specfies the plot title - otherwise the current DataFile filename is used
                 save_filename (string): Filename used to save the plot
                 figure (matplotlib figure): Controls what matplotlib figure to use. Can be an integer, or a matplotlib.figure or False. If False then a new figure is 
-                	always used, otherwise it will default to using the last figure used by this DataFile object.
+                    always used, otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Default is a 3d surface plotter, but contour plot and pcolormesh also work.
                 **kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
-                """
+        """
         c = self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, wcol=wcol, **kargs)
 
         if "template" in kargs: #Catch template in kargs
@@ -1194,7 +1205,7 @@ class PlotMixin(object):
                 mode (string): glyph type, default is "cone"
                 scale_factor(float): Scale-size of glyphs.
                 figure (mlab figure): Controls what mlab figure to use. Can be an integer, or a mlab.figure or False. If False then a new figure is always used, 
-                	otherwise it will default to using the last figure used by this DataFile object.
+                    otherwise it will default to using the last figure used by this DataFile object.
                 plotter (callable): Optional arguement that passes a plotting function into the routine. Sensible choices might be plt.plot (default), py.semilogy, plt.semilogx
                 kargs (dict): A dictionary of other keyword arguments to pass into the plot function.
 
@@ -1414,7 +1425,7 @@ def hsl2rgb(h, s, l):
 
     Returns:
         2D array (Mx3) of unsigned 8bit integers
-        """
+    """
     if isinstance(h, float):
         h = _np_.array([h])
     if isinstance(s, float):
@@ -1432,7 +1443,9 @@ def hsl2rgb(h, s, l):
     return (255 * rgb).astype('u1')
 
 class PlotFile(PlotMixin,DataFile):
+    
     """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`
 
     """
+    
     pass

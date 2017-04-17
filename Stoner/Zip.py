@@ -12,9 +12,8 @@ Created on Tue Jan 13 16:39:51 2015
 @author: phygbu
 """
 
-from Stoner.compat import *
+from Stoner.compat import string_types,bytes2str,str2bytes
 import zipfile as zf
-import zlib
 from .Core import DataFile,StonerLoadError
 from .Folders import DataFolder
 import os.path as path
@@ -23,7 +22,7 @@ import numpy as _np_
 
 
 def test_is_zip(filename, member=""):
-    """Recursively searches for a zipfile in the tree."""
+    "Recursively searches for a zipfile in the tree."
     if not filename or filename == "":
         return False
     elif zf.is_zipfile(filename):
@@ -42,6 +41,7 @@ def test_is_zip(filename, member=""):
 
 
 class ZipFile(DataFile):
+    
     """A sub class of DataFile that sores itself in a zip file.
 
     If the first non-keyword arguement is not an :py:class:`zipfile:ZipFile` then
@@ -57,8 +57,7 @@ class ZipFile(DataFile):
 
 
     def __init__(self, *args, **kargs):
-        """Constructor to catch initialising with an h5py.File or h5py.Group
-        """
+        "Constructor to catch initialising with an h5py.File or h5py.Group"
         if len(args) > 0:
             other = args[0]
             if isinstance(other, zf.ZipFile):
@@ -99,7 +98,7 @@ class ZipFile(DataFile):
         return self
 
     def _load(self, filename=None, *args, **kargs):
-        """Load a file from the zip file, openining it as necessary"""
+        "Load a file from the zip file, openining it as necessary"
         if filename is None or not filename:
             self.get_filename('r')
         else:
@@ -129,13 +128,12 @@ class ZipFile(DataFile):
         except StonerLoadError as e:
             raise e
         except Exception as e:
-            print(format_exc())
             try:
                 exc=format_exc()
                 other.close()
             except Exception:
                 pass
-            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,exc()))
+            raise StonerLoadError("{} threw an error when opening\n{}".format(self.filename,exc))
 #Ok we can try reading now
         self._extract(other, member)
         if close_me:
@@ -151,7 +149,8 @@ class ZipFile(DataFile):
             filename (string or zipfile.ZipFile instance): Filename to save as (using the same rules as for the load routines)
 
         Returns:
-            A copy of itself."""
+            A copy of itself.
+        """
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):  # now go and ask for one
@@ -205,18 +204,16 @@ class ZipFile(DataFile):
         return self
 
 class ZipFolder(DataFolder):
-    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a
-    method to load and save data from a single Zip file.
+    
+    """A sub class of :py:class:`Stoner.Folders.DataFolder` that provides a method to load and save data from a single Zip file.
 
     See :py:class:`Stoner.Folders.DataFolder` for documentation on constructor.
     """
 
     def __init__(self, *args, **kargs):
-        """Constructor for the HDF5Folder Class.
-        """
+        "Constructor for the HDF5Folder Class."
         self.File = None
         self.type = ZipFile
-        close_me=False
         if len(args) > 1:
             if isinstance(args[0], string_types) and zf.is_zipfile(args[0]):
                 self.File = zf.ZipFile(args[0], "a")
@@ -237,7 +234,8 @@ class ZipFolder(DataFolder):
             new_file (bool): True if allowed to create new directory
 
         Returns:
-            A directory to be used for the file operation."""
+            A directory to be used for the file operation.
+        """
         try:
             from enthought.pyface.api import FileDialog, OK
         except ImportError:
@@ -261,8 +259,7 @@ class ZipFolder(DataFolder):
             return None
 
     def getlist(self, recursive=None, directory=None, flatten=None):
-        """Reads the Zip File to construct a list of ZipFile objects"""
-
+        "Reads the Zip File to construct a list of ZipFile objects"
         if recursive is None:
             recursive = self.recursive
         self.files = []
@@ -301,7 +298,7 @@ class ZipFolder(DataFolder):
         return self
 
     def __read__(self, f):
-        """Override the _-read method to handle pulling files from the zip file"""
+        "Override the _-read method to handle pulling files from the zip file"
         if isinstance(f, DataFile):  # This is an already loaded DataFile
             tmp = f
             f = tmp.filename
@@ -338,7 +335,6 @@ class ZipFolder(DataFolder):
         Return:
             A list of group paths in the Zip file
         """
-
         if root is None:
             root = self._dialog(mode='w')
         elif isinstance(root, bool) and not root and isinstance(self.File, zf.ZipFile):

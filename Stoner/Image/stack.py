@@ -8,39 +8,40 @@ Created on Mon May 23 12:05:59 2016
 from .core import ImageArray
 from .core import dtype_range
 from .folders import ImageFolder
-from Stoner.Core import metadataObject
+from Stoner.Core import metadataObject,all_type
 from Stoner.Util import Data
 import numpy as np
-from os import path
 import copy
 
 from skimage.viewer import CollectionViewer
-from Stoner.compat import *
+from Stoner.compat import int_types
 from Stoner.compat import string_types
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
-def _load_ImageArray(f,img_num=0, **kargs):
+def _load_ImageArray(f, **kargs):
+    kargs.pop("Img_num",None) # REemove img_num if it exists
     return ImageArray(f, **kargs)
 
 def _average_list(listob):
     """Average a list of items picking an appropriate average given the type.
+    
     If no appropriate average is found None will be returned.
     if listob contains nested lists or dicts of numbers then try to average
     individual items within the lists/keys.
     """
     if len(listob)==0:
         return None
-    if not all([type(i)==type(listob[0]) for i in listob]):
+    if not all_type(listob,type(listob[0])):
         return None #all of the list isn't the same type
     typex = listob[0]
-    if isinstance(typex, (int,long,float)):
-            ret = sum(listob)/float(len(listob))
+    if isinstance(typex, int_types+(float,)):
+        ret = sum(listob)/float(len(listob))
     elif isinstance(typex, np.ndarray):
         try:
             ret = np.average(tuple(listob))
-        except: #probably incompatible array sizes
+        except Exception: #probably incompatible array sizes
             ret = None
     elif isinstance(typex, (tuple,list)): #recursively go through sub lists averaging values
         nl = zip(*listob)
@@ -62,6 +63,7 @@ def _average_list(listob):
     
 
 class ImageStack(metadataObject):
+    
     """:py:class:`Stoner.Image.stack.ImageStack` is a 3d numpy array stack of images.
 
     This is used to deal with a stack of images with identical dimensions
@@ -88,6 +90,7 @@ class ImageStack(metadataObject):
         
     def __init__(self, *args, **kargs):
         """Constructor for :py:class:`Stoner.Image.stack.ImageStack`
+        
         Args:
             (str, ndarray (3d or 2d), ImageFolder, ImageStack, list of array type):
                 Various forms recognised. Will try to create as expected!
@@ -104,19 +107,17 @@ class ImageStack(metadataObject):
                     metadata=kargs.pop('metadata',None)) #initialise metadata
         self._len = 0 #lock on adhoc imarray adjustments
         self.imarray = np.zeros((0,0,0))
+        self.metadata_info = kargs.pop('metadata_info', 'list')
         self.allmeta = [] #A list of metadata dicts extracted from the input images,
                           #if just a 3d numpy array is given this will be empty.
                           #this is for easy reconstruction if we want to get images 
                           #back out of ImageStack
         self.zipallmeta = {} #dict of allmeta in list form (only keys that 
-                                #are common to all images are retained)
-        self.metadata_info = kargs.pop('metadata_info', 'list')
+                          #are common to all images are retained)
         copyarray = kargs.pop('copyarray', False)
         self._commonkeys = [] #metadata fields that are common to all images        
         self['metadata_info'] = self.metadata_info
-        if len(args)==0:
-            pass  #add arrays later
-        else:
+        if len(args)!=0:
             images=args[0]
             if isinstance(images, ImageStack):
                 if copyarray:
@@ -148,22 +149,21 @@ class ImageStack(metadataObject):
                 else:
                     raise ValueError('Bad input for ImageStack {}'.format(type(images)))
             else:
-               raise ValueError('Bad input for ImageStack {}'.format(type(images)))         
+                raise ValueError('Bad input for ImageStack {}'.format(type(images)))         
              
     @property
     def shape(self):
-        """call through to ndarray.shape
-        """
+        "call through to ndarray.shape"
         return self.imarray.shape
     
     @property
     def imarray(self):
-        """The main array storing the images
-        """
+        "The main array storing the images"
         return self._imarray
     
     @imarray.setter
     def imarray(self, arr):
+        "Set the main array for the image."
         if len(arr.shape)!=3:
             raise ValueError('Bad shape {} for imarray'.format(arr.shape))
         if arr.shape[0] != self._len:
@@ -172,46 +172,45 @@ class ImageStack(metadataObject):
     
     @property
     def allmeta(self):
-        """List of complete metadata for each image in ImageStack"""
+        "List of complete metadata for each image in ImageStack"
         return self._allmeta
     
     @allmeta.setter
     def allmeta(self, value):
         self._allmeta=value
-        self._update_metadata
+        self._update_metadata()
         
     @property
     def clone(self):
-        """Return a copy of self
-        """
+        "Return a copy of self"
         return copy.deepcopy(self)
     
     def __iter__(self):
+        "Iterating method."
         return self.__next__()
     
     def __next__(self):
+        "Python 3 style iterator interface."
         for i in range(len(self)):
             yield self[i]
     
     def _update_commonkeys(self):
-        """update self._commonkeys
-        common keys in self.allmeta
-        """
-        keys = set(self.allmeta[0].keys())
-        for m in self.allmeta:
-            self._commonkeys = keys & set(m.keys()) #intersection
+        "update self._commonkeys common keys in self.allmeta"
+        if len(self._allmeta)>0:
+            keys = set(self.allmeta[0].keys())
+            for m in self.allmeta:
+                self._commonkeys = keys & set(m.keys()) #intersection
+        else:
+            self._commonkeys = set()
     
     def _update_zipallmeta(self):
-        """list of metadata items for each common key
-        """
+        "list of metadata items for each common key"
         self._update_commonkeys()
         for k in self._commonkeys:
             self.zipallmeta[k] = [i[k] for i in self.allmeta]
         
     def _update_metadata(self):     
-        """update the metadata from allmeta according to the specifications in 
-        metadata_info
-        """
+        "update the metadata from allmeta according to the specifications in  metadata_info"
         self._update_zipallmeta()
         mi = self.metadata_info
         for cm in self._commonkeys:
@@ -228,8 +227,7 @@ class ImageStack(metadataObject):
                 raise NotImplementedError("metadata_info can't take all keywords yet")
         
     def __getitem__(self,index):
-        """Patch indexing of strings to metadata and an index to a single 
-        ImageArray"""
+        "Patch indexing of strings to metadata and an index to a single ImageArray"
         if isinstance(index,string_types):
             return self.metadata[index]
         elif isinstance(index, int):
@@ -242,8 +240,7 @@ class ImageStack(metadataObject):
         return super(ImageStack,self).__getitem__(index)
         
     def __setitem__(self,index,value):
-        """Patch string index through to metadata. All other set operations
-        to be handled by insert, append and del."""
+        "Patch string index through to metadata. All other set operations to be handled by insert, append and del."
         if isinstance(index,string_types):
             self.metadata[index]=value
         elif isinstance(index,int):
@@ -256,8 +253,7 @@ class ImageStack(metadataObject):
             super(ImageStack,self).__setitem__(index,value)
 
     def __delitem__(self,index):
-        """Patch indexing of strings to metadata and index to single image
-        and slice to multiple image"""
+        "Patch indexing of strings to metadata and index to single image and slice to multiple image"
         if isinstance(index,string_types):
             del self.metadata[index]
         elif isinstance(index, int):
@@ -272,9 +268,11 @@ class ImageStack(metadataObject):
             super(ImageStack,self).__delitem__(index)
             
     def __len__(self):
+        "Define a length for the array."
         return self.imarray.shape[0]
 
     def __deepcopy__(self, memo):
+        "Support copy.deepcopy."
         cls = self.__class__
         ret = cls.__new__(cls)
         memo[id(self)] = ret
@@ -382,6 +380,7 @@ class ImageStack(metadataObject):
     
     def convert_float(self, clip_negative=True):
         """Convert the imarray to floating point type normalised to -1 to 1. 
+        
         If clip_negative then clip intensities below 0 to 0.
         
         Keyword Arguments:
@@ -466,18 +465,19 @@ class ImageStack(metadataObject):
         self.imarray = self.imarray[:,box[2]:box[3],box[0]:box[1]]
         
     def show(self):
-        """Show the stack of images in a skimage CollectionViewer window"""
+        "Show the stack of images in a skimage CollectionViewer window"
         #stackims=[self[i] for i in range(len(self))]
         cv=CollectionViewer(self)
         cv.show()
         return cv  
 
     def save(self, fname):
-        """probably should save in hdf5 format"""
-        raise NotImplemented
+        "probably should save in hdf5 format"
+        raise NotImplementedError
         
     def stddev(self, weights=None):
-        """calculate weighted standard deviation for stack
+        """Calculate weighted standard deviation for stack
+        
         This is a biased standard deviation, may not be appropriate for small sample sizes
         """
         avs = self.stack_average(weights=weights)
@@ -487,13 +487,13 @@ class ImageStack(metadataObject):
         return result.view(ImageArray)
     
     def stderr(self, weights=None):
-        """Standard error in the stack average
-        """
+        "Standard error in the stack average"
         serr = self.stddev(weights=weights)/np.sqrt(self.shape[0])
         return serr
 
     def average(self, weights=None):
         """Get an array of average pixel values for the stack.
+        
         Pass through to numpy average        
         Returns:
             average(ImageArray):
@@ -522,8 +522,8 @@ class ImageStack(metadataObject):
 
 
 class KerrStack(ImageStack):
-    """:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds
-    some functionality particular to Kerr images.
+    
+    """:py:class:`Stoner.Image.stack.KerrStack is similar to ImageStack but adds some functionality particular to Kerr images.
     
     Attributes:
         fields(list):
@@ -569,22 +569,22 @@ class KerrStack(ImageStack):
         return d
             
     def index_to_field(self, index_map):
-        """Convert an image of index values into an image of field values
-        """
+        "Convert an image of index values into an image of field values"
         fieldvals=np.take(self.fields, index_map)
         return ImageArray(fieldvals)
     
     def reverse(self):
-        """Reverse the image order
-        """
+        "Reverse the image order"
         self.imarray = self.imarray[::-1,:,:]
         self.fields = self.fields[::-1]
                               
     def denoise_thresh(self, denoise_weight=0.1, thresh=0.5, invert=False):
         """apply denoise then threshold images.
+        
         Return a new MaskStack.
         True for values greater than thresh, False otherwise
-        else return True for values between thresh and 1"""
+        else return True for values between thresh and 1
+        """
         masks=self.clone
         masks.apply_all('denoise', weight=0.1)
         masks.apply_all('threshold_minmax', threshmin=thresh, 
@@ -595,8 +595,9 @@ class KerrStack(ImageStack):
         return masks
     
     def find_threshold(self, testim=None, mask=None):
-        """Try to find the threshold value at which the image switches. Takes
-        it as the median value of the testim. Masks values
+        """Try to find the threshold value at which the image switches. 
+        
+        Takes it as the median value of the testim. Masks values
         where the difference is less than tolerance in case part of the image is
         irrelevant.
         """
@@ -611,10 +612,12 @@ class KerrStack(ImageStack):
         return med
         
     def stable_mask(self, tolerance=1e-2, comparison = None):
-        """Produce a mask of areas of the image that are changing little over the
-        stack. comparison is an optional tuple that gives the index of two images
+        """Produce a mask of areas of the image that are changing little over the stack. 
+        
+        comparison is an optional tuple that gives the index of two images
         to compare, otherwise first and last used. tolerance is the difference
-        tolerance"""
+        tolerance
+        """
         mask = np.zeros(self[0].shape, dtype=bool)
         mask[abs(self[-1]-self[0])<tolerance] = True
         return mask
@@ -634,6 +637,7 @@ class KerrStack(ImageStack):
     def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=False, 
               saturation_end=True, saturation_white=True, extra_info=False):
         """produce a map of the switching field at every pixel in the stack.
+        
         It needs the stack to start saturated one way and end saturated the other way.
         
         Keyword Arguments:
@@ -675,6 +679,7 @@ class KerrStack(ImageStack):
 
     def average_Hcmap(self, weights=None, ignore_zeros=False):
         """Get an array of average pixel values for the stack.
+        
         Return average of pixel values in the stack.
         
         Keyword arguments:
@@ -697,15 +702,15 @@ class KerrStack(ImageStack):
         return average.view(ImageArray)    
     
 class MaskStack(KerrStack):
-    """Similar to ImageStack but made for stacks of boolean or binary images
-    """
+    
+    "Similar to ImageStack but made for stacks of boolean or binary images"
+    
     def __init__(self, *args, **kargs):
         super(MaskStack,self).__init__(*args, **kargs)
         self.imarray=self.imarray.astype(bool)
     
     def switch_index(self, saturation_end=True, saturation_value=True):
-        """Given a stack of boolean masks representing a hystersis loop find
-        the stack index of the saturation field for each pixel.
+        """Given a stack of boolean masks representing a hystersis loop find the stack index of the saturation field for each pixel.
         
         Take the final mask as all switched (or the first mask if saturation_end
         is False). Work back through the masks taking the first time a pixel 
@@ -746,7 +751,7 @@ class MaskStack(KerrStack):
         del(switch_prog[-1])
         for m in reversed(range(len(ms)-1)): #go from saturation backwards
             already_done=np.copy(switch_ind).astype(dtype=bool) #only change switch_ind if it hasn't already
-            condition=np.logical_and( ms[m]!=True, ms[m+1]==True )
+            condition=np.logical_and( ms[m]!=True, ms[m+1])
             condition=np.logical_and(condition, np.invert(already_done))
             condition=[condition, np.logical_not(condition)]
             choice=[np.ones(switch_ind.shape)*m, switch_ind] #index or leave as is

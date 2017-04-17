@@ -1,4 +1,4 @@
-"""Plot data using mutiple sub-plots."""
+"Plot data using mutiple sub-plots."
 from Stoner import Data
 p=Data("sample.txt",setas="xyy")
 # Quick plot

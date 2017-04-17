@@ -1,3 +1,4 @@
+"Example plot using Joe Batley's plot style."
 from Stoner import Data
 from Stoner.plot.formats import JTBPlotStyle
 
