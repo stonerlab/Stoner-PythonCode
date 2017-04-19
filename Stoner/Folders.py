@@ -1394,7 +1394,7 @@ class DiskBssedFolder(object):
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
-        if self.readlist:
+        if self.readlist and len(args)>0:
             self.getlist(directory=args[0])
         
         
