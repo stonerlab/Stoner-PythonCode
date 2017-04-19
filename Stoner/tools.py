@@ -21,8 +21,8 @@ def isNone(iterator):
         iterator (None or Iterable):
 
     Returns:
-        True if iterator is None, empty or full of None."""
-
+        True if iterator is None, empty or full of None.
+    """
     if iterator is None:
         ret=True
     elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
@@ -236,20 +236,25 @@ def format_error(value, error, **kargs):
     return fmt_str.format(value, error)
 
 class _attribute_store(dict):
+    
     """A dictionary=like class that provides attributes that work like indices.
 
-    Used to implement the mapping of column types to indices in the setas attriobutes."""
+    Used to implement the mapping of column types to indices in the setas attriobutes.
+    """
 
     def __init__(self, *args, **kargs):
+        """Initialise from a dictionary."""
         if len(args) == 1 and isinstance(args[0], dict):
             self.update(args[0])
         else:
             super(_attribute_store, self).__init__(*args, **kargs)
 
     def __setattr__(self, name, value):
+        """Setting an attribute is equivalent to setting an item."""
         self[name] = value
 
     def __getattr__(self, name):
+        """Getting an attrbute is equivalent to getting an item."""
         try:
             return self[name]
         except KeyError:

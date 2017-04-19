@@ -1,4 +1,4 @@
-"Example plot using default style."
+"""Example plot using default style."""
 from Stoner import Data
 from Stoner.plot.formats import DefaultPlotStyle
 
