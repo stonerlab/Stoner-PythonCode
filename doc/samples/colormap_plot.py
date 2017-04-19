@@ -1,4 +1,4 @@
-"Plot 3d fdata as a colourmap."
+"""Plot 3d fdata as a colourmap."""
 from Stoner import Data
 import numpy as np
 

@@ -1,5 +1,4 @@
-"Example of using lmfit to do a bounded fit."
-from Stoner import Data
+"""Example of using lmfit to do a bounded fit."""
 from Stoner.Fit import StretchedExp
 
 #Load dat and plot

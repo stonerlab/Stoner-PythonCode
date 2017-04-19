@@ -1,4 +1,4 @@
-"Re-binning data example."
+"""Re-binning data example."""
 from Stoner import Data
 from Stoner.plot.utils import errorfill
 

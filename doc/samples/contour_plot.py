@@ -1,4 +1,4 @@
-"Plot 3D data on a contour plot."
+"""Plot 3D data on a contour plot."""
 from Stoner import Data
 import numpy as np
 

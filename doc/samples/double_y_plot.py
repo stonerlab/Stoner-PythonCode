@@ -1,4 +1,4 @@
-"Plot data using two y-axes."
+"""Plot data using two y-axes."""
 from Stoner import Data
 p=Data("sample.txt",setas="xyy")
 
