@@ -7,6 +7,7 @@ autodetect: true
 #requirements:
 ignore-patterns:
   - ^.*kgui\.py$
+  - ^.*doc\/conf\.py
 python-targets:
   - 2
   - 3
