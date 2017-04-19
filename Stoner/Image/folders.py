@@ -21,7 +21,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
     functions and loaders appropriate for image based files.
     
         Attributes:
-        type (:py:class:`Stoner.Image.core.ImageArray`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Util.Data`)
+        type (:py:class:`Stoner.Image.core.ImageArray`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Cire.Data`)
 
         extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
 

@@ -6,7 +6,7 @@ Sample script for fitting BlochGrueneisen function to a data file
 """
 from __future__ import print_function
 
-from Stoner.Util import Data,format_error
+from Stoner.Core import Data,format_error
 from Stoner.compat import python_v3
 from Stoner.Fit import blochGrueneisen
 from numpy import sqrt,diag,append,any,isnan

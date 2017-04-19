@@ -5,17 +5,18 @@ Provides  :py:class:`AnalysisMixin` - DataFile with extra bells and whistles.
 
 __all__ = ["AnalysisMixin"]
 
-from Stoner.compat import *
-from Stoner.Core import DataFile,isNone,DataArray
+from .compat import python_v3,string_types,int_types,index_types,LooseVersion
+from .tools import isNone
 import numpy as _np_
 import numpy.ma as ma
 from scipy.integrate import cumtrapz
 from scipy.signal import get_window,convolve
-from scipy.interpolate import interp1d, InterpolatedUnivariateSpline, UnivariateSpline
+from scipy.interpolate import interp1d,  UnivariateSpline
 from scipy.optimize import curve_fit,newton
 from scipy.signal import savgol_filter
 from inspect import isclass
 from collections import Iterable
+from warnings import warn
 try:  #Allow lmfit to be optional
     import lmfit
     if LooseVersion(lmfit.__version__)<LooseVersion("0.9.0"):
@@ -1086,6 +1087,7 @@ class AnalysisMixin(object):
             - if *xcol* was None, this argument is interpreted as array indices, but if *xcol* was specified, then this argument is interpreted as
             an array of xvalues.
         """
+        DataArray=self.data.__class__
         l = _np_.shape(self.data)[0]
         index = _np_.arange(l)
         if xcol is None:
@@ -1760,7 +1762,7 @@ class AnalysisMixin(object):
 
         # Get data from the other. If it is already an ndarray, check size and dimensions
 
-        if isinstance(other,DataFile):
+        if isinstance(other,self._baseclass):
             working2 = other.search(_.xcol,otherbounds)
             working2 = ma.mask_rowcols(working2, axis=0)
             xdat2 = working2[:, other.find_col(_.xcol)]
@@ -2220,9 +2222,9 @@ class AnalysisMixin(object):
         Warning:
             There has been an API change. Versions prior to 0.1.9 placed the column before the threshold in the positional
             argument list. In order to support the use of assigned columns, this has been swapped to the present order.
-            """
+        """
 
-
+        DataArray=self.data.__class__
         col=kargs.pop("col",None)
         if col is None:
             col = self.setas._get_cols("ycol")
@@ -2290,11 +2292,19 @@ class AnalysisMixin(object):
             ret.isrow=True
         return ret
 
-class AnalyseFile(AnalysisMixin,DataFile):
-    """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
-
-    Note:
-        There is no separate constructor for this class - it inherits from DataFile
-
-    """
-    pass
+def AnalyseFile(*args,**kargs):
+    """Issue a warning and then create a class anyway."""
+    warn("AnalyseFile is deprecated in favour of Stoner.Data or the AnalysisMixin",DeprecationWarning)
+    from .Core import DataFile    
+    
+    class AnalyseFile(AnalysisMixin,DataFile):
+        
+        """:py:class:`Stoner.Analysis.AnalyseFile` extends :py:class:`Stoner.Core.DataFile` with numpy and scipy passthrough functions.
+    
+        Note:
+            There is no separate constructor for this class - it inherits from DataFile
+    
+        """
+        pass
+    
+    return AnalyseFile(*args,**kargs)

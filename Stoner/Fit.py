@@ -95,7 +95,7 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
         **kargs: All other keywords are passed to the Data constructor
 
     Returns:
-        An instance of :py:class:`Stoner.Util.Data` with data loaded and columns configured.
+        An instance of :py:class:`Stoner.Core.Data` with data loaded and columns configured.
 
     The inifile should contain a [Data] section that contains the following keys:
 
@@ -108,7 +108,7 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     if ConfigParser is None:
         raise RuntimeError("Need to have ConfigParser module installed for this to work.")
     config = ConfigParser.SafeConfigParser()
-    from Stoner.Util import Data
+    from Stoner.Core import Data
     if isinstance(inifile,string_types):
         config.read(inifile)
     elif isinstance(inifile,IOBase):

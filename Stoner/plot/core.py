@@ -9,7 +9,7 @@ Classes:
 
 __all__ = ["PlotMixin","hsl2rgb"]
 from Stoner.compat import python_v3,string_types,index_types
-from Stoner.Core import DataFile, _attribute_store, isNone
+from Stoner.tools import _attribute_store, isNone
 from .formats import DefaultPlotStyle
 from .utils import errorfill
 
@@ -21,6 +21,7 @@ import platform
 import copy
 from collections import Iterable
 from colorsys import hls_to_rgb
+from warnings import warn
 
 if os.name == "posix" and platform.system() == "Darwin":
     import matplotlib
@@ -1442,10 +1443,15 @@ def hsl2rgb(h, s, l):
         rgb[i,:] = _np_.array(hls_to_rgb(*hls[i]))
     return (255 * rgb).astype('u1')
 
-class PlotFile(PlotMixin,DataFile):
-    
-    """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`
+def PlotFile(*args,**kargs):
+    """Issue a warning and then create a class anyway."""
+    warn("PlotFile is deprecated in favour of Stoner.Data or the PlotMixin",DeprecationWarning)
+    from Stoner.Core import DataFile    
 
-    """
+    class PlotFile(PlotMixin,DataFile):
+        
+        """Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`"""
+        
+        pass
     
-    pass
+    return PlotFile(*args,**kargs)

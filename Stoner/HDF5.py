@@ -11,7 +11,7 @@ import h5py
 import numpy as _np_
 from .Core import DataFile, StonerLoadError
 from .Folders import DataFolder
-from .Util import Data
+from .Core import Data
 from .Image.core import ImageArray
 import os.path as path
 import os
@@ -414,7 +414,7 @@ class HDF5Folder(object):
         elif isinstance(root, bool) and not root and isinstance(self.File, h5py.File):
             root = self.File.filename
             self.File.close()
-        from .Util import Data
+        from .Core import Data
         self.File = h5py.File(root, 'w')
         tmp = self.walk_groups(self._save)
         self.File.file.close()

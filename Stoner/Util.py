@@ -7,55 +7,13 @@ Created on Tue Oct 08 20:14:34 2013
 @author: phygbu
 """
 
-from .compat import bytes2str,int_types
+from .compat import int_types
+from .tools import format_error
 import Stoner.Core  as _SC_
-import Stoner.Analysis as _SA_
-import Stoner.plot  as _SP_
 from .Folders import DataFolder as _SF_
 from .Fit import linear
-from numpy import log10, floor, max, abs, sqrt, diag, argmax, mean,array #pylint: disable=redefined-builtin
+from numpy import max, sqrt, diag, argmax, mean,array #pylint: disable=redefined-builtin
 from scipy.stats import sem
-from sys import float_info
-try:
-    from lmfit import Model
-    _lmfit=True
-except ImportError:
-    Model=object
-    _lmfit=False
-from inspect import isclass
-import re
-from cgi import escape as html_escape
-import Stoner.FileFormats as _SFF_ # pylint: disable=unused-import
-
-def tex_escape(text):
-    """
-        Escapes spacecial text charcters in a string.
-
-        Parameters:
-            text (str): a plain text message
-
-        Returns:
-            the message escaped to appear correctly in LaTeX
-
-    From `Stackoverflow <http://stackoverflow.com/questions/16259923/how-can-i-escape-latex-special-characters-inside-django-templates>`
-
-    """
-    conv = {
-        '&': r'\&',
-        '%': r'\%',
-        '$': r'\$',
-        '#': r'\#',
-        '_': r'\_',
-        '{': r'\{',
-        '}': r'\}',
-        '~': r'\textasciitilde{}',
-        '^': r'\^{}',
-        '\\': r'\textbackslash{}',
-        '<': r'\textless',
-        '>': r'\textgreater',
-    }
-    regex = re.compile('|'.join(re.escape(bytes2str(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
-    return regex.sub(lambda match: conv[match.group()], text)
 
 def _up_down(data):
     """Split data d into rising and falling sections and then add and sort the two sets.
@@ -78,128 +36,6 @@ def _up_down(data):
     return ret
 
 
-class Data(_SA_.AnalysisMixin,_SP_.PlotMixin,_SC_.DataFile):
-    
-    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
-    
-    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
-    This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
-    analysis on data files.
-    """
-
-    def format(self,key,**kargs):
-        r"""Return the contents of key pretty formatted using :py:func:`format_error`.
-
-        Args:
-            fmt (str): Specify the output format, opyions are:
-
-                *  "text" - plain text output
-                * "latex" - latex output
-                * "html" - html entities
-
-            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-            mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-                to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-                i.e. mantissa and exponent format is used.
-            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
-            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-                inside the math-mode markers, but not embedded in \mathrm.
-
-        Returns:
-            A pretty string representation.
-
-        The if key="key", then the value is self["key"], the error is self["key err"], the default prefix is self["key label"]+"=" or "key=",
-        the units are self["key units"] or "".
-
-        """
-        mode=kargs.pop("mode","float")
-        units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
-        latex=kargs.pop("latex",False)
-        fmt=kargs.pop("fmt","latex" if latex else "text")
-        escape=kargs.pop("escape",False)
-
-        try:
-            value=float(self[key])
-        except ValueError:
-            raise KeyError("{} should be a floating point value of the metadata.",format(key))
-        try:
-            error=float(self[key+" err"])
-        except KeyError:
-            error=float_info.epsilon
-        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
-
-    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
-        """Annotate a plot with some information about a fit.
-
-        Args:
-            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.
-
-        Keyword Parameters:
-            x (float): x co-ordinate of the label
-            y (float): y co-ordinate of the label
-            z (float): z co-ordinbate of the label if the current axes are 3D
-            prefix (str): The prefix placed ahead of the model parameters in the metadata.
-            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
-                return just the text and don't add to a plot.
-
-        Returns:
-            
-            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
-
-        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
-        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
-        are set to be 0.75 * maximum x and y limit of the plot.
-        """
-        if _lmfit and isclass(model) and issubclass(model,Model):
-            model=model()
-        elif _lmfit and isinstance(model,Model):
-            pass
-        elif callable(model):
-            prefix=model.__name__
-            model=Model(model)
-        else:
-            raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
-
-        if prefix is not None:
-            prefix="" if prefix == "" else prefix+":"
-        elif "lmfit.prefix" in self:
-            prefix=self["lmfit.prefix"][0]
-        else:
-            if model.prefix=="":
-                prefix=""
-            else:
-                prefix=model.prefix+":"
-
-        if x is None:
-            xl,xr=self.xlim() # pylint: disable=not-callable
-            x=(xr-xl)*0.75+xl
-        if y is None:
-            yb,yt=self.ylim() # pylint: disable=not-callable
-            y=0.5*(yt-yb)+yb
-
-        try: # if the model has an attribute display params then use these as the parameter anmes
-            for k,display_name in zip(model.param_names,model.display_names):
-                self[k+" label"]=display_name
-        except (AttributeError,KeyError):
-            pass
-
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex") for k in model.param_names])
-        if not text_only:
-            ax=self.fig.gca()
-            if "zlim" in ax.properties():
-                #3D plot then
-                if z is None:
-                    zb,zt=ax.properties()["zlim"]
-                    z=0.5*(zt-zb)+zb
-                ax.text3D(x,y,z,text)
-            else:
-                ax.annotate(text, xy=(x,y), **kargs)
-            ret=self
-        else:
-            ret=text
-        return ret
 
 
 def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, skip=0):
@@ -220,7 +56,7 @@ def split(data, col=None, folder=None, spliton=0, rising=True, falling=False, sk
     """
     if col is None:
         col = data.setas["x"]
-    d=Data(data)
+    d=_SC_.Data(data)
     if not isinstance(folder, _SF_):  # Create a new DataFolder object
         output = _SF_()
     else:
@@ -266,7 +102,7 @@ def split_up_down(data, col=None, folder=None):
     Returns:
         A :py:class:`Sonter.Folder.DataFolder` object with two groups, rising and falling
     """
-    a = Data(data)
+    a = _SC_.Data(data)
     if col is None:
         _=a._col_args()
         col=_.xcol
@@ -311,119 +147,6 @@ def split_up_down(data, col=None, folder=None):
     return output
 
 
-def format_error(value, error, **kargs):
-    """This handles the printing out of the answer with the uncertaintly to 1sf and the
-    value to no more sf's than the uncertainty.
-
-    Args:
-        value (float): The value to be formated
-        error (float): The uncertainty in the value
-        fmt (str): Specify the output format, opyions are:
-            *  "text" - plain text output
-            * "latex" - latex output
-            * "html" - html entities
-        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
-        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
-            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
-            i.e. mantissa and exponent format is used.
-        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
-            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
-        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
-            inside the math-mode markers, but not embedded in \\mathrm.
-
-    Returns:
-        String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
-    """
-    mode=kargs.pop("mode","float")
-    units=kargs.pop("units","")
-    prefix=kargs.pop("prefix","")
-    latex=kargs.pop("latex",False)
-    fmt=kargs.pop("fmt","latex" if latex else "text")
-    escape=kargs.pop("escape",False)
-    escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
-
-    if escape:
-        prefix=escape_func(prefix)
-        units=escape_func(units)
-
-    prefs={"text":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "latex":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "html":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            }
-        }
-
-    if error == 0.0:  # special case for zero uncertainty
-        return repr(value)
-    #Sort out special fomatting for different modes
-    if mode == "float":  # Standard
-        suffix_val = ""
-    elif mode == "eng":  #Use SI prefixes
-        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
-        prefixes = prefs.get(fmt,prefs["text"])
-        if v_mag in prefixes:
-            if fmt=="latex":
-                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
-            else:
-                suffix_val = prefixes[v_mag]
-            value /= 10 ** v_mag
-            error /= 10 ** v_mag
-        else:  # Implies 10^-3<x<10^3
-            suffix_val = ""
-    elif mode == "sci":  # Scientific mode - raise to common power of 10
-        v_mag = floor(log10(abs(value)))
-        if fmt=="latex":
-            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
-        elif fmt=="html":
-            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
-        else:
-            suffix_val = "E{} ".format(int(v_mag))
-        value /= 10 ** v_mag
-        error /= 10 ** v_mag
-    else:  # Bad mode
-        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
-
-# Now do the rounding of the value based on error to 1 s.f.
-    e2 = error
-    u_mag = floor(log10(abs(error)))  #work out the scale of the error
-    error = round(error / 10 ** u_mag) * 10 ** u_mag  # round the error, but this could round to 0.x0
-    u_mag = floor(log10(error))  # so go round the loop again
-    error = round(e2 / 10 ** u_mag) * 10 ** u_mag  # and get a new error magnitude
-    value = round(value / 10 ** u_mag) * 10 ** u_mag
-    u_mag = min(0, u_mag)  # Force integer results to have no dp
-
-    #Protect {} in units string
-    units = units.replace("{", "{{").replace("}", "}}")
-    prefix = prefix.replace("{", "{{").replace("}", "}}")
-    if fmt=="latex":  # Switch to latex math mode symbols
-        val_fmt_str = r"${}{{:.{}f}}\pm ".format(prefix, int(abs(u_mag)))
-        if units != "":
-            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
-        else:
-            suffix_fmt = ""
-        suffix_fmt += "$"
-    elif fmt=="html":  # Switch to latex math mode symbols
-        val_fmt_str = r"{}{{:.{}f}}&plusmin;".format(prefix, int(abs(u_mag)))
-        suffix_fmt = units
-    else:  # Plain text
-        val_fmt_str = r"{}{{:.{}f}}+/-".format(prefix, int(abs(u_mag)))
-        suffix_fmt = units
-    if u_mag < 0:  # the error is less than 1, so con strain decimal places
-        err_fmt_str = r"{:." + str(int(abs(u_mag))) + "f}"
-    else:  # We'll be converting it to an integer anyway
-        err_fmt_str = r"{}"
-    fmt_str = val_fmt_str + err_fmt_str + suffix_val + suffix_fmt
-    if error >= 1.0:
-        error = int(error)
-        value = int(value)
-    return fmt_str.format(value, error)
 
 Hickeyify = format_error
 
@@ -474,7 +197,7 @@ def hysteresis_correct(data, **kargs):
     if isinstance(data, _SC_.DataFile):
         cls = data.__class__
     else:
-        cls = Data
+        cls = _SC_.Data
     data = cls(data)
 
     if "setas" in kargs: # Allow us to override the setas variable

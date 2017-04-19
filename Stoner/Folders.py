@@ -1345,7 +1345,7 @@ class DiskBssedFolder(object):
     """A Mixin class that implmenets reading metadataObjects from disc.
     
     Attributes:
-        type (:py:class:`Stoner.Core.metadataObject`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Util.Data`)
+        type (:py:class:`Stoner.Core.metadataObject`) the type ob object to sotre in the folder (defaults to :py:class:`Stoner.Core.Data`)
     
         extra_args (dict): Extra arguments to use when instantiatoing the contents of the folder from a file on disk.
     
@@ -1510,9 +1510,9 @@ class DiskBssedFolder(object):
                 the baseFolder class uses a :py:class:`regexpDict` to store objects in.
 
         Keyword Arguments:
-            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Util.Data` object. If False,
+            instatiate (bool): IF True (default) then always return a :py:class:`Stoner.Core.Data` object. If False,
                 the __getter__ method may return a key that can be used by it later to actually get the
-                :py:class:`Stoner.Util.Data` object.
+                :py:class:`Stoner.Core.Data` object.
 
         Returns:
             (metadataObject): The metadataObject
@@ -1901,7 +1901,7 @@ class PlotFolder(DataFolder):
 
         Notes:
             If the underlying type of the :py:class:`Stoner.Core.metadataObject` instances in the :py:class:`PlotFolder`
-            lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Util.Data`.
+            lacks a **plot** method, then the instances are converted to :py:class:`Stoner.Core.Data`.
 
             Each plot is generated as sub-plot on a page. The number of rows and columns of subplots is computed
             from the aspect ratio of the figure and the number of files in the :py:class:`PlotFolder`.

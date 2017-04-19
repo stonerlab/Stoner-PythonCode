@@ -110,7 +110,7 @@ The current development version is 0.7. Features of 0.7 include
     *   Replace older AnalyseFile and PlotFile with mixin based versions AnalysisMixin and PlotMixin
     *   Addition of Stoner.Image package to handle image analysis
     *   Refactor DataFolder to use Mixin classes
-    *   DataFolder now defaults to using :py:class:`Stoner.Util.Data`
+    *   DataFolder now defaults to using :py:class:`Stoner.Core.Data`
     *   DataFolder has an options to skip iterating over empty Data files
     *  Further improvements to :py:attr:`Stoner.Core.DataFile.setas` handline.
 

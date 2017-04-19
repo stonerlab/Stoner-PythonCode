@@ -9,7 +9,7 @@ from .core import ImageArray
 from .core import dtype_range
 from .folders import ImageFolder
 from Stoner.Core import metadataObject,all_type
-from Stoner.Util import Data
+from Stoner.Core import Data
 import numpy as np
 import copy
 

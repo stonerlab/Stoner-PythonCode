@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Stoner class Python2/3 compatibility module
+"""Stoner.compat ensures a consistent namespace for the rest of the package
+
+Handles differences between python 2.7 and 3.x as well as some optional dependencies.
 
 Created on Tue Jan 14 19:53:11 2014
 
-@author: phygbu
+@author: Gavin Burnell
 """
 from __future__ import print_function, absolute_import, division, unicode_literals
 from sys import version_info as __vi__
@@ -12,7 +13,15 @@ from re import _pattern_type
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 
-__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version"]
+try:
+    from lmfit import Model
+    _lmfit=True
+except ImportError:
+    Model=object
+    _lmfit=False
+
+
+__all__ = ["python_v3","str2bytes","bytes2str","get_filedialog","string_types","int_types","index_types","LooseVersion","classproperty","mpl_version","_lmfit"]
 
 # Nasty hacks to sort out some naming conventions
 if __vi__[0] == 2:
@@ -113,3 +122,4 @@ def classproperty(func):
         func = classmethod(func)
 
     return ClassPropertyDescriptor(func)
+

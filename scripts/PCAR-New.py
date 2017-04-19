@@ -7,7 +7,7 @@ from __future__ import print_function
 # Import packages
 
 import numpy as np
-from Stoner.Util import Data
+from Stoner.Core import Data
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini,quadratic
 from Stoner.compat import python_v3
 if python_v3:

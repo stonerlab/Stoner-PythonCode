@@ -1,28 +1,30 @@
 """Stoner.Core provides the core classes for the Stoner package.
 
-Classes:
-    `DataFile` :the base class for representing a single data set of experimental data.
-    `typeHintedDict`: a dictionary subclass that tries to keep track of the underlying type of data
-        stored in each element. This class facilitates the export to strongly typed
-        languages such as LabVIEW.
+This module imports Stoner.Analysis and Stoner.plot.core to define the core Data class.
 
 """
 from __future__ import print_function
 __all__ = ["StonerLoadError", "DataFile","DataArray","typeHintedDict","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
 
-from Stoner.compat import *
+from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
+from .tools import isNone,all_size,all_type,format_error,_attribute_store
+from .plot.core import PlotMixin
+from .Analysis import AnalysisMixin
 import re
 #import pdb # for debugging
 import os
 import csv
+from sys import float_info
 import numpy as _np_
 from numpy import NaN
 import numpy.ma as _ma_
 import copy
 import os.path as path
 import inspect as _inspect_
+
 import itertools
 from collections import Iterable, OrderedDict,MutableMapping
+
 
 try:
     assert not python_v3 # blist doesn't seem entirely reliable in 3.5 :-(
@@ -58,83 +60,6 @@ def copy_into(source,dest):
             setattr(dest,attr,getattr(source,attr))
     return dest
 
-def isNone(iterator):
-    """Returns True if input is None or an empty iterator, or an iterator of None.
-
-    Args:
-        iterator (None or Iterable):
-
-    Returns:
-        True if iterator is None, empty or full of None."""
-
-    if iterator is None:
-        ret=True
-    elif isinstance(iterator,Iterable) and not isinstance(iterator,string_types):
-        if len(iterator)==0:
-            ret=True
-        else:
-            for i in iterator:
-                if i is not None:
-                    ret=False
-                    break
-            else:
-                ret=True
-    else:
-        ret=False
-    return ret
-
-def all_size(iterator,size=None):
-    """Check whether each element of *iterator* is the same length/shape.
-
-    Arguments:
-        iterator (Iterable): list or other iterable of things with a length or shape
-
-    Keyword Arguments:
-        size(int, tuple or None): Required size of each item in iterator.
-
-    Returns:
-        True if all objects are the size specified (or the same size if size is None).
-    """
-    if hasattr(iterator[0],"shape"):
-        sizer=lambda x:x.shape
-    else:
-        sizer=lambda x:len(x)
-
-    if size is None:
-        size=sizer(iterator[0])
-    ret=False
-    for i in iterator:
-        if sizer(i)!=size:
-            break
-    else:
-        ret=True
-    return ret
-
-
-def all_type(iterator,typ):
-    """Determines if an interable omnly contains a common type.
-
-    Arguments:
-        iterator (Iterable): The object to check if it is all iterable
-        typ (class): The type to check for.
-
-    Returns:
-        True if all elements are of the type typ, or False if not.
-
-    Notes:
-        Routine will iterate the *iterator* and break when an element is not of
-        the search type *typ*.
-    """
-    ret=False
-    if isinstance(iterator,Iterable):
-        for i in iterator:
-            if not isinstance(i,typ):
-                break
-        else:
-            ret=True
-    return ret
-
-
 class StonerLoadError(Exception):
     """An exception thrown by the file loading routines in the Stoner Package.
 
@@ -148,26 +73,6 @@ class StonerLoadError(Exception):
 class StonerSetasError(AttributeError):
     """An exception tjrown when we try to access a column in data without setas being set."""
     pass
-
-class _attribute_store(dict):
-    """A dictionary=like class that provides attributes that work like indices.
-
-    Used to implement the mapping of column types to indices in the setas attriobutes."""
-
-    def __init__(self, *args, **kargs):
-        if len(args) == 1 and isinstance(args[0], dict):
-            self.update(args[0])
-        else:
-            super(_attribute_store, self).__init__(*args, **kargs)
-
-    def __setattr__(self, name, value):
-        self[name] = value
-
-    def __getattr__(self, name):
-        try:
-            return self[name]
-        except KeyError:
-            raise AttributeError
 
 
 class _tab_delimited(csv.Dialect):
@@ -1556,6 +1461,7 @@ class DataFile(metadataObject):
         self._public_attrs_real={}
         super(DataFile,self).__setattr__("_data",DataArray([]))
         self.column_headers = list()
+        self._baseclass = DataFile
         return self
        
 
@@ -1661,7 +1567,7 @@ class DataFile(metadataObject):
                 self.metadata = arg.copy()
         elif isinstance(arg, DataFile):
             for a in arg.__dict__:
-                if not callable(a):
+                if not callable(a) and a!="_baseclass":
                     super(DataFile, self).__setattr__(a, copy.copy(arg.__getattribute__(a)))
             self.metadata = arg.metadata.copy()
             self.data = DataArray(arg.data,setas=arg.setas.clone)
@@ -1706,15 +1612,6 @@ class DataFile(metadataObject):
         """Privaye property to update the list of public attributes."""
         self._public_attrs_real.update(value)
 
-        ret={
-            "data": _np_.ndarray,
-            "column_headers": list,
-            "setas": (string_types, list),
-            "metadata": typeHintedDict,
-            "debug": bool,
-            "filename": string_types,
-            "mask": (_np_.ndarray, bool),
-        }
     @property
     def clone(self):
         """Gets a deep copy of the current DataFile.
@@ -3675,6 +3572,135 @@ class DataFile(metadataObject):
 
         """
         return _np_.unique(self.column(col), return_index, return_inverse)
+
+class Data(AnalysisMixin,PlotMixin,DataFile):
+    
+    """A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`
+    
+    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.
+    This 'kitchen-sink' class is intended as a convenience for writing scripts that carry out both plotting and
+    analysis on data files.
+    """
+
+    def __new__(cls, *args,**kargs):
+        """Just do rthe import of Stoner.FileFormats."""
+        import Stoner.FileFormats as SFF
+        return DataFile.__new__(cls,*args,**kargs)
+
+    def format(self,key,**kargs):
+        r"""Return the contents of key pretty formatted using :py:func:`format_error`.
+
+        Args:
+            fmt (str): Specify the output format, opyions are:
+
+                *  "text" - plain text output
+                * "latex" - latex output
+                * "html" - html entities
+
+            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
+            mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+                to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+                i.e. mantissa and exponent format is used.
+            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm
+            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+                inside the math-mode markers, but not embedded in \mathrm.
+
+        Returns:
+            A pretty string representation.
+
+        The if key="key", then the value is self["key"], the error is self["key err"], the default prefix is self["key label"]+"=" or "key=",
+        the units are self["key units"] or "".
+
+        """
+        mode=kargs.pop("mode","float")
+        units=kargs.pop("units",self.get(key+" units","")	)
+        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
+        latex=kargs.pop("latex",False)
+        fmt=kargs.pop("fmt","latex" if latex else "text")
+        escape=kargs.pop("escape",False)
+
+        try:
+            value=float(self[key])
+        except ValueError:
+            raise KeyError("{} should be a floating point value of the metadata.",format(key))
+        try:
+            error=float(self[key+" err"])
+        except KeyError:
+            error=float_info.epsilon
+        return format_error(value,error,fmt=fmt,mode=mode,units=units,prefix=prefix,scape=escape)
+
+    def annotate_fit(self,model,x=None,y=None,z=None,prefix=None,text_only=False,**kargs):
+        """Annotate a plot with some information about a fit.
+
+        Args:
+            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.
+
+        Keyword Parameters:
+            x (float): x co-ordinate of the label
+            y (float): y co-ordinate of the label
+            z (float): z co-ordinbate of the label if the current axes are 3D
+            prefix (str): The prefix placed ahead of the model parameters in the metadata.
+            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, 
+                return just the text and don't add to a plot.
+
+        Returns:
+            
+            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.
+
+        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,
+        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
+        are set to be 0.75 * maximum x and y limit of the plot.
+        """
+        if _lmfit and _inspect_.isclass(model) and issubclass(model,Model):
+            model=model()
+        elif _lmfit and isinstance(model,Model):
+            pass
+        elif callable(model):
+            prefix=model.__name__
+            model=Model(model)
+        else:
+            raise RuntimeError("model should be either an lmfit.Model or a callable function, not a {}".format(type(model)))
+
+        if prefix is not None:
+            prefix="" if prefix == "" else prefix+":"
+        elif "lmfit.prefix" in self:
+            prefix=self["lmfit.prefix"][0]
+        else:
+            if model.prefix=="":
+                prefix=""
+            else:
+                prefix=model.prefix+":"
+
+        if x is None:
+            xl,xr=self.xlim() # pylint: disable=not-callable
+            x=(xr-xl)*0.75+xl
+        if y is None:
+            yb,yt=self.ylim() # pylint: disable=not-callable
+            y=0.5*(yt-yb)+yb
+
+        try: # if the model has an attribute display params then use these as the parameter anmes
+            for k,display_name in zip(model.param_names,model.display_names):
+                self[k+" label"]=display_name
+        except (AttributeError,KeyError):
+            pass
+
+        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex") for k in model.param_names])
+        if not text_only:
+            ax=self.fig.gca()
+            if "zlim" in ax.properties():
+                #3D plot then
+                if z is None:
+                    zb,zt=ax.properties()["zlim"]
+                    z=0.5*(zt-zb)+zb
+                ax.text3D(x,y,z,text)
+            else:
+                ax.annotate(text, xy=(x,y), **kargs)
+            ret=self
+        else:
+            ret=text
+        return ret
+
 
 # Module level functions
 

@@ -17,7 +17,7 @@ measurement.::
 In this example we have loaded data from ``my_data.txt`` which should be in the
 current directory
 
-The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Util.Data`
+The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Core.Data`
 class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
 detect the format of many of the measurement files that we use in our research.
 

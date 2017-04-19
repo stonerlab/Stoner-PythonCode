@@ -2,12 +2,11 @@
 
 See http://github.com/~gb119/Stoner-PythonCode for more details."""
 
-__all__=['Core', 'Analysis', 'FileFormats','Folders','DataFile','Data','DataFolder']
+__all__=['Core', 'Analysis', 'tools','FileFormats','Folders','DataFile','Data','DataFolder']
 
 # These fake the old namespace if you do an import Stoner
 
-from .Core import DataFile
-from .Util import Data
+from .Core import DataFile,Data
 from .Folders import DataFolder
 
 from os import path as _path_

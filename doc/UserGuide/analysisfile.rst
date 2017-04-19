@@ -118,7 +118,7 @@ index at which the fitted data will be inserted (*replace* **False**) or overwri
 The fitted data will be given the column header *header* unless *header* is not a string, in which ase the column
 will be called 'Fitted with ' and the name of the function *func*.
 
-The utility method of the :py:class:`Stoner.Util.Data`, :py:meth:`Stoner.Util.Data.annotate_fit` is useful
+The utility method of the :py:class:`Stoner.Core.Data`, :py:meth:`Stoner.Util.Data.annotate_fit` is useful
 for adding appropriately formatted details of the fit to the plot.
 
 .. plot:: samples/curve_fit_line.py
