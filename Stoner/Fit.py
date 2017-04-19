@@ -1,5 +1,4 @@
-"""Stoner.Fit: Functions and lmfit.Models for fitting data
-==================================================================
+"""Stoner.Fit: Functions and lmfit.Models for fitting data.
 
 Functions should accept an array of x values and a number of parmeters,
 they should then return an array of y values the same size as the x array.
@@ -12,16 +11,16 @@ All the functions here defined for scipy.optimize.curve\_fit to call themm
 i.e. the parameters are expanded to separate arguements.
 """
 
-from Stoner.compat import *
+from Stoner.compat import python_v3,string_types
 from Stoner.Core import DataFile
 import numpy as _np_
 from io import IOBase
 from scipy.special import digamma
 try:
     from lmfit import Model
-    from lmfit.models import LinearModel as Linear
-    from lmfit.models import PowerLawModel as PowerLaw
-    from lmfit.models import QuadraticModel as Quadratic
+    from lmfit.models import LinearModel as Linear  # NOQA pylint: disable=unused-import
+    from lmfit.models import PowerLawModel as PowerLaw  # NOQA pylint: disable=unused-import
+    from lmfit.models import QuadraticModel as Quadratic  # NOQA pylint: disable=unused-import
     from lmfit.models import update_param_vals
 except ImportError:
     Model=object
@@ -151,7 +150,7 @@ def cfg_data_from_ini(inifile,filename=None,**kargs):
     return data
 
 def cfg_model_from_ini(inifile,model=None,data=None):
-    """Utility function to configure an lmfit Model from an inifile.
+    r"""Utility function to configure an lmfit Model from an inifile.
 
     Args:
         inifile (str or file): Path to the ini file to be read.
@@ -175,9 +174,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
 
     The returned model is configured with parameter hints for fitting with. The second return value is
     a 2D array which lists the starting values for one or more fits. If the inifile describes mapping out
-    the :math:`\\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
-
-
+    the :math:`\Chi^2` as a function of the parameters, then this array has a separate row for each iteration.
     """
     config = ConfigParser.SafeConfigParser()
     if isinstance(inifile,string_types):
@@ -203,12 +200,12 @@ def cfg_model_from_ini(inifile,model=None,data=None):
         keys={"vary":bool,"value":float,"min":float,"max":float,"expr":str,"step":float,"label":str,"units":str}
         kargs=dict()
         for k in keys:
-           if config.has_option(p,k):
-               if keys[k]==bool:
-                   kargs[k]=config.getboolean(p,k)
-               elif keys[k]==float:
-                   kargs[k]=config.getfloat(p,k)
-               elif keys[k]==str:
+            if config.has_option(p,k):
+                if keys[k]==bool:
+                    kargs[k]=config.getboolean(p,k)
+                elif keys[k]==float:
+                    kargs[k]=config.getfloat(p,k)
+                elif keys[k]==str:
                     kargs[k]=config.get(p,k)
         if isinstance(data,DataFile): # stuff the parameter hint data into metadata
             for k in keys: # remove keywords not needed
@@ -234,7 +231,7 @@ def cfg_model_from_ini(inifile,model=None,data=None):
     return model,msh
 
 def arrhenius(x, A, DE):
-    """Arrhenius Equation without T dependendent prefactor.
+    r"""Arrhenius Equation without T dependendent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -244,7 +241,7 @@ def arrhenius(x, A, DE):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
@@ -252,7 +249,8 @@ def arrhenius(x, A, DE):
 
 
 class Arrhenius(Model):
-    """Arrhenius Equation without T dependendent prefactor.
+    
+    r"""Arrhenius Equation without T dependendent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -262,16 +260,19 @@ class Arrhenius(Model):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
+    
     display_names=["A",r"\Delta E"]
 
 
     def __init__(self, *args, **kwargs):
+        """Configure default function to fit."""
         super(Arrhenius, self).__init__(arrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
+        """Estimate fitting parameters from data."""
         _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
 
         d1, d2 = 1., 0.0
@@ -282,7 +283,7 @@ class Arrhenius(Model):
 
 
 def nDimArrhenius(x, A, DE, n):
-    """Arrhenius Equation without T dependendent prefactor for various dimensions.
+    r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
 
     Args:
         x (array): temperatyre data in K
@@ -293,14 +294,15 @@ def nDimArrhenius(x, A, DE, n):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
     return arrhenius(x ** n, A, DE)
 
 
 class NDimArrhenius(Model):
-    """Arrhenius Equation without T dependendent prefactor for various dimensions.
+    
+    r"""Arrhenius Equation without T dependendent prefactor for various dimensions.
 
     Args:
         x (array): temperatyre data in K
@@ -311,15 +313,18 @@ class NDimArrhenius(Model):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=A\\exp\\left(\\frac{-\\Delta E}{k_B x^n}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
+    
     display_names=["A",r"\Delta E","n"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(NDimArrhenius, self).__init__(nDimArrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
+        """Guess paramneters from a set of data."""
         _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
 
         d1, d2 = 1., 0.0
@@ -330,7 +335,7 @@ class NDimArrhenius(Model):
 
 
 def modArrhenius(x, A, DE, n):
-    """Arrhenius Equation with a variable T power dependent prefactor.
+    r"""Arrhenius Equation with a variable T power dependent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -341,14 +346,15 @@ def modArrhenius(x, A, DE, n):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
     return (x ** n) * Arrhenius(x, A, DE)
 
 
 class ModArrhenius(Model):
-    """Arrhenius Equation with a variable T power dependent prefactor.
+    
+    r"""Arrhenius Equation with a variable T power dependent prefactor.
 
     Args:
         x (array): temperatyre data in K
@@ -359,16 +365,18 @@ class ModArrhenius(Model):
     Return:
         Typically a rate corresponding to the given temperature values.
 
-    The Arrhenius function is defined as :math:`\\tau=Ax^n\\exp\\left(\\frac{-\\Delta E}{k_B x}\\right)` where
+    The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     """
 
     display_names=["A",r"\Delta E","n"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(ModArrhenius, self).__init__(modArrhenius, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
+        """Guess paramneters from a set of data."""
         _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
 
         d1, d2 = 1., 0.0
@@ -405,7 +413,8 @@ def quadratic(x, a, b, c):
     Returns:
         Array of data.
 
-    :math:`y=ax^2+bx+c`"""
+    :math:`y=ax^2+bx+c`
+    """
     return a * x ** 2 + b * x + c
 
 
@@ -431,6 +440,7 @@ def simmons(V, A, phi, d):
 
 
 class Simmons(Model):
+
     """Simmons model of electron tunnelling.
 
     Args:
@@ -450,9 +460,10 @@ class Simmons(Model):
     display_names=["A",r"\phi","d"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(Simmons, self).__init__(simmons, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):
+    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
         pars = self.make_params(A=1E-12, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -474,13 +485,15 @@ def bdr(V, A, phi, dphi, d, mass):
 
     .. note::
 
-       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)"""
+       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
+    """
     I = 3.16e10 * A ** 2 * _np_.sqrt(phi) / d * _np_.exp(-1.028 * _np_.sqrt(phi) * d) * (
         V - 0.0214 * _np_.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
     return I
 
 
 class BDR(Model):
+    
     """BDR model tunnelling.
 
     Args:
@@ -496,12 +509,14 @@ class BDR(Model):
 
     .. note::
 
-       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)"""
+       See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
+    """
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(BDR, self).__init__(bdr, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):
+    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi,dphi,d and mass values to typical answers for a small tunnel junction"""
         pars = self.make_params(A=1E-12, phi=3.0, d=10.0, dphi=1.0, mass=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -524,6 +539,7 @@ def fowlerNordheim(V, A, phi, d):
 
 
 class FowlerNordheim(Model):
+
     """Fowler Nordhiem Model of electron tunnelling.
 
     Args:
@@ -537,9 +553,10 @@ class FowlerNordheim(Model):
     """
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(FowlerNordheim, self).__init__(fowlerNordheim, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):
+    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
         pars = self.make_params(A=1E-12, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -560,6 +577,7 @@ def tersoffHammann(V, A):
 
 
 class TersoffHammann(Model):
+
     """TersoffHamman model for tunnelling through STM tip.
 
     Args:
@@ -571,6 +589,7 @@ class TersoffHammann(Model):
     """
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(TersoffHammann, self).__init__(tersoffHammann, *args, **kwargs)
 
     def guess(self, data, V=None, **kwargs):
@@ -624,6 +643,7 @@ def wlfit(B, s0, DS, B1, B2):
 
 
 class WLfit(Model):
+
     """
     Weak localisation
 
@@ -645,6 +665,7 @@ class WLfit(Model):
     display_names=[r"\sigma_0","D_S","B_1","B_2"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(WLfit, self).__init__(wlfit, *args, **kwargs)
 
     def guess(self, data, B=None, **kwargs):
@@ -688,15 +709,13 @@ def _strijkers_core(V, omega, delta, P, Z):
     Bp = _np_.zeros(len(E))
 
     #Conductance calculation
-    """
-    % For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
-    %Calculates reflection probabilities when E < or > delta
-    %A denotes Andreev Reflection probability
-    %B denotes normal reflection probability
-    %subscript p for polarised, u for unpolarised
-    %Ap is always zero as the polarised current has 0 prob for an Andreev
-    %event
-    """
+#    For ease of calculation, epsilon = E/(sqrt(E^2 - delta^2))
+#    Calculates reflection probabilities when E < or > delta
+#    A denotes Andreev Reflection probability
+#    B denotes normal reflection probability
+#    subscript p for polarised, u for unpolarised
+#    Ap is always zero as the polarised current has 0 prob for an Andreev
+#    event
 
     Au1 = (delta ** 2) / ((E ** 2) + (((delta ** 2) - (E ** 2)) * (1 + 2 * (Z ** 2)) ** 2))
     Au2 = (((_np_.abs(E) / (_np_.sqrt((E ** 2) - (delta ** 2)))) ** 2) - 1) / (((_np_.abs(E) /
@@ -757,6 +776,7 @@ def strijkers(V, omega, delta, P, Z):
 
 
 class Strijkers(Model):
+
     """strijkers Model for point-contact Andreev Reflection Spectroscopy.
 
     Args:
@@ -779,9 +799,10 @@ class Strijkers(Model):
     display_names=[r"\omega",r"\Delta","P","Z"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(Strijkers, self).__init__(strijkers, *args, **kwargs)
 
-    def guess(self, data, V=None, **kwargs):
+    def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Guess starting values for a good Nb contact to a ferromagnet at 4.2K"""
         pars = self.make_params(omega=0.36, delta=1.50, P=0.42, Z=0.15)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -801,8 +822,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
-"""
-
+    """
     k = t / l
 
     kernel = lambda x, k: (x - x ** 3) * _np_.exp(-k * x) / (1 - _np_.exp(-k * x))
@@ -815,6 +835,7 @@ def fluchsSondheimer(t, l, p, sigma_0):
 
 
 class FluchsSondheimer(Model):
+
     """Evaluate a Fluchs-Sondheumer model function for conductivity.
 
     Args:
@@ -829,18 +850,21 @@ class FluchsSondheimer(Model):
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
     """
+
     display_names=[r"\lambda_{mfp}","p_{refl}",r"\sigma_0"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(FluchsSondheimer, self).__init__(fluchsSondheimer, *args, **kwargs)
 
-    def guess(self, data, t=None, **kwargs):
+    def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever"""
         pars = self.make_params(l=10.0, p=0.5, sigma_0=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
 def _bgintegrand(x, n):
+    """The integrand for the Bloch Grueneisen model."""
     return x ** n / ((_np_.exp(x) - 1) * (1 - _np_.exp(-x)))
 
 
@@ -855,7 +879,8 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
         n (float): Exponent term
 
     Return:
-        Evaluation of the BlochGrueneisen function for R(T)"""
+        Evaluation of the BlochGrueneisen function for R(T)
+    """
     ret = _np_.zeros(T.shape)
     for i, t in enumerate(T):
         intg = quad(_bgintegrand, 0, thetaD / (t), (n, ))[0]
@@ -864,6 +889,7 @@ def blochGrueneisen(T, thetaD, rho0, A, n):
 
 
 class BlochGrueneisen(Model):
+    
     """BlochGrueneiseen Function for fitting R(T).
 
     Args:
@@ -874,14 +900,16 @@ class BlochGrueneisen(Model):
         n (float): Exponent term
 
     Return:
-        Evaluation of the BlochGrueneisen function for R(T)"""
+        Evaluation of the BlochGrueneisen function for R(T)
+    """
 
     display_names=[r"\theta_D",r"\rho_0","A","n"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(BlochGrueneisen, self).__init__(blochGrueneisen, *args, **kwargs)
 
-    def guess(self, data, t=None, **kwargs):
+    def guess(self, data, t=None, **kwargs):  # pylint: disable=unused-argument
         """Guess some starting values - not very clever"""
         pars = self.make_params(thetaD=900, rho0=0.01, A=0.2, n=5.0)
         return update_param_vals(pars, self.prefix, **kwargs)
@@ -899,7 +927,7 @@ def langevin(H, M_s, m, T):
     Returns:
         Magnetic Momemnts (array).
 
-    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.
+    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
     """
     from scipy.constants import k, mu_0
 
@@ -908,6 +936,7 @@ def langevin(H, M_s, m, T):
 
 
 class Langevin(Model):
+
     """"The Langevin function for paramagnetic M-H loops/
 
     Args:
@@ -919,10 +948,11 @@ class Langevin(Model):
     Returns:
         Magnetic Momemnts (array).
 
-    The Langevin Function is :math:`\\coth(\\frac{\\mu_0HM_s}{k_BT})-\\frac{k_BT}{\\mu_0HM_s}`.
+    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
     """
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(Langevin, self).__init__(langevin, *args, **kwargs)
 
     def guess(self, data, h=None, **kwargs):
@@ -968,6 +998,7 @@ def vftEquation(x, A, DE, x_0):
 
 
 class VFTEquation(Model):
+
     r"""Vogel-Flucher-Tammann (VFT) Equation without T dependendent prefactor.
 
     Args:
@@ -982,12 +1013,15 @@ class VFTEquation(Model):
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
     """
+
     display_names=["A",r"\Delta E","x_0"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(VFTEquation, self).__init__(vftEquation, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
+        """Guess paramneters from a set of data."""
         _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
 
         d1, d2, x0 = 1., 0.0, 1.0
@@ -999,7 +1033,7 @@ class VFTEquation(Model):
 
 
 def stretchedExp(x, A, beta, x_0):
-    """A stretched exponential fuinction.
+    r"""A stretched exponential fuinction.
 
     Args:
         x (array): x data values
@@ -1010,13 +1044,14 @@ def stretchedExp(x, A, beta, x_0):
     Return:
         Data for a stretched exponentional function.
 
-    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.
+    The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
     """
     return A * _np_.exp(-(x / x_0) ** beta)
 
 
 class StretchedExp(Model):
-    """A stretched exponential fuinction.
+    
+    r"""A stretched exponential fuinction.
 
     Args:
         x (array): x data values
@@ -1027,16 +1062,17 @@ class StretchedExp(Model):
     Return:
         Data for a stretched exponentional function.
 
-    The stretched exponential is defined as :math:`y=A\\exp\\left[\\left(\\frac{-x}{x_0}\\right)^\\beta\\right]`.
+    The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
     """
 
     display_names=["A",r"\beta","x_0"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(StretchedExp, self).__init__(stretchedExp, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
-
+        """Guess parameters for the stretched exponential from data."""
         A, beta, x0 = 1.0, 1.0, 1.0
         if x is not None:
             A = data[_np_.argmin(_np_.abs(x))]
@@ -1066,6 +1102,7 @@ def kittelEquation(H,gamma,M_s,H_k):
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 class KittelEquation(Model):
+    
     """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
@@ -1081,6 +1118,7 @@ class KittelEquation(Model):
     display_names=[r"\gamma","M_s","H_k"]
 
     def __init__(self, *args, **kwargs):
+        """Configure Initial fitting function."""
         super(KittelEquation, self).__init__(kittelEquation, *args, **kwargs)
 
     def guess(self, data, x=None, **kwargs):
