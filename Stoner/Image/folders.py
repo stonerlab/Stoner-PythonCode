@@ -8,16 +8,21 @@ Created on Mon May 23 12:05:59 2016
 from .core import ImageArray
 
 from Stoner.Folders import DiskBssedFolder, baseFolder
-from Stoner.compat import *
+from Stoner.compat import string_types
 
 from collections import Iterable
 
 
-def _load_ImageArray(f,img_num=0, **kargs):
+def _load_ImageArray(f, **kargs):
+    """Simple meothd to load an image array."""
+    kargs.pop("img_num",None)
     return ImageArray(f, **kargs)
 
 class ImageFolder(DiskBssedFolder,baseFolder):
-    """ImageFolder is designed to behave pretty much like DataFolder but with
+    
+    """Folder object for images.
+    
+    ImageFolder is designed to behave pretty much like DataFolder but with
     functions and loaders appropriate for image based files.
     
         Attributes:
@@ -44,9 +49,9 @@ class ImageFolder(DiskBssedFolder,baseFolder):
     """
 
     def __init__(self, *args, **kargs):
-        """
-        Initialise the ImageFolder. Mostly a pass
-        through to the :py:class:`Stoner.Folders.baseFolder` class.
+        """nitialise the ImageFolder. 
+        
+        Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
         """
         kargs["pattern"]=kargs.get("pattern","*.png")
         kargs["type"]=kargs.get("type",ImageArray)
@@ -57,11 +62,11 @@ class ImageFolder(DiskBssedFolder,baseFolder):
     
     def loadgroup(self):
         """Load all files from this group into memory"""
-        [None for _ in self]
+        for _ in self:
+            pass
         
-    def slice_metadata(self, key=None, values_only=False):
-        """Return a list of the metadata dictionaries for each item/file in the
-        top level group
+    def slice_metadata(self, key=None, values_only=False):  # pylint: dissable=arguments-differ
+        """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:
             key(string or list of strings):
@@ -100,8 +105,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         return metadata
     
     def stack(self):
-        """Return a KerrStack of the images in the current group.
-        """
+        """Return a KerrStack of the images in the current group."""
         from Stoner.Image import KerrStack
         k = KerrStack(self)
         return k

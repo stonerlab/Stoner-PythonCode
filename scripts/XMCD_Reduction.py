@@ -19,7 +19,7 @@ def helicity(f):
         return "Neither"
 
 def position(f):
-    """"Look for meta data named magj1yins and us this rounded to 1dp as a key """
+    """"Look for meta data named magj1yins and us this rounded to 1dp as a key"""
     if "magj1yins" in f:
         if f["magj1yins"]==-8.5:
             return "Perp"
@@ -43,7 +43,7 @@ def cycle(f):
         return "cycle1"
 
 
-def alt_norm(f,trail,**kargs):
+def alt_norm(f,_,**kargs):
     """Just do the normalisation per file and report run number and normalisation constants"""
     run=f["run"]
     signal=kargs["signal"]
@@ -64,12 +64,12 @@ def alt_norm(f,trail,**kargs):
 
 
 
-def norm_group(pos,trail,**kargs):
+def norm_group(pos,_,**kargs):
     """Takes the drain current for each file in group and builds an analysis file and works out the mean drain"""
     if "signal" in kargs:
         signal=kargs["signal"]
     else:
-            signal="fluo"
+        signal="fluo"
     lfit=kargs["lfit"]
     rfit=kargs["rfit"]
 
@@ -135,13 +135,13 @@ signal='fluo'
 # A filename pattern that will grab the run number from the filename
 pattern=re.compile('i10-(?P<run>\d*)\.dat')
 #The Data spool directory
-dir='C:\Data\data'
+directory='C:\Data\data'
 #Set the limits used on the normalisation
 rfit=(660,670)
 lfit=(615,630)
 
 #Read the directory of data files and sort by run number
-fldr=SF.DataFolder(dir,pattern=pattern,read_means=True)
+fldr=SF.DataFolder(directory,pattern=pattern,read_means=True)
 fldr.sort("run")
 # Remove files outside of the run number range
 fldr.filterout(lambda f: f['run']>endrun or f['run']<startrun)

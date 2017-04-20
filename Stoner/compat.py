@@ -14,7 +14,7 @@ from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
 
 try:
-    from lmfit import Model
+    from lmfit import Model  # pylint: disable=unused-import
     _lmfit=True
 except ImportError:
     Model=object
@@ -103,21 +103,22 @@ elif __vi__[0] == 3:
 index_types = string_types + int_types +(_pattern_type,)
 
 class ClassPropertyDescriptor(object):
-    """Supports adding class properties.
-    """
+    
+    """Supports adding class properties."""
 
     def __init__(self, fget, fset=None):
+        """Setup descriptor."""
         self.fget = fget
         self.fset = fset
 
     def __get__(self, obj, klass=None):
+        """Implement descriptor getter."""
         if klass is None:
             klass = type(obj)
         return self.fget.__get__(obj, klass)()
 
 def classproperty(func):
-    """Define a property to be a class property and not an instance property.
-    """
+    """Define a property to be a class property and not an instance property."""
     if not isinstance(func, (classmethod, staticmethod)):
         func = classmethod(func)
 

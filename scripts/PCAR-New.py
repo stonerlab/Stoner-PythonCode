@@ -86,7 +86,9 @@ class working(Data):
         return self
 
     def offset_correct(self):
-        """Centre the data - look for peaks and troughs within 5 of the initial delta value
+        """Centre the data.
+        
+        - look for peaks and troughs within 5 of the initial delta value
         take the average of these and then subtract it.
         """
         if self.config.has_option("Options", "remove_offset") and self.config.getboolean("Options", "remove_offset"):

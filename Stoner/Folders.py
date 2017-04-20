@@ -3,7 +3,7 @@
 Classes:
      :py:class:`objectFolder` - manages a list of individual data files (e.g. from a directory tree)
 """
-__all__ = ["objectFolder","DataFolder","PlotFolder"]
+__all__ = ["baseFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog
 from .tools import operator
 import os

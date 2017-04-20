@@ -12,12 +12,10 @@ from Stoner import Data
 
 class VSMAnalysis(Data):
     
-    """A mixin of AnalyseFile and VSMFile so we can easily load and process the Data
-    """
+    """A mixin of AnalyseFile and VSMFile so we can easily load and process the Data"""
 
     def true_m(self):
-        """Calculates correct m from lockin X and Y components.
-        """
+        """Calculates correct m from lockin X and Y components."""
         #Get some constants that scale betweent he columns
         s_vol=numpy.mean(self.column('Mvol')/self.column('m (emu)'))
         s_mass=numpy.mean(self.column('Mmass')/self.column('m (emu)'))
@@ -70,7 +68,7 @@ class VSMAnalysis(Data):
             self.filter(lambda r:r[0]>H_max*threshold,['H_vsm']) # mask out everything expcet max field data
             pcoeff,_=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
             self.filter(lambda r:r[0]<H_min*threshold,['H_vsm']) #mask out everything except min field data
-            ncoeff,covar=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
+            ncoeff,_=self.curve_fit(Linear,'H_vsm',m) # Get a linear fit
             coeff=(pcoeff+ncoeff)/2.0 # Average the co-=fficients of the two fits
             correct_m=self.column(m)-Linear(self.column('H_vsm'),*coeff) # Calculate corrected fits
             self.data[:,m]=correct_m # Apply corrected fits
