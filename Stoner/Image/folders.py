@@ -84,7 +84,6 @@ class ImageFolder(DiskBssedFolder,baseFolder):
             recursive options (build a dictionary of metadata values). And probably
             options to extract other parts of objects (first row or whatever).
         """
-
         metadata=[k.metadata for k in self] #this can take some time if it's loading in the images
         if isinstance(key, string_types):
             key=metadata[0].__lookup__(key,multiple=True)
