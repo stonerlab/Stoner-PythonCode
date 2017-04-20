@@ -5,6 +5,7 @@ Classes:
 """
 __all__ = ["objectFolder","DataFolder","PlotFolder"]
 from .compat import python_v3,int_types,string_types,get_filedialog
+from .tools import operator
 import os
 import re
 import os.path as path
@@ -1111,10 +1112,11 @@ class baseFolder(MutableSequence):
                 - *lt* metadata value doe less than argument value
                 - *ge* metadata value doe greater than or equal to argument value
                 - *le* metadata value doe less than or equal to argument value
-                - *contains* metadata value contains argument value (this is the default test for non-tuple iterable arguments)
+                - *contains* metadata value contains argument value
+                - *in* metadata value is in the argument value (this is the default test for non-tuple iterable arguments)
                 - *startswith* metadata value startswith argument value
                 - *endswith* metadata value endwith argument value
-                - *icontains*,*istartswith*,*iendswith* as above but case insensitive
+                - *icontains*,*iin*, *istartswith*,*iendswith* as above but case insensitive
                 - *between* metadata value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
                 - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
 
@@ -1142,24 +1144,6 @@ class baseFolder(MutableSequence):
                 kargs["__"]=args[0]
             elif isinstance(args[0],dict):
                 kargs.update(args[0])
-        operator={
-            "eq":lambda k,v:k==v,
-            "ne":lambda k,v:k!=v,
-            "contains":lambda k,v: k in v,
-            "icontains":lambda k,v: k.upper() in str(v).upper(),
-            "lt":lambda k,v:k<v,
-            "le":lambda k,v:k<=v,
-            "gt":lambda k,v:k>v,
-            "ge":lambda k,v:k>=v,
-            "between":lambda k,v: min(v)<k<max(v),
-            "ibetween":lambda k,v: min(v)<=k<=max(v),
-            "ilbetween":lambda k,v: min(v)<=k<max(v),
-            "iubetween":lambda k,v: min(v)<k<=max(v),
-            "startswith":lambda k,v:str(v).startswith(k),
-            "istartswith":lambda k,v:str(v).upper().startswith(k.upper()),
-            "endsswith":lambda k,v:str(v).endswith(k),
-            "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
-        }
         result=self.__clone__(attrs_only=True)
         if recurse:
             gkargs={}
@@ -1174,17 +1158,23 @@ class baseFolder(MutableSequence):
                 elif isinstance(arg,string_types):
                     parts=arg.split("__")
                     if parts[-1] in operator and len(parts)>1:
-                        arg="__".join(parts[:-1])
+                        if len(parts)>2 and parts[-2]=="not":
+                            end=-2
+                            negate=True
+                        else:
+                            end=-1
+                            negate=False
+                        arg="__".join(parts[:end])
                         op=parts[-1]
                     else:
                         if isinstance(kargs[arg],tuple) and len(kargs[arg]==2):
                             op="between" #Assume two length tuples are testing for range
                         elif not isinstance(kargs[arg],string_types) and isinstance(kargs[arg],Iterable):
-                            op="contains" # Assume other iterables are testing for memebership
+                            op="in" # Assume other iterables are testing for memebership
                         else: #Everything else is exact matches
                             op="eq"
                     func=operator[op]
-                    if arg in f and func(kargs[arg],f[arg]):
+                    if arg in f and negate^func(f[arg],kargs[arg]):
                         break
             else: # No tests matched - contineu to next line
                 continue

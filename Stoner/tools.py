@@ -11,8 +11,30 @@ Created on Wed Apr 19 19:47:50 2017
 from collections import Iterable
 from .compat import string_types,bytes2str
 import re
-from numpy import log10,floor,abs
+from numpy import log10,floor,abs,logical_and
 from cgi import escape as html_escape
+
+operator={
+    "eq":lambda k,v:k==v,
+    "ne":lambda k,v:k!=v,
+    "contains":lambda k,v: v in k,
+    "in":lambda k,v: k in v,
+    "icontains":lambda k,v: k.upper() in str(v).upper(),
+    "iin":lambda k,v: str(v).upper() in k.upper(),
+    "lt":lambda k,v:k<v,
+    "le":lambda k,v:k<=v,
+    "gt":lambda k,v:k>v,
+    "ge":lambda k,v:k>=v,
+    "between":lambda k,v: logical_and(min(v)<k,k<max(v)),
+    "ibetween":lambda k,v: logical_and(min(v)<=k,k<=max(v)),
+    "ilbetween":lambda k,v: logical_and(min(v)<=k,k<max(v)),
+    "iubetween":lambda k,v: logical_and(min(v)<k,k<=max(v)),
+    "startswith":lambda k,v:str(v).startswith(k),
+    "istartswith":lambda k,v:str(v).upper().startswith(k.upper()),
+    "endsswith":lambda k,v:str(v).endswith(k),
+    "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
+}
+
 
 def isNone(iterator):
     """Returns True if input is None or an empty iterator, or an iterator of None.

@@ -141,6 +141,7 @@ class Datatest(unittest.TestCase):
         self.assertTrue(np.max(self.d.x)==50,"Failure of filter method to set mask")
         self.assertTrue(np.isnan(self.d.x[ix]),"Failed to mask maximum value")
         self.d._pop_mask()
+        self.assertEqual(self.d2.select(Temp__not__gt=150).shape,(839,3),"Seect method failure.")
 
     def test_operators(self):
         #Test Column Indexer
@@ -237,3 +238,4 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.test_operators()
     test.test_methods()
     test.test_setas_metadata()
+    test.test_filter()

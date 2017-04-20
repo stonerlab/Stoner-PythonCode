@@ -7,7 +7,7 @@ from __future__ import print_function
 __all__ = ["StonerLoadError", "DataFile","DataArray","typeHintedDict","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
-from .tools import isNone,all_size,all_type,format_error,_attribute_store
+from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator
 from .plot.core import PlotMixin
 from .Analysis import AnalysisMixin
 import re
@@ -3484,6 +3484,80 @@ class DataFile(metadataObject):
             func = lambda x, r: kargs["r"](r[xcol], r[ycol], r[zcol])
             tmp.data = tmp.search(0, func, accuracy=accuracy)
         return tmp
+
+    def select(self,*args, **kargs):
+        """Produce a copy of the DataFile with only data rows that match a criteria.
+
+        Args:
+            args (various): A single positional argument if present is interpreted as follows:
+
+            * If a callable function is given, the entire row is presented to it.
+                If it evaluates True then that row is selected. This allows arbitary select operations
+            * If a dict is given, then it and the kargs dictionary are merged and used to select the rows
+
+        Keyword Arguments:
+            kargs (various): Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+                columns. The keyword argument may have an additional *__operator** appended to it which is interpreted
+                as follows:
+
+                - *eq*  value equals argument value (this is the default test for scalar argument)
+                - *ne*  value doe not equal argument value
+                - *gt*  value doe greater than argument value
+                - *lt*  value doe less than argument value
+                - *ge*  value doe greater than or equal to argument value
+                - *le*  value doe less than or equal to argument value
+                - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
+                - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
+                
+            if the operator is preceeded by *__not__* then the sense of the test is negated.
+            
+            The syntax is inspired by the Django project for selecting, but is not quite as rich.
+
+        Returns:
+            (DatFile): a copy the DataFile instance that contains just the matching rows.
+
+        Note:
+            If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
+            achieve a logical AND, you can chain two selects together::
+
+                d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)
+
+            will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.
+
+            If you need to select on a row value that ends in an operator word, then append
+            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
+            then pass them via the first positional dictionary value.
+            
+        Example
+            .. plot:: samples/select_example.py
+                :include-source:
+
+        """
+        if len(args)==1:
+            if callable(args[0]):
+                kargs["__"]=args[0]
+            elif isinstance(args[0],dict):
+                kargs.update(args[0])
+        result=self.clone
+        res=_np_.zeros(len(self),dtype=bool)
+        for arg in kargs:
+            parts=arg.split("__")
+            if parts==["",""]:
+                func=kargs[arg]
+                res=_np_.logical_or(res,_np_.array([func(r) for r in self.data]))
+                continue
+            if len(parts)==1 or parts[-1] not in operator:
+                parts.append("eq")
+            if len(parts)>2 and parts[-2]=="not":
+                end=-2
+                negate=True
+            else:
+                end=-1
+                negate=False
+            col="__".join(parts[:end])
+            res=_np_.logical_or(res,_np_.logical_xor(negate,operator[parts[-1]](self.column(col),kargs[arg])))
+        result.data=self.data[res,:]
+        return result
 
     def sort(self, *order,**kargs):
         """Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.
