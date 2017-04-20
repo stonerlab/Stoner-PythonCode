@@ -65,7 +65,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         for _ in self:
             pass
         
-    def slice_metadata(self, key=None, values_only=False):  # pylint: dissable=arguments-differ
+    def slice_metadata(self, key=None, values_only=False):  # pylint: disable=arguments-differ
         """Return a list of the metadata dictionaries for each item/file in the top level group
 
         Keyword Arguments:

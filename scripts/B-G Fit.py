@@ -9,7 +9,7 @@ from __future__ import print_function
 from Stoner.Core import Data,format_error
 from Stoner.compat import python_v3
 from Stoner.Fit import blochGrueneisen
-from numpy import sqrt,diag,append,any,isnan
+import numpy as np
 from matplotlib.pyplot import text
 import re
 
@@ -61,17 +61,17 @@ thetaD=300.0
 p0=[thetaD,rho0,A]
 print("Initial guesses: {}".format(p0))
 
-d.del_rows(0,lambda x,r:any(isnan(r)))
+d.del_rows(0,lambda x,r:np.any(np.isnan(r)))
 
 popt,pcov=d.curve_fit(bg_wrapper,xcol=t_col,ycol=r_col,p0=p0,absolute_sigma=False)
-perr=sqrt(diag(pcov))
+perr=np.sqrt(np.diag(pcov))
 
 labels=[r'\theta_D',r'\rho_0',r'A']
 units=["K",r"\Omega m",r"\Omega m"]
 
 annotation=["${}$: {}\n".format(l,format_error(v,e,latex=True,mode="eng",units=u)) for l,v,e,u in zip(labels,popt,perr,units)]
 annotation="\n".join(annotation)
-popt=append(popt,5)
+popt=np.append(popt,5)
 T=d.column(t_col)
 d.add_column(blochGrueneisen(T,*popt),header=r"Bloch")
 

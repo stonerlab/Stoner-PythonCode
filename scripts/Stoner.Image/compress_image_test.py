@@ -9,6 +9,7 @@ Proof that the compression is lossless
 
 from PIL import Image
 import os
+import numpy as np
 
 os.chdir('C:\Users\phyrct\KermitData')
 i=Image.open('test.png')

@@ -104,13 +104,13 @@ class HDF5File(DataFile):
             except IOError:
                 try:
                     f.file.close()
-                except:
+                except Exception:
                     pass
                 raise StonerLoadError("Failed to open {} as a n hdf5 file".format(filename))
             except KeyError:
                 try:
                     f.file.close()
-                except:
+                except Exception:
                     pass
                 raise StonerLoadError("Could not find group {} in file {}".format(group,filename))
         elif isinstance(filename, h5py.File) or isinstance(filename, h5py.Group):
@@ -118,14 +118,14 @@ class HDF5File(DataFile):
         else:
             try:
                 f.file.close()
-            except:
+            except Exception:
                 pass
             raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
         if "type" not in f.attrs or bytes2str(
             f.attrs["type"]) != "HDF5File":  #Ensure that if we have a type attribute it tells us we're the right type !
             try:
                 f.file.close()
-            except:
+            except Exception:
                 pass
             raise StonerLoadError("HDF5 group doesn't hold an HD5File")
         data = f["data"]

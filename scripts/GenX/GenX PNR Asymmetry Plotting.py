@@ -37,7 +37,8 @@ up_c=up.find_col('I_up')
 down_c=up.find_col('I_down')
 up_ec=up.find_col('dI_up')
 down_ec=up.find_col('dI_down')
-func=lambda r:np.sqrt((1.0/(r[up_c]+r[down_c])-(r[up_c]-r[down_c])/(r[up_c]+r[down_c])**2)**2*r[up_ec]**2+(-1.0/(r[up_c]+r[down_c])-(r[up_c]-r[down_c]) / (r[up_c]+r[down_c])**2)**2*r[down_ec]**2)
+func=lambda r:np.sqrt((1.0/(r[up_c]+r[down_c])-(r[up_c]-r[down_c])/(r[up_c]+r[down_c])**2)**2*r[up_ec]**2+
+                      (-1.0/(r[up_c]+r[down_c])-(r[up_c]-r[down_c]) / (r[up_c]+r[down_c])**2)**2*r[down_ec]**2)
 up.apply(func,up.find_col('SpinAsym_data'),replace=False,header="dSpinAsym")
 up.fig=plt.figure()
 

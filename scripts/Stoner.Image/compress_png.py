@@ -25,7 +25,7 @@ folder=r'C:\Users\phyrct\KermitData\test2'
 def get_size(start_path = '.'):
     """get directory size"""
     total_size = 0
-    for dirpath, dirnames, filenames in os.walk(start_path):
+    for dirpath, _, filenames in os.walk(start_path):
         for f in filenames:
             fp = os.path.join(dirpath, f)
             total_size += os.path.getsize(fp)
@@ -35,8 +35,8 @@ def pngsave(im, filename):
     """save a PNG with PIL preserving metadata. 
     
     Thanks to blog http://blog.client9.com/2007/08/28/python-pil-and-png-metadata-take-2.html
-    for code"""
-    
+    for code
+    """
     # these can be automatically added to Image.info dict                                                                              
     # they are not user-added metadata
     reserved = ('interlace', 'gamma', 'dpi', 'transparency', 'aspect')
@@ -75,7 +75,7 @@ for i,fname in enumerate(df.ls):
     try:    
         im=Image.open(fname)
         pngsave(im, fname)
-    except:
+    except Exception:
         print('Could not compress file {}'.format(fname))
         q=raw_input('Would you like to continue (y/n)?')
         if q!='y':

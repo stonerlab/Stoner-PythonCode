@@ -896,7 +896,7 @@ class FmokeFile(DataFile):
         with open(self.filename, mode="rb") as f:
             try:
                 value = [float(x.strip()) for x in bytes2str(f.readline()).split('\t')]
-            except:
+            except Exception:
                 f.close()
                 raise StonerLoadError("Not an FMOKE file?")
             label = [x.strip() for x in bytes2str(f.readline()).split('\t')]

@@ -554,7 +554,7 @@ class regexpDict(sorteddict):
             if isinstance(name,string_types):
                 try:
                     nm=re.compile(name)
-                except:
+                except Exception:
                     pass
             elif isinstance(name,int_types): #We can do this because we're an OrderedDict!
                 ret=list(self.keys())[name]
@@ -2344,7 +2344,7 @@ class DataFile(metadataObject):
                     fmt = 1.0
                 else:
                     raise StonerLoadError("Not a TDI File")
-            except:
+            except Exception:
                 raise StonerLoadError("Not a TDI File")
             col_headers_tmp = [x.strip() for x in row[1:]]
             data_array = 0

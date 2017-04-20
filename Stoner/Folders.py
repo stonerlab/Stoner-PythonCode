@@ -1772,7 +1772,7 @@ class DataFolder(DiskBssedFolder,baseFolder):
             for m in metadata: # Sanity check the metadata to include
                 try:
                     test=_np_.array(results[m])
-                except:
+                except Exception:
                     continue
                 else:
                     ok_data.append(m)
