@@ -43,6 +43,7 @@ Stoner.FileFormats.MokeFile
       ~Stoner.FileFormats.MokeFile.save
       ~Stoner.FileFormats.MokeFile.search
       ~Stoner.FileFormats.MokeFile.section
+      ~Stoner.FileFormats.MokeFile.select
       ~Stoner.FileFormats.MokeFile.setdefault
       ~Stoner.FileFormats.MokeFile.sort
       ~Stoner.FileFormats.MokeFile.swap_column

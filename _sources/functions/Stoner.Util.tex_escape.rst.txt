@@ -1,8 +1,0 @@
-
-
-tex_escape
-======================
-
-.. currentmodule:: Stoner.Util
-
-.. autofunction:: tex_escape

@@ -62,7 +62,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">StonerLoadError</span>
 <span class="kn">from</span> <span class="nn">.Folders</span> <span class="k">import</span> <span class="n">DataFolder</span>
-<span class="kn">from</span> <span class="nn">.Util</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">.Image.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -465,7 +465,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">root</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">):</span>
             <span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">filename</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="kn">from</span> <span class="nn">.Util</span> <span class="k">import</span> <span class="n">Data</span>
+        <span class="kn">from</span> <span class="nn">.Core</span> <span class="k">import</span> <span class="n">Data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">walk_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">File</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -624,7 +624,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

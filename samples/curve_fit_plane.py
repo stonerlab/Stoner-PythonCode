@@ -1,4 +1,4 @@
-"Use curve_fit to fit a plane to some data."
+"""Use curve_fit to fit a plane to some data."""
 from __future__ import print_function
 from Stoner import Data
 from numpy.random import normal

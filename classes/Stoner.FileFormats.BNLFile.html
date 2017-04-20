@@ -164,22 +164,25 @@ in data/Python/PythonCode/scripts.</p>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.section.html#Stoner.FileFormats.BNLFile.section" title="Stoner.FileFormats.BNLFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(\*\*kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.setdefault.html#Stoner.FileFormats.BNLFile.setdefault" title="Stoner.FileFormats.BNLFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.select.html#Stoner.FileFormats.BNLFile.select" title="Stoner.FileFormats.BNLFile.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>Produce a copy of the DataFile with only data rows that match a criteria.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.setdefault.html#Stoner.FileFormats.BNLFile.setdefault" title="Stoner.FileFormats.BNLFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.sort.html#Stoner.FileFormats.BNLFile.sort" title="Stoner.FileFormats.BNLFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.sort.html#Stoner.FileFormats.BNLFile.sort" title="Stoner.FileFormats.BNLFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.swap_column.html#Stoner.FileFormats.BNLFile.swap_column" title="Stoner.FileFormats.BNLFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.swap_column.html#Stoner.FileFormats.BNLFile.swap_column" title="Stoner.FileFormats.BNLFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.unique.html#Stoner.FileFormats.BNLFile.unique" title="Stoner.FileFormats.BNLFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.unique.html#Stoner.FileFormats.BNLFile.unique" title="Stoner.FileFormats.BNLFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.update.html#Stoner.FileFormats.BNLFile.update" title="Stoner.FileFormats.BNLFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.update.html#Stoner.FileFormats.BNLFile.update" title="Stoner.FileFormats.BNLFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
 <td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.values.html#Stoner.FileFormats.BNLFile.values" title="Stoner.FileFormats.BNLFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.BNLFile.values.html#Stoner.FileFormats.BNLFile.values" title="Stoner.FileFormats.BNLFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
 <td></td>
 </tr>
 </tbody>
@@ -305,7 +308,7 @@ in data/Python/PythonCode/scripts.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -1,0 +1,8 @@
+
+
+SNSFile.select
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: SNSFile.select

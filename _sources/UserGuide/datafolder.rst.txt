@@ -7,8 +7,8 @@ Working with Lots of Files
 A common case is that you have measured lots of data curves and now have a large stack of data
 files sitting in a tree of folders on disc and now need to process all of them with some code.
 The :py:mod:`Stoner.Folders` contains classes to make this job easy. The top level class
-:py:class:`DataFolder` is designed to complement the :py:class:`Stoner.Util.Data` as a one stop
-solution for most cases. Like :py:class:`Stoner.Util.Data`, :py:class:`Stoner.Folders.DataFolder` is 
+:py:class:`DataFolder` is designed to complement the :py:class:`Stoner.Core.Data` as a one stop
+solution for most cases. Like :py:class:`Stoner.Core.Data`, :py:class:`Stoner.Folders.DataFolder` is 
 exported directly from the :py:mod:`Stoner` package.
 
 Building a (virtual) Folder of Data Files
@@ -23,7 +23,7 @@ The first thing you probably want to do is to get a list of data files in a dire
 In this very simple example, the :py:class:`DataFolder class is imported in the first line and
 then a new instance *f* is created. The optional *pattern* keyword is used to only collect
 the files with a .dat extension. In this example, it is assumed that the files are readable by
-the :py:class:`Stoner.Util.Data` general class, if they are in some other format then the 'type' keyword can be used::
+the :py:class:`Stoner.Core.Data` general class, if they are in some other format then the 'type' keyword can be used::
 
    from Stoner.FileFormats import XRDFile
    f=DataFolder(type=XRDFile,pattern='*.dql')

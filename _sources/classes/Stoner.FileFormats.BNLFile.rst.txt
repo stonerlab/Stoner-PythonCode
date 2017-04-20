@@ -43,6 +43,7 @@ Stoner.FileFormats.BNLFile
       ~Stoner.FileFormats.BNLFile.save
       ~Stoner.FileFormats.BNLFile.search
       ~Stoner.FileFormats.BNLFile.section
+      ~Stoner.FileFormats.BNLFile.select
       ~Stoner.FileFormats.BNLFile.setdefault
       ~Stoner.FileFormats.BNLFile.sort
       ~Stoner.FileFormats.BNLFile.swap_column

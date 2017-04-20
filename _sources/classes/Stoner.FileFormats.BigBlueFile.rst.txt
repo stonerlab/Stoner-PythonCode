@@ -43,6 +43,7 @@ Stoner.FileFormats.BigBlueFile
       ~Stoner.FileFormats.BigBlueFile.save
       ~Stoner.FileFormats.BigBlueFile.search
       ~Stoner.FileFormats.BigBlueFile.section
+      ~Stoner.FileFormats.BigBlueFile.select
       ~Stoner.FileFormats.BigBlueFile.setdefault
       ~Stoner.FileFormats.BigBlueFile.sort
       ~Stoner.FileFormats.BigBlueFile.swap_column

@@ -43,6 +43,7 @@ Stoner.FileFormats.FmokeFile
       ~Stoner.FileFormats.FmokeFile.save
       ~Stoner.FileFormats.FmokeFile.search
       ~Stoner.FileFormats.FmokeFile.section
+      ~Stoner.FileFormats.FmokeFile.select
       ~Stoner.FileFormats.FmokeFile.setdefault
       ~Stoner.FileFormats.FmokeFile.sort
       ~Stoner.FileFormats.FmokeFile.swap_column

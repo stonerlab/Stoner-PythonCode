@@ -38,6 +38,7 @@ Stoner.Core.DataFile
       ~Stoner.Core.DataFile.save
       ~Stoner.Core.DataFile.search
       ~Stoner.Core.DataFile.section
+      ~Stoner.Core.DataFile.select
       ~Stoner.Core.DataFile.sort
       ~Stoner.Core.DataFile.swap_column
       ~Stoner.Core.DataFile.unique

@@ -43,6 +43,7 @@ Stoner.FileFormats.TDMSFile
       ~Stoner.FileFormats.TDMSFile.save
       ~Stoner.FileFormats.TDMSFile.search
       ~Stoner.FileFormats.TDMSFile.section
+      ~Stoner.FileFormats.TDMSFile.select
       ~Stoner.FileFormats.TDMSFile.setdefault
       ~Stoner.FileFormats.TDMSFile.sort
       ~Stoner.FileFormats.TDMSFile.swap_column

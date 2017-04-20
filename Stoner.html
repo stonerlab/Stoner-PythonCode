@@ -90,15 +90,6 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Core.isNone.html#Stoner.Core.isNone" title="Stoner.Core.isNone"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.isNone</span></code></a>(iterator)</td>
-<td>Returns True if input is None or an empty iterator, or an iterator of None.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.Core.all_size.html#Stoner.Core.all_size" title="Stoner.Core.all_size"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.all_size</span></code></a>(iterator[,&nbsp;size])</td>
-<td>Check whether each element of <em>iterator</em> is the same length/shape.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Core.all_type.html#Stoner.Core.all_type" title="Stoner.Core.all_type"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Core.all_type</span></code></a>(iterator,&nbsp;typ)</td>
-<td>Determines if an interable omnly contains a common type.</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -172,7 +163,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.plot.formats.TexFormatter.html#Stoner.plot.formats.TexFormatter" title="Stoner.plot.formats.TexFormatter"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.plot.formats.TexFormatter</span></code></a></td>
-<td>An axis tick label formatter that emits Tex formula mode code so that large numbers are registered as times 10^{power} rather than ysing E notation.</td>
+<td>An axis tick label formatter that emits Tex formula mode code.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.plot.formats.DefaultPlotStyle.html#Stoner.plot.formats.DefaultPlotStyle" title="Stoner.plot.formats.DefaultPlotStyle"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.plot.formats.DefaultPlotStyle</span></code></a>(\*\*kargs)</td>
 <td>Produces a default plot style.</td>
@@ -547,9 +538,6 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>A merged class of <a class="reference internal" href="classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile" title="Stoner.Core.DataFile"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.DataFile</span></code></a>, <a class="reference internal" href="classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and <code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -561,12 +549,6 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.format_error</span></code></a>(value,&nbsp;error,&nbsp;\*\*kargs)</td>
-<td>This handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf&#8217;s than the uncertainty.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.format_error</span></code></a>(value,&nbsp;error,&nbsp;\*\*kargs)</td>
-<td>This handles the printing out of the answer with the uncertaintly to 1sf and the value to no more sf&#8217;s than the uncertainty.</td>
-</tr>
 <tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Util.hysteresis_correct.html#Stoner.Util.hysteresis_correct" title="Stoner.Util.hysteresis_correct"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.hysteresis_correct</span></code></a>(data,&nbsp;\*\*kargs)</td>
 <td>Peform corrections to a hysteresis loop.</td>
 </tr>
@@ -574,13 +556,10 @@
 <td>Format an integer into an ordinal string.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Util.split.html#Stoner.Util.split" title="Stoner.Util.split"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.split</span></code></a>(data[,&nbsp;col,&nbsp;folder,&nbsp;...])</td>
-<td>Splits the DataFile data into several files where the column  col is either rising or falling</td>
+<td>Splits the DataFile data into several files where the column <em>col</em> is either rising or falling</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="functions/Stoner.Util.split_up_down.html#Stoner.Util.split_up_down" title="Stoner.Util.split_up_down"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.split_up_down</span></code></a>(data[,&nbsp;col,&nbsp;folder])</td>
-<td>Splits the DataFile data into several files where the column  col is either rising or falling</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="functions/Stoner.Util.tex_escape.html#Stoner.Util.tex_escape" title="Stoner.Util.tex_escape"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Util.tex_escape</span></code></a>(text)</td>
-<td>Escapes spacecial text charcters in a string.</td>
+<td>Splits the DataFile data into several files where the column <em>col</em> is either rising or falling</td>
 </tr>
 </tbody>
 </table>
@@ -811,7 +790,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

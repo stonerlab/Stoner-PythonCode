@@ -43,6 +43,7 @@ Stoner.FileFormats.SNSFile
       ~Stoner.FileFormats.SNSFile.save
       ~Stoner.FileFormats.SNSFile.search
       ~Stoner.FileFormats.SNSFile.section
+      ~Stoner.FileFormats.SNSFile.select
       ~Stoner.FileFormats.SNSFile.setdefault
       ~Stoner.FileFormats.SNSFile.sort
       ~Stoner.FileFormats.SNSFile.swap_column

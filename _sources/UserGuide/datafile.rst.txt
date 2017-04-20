@@ -17,7 +17,7 @@ measurement.::
 In this example we have loaded data from ``my_data.txt`` which should be in the
 current directory
 
-The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Util.Data`
+The **Stoner.Data** class is actually a shorthand for importing the :py:class:`Stoner.Core.Data`
 class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
 detect the format of many of the measurement files that we use in our research.
 
@@ -578,6 +578,9 @@ If there is no mask set, then the first example could also have been written mor
 Searching, sectioning and filtering the data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Searching
+~~~~~~~~~
+
 In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.::
 
@@ -612,6 +615,9 @@ The 'accuracy' keyword parameter sets the level of accuracy to accept when testi
 equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.
 
+Filtering
+~~~~~~~~~
+
 Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see ':ref:`maskeddata`) comes into its own.
@@ -626,6 +632,26 @@ to the number of columns). With a second argument as in the second example, you 
 columns are passed to the filtering function in what order. The second argument must be a list
 of things which can be used to index a column (ie strings, integers, regular expressions).
 
+Selecting
+~~~~~~~~~
+
+A very powerful way to get at just the dat rows you want is to make use of the :py:meth:`DataFile.select` method.
+This offers a simple way to query which rows have columns matching some criteria.::
+
+ d.select(Temp=250)
+ d.select(Temp__ge=150)
+ d.select(T1__lt=4,T2__lt=5).select(Res__between=(100,200))
+ 
+The general form is to provide keyword arguments that are something that can be used to index a column, followed by a double
+underscore, followed by and operator. Where more than one keyword argument is supplied, the results of testing each row are logically
+ORed. The result of chaining together two separate calls to select will, however, logically AND the two tests. So, in the examples above,
+the, first line will assume an implicit equality test and give only those rows with a column *Temp* equal to 250. The second line gives an
+explicit greather than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 *or*
+column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
+:py:meth:`Stoner.Folders.baseFolder.select`.
+
+Sectioning
+~~~~~~~~~~
 
 Another option is to construct a new `DataFile` object from a section of the data - this is
 particularly useful where the `DataFile` represents data correspondi ng to a set of (x,y,z)

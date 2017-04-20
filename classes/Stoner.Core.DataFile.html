@@ -308,13 +308,16 @@ string name of the subclass and the class object.</p>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.section.html#Stoner.Core.DataFile.section" title="Stoner.Core.DataFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(\*\*kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.select.html#Stoner.Core.DataFile.select" title="Stoner.Core.DataFile.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>Produce a copy of the DataFile with only data rows that match a criteria.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort" title="Stoner.Core.DataFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.swap_column.html#Stoner.Core.DataFile.swap_column" title="Stoner.Core.DataFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Core.DataFile.unique.html#Stoner.Core.DataFile.unique" title="Stoner.Core.DataFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
 </tbody>
@@ -437,7 +440,7 @@ string name of the subclass and the class object.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -43,6 +43,7 @@ Stoner.FileFormats.OVFFile
       ~Stoner.FileFormats.OVFFile.save
       ~Stoner.FileFormats.OVFFile.search
       ~Stoner.FileFormats.OVFFile.section
+      ~Stoner.FileFormats.OVFFile.select
       ~Stoner.FileFormats.OVFFile.setdefault
       ~Stoner.FileFormats.OVFFile.sort
       ~Stoner.FileFormats.OVFFile.swap_column

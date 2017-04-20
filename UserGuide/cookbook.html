@@ -65,12 +65,12 @@ done with the Stoner python module in just a few lines.</p>
 <p>The <strong>Stoner</strong> package comes with an extra <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module that includes some handy utility
 functions.</p>
 <div class="section" id="the-data-class">
-<h3>The <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
+<h3>The <code class="xref py py-class docutils literal"><span class="pre">Data</span></code> Class<a class="headerlink" href="#the-data-class" title="Permalink to this headline">¶</a></h3>
 <p>In practice, one often requires both the analysis functions of <a class="reference internal" href="../classes/Stoner.Analysis.AnalysisMixin.html#Stoner.Analysis.AnalysisMixin" title="Stoner.Analysis.AnalysisMixin"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Analysis.AnalysisMixin</span></code></a> and
 the plotting functions of <code class="xref py py-class docutils literal"><span class="pre">Stoner.plot.PlotMixin</span></code>. This can be done easily by creating a
-subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module provides the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Data</span></code></a>
+subclass that inherits from both, but for convenience, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module provides the <code class="xref py py-class docutils literal"><span class="pre">Data</span></code>
 class that does this for you.:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;File-of-data.txt&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -125,7 +125,7 @@ extrema in H). The keyword parameter <em>saturation_fraction</em> controls the e
 <p>In experimental physics, the usual practice (unless one has good reason to do otherwise) is to quote uncertainties in
 a measurement to one signficant figure, and then quote the value to the same number of decimal places. Whilst doing this
 might sound simple, actually doing it seems something that many students find difficult. To hep with this task, the <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Util</span></code> module
-provides the <a class="reference internal" href="../functions/Stoner.Util.format_error.html#Stoner.Util.format_error" title="Stoner.Util.format_error"><code class="xref py py-func docutils literal"><span class="pre">Stoner.Util.format_error()</span></code></a> function.:</p>
+provides the <code class="xref py py-func docutils literal"><span class="pre">Stoner.Util.format_error()</span></code> function.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">format_error</span>
 <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="k">import</span> <span class="n">hbar</span><span class="p">,</span><span class="n">m_e</span><span class="p">,</span><span class="n">m_u</span>
 <span class="nb">print</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">)</span>
@@ -149,7 +149,7 @@ default, option does no particular scaling. Finally the units keyword allows the
 variables. In order to do this, the <em>xcol</em> parameter needs to be an iterable (e.g. list or tuple or array), and
 the function to be fitted needs to take a tuple of scalars or arrays as the first argument. The following example
 illustrates this by fitting a plane to a collection of points in 3D space.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s2">&quot;Use curve_fit to fit a plane to some data.&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Use curve_fit to fit a plane to some data.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
@@ -198,9 +198,9 @@ the function you want to fit can be written as <span class="math">\(f(x_1,x_2,\c
 In thus case pass <em>xcol</em> a list or tuple of columns that make up <span class="math">\(x_1,x_2,\cdots ,x_n\)</span>
 and make your function take a tuple of 1D-arrays and pass <em>ycol</em> as an array of zeros.
 For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s2">&quot;Fit a sphere with curve_fit.&quot;</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Fit a sphere with curve_fit.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">sqrt</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">sin</span><span class="p">,</span><span class="n">cos</span><span class="p">,</span><span class="n">pi</span><span class="p">,</span><span class="n">column_stack</span><span class="p">,</span><span class="n">zeros_like</span><span class="p">,</span><span class="n">ones_like</span><span class="p">,</span><span class="n">meshgrid</span><span class="p">,</span><span class="n">linspace</span>
 <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span><span class="n">uniform</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
@@ -427,7 +427,7 @@ to quickly examine the output data:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

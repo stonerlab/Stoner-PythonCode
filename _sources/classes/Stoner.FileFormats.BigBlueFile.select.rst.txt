@@ -1,0 +1,8 @@
+
+
+BigBlueFile.select
+=====================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: BigBlueFile.select

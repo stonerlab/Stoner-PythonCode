@@ -43,6 +43,7 @@ Stoner.FileFormats.EasyPlotFile
       ~Stoner.FileFormats.EasyPlotFile.save
       ~Stoner.FileFormats.EasyPlotFile.search
       ~Stoner.FileFormats.EasyPlotFile.section
+      ~Stoner.FileFormats.EasyPlotFile.select
       ~Stoner.FileFormats.EasyPlotFile.setdefault
       ~Stoner.FileFormats.EasyPlotFile.sort
       ~Stoner.FileFormats.EasyPlotFile.swap_column

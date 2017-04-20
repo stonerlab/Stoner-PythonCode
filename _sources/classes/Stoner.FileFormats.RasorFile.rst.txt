@@ -43,6 +43,7 @@ Stoner.FileFormats.RasorFile
       ~Stoner.FileFormats.RasorFile.save
       ~Stoner.FileFormats.RasorFile.search
       ~Stoner.FileFormats.RasorFile.section
+      ~Stoner.FileFormats.RasorFile.select
       ~Stoner.FileFormats.RasorFile.setdefault
       ~Stoner.FileFormats.RasorFile.sort
       ~Stoner.FileFormats.RasorFile.swap_column

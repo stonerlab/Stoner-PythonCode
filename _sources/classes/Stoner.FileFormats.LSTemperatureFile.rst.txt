@@ -43,6 +43,7 @@ Stoner.FileFormats.LSTemperatureFile
       ~Stoner.FileFormats.LSTemperatureFile.save
       ~Stoner.FileFormats.LSTemperatureFile.search
       ~Stoner.FileFormats.LSTemperatureFile.section
+      ~Stoner.FileFormats.LSTemperatureFile.select
       ~Stoner.FileFormats.LSTemperatureFile.setdefault
       ~Stoner.FileFormats.LSTemperatureFile.sort
       ~Stoner.FileFormats.LSTemperatureFile.swap_column

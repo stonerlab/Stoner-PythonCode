@@ -43,6 +43,7 @@ Stoner.FileFormats.QDFile
       ~Stoner.FileFormats.QDFile.save
       ~Stoner.FileFormats.QDFile.search
       ~Stoner.FileFormats.QDFile.section
+      ~Stoner.FileFormats.QDFile.select
       ~Stoner.FileFormats.QDFile.setdefault
       ~Stoner.FileFormats.QDFile.sort
       ~Stoner.FileFormats.QDFile.swap_column

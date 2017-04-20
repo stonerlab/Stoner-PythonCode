@@ -21,7 +21,7 @@ the plotting functions of :py:class:`Stoner.plot.PlotMixin`. This can be done ea
 subclass that inherits from both, but for convenience, the :py:mod:`Stoner.Util` module provides the :py:class:`Data`
 class that does this for you.::
 
-    from Stoner.Util import Data
+    from Stoner.Core import Data
     d=Data("File-of-data.txt")
 
 Splitting Data into rising and falling values

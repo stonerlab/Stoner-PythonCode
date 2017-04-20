@@ -58,6 +58,7 @@
 
 <span class="sd">Eacg class should implement a load() method and optionally a save() method.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">linecache</span>
@@ -81,6 +82,7 @@
 
 
 <div class="viewcode-block" id="CSVFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.CSVFile.html#Stoner.FileFormats.CSVFile">[docs]</a><span class="k">class</span> <span class="nc">CSVFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A subclass of DataFiule for loading generic deliminated text fiules without metadata.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -162,7 +164,9 @@
 
 
 <div class="viewcode-block" id="VSMFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.VSMFile.html#Stoner.FileFormats.VSMFile">[docs]</a><span class="k">class</span> <span class="nc">VSMFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to open VSM Files&quot;&quot;&quot;</span>
+    
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
     <span class="c1">#   .. note::</span>
     <span class="c1">#      Subclasses with priority&lt;=32 should make some positive identification that they have the right</span>
@@ -243,6 +247,7 @@
 
 
 <div class="viewcode-block" id="BigBlueFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile">[docs]</a><span class="k">class</span> <span class="nc">BigBlueFile</span><span class="p">(</span><span class="n">CSVFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends CSVFile to load files from BigBlue&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -277,6 +282,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="QDFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.QDFile.html#Stoner.FileFormats.QDFile">[docs]</a><span class="k">class</span> <span class="nc">QDFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from Quantum Design Systems - including PPMS, MPMS and SQUID-VSM&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -373,6 +379,7 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="OpenGDAFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OpenGDAFile.html#Stoner.FileFormats.OpenGDAFile">[docs]</a><span class="k">class</span> <span class="nc">OpenGDAFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from RASOR&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -421,11 +428,14 @@
 
 
 <div class="viewcode-block" id="RasorFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RasorFile.html#Stoner.FileFormats.RasorFile">[docs]</a><span class="k">class</span> <span class="nc">RasorFile</span><span class="p">(</span><span class="n">OpenGDAFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Just an alias for OpenGDAFile&quot;&quot;&quot;</span>
+    
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="SPCFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.SPCFile.html#Stoner.FileFormats.SPCFile">[docs]</a><span class="k">class</span> <span class="nc">SPCFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load SPC files from Raman&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -570,6 +580,7 @@
             <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="RigakuFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.RigakuFile.html#Stoner.FileFormats.RigakuFile">[docs]</a><span class="k">class</span> <span class="nc">RigakuFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Loads a .ras file as produced by Rigaku X-ray diffractormeters&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -672,6 +683,7 @@
 
 
 <div class="viewcode-block" id="XRDFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.XRDFile.html#Stoner.FileFormats.XRDFile">[docs]</a><span class="k">class</span> <span class="nc">XRDFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Loads Files from a Brucker D8 Discovery X-Ray Diffractometer&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -755,6 +767,7 @@
 
 
 <div class="viewcode-block" id="BNLFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.BNLFile.html#Stoner.FileFormats.BNLFile">[docs]</a><span class="k">class</span> <span class="nc">BNLFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates BNLFile a subclass of DataFile that caters for files in the SPEC format given</span>
 <span class="sd">    by BNL (specifically u4b beamline but hopefully generalisable).</span>
@@ -765,6 +778,7 @@
 <span class="sd">    them, a separate python script has been written for this and should be found</span>
 <span class="sd">    in data/Python/PythonCode/scripts.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
     <span class="c1">#   .. note::</span>
@@ -858,6 +872,7 @@
 
 
 <div class="viewcode-block" id="MokeFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MokeFile.html#Stoner.FileFormats.MokeFile">[docs]</a><span class="k">class</span> <span class="nc">MokeFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Class that extgends DataFile to load files from the Leeds MOKE system.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -903,6 +918,7 @@
 
 
 <div class="viewcode-block" id="FmokeFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile">[docs]</a><span class="k">class</span> <span class="nc">FmokeFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to open Fmoke Files&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -948,6 +964,7 @@
 
 
 <span class="k">class</span> <span class="nc">GenXFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile for GenX Exported data.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -997,6 +1014,7 @@
 
 
 <div class="viewcode-block" id="SNSFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.SNSFile.html#Stoner.FileFormats.SNSFile">[docs]</a><span class="k">class</span> <span class="nc">SNSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;This reads the ASCII exported Poalrised Neutron Rfeflectivity reduced files from</span>
 <span class="sd">    BL-4A line at the Spallation Neutron Source at Oak Ridge National Lab.</span>
 
@@ -1066,6 +1084,7 @@
 
 
 <div class="viewcode-block" id="OVFFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.OVFFile.html#Stoner.FileFormats.OVFFile">[docs]</a><span class="k">class</span> <span class="nc">OVFFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A class that reads OOMMF vector format files and constructs x,y,z,u,v,w data.</span>
 
 <span class="sd">    OVF 1 and OVF 2 files with text or binary data and only files with a meshtype rectangular are supported&quot;&quot;&quot;</span>
@@ -1169,6 +1188,7 @@
 
 
 <div class="viewcode-block" id="MDAASCIIFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.MDAASCIIFile.html#Stoner.FileFormats.MDAASCIIFile">[docs]</a><span class="k">class</span> <span class="nc">MDAASCIIFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Reads files generated from the APS.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1259,6 +1279,7 @@
 
 
 <div class="viewcode-block" id="LSTemperatureFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.LSTemperatureFile.html#Stoner.FileFormats.LSTemperatureFile">[docs]</a><span class="k">class</span> <span class="nc">LSTemperatureFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A class that reads and writes Lakeshore Temperature Calibration Curves.</span>
 
 <span class="sd">.. warning::</span>
@@ -1360,6 +1381,7 @@
 
 
 <div class="viewcode-block" id="EasyPlotFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.EasyPlotFile.html#Stoner.FileFormats.EasyPlotFile">[docs]</a><span class="k">class</span> <span class="nc">EasyPlotFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;A class that will extract as much as it can from an EasyPlot save File.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1451,6 +1473,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
 
 <span class="k">class</span> <span class="nc">PinkLibFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Extends DataFile to load files from MdV&#39;s PINK library - as used by the GMR anneal rig.&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1499,6 +1522,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 <span class="k">class</span> <span class="nc">KermitPNGFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+    
     <span class="sd">&quot;&quot;&quot;Loads PNG files with additional metadata embedded in them and extracts as metadata&quot;&quot;&quot;</span>
 
     <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1567,6 +1591,7 @@
     <span class="kn">from</span> <span class="nn">nptdms</span> <span class="k">import</span> <span class="n">TdmsFile</span>
     
 <div class="viewcode-block" id="TDMSFile"><a class="viewcode-back" href="../../classes/Stoner.FileFormats.TDMSFile.html#Stoner.FileFormats.TDMSFile">[docs]</a>    <span class="k">class</span> <span class="nc">TDMSFile</span><span class="p">(</span><span class="n">DataFile</span><span class="p">):</span>
+        
         <span class="sd">&quot;&quot;&quot;A first stab at writing a file that will import TDMS files&quot;&quot;&quot;</span>
     
         <span class="c1">#: priority (int): is the load order for the class, smaller numbers are tried before larger numbers.</span>
@@ -1667,7 +1692,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

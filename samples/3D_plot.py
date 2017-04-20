@@ -1,4 +1,4 @@
-"3D surface plot example."
+"""3D surface plot example."""
 from Stoner import Data
 import numpy as np
 import matplotlib.cm

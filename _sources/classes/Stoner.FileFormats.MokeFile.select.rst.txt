@@ -1,0 +1,8 @@
+
+
+MokeFile.select
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MokeFile.select

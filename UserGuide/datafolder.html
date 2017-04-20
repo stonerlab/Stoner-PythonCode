@@ -61,8 +61,8 @@
 <p>A common case is that you have measured lots of data curves and now have a large stack of data
 files sitting in a tree of folders on disc and now need to process all of them with some code.
 The <code class="xref py py-mod docutils literal"><span class="pre">Stoner.Folders</span></code> contains classes to make this job easy. The top level class
-<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is designed to complement the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a> as a one stop
-solution for most cases. Like <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>, <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> is
+<a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">DataFolder</span></code></a> is designed to complement the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code> as a one stop
+solution for most cases. Like <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code>, <a class="reference internal" href="../classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a> is
 exported directly from the <code class="xref py py-mod docutils literal"><span class="pre">Stoner</span></code> package.</p>
 <div class="section" id="building-a-virtual-folder-of-data-files">
 <h2>Building a (virtual) Folder of Data Files<a class="headerlink" href="#building-a-virtual-folder-of-data-files" title="Permalink to this headline">¶</a></h2>
@@ -75,7 +75,7 @@ exported directly from the <code class="xref py py-mod docutils literal"><span c
 <p>In this very simple example, the <code class="xref py py-class docutils literal"><span class="pre">DataFolder</span> <span class="pre">class</span> <span class="pre">is</span> <span class="pre">imported</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">first</span> <span class="pre">line</span> <span class="pre">and</span>
 <span class="pre">then</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">instance</span> <span class="pre">*f*</span> <span class="pre">is</span> <span class="pre">created.</span> <span class="pre">The</span> <span class="pre">optional</span> <span class="pre">*pattern*</span> <span class="pre">keyword</span> <span class="pre">is</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">only</span> <span class="pre">collect</span>
 <span class="pre">the</span> <span class="pre">files</span> <span class="pre">with</span> <span class="pre">a</span> <span class="pre">.dat</span> <span class="pre">extension.</span> <span class="pre">In</span> <span class="pre">this</span> <span class="pre">example,</span> <span class="pre">it</span> <span class="pre">is</span> <span class="pre">assumed</span> <span class="pre">that</span> <span class="pre">the</span> <span class="pre">files</span> <span class="pre">are</span> <span class="pre">readable</span> <span class="pre">by</span>
-<span class="pre">the</span> <span class="pre">:py:class:`Stoner.Util.Data</span></code> general class, if they are in some other format then the &#8216;type&#8217; keyword can be used:</p>
+<span class="pre">the</span> <span class="pre">:py:class:`Stoner.Core.Data</span></code> general class, if they are in some other format then the &#8216;type&#8217; keyword can be used:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">Stoner.FileFormats</span> <span class="k">import</span> <span class="n">XRDFile</span>
 <span class="n">f</span><span class="o">=</span><span class="n">DataFolder</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">XRDFile</span><span class="p">,</span><span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;*.dql&#39;</span><span class="p">)</span>
 </pre></div>
@@ -448,7 +448,7 @@ each and so. This presupposes that the files started of sorted by some suitable 
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

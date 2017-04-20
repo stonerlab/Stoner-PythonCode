@@ -43,6 +43,7 @@ Stoner.FileFormats.MDAASCIIFile
       ~Stoner.FileFormats.MDAASCIIFile.save
       ~Stoner.FileFormats.MDAASCIIFile.search
       ~Stoner.FileFormats.MDAASCIIFile.section
+      ~Stoner.FileFormats.MDAASCIIFile.select
       ~Stoner.FileFormats.MDAASCIIFile.setdefault
       ~Stoner.FileFormats.MDAASCIIFile.sort
       ~Stoner.FileFormats.MDAASCIIFile.swap_column

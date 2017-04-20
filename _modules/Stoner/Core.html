@@ -51,29 +51,31 @@
   <h1>Source code for Stoner.Core</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Stoner.Core provides the core classes for the Stoner package.</span>
 
-<span class="sd">Classes:</span>
-<span class="sd">    `DataFile` :the base class for representing a single data set of experimental data.</span>
-<span class="sd">    `typeHintedDict`: a dictionary subclass that tries to keep track of the underlying type of data</span>
-<span class="sd">        stored in each element. This class facilitates the export to strongly typed</span>
-<span class="sd">        languages such as LabVIEW.</span>
+<span class="sd">This module imports Stoner.Analysis and Stoner.plot.core to define the core Data class.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;StonerLoadError&quot;</span><span class="p">,</span> <span class="s2">&quot;DataFile&quot;</span><span class="p">,</span><span class="s2">&quot;DataArray&quot;</span><span class="p">,</span><span class="s2">&quot;typeHintedDict&quot;</span><span class="p">,</span><span class="s2">&quot;isNone&quot;</span><span class="p">,</span><span class="s2">&quot;all_size&quot;</span><span class="p">,</span><span class="s2">&quot;all_type&quot;</span><span class="p">]</span>  <span class="c1"># Don&#39;t import too muhc with from Stoner.Core import *</span>
 
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">int_types</span><span class="p">,</span><span class="n">index_types</span><span class="p">,</span><span class="n">get_filedialog</span><span class="p">,</span><span class="n">classproperty</span><span class="p">,</span><span class="n">str2bytes</span><span class="p">,</span><span class="n">_lmfit</span><span class="p">,</span><span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="n">isNone</span><span class="p">,</span><span class="n">all_size</span><span class="p">,</span><span class="n">all_type</span><span class="p">,</span><span class="n">format_error</span><span class="p">,</span><span class="n">_attribute_store</span><span class="p">,</span><span class="n">operator</span>
+<span class="kn">from</span> <span class="nn">.plot.core</span> <span class="k">import</span> <span class="n">PlotMixin</span>
+<span class="kn">from</span> <span class="nn">.Analysis</span> <span class="k">import</span> <span class="n">AnalysisMixin</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="c1">#import pdb # for debugging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="k">import</span> <span class="n">float_info</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np_</span>
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">NaN</span>
 <span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="k">as</span> <span class="nn">_ma_</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">path</span>
 <span class="kn">import</span> <span class="nn">inspect</span> <span class="k">as</span> <span class="nn">_inspect_</span>
+
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span><span class="n">MutableMapping</span>
+
 
 <span class="k">try</span><span class="p">:</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">python_v3</span> <span class="c1"># blist doesn&#39;t seem entirely reliable in 3.5 :-(</span>
@@ -109,83 +111,6 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="nb">getattr</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="n">attr</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">dest</span>
 
-<div class="viewcode-block" id="isNone"><a class="viewcode-back" href="../../functions/Stoner.Core.isNone.html#Stoner.Core.isNone">[docs]</a><span class="k">def</span> <span class="nf">isNone</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns True if input is None or an empty iterator, or an iterator of None.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        iterator (None or Iterable):</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if iterator is None, empty or full of None.&quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">iterator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-                    <span class="k">break</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-<div class="viewcode-block" id="all_size"><a class="viewcode-back" href="../../functions/Stoner.Core.all_size.html#Stoner.Core.all_size">[docs]</a><span class="k">def</span> <span class="nf">all_size</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether each element of *iterator* is the same length/shape.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        iterator (Iterable): list or other iterable of things with a length or shape</span>
-
-<span class="sd">    Keyword Arguments:</span>
-<span class="sd">        size(int, tuple or None): Required size of each item in iterator.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if all objects are the size specified (or the same size if size is None).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;shape&quot;</span><span class="p">):</span>
-        <span class="n">sizer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">sizer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">size</span><span class="o">=</span><span class="n">sizer</span><span class="p">(</span><span class="n">iterator</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sizer</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">!=</span><span class="n">size</span><span class="p">:</span>
-            <span class="k">break</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
-<div class="viewcode-block" id="all_type"><a class="viewcode-back" href="../../functions/Stoner.Core.all_type.html#Stoner.Core.all_type">[docs]</a><span class="k">def</span> <span class="nf">all_type</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Determines if an interable omnly contains a common type.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        iterator (Iterable): The object to check if it is all iterable</span>
-<span class="sd">        typ (class): The type to check for.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        True if all elements are of the type typ, or False if not.</span>
-
-<span class="sd">    Notes:</span>
-<span class="sd">        Routine will iterate the *iterator* and break when an element is not of</span>
-<span class="sd">        the search type *typ*.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ret</span><span class="o">=</span><span class="kc">False</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterator</span><span class="p">,</span><span class="n">Iterable</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">iterator</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">typ</span><span class="p">):</span>
-                <span class="k">break</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="kc">True</span>
-    <span class="k">return</span> <span class="n">ret</span></div>
-
-
 <div class="viewcode-block" id="StonerLoadError"><a class="viewcode-back" href="../../classes/Stoner.Core.StonerLoadError.html#Stoner.Core.StonerLoadError">[docs]</a><span class="k">class</span> <span class="nc">StonerLoadError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An exception thrown by the file loading routines in the Stoner Package.</span>
 
@@ -199,26 +124,6 @@
 <span class="k">class</span> <span class="nc">StonerSetasError</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An exception tjrown when we try to access a column in data without setas being set.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
-
-<span class="k">class</span> <span class="nc">_attribute_store</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A dictionary=like class that provides attributes that work like indices.</span>
-
-<span class="sd">    Used to implement the mapping of column types to indices in the setas attriobutes.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">_attribute_store</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span>
 
 
 <span class="k">class</span> <span class="nc">_tab_delimited</span><span class="p">(</span><span class="n">csv</span><span class="o">.</span><span class="n">Dialect</span><span class="p">):</span>
@@ -1607,6 +1512,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span><span class="o">=</span><span class="p">{}</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s2">&quot;_data&quot;</span><span class="p">,</span><span class="n">DataArray</span><span class="p">([]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_baseclass</span> <span class="o">=</span> <span class="n">DataFile</span>
         <span class="k">return</span> <span class="bp">self</span>
        
 
@@ -1712,7 +1618,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">DataFile</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="ow">and</span> <span class="n">a</span><span class="o">!=</span><span class="s2">&quot;_baseclass&quot;</span><span class="p">:</span>
                     <span class="nb">super</span><span class="p">(</span><span class="n">DataFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">__getattribute__</span><span class="p">(</span><span class="n">a</span><span class="p">)))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataArray</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="n">arg</span><span class="o">.</span><span class="n">setas</span><span class="o">.</span><span class="n">clone</span><span class="p">)</span>
@@ -1757,15 +1663,6 @@
         <span class="sd">&quot;&quot;&quot;Privaye property to update the list of public attributes.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs_real</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-        <span class="n">ret</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-            <span class="s2">&quot;column_headers&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
-            <span class="s2">&quot;setas&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">string_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">typeHintedDict</span><span class="p">,</span>
-            <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-            <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
-            <span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">_np_</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span>
-        <span class="p">}</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets a deep copy of the current DataFile.</span>
@@ -3639,6 +3536,80 @@
             <span class="n">tmp</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tmp</span></div>
 
+<div class="viewcode-block" id="DataFile.select"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.select.html#Stoner.Core.DataFile.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Produce a copy of the DataFile with only data rows that match a criteria.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (various): A single positional argument if present is interpreted as follows:</span>
+
+<span class="sd">            * If a callable function is given, the entire row is presented to it.</span>
+<span class="sd">                If it evaluates True then that row is selected. This allows arbitary select operations</span>
+<span class="sd">            * If a dict is given, then it and the kargs dictionary are merged and used to select the rows</span>
+
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            kargs (various): Arbitary keyword arguments are interpreted as requestion matches against the corresponding</span>
+<span class="sd">                columns. The keyword argument may have an additional *__operator** appended to it which is interpreted</span>
+<span class="sd">                as follows:</span>
+
+<span class="sd">                - *eq*  value equals argument value (this is the default test for scalar argument)</span>
+<span class="sd">                - *ne*  value doe not equal argument value</span>
+<span class="sd">                - *gt*  value doe greater than argument value</span>
+<span class="sd">                - *lt*  value doe less than argument value</span>
+<span class="sd">                - *ge*  value doe greater than or equal to argument value</span>
+<span class="sd">                - *le*  value doe less than or equal to argument value</span>
+<span class="sd">                - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</span>
+<span class="sd">                - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values</span>
+<span class="sd">                </span>
+<span class="sd">            if the operator is preceeded by *__not__* then the sense of the test is negated.</span>
+<span class="sd">            </span>
+<span class="sd">            The syntax is inspired by the Django project for selecting, but is not quite as rich.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (DatFile): a copy the DataFile instance that contains just the matching rows.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            If any of the tests is True, then the row will be selected, so the effect is a logical OR. To</span>
+<span class="sd">            achieve a logical AND, you can chain two selects together::</span>
+
+<span class="sd">                d.select(temp__le=4.2,vti_temp__lt=4.2).select(field_gt=3.0)</span>
+
+<span class="sd">            will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</span>
+
+<span class="sd">            If you need to select on a row value that ends in an operator word, then append</span>
+<span class="sd">            *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,</span>
+<span class="sd">            then pass them via the first positional dictionary value.</span>
+<span class="sd">            </span>
+<span class="sd">        Example</span>
+<span class="sd">            .. plot:: samples/select_example.py</span>
+<span class="sd">                :include-source:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;__&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">dict</span><span class="p">):</span>
+                <span class="n">kargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">result</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span>
+        <span class="n">res</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">kargs</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">=</span><span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">parts</span><span class="o">==</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">]:</span>
+                <span class="n">func</span><span class="o">=</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span>
+                <span class="n">res</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]))</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">operator</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;eq&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="s2">&quot;not&quot;</span><span class="p">:</span>
+                <span class="n">end</span><span class="o">=-</span><span class="mi">2</span>
+                <span class="n">negate</span><span class="o">=</span><span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">end</span><span class="o">=-</span><span class="mi">1</span>
+                <span class="n">negate</span><span class="o">=</span><span class="kc">False</span>
+            <span class="n">col</span><span class="o">=</span><span class="s2">&quot;__&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="n">end</span><span class="p">])</span>
+            <span class="n">res</span><span class="o">=</span><span class="n">_np_</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">_np_</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">negate</span><span class="p">,</span><span class="n">operator</span><span class="p">[</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]](</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">),</span><span class="n">kargs</span><span class="p">[</span><span class="n">arg</span><span class="p">])))</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">res</span><span class="p">,:]</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
 <div class="viewcode-block" id="DataFile.sort"><a class="viewcode-back" href="../../classes/Stoner.Core.DataFile.sort.html#Stoner.Core.DataFile.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">order</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sorts the data by column name. Sorts in place and returns a copy of the sorted data object for chaining methods.</span>
 
@@ -3727,6 +3698,135 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_np_</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">return_index</span><span class="p">,</span> <span class="n">return_inverse</span><span class="p">)</span></div></div>
 
+<span class="k">class</span> <span class="nc">Data</span><span class="p">(</span><span class="n">AnalysisMixin</span><span class="p">,</span><span class="n">PlotMixin</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;A merged class of :py:class:`Stoner.Core.DataFile`, :py:class:`Stoner.Analysis.AnalysisMixin` and :py:class:`Stoner.plot.PlotMixin`</span>
+<span class="sd">    </span>
+<span class="sd">    Also has the :py:mod:`Stoner.FielFormats` loaded redy for use.</span>
+<span class="sd">    This &#39;kitchen-sink&#39; class is intended as a convenience for writing scripts that carry out both plotting and</span>
+<span class="sd">    analysis on data files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Just do rthe import of Stoner.FileFormats.&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">Stoner.FileFormats</span> <span class="k">as</span> <span class="nn">SFF</span>
+        <span class="k">return</span> <span class="n">DataFile</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">r&quot;&quot;&quot;Return the contents of key pretty formatted using :py:func:`format_error`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fmt (str): Specify the output format, opyions are:</span>
+
+<span class="sd">                *  &quot;text&quot; - plain text output</span>
+<span class="sd">                * &quot;latex&quot; - latex output</span>
+<span class="sd">                * &quot;html&quot; - html entities</span>
+
+<span class="sd">            escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)</span>
+<span class="sd">            mode (string): If &quot;float&quot; (default) the number is formatted as is, if &quot;eng&quot; the value and error is converted</span>
+<span class="sd">                to the next samllest power of 1000 and the appropriate SI index appended. If mode is &quot;sci&quot; then a scientifc,</span>
+<span class="sd">                i.e. mantissa and exponent format is used.</span>
+<span class="sd">            units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are</span>
+<span class="sd">                prepended to the units string. In LaTeX mode, the units string is embedded in \mathrm</span>
+<span class="sd">            prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is</span>
+<span class="sd">                inside the math-mode markers, but not embedded in \mathrm.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pretty string representation.</span>
+
+<span class="sd">        The if key=&quot;key&quot;, then the value is self[&quot;key&quot;], the error is self[&quot;key err&quot;], the default prefix is self[&quot;key label&quot;]+&quot;=&quot; or &quot;key=&quot;,</span>
+<span class="sd">        the units are self[&quot;key units&quot;] or &quot;&quot;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span><span class="s2">&quot;float&quot;</span><span class="p">)</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; units&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>	<span class="p">)</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;prefix&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> =&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))))</span>
+        <span class="n">latex</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;latex&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span><span class="s2">&quot;latex&quot;</span> <span class="k">if</span> <span class="n">latex</span> <span class="k">else</span> <span class="s2">&quot;text&quot;</span><span class="p">)</span>
+        <span class="n">escape</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> should be a floating point value of the metadata.&quot;</span><span class="p">,</span><span class="nb">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">error</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="o">+</span><span class="s2">&quot; err&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">error</span><span class="o">=</span><span class="n">float_info</span><span class="o">.</span><span class="n">epsilon</span>
+        <span class="k">return</span> <span class="n">format_error</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">error</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="n">fmt</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span><span class="n">scape</span><span class="o">=</span><span class="n">escape</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">annotate_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">model</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">text_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Annotate a plot with some information about a fit.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mode (callable or lmfit.Model): The function/model used to describe the fit to be annotated.</span>
+
+<span class="sd">        Keyword Parameters:</span>
+<span class="sd">            x (float): x co-ordinate of the label</span>
+<span class="sd">            y (float): y co-ordinate of the label</span>
+<span class="sd">            z (float): z co-ordinbate of the label if the current axes are 3D</span>
+<span class="sd">            prefix (str): The prefix placed ahead of the model parameters in the metadata.</span>
+<span class="sd">            text_only (bool): If False (default), add the text to the plot and return the current object, otherwise, </span>
+<span class="sd">                return just the text and don&#39;t add to a plot.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            </span>
+<span class="sd">            (Datam, str): A copy of the current Data instance if text_only is False, otherwise returns the text.</span>
+
+<span class="sd">        If *prefix* is not given, then the first prefix in the metadata lmfit.prefix is used if present,</span>
+<span class="sd">        otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they</span>
+<span class="sd">        are set to be 0.75 * maximum x and y limit of the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">_lmfit</span> <span class="ow">and</span> <span class="n">_inspect_</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">Model</span><span class="p">):</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">_lmfit</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">Model</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">callable</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">Model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;model should be either an lmfit.Model or a callable function, not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="n">prefix</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
+        <span class="k">elif</span> <span class="s2">&quot;lmfit.prefix&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;lmfit.prefix&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">prefix</span><span class="o">==</span><span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">prefix</span><span class="o">+</span><span class="s2">&quot;:&quot;</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xl</span><span class="p">,</span><span class="n">xr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">xlim</span><span class="p">()</span> <span class="c1"># pylint: disable=not-callable</span>
+            <span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">xr</span><span class="o">-</span><span class="n">xl</span><span class="p">)</span><span class="o">*</span><span class="mf">0.75</span><span class="o">+</span><span class="n">xl</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">yb</span><span class="p">,</span><span class="n">yt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span> <span class="c1"># pylint: disable=not-callable</span>
+            <span class="n">y</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">yt</span><span class="o">-</span><span class="n">yb</span><span class="p">)</span><span class="o">+</span><span class="n">yb</span>
+
+        <span class="k">try</span><span class="p">:</span> <span class="c1"># if the model has an attribute display params then use these as the parameter anmes</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">display_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span><span class="n">model</span><span class="o">.</span><span class="n">display_names</span><span class="p">):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="s2">&quot; label&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">display_name</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">text</span><span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;latex&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text_only</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s2">&quot;zlim&quot;</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">():</span>
+                <span class="c1">#3D plot then</span>
+                <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">zb</span><span class="p">,</span><span class="n">zt</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">properties</span><span class="p">()[</span><span class="s2">&quot;zlim&quot;</span><span class="p">]</span>
+                    <span class="n">z</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">zt</span><span class="o">-</span><span class="n">zb</span><span class="p">)</span><span class="o">+</span><span class="n">zb</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">text3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span><span class="o">=</span><span class="n">text</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+
 <span class="c1"># Module level functions</span>
 
 
@@ -3807,7 +3907,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

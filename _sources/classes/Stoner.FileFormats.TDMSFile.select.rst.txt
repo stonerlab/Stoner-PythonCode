@@ -1,0 +1,8 @@
+
+
+TDMSFile.select
+==================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: TDMSFile.select

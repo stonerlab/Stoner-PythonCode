@@ -62,24 +62,20 @@
 <dt id="Stoner.Fit.Langevin">
 <em class="property">class </em><code class="descclassname">Stoner.Fit.</code><code class="descname">Langevin</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Fit.html#Langevin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Fit.Langevin" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#8220;The Langevin function for paramagnetic M-H loops/</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>H</strong> (<em>array</em>) &#8211; The applied magnetic field</li>
-<li><strong>M_s</strong> (<em>float</em>) &#8211; Saturation magnetisation</li>
-<li><strong>m</strong> (<em>float</em>) &#8211; is the moment of a single cluster</li>
-<li><strong>T</strong> (<em>float</em>) &#8211; Temperature</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Magnetic Momemnts (array).</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p>The Langevin Function is <span class="math">\(\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}\)</span>.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd>H (array): The applied magnetic field
+M_s (float): Saturation magnetisation
+m (float): is the moment of a single cluster
+T (float): Temperature</dd>
+<dt>Returns:</dt>
+<dd>Magnetic Momemnts (array).</dd>
+</dl>
+<p>The Langevin Function is :math:<a href="#id1"><span class="problematic" id="id2">`</span></a>coth(</p>
+</div></blockquote>
+<p>rac{mu_0HM_s}{k_BT})-
+rac{k_BT}{mu_0HM_s}`.</p>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -88,7 +84,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Fit.Langevin.__init__.html#Stoner.Fit.Langevin.__init__" title="Stoner.Fit.Langevin.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kwargs)</td>
-<td></td>
+<td>Configure Initial fitting function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Fit.Langevin.guess.html#Stoner.Fit.Langevin.guess" title="Stoner.Fit.Langevin.guess"><code class="xref py py-obj docutils literal"><span class="pre">guess</span></code></a>(data[,&nbsp;h])</td>
 <td>Guess some starting values.</td>
@@ -156,7 +152,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

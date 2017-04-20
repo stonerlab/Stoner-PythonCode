@@ -68,7 +68,7 @@ measurement.:</p>
 </div>
 <p>In this example we have loaded data from <code class="docutils literal"><span class="pre">my_data.txt</span></code> which should be in the
 current directory</p>
-<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <a class="reference internal" href="../classes/Stoner.Util.Data.html#Stoner.Util.Data" title="Stoner.Util.Data"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Util.Data</span></code></a>
+<p>The <strong>Stoner.Data</strong> class is actually a shorthand for importing the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.Data</span></code>
 class which in turn is a superset of the classes in the Stoner package. This includes code to automatically
 detect the format of many of the measurement files that we use in our research.</p>
 <p>The native file format for the Stoner package is known as the <em>TDI 1.5</em> format - a tab delimited text file
@@ -613,6 +613,8 @@ masked rows are skipped over.</p>
 </div>
 <div class="section" id="searching-sectioning-and-filtering-the-data">
 <h4>Searching, sectioning and filtering the data<a class="headerlink" href="#searching-sectioning-and-filtering-the-data" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="searching">
+<h5>Searching<a class="headerlink" href="#searching" title="Permalink to this headline">¶</a></h5>
 <p>In many cases you do not know which rows in the data file are of interest - in
 this case you want to search the data.:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span><span class="mf">4.2</span><span class="p">,</span><span class="n">accuracy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
@@ -643,6 +645,9 @@ are the same as used for the <a class="reference internal" href="../classes/Ston
 <p>The &#8216;accuracy&#8217; keyword parameter sets the level of accuracy to accept when testing
 equality or ranges (i.e. when the value parameter is a float or a tuple) - this avoids
 the problem of rounding errors with floating point arithmetic. The default is accuracy is 0.0.</p>
+</div>
+<div class="section" id="filtering">
+<h5>Filtering<a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h5>
 <p>Sometimes you may want not to get the rows of data that you are looking for as a
 separate array, but merely mark them for inclusion (or exclusion) from subsequent
 operations. This is where the masked array (see &#8216;<a class="reference internal" href="#maskeddata"><span class="std std-ref">Masked Data and Why You Care</span></a>) comes into its own.
@@ -656,6 +661,26 @@ to the first argument, expecting to get a boolean response (or list olf booleans
 to the number of columns). With a second argument as in the second example, you can sepcify which
 columns are passed to the filtering function in what order. The second argument must be a list
 of things which can be used to index a column (ie strings, integers, regular expressions).</p>
+</div>
+<div class="section" id="selecting">
+<h5>Selecting<a class="headerlink" href="#selecting" title="Permalink to this headline">¶</a></h5>
+<p>A very powerful way to get at just the dat rows you want is to make use of the <a class="reference internal" href="../classes/Stoner.Core.DataFile.select.html#Stoner.Core.DataFile.select" title="Stoner.Core.DataFile.select"><code class="xref py py-meth docutils literal"><span class="pre">DataFile.select()</span></code></a> method.
+This offers a simple way to query which rows have columns matching some criteria.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__ge</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">T1__lt</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span><span class="n">T2__lt</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The general form is to provide keyword arguments that are something that can be used to index a column, followed by a double
+underscore, followed by and operator. Where more than one keyword argument is supplied, the results of testing each row are logically
+ORed. The result of chaining together two separate calls to select will, however, logically AND the two tests. So, in the examples above,
+the, first line will assume an implicit equality test and give only those rows with a column <em>Temp</em> equal to 250. The second line gives an
+explicit greather than or equal to test for the same column. The third line will select first those rows that have column T1 less than 4.2 <em>or</em>
+column T2 less than 5 and then from those select those rows which have a column Res between 100 and 200. The full list of operators is given in
+<code class="xref py py-meth docutils literal"><span class="pre">Stoner.Folders.baseFolder.select()</span></code>.</p>
+</div>
+<div class="section" id="sectioning">
+<h5>Sectioning<a class="headerlink" href="#sectioning" title="Permalink to this headline">¶</a></h5>
 <p>Another option is to construct a new <cite>DataFile</cite> object from a section of the data - this is
 particularly useful where the <cite>DataFile</cite> represents data correspondi ng to a set of (x,y,z)
 points. For this case the :py:,eth:<cite>DataFile.section</cite> method can be used:</p>
@@ -677,6 +702,7 @@ these keyword arguments follow the same rules as the <a class="reference interna
 <p>If the <em>xcol</em> parameter is not supplied, the value from the <a class="reference internal" href="../classes/Stoner.Core.DataFile.html#Stoner.Core.DataFile.setas" title="Stoner.Core.DataFile.setas"><code class="xref py py-attr docutils literal"><span class="pre">DataFile.setas</span></code></a> attribute is used. Since the returned row
 is an instance of the <a class="reference internal" href="../classes/Stoner.Core.DataArray.html#Stoner.Core.DataArray" title="Stoner.Core.DataArray"><code class="xref py py-class docutils literal"><span class="pre">DataArray</span></code></a> that has been taken from the original data, it will know what row number it was and
 will make that available via it&#8217;s <em>i</em> attribute.</p>
+</div>
 </div>
 <div class="section" id="find-out-more-about-the-data">
 <h4>Find out more about the data<a class="headerlink" href="#find-out-more-about-the-data" title="Permalink to this headline">¶</a></h4>
@@ -987,7 +1013,13 @@ specifies that the eliminator is a tab character.</p>
 <li><a class="reference internal" href="#manipulating-the-metadata">Manipulating the metadata</a></li>
 <li><a class="reference internal" href="#more-on-indexing-the-data">More on Indexing the data</a><ul>
 <li><a class="reference internal" href="#selecting-individual-rows-and-columns-of-data">Selecting Individual rows and columns of data</a></li>
-<li><a class="reference internal" href="#searching-sectioning-and-filtering-the-data">Searching, sectioning and filtering the data</a></li>
+<li><a class="reference internal" href="#searching-sectioning-and-filtering-the-data">Searching, sectioning and filtering the data</a><ul>
+<li><a class="reference internal" href="#searching">Searching</a></li>
+<li><a class="reference internal" href="#filtering">Filtering</a></li>
+<li><a class="reference internal" href="#selecting">Selecting</a></li>
+<li><a class="reference internal" href="#sectioning">Sectioning</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#find-out-more-about-the-data">Find out more about the data</a></li>
 <li><a class="reference internal" href="#copying-data">Copying Data</a></li>
 </ul>
@@ -1061,7 +1093,7 @@ specifies that the eliminator is a tab character.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

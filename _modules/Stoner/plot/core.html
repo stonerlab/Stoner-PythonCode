@@ -60,7 +60,7 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PlotMixin&quot;</span><span class="p">,</span><span class="s2">&quot;hsl2rgb&quot;</span><span class="p">]</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">python_v3</span><span class="p">,</span><span class="n">string_types</span><span class="p">,</span><span class="n">index_types</span>
-<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isNone</span>
+<span class="kn">from</span> <span class="nn">Stoner.tools</span> <span class="k">import</span> <span class="n">_attribute_store</span><span class="p">,</span> <span class="n">isNone</span>
 <span class="kn">from</span> <span class="nn">.formats</span> <span class="k">import</span> <span class="n">DefaultPlotStyle</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">errorfill</span>
 
@@ -72,6 +72,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">colorsys</span> <span class="k">import</span> <span class="n">hls_to_rgb</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
 
 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;posix&quot;</span> <span class="ow">and</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Darwin&quot;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">matplotlib</span>
@@ -151,12 +152,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return the current axis number.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the current axis number.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">())</span>
 
     <span class="nd">@ax</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">ax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Change the current axis number.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Change the current axis number.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">value</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
@@ -164,7 +165,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return  the current axes object.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return  the current axes object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
         <span class="k">else</span><span class="p">:</span>
@@ -173,12 +174,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Get the current figure.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get the current figure.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span>
 
     <span class="nd">@fig</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">fig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Set the current figure.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the current figure.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">new_figure</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
@@ -192,19 +193,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">fignum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return the current figure number.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the current figure number.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">number</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return the labels for the plot columns&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the labels for the plot columns&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">):]))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
 
     <span class="nd">@labels</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Set the labels for the plot columns.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the labels for the plot columns.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">=</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -212,7 +213,7 @@
             
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">showfig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns either the current figure or self or None, depeding on whether the attribute is True or False or None.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="p">:</span>
@@ -222,7 +223,7 @@
         
     <span class="nd">@showfig</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">showfig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Force a figure to be displayed.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Force a figure to be displayed.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="nb">bool</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;showfig should be a boolean value not a </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -230,7 +231,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">subplots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return the subplot instances.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the subplot instances.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span><span class="o">.</span><span class="n">axes</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span>
@@ -238,14 +239,14 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return the current plot template.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the current plot template.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_template&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">=</span><span class="n">DefaultPlotStyle</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_template</span>
 
     <span class="nd">@template</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Set the current template.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the current template.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">DefaultPlotStyle</span><span class="p">):</span>
@@ -1493,13 +1494,18 @@
         <span class="n">rgb</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">hls_to_rgb</span><span class="p">(</span><span class="o">*</span><span class="n">hls</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
     <span class="k">return</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">rgb</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;u1&#39;</span><span class="p">)</span></div>
 
-<span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
-    
-    <span class="sd">&quot;&quot;&quot;Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`</span>
+<span class="k">def</span> <span class="nf">PlotFile</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Issue a warning and then create a class anyway.&quot;&quot;&quot;</span>
+    <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;PlotFile is deprecated in favour of Stoner.Data or the PlotMixin&quot;</span><span class="p">,</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">DataFile</span>    
 
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">PlotFile</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="n">DataFile</span><span class="p">):</span>
+        
+        <span class="sd">&quot;&quot;&quot;Extends DataFile with plotting functions from :py:class:`Stoner.Plot.PlotMixin`&quot;&quot;&quot;</span>
+        
+        <span class="k">pass</span>
     
-    <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">PlotFile</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 </pre></div>
 
           </div>
@@ -1539,7 +1545,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

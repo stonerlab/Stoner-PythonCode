@@ -1,0 +1,8 @@
+
+
+FmokeFile.select
+===================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: FmokeFile.select

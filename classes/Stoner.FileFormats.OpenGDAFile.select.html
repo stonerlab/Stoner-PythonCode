@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>OpenGDAFile.select &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="OpenGDAFile.setdefault" href="Stoner.FileFormats.OpenGDAFile.setdefault.html" />
+    <link rel="prev" title="OpenGDAFile.section" href="Stoner.FileFormats.OpenGDAFile.section.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.OpenGDAFile.setdefault.html" title="OpenGDAFile.setdefault"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.OpenGDAFile.section.html" title="OpenGDAFile.section"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.OpenGDAFile.html" accesskey="U">Stoner.FileFormats.OpenGDAFile</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="opengdafile-select">
+<h1>OpenGDAFile.select<a class="headerlink" href="#opengdafile-select" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="Stoner.FileFormats.OpenGDAFile.select">
+<code class="descclassname">OpenGDAFile.</code><code class="descname">select</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.FileFormats.OpenGDAFile.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a copy of the DataFile with only data rows that match a criteria.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>args</strong> (<em>various</em>) &#8211; A single positional argument if present is interpreted as follows:</li>
+<li><strong>* If a callable function is given, the entire row is presented to it.</strong> &#8211; If it evaluates True then that row is selected. This allows arbitary select operations</li>
+<li><strong>* If a dict is given, then it and the kargs dictionary are merged and used to select the rows</strong></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first simple">
+<li><strong>kargs</strong> (<em>various</em>) &#8211; <p>Arbitary keyword arguments are interpreted as requestion matches against the corresponding
+columns. The keyword argument may have an additional <em>__operator*</em> appended to it which is interpreted
+as follows:</p>
+<ul>
+<li><em>eq</em>  value equals argument value (this is the default test for scalar argument)</li>
+<li><em>ne</em>  value doe not equal argument value</li>
+<li><em>gt</em>  value doe greater than argument value</li>
+<li><em>lt</em>  value doe less than argument value</li>
+<li><em>ge</em>  value doe greater than or equal to argument value</li>
+<li><em>le</em>  value doe less than or equal to argument value</li>
+<li><em>between</em>  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)</li>
+<li><em>ibetween</em>,*ilbetween*,*iubetween* as above but include both,lower or upper values</li>
+</ul>
+</li>
+<li><strong>the operator is preceeded by __not__ then the sense of the test is negated.</strong> (<em>if</em>) &#8211; </li>
+<li><strong>syntax is inspired by the Django project for selecting</strong><strong>, </strong><strong>but is not quite as rich.</strong> (<em>The</em>) &#8211; </li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(DatFile)</em> &#8211; a copy the DataFile instance that contains just the matching rows.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
+achieve a logical AND, you can chain two selects together:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">temp__le</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span><span class="n">vti_temp__lt</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">field_gt</span><span class="o">=</span><span class="mf">3.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will select rows that have either temp or vti_temp metadata values below 4.2 AND field metadata values greater than 3.</p>
+<p class="last">If you need to select on a row value that ends in an operator word, then append
+<em>__eq</em> in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
+then pass them via the first positional dictionary value.</p>
+</div>
+<dl class="docutils">
+<dt>Example</dt>
+<dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example using select method to pick out data.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+
+<span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;b-&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__gt</span><span class="o">=</span><span class="mi">75</span><span class="p">)</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Res__between</span><span class="o">=</span><span class="p">(</span><span class="mf">5.3</span><span class="p">,</span><span class="mf">6.3</span><span class="p">))</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;ro&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 1&quot;</span><span class="p">)</span>
+<span class="n">d</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">Temp__lt</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;g&lt;&quot;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;portion 2&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../samples/select_example.py">Source code</a>, <a class="reference external" href="../samples/select_example.png">png</a>, <a class="reference external" href="../samples/select_example.hires.png">hires.png</a>, <a class="reference external" href="../samples/select_example.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/select_example.png" src="../_images/select_example.png" />
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.OpenGDAFile.section.html"
+                        title="previous chapter">OpenGDAFile.section</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.FileFormats.OpenGDAFile.setdefault.html"
+                        title="next chapter">OpenGDAFile.setdefault</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.FileFormats.OpenGDAFile.select.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.OpenGDAFile.setdefault.html" title="OpenGDAFile.setdefault"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.FileFormats.OpenGDAFile.section.html" title="OpenGDAFile.section"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="Stoner.FileFormats.OpenGDAFile.html" >Stoner.FileFormats.OpenGDAFile</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Apr 20, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

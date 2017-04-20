@@ -43,6 +43,7 @@ Stoner.FileFormats.SPCFile
       ~Stoner.FileFormats.SPCFile.save
       ~Stoner.FileFormats.SPCFile.search
       ~Stoner.FileFormats.SPCFile.section
+      ~Stoner.FileFormats.SPCFile.select
       ~Stoner.FileFormats.SPCFile.setdefault
       ~Stoner.FileFormats.SPCFile.sort
       ~Stoner.FileFormats.SPCFile.swap_column

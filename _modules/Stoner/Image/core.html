@@ -232,7 +232,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="s2">&quot;see __array_finalize__ for info&quot;</span>
+        <span class="sd">&quot;&quot;&quot;see __array_finalize__ for info&quot;&quot;&quot;</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
@@ -243,13 +243,13 @@
 <span class="c1">#==============================================================r</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;return a copy of the instance&quot;</span>
+        <span class="sd">&quot;&quot;&quot;return a copy of the instance&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">metadata</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
                                <span class="n">get_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;return the coordinate extent (xmin,xmax,ymin,ymax)&quot;</span>
+        <span class="sd">&quot;&quot;&quot;return the coordinate extent (xmin,xmax,ymin,ymax)&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c1">#1d array</span>
@@ -258,7 +258,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;alias for image[:]. Equivalence to Stoner.data behaviour&quot;</span>
+        <span class="sd">&quot;&quot;&quot;alias for image[:]. Equivalence to Stoner.data behaviour&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[:]</span>
     
     <span class="c1">#@property</span>
@@ -271,7 +271,7 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_kfuncs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Provide an attribtute that caches the imported ImageArray functions.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Provide an attribtute that caches the imported ImageArray functions.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kfuncs_proxy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">imagefuncs</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_kfuncs_proxy</span><span class="o">=</span><span class="n">imagefuncs</span>
@@ -279,7 +279,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_ski_funcs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Provide an attribute that cahces the import sckit-image function names.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Provide an attribute that cahces the import sckit-image function names.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs_proxy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_ski_modules</span><span class="o">=</span><span class="p">[</span><span class="n">color</span><span class="p">,</span><span class="n">exposure</span><span class="p">,</span><span class="n">feature</span><span class="p">,</span><span class="n">io</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">filters</span><span class="p">,</span><span class="n">filters</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span> <span class="n">graph</span><span class="p">,</span>
                     <span class="n">util</span><span class="p">,</span> <span class="n">restoration</span><span class="p">,</span> <span class="n">morphology</span><span class="p">,</span> <span class="n">segmentation</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span>
@@ -291,7 +291,7 @@
         
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tesseractable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Do a test call to tesseract to see if it is there and cache the result.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Do a test call to tesseract to see if it is there and cache the result.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_tesseractable&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_tesseractable&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
@@ -305,7 +305,7 @@
 <span class="c1">#function generator</span>
 <span class="c1">#==============================================================</span>
     <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Implement code for dir()&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Implement code for dir()&quot;&quot;&quot;</span>
         <span class="n">kfuncs</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kfuncs</span><span class="p">))</span>
         <span class="n">skimage</span><span class="o">=</span><span class="nb">set</span><span class="p">()</span>
         <span class="n">mods</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -349,7 +349,7 @@
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
-        <span class="s2">&quot;Patch indexing of strings to metadata.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -357,21 +357,21 @@
 
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Patch string index through to metadata.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch string index through to metadata.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
-        <span class="s2">&quot;Patch indexing of strings to metadata.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">workingfunc</span><span class="p">):</span>
-        <span class="s2">&quot;generate a function that adds self as the first argument&quot;</span>
+        <span class="sd">&quot;&quot;&quot;generate a function that adds self as the first argument&quot;&quot;&quot;</span>
 
         <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">r</span><span class="o">=</span><span class="n">workingfunc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#send copy of self as the first arg</span>
@@ -394,7 +394,7 @@
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="ImageArray._load"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray._load.html#Stoner.Image.core.ImageArray._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="s2">&quot;Load an image from a file and return as a 2D array and metadata dictionary.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Load an image from a file and return as a 2D array and metadata dictionary.&quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
             <span class="n">fname</span><span class="o">=</span><span class="n">filename</span>
             <span class="n">image</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
@@ -646,7 +646,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
                 
     <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="s2">&quot;Attempt to parse text which has been recognised from an image if key is given specific hints may be applied&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Attempt to parse text which has been recognised from an image if key is given specific hints may be applied&quot;&quot;&quot;</span>
         <span class="c1">#print &#39;{} before processsing: \&#39;{}\&#39;&#39;.format(key,data)</span>
 
         <span class="c1">#strip any internal white space</span>
@@ -712,7 +712,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_get_scalebar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Get the length in pixels of the image scale bar&quot;</span>
+        <span class="sd">&quot;&quot;&quot;&quot;Get the length in pixels of the image scale bar&quot;&quot;&quot;</span>
         <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">419</span><span class="p">,</span><span class="mi">519</span><span class="p">,</span><span class="mi">520</span><span class="p">)</span> <span class="c1">#row where scalebar exists</span>
         <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -817,7 +817,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

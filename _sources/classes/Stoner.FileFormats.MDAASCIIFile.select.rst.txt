@@ -1,0 +1,8 @@
+
+
+MDAASCIIFile.select
+======================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: MDAASCIIFile.select

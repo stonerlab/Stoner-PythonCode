@@ -43,6 +43,7 @@ Stoner.FileFormats.XRDFile
       ~Stoner.FileFormats.XRDFile.save
       ~Stoner.FileFormats.XRDFile.search
       ~Stoner.FileFormats.XRDFile.section
+      ~Stoner.FileFormats.XRDFile.select
       ~Stoner.FileFormats.XRDFile.setdefault
       ~Stoner.FileFormats.XRDFile.sort
       ~Stoner.FileFormats.XRDFile.swap_column

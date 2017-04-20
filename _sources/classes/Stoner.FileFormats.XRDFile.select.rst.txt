@@ -1,0 +1,8 @@
+
+
+XRDFile.select
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: XRDFile.select

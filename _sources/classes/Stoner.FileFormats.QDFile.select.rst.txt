@@ -1,0 +1,8 @@
+
+
+QDFile.select
+================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: QDFile.select

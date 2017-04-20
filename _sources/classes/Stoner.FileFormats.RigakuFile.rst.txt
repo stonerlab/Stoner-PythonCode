@@ -43,6 +43,7 @@ Stoner.FileFormats.RigakuFile
       ~Stoner.FileFormats.RigakuFile.save
       ~Stoner.FileFormats.RigakuFile.search
       ~Stoner.FileFormats.RigakuFile.section
+      ~Stoner.FileFormats.RigakuFile.select
       ~Stoner.FileFormats.RigakuFile.setdefault
       ~Stoner.FileFormats.RigakuFile.sort
       ~Stoner.FileFormats.RigakuFile.swap_column

@@ -60,7 +60,7 @@
 <span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">dtype_range</span>
 <span class="kn">from</span> <span class="nn">.folders</span> <span class="k">import</span> <span class="n">ImageFolder</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">metadataObject</span><span class="p">,</span><span class="n">all_type</span>
-<span class="kn">from</span> <span class="nn">Stoner.Util</span> <span class="k">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
@@ -204,17 +204,17 @@
              
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;call through to ndarray.shape&quot;</span>
+        <span class="sd">&quot;&quot;&quot;call through to ndarray.shape&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">shape</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;The main array storing the images&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The main array storing the images&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_imarray</span>
     
     <span class="nd">@imarray</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">imarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
-        <span class="s2">&quot;Set the main array for the image.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Set the main array for the image.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">!=</span><span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Bad shape </span><span class="si">{}</span><span class="s1"> for imarray&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span><span class="p">:</span>
@@ -223,7 +223,7 @@
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">allmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;List of complete metadata for each image in ImageStack&quot;</span>
+        <span class="sd">&quot;&quot;&quot;List of complete metadata for each image in ImageStack&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_allmeta</span>
     
     <span class="nd">@allmeta</span><span class="o">.</span><span class="n">setter</span>
@@ -233,20 +233,20 @@
         
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Return a copy of self&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a copy of self&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Iterating method.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Iterating method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next__</span><span class="p">()</span>
     
     <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Python 3 style iterator interface.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Python 3 style iterator interface.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     
     <span class="k">def</span> <span class="nf">_update_commonkeys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;update self._commonkeys common keys in self.allmeta&quot;</span>
+        <span class="sd">&quot;&quot;&quot;update self._commonkeys common keys in self.allmeta&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_allmeta</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">:</span>
@@ -255,13 +255,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     
     <span class="k">def</span> <span class="nf">_update_zipallmeta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;list of metadata items for each common key&quot;</span>
+        <span class="sd">&quot;&quot;&quot;list of metadata items for each common key&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_commonkeys</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">zipallmeta</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allmeta</span><span class="p">]</span>
         
     <span class="k">def</span> <span class="nf">_update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>     
-        <span class="s2">&quot;update the metadata from allmeta according to the specifications in  metadata_info&quot;</span>
+        <span class="sd">&quot;&quot;&quot;update the metadata from allmeta according to the specifications in  metadata_info&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_zipallmeta</span><span class="p">()</span>
         <span class="n">mi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_info</span>
         <span class="k">for</span> <span class="n">cm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_commonkeys</span><span class="p">:</span>
@@ -278,7 +278,7 @@
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;metadata_info can&#39;t take all keywords yet&quot;</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
-        <span class="s2">&quot;Patch indexing of strings to metadata and an index to a single ImageArray&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata and an index to a single ImageArray&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -291,7 +291,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
         
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
-        <span class="s2">&quot;Patch string index through to metadata. All other set operations to be handled by insert, append and del.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch string index through to metadata. All other set operations to be handled by insert, append and del.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">value</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span>
@@ -304,7 +304,7 @@
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
-        <span class="s2">&quot;Patch indexing of strings to metadata and index to single image and slice to multiple image&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata and index to single image and slice to multiple image&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -319,11 +319,11 @@
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
             
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Define a length for the array.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Define a length for the array.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
-        <span class="s2">&quot;Support copy.deepcopy.&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Support copy.deepcopy.&quot;&quot;&quot;</span>
         <span class="n">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span>
         <span class="n">ret</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
         <span class="n">memo</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ret</span>
@@ -516,14 +516,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[:,</span><span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span></div>
         
 <div class="viewcode-block" id="ImageStack.show"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.show.html#Stoner.Image.stack.ImageStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Show the stack of images in a skimage CollectionViewer window&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Show the stack of images in a skimage CollectionViewer window&quot;&quot;&quot;</span>
         <span class="c1">#stackims=[self[i] for i in range(len(self))]</span>
         <span class="n">cv</span><span class="o">=</span><span class="n">CollectionViewer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">cv</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cv</span>  </div>
 
 <div class="viewcode-block" id="ImageStack.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.save.html#Stoner.Image.stack.ImageStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="p">):</span>
-        <span class="s2">&quot;probably should save in hdf5 format&quot;</span>
+        <span class="sd">&quot;&quot;&quot;probably should save in hdf5 format&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
         
 <div class="viewcode-block" id="ImageStack.stddev"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.stddev.html#Stoner.Image.stack.ImageStack.stddev">[docs]</a>    <span class="k">def</span> <span class="nf">stddev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -538,7 +538,7 @@
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="ImageStack.stderr"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.ImageStack.stderr.html#Stoner.Image.stack.ImageStack.stderr">[docs]</a>    <span class="k">def</span> <span class="nf">stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="s2">&quot;Standard error in the stack average&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Standard error in the stack average&quot;&quot;&quot;</span>
         <span class="n">serr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">serr</span></div>
 
@@ -620,12 +620,12 @@
         <span class="k">return</span> <span class="n">d</span></div>
             
 <div class="viewcode-block" id="KerrStack.index_to_field"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.index_to_field.html#Stoner.Image.stack.KerrStack.index_to_field">[docs]</a>    <span class="k">def</span> <span class="nf">index_to_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_map</span><span class="p">):</span>
-        <span class="s2">&quot;Convert an image of index values into an image of field values&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Convert an image of index values into an image of field values&quot;&quot;&quot;</span>
         <span class="n">fieldvals</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">index_map</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">fieldvals</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="KerrStack.reverse"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.KerrStack.reverse.html#Stoner.Image.stack.KerrStack.reverse">[docs]</a>    <span class="k">def</span> <span class="nf">reverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="s2">&quot;Reverse the image order&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reverse the image order&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imarray</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:,:]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
                               
@@ -754,7 +754,7 @@
     
 <div class="viewcode-block" id="MaskStack"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.html#Stoner.Image.stack.MaskStack">[docs]</a><span class="k">class</span> <span class="nc">MaskStack</span><span class="p">(</span><span class="n">KerrStack</span><span class="p">):</span>
     
-    <span class="s2">&quot;Similar to ImageStack but made for stacks of boolean or binary images&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Similar to ImageStack but made for stacks of boolean or binary images&quot;&quot;&quot;</span>
     
 <div class="viewcode-block" id="MaskStack.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.stack.MaskStack.__init__.html#Stoner.Image.stack.MaskStack.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MaskStack</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
@@ -852,7 +852,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

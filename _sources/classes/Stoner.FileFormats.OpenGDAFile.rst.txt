@@ -43,6 +43,7 @@ Stoner.FileFormats.OpenGDAFile
       ~Stoner.FileFormats.OpenGDAFile.save
       ~Stoner.FileFormats.OpenGDAFile.search
       ~Stoner.FileFormats.OpenGDAFile.section
+      ~Stoner.FileFormats.OpenGDAFile.select
       ~Stoner.FileFormats.OpenGDAFile.setdefault
       ~Stoner.FileFormats.OpenGDAFile.sort
       ~Stoner.FileFormats.OpenGDAFile.swap_column

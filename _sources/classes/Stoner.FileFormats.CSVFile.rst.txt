@@ -43,6 +43,7 @@ Stoner.FileFormats.CSVFile
       ~Stoner.FileFormats.CSVFile.save
       ~Stoner.FileFormats.CSVFile.search
       ~Stoner.FileFormats.CSVFile.section
+      ~Stoner.FileFormats.CSVFile.select
       ~Stoner.FileFormats.CSVFile.setdefault
       ~Stoner.FileFormats.CSVFile.sort
       ~Stoner.FileFormats.CSVFile.swap_column

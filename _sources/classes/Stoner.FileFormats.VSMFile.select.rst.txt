@@ -1,0 +1,8 @@
+
+
+VSMFile.select
+=================================
+
+.. currentmodule:: Stoner.FileFormats
+
+.. automethod:: VSMFile.select

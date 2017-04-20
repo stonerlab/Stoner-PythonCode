@@ -43,6 +43,7 @@ Stoner.FileFormats.VSMFile
       ~Stoner.FileFormats.VSMFile.save
       ~Stoner.FileFormats.VSMFile.search
       ~Stoner.FileFormats.VSMFile.section
+      ~Stoner.FileFormats.VSMFile.select
       ~Stoner.FileFormats.VSMFile.setdefault
       ~Stoner.FileFormats.VSMFile.sort
       ~Stoner.FileFormats.VSMFile.swap_column

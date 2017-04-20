@@ -159,25 +159,28 @@
 <tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.section.html#Stoner.FileFormats.XRDFile.section" title="Stoner.FileFormats.XRDFile.section"><code class="xref py py-obj docutils literal"><span class="pre">section</span></code></a>(\*\*kargs)</td>
 <td>Assuming data has x,y or x,y,z co-ordinates, return data from a section of the parameter space.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.setdefault.html#Stoner.FileFormats.XRDFile.setdefault" title="Stoner.FileFormats.XRDFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.select.html#Stoner.FileFormats.XRDFile.select" title="Stoner.FileFormats.XRDFile.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>Produce a copy of the DataFile with only data rows that match a criteria.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.setdefault.html#Stoner.FileFormats.XRDFile.setdefault" title="Stoner.FileFormats.XRDFile.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.sort.html#Stoner.FileFormats.XRDFile.sort" title="Stoner.FileFormats.XRDFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.sort.html#Stoner.FileFormats.XRDFile.sort" title="Stoner.FileFormats.XRDFile.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>(\*order,&nbsp;\*\*kargs)</td>
 <td>Sorts the data by column name.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.swap_column.html#Stoner.FileFormats.XRDFile.swap_column" title="Stoner.FileFormats.XRDFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.swap_column.html#Stoner.FileFormats.XRDFile.swap_column" title="Stoner.FileFormats.XRDFile.swap_column"><code class="xref py py-obj docutils literal"><span class="pre">swap_column</span></code></a>(\*swp,&nbsp;\*\*kargs)</td>
 <td>Swaps pairs of columns in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.to_Q.html#Stoner.FileFormats.XRDFile.to_Q" title="Stoner.FileFormats.XRDFile.to_Q"><code class="xref py py-obj docutils literal"><span class="pre">to_Q</span></code></a>([l])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.to_Q.html#Stoner.FileFormats.XRDFile.to_Q" title="Stoner.FileFormats.XRDFile.to_Q"><code class="xref py py-obj docutils literal"><span class="pre">to_Q</span></code></a>([l])</td>
 <td>Adds an additional function to covert an angualr scale to momentum transfer</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.unique.html#Stoner.FileFormats.XRDFile.unique" title="Stoner.FileFormats.XRDFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.unique.html#Stoner.FileFormats.XRDFile.unique" title="Stoner.FileFormats.XRDFile.unique"><code class="xref py py-obj docutils literal"><span class="pre">unique</span></code></a>(col[,&nbsp;return_index,&nbsp;return_inverse])</td>
 <td>Return the unique values from the specified column - pass through for numpy.unique.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.update.html#Stoner.FileFormats.XRDFile.update" title="Stoner.FileFormats.XRDFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.update.html#Stoner.FileFormats.XRDFile.update" title="Stoner.FileFormats.XRDFile.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
 <td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.values.html#Stoner.FileFormats.XRDFile.values" title="Stoner.FileFormats.XRDFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.FileFormats.XRDFile.values.html#Stoner.FileFormats.XRDFile.values" title="Stoner.FileFormats.XRDFile.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
 <td></td>
 </tr>
 </tbody>
@@ -303,7 +306,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 17, 2017.
+      Last updated on Apr 20, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
