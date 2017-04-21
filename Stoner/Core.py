@@ -3346,7 +3346,7 @@ class DataFile(metadataObject):
             else:
                 yield row
 
-    def save(self, filename=None,as_loaded=False):
+    def save(self, filename=None,**kargs):
         """Saves a string representation of the current DataFile object into the file 'filename'.
 
         Args:
@@ -3360,7 +3360,8 @@ class DataFile(metadataObject):
 
         Returns:
             self: The current :py:class:`DataFile` object
-                """
+        """
+        as_loaded=kargs.pop("as_loaded",False)
         if filename is None:
             filename = self.filename
         if filename is None or (isinstance(filename, bool) and not filename):
