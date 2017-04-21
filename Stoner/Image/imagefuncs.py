@@ -111,13 +111,7 @@ def subtract_image(im, background, contrast=16, clip=True):
         im=im.clip_intensity()
     return im
 
-def float_and_crop(im):
-    """convert image to float and crop_text
-    Just to group typical functions together
-    """ 
-    k=im.convert_float()
-    k=k.crop_text()
-    return k
+
     
 def edge_det(filename,threshold1,threshold2):
     '''Detects an edges in an image according to the thresholds 1 and 2.
@@ -417,6 +411,14 @@ def imshow(im, figure='new', title=None, cmap='gray', **kwargs):
         plt.title(title)
     plt.axis('off')
     return fig
+
+def float_and_croptext(im):
+    """convert image to float and crop_text
+    Just to group typical functions together
+    """ 
+    k=im.convert_float()
+    k=k.crop_text()
+    return k
     
 def denoise(im, weight=0.1):
     """just a rename of the skimage restore function"""

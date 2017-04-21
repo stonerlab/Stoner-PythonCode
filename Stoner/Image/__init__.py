@@ -6,7 +6,7 @@ Created on Fri May 27 09:14:25 2016
 """
 
 __all__=['core','folders','stack']
-from .core import ImageArray
+from .core import ImageArray, KerrArray, ImageFile
 from .folders import ImageFolder
 from .stack import ImageStack, KerrStack, MaskStack
 

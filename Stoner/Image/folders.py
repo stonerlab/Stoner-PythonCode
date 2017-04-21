@@ -6,17 +6,8 @@ Created on Mon May 23 12:05:59 2016
 """
 
 from .core import ImageArray
-from .core import dtype_range
-from Stoner.Core import metadataObject
-from Stoner.Util import Data
-import numpy as np
-from os import path
-import copy
-
-from skimage.viewer import CollectionViewer
 from Stoner.Folders import DiskBssedFolder, baseFolder
 from Stoner.compat import *
-from Stoner.compat import string_types
 
 
 def _load_ImageArray(f,img_num=0, **kargs):
@@ -101,9 +92,9 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         return metadata
     
     def stack(self):
-        """Return a KerrStack of the images in the current group.
+        """Return a ImageStack of the images in the current group.
         """
-        from Stoner.Image import KerrStack
-        k = KerrStack(self)
+        from Stoner.Image import ImageStack
+        k = ImageStack(self)
         return k
       
