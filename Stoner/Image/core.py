@@ -17,23 +17,19 @@ Images from the Evico software are 2D arrays of 16bit unsigned integers.
 
 import numpy as np
 import os
-import tempfile
-import subprocess #calls to command line
-from copy import deepcopy
+from copy import copy, deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
+from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.compat import string_types,get_filedialog # Some things to help with Python2 and Python3 compatibility
+import inspect
 
 
-
-GRAY_RANGE=(0,65535)  #2^16
-IM_SIZE=(512,672) #Standard Kerr image size
-AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
 
 dtype_range = {np.bool_: (False, True), 
                np.bool8: (False, True),
@@ -105,118 +101,213 @@ class ImageArray(np.ndarray,metadataObject):
     #Proxy attributess for storing imported functions. Only do the import when needed
     _ski_funcs_proxy=None
     _kfuncs_proxy=None
-    _reduce_metadata=True
-    
+    #extra attributes for class beyond standard numpy ones
+    _extra_attributes_default = {'metadata': typeHintedDict({}),
+                                 'filename': ''}
 
     #now initialise class
 
+    def __new__(cls, *args, **kargs):
+        """
+        Construct an ImageArray object. 
+        We're using __new__ rather than __init__ to imitate a numpy array as 
+        close as possible.
     def __new__(cls, image=None, *args, **kwargs):
         """        Construct a ImageArray object. 
         
         We're using __new__ rather than __init__
         to imitate a numpy array as close as possible.
         """
-        if image is None:
-                image=list()
-        if isinstance(image,string_types): #we have a filename
-            image,tmp=cls._load(image,**kwargs)
-        else:
-            tmp=typeHintedDict({"Loaded from":""})
-            np.array(image) #try array on image to check it's a valid numpy type
-        array_args=['dtype','copy','order','subok','ndmin'] #kwargs for array setup
-        array_args={k:kwargs[k] for k in array_args if k in kwargs.keys()}
-        ka = np.asarray(image, **array_args).view(cls)
-        ka.metadata.update(tmp) # Store the metadata from the PNG file into the ImageArray
-        ka.filename=tmp["Loaded from"]
-        return ka #__init__ called
-
-    def __init__(self, image=None,
-                     ocr_metadata=False, field_only=False,
-                                 metadata=None, **kwargs):
-        """Constructor for :py:class:`Stoner.Image.core.ImageArray`.
         
-        Create a ImageArray instance with metadata attribute
-
-        Args:
-            image: string or numpy array initiator
-                If a filename is given it will try to load the image from memory
-                Otherwise it will call np.array(image) on the object so an array or
-                list is suitable
-        Keyword Arguments:
-            reduce_metadata: bool
-                if True reduce the metadata to useful bits and do some processing on it          
-            convert_float: bool
-                if True convert the image to float values between 0 and 1 (necessary 
-                for some forms of processing)
-            ocr_metadata: bool
-                whether to try to use optical character recognition to get the 
-                metadata from the image (necessary for images taken pre 06/2016)
-            field_only: bool
-                if ocr_metadata is true, get field only (bit faster)
-            metadata: dict
-                dictionary of extra metadata items you would like adding to your array
-        """
-        if image is None:
-            image=[]
+        def _load(cls,filename,**array_args):
+            """Load an image from a file and return as a ImageArray."""
+            if filename.endswith('.npy'):
+                image = np.load(filename)
+                image = np.array(image, **array_args).view(cls)
+            else:        
+                with Image.open(filename,'r') as img:
+                    image=np.asarray(img).view(cls)
+                    pass
+                    # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+                    # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+                    if np.issubdtype(image.dtype,np.integer):
+                        bits=np.ceil(np.log2(image.max()))
+                        if bits<=8:
+                            image=image.astype("uint8")
+                        elif bits<=16:
+                            image=image.astype("uint16")
+                        elif bits<=32:
+                            image=image.astype("uint32")
+                    for k in img.info:
+                        v=img.info[k]
+                        if "b'" in v: v=v.strip(" b'")    
+                        image.metadata[k]=v
+            image.metadata["Loaded from"]=os.path.realpath(filename)
+            return image
+        
+        if len(args) not in [0,1]:
+            raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
+            
+        ### Deal with kwargs
+        array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
+        array_args = {k:kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
+        user_metadata = kargs.pop('metadata',{})
+        asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
+        _debug = kargs.pop('_debug', False)
+                           
+        ### 0 args initialisation
+        if len(args)==0:
+            ret = np.empty((0,0), dtype=float).view(cls)
+            ret.metadata.update(user_metadata)
+            return ret       
+        
+        ### 1 args initialisation
+        arg = args[0]
+        loadfromfile=False
+        if isinstance(arg, cls):
+            ret = arg           
+        elif isinstance(arg, np.ndarray):
+            # numpy array or ImageArray)
+            if len(arg.shape)==2:
+                ret = arg.view(ImageArray)
+            elif len(arg.shape)==1:
+                arg = np.array([arg]) #force 2d array
+                ret = arg.view(ImageArray)
+            else:
+                raise ValueError('Array dimension 0 must be at most 2. Got {}'.format(len(arg.shape)))
+        elif isinstance(arg, bool) and not arg:
+            patterns=(('png', '*.png'), ('npy','*.npy'))
+            arg = get_filedialog(what='r',filetypes=patterns)
+            if len(arg)==0:
+                raise ValueError('No file given')
+            else:
+                loadfromfile=True
+        elif isinstance(arg, string_types) or loadfromfile:
+            # Filename- load datafile
+            if not os.path.exists(arg):
+                raise ValueError('File path does not exist {}'.format(arg))
+            ret = _load(cls, arg, **array_args)
+        elif isinstance(arg, ImageFile):
+            #extract the image
+            ret = arg.image
+        else:
+            try:  #try converting to a numpy array (eg a list type)
+                ret = np.asarray(arg, **array_args).view(cls)
+                if ret.dtype=='O': #object dtype - can't deal with this
+                    raise ValueError
+            except ValueError: #ok couldn't load from iterable, we're done
+                raise ValueError("No constructor for {}".format(type(arg)))
+        if asfloat and ret.dtype.kind!='f': #convert to float type in place
+                dl = dtype_range[ret.dtype.type]
+                ret = np.array(ret, dtype=np.float64).view(cls)
+                ret = ret / float(dl[1])
                 
-        if kwargs.get("reduce_metadata",self._reduce_metadata):
-            self.reduce_metadata()
-        if metadata is not None and isinstance(metadata,(dict,typeHintedDict)):
-            for key in metadata.keys():
-                self.metadata[key] = metadata[key]
-        if isinstance(image,string_types):
-            self.metadata['filename']=image
-            self.filename=image
-        if ocr_metadata:
-            self.ocr_metadata(field_only=field_only) #update metadat 
+        #all constructors call array_finalise so metadata is now initialised
+        if 'Loaded from' not in ret.metadata.keys():
+            ret.metadata['Loaded from']=''
+        ret.filename = ret.metadata['Loaded from']
+        ret.metadata.update(user_metadata) 
+        ret._debug = _debug
+        return ret
 
     def __array_finalize__(self, obj):
         """__array_finalize__ and __array_wrap__ are necessary functions when subclassing numpy.ndarray to fix some behaviours. 
         
         See http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for
         more info and examples
+        Defaults below are only set when constructing an array using view
+        eg np.arange(10).view(ImageArray). Otherwise filename and metadata
+        attributes are just copied over (plus any other attributes set in 
+        _extra_attributes).
         """
-        if obj is None: return
-        self.metadata = getattr(obj, 'metadata', {})
-        self.filename = getattr(obj, 'filename', None)
+        if hasattr(self, '_debug') and self._debug:
+            print(type(self), type(obj))
+            curframe = inspect.currentframe()
+            calframe = inspect.getouterframes(curframe, 2)
+            print('caller name:', calframe[1][3])
+        _extra_attributes = getattr(obj, '_extra_attributes', 
+                                deepcopy(ImageArray._extra_attributes_default))
+        setattr(self, '_extra_attributes', copy(_extra_attributes))
+        for k,v in _extra_attributes.items():
+            setattr(self, k, getattr(obj, k, v))       
 
     def __array_wrap__(self, out_arr, context=None):
-        """see __array_finalize__ for info"""
+        """see __array_finalize__ for info. This is for if ImageArray is called 
+        via ufuncs. array_finalize is called after"""
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
+    def __init__(self, *args, **kwargs):
+        """Constructor method for :py:class:`ImageArray`.
+
+        various forms are recognised
+
+        .. py:function:: ImageArray('filename')
+            :noindex:
+
+            Creates the new ImageArray object and then loads data from the 
+            given *filename*.
+
+        .. py:function:: ImageArray(array)
+            :noindex:
+
+            Creates a new ImageArray object and assigns the *array*.
+            
+        .. py:function:: ImageArray(ImageFile)
+            :noindex:
+
+            Creates a new ImageArray object and assigns the *array* using
+            the ImageFile.image property.
 
 
+        .. py:function:: ImageArray(ImageArray)
+            :noindex:
+
+            Creates the new ImageArray object and initialises all data from the
+            existing :py:class:`ImageArray` instance. This on the face of it does the same as
+            the assignment operator, but is more useful when one or other of the
+            ImageArray objects is an instance of a sub - class of ImageArray
+        
+        .. py:function:: ImageArray(bool)
+            :noindex:
+
+           if arg[0] is bool and False then open a file dialog to locate the
+           file to open.
+            
+        Args:
+            arg (positional arguments): an argument that matches one of the
+                definitions above
+        Keyword Arguments: All keyword arguments that match public attributes are
+                used to set those public attributes eg metadata.
+                
+                asfloat(bool):
+                    if True  and loading the image from file, convert the image 
+                    to float values between 0 and 1 (necessary for some forms 
+                    of processing)
+        """
+        pass #already sorted metadata and ndarray setup through __new__
+        
 #==============================================================
 # Propety Accessor Functions
 #==============================================================r
     @property
     def clone(self):
         """return a copy of the instance"""
-        return ImageArray(np.copy(self),metadata=deepcopy(self.metadata),
-                               get_metadata=False)
+        ret = ImageArray(np.copy(self))
+        for k,v in self._extra_attributes.items():
+            setattr(ret, k, deepcopy(v))
+        return ret        
 
     @property
     def max_box(self):
         """return the coordinate extent (xmin,xmax,ymin,ymax)"""
-        try:
-            box=(0,self.shape[1],0,self.shape[0])
-        except IndexError: #1d array
-            box=(0,1,0,self.shape[0])
+        box=(0,self.shape[1],0,self.shape[0])
         return box
 
     @property
     def data(self):
         """alias for image[:]. Equivalence to Stoner.data behaviour"""
         return self[:]
-    
-    #@property
-    #def filename(self):
-    #    if 'filename' in self.keys():
-    #        ret=self['filename']
-    #    else:
-    #        ret=None
-    #    return ret
     
     @property
     def _kfuncs(self):
@@ -238,17 +329,7 @@ class ImageArray(np.ndarray,metadataObject):
                 self._ski_funcs_proxy[mod.__name__] = (mod, dir(mod))
         return self._ski_funcs_proxy
         
-    @property
-    def tesseractable(self):
-        """Do a test call to tesseract to see if it is there and cache the result."""
-        if hasattr(self,"_tesseractable"):
-            return getattr(self,"_tesseractable")
-        try:
-            ret=subprocess.call(["tesseract","-v"])
-        except Exception:
-            ret = -1
-        self._tesseractable=ret==0
-        return ret==0
+
 
 #==============================================================
 #function generator
@@ -264,17 +345,21 @@ class ImageArray(np.ndarray,metadataObject):
         parent=set(dir(super(ImageArray,self)))
         mine=set(dir(ImageArray))
         return list(skimage|kfuncs|parent|mine)
-
+    
     def __getattr__(self,name):
-        """run when asking for an attribute that doesn't exist yet. 
-        
-        It looks first in kermit funcs then in skimage functions for a match. If
+        """run when asking for an attribute that doesn't exist yet. It
+        looks first in imagefuncs.py then in skimage functions for a match. If
         it finds it it returns a copy of the function that automatically adds
         the image as the first argument.
+        skimage functions can be called by module_func notation
+        with the underscore sep eg im.exposure_rescale_intensity, or it can simply
+        be the function with no module given in which case the entire directory
+        is searched and the first hit is returned im.rescale_intensity.
         Note that numpy is already subclassed so numpy funcs are highest on the
-        heirarchy, followed by kfuncs, followed by skimage funcs
+        heirarchy, followed by imagefuncs, followed by skimage funcs
         Also note that the function named must take image array as the
         first argument
+        """
 
         An alternative nested attribute system could be something like
         http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
@@ -287,18 +372,63 @@ class ImageArray(np.ndarray,metadataObject):
         elif name in dir(self._kfuncs):
             workingfunc=getattr(self._kfuncs,name)
             ret=self._func_generator(workingfunc)
-        else:
-            for key in self._ski_funcs.keys():
+        elif '_' in name: #ok we might have a skimage module_function request
+            t=name.split('_')
+            t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
+            t = ['skimage.'+t[0],t[1]]
+            if t[0] in self._ski_funcs.keys():
+                if t[1] in self._ski_funcs[t[0]][1]:
+                    workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
+                    ret=self._func_generator(workingfunc)        
+        if ret is None: #Ok maybe just a request for an skimage func, no module
+            for key in self._ski_funcs.keys(): #now look in skimage funcs
                 if name in self._ski_funcs[key][1]:
                     workingfunc=getattr(self._ski_funcs[key][0],name)
                     ret=self._func_generator(workingfunc)
                     break
+
         if ret is None:
             raise AttributeError('No attribute found of name {}'.format(name))
         return ret
+    
+    def _func_generator(self,workingfunc):
+        """generate a function that adds self as the first argument"""
 
+        def gen_func(*args, **kwargs):
+            r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
+            if isinstance(r,Data):
+                pass #Data return is ok
+            elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
+                r=Data(r)
+                r.metadata=self.metadata.copy()
+                r.column_headers[0]=workingfunc.__name__
+            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
+                r=r.view(type=ImageArray)
+                r.metadata=self.metadata.copy()
+            #NB we might not be returning an ndarray at all here !
+            return r
+        gen_func.__doc__=workingfunc.__doc__
+        gen_func.__name__=workingfunc.__name__
+        return gen_func 
+    
+    def __setattr__(self, name, value):
+        super(ImageArray, self).__setattr__(name, value)
+         #add attribute to those for copying in array_finalize. use value as
+         #defualt.
+        circ = ['_extra_attributes'] #circular references
+        proxy = ['_kfuncs_proxy', '_ski_funcs_proxy'] #can be reloaded for cloned arrays
+        if name in circ + proxy: 
+            #Ignore these in clone
+            pass
+        else:
+            self._extra_attributes.update({name:value})
+        
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
+        if self._debug:
+            curframe = inspect.currentframe()
+            calframe = inspect.getouterframes(curframe, 2)
+            print('caller name:', calframe[1][3])
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
@@ -319,88 +449,67 @@ class ImageArray(np.ndarray,metadataObject):
         else:
             super(ImageArray,self).__delitem__(index)
 
-    def _func_generator(self,workingfunc):
-        """generate a function that adds self as the first argument"""
-
-        def gen_func(*args, **kwargs):
-            r=workingfunc(self.clone, *args, **kwargs) #send copy of self as the first arg
-            if isinstance(r,Data):
-                pass #Data return is ok
-            elif isinstance(r,np.ndarray) and np.prod(r.shape)==np.max(r.shape): #1D Array
-                r=Data(r)
-                r.metadata=self.metadata.opy()
-                r.column_headers[0]=workingfunc.__name__
-            elif isinstance(r,np.ndarray) and not isinstance(r,ImageArray): #make sure we return a ImageArray
-                r=r.view(type=ImageArray)
-                r.metadata=self.metadata.copy()
-            #NB we might not be returning an ndarray at all here !
-            return r
-        gen_func.__doc__=workingfunc.__doc__
-        gen_func.__name__=workingfunc.__name__
-
-        return gen_func
-
-
-    @classmethod
-    def _load(self,filename,**kwargs):
-        """Load an image from a file and return as a 2D array and metadata dictionary."""
-        with Image.open(filename,"r") as img:
-            fname=filename
-            image=np.asarray(img)
-            # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-            # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-            if np.issubdtype(image.dtype,np.integer):
-                bits=np.ceil(np.log2(image.max()))
-                if bits<=8:
-                    image=image.astype("uint8")
-                elif bits<=16:
-                    image=image.astype("uint16")
-                elif bits<=32:
-                    image=image.astype("uint32")
-           
-            if 'dtype' not in kwargs.keys():
-                kwargs['dtype']='uint16' #defualt output for Kerr microscope
-            tmp=typeHintedDict()
-            for k in img.info:
-                v=img.info[k]
-                if "b'" in v: v=v.strip(" b'")    
-                tmp[k]=v
-            tmp["Loaded from"]=fname
-        return image,tmp 
-    
 #==============================================================
 #Now any other useful bits
 #==============================================================
-    def box(self, xmin, xmax, ymin, ymax):
-        """Crop the data to a box.
-        
-        Essentially an alias for crop but always returns a view onto
-        the array rather than a copy (ie copy=False). Useful for if you
-        want to do something to a partial area of an image.
-        Equivalent to im[ymin,ymax,xmin,xmax]
-        (the natural extension of this is using masked arrays for arbitrary
-        areas, yet to be implemented)
 
-        Args:
-            xmin int
-            xmax int
-            ymin int
-            ymax int
-
-        Returns:
-            view (ImageArray):
-                view onto the array
-
-        Example:
-            a=ImageArray([[1,2,3],[0,1,2]])
-            b=a.box(0,1,0,2)
-            b[:]=b+1
-            print a
-            #result:
-            [[2,3,3],[1,2,2]]
+    
+    def box(self, *args, **kargs):
+        """alias for crop
         """
-        sub=(xmin,xmax,ymin,ymax)
-        return self.crop_image(box=sub,copy=False)
+        return self.crop(*args, **kargs)
+    
+    def crop_image(self, *args, **kargs):
+        """back compatability"""
+        return self.crop(*args, **kargs)
+
+    def crop(self, *args, **kargs):
+        """Crop the image. This is essentially like taking a view onto the array
+        but uses image x,y coords (x,y --> col,row)
+        Returns a view according to the coords given. If box is None it will
+        allow the user to select a rectangle. If a tuple is given with None
+        included then max extent is used for that coord (analagous to slice).
+        If copy then return a copy of self with the cropped image.
+        
+        Args:
+            box(tuple) or 4 separate args or None:
+                (xmin,xmax,ymin,ymax)
+                If None image will be shown and user will be asked to select
+                a box (bit experimental)
+        Keyword Arguments:
+            copy(bool):
+                If True return a copy of ImageFile with the cropped image
+        Returns:
+            (ImageArray):
+                view or copy of array asked for
+        
+        Example:
+            a=ImageFile(np.arange(12).reshape(3,4))
+            
+            a.crop(1,3,None,None)
+        """
+        if len(args)==0 and 'box' in kargs.keys():
+            args = kargs['box'] #back compatability
+        elif len(args) not in (1,4):
+            raise ValueError('crop accepts 1 or 4 arguments, {} given.'.format(len(args)))
+        if len(args)==1:
+            box = args[0]
+            if box is None: #experimental
+                print('Select crop area')
+                box = self.draw_rectangle(box)
+            elif isinstance(box, (tuple,list)) and len(box)==4:
+                pass
+            else:
+                raise ValueError('crop accepts tuple of length 4, {} given.'.format(len(box)))
+        else:
+            box = tuple(args)
+        for i,item in enumerate(box): #replace None with max extent
+            if item is None:
+                box[i]=self.max_box[i]
+        ret = self[box[2]:box[3],box[0]:box[1]]   
+        if 'copy' in kargs.keys() and kargs['copy']:
+            ret = ret.clone
+        return ret
     
     def dtype_limits(self, clip_negative=True):
         """Return intensity limits, i.e. (min, max) tuple, of the image's dtype.
@@ -421,103 +530,105 @@ class ImageArray(np.ndarray,metadataObject):
         if clip_negative:
             imin = 0
         return imin, imax
+        
+    def asfloat(self, normalise=False, clip_negative=False):
+        """Return the image converted to floating point type.
+        If currently an int type then floats will be automatically normalised.
+        If currently a float type then will normalise if normalise.
+        If currently an unsigned int type then image will be in range 0,1        
+        Keyword Arguments:
+            normalise(bool):
+                normalise the image to -1,1
+            clip_negative(bool):
+                clip negative intensity to 0
+        """
+        self.image = ImageArray(convert(self, dtype=np.float64))
+        if normalise:
+            self.normalise()
+        if clip_negative:
+            self.clip_negative()
+    
+    def normalise(self):
+        """Normalise the image to -1,1.
+        """
+        if self.dtype.kind != 'f':
+            ret  = self.asfloat(normalise=False) #bit dodgy here having normalise in asfloat
+        else:
+            ret = self
+        norm=np.linalg.norm(ret)
+        if norm==0: 
+           raise RuntimeError('Attempting to normalise an array with only 0 values')
+        ret = ret / norm
+        return ret
+
+    def clip_intensity(self):
+        """prefer ImageArray.normalise 
+        clip_intensity for back compatibility
+        """
+        ret = self.asfloat(normalise=True, clip_negative=True)
+        return ret
     
     def convert_float(self, clip_negative=True):
-        """Return the image converted to floating point type normalised to -1  to 1. 
-        
-        If clip_negative then clip intensities below 0 to 0.
-        Unfortunately there is no easy way to convert the type in
-        place self.astype(np.float64,copy=False) doesn't
-        work for different memory block sizes so a new array is produced
-        
-        Args:
-            clip_negative(bool):
-                If True, clip the negative range (i.e. return 0 for min intensity)
-                even if the image dtype allows negative values.
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
-        """
-        if self.dtype.kind=='f': #already float
-            ret=self
-        else:
-            dl=self.dtype_limits(clip_negative=False)
-            ret=self.astype(np.float64)
-            ret=ret/float(dl[1])
-        if clip_negative and np.min(ret)<0:
-            ret=ret.clip_intensity()
-        return ret
-                  
-    def clip_intensity(self):
-        """clip intensity that lies outside the range allowed by dtype.
-        
+        """back compatability. asfloat preferred"""
+        self.asfloat(normalise=False, clip_negative=clip_negative)
+              
+    def clip_negative(self):
+        """Clip negative pixels to 0.
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes
-        
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
+        are changed to 0.
         """
-        dl=self.dtype_limits(clip_negative=True)
-        ret=self.rescale_intensity(in_range=dl)
+        self[self<0] = 0
+    
+    def asint(self, dtype=np.uint16):
+        """convert the image to unsigned integer format. May raise warnings 
+        about loss of precision. Pass through to skiamge img_as_uint
+        """
+        if self.dtype.kind=='f' and (np.max(self)>1 or np.min(self)<-1):
+            self=self.normalise()
+        ret = convert(self, dtype)
         return ret
     
     def convert_int(self):
-        """convert the image to uint16 (the format used by Evico)
-        
-        Returns:
-            :py:class:`Stoner.Image.core.ImageArray`
-        """
-        return self.img_as_uint()
-    
-    def crop_image(self, box=None, copy=True):
-        """Crop the image.
-        
-        Crops to the box given. Returns the cropped image.
+        """back compatability. asuint preferred"""
+        self.asint()
 
-        KeywordArguments:
-            box(array or list of type int):
-                [xmin,xmax,ymin,ymax]
-            copy(bool):
-                whether to return a copy of the array or a view of the original object
-
-        Returns:
-            (ImageArray):
-                cropped image
-        """
-        if box is None:
-            box=draw_rectangle(im)
-        im=self[box[2]:box[3],box[0]:box[1]] #this is a view onto the
-                                                    #same memory slots as self
-        if copy:
-            im=im.clone  #this is now a new memory location
-        return im
-
-    def save(self, filename=None):
-        """Saves the image into the file 'filename', compatible with png.
+    def save(self, filename=None, fmt='png'):
+        """Saves the image into the file 'filename'. Metadata will be preserved 
+        in .png format.
+        fmt can be 'png' or 'npy' or 'both' which will save the file in that format.
+        metadata is lost in .npy format but data is converted to integer format
+        for png so that definition can be lost and negative values are clipped.
 
         Args:
             filename (string, bool or None): Filename to save data as, if this is
                 None then the current filename for the object is used
                 If this is not set, then then a file dialog is used. If 
                 filename is False then a file dialog is forced.
+            
         """
+        if fmt not in ['png','npy','both']:
+            raise ValueError('fmt must be "png" or "npy" or "both"')
         if filename is None:
             filename = self.filename
         if filename in (None, '') or (isinstance(filename, bool) and not filename):
             # now go and ask for one
             filename = self.__file_dialog('w')
-        if filename[-4:]!='.png':
-            filename=filename+'.png' #must save as a png type
-        meta=PngImagePlugin.PngInfo()
-        info=self.metadata.export_all()
-        info=[i.split('=') for i in info]
-        for k,v in info:        
-            meta.add_text(k,v)
-        s=self.convert_int()
-        im=Image.fromarray(s.astype('uint32'),mode='I')
-        im.save(filename,pnginfo=meta)
-
+        if fmt in ['png', 'both']:
+            pngname = os.path.splitext(filename)[0] + '.png'
+            meta=PngImagePlugin.PngInfo()
+            info=self.metadata.export_all()
+            info=[i.split('=') for i in info]
+            for k,v in info:        
+                meta.add_text(k,v)
+            s=self.asint(dtype=np.uint16)
+            im=Image.fromarray(s.astype('uint32'),mode='I')
+            im.save(pngname,pnginfo=meta)
+        if fmt in ['npy', 'both']:
+            npyname = os.path.splitext(filename)[0] + '.npy'
+            np.save(npyname, self)
+    
     def __file_dialog(self, mode):
-        """Creates a file dialog box for loading or saving ~b DataFile objects.
+        """Creates a file dialog box for loading or saving ~b ImageFile objects.
 
         Args:
             mode(string): The mode of the file operation  'r' or 'w'
@@ -546,184 +657,83 @@ class ImageArray(np.ndarray,metadataObject):
             return self.filename
         else:
             return None
+
+
+            
+class ImageFile(object):
+    """Analagous to DataFile this contains metadata and an image attribute which
+    is an ImageArray type which subclasses numpy ndarray and adds lots of extra
+    image specific processing functions. 
     
-    #to do: should probably subclass the functions below       
-    def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image
-
-        KeywordArguments:
-            copy(bool):
-                Whether to return a copy of the data or the original data
-
-        Returns:
-        (ImageArray):
-            cropped image
+    The ImageFile owned attribute is image. All other calls including metadata
+    are passed through to ImageArray (so no need to inherit from metadataObject).
+    
+    Almost all calls to ImageFile are passed through to the underlying ImageArray
+    logic and ImageArray can be used as a standalone class.
+    However because ImageArray subclasses an ndarray it is not possible to enter
+    it in place. All attributes return an array instance which needs to be reassigned.
+    ImageFile owns image and so can change in place.
+    The penalty is that numpy ufuncs don't return ImageFile type
+    
+    so can do:
+    imfile.asfloat() #imagefile.image is updated to float type
+    however need to do:
+    imfile.image = np.abs(imfile.image)
+    
+    whereas for imarray:
+    need to do:
+    imarray = imagearray.asfloat()
+    but:
+    np.abs(imarray) #returns ImageArray type
+    """
+    
+    def __init__(self, *args, **kargs):
+        """Mostly a pass through to ImageArray constructor.
+        Local attribute is image. All other attributes and calls are passed
+        through to image attribute.
         """
-        assert self.shape==AN_IM_SIZE or self.shape==IM_SIZE, \
-                'Need a full sized Kerr image to crop' #check it's a normal image
-        crop=(0,IM_SIZE[1],0,IM_SIZE[0])
-        return self.crop_image(box=crop, copy=copy)
-
-    def reduce_metadata(self):
-        """Reduce the metadata down to a few useful pieces and do a bit of 
-        processing.
-        
-        Returns:
-            (:py:class:`typeHintedDict`): the new metadata 
-        """
-        newmet={}
-        useful_keys=['X-B-2d','field: units','MicronsPerPixel','Comment:',
-                    'Contrast Shift','HorizontalFieldOfView','Images to Average',
-                    'Lens','Magnification.__text__','Substraction Std']
-        if not all([k in self.keys() for k in ['X-B-2d','field: units']]):
-            return self.metadata #we've not got a standard Labview output, not safe to reduce
-        for key in useful_keys:
-            try:
-                newmet[key]=self[key]
-            except KeyError:
-                pass
-        newmet['field']=newmet.pop('X-B-2d') #rename
-        if 'Substraction Std' in self.keys():
-            newmet['subtraction']=newmet.pop('Substraction Std')
-        if 'Averaging' in self.keys():
-            if self['Averaging']: #averaging was on
-                newmet['Averaging']=newmet.pop('Images to Average')
-            else:
-                newmet['Averaging']=1
-                newmet.pop('Images to Average')
-        self.metadata=typeHintedDict(newmet)
-        return self.metadata
-                
-    def _parse_text(self, text, key=None):
-        """Attempt to parse text which has been recognised from an image if key is given specific hints may be applied"""
-        #print '{} before processsing: \'{}\''.format(key,data)
-
-        #strip any internal white space
-        text=[t.strip() for t in text.split()]
-        text=''.join(text)
-
-        #replace letters that look like numbers
-        errors=[('s','5'),('S','5'),('O','0'),('f','/'),('::','x'),('Z','2'),
-                         ('l','1'),('\xe2\x80\x997','7'),('?','7'),('I','1'),
-                         ('].','1'),("'",'')]
-        for item in errors:
-            text=text.replace(item[0],item[1])
-
-        #apply any key specific corrections
-        if key in ['ocr_field','ocr_scalebar_length_microns']:
-            try:
-                text=float(text)
-            except Exception:
-                pass #leave it as string
-        #print '{} after processsing: \'{}\''.format(key,data)
-
-        return text
-
-    def _tesseract_image(self, im, key):
-        """ocr image with tesseract tool.
-        
-        im is the cropped image containing just a bit of text
-        key is the metadata key we're trying to find, it may give a
-        hint for parsing the text generated.
-        """
-        #first set up temp files to work with
-        tmpdir=tempfile.mkdtemp()
-        textfile=os.path.join(tmpdir,'tmpfile.txt')
-        stdoutfile=os.path.join(tmpdir,'logfile.txt')
-        imagefile=os.path.join(tmpdir,'tmpim.tif')
-        with open(textfile,'w') as tf:#open a text file to export metadata to temporarily
-            pass
-
-        #process image to make it easier to read
-        i=1.0*im / np.max(im) #change to float and normalise
-        i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
-        i=exposure.rescale_intensity(i) #make sure they're black and white
-        i=transform.rescale(i, 5.0) #rescale to get more pixels on text
-        io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
-
-        #call tesseract
-        if self.tesseractable:
-            with open(stdoutfile,"w") as stdout:
-                subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
-            os.unlink(stdoutfile)
-        with open(textfile,'r') as tf:
-            data=tf.readline()
-
-        #delete the temp files
-        os.remove(textfile)
-        os.remove(imagefile)
-        os.rmdir(tmpdir)
-
-        #parse the reading
-        if len(data)==0:
-            print('No data read for {}'.format(key))
-        data=self._parse_text(data, key=key)
-        return data
-
-    def _get_scalebar(self):
-        """"Get the length in pixels of the image scale bar"""
-        box=(0,419,519,520) #row where scalebar exists
-        im=self.crop_image(box=box, copy=True)
-        im=im.astype(float)
-        im=(im-im.min())/(im.max()-im.min())
-        im=exposure.rescale_intensity(im,in_range=(0.49,0.5)) #saturate black and white pixels
-        im=exposure.rescale_intensity(im) #make sure they're black and white
-        im=np.diff(im[0]) #1d numpy array, differences
-        lim=[np.where(im>0.9)[0][0],
-             np.where(im<-0.9)[0][0]] #first occurance of both cases
-        assert len(lim)==2, 'Couldn\'t find scalebar'
-        return lim[1]-lim[0]
-
-    def ocr_metadata(self, field_only=False):
-        """Use image recognition to try to pull the metadata numbers off the image
-
-        Requirements: This function uses tesseract to recognise the image, therefore
-        tesseract file1 file2 must be valid on your command line.
-        Install tesseract from
-        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
-
-        KeywordArguments:
-            field_only(bool):
-                only try to return a field value
-
-        Returns:
-            metadata: dict
-                updated metadata dictionary
-        """
-        if self.shape!=AN_IM_SIZE:
-            pass #can't do anything without an annotated image
-
-        #now we have to crop the image to the various text areas and try tesseract
-        elif field_only:
-            fbox=(110,165,527,540) #(This is just the number area not the unit)
-            im=self.crop_image(box=fbox,copy=True)
-            field=self._tesseract_image(im,'ocr_field')
-            self.metadata['ocr_field']=field
+        self.image = ImageArray(*args, **kargs)
+    
+    @property
+    def image(self):
+        return self._image
+    
+    @image.setter
+    def image(self, v):
+        self._image = ImageArray(v)
+    
+    def __getitem__(self, n):
+        return self.image.__getitem__(n)
+   
+    def __setitem__(self, n, v):
+        self.image.__setitem__(n,v)
+    
+    def __delitem__(self, n):
+        self.image.__delitem__(n)
+    
+    def __getattr__(self, n):
+        if isinstance(n, string_types):
+            ret = getattr(self.image, n)
         else:
-            text_areas={'ocr_field': (110,165,527,540),
-                        'ocr_date': (542,605,512,527),
-                        'ocr_time': (605,668,512,527),
-                        'ocr_subtract': (237,260,527,540),
-                        'ocr_average': (303,350,527,540)}
-            try:
-                sb_length=self._get_scalebar()
-            except AssertionError:
-                sb_length=None
-            if sb_length is not None:
-                text_areas.update({'ocr_scalebar_length_microns': (sb_length+10,sb_length+27,514,527),
-                                   'ocr_lens': (sb_length+51,sb_length+97,514,527),
-                                    'ocr_zoom': (sb_length+107,sb_length+149,514,527)})
-
-            metadata={}   #now go through and process all keys
-            for key in text_areas.keys():
-                im=self.crop_image(box=text_areas[key], copy=True)
-                metadata[key]=self._tesseract_image(im,key)
-            metadata['ocr_scalebar_length_pixels']=sb_length
-            if type(metadata['ocr_scalebar_length_microns'])==float:
-                metadata['ocr_microns_per_pixel']=metadata['ocr_scalebar_length_microns']/sb_length
-                metadata['ocr_pixels_per_micron']=1/metadata['ocr_microns_per_pixel']
-                metadata['ocr_field_of_view_microns']=np.array(IM_SIZE)*metadata['ocr_microns_per_pixel']
-            self.metadata.update(metadata)
-        if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
-            self.metadata['ocr_field']=np.nan  #didn't read the field properly
-        return self.metadata
+            ret = getattr(self.image, n)
+            if hasattr(ret, '__call__'): #we have a method
+                ret = self._func_generator(ret) #modiy so that we can change image in place
+        return ret
+        
+    def _func_generator(self, workingfunc):
+        """ImageFile generator. If function called returns ImageArray type then
+        use that to set image attribute, otherwise return given output.
+        """
+        def gen_func(*args, **kargs):
+            r = workingfunc(*args, **kargs)
+            if isinstance(r,ImageArray):
+                self.image = r
+            else:
+                return r
+        
+        gen_func.__doc__=workingfunc.__doc__
+        gen_func.__name__=workingfunc.__name__
+        return gen_func            
+    
+    def __setattr__(self, n, v):
+        setattr(self.image, n, v)
