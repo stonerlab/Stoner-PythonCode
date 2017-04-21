@@ -17,18 +17,17 @@ Images from the Evico software are 2D arrays of 16bit unsigned integers.
 
 import numpy as np
 import os
-import tempfile
-import subprocess #calls to command line
-from copy import deepcopy
+from copy import copy, deepcopy
 from skimage import color,exposure,feature,io,measure,\
                     filters,graph,util,restoration,morphology,\
                     segmentation,transform,viewer
-from skimage import img_as_float,img_as_uint
 from PIL import Image
 from PIL import PngImagePlugin #for saving metadata
 from Stoner.Core import typeHintedDict,metadataObject
+from Stoner.Image.util import convert
 from Stoner import Data
 from Stoner.compat import * # Some things to help with Python2 and Python3 compatibility
+import inspect
 
 
 
@@ -123,6 +122,7 @@ class ImageArray(np.ndarray,metadataObject):
             else:        
                 with Image.open(filename,'r') as img:
                     image=np.asarray(img).view(cls)
+                    pass
                     # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
                     # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
                     if np.issubdtype(image.dtype,np.integer):
@@ -137,28 +137,39 @@ class ImageArray(np.ndarray,metadataObject):
                         v=img.info[k]
                         if "b'" in v: v=v.strip(" b'")    
                         image.metadata[k]=v
-            image.metadata["Loaded from"]=filename
+            image.metadata["Loaded from"]=os.path.realpath(filename)
             return image
         
         if len(args) not in [0,1]:
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
+            
+        ### Deal with kwargs
         array_arg_keys = ['dtype','copy','order','subok','ndmin'] #kwargs for array setup
         array_args = {k:kargs.pop(k) for k in array_arg_keys if k in kargs.keys()}
         user_metadata = kargs.pop('metadata',{})
         asfloat = kargs.pop('asfloat', False) or kargs.pop('convert_float',False) #convert_float for back compatability
-        
+        _debug = kargs.pop('_debug', False)
+                           
+        ### 0 args initialisation
         if len(args)==0:
             ret = np.empty((0,0), dtype=float).view(cls)
             ret.metadata.update(user_metadata)
             return ret       
         
+        ### 1 args initialisation
         arg = args[0]
         loadfromfile=False
         if isinstance(arg, cls):
             ret = arg           
         elif isinstance(arg, np.ndarray):
-            # numpy array or ImageArray
-            ret = arg.view(ImageArray)
+            # numpy array or ImageArray)
+            if len(arg.shape)==2:
+                ret = arg.view(ImageArray)
+            elif len(arg.shape)==1:
+                arg = np.array([arg]) #force 2d array
+                ret = arg.view(ImageArray)
+            else:
+                raise ValueError('Array dimension 0 must be at most 2. Got {}'.format(len(arg.shape)))
         elif isinstance(arg, bool) and not arg:
             patterns=(('png', '*.png'), ('npy','*.npy'))
             arg = get_filedialog(what='r',filetypes=patterns)
@@ -171,23 +182,28 @@ class ImageArray(np.ndarray,metadataObject):
             if not os.path.exists(arg):
                 raise ValueError('File path does not exist {}'.format(arg))
             ret = _load(cls, arg, **array_args)
-            if asfloat and ret.dtype.kind!='f': #convert to float type in place
-                dl = dtype_range[ret.dtype.type]
-                ret = np.array(ret, dtype=np.float64).view(cls)
-                ret = ret / float(dl[1])
         elif isinstance(arg, ImageFile):
             #extract the image
             ret = arg.image
         else:
             try:  #try converting to a numpy array (eg a list type)
                 ret = np.asarray(arg, **array_args).view(cls)
+                if ret.dtype=='O': #object dtype - can't deal with this
+                    raise ValueError
             except ValueError: #ok couldn't load from iterable, we're done
                 raise ValueError("No constructor for {}".format(type(arg)))
+        
+        if asfloat and ret.dtype.kind!='f': #convert to float type in place
+                dl = dtype_range[ret.dtype.type]
+                ret = np.array(ret, dtype=np.float64).view(cls)
+                ret = ret / float(dl[1])
+                
         #all constructors call array_finalise so metadata is now initialised
         if 'Loaded from' not in ret.metadata.keys():
             ret.metadata['Loaded from']=''
         ret.filename = ret.metadata['Loaded from']
-        ret.metadata.update(user_metadata)        
+        ret.metadata.update(user_metadata) 
+        ret._debug = _debug
         return ret
 
     def __array_finalize__(self, obj):
@@ -200,13 +216,16 @@ class ImageArray(np.ndarray,metadataObject):
         attributes are just copied over (plus any other attributes set in 
         _extra_attributes).
         """
-        self._extra_attributes = getattr(obj, '_extra_attributes', 
-                                    ImageArray._extra_attributes_default)
-        for k,v in self._extra_attributes:
-            if hasattr(obj, k):
-                setattr(self, k, obj.k)
-            else:
-                setattr(self, k, v)
+        if hasattr(self, '_debug') and self._debug:
+            print(type(self), type(obj))
+            curframe = inspect.currentframe()
+            calframe = inspect.getouterframes(curframe, 2)
+            print('caller name:', calframe[1][3])
+        _extra_attributes = getattr(obj, '_extra_attributes', 
+                                deepcopy(ImageArray._extra_attributes_default))
+        setattr(self, '_extra_attributes', copy(_extra_attributes))
+        for k,v in _extra_attributes.items():
+            setattr(self, k, getattr(obj, k, v))       
 
     def __array_wrap__(self, out_arr, context=None):
         """see __array_finalize__ for info. This is for if ImageArray is called 
@@ -262,7 +281,7 @@ class ImageArray(np.ndarray,metadataObject):
                     to float values between 0 and 1 (necessary for some forms 
                     of processing)
         """
-        super(ImageArray, self).__init__(*args, **kwargs)
+        pass #already sorted metadata and ndarray setup through __new__
         
 #==============================================================
 # Propety Accessor Functions
@@ -271,7 +290,7 @@ class ImageArray(np.ndarray,metadataObject):
     def clone(self):
         """return a copy of the instance"""
         ret = ImageArray(np.copy(self))
-        for k,v in self._extra_attributes:
+        for k,v in self._extra_attributes.items():
             setattr(ret, k, deepcopy(v))
         return ret        
 
@@ -347,12 +366,12 @@ class ImageArray(np.ndarray,metadataObject):
         elif '_' in name: #ok we might have a skimage module_function request
             t=name.split('_')
             t[1]='_'.join(t[1:]) #eg rescale_intensity needs stitching back together
-            t = [t[0],t[1]]
+            t = ['skimage.'+t[0],t[1]]
             if t[0] in self._ski_funcs.keys():
                 if t[1] in self._ski_funcs[t[0]][1]:
                     workingfunc=getattr(self._ski_funcs[t[0]][0],t[1])
-                    ret=self._func_generator(workingfunc)
-        else: #Ok maybe just a request for an skimage func, no module
+                    ret=self._func_generator(workingfunc)        
+        if ret is None: #Ok maybe just a request for an skimage func, no module
             for key in self._ski_funcs.keys(): #now look in skimage funcs
                 if name in self._ski_funcs[key][1]:
                     workingfunc=getattr(self._ski_funcs[key][0],name)
@@ -387,10 +406,20 @@ class ImageArray(np.ndarray,metadataObject):
         super(ImageArray, self).__setattr__(name, value)
          #add attribute to those for copying in array_finalize. use value as
          #defualt.
-        self._extra_attributes.update({name:value})
+        circ = ['_extra_attributes'] #circular references
+        proxy = ['_kfuncs_proxy', '_ski_funcs_proxy'] #can be reloaded for cloned arrays
+        if name in circ + proxy: 
+            #Ignore these in clone
+            pass
+        else:
+            self._extra_attributes.update({name:value})
         
     def __getitem__(self,index):
         """Patch indexing of strings to metadata."""
+        if self._debug:
+            curframe = inspect.currentframe()
+            calframe = inspect.getouterframes(curframe, 2)
+            print('caller name:', calframe[1][3])
         if isinstance(index,string_types):
             return self.metadata[index]
         else:
@@ -504,7 +533,7 @@ class ImageArray(np.ndarray,metadataObject):
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        self.image = ImageArray(img_as_float(self))
+        self.image = ImageArray(convert(self, dtype=np.float64))
         if normalise:
             self.normalise()
         if clip_negative:
@@ -541,16 +570,18 @@ class ImageArray(np.ndarray,metadataObject):
         """
         self[self<0] = 0
     
-    def asuint(self):
+    def asint(self, dtype=np.uint16):
         """convert the image to unsigned integer format. May raise warnings 
         about loss of precision. Pass through to skiamge img_as_uint
         """
-        ret = ImageArray(img_as_uint(self))
+        if self.dtype.kind=='f' and (np.max(self)>1 or np.min(self)<-1):
+            self=self.normalise()
+        ret = convert(self, dtype)
         return ret
     
     def convert_int(self):
         """back compatability. asuint preferred"""
-        self.asuint()
+        self.asint()
 
     def save(self, filename=None, fmt='png'):
         """Saves the image into the file 'filename'. Metadata will be preserved 
@@ -580,7 +611,7 @@ class ImageArray(np.ndarray,metadataObject):
             info=[i.split('=') for i in info]
             for k,v in info:        
                 meta.add_text(k,v)
-            s=self.convert_int()
+            s=self.asint(dtype=np.uint16)
             im=Image.fromarray(s.astype('uint32'),mode='I')
             im.save(pngname,pnginfo=meta)
         if fmt in ['npy', 'both']:
@@ -618,244 +649,7 @@ class ImageArray(np.ndarray,metadataObject):
         else:
             return None
 
-class KerrArray(ImageArray):
-    """A subclass for Kerr microscopy specific image functions.
-    """
-    GRAY_RANGE=(0,65535)  #2^16
-    IM_SIZE=(512,672) #Standard Kerr image size
-    AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
-    #useful_keys are metadata keys that we'd usually like to keep from a 
-    #standard kerr output.
-    _useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
-        'Contrast Shift','HorizontalFieldOfView','Images to Average',
-        'Lens','Magnification','Substraction Std']
-    _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that
-                                           #it is a standard file output
-               
-    def __init__(self,*args,**kargs):
-        """
-        Constructor for KerrArray which subclasses ImageArray. Extra keyword
-        arguments accepted are given below.
-        Keyword Arguments:
-            reduce_metadata(bool):
-                if True reduce the metadata to useful bits and do some processing on it          
-            asfloat(bool)
-                if True convert the image to float values between 0 and 1 (necessary 
-                for some forms of processing)
-            crop_text(bool):
-                whether to crop the bottom text area from the image
-            ocr_metadata(bool):
-                whether to try to use optical character recognition to get the 
-                metadata from the image (necessary for images taken pre 06/2016
-                and so far field from hysteresis images)
-            field_only(bool):
-                if ocr_metadata is true, get field only (bit faster)
-        """
-        kerrdefaults = {'ocr_metadata':False,
-                        'field_only':False,
-                        'reduce_metadata':True,
-                        'asfloat':True,
-                        'crop_text':True}
-        kerrargs={}
-        for k, v in kerrdefaults:
-            kerrargs[k] = kargs.pop(k, v) 
-        super(KerrArray,self).__init__(*args,**kargs)
-        if kerrargs['reduce_metadata']:
-            self.reduce_metadata()
-        if kerrargs['ocr_metadata']:
-            self.ocr_metadata(field_only=kerrargs['field_only']) 
-        if kerrargs['asfloat']:
-            self.asfloat()
-        if kerrargs['crop_text']:
-            self.crop_text()
-            
-    @property
-    def tesseractable(self):
-        """Do a test call to tesseract to see if it is there and cache the result."""
-        if hasattr(self,"_tesseractable"):
-            return self._tesseractable
-        try:
-            ret=subprocess.call(["tesseract","-v"])
-        except:
-            ret = -1
-        self._tesseractable=ret==0
-        return ret==0
-    
-    def crop_text(self, copy=False):
-        """Crop the bottom text area from a standard Kermit image
 
-        KeywordArguments:
-            copy(bool):
-                Whether to return a copy of the data or the original data
-
-        Returns:
-        (ImageArray):
-            cropped image
-        """
-
-        if self.shape!=KerrArray.AN_IM_SIZE and self.shape!=KerrArray.IM_SIZE:
-                raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
-        return self.crop(None, None, None, KerrArray.IM_SIZE[0])
-
-    def reduce_metadata(self):
-        """Reduce the metadata down to a few useful pieces and do a bit of 
-        processing.
-        
-        Returns:
-            (:py:class:`typeHintedDict`): the new metadata 
-        """
-        
-        newmet={}
-        if not all([k in self.keys() for k in KerrArray._test_keys]):
-            return self.metadata #we've not got a standard Labview output, not safe to reduce
-        for key in KerrArray._useful_keys:
-            if key in self.keys():
-                newmet[key]=self[key]
-        newmet['field']=newmet.pop('X-B-2d') #rename
-        if 'Substraction Std' in self.keys():
-            newmet['subtraction']=newmet.pop('Substraction Std')
-        if 'Averaging' in self.keys():
-            if self['Averaging']: #averaging was on
-                newmet['Averaging']=newmet.pop('Images to Average')
-            else:
-                newmet['Averaging']=1
-                newmet.pop('Images to Average')
-        self.metadata=typeHintedDict(newmet)
-        return self.metadata
-                
-    def _parse_text(self, text, key=None):
-        """Attempt to parse text which has been recognised from an image
-        if key is given specific hints may be applied"""
-        #print '{} before processsing: \'{}\''.format(key,data)
-
-        #strip any internal white space
-        text=[t.strip() for t in text.split()]
-        text=''.join(text)
-
-        #replace letters that look like numbers
-        errors=[('s','5'),('S','5'),('O','0'),('f','/'),('::','x'),('Z','2'),
-                         ('l','1'),('\xe2\x80\x997','7'),('?','7'),('I','1'),
-                         ('].','1'),("'",'')]
-        for item in errors:
-            text=text.replace(item[0],item[1])
-
-        #apply any key specific corrections
-        if key in ['ocr_field','ocr_scalebar_length_microns']:
-            try:
-                text=float(text)
-            except:
-                pass #leave it as string
-        #print '{} after processsing: \'{}\''.format(key,data)
-
-        return text
-
-    def _tesseract_image(self, im, key):
-        """ocr image with tesseract tool.
-        im is the cropped image containing just a bit of text
-        key is the metadata key we're trying to find, it may give a
-        hint for parsing the text generated."""
-
-        #first set up temp files to work with
-        tmpdir=tempfile.mkdtemp()
-        textfile=os.path.join(tmpdir,'tmpfile.txt')
-        stdoutfile=os.path.join(tmpdir,'logfile.txt')
-        imagefile=os.path.join(tmpdir,'tmpim.tif')
-        with open(textfile,'w') as tf:#open a text file to export metadata to temporarily
-            pass
-
-        #process image to make it easier to read
-        i=1.0*im / np.max(im) #change to float and normalise
-        i=exposure.rescale_intensity(i,in_range=(0.49,0.5)) #saturate black and white pixels
-        i=exposure.rescale_intensity(i) #make sure they're black and white
-        i=transform.rescale(i, 5.0) #rescale to get more pixels on text
-        io.imsave(imagefile,(255.0*i).astype("uint8"),plugin='pil') #python imaging library will save according to file extension
-
-        #call tesseract
-        if self.tesseractable:
-            with open(stdoutfile,"w") as stdout:
-                subprocess.call(['tesseract', imagefile, textfile[:-4]],stdout=stdout,stderr=subprocess.STDOUT) #adds '.txt' extension itself
-            os.unlink(stdoutfile)
-        with open(textfile,'r') as tf:
-            data=tf.readline()
-
-        #delete the temp files
-        os.remove(textfile)
-        os.remove(imagefile)
-        os.rmdir(tmpdir)
-
-        #parse the reading
-        if len(data)==0:
-            print('No data read for {}'.format(key))
-        data=self._parse_text(data, key=key)
-        return data
-
-    def _get_scalebar(self):
-        """Get the length in pixels of the image scale bar"""
-        box=(0,419,519,520) #row where scalebar exists
-        im=self.crop_image(box=box, copy=True)
-        im=im.astype(float)
-        im=(im-im.min())/(im.max()-im.min())
-        im=exposure.rescale_intensity(im,in_range=(0.49,0.5)) #saturate black and white pixels
-        im=exposure.rescale_intensity(im) #make sure they're black and white
-        im=np.diff(im[0]) #1d numpy array, differences
-        lim=[np.where(im>0.9)[0][0],
-             np.where(im<-0.9)[0][0]] #first occurance of both cases
-        assert len(lim)==2, 'Couldn\'t find scalebar'
-        return lim[1]-lim[0]
-
-    def ocr_metadata(self, field_only=False):
-        """Use image recognition to try to pull the metadata numbers off the image
-
-        Requirements: This function uses tesseract to recognise the image, therefore
-        tesseract file1 file2 must be valid on your command line.
-        Install tesseract from
-        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar
-
-        KeywordArguments:
-            field_only(bool):
-                only try to return a field value
-
-        Returns:
-            metadata: dict
-                updated metadata dictionary
-        """
-        if self.shape!=KerrArray.AN_IM_SIZE:
-            pass #can't do anything without an annotated image
-
-        #now we have to crop the image to the various text areas and try tesseract
-        elif field_only:
-            fbox=(110,165,527,540) #(This is just the number area not the unit)
-            im=self.crop_image(box=fbox,copy=True)
-            field=self._tesseract_image(im,'ocr_field')
-            self.metadata['ocr_field']=field
-        else:
-            text_areas={'ocr_field': (110,165,527,540),
-                        'ocr_date': (542,605,512,527),
-                        'ocr_time': (605,668,512,527),
-                        'ocr_subtract': (237,260,527,540),
-                        'ocr_average': (303,350,527,540)}
-            try:
-                sb_length=self._get_scalebar()
-            except AssertionError:
-                sb_length=None
-            if sb_length is not None:
-                text_areas.update({'ocr_scalebar_length_microns': (sb_length+10,sb_length+27,514,527),
-                                   'ocr_lens': (sb_length+51,sb_length+97,514,527),
-                                    'ocr_zoom': (sb_length+107,sb_length+149,514,527)})
-
-            metadata={}   #now go through and process all keys
-            for key in text_areas.keys():
-                im=self.crop_image(box=text_areas[key], copy=True)
-                metadata[key]=self._tesseract_image(im,key)
-            metadata['ocr_scalebar_length_pixels']=sb_length
-            if type(metadata['ocr_scalebar_length_microns'])==float:
-                metadata['ocr_microns_per_pixel']=metadata['ocr_scalebar_length_microns']/sb_length
-                metadata['ocr_pixels_per_micron']=1/metadata['ocr_microns_per_pixel']
-                metadata['ocr_field_of_view_microns']=np.array(KerrArray.IM_SIZE)*metadata['ocr_microns_per_pixel']
-            self.metadata.update(metadata)
-        if 'ocr_field' in self.metadata.keys() and not isinstance(self.metadata['ocr_field'],(int,float)):
-            self.metadata['ocr_field']=np.nan  #didn't read the field properly
-        return self.metadata
             
 class ImageFile(object):
     """Analagous to DataFile this contains metadata and an image attribute which
@@ -909,7 +703,7 @@ class ImageFile(object):
         self.image.__delitem__(n)
     
     def __getattr__(self, n):
-        if isinstance(n, stringtypes):
+        if isinstance(n, string_types):
             ret = getattr(self.image, n)
         else:
             ret = getattr(self.image, n)
