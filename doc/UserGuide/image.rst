@@ -16,7 +16,8 @@ load an image::
    im = ImageArray('my_image.png')
    im2 = ImageArray(np.arange(12).reshape(3,4), metadata={'myarray':1})
 
-ImageArray is designed to act much like a 2d numpy array but with the extra metadata parameter.
+ImageArray inherits from numpy.ndarray and can be used in much the same way as a normal array. On top
+of this are added specific image functions
 
 Examining and manipulating the ImageArray
 =========================================
@@ -26,8 +27,8 @@ Local functions and properties
 Typical start functions might be to convert the image into floating point form which is more precise than
 integer format and crop the image::
   
-  im = im.convert_float()
-  im = im.crop_image(box=(1,8,40,200)) #(xmin, xmax, ymin, ymax)
+  im = im.asfloat()
+  im = im.crop_image(1,8,40,200) #(xmin, xmax, ymin, ymax)
   copyofim = im.clone #behaviour similar to data file
 Set a metadata item::
 
