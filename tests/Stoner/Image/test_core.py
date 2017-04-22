@@ -107,8 +107,6 @@ class ImageArrayTest(unittest.TestCase):
     #####test attributes ##
     
     def test_filename(self):
-        #print(self.imarr.shape, self.imarr.filename)
-        #print(self.imarr.filename==self.imarrfile.filename)
         im = ImageArray(np.linspace(0,1,12).reshape(3,4))
         fpath = os.path.join(thisdir, 'coretestdata/im1_annotated.png')
         self.assertTrue(os.path.normpath(self.imarrfile.filename)\

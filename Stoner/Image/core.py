@@ -108,37 +108,12 @@ class ImageArray(np.ndarray,metadataObject):
     #now initialise class
 
     def __new__(cls, *args, **kargs):
-        """
-        Construct an ImageArray object. 
+        """Construct an ImageArray object.
+        
         We're using __new__ rather than __init__ to imitate a numpy array as 
         close as possible.
         """
         
-        def _load(cls,filename,**array_args):
-            """Load an image from a file and return as a ImageArray."""
-            if filename.endswith('.npy'):
-                image = np.load(filename)
-                image = np.array(image, **array_args).view(cls)
-            else:        
-                with Image.open(filename,'r') as img:
-                    image=np.asarray(img).view(cls)
-                    pass
-                    # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
-                    # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
-                    if np.issubdtype(image.dtype,np.integer):
-                        bits=np.ceil(np.log2(image.max()))
-                        if bits<=8:
-                            image=image.astype("uint8")
-                        elif bits<=16:
-                            image=image.astype("uint16")
-                        elif bits<=32:
-                            image=image.astype("uint32")
-                    for k in img.info:
-                        v=img.info[k]
-                        if "b'" in v: v=v.strip(" b'")    
-                        image.metadata[k]=v
-            image.metadata["Loaded from"]=os.path.realpath(filename)
-            return image
         
         if len(args) not in [0,1]:
             raise ValueError('ImageArray expects 0 or 1 arguments, {} given'.format(len(args)))
@@ -181,7 +156,7 @@ class ImageArray(np.ndarray,metadataObject):
             # Filename- load datafile
             if not os.path.exists(arg):
                 raise ValueError('File path does not exist {}'.format(arg))
-            ret = _load(cls, arg, **array_args)
+            ret = cls._load(arg, **array_args)
         elif isinstance(arg, ImageFile):
             #extract the image
             ret = arg.image
@@ -193,9 +168,9 @@ class ImageArray(np.ndarray,metadataObject):
             except ValueError: #ok couldn't load from iterable, we're done
                 raise ValueError("No constructor for {}".format(type(arg)))
         if asfloat and ret.dtype.kind!='f': #convert to float type in place
-                dl = dtype_range[ret.dtype.type]
-                ret = np.array(ret, dtype=np.float64).view(cls)
-                ret = ret / float(dl[1])
+            dl = dtype_range[ret.dtype.type]
+            ret = np.array(ret, dtype=np.float64).view(cls)
+            ret = ret / float(dl[1])
                 
         #all constructors call array_finalise so metadata is now initialised
         if 'Loaded from' not in ret.metadata.keys():
@@ -227,8 +202,11 @@ class ImageArray(np.ndarray,metadataObject):
             setattr(self, k, getattr(obj, k, v))       
 
     def __array_wrap__(self, out_arr, context=None):
-        """see __array_finalize__ for info. This is for if ImageArray is called 
-        via ufuncs. array_finalize is called after"""
+        """Part of the numpy array machinery.
+        
+        see __array_finalize__ for info. This is for if ImageArray is called 
+        via ufuncs. array_finalize is called after.
+        """
         ret=np.ndarray.__array_wrap__(self, out_arr, context)
         return ret
 
@@ -281,6 +259,32 @@ class ImageArray(np.ndarray,metadataObject):
                     of processing)
         """
         pass #already sorted metadata and ndarray setup through __new__
+
+    @classmethod
+    def _load(cls,filename,**array_args):
+        """Load an image from a file and return as a ImageArray."""
+        if filename.endswith('.npy'):
+            image = np.load(filename)
+            image = np.array(image, **array_args).view(cls)
+        else:        
+            with Image.open(filename,'r') as img:
+                image=np.asarray(img).view(cls)
+                # Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it's important to make
+                # sure that we're not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...
+                if np.issubdtype(image.dtype,np.integer):
+                    bits=np.ceil(np.log2(image.max()))
+                    if bits<=8:
+                        image=image.astype("uint8")
+                    elif bits<=16:
+                        image=image.astype("uint16")
+                    elif bits<=32:
+                        image=image.astype("uint32")
+                for k in img.info:
+                    v=img.info[k]
+                    if "b'" in v: v=v.strip(" b'")    
+                    image.metadata[k]=v
+        image.metadata["Loaded from"]=os.path.realpath(filename)
+        return image
         
 #==============================================================
 # Propety Accessor Functions
@@ -342,8 +346,9 @@ class ImageArray(np.ndarray,metadataObject):
         return list(skimage|kfuncs|parent|mine)
     
     def __getattr__(self,name):
-        """run when asking for an attribute that doesn't exist yet. It
-        looks first in imagefuncs.py then in skimage functions for a match. If
+        """run when asking for an attribute that doesn't exist yet. 
+        
+        It looks first in imagefuncs.py then in skimage functions for a match. If
         it finds it it returns a copy of the function that automatically adds
         the image as the first argument.
         skimage functions can be called by module_func notation
@@ -407,9 +412,10 @@ class ImageArray(np.ndarray,metadataObject):
         return gen_func 
     
     def __setattr__(self, name, value):
+        """Set an attribute on the object."""
         super(ImageArray, self).__setattr__(name, value)
-         #add attribute to those for copying in array_finalize. use value as
-         #defualt.
+        #add attribute to those for copying in array_finalize. use value as
+        #defualt.
         circ = ['_extra_attributes'] #circular references
         proxy = ['_kfuncs_proxy', '_ski_funcs_proxy'] #can be reloaded for cloned arrays
         if name in circ + proxy: 
@@ -450,8 +456,7 @@ class ImageArray(np.ndarray,metadataObject):
 
     
     def box(self, *args, **kargs):
-        """alias for crop
-        """
+        """alias for crop"""
         return self.crop(*args, **kargs)
     
     def crop_image(self, *args, **kargs):
@@ -459,7 +464,9 @@ class ImageArray(np.ndarray,metadataObject):
         return self.crop(*args, **kargs)
 
     def crop(self, *args, **kargs):
-        """Crop the image. This is essentially like taking a view onto the array
+        """Crop the image. 
+        
+        This is essentially like taking a view onto the array
         but uses image x,y coords (x,y --> col,row)
         Returns a view according to the coords given. If box is None it will
         allow the user to select a rectangle. If a tuple is given with None
@@ -528,6 +535,7 @@ class ImageArray(np.ndarray,metadataObject):
         
     def asfloat(self, normalise=False, clip_negative=False):
         """Return the image converted to floating point type.
+        
         If currently an int type then floats will be automatically normalised.
         If currently a float type then will normalise if normalise.
         If currently an unsigned int type then image will be in range 0,1        
@@ -553,12 +561,13 @@ class ImageArray(np.ndarray,metadataObject):
             ret = self
         norm=np.linalg.norm(ret)
         if norm==0: 
-           raise RuntimeError('Attempting to normalise an array with only 0 values')
+            raise RuntimeError('Attempting to normalise an array with only 0 values')
         ret = ret / norm
         return ret
 
     def clip_intensity(self):
         """prefer ImageArray.normalise 
+        
         clip_intensity for back compatibility
         """
         ret = self.asfloat(normalise=True, clip_negative=True)
@@ -570,14 +579,16 @@ class ImageArray(np.ndarray,metadataObject):
               
     def clip_negative(self):
         """Clip negative pixels to 0.
+        
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
         are changed to 0.
         """
         self[self<0] = 0
     
     def asint(self, dtype=np.uint16):
-        """convert the image to unsigned integer format. May raise warnings 
-        about loss of precision. Pass through to skiamge img_as_uint
+        """convert the image to unsigned integer format. 
+        
+        May raise warnings about loss of precision. Pass through to skiamge img_as_uint
         """
         if self.dtype.kind=='f' and (np.max(self)>1 or np.min(self)<-1):
             self=self.normalise()
@@ -588,9 +599,10 @@ class ImageArray(np.ndarray,metadataObject):
         """back compatability. asuint preferred"""
         self.asint()
 
-    def save(self, filename=None, fmt='png'):
-        """Saves the image into the file 'filename'. Metadata will be preserved 
-        in .png format.
+    def save(self, filename, **kargs):
+        """Saves the image into the file 'filename'. 
+        
+        Metadata will be preserved in .png format.
         fmt can be 'png' or 'npy' or 'both' which will save the file in that format.
         metadata is lost in .npy format but data is converted to integer format
         for png so that definition can be lost and negative values are clipped.
@@ -602,6 +614,8 @@ class ImageArray(np.ndarray,metadataObject):
                 filename is False then a file dialog is forced.
             
         """
+        fmt=kargs.pop("fmt","png")
+        self.filename=getattr(self,"filename","")
         if fmt not in ['png','npy','both']:
             raise ValueError('fmt must be "png" or "npy" or "both"')
         if filename is None:
@@ -630,9 +644,8 @@ class ImageArray(np.ndarray,metadataObject):
             mode(string): The mode of the file operation  'r' or 'w'
 
         Returns:
-            A filename to be used for the file operation."""
-        # Wildcard pattern to be used in file dialogs.
-
+            A filename to be used for the file operation.
+        """
         patterns=(('png', '*.png'))
 
         if self.filename is not None:
@@ -657,7 +670,10 @@ class ImageArray(np.ndarray,metadataObject):
 
             
 class ImageFile(object):
-    """Analagous to DataFile this contains metadata and an image attribute which
+    
+    """An Image file type that is analagous to DataFile.
+    
+    This contains metadata and an image attribute which
     is an ImageArray type which subclasses numpy ndarray and adds lots of extra
     image specific processing functions. 
     
@@ -685,6 +701,7 @@ class ImageFile(object):
     
     def __init__(self, *args, **kargs):
         """Mostly a pass through to ImageArray constructor.
+        
         Local attribute is image. All other attributes and calls are passed
         through to image attribute.
         """
@@ -692,29 +709,37 @@ class ImageFile(object):
     
     @property
     def image(self):
+        """Access the image data."""
         return self._image
     
     @image.setter
     def image(self, v):
+        """Ensure stored image is always an ImageArray."""
         self._image = ImageArray(v)
     
     def __getitem__(self, n):
+        """A pass through to ImageArray."""
         return self.image.__getitem__(n)
    
     def __setitem__(self, n, v):
+        """A Pass through to ImageArray."""
         self.image.__setitem__(n,v)
     
     def __delitem__(self, n):
+        """A Pass through to ImageArray."""
         self.image.__delitem__(n)
     
     def __getattr__(self, n):
+        """"Handles attriobute access."""
         ret = getattr(self.image, n)
         if hasattr(ret, '__call__'): #we have a method
             ret = self._func_generator(ret) #modiy so that we can change image in place
         return ret
         
     def _func_generator(self, workingfunc):
-        """ImageFile generator. If function called returns ImageArray type 
+        """ImageFile generator. 
+        
+        If function called returns ImageArray type 
         of the same shape as our current image then
         use that to update image attribute, otherwise return given output.
         """
@@ -730,6 +755,7 @@ class ImageFile(object):
         return gen_func            
     
     def __setattr__(self, n, v):
+        """Handles setting attributes."""
         if n in ['image', '_image']:
             super(ImageFile,self).__setattr__(n, v)
         else:

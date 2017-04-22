@@ -410,7 +410,7 @@ class ImageStack(metadataObject):
         """
         args = list(args)
         func = args.pop(0)
-        quiet = kargs.pop('quiet', False)
+        quiet = kargs.pop('quiet', True)
         if isinstance(func, string_types):
             for i, im in enumerate(self):
                 f=getattr(im,func)

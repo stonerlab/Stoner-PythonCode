@@ -31,7 +31,6 @@ class ImageFolderTest(unittest.TestCase):
 
     def test_load(self):
         self.assertTrue(len(self.td)==len(os.listdir(testdir)), "Didn't find all the images")
-        #print(type(self.td[0]))
         self.assertTrue(isinstance(self.td[0],ImageArray), 'Getting an image array from the ImageFolder failed') #'{}, '.format(isinstance(self.td[0], ImageArray))#
         #self.assertTrue(self.td.slice_metadata(key='field',values_only=True)==knownfieldvals, 'slice metadata failed')
     
