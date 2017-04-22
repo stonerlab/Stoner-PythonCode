@@ -42,8 +42,8 @@ class ImageArrayTest(unittest.TestCase):
         #from array
         self.assertTrue(np.array_equal(self.imarr,self.arr))
         #int type
-        imarr = ImageArray(np.arange(12).reshape(3,4))
-        self.assertTrue(imarr.dtype==np.dtype('int32'))        
+        imarr = ImageArray(np.arange(12,dtype="int32").reshape(3,4))
+        self.assertTrue(imarr.dtype==np.dtype('int32'),"Failed to set correct dtype - actual dtype={}".format(imarr.dtype))        
     
     def test_load_from_ImageArray(self):
         #from ImageArray
@@ -51,15 +51,15 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(shares_memory(self.imarr, t), 'no overlap on creating ImageArray from ImageArray')
     
     def test_load_from_png(self):
-        subpath = 'coretestdata\im1_annotated.png'
-        fpath = path.join(thisdir, subpath)
+        subpath = os.path.join("coretestdata","im1_annotated.png")
+        fpath = os.path.join(thisdir, subpath)
         anim=ImageArray(fpath)
         self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath))
         cwd = os.getcwd()
         os.chdir(thisdir)
         anim = ImageArray(subpath)
         #check full path is in loaded from metadata
-        self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), 'Full path not in metadata')
+        self.assertTrue(os.path.normpath(anim.metadata['Loaded from']) == os.path.normpath(fpath), 'Full path not in metadata: {}'.format(anim["Loaded from"]))
         os.chdir(cwd)
    
     def test_load_from_ImageFile(self):
@@ -235,11 +235,7 @@ class ImageFileTest(unittest.TestCase):
 
         
 if __name__=="__main__": # Run some tests manually to allow debugging
-    test=ImageArrayTest()
-    test2=ImageFileTest()
-    #test2.setUp()
-    #test2.test_methods()
+    test=ImageArrayTest("test_filename")
+    test2=ImageFileTest("test_methods")
     unittest.main()
-
-
 

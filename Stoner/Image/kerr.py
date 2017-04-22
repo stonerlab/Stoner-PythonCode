@@ -362,7 +362,7 @@ class KerrStack(ImageStack):
         crop=(0,IM_SIZE[1],0,IM_SIZE[0])
         self.crop_stack(box=crop)
     
-    def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=False, 
+    def HcMap(self, threshold=0.5, correct_drift=False, baseimage=0, quiet=True, 
               saturation_end=True, saturation_white=True, extra_info=False):
         """produce a map of the switching field at every pixel in the stack.
         It needs the stack to start saturated one way and end saturated the other way.

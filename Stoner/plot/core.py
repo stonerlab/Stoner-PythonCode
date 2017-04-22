@@ -80,7 +80,7 @@ class PlotMixin(object):
         self.__figure = None
         self._labels = copy.deepcopy(self.column_headers)
         self._subplots = []
-        self._showfig=True # Retains previous behaviour
+        self._showfig=kargs.pop("showfig",True) # Retains previous behaviour
         if self.debug: print("Done PlotMixin init")
         self._public_attrs={
             "fig": (int, mplfig.Figure),
