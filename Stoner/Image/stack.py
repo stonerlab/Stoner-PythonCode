@@ -14,7 +14,8 @@ import copy
 import numbers
 
 from skimage.viewer import CollectionViewer
-from Stoner.compat import int_types, string_types
+from Stoner.compat import  string_types
+from Stoner.tools import all_type
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped
@@ -36,7 +37,7 @@ def _average_list(listob):
         return None #all of the list isn't the same type
     typex = listob[0]
     if isinstance(typex, numbers.Number):
-            ret = sum(listob)/float(len(listob))
+        ret = sum(listob)/float(len(listob))
     elif isinstance(typex, np.ndarray):
         try:
             ret = np.average(tuple(listob))
@@ -108,11 +109,11 @@ class ImageStack(metadataObject):
         self.imarray = np.zeros((0,0,0))
         self.metadata_info = kargs.pop('metadata_info', 'list')
         self.allmeta = [] #A list of metadata dicts extracted from the input images,
-                          #if just a 3d numpy array is given this will be empty.
-                          #this is for easy reconstruction if we want to get images 
-                          #back out of ImageStack
+        #                  if just a 3d numpy array is given this will be empty.
+        #                  this is for easy reconstruction if we want to get images 
+        #                  back out of ImageStack
         self.zipallmeta = {} #dict of allmeta in list form (only keys that 
-                          #are common to all images are retained)
+        #                       are common to all images are retained)
         copyarray = kargs.pop('copyarray', False)
         self._commonkeys = [] #metadata fields that are common to all images        
         self['metadata_info'] = self.metadata_info
@@ -318,8 +319,7 @@ class ImageStack(metadataObject):
         Arg:
             item(ndarray or ImageArray):
                 array of same shape as other images in stack
-        """
-                
+        """                
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -342,8 +342,7 @@ class ImageStack(metadataObject):
                 index for insertion
             item(ndarray or ImageArray):
                 array of same shape as other images in stack
-        """
-        
+        """        
         if not isinstance(item, np.ndarray):
             raise ValueError('append expects array type, {} given.'.format(type(item)))
         if len(self)>0 and item.shape!=self[0].shape:
@@ -373,7 +372,8 @@ class ImageStack(metadataObject):
         """Clip intensity that lies outside the range allowed by dtype.
         
         Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels
-        are changed to 0. (Numpy should limit the range on arrays of int dtypes."""
+        are changed to 0. (Numpy should limit the range on arrays of int dtypes.
+        """
         dl=self.dtype_limits(clip_negative=True)
         np.clip(self.imarray, dl[0], dl[1], out=self.imarray)
     

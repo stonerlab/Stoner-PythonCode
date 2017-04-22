@@ -7,6 +7,7 @@ Created on Mon May 23 12:05:59 2016
 
 from .core import ImageArray
 from Stoner.Folders import DiskBssedFolder, baseFolder
+from Stoner.compat import string_types
 
 from collections import Iterable
 
@@ -102,8 +103,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         return metadata
     
     def stack(self):
-        """Return a ImageStack of the images in the current group.
-        """
+        """Return a ImageStack of the images in the current group."""
         from Stoner.Image import ImageStack
         k = ImageStack(self)
         return k
