@@ -209,13 +209,36 @@ class ImageArrayTest(unittest.TestCase):
         self.assertTrue(np.allclose(im3, im0), 'skimage call with module name failed')
 
 class ImageFileTest(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.a = np.linspace(0,5,12).reshape(3,4)
+        self.ifi = ImageFile(self.a)
+    
+    def test_properties(self):
+        self.assertTrue(np.allclose(self.ifi.image, self.a))
+        self.ifi[0,1]=10.1
+        self.assertTrue(self.ifi.image[0,1]==10.1)
+    
+    def test_attrs(self):
+        self.assertTrue(self.ifi['Loaded from'] == '')
+        self.ifi.abc = 123
+        self.assertTrue(self.ifi.image.abc == 123)
+        self.assertTrue(self.ifi.abc == 123)
+        
+    def test_methods(self):
+        b=np.arange(12).reshape(3,4)
+        ifi = ImageFile(b)
+        ifi.asfloat() #convert in place
+        self.assertTrue(ifi.image.dtype.kind == 'f')
+        ifi.image == ifi.image*5
+        ifi.rescale_intensity()
+        self.assertTrue(np.allclose(ifi.image, np.linspace(0,1,12).reshape(3,4)))
 
         
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=ImageArrayTest()
-    #test.setUp()
-    #test.test_filename()
+    test2=ImageFileTest()
+    #test2.setUp()
+    #test2.test_methods()
     unittest.main()
 
 

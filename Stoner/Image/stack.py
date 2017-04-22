@@ -14,7 +14,7 @@ import copy
 import numbers
 
 from skimage.viewer import CollectionViewer
-from Stoner.compat import int_types
+from Stoner.compat import int_types, string_types
 
 IM_SIZE=(512,672) #Standard Kerr image size
 AN_IM_SIZE=(554,672) #Kerr image with annotation not cropped

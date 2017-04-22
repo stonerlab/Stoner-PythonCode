@@ -112,11 +112,6 @@ class ImageArray(np.ndarray,metadataObject):
         Construct an ImageArray object. 
         We're using __new__ rather than __init__ to imitate a numpy array as 
         close as possible.
-    def __new__(cls, image=None, *args, **kwargs):
-        """        Construct a ImageArray object. 
-        
-        We're using __new__ rather than __init__
-        to imitate a numpy array as close as possible.
         """
         
         def _load(cls,filename,**array_args):
@@ -359,7 +354,7 @@ class ImageArray(np.ndarray,metadataObject):
         heirarchy, followed by imagefuncs, followed by skimage funcs
         Also note that the function named must take image array as the
         first argument
-        """
+
 
         An alternative nested attribute system could be something like
         http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects
@@ -542,11 +537,12 @@ class ImageArray(np.ndarray,metadataObject):
             clip_negative(bool):
                 clip negative intensity to 0
         """
-        self.image = ImageArray(convert(self, dtype=np.float64))
+        ret = ImageArray(convert(self, dtype=np.float64))
         if normalise:
-            self.normalise()
+            ret = ret.normalise()
         if clip_negative:
-            self.clip_negative()
+            ret = ret.clip_negative()
+        return ret
     
     def normalise(self):
         """Normalise the image to -1,1.
@@ -712,21 +708,19 @@ class ImageFile(object):
         self.image.__delitem__(n)
     
     def __getattr__(self, n):
-        if isinstance(n, string_types):
-            ret = getattr(self.image, n)
-        else:
-            ret = getattr(self.image, n)
-            if hasattr(ret, '__call__'): #we have a method
-                ret = self._func_generator(ret) #modiy so that we can change image in place
+        ret = getattr(self.image, n)
+        if hasattr(ret, '__call__'): #we have a method
+            ret = self._func_generator(ret) #modiy so that we can change image in place
         return ret
         
     def _func_generator(self, workingfunc):
-        """ImageFile generator. If function called returns ImageArray type then
-        use that to set image attribute, otherwise return given output.
+        """ImageFile generator. If function called returns ImageArray type 
+        of the same shape as our current image then
+        use that to update image attribute, otherwise return given output.
         """
         def gen_func(*args, **kargs):
             r = workingfunc(*args, **kargs)
-            if isinstance(r,ImageArray):
+            if isinstance(r,ImageArray) and r.shape==self.image.shape:
                 self.image = r
             else:
                 return r
@@ -736,4 +730,7 @@ class ImageFile(object):
         return gen_func            
     
     def __setattr__(self, n, v):
-        setattr(self.image, n, v)
+        if n in ['image', '_image']:
+            super(ImageFile,self).__setattr__(n, v)
+        else:
+            setattr(self.image, n, v)
