@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Kerr Image Processing Module.
+
 Created on Fri Apr 21 17:29:08 2017
 Derivatives of ImageArray and ImageStack specific to processing Kerr images.
 
@@ -26,8 +27,7 @@ class KerrArray(ImageArray):
     _useful_keys = ['X-B-2d','field: units','MicronsPerPixel','Comment:',
         'Contrast Shift','HorizontalFieldOfView','Images to Average',
         'Lens','Magnification','Substraction Std']
-    _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that
-                                           #it is a standard file output
+    _test_keys = ['X-B-2d','field: units'] #minimum keys in data to assert that it is a standard file output
                
     def __init__(self,*args,**kargs):
         """Constructor for KerrArray which subclasses ImageArray. 
@@ -69,14 +69,13 @@ class KerrArray(ImageArray):
     @property
     def tesseractable(self):
         """Do a test call to tesseract to see if it is there and cache the result."""
-        if hasattr(self,"_tesseractable"):
-            return self._tesseractable
         try:
-            ret=subprocess.call(["tesseract","-v"])
-        except:
-            ret = -1
-        self._tesseractable=ret==0
-        return ret==0
+            self.__tesseractable=getattr(self,"_tesseractable")
+        except AttributeError:
+            self._tesseractable=subprocess.call(["tesseract","-v"])==0
+        except Exception:
+            self._tesseractable=False
+        return self._tesseractable
     
     def crop_text(self, copy=False):
         """Crop the bottom text area from a standard Kermit image
@@ -90,8 +89,8 @@ class KerrArray(ImageArray):
             cropped image
         """
         if self.shape!=AN_IM_SIZE and self.shape!=IM_SIZE:
-                raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
-        return self.crop(None, None, None, IM_SIZE[0])
+            raise ValueError('Need a full sized Kerr image to crop') #check it's a normal image
+        return self.crop(None, None, None, IM_SIZE[0],copy=copy)
 
     def reduce_metadata(self):
         """Reduce the metadata down to a few useful pieces and do a bit of processing.
@@ -137,7 +136,7 @@ class KerrArray(ImageArray):
         if key in ['ocr_field','ocr_scalebar_length_microns']:
             try:
                 text=float(text)
-            except:
+            except Exception:
                 pass #leave it as string
         #print '{} after processsing: \'{}\''.format(key,data)
 
@@ -485,7 +484,7 @@ class MaskStack(KerrStack):
         del(switch_prog[-1])
         for m in reversed(range(len(ms)-1)): #go from saturation backwards
             already_done=np.copy(switch_ind).astype(dtype=bool) #only change switch_ind if it hasn't already
-            condition=np.logical_and( ms[m]!=True, bool(ms[m+1]) )
+            condition=np.logical_and(not ms[m], ms[m+1] )
             condition=np.logical_and(condition, np.invert(already_done))
             condition=[condition, np.logical_not(condition)]
             choice=[np.ones(switch_ind.shape)*m, switch_ind] #index or leave as is
