@@ -2,8 +2,7 @@ import unittest
 import sys
 import os.path as path
 import os
-import fnmatch
-from Stoner.compat import *
+from Stoner.compat import listdir_recursive
 from importlib import import_module
 import matplotlib.pyplot as plt
 from traceback import format_exc
@@ -18,7 +17,7 @@ class DocSamples_test(unittest.TestCase):
     datadir=path.join(pth,"doc","samples")
 
     def setUp(self):
-        self.scripts=fnmatch.filter(os.listdir(self.datadir),"*.py")
+        self.scripts=[path.relpath(x,self.datadir).replace(path.sep,".") for x in listdir_recursive(self.datadir,"*.py") if not x.endswith("__init__.py")]
         sys.path.insert(0,self.datadir)
         
     def test_scripts(self):
@@ -31,8 +30,10 @@ class DocSamples_test(unittest.TestCase):
             try:
                 os.chdir(self.datadir)
                 code=import_module(script)
+                fignum=len(plt.get_fignums())
+                self.assertGreaterEqual(fignum,1,"{} Did not produce any figures !".format(script))
                 plt.close("all")
-            except Exception as e:
+            except Exception:
                 v=format_exc()
                 print("Failed with\n{}".format(v))
                 failures.append("Script file {} failed with {}".format(filename,v))
