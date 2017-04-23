@@ -761,8 +761,6 @@ class AnalysisMixin(object):
                 popt,pcov,infodict,mesg,ier = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
                 ret = (popt,pcov,infodict,mesg,ier)
             else:
-                if s is not None:
-                    print(s.shape)
                 popt,pcov = curve_fit(func, xdat, ydat, p0=p0, sigma=s, absolute_sigma=absolute_sigma, **kargs)
             perr=_np_.sqrt(_np_.diag(pcov))
             if result is not None:

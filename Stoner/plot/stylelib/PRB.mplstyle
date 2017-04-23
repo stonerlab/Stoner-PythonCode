@@ -12,7 +12,6 @@ legend.frameon      :False   # whether or not to draw a frame around legend
 legend.handleheight :0.7     # the height of the legend handle in fraction of fontsize
 legend.handlelength :2.     # the length of the legend lines in fraction of fontsize
 legend.handletextpad:0.8    # the space between the legend line and legend text in fraction of fontsize
-legend.isaxes       :True
 legend.labelspacing :0.5    # the vertical space between the legend entries in fraction of fontsize
 legend.markerscale  :1.0    # the relative size of legend markers vs. original
 legend.numpoints    :2      # the number of points in the legend line
