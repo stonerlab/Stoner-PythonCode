@@ -76,12 +76,9 @@ class PlotMixin(object):
         """Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.
 
         """
-        super(PlotMixin,self).__init__(*args,**kargs)
         self.__figure = None
-        self._labels = copy.deepcopy(self.column_headers)
-        self._subplots = []
         self._showfig=kargs.pop("showfig",True) # Retains previous behaviour
-        if self.debug: print("Done PlotMixin init")
+        self._subplots = []
         self._public_attrs={
             "fig": (int, mplfig.Figure),
             "labels": list,
@@ -92,7 +89,10 @@ class PlotMixin(object):
             "xlabel": string_types,
             "ylabel": string_types,
             "showfig": bool
-    }
+        }
+        super(PlotMixin,self).__init__(*args,**kargs)
+        self._labels = copy.deepcopy(self.column_headers)
+        if self.debug: print("Done PlotMixin init")
 
 
 #============================================================================================================================
