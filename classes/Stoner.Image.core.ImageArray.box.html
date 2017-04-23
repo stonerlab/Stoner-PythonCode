@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ImageArray.clip_intensity" href="Stoner.Image.core.ImageArray.clip_intensity.html" />
-    <link rel="prev" title="ImageArray._load" href="Stoner.Image.core.ImageArray._load.html" /> 
+    <link rel="prev" title="ImageArray.asint" href="Stoner.Image.core.ImageArray.asint.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -44,7 +44,7 @@
           <a href="Stoner.Image.core.ImageArray.clip_intensity.html" title="ImageArray.clip_intensity"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.core.ImageArray._load.html" title="ImageArray._load"
+          <a href="Stoner.Image.core.ImageArray.asint.html" title="ImageArray.asint"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
@@ -61,38 +61,8 @@
 <h1>ImageArray.box<a class="headerlink" href="#imagearray-box" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Image.core.ImageArray.box">
-<code class="descclassname">ImageArray.</code><code class="descname">box</code><span class="sig-paren">(</span><em>xmin</em>, <em>xmax</em>, <em>ymin</em>, <em>ymax</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray.box" title="Permalink to this definition">¶</a></dt>
-<dd><p>Crop the data to a box.</p>
-<p>Essentially an alias for crop but always returns a view onto
-the array rather than a copy (ie copy=False). Useful for if you
-want to do something to a partial area of an image.
-Equivalent to im[ymin,ymax,xmin,xmax]
-(the natural extension of this is using masked arrays for arbitrary
-areas, yet to be implemented)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>xmin int</strong></li>
-<li><strong>xmax int</strong></li>
-<li><strong>ymin int</strong></li>
-<li><strong>ymax int</strong></li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>view (ImageArray)</em> &#8211;     view onto the array</p>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Example</p>
-<p>a=ImageArray([[1,2,3],[0,1,2]])
-b=a.box(0,1,0,2)
-b[:]=b+1
-print a
-#result:
-[[2,3,3],[1,2,2]]</p>
+<code class="descclassname">ImageArray.</code><code class="descname">box</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray.box" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias for crop</p>
 </dd></dl>
 
 </div>
@@ -107,8 +77,8 @@ print a
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.core.ImageArray._load.html"
-                        title="previous chapter">ImageArray._load</a></p>
+  <p class="topless"><a href="Stoner.Image.core.ImageArray.asint.html"
+                        title="previous chapter">ImageArray.asint</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.core.ImageArray.clip_intensity.html"
                         title="next chapter">ImageArray.clip_intensity</a></p>
@@ -146,7 +116,7 @@ print a
           <a href="Stoner.Image.core.ImageArray.clip_intensity.html" title="ImageArray.clip_intensity"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.core.ImageArray._load.html" title="ImageArray._load"
+          <a href="Stoner.Image.core.ImageArray.asint.html" title="ImageArray.asint"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li>
@@ -155,7 +125,7 @@ print a
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

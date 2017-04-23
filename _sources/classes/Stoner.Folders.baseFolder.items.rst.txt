@@ -1,0 +1,8 @@
+
+
+baseFolder.items
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.items

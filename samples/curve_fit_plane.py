@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 
 
 
-def plane(coord,a,b,c): # Function to define a plane
+def plane(coord,a,b,c):
+    """Function to define a plane"""
     return c-(coord[0]*a+coord[1]*b)
 
 coeefs=[1,-0.5,-1]

@@ -1,8 +1,0 @@
-
-
-KerrStack.stable_mask
-========================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: KerrStack.stable_mask

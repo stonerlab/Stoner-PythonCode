@@ -1,0 +1,8 @@
+
+
+baseFolder.__init__
+==================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.__init__

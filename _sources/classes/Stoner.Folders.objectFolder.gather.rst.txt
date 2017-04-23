@@ -1,8 +1,0 @@
-
-
-objectFolder.gather
-==================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.gather

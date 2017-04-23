@@ -1,0 +1,292 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Folders.baseFolder &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="baseFolder.__init__" href="Stoner.Folders.baseFolder.__init__.html" />
+    <link rel="prev" title="errorfill" href="../functions/Stoner.plot.utils.errorfill.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.baseFolder.__init__.html" title="baseFolder.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../functions/Stoner.plot.utils.errorfill.html" title="errorfill"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-folders-basefolder">
+<h1>Stoner.Folders.baseFolder<a class="headerlink" href="#stoner-folders-basefolder" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Folders.baseFolder">
+<em class="property">class </em><code class="descclassname">Stoner.Folders.</code><code class="descname">baseFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Folders.html#baseFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Folders.baseFolder" title="Permalink to this definition">¶</a></dt>
+<dd><p>A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</p>
+<dl class="attribute">
+<dt id="Stoner.Folders.baseFolder.groups">
+<code class="descname">groups</code><a class="headerlink" href="#Stoner.Folders.baseFolder.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>regexpDict</em> &#8211; A dictionary of similar baseFolder instances</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Folders.baseFolder.objects">
+<code class="descname">objects</code><a class="headerlink" href="#Stoner.Folders.baseFolder.objects" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>regexptDict</em> &#8211; A dictionary of metadataObjects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Stoner.Folders.baseFolder._index">
+<code class="descname">_index</code><a class="headerlink" href="#Stoner.Folders.baseFolder._index" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>list</em> &#8211; An index of the keys associated with objects</p>
+</dd></dl>
+
+<dl class="docutils">
+<dt>Properties:</dt>
+<dd>depth (int): The maximum number of levels of nested groups in the folder
+files (list of str or metadataObject): the indivdual objects or their names if they are not loaded
+instance (metadataObject): an empty instance of the data type stored in the folder
+loaded (generator of (str name, metadataObject value): iterate over only the loaded into memory items of the folder
+ls (list of str): the names of the objects in the folder, loaded or not
+lsgrp (list of str): the names of all the groups in the folder
+mindepth (int): the minimum level of nesting groups in the folder.
+not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
+type (subclass of metadtaObject): the class of objects sotred in this folder</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.__init__.html#Stoner.Folders.baseFolder.__init__" title="Stoner.Folders.baseFolder.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>Initialise the baseFolder.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.add_group.html#Stoner.Folders.baseFolder.add_group" title="Stoner.Folders.baseFolder.add_group"><code class="xref py py-obj docutils literal"><span class="pre">add_group</span></code></a>(key)</td>
+<td>Add a new group to the current baseFolder with the given key.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.clear.html#Stoner.Folders.baseFolder.clear" title="Stoner.Folders.baseFolder.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>()</td>
+<td>Clear the subgroups.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.count.html#Stoner.Folders.baseFolder.count" title="Stoner.Folders.baseFolder.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a>(name)</td>
+<td>Provide a count method like a sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.filter.html#Stoner.Folders.baseFolder.filter" title="Stoner.Folders.baseFolder.filter"><code class="xref py py-obj docutils literal"><span class="pre">filter</span></code></a>([filter,&nbsp;invert,&nbsp;copy])</td>
+<td>Filter the current set of files by some criterion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.filterout.html#Stoner.Folders.baseFolder.filterout" title="Stoner.Folders.baseFolder.filterout"><code class="xref py py-obj docutils literal"><span class="pre">filterout</span></code></a>(filter)</td>
+<td>Synonym for self.filter(filter,invert=True)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.flatten.html#Stoner.Folders.baseFolder.flatten" title="Stoner.Folders.baseFolder.flatten"><code class="xref py py-obj docutils literal"><span class="pre">flatten</span></code></a>([depth])</td>
+<td>Compresses all the groups and sub-groups iunto a single flat file list.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.get.html#Stoner.Folders.baseFolder.get" title="Stoner.Folders.baseFolder.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>(name[,&nbsp;default])</td>
+<td>Return either a sub-group or named object from this folder.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.group.html#Stoner.Folders.baseFolder.group" title="Stoner.Folders.baseFolder.group"><code class="xref py py-obj docutils literal"><span class="pre">group</span></code></a>(key)</td>
+<td>Take the files and sort them into a series of separate objectFolder objects according to the value of the key</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.index.html#Stoner.Folders.baseFolder.index" title="Stoner.Folders.baseFolder.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a>(name[,&nbsp;start,&nbsp;end])</td>
+<td>Provide an index method like a sequence.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.insert.html#Stoner.Folders.baseFolder.insert" title="Stoner.Folders.baseFolder.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a>(ix,&nbsp;value)</td>
+<td>Implements the insert method with the option to append as well.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.items.html#Stoner.Folders.baseFolder.items" title="Stoner.Folders.baseFolder.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>()</td>
+<td>Return the key,value pairs for the subbroups of this folder.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.keys.html#Stoner.Folders.baseFolder.keys" title="Stoner.Folders.baseFolder.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>()</td>
+<td>Return the keys used to access the sub-=groups of this folder.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.make_name.html#Stoner.Folders.baseFolder.make_name" title="Stoner.Folders.baseFolder.make_name"><code class="xref py py-obj docutils literal"><span class="pre">make_name</span></code></a>([value])</td>
+<td>Construct a name from the value object if possible.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.next.html#Stoner.Folders.baseFolder.next" title="Stoner.Folders.baseFolder.next"><code class="xref py py-obj docutils literal"><span class="pre">next</span></code></a>()</td>
+<td>Python 2.7 style iterator function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.pop.html#Stoner.Folders.baseFolder.pop" title="Stoner.Folders.baseFolder.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>([name,&nbsp;default])</td>
+<td>Return and remove either a subgroup or named object from this folder.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.popitem.html#Stoner.Folders.baseFolder.popitem" title="Stoner.Folders.baseFolder.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a>()</td>
+<td>Return the most recent subgroup from this folder.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.prune.html#Stoner.Folders.baseFolder.prune" title="Stoner.Folders.baseFolder.prune"><code class="xref py py-obj docutils literal"><span class="pre">prune</span></code></a>()</td>
+<td>Remove any groups from the objectFolder (and subgroups).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.select.html#Stoner.Folders.baseFolder.select" title="Stoner.Folders.baseFolder.select"><code class="xref py py-obj docutils literal"><span class="pre">select</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>A generator that can be used to select particular data files from the objectFolder</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.setdefault.html#Stoner.Folders.baseFolder.setdefault" title="Stoner.Folders.baseFolder.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>(k[,&nbsp;d])</td>
+<td>Return or set a subgroup or named object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.slice_metadata.html#Stoner.Folders.baseFolder.slice_metadata" title="Stoner.Folders.baseFolder.slice_metadata"><code class="xref py py-obj docutils literal"><span class="pre">slice_metadata</span></code></a>(key)</td>
+<td>Return an array of the metadata values for each item/file in the top level group</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.sort.html#Stoner.Folders.baseFolder.sort" title="Stoner.Folders.baseFolder.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a>([key,&nbsp;reverse])</td>
+<td>Sort the files by some key</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.unflatten.html#Stoner.Folders.baseFolder.unflatten" title="Stoner.Folders.baseFolder.unflatten"><code class="xref py py-obj docutils literal"><span class="pre">unflatten</span></code></a>()</td>
+<td>Takes a file list an unflattens them according to the file paths.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.update.html#Stoner.Folders.baseFolder.update" title="Stoner.Folders.baseFolder.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(other)</td>
+<td>Update this folder with a dictionary or another folder.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.values.html#Stoner.Folders.baseFolder.values" title="Stoner.Folders.baseFolder.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>()</td>
+<td>Return the sub-groups of this folder.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Folders.baseFolder.walk_groups.html#Stoner.Folders.baseFolder.walk_groups" title="Stoner.Folders.baseFolder.walk_groups"><code class="xref py py-obj docutils literal"><span class="pre">walk_groups</span></code></a>(walker,&nbsp;\*\*kargs)</td>
+<td>Walks through a heirarchy of groups and calls walker for each file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Folders.baseFolder.zip_groups.html#Stoner.Folders.baseFolder.zip_groups" title="Stoner.Folders.baseFolder.zip_groups"><code class="xref py py-obj docutils literal"><span class="pre">zip_groups</span></code></a>(groups)</td>
+<td>Return a list of tuples of metadataObjects drawn from the specified groups</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">depth</span></code></td>
+<td>Gives the maximum number of levels of group below the current objectFolder.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">files</span></code></td>
+<td>Return an iterator of potentially unloaded named objects.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#Stoner.Folders.baseFolder.groups" title="Stoner.Folders.baseFolder.groups"><code class="xref py py-obj docutils literal"><span class="pre">groups</span></code></a></td>
+<td>Subfolders are held in an ordered dictionary of groups.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">instance</span></code></td>
+<td>A default instance of the type of object in the folder.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">loaded</span></code></td>
+<td>An iterator that indicates wether the contents of the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Folders.objectFolder</span></code> has been loaded into memory.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">ls</span></code></td>
+<td>List just the names of the objects in the folder.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">lsgrp</span></code></td>
+<td>Returns a list of the groups as a generator.</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">mindepth</span></code></td>
+<td>Gives the minimum number of levels of group below the current objectFolder.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">not_empty</span></code></td>
+<td>An iterator for objectFolder that checks whether the loaded metadataObject objects have any data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#Stoner.Folders.baseFolder.objects" title="Stoner.Folders.baseFolder.objects"><code class="xref py py-obj docutils literal"><span class="pre">objects</span></code></a></td>
+<td>The objects in the folder are stored in a <code class="xref py py-class docutils literal"><span class="pre">regexpDict</span></code>.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">type</span></code></td>
+<td>Defines the (sub)class of the <code class="xref py py-class docutils literal"><span class="pre">Stoner.Core.metadataObject</span></code> instances.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../functions/Stoner.plot.utils.errorfill.html"
+                        title="previous chapter">errorfill</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Folders.baseFolder.__init__.html"
+                        title="next chapter">baseFolder.__init__</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Folders.baseFolder.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Folders.baseFolder.__init__.html" title="baseFolder.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../functions/Stoner.plot.utils.errorfill.html" title="errorfill"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Apr 23, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

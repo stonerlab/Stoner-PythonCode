@@ -1,8 +1,0 @@
-
-
-KerrStack.HcMap
-==================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: KerrStack.HcMap

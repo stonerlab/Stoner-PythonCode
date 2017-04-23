@@ -68,23 +68,19 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">subprocess</span> <span class="c1">#calls to command line</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">skimage</span> <span class="k">import</span> <span class="n">color</span><span class="p">,</span><span class="n">exposure</span><span class="p">,</span><span class="n">feature</span><span class="p">,</span><span class="n">io</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span>\
                     <span class="n">filters</span><span class="p">,</span><span class="n">graph</span><span class="p">,</span><span class="n">util</span><span class="p">,</span><span class="n">restoration</span><span class="p">,</span><span class="n">morphology</span><span class="p">,</span>\
                     <span class="n">segmentation</span><span class="p">,</span><span class="n">transform</span><span class="p">,</span><span class="n">viewer</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
 <span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">PngImagePlugin</span> <span class="c1">#for saving metadata</span>
 <span class="kn">from</span> <span class="nn">Stoner.Core</span> <span class="k">import</span> <span class="n">typeHintedDict</span><span class="p">,</span><span class="n">metadataObject</span>
+<span class="kn">from</span> <span class="nn">Stoner.Image.util</span> <span class="k">import</span> <span class="n">convert</span>
 <span class="kn">from</span> <span class="nn">Stoner</span> <span class="k">import</span> <span class="n">Data</span>
 <span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span><span class="p">,</span><span class="n">get_filedialog</span> <span class="c1"># Some things to help with Python2 and Python3 compatibility</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
 
 
-
-<span class="n">GRAY_RANGE</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">65535</span><span class="p">)</span>  <span class="c1">#2^16</span>
-<span class="n">IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Standard Kerr image size</span>
-<span class="n">AN_IM_SIZE</span><span class="o">=</span><span class="p">(</span><span class="mi">554</span><span class="p">,</span><span class="mi">672</span><span class="p">)</span> <span class="c1">#Kerr image with annotation not cropped</span>
 
 <span class="n">dtype_range</span> <span class="o">=</span> <span class="p">{</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> 
                <span class="n">np</span><span class="o">.</span><span class="n">bool8</span><span class="p">:</span> <span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span>
@@ -156,118 +152,212 @@
     <span class="c1">#Proxy attributess for storing imported functions. Only do the import when needed</span>
     <span class="n">_ski_funcs_proxy</span><span class="o">=</span><span class="kc">None</span>
     <span class="n">_kfuncs_proxy</span><span class="o">=</span><span class="kc">None</span>
-    <span class="n">_reduce_metadata</span><span class="o">=</span><span class="kc">True</span>
-    
+    <span class="c1">#extra attributes for class beyond standard numpy ones</span>
+    <span class="n">_extra_attributes_default</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;metadata&#39;</span><span class="p">:</span> <span class="n">typeHintedDict</span><span class="p">({}),</span>
+                                 <span class="s1">&#39;filename&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
 
     <span class="c1">#now initialise class</span>
 
-    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;        Construct a ImageArray object. </span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Construct an ImageArray object.</span>
 <span class="sd">        </span>
-<span class="sd">        We&#39;re using __new__ rather than __init__</span>
-<span class="sd">        to imitate a numpy array as close as possible.</span>
+<span class="sd">        We&#39;re using __new__ rather than __init__ to imitate a numpy array as </span>
+<span class="sd">        close as possible.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">image</span><span class="o">=</span><span class="nb">list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span> <span class="c1">#we have a filename</span>
-            <span class="n">image</span><span class="p">,</span><span class="n">tmp</span><span class="o">=</span><span class="n">cls</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ImageArray expects 0 or 1 arguments, </span><span class="si">{}</span><span class="s1"> given&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+            
+        <span class="c1">### Deal with kwargs</span>
+        <span class="n">array_arg_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span><span class="s1">&#39;copy&#39;</span><span class="p">,</span><span class="s1">&#39;order&#39;</span><span class="p">,</span><span class="s1">&#39;subok&#39;</span><span class="p">,</span><span class="s1">&#39;ndmin&#39;</span><span class="p">]</span> <span class="c1">#kwargs for array setup</span>
+        <span class="n">array_args</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array_arg_keys</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+        <span class="n">user_metadata</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,{})</span>
+        <span class="n">asfloat</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;asfloat&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">or</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;convert_float&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#convert_float for back compatability</span>
+        <span class="n">_debug</span> <span class="o">=</span> <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;_debug&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                           
+        <span class="c1">### 0 args initialisation</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">user_metadata</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ret</span>       
+        
+        <span class="c1">### 1 args initialisation</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">loadfromfile</span><span class="o">=</span><span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">arg</span>           
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="c1"># numpy array or ImageArray)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">arg</span><span class="p">])</span> <span class="c1">#force 2d array</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Array dimension 0 must be at most 2. Got </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">shape</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">arg</span><span class="p">:</span>
+            <span class="n">patterns</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;*.png&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;npy&#39;</span><span class="p">,</span><span class="s1">&#39;*.npy&#39;</span><span class="p">))</span>
+            <span class="n">arg</span> <span class="o">=</span> <span class="n">get_filedialog</span><span class="p">(</span><span class="n">what</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">filetypes</span><span class="o">=</span><span class="n">patterns</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No file given&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loadfromfile</span><span class="o">=</span><span class="kc">True</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="ow">or</span> <span class="n">loadfromfile</span><span class="p">:</span>
+            <span class="c1"># Filename- load datafile</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">arg</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;File path does not exist </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_load</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">ImageFile</span><span class="p">):</span>
+            <span class="c1">#extract the image</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">image</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">tmp</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">({</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">})</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="c1">#try array on image to check it&#39;s a valid numpy type</span>
-        <span class="n">array_args</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">,</span><span class="s1">&#39;copy&#39;</span><span class="p">,</span><span class="s1">&#39;order&#39;</span><span class="p">,</span><span class="s1">&#39;subok&#39;</span><span class="p">,</span><span class="s1">&#39;ndmin&#39;</span><span class="p">]</span> <span class="c1">#kwargs for array setup</span>
-        <span class="n">array_args</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span><span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array_args</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
-        <span class="n">ka</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
-        <span class="n">ka</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="c1"># Store the metadata from the PNG file into the ImageArray</span>
-        <span class="n">ka</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">ka</span> <span class="c1">#__init__ called</span>
-
-<div class="viewcode-block" id="ImageArray.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.__init__.html#Stoner.Image.core.ImageArray.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                     <span class="n">ocr_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">field_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                 <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor for :py:class:`Stoner.Image.core.ImageArray`.</span>
-<span class="sd">        </span>
-<span class="sd">        Create a ImageArray instance with metadata attribute</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            image: string or numpy array initiator</span>
-<span class="sd">                If a filename is given it will try to load the image from memory</span>
-<span class="sd">                Otherwise it will call np.array(image) on the object so an array or</span>
-<span class="sd">                list is suitable</span>
-<span class="sd">        Keyword Arguments:</span>
-<span class="sd">            reduce_metadata: bool</span>
-<span class="sd">                if True reduce the metadata to useful bits and do some processing on it          </span>
-<span class="sd">            convert_float: bool</span>
-<span class="sd">                if True convert the image to float values between 0 and 1 (necessary </span>
-<span class="sd">                for some forms of processing)</span>
-<span class="sd">            ocr_metadata: bool</span>
-<span class="sd">                whether to try to use optical character recognition to get the </span>
-<span class="sd">                metadata from the image (necessary for images taken pre 06/2016)</span>
-<span class="sd">            field_only: bool</span>
-<span class="sd">                if ocr_metadata is true, get field only (bit faster)</span>
-<span class="sd">            metadata: dict</span>
-<span class="sd">                dictionary of extra metadata items you would like adding to your array</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">image</span><span class="o">=</span><span class="p">[]</span>
+            <span class="k">try</span><span class="p">:</span>  <span class="c1">#try converting to a numpy array (eg a list type)</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">dtype</span><span class="o">==</span><span class="s1">&#39;O&#39;</span><span class="p">:</span> <span class="c1">#object dtype - can&#39;t deal with this</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1">#ok couldn&#39;t load from iterable, we&#39;re done</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No constructor for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">asfloat</span> <span class="ow">and</span> <span class="n">ret</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">!=</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="c1">#convert to float type in place</span>
+            <span class="n">dl</span> <span class="o">=</span> <span class="n">dtype_range</span><span class="p">[</span><span class="n">ret</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">]</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reduce_metadata&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_reduce_metadata</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reduce_metadata</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,(</span><span class="nb">dict</span><span class="p">,</span><span class="n">typeHintedDict</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">image</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="n">image</span>
-        <span class="k">if</span> <span class="n">ocr_metadata</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ocr_metadata</span><span class="p">(</span><span class="n">field_only</span><span class="o">=</span><span class="n">field_only</span><span class="p">)</span> <span class="c1">#update metadat </span></div>
+        <span class="c1">#all constructors call array_finalise so metadata is now initialised</span>
+        <span class="k">if</span> <span class="s1">&#39;Loaded from&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;Loaded from&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;Loaded from&#39;</span><span class="p">]</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">user_metadata</span><span class="p">)</span> 
+        <span class="n">ret</span><span class="o">.</span><span class="n">_debug</span> <span class="o">=</span> <span class="n">_debug</span>
+        <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;__array_finalize__ and __array_wrap__ are necessary functions when subclassing numpy.ndarray to fix some behaviours. </span>
 <span class="sd">        </span>
 <span class="sd">        See http://docs.scipy.org/doc/numpy-1.10.1/user/basics.subclassing.html for</span>
 <span class="sd">        more info and examples</span>
+<span class="sd">        Defaults below are only set when constructing an array using view</span>
+<span class="sd">        eg np.arange(10).view(ImageArray). Otherwise filename and metadata</span>
+<span class="sd">        attributes are just copied over (plus any other attributes set in </span>
+<span class="sd">        _extra_attributes).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_debug&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+            <span class="n">curframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+            <span class="n">calframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curframe</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;caller name:&#39;</span><span class="p">,</span> <span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">_extra_attributes</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;_extra_attributes&#39;</span><span class="p">,</span> 
+                                <span class="n">deepcopy</span><span class="p">(</span><span class="n">ImageArray</span><span class="o">.</span><span class="n">_extra_attributes_default</span><span class="p">))</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_extra_attributes&#39;</span><span class="p">,</span> <span class="n">copy</span><span class="p">(</span><span class="n">_extra_attributes</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">_extra_attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>       
 
     <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;see __array_finalize__ for info&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Part of the numpy array machinery.</span>
+<span class="sd">        </span>
+<span class="sd">        see __array_finalize__ for info. This is for if ImageArray is called </span>
+<span class="sd">        via ufuncs. array_finalize is called after.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ret</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_arr</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
+<div class="viewcode-block" id="ImageArray.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.__init__.html#Stoner.Image.core.ImageArray.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method for :py:class:`ImageArray`.</span>
+
+<span class="sd">        various forms are recognised</span>
+
+<span class="sd">        .. py:function:: ImageArray(&#39;filename&#39;)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Creates the new ImageArray object and then loads data from the </span>
+<span class="sd">            given *filename*.</span>
+
+<span class="sd">        .. py:function:: ImageArray(array)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Creates a new ImageArray object and assigns the *array*.</span>
+<span class="sd">            </span>
+<span class="sd">        .. py:function:: ImageArray(ImageFile)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Creates a new ImageArray object and assigns the *array* using</span>
+<span class="sd">            the ImageFile.image property.</span>
 
 
+<span class="sd">        .. py:function:: ImageArray(ImageArray)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">            Creates the new ImageArray object and initialises all data from the</span>
+<span class="sd">            existing :py:class:`ImageArray` instance. This on the face of it does the same as</span>
+<span class="sd">            the assignment operator, but is more useful when one or other of the</span>
+<span class="sd">            ImageArray objects is an instance of a sub - class of ImageArray</span>
+<span class="sd">        </span>
+<span class="sd">        .. py:function:: ImageArray(bool)</span>
+<span class="sd">            :noindex:</span>
+
+<span class="sd">           if arg[0] is bool and False then open a file dialog to locate the</span>
+<span class="sd">           file to open.</span>
+<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">            arg (positional arguments): an argument that matches one of the</span>
+<span class="sd">                definitions above</span>
+<span class="sd">        Keyword Arguments: All keyword arguments that match public attributes are</span>
+<span class="sd">                used to set those public attributes eg metadata.</span>
+<span class="sd">                </span>
+<span class="sd">                asfloat(bool):</span>
+<span class="sd">                    if True  and loading the image from file, convert the image </span>
+<span class="sd">                    to float values between 0 and 1 (necessary for some forms </span>
+<span class="sd">                    of processing)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span> <span class="c1">#already sorted metadata and ndarray setup through __new__</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ImageArray._load"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray._load.html#Stoner.Image.core.ImageArray._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="o">**</span><span class="n">array_args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load an image from a file and return as a ImageArray.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.npy&#39;</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">array_args</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>        
+            <span class="k">with</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+                <span class="n">image</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+                <span class="c1"># Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it&#39;s important to make</span>
+                <span class="c1"># sure that we&#39;re not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+                    <span class="n">bits</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+                    <span class="k">if</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">8</span><span class="p">:</span>
+                        <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">16</span><span class="p">:</span>
+                        <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint16&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">32</span><span class="p">:</span>
+                        <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint32&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+                    <span class="n">v</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s2">&quot;b&#39;&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; b&#39;&quot;</span><span class="p">)</span>    
+                    <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
+        <span class="n">image</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span></div>
+        
 <span class="c1">#==============================================================</span>
 <span class="c1"># Propety Accessor Functions</span>
 <span class="c1">#==============================================================r</span>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;return a copy of the instance&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span><span class="n">metadata</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span>
-                               <span class="n">get_metadata</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ret</span>        
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">max_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;return the coordinate extent (xmin,xmax,ymin,ymax)&quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span> <span class="c1">#1d array</span>
-            <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">box</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;alias for image[:]. Equivalence to Stoner.data behaviour&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[:]</span>
-    
-    <span class="c1">#@property</span>
-    <span class="c1">#def filename(self):</span>
-    <span class="c1">#    if &#39;filename&#39; in self.keys():</span>
-    <span class="c1">#        ret=self[&#39;filename&#39;]</span>
-    <span class="c1">#    else:</span>
-    <span class="c1">#        ret=None</span>
-    <span class="c1">#    return ret</span>
     
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_kfuncs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -289,17 +379,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs_proxy</span><span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs_proxy</span>
         
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">tesseractable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Do a test call to tesseract to see if it is there and cache the result.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_tesseractable&quot;</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;_tesseractable&quot;</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;tesseract&quot;</span><span class="p">,</span><span class="s2">&quot;-v&quot;</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tesseractable</span><span class="o">=</span><span class="n">ret</span><span class="o">==</span><span class="mi">0</span>
-        <span class="k">return</span> <span class="n">ret</span><span class="o">==</span><span class="mi">0</span>
+
 
 <span class="c1">#==============================================================</span>
 <span class="c1">#function generator</span>
@@ -315,17 +395,22 @@
         <span class="n">parent</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)))</span>
         <span class="n">mine</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">skimage</span><span class="o">|</span><span class="n">kfuncs</span><span class="o">|</span><span class="n">parent</span><span class="o">|</span><span class="n">mine</span><span class="p">)</span>
-
+    
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;run when asking for an attribute that doesn&#39;t exist yet. </span>
 <span class="sd">        </span>
-<span class="sd">        It looks first in kermit funcs then in skimage functions for a match. If</span>
+<span class="sd">        It looks first in imagefuncs.py then in skimage functions for a match. If</span>
 <span class="sd">        it finds it it returns a copy of the function that automatically adds</span>
 <span class="sd">        the image as the first argument.</span>
+<span class="sd">        skimage functions can be called by module_func notation</span>
+<span class="sd">        with the underscore sep eg im.exposure_rescale_intensity, or it can simply</span>
+<span class="sd">        be the function with no module given in which case the entire directory</span>
+<span class="sd">        is searched and the first hit is returned im.rescale_intensity.</span>
 <span class="sd">        Note that numpy is already subclassed so numpy funcs are highest on the</span>
-<span class="sd">        heirarchy, followed by kfuncs, followed by skimage funcs</span>
+<span class="sd">        heirarchy, followed by imagefuncs, followed by skimage funcs</span>
 <span class="sd">        Also note that the function named must take image array as the</span>
 <span class="sd">        first argument</span>
+
 
 <span class="sd">        An alternative nested attribute system could be something like</span>
 <span class="sd">        http://stackoverflow.com/questions/31174295/getattr-and-setattr-on-nested-objects</span>
@@ -338,18 +423,64 @@
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kfuncs</span><span class="p">):</span>
             <span class="n">workingfunc</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kfuncs</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
             <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_func_generator</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">elif</span> <span class="s1">&#39;_&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span> <span class="c1">#ok we might have a skimage module_function request</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+            <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1">#eg rescale_intensity needs stitching back together</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;skimage.&#39;</span><span class="o">+</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">workingfunc</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="mi">0</span><span class="p">],</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_func_generator</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#Ok maybe just a request for an skimage func, no module</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span> <span class="c1">#now look in skimage funcs</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
                     <span class="n">workingfunc</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ski_funcs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">name</span><span class="p">)</span>
                     <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_func_generator</span><span class="p">(</span><span class="n">workingfunc</span><span class="p">)</span>
                     <span class="k">break</span>
+
         <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;No attribute found of name </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">ret</span>
+    
+    <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">workingfunc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;generate a function that adds self as the first argument&quot;&quot;&quot;</span>
 
+        <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">r</span><span class="o">=</span><span class="n">workingfunc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#send copy of self as the first arg</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">Data</span><span class="p">):</span>
+                <span class="k">pass</span> <span class="c1">#Data return is ok</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span> <span class="c1">#1D Array</span>
+                <span class="n">r</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">):</span> <span class="c1">#make sure we return a ImageArray</span>
+                <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span>
+                <span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="c1">#NB we might not be returning an ndarray at all here !</span>
+            <span class="k">return</span> <span class="n">r</span>
+        <span class="n">gen_func</span><span class="o">.</span><span class="n">__doc__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="n">gen_func</span><span class="o">.</span><span class="n">__name__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">return</span> <span class="n">gen_func</span> 
+    
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set an attribute on the object.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="c1">#add attribute to those for copying in array_finalize. use value as</span>
+        <span class="c1">#defualt.</span>
+        <span class="n">circ</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_extra_attributes&#39;</span><span class="p">]</span> <span class="c1">#circular references</span>
+        <span class="n">proxy</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_kfuncs_proxy&#39;</span><span class="p">,</span> <span class="s1">&#39;_ski_funcs_proxy&#39;</span><span class="p">]</span> <span class="c1">#can be reloaded for cloned arrays</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">circ</span> <span class="o">+</span> <span class="n">proxy</span><span class="p">:</span> 
+            <span class="c1">#Ignore these in clone</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_extra_attributes</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span><span class="n">value</span><span class="p">})</span>
+        
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Patch indexing of strings to metadata.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_debug</span><span class="p">:</span>
+            <span class="n">curframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+            <span class="n">calframe</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getouterframes</span><span class="p">(</span><span class="n">curframe</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;caller name:&#39;</span><span class="p">,</span> <span class="n">calframe</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span><span class="n">string_types</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -370,88 +501,68 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">super</span><span class="p">(</span><span class="n">ImageArray</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">workingfunc</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;generate a function that adds self as the first argument&quot;&quot;&quot;</span>
-
-        <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">r</span><span class="o">=</span><span class="n">workingfunc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c1">#send copy of self as the first arg</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">Data</span><span class="p">):</span>
-                <span class="k">pass</span> <span class="c1">#Data return is ok</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span> <span class="c1">#1D Array</span>
-                <span class="n">r</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">opy</span><span class="p">()</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">column_headers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__name__</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">):</span> <span class="c1">#make sure we return a ImageArray</span>
-                <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageArray</span><span class="p">)</span>
-                <span class="n">r</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="c1">#NB we might not be returning an ndarray at all here !</span>
-            <span class="k">return</span> <span class="n">r</span>
-        <span class="n">gen_func</span><span class="o">.</span><span class="n">__doc__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__doc__</span>
-        <span class="n">gen_func</span><span class="o">.</span><span class="n">__name__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__name__</span>
-
-        <span class="k">return</span> <span class="n">gen_func</span>
-
-
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ImageArray._load"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray._load.html#Stoner.Image.core.ImageArray._load">[docs]</a>    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Load an image from a file and return as a 2D array and metadata dictionary.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-            <span class="n">fname</span><span class="o">=</span><span class="n">filename</span>
-            <span class="n">image</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
-            <span class="c1"># Since skimage.img_as_float() looks at the dtype of the array when mapping ranges, it&#39;s important to make</span>
-            <span class="c1"># sure that we&#39;re not using too many bits to store the image in. This is a bit of a hack to reduce the bit-depth...</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-                <span class="n">bits</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
-                <span class="k">if</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">8</span><span class="p">:</span>
-                    <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">16</span><span class="p">:</span>
-                    <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint16&quot;</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">bits</span><span class="o">&lt;=</span><span class="mi">32</span><span class="p">:</span>
-                    <span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint32&quot;</span><span class="p">)</span>
-           
-            <span class="k">if</span> <span class="s1">&#39;dtype&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dtype&#39;</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;uint16&#39;</span> <span class="c1">#defualt output for Kerr microscope</span>
-            <span class="n">tmp</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
-                <span class="n">v</span><span class="o">=</span><span class="n">img</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                <span class="k">if</span> <span class="s2">&quot;b&#39;&quot;</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot; b&#39;&quot;</span><span class="p">)</span>    
-                <span class="n">tmp</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">=</span><span class="n">v</span>
-            <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;Loaded from&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">fname</span>
-        <span class="k">return</span> <span class="n">image</span><span class="p">,</span><span class="n">tmp</span> </div>
-    
 <span class="c1">#==============================================================</span>
 <span class="c1">#Now any other useful bits</span>
 <span class="c1">#==============================================================</span>
-<div class="viewcode-block" id="ImageArray.box"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.box.html#Stoner.Image.core.ImageArray.box">[docs]</a>    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">ymax</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Crop the data to a box.</span>
+
+    
+<div class="viewcode-block" id="ImageArray.box"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.box.html#Stoner.Image.core.ImageArray.box">[docs]</a>    <span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;alias for crop&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="ImageArray.crop_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.crop_image.html#Stoner.Image.core.ImageArray.crop_image">[docs]</a>    <span class="k">def</span> <span class="nf">crop_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;back compatability&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ImageArray.crop"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.crop.html#Stoner.Image.core.ImageArray.crop">[docs]</a>    <span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Crop the image. </span>
 <span class="sd">        </span>
-<span class="sd">        Essentially an alias for crop but always returns a view onto</span>
-<span class="sd">        the array rather than a copy (ie copy=False). Useful for if you</span>
-<span class="sd">        want to do something to a partial area of an image.</span>
-<span class="sd">        Equivalent to im[ymin,ymax,xmin,xmax]</span>
-<span class="sd">        (the natural extension of this is using masked arrays for arbitrary</span>
-<span class="sd">        areas, yet to be implemented)</span>
-
+<span class="sd">        This is essentially like taking a view onto the array</span>
+<span class="sd">        but uses image x,y coords (x,y --&gt; col,row)</span>
+<span class="sd">        Returns a view according to the coords given. If box is None it will</span>
+<span class="sd">        allow the user to select a rectangle. If a tuple is given with None</span>
+<span class="sd">        included then max extent is used for that coord (analagous to slice).</span>
+<span class="sd">        If copy then return a copy of self with the cropped image.</span>
+<span class="sd">        </span>
 <span class="sd">        Args:</span>
-<span class="sd">            xmin int</span>
-<span class="sd">            xmax int</span>
-<span class="sd">            ymin int</span>
-<span class="sd">            ymax int</span>
-
+<span class="sd">            box(tuple) or 4 separate args or None:</span>
+<span class="sd">                (xmin,xmax,ymin,ymax)</span>
+<span class="sd">                If None image will be shown and user will be asked to select</span>
+<span class="sd">                a box (bit experimental)</span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            copy(bool):</span>
+<span class="sd">                If True return a copy of ImageFile with the cropped image</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            view (ImageArray):</span>
-<span class="sd">                view onto the array</span>
-
+<span class="sd">            (ImageArray):</span>
+<span class="sd">                view or copy of array asked for</span>
+<span class="sd">        </span>
 <span class="sd">        Example:</span>
-<span class="sd">            a=ImageArray([[1,2,3],[0,1,2]])</span>
-<span class="sd">            b=a.box(0,1,0,2)</span>
-<span class="sd">            b[:]=b+1</span>
-<span class="sd">            print a</span>
-<span class="sd">            #result:</span>
-<span class="sd">            [[2,3,3],[1,2,2]]</span>
+<span class="sd">            a=ImageFile(np.arange(12).reshape(3,4))</span>
+<span class="sd">            </span>
+<span class="sd">            a.crop(1,3,None,None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sub</span><span class="o">=</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">,</span><span class="n">ymin</span><span class="p">,</span><span class="n">ymax</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">sub</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="ow">and</span> <span class="s1">&#39;box&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">]</span> <span class="c1">#back compatability</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;crop accepts 1 or 4 arguments, </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">box</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1">#experimental</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Select crop area&#39;</span><span class="p">)</span>
+                <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">draw_rectangle</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">box</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span><span class="nb">list</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)</span><span class="o">==</span><span class="mi">4</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;crop accepts tuple of length 4, </span><span class="si">{}</span><span class="s1"> given.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">box</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">box</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">box</span><span class="p">):</span> <span class="c1">#replace None with max extent</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_box</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>   
+        <span class="k">if</span> <span class="s1">&#39;copy&#39;</span> <span class="ow">in</span> <span class="n">kargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">kargs</span><span class="p">[</span><span class="s1">&#39;copy&#39;</span><span class="p">]:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">clone</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
     
 <div class="viewcode-block" id="ImageArray.dtype_limits"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.dtype_limits.html#Stoner.Image.core.ImageArray.dtype_limits">[docs]</a>    <span class="k">def</span> <span class="nf">dtype_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return intensity limits, i.e. (min, max) tuple, of the image&#39;s dtype.</span>
@@ -472,111 +583,120 @@
         <span class="k">if</span> <span class="n">clip_negative</span><span class="p">:</span>
             <span class="n">imin</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">imin</span><span class="p">,</span> <span class="n">imax</span></div>
+        
+<div class="viewcode-block" id="ImageArray.asfloat"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.asfloat.html#Stoner.Image.core.ImageArray.asfloat">[docs]</a>    <span class="k">def</span> <span class="nf">asfloat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the image converted to floating point type.</span>
+<span class="sd">        </span>
+<span class="sd">        If currently an int type then floats will be automatically normalised.</span>
+<span class="sd">        If currently a float type then will normalise if normalise.</span>
+<span class="sd">        If currently an unsigned int type then image will be in range 0,1        </span>
+<span class="sd">        Keyword Arguments:</span>
+<span class="sd">            normalise(bool):</span>
+<span class="sd">                normalise the image to -1,1</span>
+<span class="sd">            clip_negative(bool):</span>
+<span class="sd">                clip negative intensity to 0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">normalise</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">normalise</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">clip_negative</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">clip_negative</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+    
+<div class="viewcode-block" id="ImageArray.normalise"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.normalise.html#Stoner.Image.core.ImageArray.normalise">[docs]</a>    <span class="k">def</span> <span class="nf">normalise</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Normalise the image to -1,1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+            <span class="n">ret</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1">#bit dodgy here having normalise in asfloat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">norm</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> 
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Attempting to normalise an array with only 0 values&#39;</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">/</span> <span class="n">norm</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="ImageArray.clip_intensity"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.clip_intensity.html#Stoner.Image.core.ImageArray.clip_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;prefer ImageArray.normalise </span>
+<span class="sd">        </span>
+<span class="sd">        clip_intensity for back compatibility</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
     
 <div class="viewcode-block" id="ImageArray.convert_float"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.convert_float.html#Stoner.Image.core.ImageArray.convert_float">[docs]</a>    <span class="k">def</span> <span class="nf">convert_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the image converted to floating point type normalised to -1  to 1. </span>
-<span class="sd">        </span>
-<span class="sd">        If clip_negative then clip intensities below 0 to 0.</span>
-<span class="sd">        Unfortunately there is no easy way to convert the type in</span>
-<span class="sd">        place self.astype(np.float64,copy=False) doesn&#39;t</span>
-<span class="sd">        work for different memory block sizes so a new array is produced</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            clip_negative(bool):</span>
-<span class="sd">                If True, clip the negative range (i.e. return 0 for min intensity)</span>
-<span class="sd">                even if the image dtype allows negative values.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            :py:class:`Stoner.Image.core.ImageArray`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="c1">#already float</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_limits</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">dl</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">clip_negative</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">:</span>
-            <span class="n">ret</span><span class="o">=</span><span class="n">ret</span><span class="o">.</span><span class="n">clip_intensity</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">ret</span></div>
-                  
-<div class="viewcode-block" id="ImageArray.clip_intensity"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.clip_intensity.html#Stoner.Image.core.ImageArray.clip_intensity">[docs]</a>    <span class="k">def</span> <span class="nf">clip_intensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;clip intensity that lies outside the range allowed by dtype.</span>
+        <span class="sd">&quot;&quot;&quot;back compatability. asfloat preferred&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asfloat</span><span class="p">(</span><span class="n">normalise</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clip_negative</span><span class="o">=</span><span class="n">clip_negative</span><span class="p">)</span></div>
+              
+<div class="viewcode-block" id="ImageArray.clip_negative"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.clip_negative.html#Stoner.Image.core.ImageArray.clip_negative">[docs]</a>    <span class="k">def</span> <span class="nf">clip_negative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clip negative pixels to 0.</span>
 <span class="sd">        </span>
 <span class="sd">        Most useful for float where pixels above 1 are reduced to 1.0 and -ve pixels</span>
-<span class="sd">        are changed to 0. (Numpy should limit the range on arrays of int dtypes</span>
-<span class="sd">        </span>
-<span class="sd">        Returns:</span>
-<span class="sd">            :py:class:`Stoner.Image.core.ImageArray`</span>
+<span class="sd">        are changed to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dl</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_limits</span><span class="p">(</span><span class="n">clip_negative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">ret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">in_range</span><span class="o">=</span><span class="n">dl</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="bp">self</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+    
+<div class="viewcode-block" id="ImageArray.asint"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.asint.html#Stoner.Image.core.ImageArray.asint">[docs]</a>    <span class="k">def</span> <span class="nf">asint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;convert the image to unsigned integer format. </span>
+<span class="sd">        </span>
+<span class="sd">        May raise warnings about loss of precision. Pass through to skiamge img_as_uint</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span><span class="o">==</span><span class="s1">&#39;f&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">&lt;-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalise</span><span class="p">()</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span></div>
     
 <div class="viewcode-block" id="ImageArray.convert_int"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.convert_int.html#Stoner.Image.core.ImageArray.convert_int">[docs]</a>    <span class="k">def</span> <span class="nf">convert_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;convert the image to uint16 (the format used by Evico)</span>
+        <span class="sd">&quot;&quot;&quot;back compatability. asuint preferred&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asint</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ImageArray.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.save.html#Stoner.Image.core.ImageArray.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;. </span>
 <span class="sd">        </span>
-<span class="sd">        Returns:</span>
-<span class="sd">            :py:class:`Stoner.Image.core.ImageArray`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">img_as_uint</span><span class="p">()</span></div>
-    
-<div class="viewcode-block" id="ImageArray.crop_image"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.crop_image.html#Stoner.Image.core.ImageArray.crop_image">[docs]</a>    <span class="k">def</span> <span class="nf">crop_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Crop the image.</span>
-<span class="sd">        </span>
-<span class="sd">        Crops to the box given. Returns the cropped image.</span>
-
-<span class="sd">        KeywordArguments:</span>
-<span class="sd">            box(array or list of type int):</span>
-<span class="sd">                [xmin,xmax,ymin,ymax]</span>
-<span class="sd">            copy(bool):</span>
-<span class="sd">                whether to return a copy of the array or a view of the original object</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (ImageArray):</span>
-<span class="sd">                cropped image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">box</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">box</span><span class="o">=</span><span class="n">draw_rectangle</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
-        <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="c1">#this is a view onto the</span>
-                                                    <span class="c1">#same memory slots as self</span>
-        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
-            <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">clone</span>  <span class="c1">#this is now a new memory location</span>
-        <span class="k">return</span> <span class="n">im</span></div>
-
-<div class="viewcode-block" id="ImageArray.save"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.save.html#Stoner.Image.core.ImageArray.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the image into the file &#39;filename&#39;, compatible with png.</span>
+<span class="sd">        Metadata will be preserved in .png format.</span>
+<span class="sd">        fmt can be &#39;png&#39; or &#39;npy&#39; or &#39;both&#39; which will save the file in that format.</span>
+<span class="sd">        metadata is lost in .npy format but data is converted to integer format</span>
+<span class="sd">        for png so that definition can be lost and negative values are clipped.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename (string, bool or None): Filename to save data as, if this is</span>
 <span class="sd">                None then the current filename for the object is used</span>
 <span class="sd">                If this is not set, then then a file dialog is used. If </span>
 <span class="sd">                filename is False then a file dialog is forced.</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;fmt&quot;</span><span class="p">,</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">,</span><span class="s1">&#39;npy&#39;</span><span class="p">,</span><span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;fmt must be &quot;png&quot; or &quot;npy&quot; or &quot;both&quot;&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">):</span>
             <span class="c1"># now go and ask for one</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__file_dialog</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span><span class="o">!=</span><span class="s1">&#39;.png&#39;</span><span class="p">:</span>
-            <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="o">+</span><span class="s1">&#39;.png&#39;</span> <span class="c1">#must save as a png type</span>
-        <span class="n">meta</span><span class="o">=</span><span class="n">PngImagePlugin</span><span class="o">.</span><span class="n">PngInfo</span><span class="p">()</span>
-        <span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export_all</span><span class="p">()</span>
-        <span class="n">info</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">info</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>        
-            <span class="n">meta</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
-        <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_int</span><span class="p">()</span>
-        <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint32&#39;</span><span class="p">),</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
-        <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span></div>
-
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="n">pngname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span>
+            <span class="n">meta</span><span class="o">=</span><span class="n">PngImagePlugin</span><span class="o">.</span><span class="n">PngInfo</span><span class="p">()</span>
+            <span class="n">info</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">export_all</span><span class="p">()</span>
+            <span class="n">info</span><span class="o">=</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">info</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>        
+                <span class="n">meta</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">asint</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+            <span class="n">im</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;uint32&#39;</span><span class="p">),</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
+            <span class="n">im</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">pngname</span><span class="p">,</span><span class="n">pnginfo</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;npy&#39;</span><span class="p">,</span> <span class="s1">&#39;both&#39;</span><span class="p">]:</span>
+            <span class="n">npyname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">npyname</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+    
     <span class="k">def</span> <span class="nf">__file_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates a file dialog box for loading or saving ~b DataFile objects.</span>
+        <span class="sd">&quot;&quot;&quot;Creates a file dialog box for loading or saving ~b ImageFile objects.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            mode(string): The mode of the file operation  &#39;r&#39; or &#39;w&#39;</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A filename to be used for the file operation.&quot;&quot;&quot;</span>
-        <span class="c1"># Wildcard pattern to be used in file dialogs.</span>
-
+<span class="sd">            A filename to be used for the file operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">patterns</span><span class="o">=</span><span class="p">((</span><span class="s1">&#39;png&#39;</span><span class="p">,</span> <span class="s1">&#39;*.png&#39;</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -596,188 +716,101 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">dlg</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+
+            
+<div class="viewcode-block" id="ImageFile"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageFile.html#Stoner.Image.core.ImageFile">[docs]</a><span class="k">class</span> <span class="nc">ImageFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     
-    <span class="c1">#to do: should probably subclass the functions below       </span>
-<div class="viewcode-block" id="ImageArray.crop_text"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.crop_text.html#Stoner.Image.core.ImageArray.crop_text">[docs]</a>    <span class="k">def</span> <span class="nf">crop_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Crop the bottom text area from a standard Kermit image</span>
-
-<span class="sd">        KeywordArguments:</span>
-<span class="sd">            copy(bool):</span>
-<span class="sd">                Whether to return a copy of the data or the original data</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">        (ImageArray):</span>
-<span class="sd">            cropped image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="n">AN_IM_SIZE</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="n">IM_SIZE</span><span class="p">,</span> \
-                <span class="s1">&#39;Need a full sized Kerr image to crop&#39;</span> <span class="c1">#check it&#39;s a normal image</span>
-        <span class="n">crop</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="n">IM_SIZE</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">crop</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="ImageArray.reduce_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.reduce_metadata.html#Stoner.Image.core.ImageArray.reduce_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">reduce_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reduce the metadata down to a few useful pieces and do a bit of </span>
-<span class="sd">        processing.</span>
+    <span class="sd">&quot;&quot;&quot;An Image file type that is analagous to DataFile.</span>
+<span class="sd">    </span>
+<span class="sd">    This contains metadata and an image attribute which</span>
+<span class="sd">    is an ImageArray type which subclasses numpy ndarray and adds lots of extra</span>
+<span class="sd">    image specific processing functions. </span>
+<span class="sd">    </span>
+<span class="sd">    The ImageFile owned attribute is image. All other calls including metadata</span>
+<span class="sd">    are passed through to ImageArray (so no need to inherit from metadataObject).</span>
+<span class="sd">    </span>
+<span class="sd">    Almost all calls to ImageFile are passed through to the underlying ImageArray</span>
+<span class="sd">    logic and ImageArray can be used as a standalone class.</span>
+<span class="sd">    However because ImageArray subclasses an ndarray it is not possible to enter</span>
+<span class="sd">    it in place. All attributes return an array instance which needs to be reassigned.</span>
+<span class="sd">    ImageFile owns image and so can change in place.</span>
+<span class="sd">    The penalty is that numpy ufuncs don&#39;t return ImageFile type</span>
+<span class="sd">    </span>
+<span class="sd">    so can do:</span>
+<span class="sd">    imfile.asfloat() #imagefile.image is updated to float type</span>
+<span class="sd">    however need to do:</span>
+<span class="sd">    imfile.image = np.abs(imfile.image)</span>
+<span class="sd">    </span>
+<span class="sd">    whereas for imarray:</span>
+<span class="sd">    need to do:</span>
+<span class="sd">    imarray = imagearray.asfloat()</span>
+<span class="sd">    but:</span>
+<span class="sd">    np.abs(imarray) #returns ImageArray type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="ImageFile.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageFile.__init__.html#Stoner.Image.core.ImageFile.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Mostly a pass through to ImageArray constructor.</span>
 <span class="sd">        </span>
-<span class="sd">        Returns:</span>
-<span class="sd">            (:py:class:`typeHintedDict`): the new metadata </span>
+<span class="sd">        Local attribute is image. All other attributes and calls are passed</span>
+<span class="sd">        through to image attribute.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">newmet</span><span class="o">=</span><span class="p">{}</span>
-        <span class="n">useful_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">,</span><span class="s1">&#39;field: units&#39;</span><span class="p">,</span><span class="s1">&#39;MicronsPerPixel&#39;</span><span class="p">,</span><span class="s1">&#39;Comment:&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Contrast Shift&#39;</span><span class="p">,</span><span class="s1">&#39;HorizontalFieldOfView&#39;</span><span class="p">,</span><span class="s1">&#39;Images to Average&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;Lens&#39;</span><span class="p">,</span><span class="s1">&#39;Magnification.__text__&#39;</span><span class="p">,</span><span class="s1">&#39;Substraction Std&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">,</span><span class="s1">&#39;field: units&#39;</span><span class="p">]]):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="c1">#we&#39;ve not got a standard Labview output, not safe to reduce</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">useful_keys</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">newmet</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="k">pass</span>
-        <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;X-B-2d&#39;</span><span class="p">)</span> <span class="c1">#rename</span>
-        <span class="k">if</span> <span class="s1">&#39;Substraction Std&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;subtraction&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Substraction Std&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;Averaging&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="p">[</span><span class="s1">&#39;Averaging&#39;</span><span class="p">]:</span> <span class="c1">#averaging was on</span>
-                <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;Averaging&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Images to Average&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Access the image data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span>
+    
+    <span class="nd">@image</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ensure stored image is always an ImageArray.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_image</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">__getitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+   
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A Pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A Pass through to ImageArray.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;Handles attriobute access.&quot;&quot;&quot;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="s1">&#39;__call__&#39;</span><span class="p">):</span> <span class="c1">#we have a method</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_func_generator</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="c1">#modiy so that we can change image in place</span>
+        <span class="k">return</span> <span class="n">ret</span>
+        
+    <span class="k">def</span> <span class="nf">_func_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workingfunc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;ImageFile generator. </span>
+<span class="sd">        </span>
+<span class="sd">        If function called returns ImageArray type </span>
+<span class="sd">        of the same shape as our current image then</span>
+<span class="sd">        use that to update image attribute, otherwise return given output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">gen_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">workingfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">r</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">newmet</span><span class="p">[</span><span class="s1">&#39;Averaging&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
-                <span class="n">newmet</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;Images to Average&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">=</span><span class="n">typeHintedDict</span><span class="p">(</span><span class="n">newmet</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div>
-                
-    <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Attempt to parse text which has been recognised from an image if key is given specific hints may be applied&quot;&quot;&quot;</span>
-        <span class="c1">#print &#39;{} before processsing: \&#39;{}\&#39;&#39;.format(key,data)</span>
-
-        <span class="c1">#strip any internal white space</span>
-        <span class="n">text</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
-        <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-
-        <span class="c1">#replace letters that look like numbers</span>
-        <span class="n">errors</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;5&#39;</span><span class="p">),(</span><span class="s1">&#39;S&#39;</span><span class="p">,</span><span class="s1">&#39;5&#39;</span><span class="p">),(</span><span class="s1">&#39;O&#39;</span><span class="p">,</span><span class="s1">&#39;0&#39;</span><span class="p">),(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;/&#39;</span><span class="p">),(</span><span class="s1">&#39;::&#39;</span><span class="p">,</span><span class="s1">&#39;x&#39;</span><span class="p">),(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span><span class="s1">&#39;2&#39;</span><span class="p">),</span>
-                         <span class="p">(</span><span class="s1">&#39;l&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),(</span><span class="s1">&#39;</span><span class="se">\xe2\x80\x99</span><span class="s1">7&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">),(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span><span class="s1">&#39;7&#39;</span><span class="p">),(</span><span class="s1">&#39;I&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),</span>
-                         <span class="p">(</span><span class="s1">&#39;].&#39;</span><span class="p">,</span><span class="s1">&#39;1&#39;</span><span class="p">),(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)]</span>
-        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-            <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-
-        <span class="c1">#apply any key specific corrections</span>
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">,</span><span class="s1">&#39;ocr_scalebar_length_microns&#39;</span><span class="p">]:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">text</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">pass</span> <span class="c1">#leave it as string</span>
-        <span class="c1">#print &#39;{} after processsing: \&#39;{}\&#39;&#39;.format(key,data)</span>
-
-        <span class="k">return</span> <span class="n">text</span>
-
-    <span class="k">def</span> <span class="nf">_tesseract_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;ocr image with tesseract tool.</span>
-<span class="sd">        </span>
-<span class="sd">        im is the cropped image containing just a bit of text</span>
-<span class="sd">        key is the metadata key we&#39;re trying to find, it may give a</span>
-<span class="sd">        hint for parsing the text generated.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#first set up temp files to work with</span>
-        <span class="n">tmpdir</span><span class="o">=</span><span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-        <span class="n">textfile</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span><span class="s1">&#39;tmpfile.txt&#39;</span><span class="p">)</span>
-        <span class="n">stdoutfile</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span><span class="s1">&#39;logfile.txt&#39;</span><span class="p">)</span>
-        <span class="n">imagefile</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span><span class="s1">&#39;tmpim.tif&#39;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">textfile</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span><span class="c1">#open a text file to export metadata to temporarily</span>
-            <span class="k">pass</span>
-
-        <span class="c1">#process image to make it easier to read</span>
-        <span class="n">i</span><span class="o">=</span><span class="mf">1.0</span><span class="o">*</span><span class="n">im</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="c1">#change to float and normalise</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">in_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.49</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span> <span class="c1">#saturate black and white pixels</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="c1">#make sure they&#39;re black and white</span>
-        <span class="n">i</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">rescale</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span> <span class="c1">#rescale to get more pixels on text</span>
-        <span class="n">io</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">imagefile</span><span class="p">,(</span><span class="mf">255.0</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;uint8&quot;</span><span class="p">),</span><span class="n">plugin</span><span class="o">=</span><span class="s1">&#39;pil&#39;</span><span class="p">)</span> <span class="c1">#python imaging library will save according to file extension</span>
-
-        <span class="c1">#call tesseract</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tesseractable</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stdoutfile</span><span class="p">,</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stdout</span><span class="p">:</span>
-                <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s1">&#39;tesseract&#39;</span><span class="p">,</span> <span class="n">imagefile</span><span class="p">,</span> <span class="n">textfile</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]],</span><span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span><span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span> <span class="c1">#adds &#39;.txt&#39; extension itself</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">stdoutfile</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">textfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tf</span><span class="p">:</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
-
-        <span class="c1">#delete the temp files</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">textfile</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">imagefile</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span>
-
-        <span class="c1">#parse the reading</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No data read for </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
-        <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_parse_text</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">_get_scalebar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;&quot;Get the length in pixels of the image scale bar&quot;&quot;&quot;</span>
-        <span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">419</span><span class="p">,</span><span class="mi">519</span><span class="p">,</span><span class="mi">520</span><span class="p">)</span> <span class="c1">#row where scalebar exists</span>
-        <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">im</span><span class="o">=</span><span class="n">im</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-        <span class="n">im</span><span class="o">=</span><span class="p">(</span><span class="n">im</span><span class="o">-</span><span class="n">im</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">-</span><span class="n">im</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
-        <span class="n">im</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">in_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.49</span><span class="p">,</span><span class="mf">0.5</span><span class="p">))</span> <span class="c1">#saturate black and white pixels</span>
-        <span class="n">im</span><span class="o">=</span><span class="n">exposure</span><span class="o">.</span><span class="n">rescale_intensity</span><span class="p">(</span><span class="n">im</span><span class="p">)</span> <span class="c1">#make sure they&#39;re black and white</span>
-        <span class="n">im</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">im</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#1d numpy array, differences</span>
-        <span class="n">lim</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">im</span><span class="o">&gt;</span><span class="mf">0.9</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-             <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">im</span><span class="o">&lt;-</span><span class="mf">0.9</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="c1">#first occurance of both cases</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">lim</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;Couldn</span><span class="se">\&#39;</span><span class="s1">t find scalebar&#39;</span>
-        <span class="k">return</span> <span class="n">lim</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">lim</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<div class="viewcode-block" id="ImageArray.ocr_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.core.ImageArray.ocr_metadata.html#Stoner.Image.core.ImageArray.ocr_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">ocr_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Use image recognition to try to pull the metadata numbers off the image</span>
-
-<span class="sd">        Requirements: This function uses tesseract to recognise the image, therefore</span>
-<span class="sd">        tesseract file1 file2 must be valid on your command line.</span>
-<span class="sd">        Install tesseract from</span>
-<span class="sd">        https://sourceforge.net/projects/tesseract-ocr-alt/files/?source=navbar</span>
-
-<span class="sd">        KeywordArguments:</span>
-<span class="sd">            field_only(bool):</span>
-<span class="sd">                only try to return a field value</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            metadata: dict</span>
-<span class="sd">                updated metadata dictionary</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="o">!=</span><span class="n">AN_IM_SIZE</span><span class="p">:</span>
-            <span class="k">pass</span> <span class="c1">#can&#39;t do anything without an annotated image</span>
-
-        <span class="c1">#now we have to crop the image to the various text areas and try tesseract</span>
-        <span class="k">elif</span> <span class="n">field_only</span><span class="p">:</span>
-            <span class="n">fbox</span><span class="o">=</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">527</span><span class="p">,</span><span class="mi">540</span><span class="p">)</span> <span class="c1">#(This is just the number area not the unit)</span>
-            <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">fbox</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tesseract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">field</span>
+                <span class="k">return</span> <span class="n">r</span>
+        
+        <span class="n">gen_func</span><span class="o">.</span><span class="n">__doc__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="n">gen_func</span><span class="o">.</span><span class="n">__name__</span><span class="o">=</span><span class="n">workingfunc</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="k">return</span> <span class="n">gen_func</span>            
+    
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Handles setting attributes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;_image&#39;</span><span class="p">]:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">ImageFile</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">text_areas</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">110</span><span class="p">,</span><span class="mi">165</span><span class="p">,</span><span class="mi">527</span><span class="p">,</span><span class="mi">540</span><span class="p">),</span>
-                        <span class="s1">&#39;ocr_date&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">542</span><span class="p">,</span><span class="mi">605</span><span class="p">,</span><span class="mi">512</span><span class="p">,</span><span class="mi">527</span><span class="p">),</span>
-                        <span class="s1">&#39;ocr_time&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">605</span><span class="p">,</span><span class="mi">668</span><span class="p">,</span><span class="mi">512</span><span class="p">,</span><span class="mi">527</span><span class="p">),</span>
-                        <span class="s1">&#39;ocr_subtract&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">237</span><span class="p">,</span><span class="mi">260</span><span class="p">,</span><span class="mi">527</span><span class="p">,</span><span class="mi">540</span><span class="p">),</span>
-                        <span class="s1">&#39;ocr_average&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">303</span><span class="p">,</span><span class="mi">350</span><span class="p">,</span><span class="mi">527</span><span class="p">,</span><span class="mi">540</span><span class="p">)}</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">sb_length</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_scalebar</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-                <span class="n">sb_length</span><span class="o">=</span><span class="kc">None</span>
-            <span class="k">if</span> <span class="n">sb_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">text_areas</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;ocr_scalebar_length_microns&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">27</span><span class="p">,</span><span class="mi">514</span><span class="p">,</span><span class="mi">527</span><span class="p">),</span>
-                                   <span class="s1">&#39;ocr_lens&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">51</span><span class="p">,</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">97</span><span class="p">,</span><span class="mi">514</span><span class="p">,</span><span class="mi">527</span><span class="p">),</span>
-                                    <span class="s1">&#39;ocr_zoom&#39;</span><span class="p">:</span> <span class="p">(</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">107</span><span class="p">,</span><span class="n">sb_length</span><span class="o">+</span><span class="mi">149</span><span class="p">,</span><span class="mi">514</span><span class="p">,</span><span class="mi">527</span><span class="p">)})</span>
-
-            <span class="n">metadata</span><span class="o">=</span><span class="p">{}</span>   <span class="c1">#now go through and process all keys</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">text_areas</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">im</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">text_areas</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tesseract_image</span><span class="p">(</span><span class="n">im</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
-            <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_scalebar_length_pixels&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">sb_length</span>
-            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_scalebar_length_microns&#39;</span><span class="p">])</span><span class="o">==</span><span class="nb">float</span><span class="p">:</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_microns_per_pixel&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_scalebar_length_microns&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">sb_length</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_pixels_per_micron&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_microns_per_pixel&#39;</span><span class="p">]</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field_of_view_microns&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IM_SIZE</span><span class="p">)</span><span class="o">*</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_microns_per_pixel&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;ocr_field&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">],(</span><span class="nb">int</span><span class="p">,</span><span class="nb">float</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;ocr_field&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1">#didn&#39;t read the field properly</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span></div></div>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -817,7 +850,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

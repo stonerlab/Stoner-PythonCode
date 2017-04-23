@@ -68,7 +68,8 @@ load an image:</p>
 <span class="n">im2</span> <span class="o">=</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;myarray&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>ImageArray is designed to act much like a 2d numpy array but with the extra metadata parameter.</p>
+<p>ImageArray inherits from numpy.ndarray and can be used in much the same way as a normal array. On top
+of this are added specific image functions</p>
 </div>
 <div class="section" id="examining-and-manipulating-the-imagearray">
 <h2>Examining and manipulating the ImageArray<a class="headerlink" href="#examining-and-manipulating-the-imagearray" title="Permalink to this headline">¶</a></h2>
@@ -76,8 +77,8 @@ load an image:</p>
 <h3>Local functions and properties<a class="headerlink" href="#local-functions-and-properties" title="Permalink to this headline">¶</a></h3>
 <p>Typical start functions might be to convert the image into floating point form which is more precise than
 integer format and crop the image:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">convert_float</span><span class="p">()</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">200</span><span class="p">))</span> <span class="c1">#(xmin, xmax, ymin, ymax)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">asfloat</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">crop_image</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span> <span class="c1">#(xmin, xmax, ymin, ymax)</span>
 <span class="n">copyofim</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">clone</span> <span class="c1">#behaviour similar to data file</span>
 </pre></div>
 </div>
@@ -189,7 +190,7 @@ is given in as the first argument. For example:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

@@ -1,0 +1,8 @@
+
+
+baseFolder.count
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.count

@@ -1,0 +1,8 @@
+
+
+baseFolder.select
+================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.select

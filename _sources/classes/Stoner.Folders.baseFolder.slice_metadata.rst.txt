@@ -1,0 +1,8 @@
+
+
+baseFolder.slice_metadata
+========================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.slice_metadata

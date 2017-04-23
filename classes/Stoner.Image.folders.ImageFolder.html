@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="ImageFolder.__init__" href="Stoner.Image.folders.ImageFolder.__init__.html" />
-    <link rel="prev" title="ImageArray.save" href="Stoner.Image.core.ImageArray.save.html" /> 
+    <link rel="prev" title="ImageFile.__init__" href="Stoner.Image.core.ImageFile.__init__.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -44,7 +44,7 @@
           <a href="Stoner.Image.folders.ImageFolder.__init__.html" title="ImageFolder.__init__"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.core.ImageArray.save.html" title="ImageArray.save"
+          <a href="Stoner.Image.core.ImageFile.__init__.html" title="ImageFile.__init__"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
@@ -61,7 +61,8 @@
 <dl class="class">
 <dt id="Stoner.Image.folders.ImageFolder">
 <em class="property">class </em><code class="descclassname">Stoner.Image.folders.</code><code class="descname">ImageFolder</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/folders.html#ImageFolder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.folders.ImageFolder" title="Permalink to this definition">¶</a></dt>
-<dd><p>ImageFolder is designed to behave pretty much like DataFolder but with
+<dd><p>Folder object for images.</p>
+<p>ImageFolder is designed to behave pretty much like DataFolder but with
 functions and loaders appropriate for image based files.</p>
 <blockquote>
 <div><p>Attributes:
@@ -90,16 +91,16 @@ type (<a class="reference internal" href="Stoner.Image.core.ImageArray.html#Ston
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.folders.ImageFolder.__init__.html#Stoner.Image.folders.ImageFolder.__init__" title="Stoner.Image.folders.ImageFolder.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>Initialise the ImageFolder.</td>
+<td>nitialise the ImageFolder.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.folders.ImageFolder.loadgroup.html#Stoner.Image.folders.ImageFolder.loadgroup" title="Stoner.Image.folders.ImageFolder.loadgroup"><code class="xref py py-obj docutils literal"><span class="pre">loadgroup</span></code></a>()</td>
 <td>Load all files from this group into memory</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.folders.ImageFolder.slice_metadata.html#Stoner.Image.folders.ImageFolder.slice_metadata" title="Stoner.Image.folders.ImageFolder.slice_metadata"><code class="xref py py-obj docutils literal"><span class="pre">slice_metadata</span></code></a>([key,&nbsp;values_only])</td>
-<td>Return a list of the metadata dictionaries for each item/file in the</td>
+<td>Return a list of the metadata dictionaries for each item/file in the top level group</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.folders.ImageFolder.stack.html#Stoner.Image.folders.ImageFolder.stack" title="Stoner.Image.folders.ImageFolder.stack"><code class="xref py py-obj docutils literal"><span class="pre">stack</span></code></a>()</td>
-<td>Return a KerrStack of the images in the current group.</td>
+<td>Return a ImageStack of the images in the current group.</td>
 </tr>
 </tbody>
 </table>
@@ -117,8 +118,8 @@ type (<a class="reference internal" href="Stoner.Image.core.ImageArray.html#Ston
               <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
             </a></p>
   <h4>Previous topic</h4>
-  <p class="topless"><a href="Stoner.Image.core.ImageArray.save.html"
-                        title="previous chapter">ImageArray.save</a></p>
+  <p class="topless"><a href="Stoner.Image.core.ImageFile.__init__.html"
+                        title="previous chapter">ImageFile.__init__</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="Stoner.Image.folders.ImageFolder.__init__.html"
                         title="next chapter">ImageFolder.__init__</a></p>
@@ -156,7 +157,7 @@ type (<a class="reference internal" href="Stoner.Image.core.ImageArray.html#Ston
           <a href="Stoner.Image.folders.ImageFolder.__init__.html" title="ImageFolder.__init__"
              >next</a> |</li>
         <li class="right" >
-          <a href="Stoner.Image.core.ImageArray.save.html" title="ImageArray.save"
+          <a href="Stoner.Image.core.ImageFile.__init__.html" title="ImageFile.__init__"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
@@ -164,7 +165,7 @@ type (<a class="reference internal" href="Stoner.Image.core.ImageArray.html#Ston
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

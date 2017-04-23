@@ -1,0 +1,8 @@
+
+
+baseFolder.index
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.index

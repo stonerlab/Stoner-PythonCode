@@ -1,0 +1,8 @@
+
+
+baseFolder.sort
+==============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.sort

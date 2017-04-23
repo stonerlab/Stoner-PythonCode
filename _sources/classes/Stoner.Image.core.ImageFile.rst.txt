@@ -1,0 +1,29 @@
+Stoner.Image.core.ImageFile
+===========================
+
+.. currentmodule:: Stoner.Image.core
+
+.. autoclass:: ImageFile
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+    :toctree:
+   
+      ~Stoner.Image.core.ImageFile.__init__
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stoner.Image.core.ImageFile.image
+   
+   

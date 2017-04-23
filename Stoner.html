@@ -219,8 +219,8 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Folders.baseFolder.html#Stoner.Folders.baseFolder" title="Stoner.Folders.baseFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.baseFolder</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>A base class for objectFolders that supports both a sequence of objects and a mapping of instances of itself.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Folders.DataFolder.html#Stoner.Folders.DataFolder" title="Stoner.Folders.DataFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Folders.DataFolder</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td></td>
@@ -269,7 +269,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.FileFormats.BigBlueFile.html#Stoner.FileFormats.BigBlueFile" title="Stoner.FileFormats.BigBlueFile"><code class="xref py py-obj docutils literal"><span class="pre">BigBlueFile</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>Extends CSVFile to load files from BigBlue</td>
+<td>Extends CSVFile to load files from Nick Porter&#8217;s old BigBlue code</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.FileFormats.FmokeFile.html#Stoner.FileFormats.FmokeFile" title="Stoner.FileFormats.FmokeFile"><code class="xref py py-obj docutils literal"><span class="pre">FmokeFile</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>Extends DataFile to open Fmoke Files</td>
@@ -473,20 +473,8 @@
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.SLS_STXMFile.html#Stoner.HDF5.SLS_STXMFile" title="Stoner.HDF5.SLS_STXMFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.SLS_STXMFile</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>Load images from the Swiss Light Source Pollux beamline</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.STXMImage.html#Stoner.HDF5.STXMImage" title="Stoner.HDF5.STXMImage"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.STXMImage</span></code></a>([image,&nbsp;ocr_metadata,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.STXMImage.html#Stoner.HDF5.STXMImage" title="Stoner.HDF5.STXMImage"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.STXMImage</span></code></a>(\*args,&nbsp;\*\*kwargs)</td>
 <td>An instance of KerrArray that will load itself from a Swiss Light Source STXM image</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.index_types.html#Stoner.HDF5.index_types" title="Stoner.HDF5.index_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.index_types</span></code></a></td>
-<td>tuple() -&gt; empty tuple</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.int_types.html#Stoner.HDF5.int_types" title="Stoner.HDF5.int_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.int_types</span></code></a></td>
-<td>tuple() -&gt; empty tuple</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.mpl_version.html#Stoner.HDF5.mpl_version" title="Stoner.HDF5.mpl_version"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.mpl_version</span></code></a></td>
-<td>str(object=&#8217;&#8216;) -&gt; string</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.HDF5.python_v3.html#Stoner.HDF5.python_v3" title="Stoner.HDF5.python_v3"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.python_v3</span></code></a></td>
-<td>bool(x) -&gt; bool</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="classes/Stoner.HDF5.string_types.html#Stoner.HDF5.string_types" title="Stoner.HDF5.string_types"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.HDF5.string_types</span></code></a></td>
 <td>tuple() -&gt; empty tuple</td>
@@ -577,8 +565,11 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a>([image,&nbsp;...])</td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a>(\*args,&nbsp;\*\*kwargs)</td>
 <td><a class="reference internal" href="classes/Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a> is a numpy array like class with a metadata parameter and pass through to skimage methods.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Image.core.ImageFile.html#Stoner.Image.core.ImageFile" title="Stoner.Image.core.ImageFile"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.core.ImageFile</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>An Image file type that is analagous to DataFile.</td>
 </tr>
 </tbody>
 </table>
@@ -606,7 +597,7 @@
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder" title="Stoner.Image.folders.ImageFolder"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.folders.ImageFolder</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>ImageFolder is designed to behave pretty much like DataFolder but with functions and loaders appropriate for image based files.</td>
+<td>Folder object for images.</td>
 </tr>
 </tbody>
 </table>
@@ -636,17 +627,11 @@
 <tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td><a class="reference internal" href="classes/Stoner.Image.stack.ImageStack.html#Stoner.Image.stack.ImageStack" title="Stoner.Image.stack.ImageStack"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.stack.ImageStack</span></code></a> is a 3d numpy array stack of images.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/Stoner.Image.stack.KerrStack.html#Stoner.Image.stack.KerrStack" title="Stoner.Image.stack.KerrStack"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.stack.KerrStack</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>:py:class:<a href="#id17"><span class="problematic" id="id18">`</span></a>Stoner.Image.stack.KerrStack is similar to ImageStack but adds some functionality particular to Kerr images.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/Stoner.Image.stack.MaskStack.html#Stoner.Image.stack.MaskStack" title="Stoner.Image.stack.MaskStack"><code class="xref py py-obj docutils literal"><span class="pre">Stoner.Image.stack.MaskStack</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
-<td>Similar to ImageStack but made for stacks of boolean or binary images</td>
-</tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id19">
-<h4>Functions<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id17">
+<h4>Functions<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h4>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -734,7 +719,7 @@
 </li>
 <li><a class="reference internal" href="#image-stack-package"><code class="docutils literal"><span class="pre">Image.stack</span></code> Package</a><ul>
 <li><a class="reference internal" href="#id16">Classes</a></li>
-<li><a class="reference internal" href="#id19">Functions</a></li>
+<li><a class="reference internal" href="#id17">Functions</a></li>
 </ul>
 </li>
 </ul>
@@ -790,7 +775,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

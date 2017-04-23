@@ -1,8 +1,0 @@
-
-
-KerrStack.denoise_thresh
-===========================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: KerrStack.denoise_thresh

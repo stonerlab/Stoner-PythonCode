@@ -60,7 +60,7 @@
 <h1>Stoner.Image.core.ImageArray<a class="headerlink" href="#stoner-image-core-imagearray" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="Stoner.Image.core.ImageArray">
-<em class="property">class </em><code class="descclassname">Stoner.Image.core.</code><code class="descname">ImageArray</code><span class="sig-paren">(</span><em>image=None</em>, <em>ocr_metadata=False</em>, <em>field_only=False</em>, <em>metadata=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">Stoner.Image.core.</code><code class="descname">ImageArray</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a> is a numpy array like class with a metadata parameter and pass through to skimage methods.</p>
 <p>ImageArray is for manipulating images stored as a 2d numpy array.
 It is built to be almost identical to a numpy array except for one extra
@@ -119,41 +119,47 @@ I would call im=im.translate((4,10))</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.__init__.html#Stoner.Image.core.ImageArray.__init__" title="Stoner.Image.core.ImageArray.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([image,&nbsp;ocr_metadata,&nbsp;field_only,&nbsp;...])</td>
-<td>Constructor for <a class="reference internal" href="#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a>.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.__init__.html#Stoner.Image.core.ImageArray.__init__" title="Stoner.Image.core.ImageArray.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kwargs)</td>
+<td>Constructor method for <a class="reference internal" href="#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code></a>.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray._load.html#Stoner.Image.core.ImageArray._load" title="Stoner.Image.core.ImageArray._load"><code class="xref py py-obj docutils literal"><span class="pre">_load</span></code></a>(filename,&nbsp;\*\*kwargs)</td>
-<td>Load an image from a file and return as a 2D array and metadata dictionary.</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray._load.html#Stoner.Image.core.ImageArray._load" title="Stoner.Image.core.ImageArray._load"><code class="xref py py-obj docutils literal"><span class="pre">_load</span></code></a>(filename,&nbsp;\*\*array_args)</td>
+<td>Load an image from a file and return as a ImageArray.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.box.html#Stoner.Image.core.ImageArray.box" title="Stoner.Image.core.ImageArray.box"><code class="xref py py-obj docutils literal"><span class="pre">box</span></code></a>(xmin,&nbsp;xmax,&nbsp;ymin,&nbsp;ymax)</td>
-<td>Crop the data to a box.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.asfloat.html#Stoner.Image.core.ImageArray.asfloat" title="Stoner.Image.core.ImageArray.asfloat"><code class="xref py py-obj docutils literal"><span class="pre">asfloat</span></code></a>([normalise,&nbsp;clip_negative])</td>
+<td>Return the image converted to floating point type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.asint.html#Stoner.Image.core.ImageArray.asint" title="Stoner.Image.core.ImageArray.asint"><code class="xref py py-obj docutils literal"><span class="pre">asint</span></code></a>([dtype])</td>
+<td>convert the image to unsigned integer format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.box.html#Stoner.Image.core.ImageArray.box" title="Stoner.Image.core.ImageArray.box"><code class="xref py py-obj docutils literal"><span class="pre">box</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>alias for crop</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.clip_intensity.html#Stoner.Image.core.ImageArray.clip_intensity" title="Stoner.Image.core.ImageArray.clip_intensity"><code class="xref py py-obj docutils literal"><span class="pre">clip_intensity</span></code></a>()</td>
-<td>clip intensity that lies outside the range allowed by dtype.</td>
+<td>prefer ImageArray.normalise</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_float.html#Stoner.Image.core.ImageArray.convert_float" title="Stoner.Image.core.ImageArray.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
-<td>Return the image converted to floating point type normalised to -1  to 1.</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.clip_negative.html#Stoner.Image.core.ImageArray.clip_negative" title="Stoner.Image.core.ImageArray.clip_negative"><code class="xref py py-obj docutils literal"><span class="pre">clip_negative</span></code></a>()</td>
+<td>Clip negative pixels to 0.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_int.html#Stoner.Image.core.ImageArray.convert_int" title="Stoner.Image.core.ImageArray.convert_int"><code class="xref py py-obj docutils literal"><span class="pre">convert_int</span></code></a>()</td>
-<td>convert the image to uint16 (the format used by Evico)</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_float.html#Stoner.Image.core.ImageArray.convert_float" title="Stoner.Image.core.ImageArray.convert_float"><code class="xref py py-obj docutils literal"><span class="pre">convert_float</span></code></a>([clip_negative])</td>
+<td>back compatability. asfloat preferred</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.crop_image.html#Stoner.Image.core.ImageArray.crop_image" title="Stoner.Image.core.ImageArray.crop_image"><code class="xref py py-obj docutils literal"><span class="pre">crop_image</span></code></a>([box,&nbsp;copy])</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.convert_int.html#Stoner.Image.core.ImageArray.convert_int" title="Stoner.Image.core.ImageArray.convert_int"><code class="xref py py-obj docutils literal"><span class="pre">convert_int</span></code></a>()</td>
+<td>back compatability. asuint preferred</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.crop.html#Stoner.Image.core.ImageArray.crop" title="Stoner.Image.core.ImageArray.crop"><code class="xref py py-obj docutils literal"><span class="pre">crop</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
 <td>Crop the image.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.crop_text.html#Stoner.Image.core.ImageArray.crop_text" title="Stoner.Image.core.ImageArray.crop_text"><code class="xref py py-obj docutils literal"><span class="pre">crop_text</span></code></a>([copy])</td>
-<td>Crop the bottom text area from a standard Kermit image</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.crop_image.html#Stoner.Image.core.ImageArray.crop_image" title="Stoner.Image.core.ImageArray.crop_image"><code class="xref py py-obj docutils literal"><span class="pre">crop_image</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>back compatability</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.dtype_limits.html#Stoner.Image.core.ImageArray.dtype_limits" title="Stoner.Image.core.ImageArray.dtype_limits"><code class="xref py py-obj docutils literal"><span class="pre">dtype_limits</span></code></a>([clip_negative])</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.dtype_limits.html#Stoner.Image.core.ImageArray.dtype_limits" title="Stoner.Image.core.ImageArray.dtype_limits"><code class="xref py py-obj docutils literal"><span class="pre">dtype_limits</span></code></a>([clip_negative])</td>
 <td>Return intensity limits, i.e.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.ocr_metadata.html#Stoner.Image.core.ImageArray.ocr_metadata" title="Stoner.Image.core.ImageArray.ocr_metadata"><code class="xref py py-obj docutils literal"><span class="pre">ocr_metadata</span></code></a>([field_only])</td>
-<td>Use image recognition to try to pull the metadata numbers off the image</td>
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.normalise.html#Stoner.Image.core.ImageArray.normalise" title="Stoner.Image.core.ImageArray.normalise"><code class="xref py py-obj docutils literal"><span class="pre">normalise</span></code></a>()</td>
+<td>Normalise the image to -1,1.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.reduce_metadata.html#Stoner.Image.core.ImageArray.reduce_metadata" title="Stoner.Image.core.ImageArray.reduce_metadata"><code class="xref py py-obj docutils literal"><span class="pre">reduce_metadata</span></code></a>()</td>
-<td>Reduce the metadata down to a few useful pieces and do a bit of processing.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.save.html#Stoner.Image.core.ImageArray.save" title="Stoner.Image.core.ImageArray.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>([filename])</td>
-<td>Saves the image into the file &#8216;filename&#8217;, compatible with png.</td>
+<tr class="row-even"><td><a class="reference internal" href="Stoner.Image.core.ImageArray.save.html#Stoner.Image.core.ImageArray.save" title="Stoner.Image.core.ImageArray.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(filename,&nbsp;\*\*kargs)</td>
+<td>Saves the image into the file &#8216;filename&#8217;.</td>
 </tr>
 </tbody>
 </table>
@@ -172,9 +178,6 @@ I would call im=im.translate((4,10))</p>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#Stoner.Image.core.ImageArray.max_box" title="Stoner.Image.core.ImageArray.max_box"><code class="xref py py-obj docutils literal"><span class="pre">max_box</span></code></a></td>
 <td>return the coordinate extent (xmin,xmax,ymin,ymax)</td>
-</tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">tesseractable</span></code></td>
-<td>Do a test call to tesseract to see if it is there and cache the result.</td>
 </tr>
 </tbody>
 </table>
@@ -239,7 +242,7 @@ I would call im=im.translate((4,10))</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

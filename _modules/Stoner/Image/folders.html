@@ -57,18 +57,22 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">.core</span> <span class="k">import</span> <span class="n">ImageArray</span>
-
 <span class="kn">from</span> <span class="nn">Stoner.Folders</span> <span class="k">import</span> <span class="n">DiskBssedFolder</span><span class="p">,</span> <span class="n">baseFolder</span>
-<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Stoner.compat</span> <span class="k">import</span> <span class="n">string_types</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Iterable</span>
 
 
-<span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">img_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_load_ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simple meothd to load an image array.&quot;&quot;&quot;</span>
+    <span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;img_num&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ImageArray</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImageFolder"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.html#Stoner.Image.folders.ImageFolder">[docs]</a><span class="k">class</span> <span class="nc">ImageFolder</span><span class="p">(</span><span class="n">DiskBssedFolder</span><span class="p">,</span><span class="n">baseFolder</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;ImageFolder is designed to behave pretty much like DataFolder but with</span>
+    
+    <span class="sd">&quot;&quot;&quot;Folder object for images.</span>
+<span class="sd">    </span>
+<span class="sd">    ImageFolder is designed to behave pretty much like DataFolder but with</span>
 <span class="sd">    functions and loaders appropriate for image based files.</span>
 <span class="sd">    </span>
 <span class="sd">        Attributes:</span>
@@ -95,9 +99,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ImageFolder.__init__"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.__init__.html#Stoner.Image.folders.ImageFolder.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialise the ImageFolder. Mostly a pass</span>
-<span class="sd">        through to the :py:class:`Stoner.Folders.baseFolder` class.</span>
+        <span class="sd">&quot;&quot;&quot;nitialise the ImageFolder. </span>
+<span class="sd">        </span>
+<span class="sd">        Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;pattern&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span><span class="s2">&quot;*.png&quot;</span><span class="p">)</span>
         <span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">,</span><span class="n">ImageArray</span><span class="p">)</span>
@@ -108,11 +112,11 @@
     
 <div class="viewcode-block" id="ImageFolder.loadgroup"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.loadgroup.html#Stoner.Image.folders.ImageFolder.loadgroup">[docs]</a>    <span class="k">def</span> <span class="nf">loadgroup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load all files from this group into memory&quot;&quot;&quot;</span>
-        <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span></div>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">pass</span></div>
         
-<div class="viewcode-block" id="ImageFolder.slice_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.slice_metadata.html#Stoner.Image.folders.ImageFolder.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the</span>
-<span class="sd">        top level group</span>
+<div class="viewcode-block" id="ImageFolder.slice_metadata"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.slice_metadata.html#Stoner.Image.folders.ImageFolder.slice_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">slice_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>  <span class="c1"># pylint: disable=arguments-differ</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of the metadata dictionaries for each item/file in the top level group</span>
 
 <span class="sd">        Keyword Arguments:</span>
 <span class="sd">            key(string or list of strings):</span>
@@ -130,7 +134,6 @@
 <span class="sd">            recursive options (build a dictionary of metadata values). And probably</span>
 <span class="sd">            options to extract other parts of objects (first row or whatever).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="n">metadata</span><span class="o">=</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">metadata</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">]</span> <span class="c1">#this can take some time if it&#39;s loading in the images</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
             <span class="n">key</span><span class="o">=</span><span class="n">metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">__lookup__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -151,10 +154,9 @@
         <span class="k">return</span> <span class="n">metadata</span></div>
     
 <div class="viewcode-block" id="ImageFolder.stack"><a class="viewcode-back" href="../../../classes/Stoner.Image.folders.ImageFolder.stack.html#Stoner.Image.folders.ImageFolder.stack">[docs]</a>    <span class="k">def</span> <span class="nf">stack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a KerrStack of the images in the current group.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">KerrStack</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">KerrStack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Return a ImageStack of the images in the current group.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">Stoner.Image</span> <span class="k">import</span> <span class="n">ImageStack</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">k</span></div></div>
       
 </pre></div>
@@ -196,7 +198,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

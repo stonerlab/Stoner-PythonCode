@@ -1,8 +1,0 @@
-
-
-ImageArray.reduce_metadata
-============================================
-
-.. currentmodule:: Stoner.Image.core
-
-.. automethod:: ImageArray.reduce_metadata

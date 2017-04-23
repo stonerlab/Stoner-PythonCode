@@ -1,0 +1,8 @@
+
+
+baseFolder.popitem
+=================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.popitem

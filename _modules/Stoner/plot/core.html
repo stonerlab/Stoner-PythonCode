@@ -127,12 +127,9 @@
         <span class="sd">&quot;&quot;&quot;Constructor of \b PlotMixin class. Imports plt and then calls the parent constructor.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__figure</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="o">=</span><span class="n">kargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;showfig&quot;</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Retains previous behaviour</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subplots</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_showfig</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># Retains previous behaviour</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done PlotMixin init&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_public_attrs</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;fig&quot;</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">mplfig</span><span class="o">.</span><span class="n">Figure</span><span class="p">),</span>
             <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
@@ -143,7 +140,10 @@
             <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="n">string_types</span><span class="p">,</span>
             <span class="s2">&quot;showfig&quot;</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="p">}</span></div>
+        <span class="p">}</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PlotMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done PlotMixin init&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1">#============================================================================================================================</span>
@@ -1545,7 +1545,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

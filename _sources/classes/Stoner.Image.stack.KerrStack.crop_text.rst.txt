@@ -1,8 +1,0 @@
-
-
-KerrStack.crop_text
-======================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: KerrStack.crop_text

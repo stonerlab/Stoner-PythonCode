@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Stoner.Image.core.ImageFile &#8212; Stoner Pacakge API Documentation</title>
+    
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ImageFile.__init__" href="Stoner.Image.core.ImageFile.__init__.html" />
+    <link rel="prev" title="ImageArray.save" href="Stoner.Image.core.ImageArray.save.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Image.core.ImageFile.__init__.html" title="ImageFile.__init__"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Image.core.ImageArray.save.html" title="ImageArray.save"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" accesskey="U">Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="stoner-image-core-imagefile">
+<h1>Stoner.Image.core.ImageFile<a class="headerlink" href="#stoner-image-core-imagefile" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Stoner.Image.core.ImageFile">
+<em class="property">class </em><code class="descclassname">Stoner.Image.core.</code><code class="descname">ImageFile</code><span class="sig-paren">(</span><em>*args</em>, <em>**kargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Image file type that is analagous to DataFile.</p>
+<p>This contains metadata and an image attribute which
+is an ImageArray type which subclasses numpy ndarray and adds lots of extra
+image specific processing functions.</p>
+<p>The ImageFile owned attribute is image. All other calls including metadata
+are passed through to ImageArray (so no need to inherit from metadataObject).</p>
+<p>Almost all calls to ImageFile are passed through to the underlying ImageArray
+logic and ImageArray can be used as a standalone class.
+However because ImageArray subclasses an ndarray it is not possible to enter
+it in place. All attributes return an array instance which needs to be reassigned.
+ImageFile owns image and so can change in place.
+The penalty is that numpy ufuncs don&#8217;t return ImageFile type</p>
+<p>so can do:
+imfile.asfloat() #imagefile.image is updated to float type
+however need to do:
+imfile.image = np.abs(imfile.image)</p>
+<p>whereas for imarray:
+need to do:
+imarray = imagearray.asfloat()
+but:
+np.abs(imarray) #returns ImageArray type</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="Stoner.Image.core.ImageFile.__init__.html#Stoner.Image.core.ImageFile.__init__" title="Stoner.Image.core.ImageFile.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(\*args,&nbsp;\*\*kargs)</td>
+<td>Mostly a pass through to ImageArray constructor.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">image</span></code></td>
+<td>Access the image data.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/StonerLogo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Stoner.Image.core.ImageArray.save.html"
+                        title="previous chapter">ImageArray.save</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Stoner.Image.core.ImageFile.__init__.html"
+                        title="next chapter">ImageFile.__init__</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/Stoner.Image.core.ImageFile.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Image.core.ImageFile.__init__.html" title="ImageFile.__init__"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Stoner.Image.core.ImageArray.save.html" title="ImageArray.save"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Stoner Package</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../Stoner.html" >Stoner Package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013-15, Gavin Burnell et al.
+      Last updated on Apr 23, 2017.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
+    </div>
+  </body>
+</html>

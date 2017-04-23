@@ -236,7 +236,7 @@
     <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># Check to see if config file specified a model</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">model</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Options&quot;</span><span class="p">,</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Model is notspecifed either as keyword argument or in inifile&quot;</span><span class="p">)</span>
     <span class="n">model</span><span class="o">=</span><span class="n">_get_model_</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">has_option</span><span class="p">(</span><span class="s2">&quot;option&quot;</span><span class="p">,</span><span class="s2">&quot;prefix&quot;</span><span class="p">):</span>
@@ -1219,7 +1219,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

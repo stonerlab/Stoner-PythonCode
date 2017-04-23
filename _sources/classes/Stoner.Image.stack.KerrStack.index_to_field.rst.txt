@@ -1,8 +1,0 @@
-
-
-KerrStack.index_to_field
-===========================================
-
-.. currentmodule:: Stoner.Image.stack
-
-.. automethod:: KerrStack.index_to_field

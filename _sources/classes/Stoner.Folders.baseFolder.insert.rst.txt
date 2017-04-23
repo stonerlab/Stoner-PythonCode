@@ -1,0 +1,8 @@
+
+
+baseFolder.insert
+================================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.insert

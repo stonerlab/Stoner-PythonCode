@@ -1,0 +1,8 @@
+
+
+baseFolder.get
+=============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.get

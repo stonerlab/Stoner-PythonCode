@@ -1,0 +1,8 @@
+
+
+baseFolder.prune
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.prune

@@ -1,0 +1,8 @@
+
+
+baseFolder.group
+===============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.group

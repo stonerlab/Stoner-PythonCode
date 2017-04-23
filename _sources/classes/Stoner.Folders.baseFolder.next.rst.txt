@@ -1,0 +1,8 @@
+
+
+baseFolder.next
+==============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.next

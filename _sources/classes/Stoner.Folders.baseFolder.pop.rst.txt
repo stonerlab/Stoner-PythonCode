@@ -1,0 +1,8 @@
+
+
+baseFolder.pop
+=============================
+
+.. currentmodule:: Stoner.Folders
+
+.. automethod:: baseFolder.pop

@@ -61,38 +61,67 @@
 <h1>ImageArray.__init__<a class="headerlink" href="#imagearray-init" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="Stoner.Image.core.ImageArray.__init__">
-<code class="descclassname">ImageArray.</code><code class="descname">__init__</code><span class="sig-paren">(</span><em>image=None</em>, <em>ocr_metadata=False</em>, <em>field_only=False</em>, <em>metadata=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor for <a class="reference internal" href="Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">Stoner.Image.core.ImageArray</span></code></a>.</p>
-<p>Create a ImageArray instance with metadata attribute</p>
+<code class="descclassname">ImageArray.</code><code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Stoner/Image/core.html#ImageArray.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Stoner.Image.core.ImageArray.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for <a class="reference internal" href="Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code></a>.</p>
+<p>various forms are recognised</p>
+<dl class="function">
+<dt>
+<code class="descname">ImageArray</code><span class="sig-paren">(</span><em>'filename'</em><span class="sig-paren">)</span></dt>
+<dd><p>Creates the new ImageArray object and then loads data from the
+given <em>filename</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">ImageArray</code><span class="sig-paren">(</span><em>array</em><span class="sig-paren">)</span></dt>
+<dd><p>Creates a new ImageArray object and assigns the <em>array</em>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">ImageArray</code><span class="sig-paren">(</span><em>ImageFile</em><span class="sig-paren">)</span></dt>
+<dd><p>Creates a new ImageArray object and assigns the <em>array</em> using
+the ImageFile.image property.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descname">ImageArray</code><span class="sig-paren">(</span><em>ImageArray</em><span class="sig-paren">)</span></dt>
+<dd><p>Creates the new ImageArray object and initialises all data from the
+existing <a class="reference internal" href="Stoner.Image.core.ImageArray.html#Stoner.Image.core.ImageArray" title="Stoner.Image.core.ImageArray"><code class="xref py py-class docutils literal"><span class="pre">ImageArray</span></code></a> instance. This on the face of it does the same as
+the assignment operator, but is more useful when one or other of the
+ImageArray objects is an instance of a sub - class of ImageArray</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Stoner.Image.core.ImageArray.ImageArray">
+<code class="descname">ImageArray</code><span class="sig-paren">(</span><em>bool</em><span class="sig-paren">)</span><a class="headerlink" href="#Stoner.Image.core.ImageArray.ImageArray" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descname">:noindex:</code></dt>
+<dd><p>if arg[0] is bool and False then open a file dialog to locate the
+file to open.</p>
+</dd></dl>
+
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>image</strong> &#8211; string or numpy array initiator
-If a filename is given it will try to load the image from memory
-Otherwise it will call np.array(image) on the object so an array or
-list is suitable</p>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Keyword Arguments:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><ul class="first last simple">
-<li><strong>reduce_metadata</strong> &#8211; bool
-if True reduce the metadata to useful bits and do some processing on it</li>
-<li><strong>convert_float</strong> &#8211; bool
-if True convert the image to float values between 0 and 1 (necessary
-for some forms of processing)</li>
-<li><strong>ocr_metadata</strong> &#8211; bool
-whether to try to use optical character recognition to get the
-metadata from the image (necessary for images taken pre 06/2016)</li>
-<li><strong>field_only</strong> &#8211; bool
-if ocr_metadata is true, get field only (bit faster)</li>
-<li><strong>metadata</strong> &#8211; dict
-dictionary of extra metadata items you would like adding to your array</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>arg</strong> (<em>positional arguments</em>) &#8211; an argument that matches one of the
+definitions above</td>
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>Keyword Arguments: All keyword arguments that match public attributes are</dt>
+<dd><p class="first">used to set those public attributes eg metadata.</p>
+<dl class="last docutils">
+<dt>asfloat(bool):</dt>
+<dd>if True  and loading the image from file, convert the image
+to float values between 0 and 1 (necessary for some forms
+of processing)</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -155,7 +184,7 @@ dictionary of extra metadata items you would like adding to your array</li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 20, 2017.
+      Last updated on Apr 23, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

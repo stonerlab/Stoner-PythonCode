@@ -1,8 +1,0 @@
-
-
-objectFolder.concatentate
-========================================
-
-.. currentmodule:: Stoner.Folders
-
-.. automethod:: objectFolder.concatentate
