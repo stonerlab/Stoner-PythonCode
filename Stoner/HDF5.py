@@ -162,8 +162,7 @@ class HDF5File(DataFile):
         return self
 
     def save(self, h5file=None):
-        """Writes the current object into  an hdf5 file or group within a file in a
-        fashion that is compatible with being loaded in again with the same class.
+        """Writes the current object into  an hdf5 file or group within a file in afashion that is compatible with being loaded in again.
 
         Args:
             h5file (string or h5py.Group): Either a string, of h5py.File or h5py.Group object into which
