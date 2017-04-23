@@ -12,6 +12,9 @@ from sys import version_info as __vi__
 from re import _pattern_type
 from matplotlib import __version__ as mpl_version
 from distutils.version import LooseVersion
+from os import walk
+from os.path import join
+import fnmatch
 
 try:
     from lmfit import Model  # pylint: disable=unused-import
@@ -101,6 +104,16 @@ elif __vi__[0] == 3:
 
 
 index_types = string_types + int_types +(_pattern_type,)
+
+def listdir_recursive(dirname,glob=None):
+    """Generator that does a recursive file list with optional globbing."""
+    for dp, _, fn in walk(dirname):
+        for f in fn:
+            ret=join(dp,f)
+            if glob is not None:
+                if not fnmatch.fnmatch(ret,glob):
+                    continue
+            yield ret
 
 class ClassPropertyDescriptor(object):
     
