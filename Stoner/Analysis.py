@@ -434,7 +434,7 @@ class AnalysisMixin(object):
             self["{}chi^2".format(prefix)] = fit.chisqr
             row.append(fit.chisqr)
             self["{}nfev".format(prefix)] = fit.nfev
-            retval = {"fit": fit, "row": row, "full": (fit, row)}
+            retval = {"fit": fit, "row": row, "full": (fit, row),"data":self}
             if output not in retval:
                 raise RuntimeError("Failed to recognise output format:{}".format(output))
             else:
@@ -732,6 +732,7 @@ class AnalysisMixin(object):
             * "fit"    (tuple of popt,pcov)
             * "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             * "full"    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).
+            * "data"   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the metadata and optionally as a new column.
 
         Note:
             If the columns are not specified (or set to None) then the X and Y data are taken using the
@@ -804,7 +805,7 @@ class AnalysisMixin(object):
             for val,err in zip(popt,perr):
                 row = _np_.append(row, [val,err])
             ret = (pcov,popt,row)
-            retval = {"fit": (popt, pcov), "row": row, "full": ret}
+            retval = {"fit": (popt, pcov), "row": row, "full": ret, "data": self}
             if output not in retval:
                 raise RuntimeError("Specified output: {}, from curve_fit not recognised".format(kargs["output"]))
             retvals.append(retval[output])
@@ -1162,6 +1163,7 @@ class AnalysisMixin(object):
             - "ffit"    just the :py:class:`lmfit.model.ModelFit` instance
             - "row"     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties
             - "full"    a tuple of the fit instance and the row.
+            - "data"    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.
 
         See Also:
             :py:meth:`AnalysisMixin.curve_fit`
@@ -1275,6 +1277,7 @@ class AnalysisMixin(object):
                 p0=_lmfit_p0_dict(p0,model)
                 p0[xvar] = xdata
                 ret_val[i,:]=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix)
+                
         return ret_val
 
 

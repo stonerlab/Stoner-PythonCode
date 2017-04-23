@@ -6,13 +6,10 @@ Created on Fri Feb 07 19:57:30 2014
 """
 
 __all__=["TexFormatter","DefaultPlotStyle","GBPlotStyle","JTBPlotStyle","JTBinsetStyle","PRBPlotStyle","SketchPlot","SeabornPlotStyle"]
-from Stoner.compat import *
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import EngFormatter, Formatter
 from matplotlib.ticker import AutoLocator
 from os.path import join, dirname, realpath,exists
-from sys import platform as _platform
 from numpy.random import normal
 from inspect import getfile
 
