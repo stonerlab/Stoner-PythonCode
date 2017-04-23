@@ -1529,19 +1529,16 @@ class DataFile(metadataObject):
             handler(*args, **kargs)
         self.metadata["Stoner.class"] = self.__class__.__name__
         if len(kargs) > 0:  # set public attributes from keywords
-            myattrs = self._public_attrs
             to_go=[]
             for k in kargs:
-                if k in myattrs:
-                    if isinstance(kargs[k], myattrs[k]):
+                if k in self._public_attrs:
+                    if isinstance(kargs[k], self._public_attrs[k]):
                         self.__setattr__(k, kargs[k])
                     else:
-                        if isinstance(myattrs[k], tuple):
-                            typ = "one of " + ",".join([str(type(t)) for t in myattrs[k]])
-                        else:
-                            typ = "a {}".format(type(myattrs[k]))
-                        raise TypeError("{} should be {} not a {}".format(k, typ, type(kargs[k])))
-                    to_go.append(k)
+                        self._raise_type_error(k)
+                        to_go.append(k)
+                else:
+                    raise AttributeError("{} is not a recognised attribute ({})".format(k,list(self._public_attrs.keys())))
             for k in to_go:
                 del kargs[k]
         if self.debug: print("Done DataFile init")
@@ -1610,7 +1607,7 @@ class DataFile(metadataObject):
     @_public_attrs.setter
     def _public_attrs(self,value):
         """Privaye property to update the list of public attributes."""
-        self._public_attrs_real.update(value)
+        self._public_attrs_real.update(dict(value))
 
     @property
     def clone(self):
@@ -2748,6 +2745,15 @@ class DataFile(metadataObject):
         self.mask = self._masks.pop()
         if len(self._masks) == 0:
             self._masks = [False]
+            
+    def _raise_type_error(self,k):
+        """Raise a type error when setting an attribute k."""
+        if isinstance(self._public_attrs[k], tuple):
+            typ = "one of " + ",".join([str(type(t)) for t in self._public_attrs[k]])
+        else:
+            typ = "a {}".format(type(self._public_attrs[k]))
+        raise TypeError("{} should be {}".format(k, typ))
+
 
 #   PUBLIC METHODS
 
