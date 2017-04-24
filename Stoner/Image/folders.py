@@ -48,7 +48,7 @@ class ImageFolder(DiskBssedFolder,baseFolder):
     """
 
     def __init__(self, *args, **kargs):
-        """nitialise the ImageFolder. 
+        """Initialise the ImageFolder. 
         
         Mostly a pass through to the :py:class:`Stoner.Folders.baseFolder` class.
         """
@@ -63,44 +63,6 @@ class ImageFolder(DiskBssedFolder,baseFolder):
         """Load all files from this group into memory"""
         for _ in self:
             pass
-        
-    def slice_metadata(self, key=None, values_only=False):  # pylint: disable=arguments-differ
-        """Return a list of the metadata dictionaries for each item/file in the top level group
-
-        Keyword Arguments:
-            key(string or list of strings):
-                if given then only return the item(s) requested from the metadata
-            values_only(bool):
-                if given only return tuples of the dictionary values. Mostly useful
-                when given a single key string
-        Returns:
-            ret(list of dict, tuple or values):
-                depending on values_only returns the sliced dictionaries or tuples/
-                values of the items
-            
-        To do: 
-            this should probably be a func in baseFolder and should use have
-            recursive options (build a dictionary of metadata values). And probably
-            options to extract other parts of objects (first row or whatever).
-        """
-        metadata=[k.metadata for k in self] #this can take some time if it's loading in the images
-        if isinstance(key, string_types):
-            key=metadata[0].__lookup__(key,multiple=True)
-        elif isinstance(key,Iterable):
-            newkey=[]
-            for k in key:
-                newkey.extnd(metadata[0].__lookup__(k,multiple=True))
-            key=newkey
-        if isinstance(key, list):
-            for i,met in enumerate(metadata):
-                assert all([k in met for k in key]), 'key requested not in item {}'.format(i)
-                metadata[i]={k:v for k,v in metadata[i].items() if k in key}
-        if values_only:
-            for i,met in enumerate(metadata):
-                metadata[i]=[v for k,v in met.items()]
-            if len(metadata[0])==1: #single key
-                metadata=[m[0] for m in metadata]
-        return metadata
     
     def stack(self):
         """Return a ImageStack of the images in the current group."""
