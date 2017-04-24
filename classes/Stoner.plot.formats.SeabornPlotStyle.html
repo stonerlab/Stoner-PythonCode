@@ -83,15 +83,18 @@
 <dl class="docutils">
 <dt>Example</dt>
 <dd><div class="first highlight-python"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;Example plot style using Seaborn plot styling template.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">Stoner</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span><span class="n">__home__</span>
 <span class="kn">from</span> <span class="nn">Stoner.plot.formats</span> <span class="kn">import</span> <span class="n">SeabornPlotStyle</span>
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="kn">as</span> <span class="nn">path</span>
-<span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">))</span>
+<span class="n">filename</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">__home__</span><span class="p">,</span><span class="s2">&quot;..&quot;</span><span class="p">,</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span><span class="s2">&quot;samples&quot;</span><span class="p">,</span><span class="s2">&quot;sample.txt&quot;</span><span class="p">))</span>
 <span class="n">d</span><span class="o">=</span><span class="n">Data</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">setas</span><span class="o">=</span><span class="s2">&quot;xyy&quot;</span><span class="p">,</span><span class="n">template</span><span class="o">=</span><span class="n">SeabornPlotStyle</span><span class="p">(</span><span class="n">stylename</span><span class="o">=</span><span class="s2">&quot;dark&quot;</span><span class="p">,</span><span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span><span class="n">palette</span><span class="o">=</span><span class="s2">&quot;muted&quot;</span><span class="p">))</span>
 <span class="n">d</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;y2&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">(<a class="reference external" href="../samples/plotstyles/SeabornStyle.py">Source code</a>)</p>
+<p>(<a class="reference external" href="../samples/plotstyles/SeabornStyle.py">Source code</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.png">png</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.hires.png">hires.png</a>, <a class="reference external" href="../samples/plotstyles/SeabornStyle.pdf">pdf</a>)</p>
+<div class="last figure">
+<img alt="../_images/SeabornStyle.png" src="../_images/SeabornStyle.png" />
+</div>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
@@ -185,7 +188,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 23, 2017.
+      Last updated on Apr 24, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>

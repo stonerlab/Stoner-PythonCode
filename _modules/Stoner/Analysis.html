@@ -485,7 +485,7 @@
             <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">chi^2&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)]</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">chisqr</span>
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fit</span><span class="o">.</span><span class="n">chisqr</span><span class="p">)</span>
             <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">nfev&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">)]</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">nfev</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit&quot;</span><span class="p">:</span> <span class="n">fit</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">row</span><span class="p">)}</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit&quot;</span><span class="p">:</span> <span class="n">fit</span><span class="p">,</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span><span class="s2">&quot;data&quot;</span><span class="p">:</span><span class="bp">self</span><span class="p">}</span>
             <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">retval</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Failed to recognise output format:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
@@ -783,6 +783,7 @@
 <span class="sd">            * &quot;fit&quot;    (tuple of popt,pcov)</span>
 <span class="sd">            * &quot;row&quot;     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</span>
 <span class="sd">            * &quot;full&quot;    a tuple of (popt,pcov,dictionary of optional outputs, message, return code, row).</span>
+<span class="sd">            * &quot;data&quot;   a copy of the :py:class:`Stoner.Core.DataFile` object with fit recorded in the metadata and optionally as a new column.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            If the columns are not specified (or set to None) then the X and Y data are taken using the</span>
@@ -855,7 +856,7 @@
             <span class="k">for</span> <span class="n">val</span><span class="p">,</span><span class="n">err</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">popt</span><span class="p">,</span><span class="n">perr</span><span class="p">):</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="n">_np_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="p">[</span><span class="n">val</span><span class="p">,</span><span class="n">err</span><span class="p">])</span>
             <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span><span class="n">pcov</span><span class="p">,</span><span class="n">popt</span><span class="p">,</span><span class="n">row</span><span class="p">)</span>
-            <span class="n">retval</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span><span class="p">),</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="n">ret</span><span class="p">}</span>
+            <span class="n">retval</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;fit&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span><span class="p">),</span> <span class="s2">&quot;row&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="n">ret</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="p">}</span>
             <span class="k">if</span> <span class="n">output</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">retval</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Specified output: </span><span class="si">{}</span><span class="s2">, from curve_fit not recognised&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">kargs</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]))</span>
             <span class="n">retvals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">retval</span><span class="p">[</span><span class="n">output</span><span class="p">])</span>
@@ -1213,6 +1214,7 @@
 <span class="sd">            - &quot;ffit&quot;    just the :py:class:`lmfit.model.ModelFit` instance</span>
 <span class="sd">            - &quot;row&quot;     just a one dimensional numpy array of the fit paraeters interleaved with their uncertainties</span>
 <span class="sd">            - &quot;full&quot;    a tuple of the fit instance and the row.</span>
+<span class="sd">            - &quot;data&quot;    a copy of the :py:class:`Stoner.Core.DataFile` object with the fit recorded in the emtadata and optinally as a column of data.</span>
 
 <span class="sd">        See Also:</span>
 <span class="sd">            :py:meth:`AnalysisMixin.curve_fit`</span>
@@ -1326,6 +1328,7 @@
                 <span class="n">p0</span><span class="o">=</span><span class="n">_lmfit_p0_dict</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span><span class="n">model</span><span class="p">)</span>
                 <span class="n">p0</span><span class="p">[</span><span class="n">xvar</span><span class="p">]</span> <span class="o">=</span> <span class="n">xdata</span>
                 <span class="n">ret_val</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__lmfit_one</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="n">_</span><span class="o">.</span><span class="n">xcol</span><span class="p">,</span><span class="n">ydata</span><span class="p">,</span><span class="n">scale_covar</span><span class="p">,</span><span class="n">sigma</span><span class="p">,</span><span class="n">p0</span><span class="p">,</span><span class="n">prefix</span><span class="p">)</span>
+                
         <span class="k">return</span> <span class="n">ret_val</span></div>
 
 
@@ -2399,7 +2402,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2013-15, Gavin Burnell et al.
-      Last updated on Apr 23, 2017.
+      Last updated on Apr 24, 2017.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.1.
     </div>
   </body>
