@@ -8,17 +8,17 @@ For a general introduction, users are referred to the Users Guide, which is part
 Getting this Code
 =================
 
-The *Stoner* package requires numpy &gt;=1.8, scipy &gt;=0.14, matplotlib &gt;=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS and numba
+The *Stoner* package requires numpy \>=1.8, scipy \>=0.14, matplotlib \>=1.5, h5py, lmfit, and has a number of optional dependencies on blist, filemagic, npTDMS and numba
 
 Ananconda Python (and probably other scientific Python distributions) include nearly all of the dependencies, aprt from lmfit. However, this can by installed with the usual tools such as *easy\_install* or *pip*.
 
-``` sourceCode
+``` {.sourceCode .sh}
 easy_install lmfit
 ```
 
 The easiest way to install the Stoner package is via seuptools' easy\_install
 
-``` sourceCode
+``` {.sourceCode .sh}
 easy_install Stoner
 ```
 
@@ -55,12 +55,12 @@ The **Stoner.HDF5** module provides some experimental classes to manipulate *Dat
 Resources
 =========
 
-Included in the [github repository](http://www.github.com/gb119/Stoner-PythonCode/) are a (small) collection of sample scripts for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a User\_Guide as part of this documentation, along with a complete API reference &lt;Stoner&gt;
+Included in the [github repository](http://www.github.com/gb119/Stoner-PythonCode/) are a (small) collection of sample scripts for carrying out various operations and some sample data files for testing the loading and processing of data. There is also a User\_Guide as part of this documentation, along with a complete API reference \<Stoner\>
 
 Contact and Licensing
 =====================
 
-The lead developer for this code is [Dr Gavin Burnell](http://www.stoner.leeds.ac.uk/people/gb) &lt;<g.burnell@leeds.ac.uk>&gt; . The User Guide gives the current list of other contributors to the project.
+The lead developer for this code is [Dr Gavin Burnell](http://www.stoner.leeds.ac.uk/people/gb) \<<g.burnell@leeds.ac.uk>\> . The User Guide gives the current list of other contributors to the project.
 
 This code and the sample data are all (C) The University of Leeds 2008-2015 unless otherwise indficated in the source file. The contents of this package are licensed under the terms of the GNU Public License v3
 
