@@ -1,10 +1,6 @@
-"""Stoner.Core provides the core classes for the Stoner package.
-
-This module imports Stoner.Analysis and Stoner.plot.core to define the core Data class.
-
-"""
+"""Stoner.Core provides the core classes for the Stoner package."""
 from __future__ import print_function
-__all__ = ["StonerLoadError", "DataFile","DataArray","typeHintedDict","isNone","all_size","all_type"]  # Don't import too muhc with from Stoner.Core import *
+__all__ = ["StonerLoadError", "StonerSetasError","regexpDict","typeHintedDict","metadataObject","DataArray","DataFile","Data"]
 
 from .compat import python_v3,string_types,int_types,index_types,get_filedialog,classproperty,str2bytes,_lmfit,Model
 from .tools import isNone,all_size,all_type,format_error,_attribute_store,operator

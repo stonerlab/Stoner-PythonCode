@@ -16,6 +16,9 @@ import os.path as path
 
 sys.path.append(path.realpath(path.join(path.dirname(__file__),"..")))
 
+from better import better_theme_path
+
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -37,8 +40,8 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.graphviz',
               'sphinx.ext.inheritance_diagram',
               'sphinx.ext.todo',
-              'astropy_helpers.sphinx.ext.automodapi',
-              'astropy_helpers.sphinx.ext.automodsumm',
+              'sphinx_automodapi.automodapi',
+              'sphinx_automodapi.smart_resolver',
               'sphinx.ext.mathjax',
               'matplotlib.sphinxext.plot_directive'
               ]
@@ -103,7 +106,7 @@ pygments_style = 'sphinx'
 #modindex_common_prefix = []
 
 autosummary_generate = True
-
+automodsumm_inherited_members = True
 autodoc_default_flags =[] # 'members', 'undoc-members', 'private-members','show-inheritance']
 
 intersphinx_mapping = {
@@ -120,8 +123,8 @@ intersphinx_mapping = {
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'classic'
-
+html_theme = 'better'
+html_theme_path = [better_theme_path]
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -139,7 +142,7 @@ html_short_title = "Stoner Package"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = "StonerLogo.png"
+html_logo = "StonerLogo2.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
