@@ -107,7 +107,7 @@ Travis CI is used to test the development branch to see if it passes the current
 
 [![Code Health](https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat)](https://landscape.io/github/gb119/Stoner-PythonCode/master)
 
-![image](https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest%0A%20:target:%20http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest%0A%20:alt:%20Documentation%20Status)
+[![Documentation Status](https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest)](http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest)
 
 ### Citing the Stoner Package
 

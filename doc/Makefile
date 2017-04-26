@@ -42,10 +42,12 @@ clean:
 	-rm -rf $(BUILDDIR)/*
 	-rm -rf classes/* functions/*
 
-html:
+readme:
+	pandoc -f rst -t markdown_github -o ../README.md readme.rst
+
+html: readme
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
-	pandoc -f rst -t markdown_github -o ../README.md readme.rst
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 dirhtml:

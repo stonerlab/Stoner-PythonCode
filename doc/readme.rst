@@ -144,8 +144,8 @@ The current status is:
    :alt: Code Health
 
 .. image:: https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest
-    :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
-    :alt: Documentation Status
+   :target: http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 
 Citing the Stoner Package
