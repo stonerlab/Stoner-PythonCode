@@ -11,7 +11,7 @@ axes.labelsize      : medium  # fontsize of the x any y labels
 axes.labelpad       : 4.0     # space between label and axis
 axes.labelweight    : normal  # weight of the x and y labels
 axes.labelcolor     : black
-axes.axisbelow      : 'line'  # draw axis gridlines and ticks below
+axes.axisbelow      : line  # draw axis gridlines and ticks below
                                # patches (True); above patches but below
                                # lines ('line'); or above all (False)
 axes.formatter.limits : -3, 3 # use scientific notation if log10
@@ -41,8 +41,7 @@ figure.figsize   : 7, 5    # figure size in inches
 figure.dpi       : 150      # figure dots per inch
 figure.facecolor:1,1,1    # figure facecolor; 0.75 is scalar gray
 figure.edgecolor : white   # figure edgecolor
-figure.autolayout : True  # When True, automatically adjust subplot
-figure.max_open_warning : 20  
+figure.autolayout : True  # When True, automatically adjust subplot 
 
 figure.subplot.bottom  : 0.1    # the bottom of the subplots of the figure
 figure.subplot.hspace  : 0.1

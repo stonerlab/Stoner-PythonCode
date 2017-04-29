@@ -2583,8 +2583,12 @@ class DataFile(metadataObject):
             ix = _np_.less_equal(_np_.abs(self.data[:, x] - value), accuracy)
         elif isinstance(value, tuple) and len(value) == 2:
             (l, u) = (min(value), max(value))
-            delta = u - l + 2 * accuracy
-            ix = _np_.less_equal(_np_.abs(self.data[:, x] - l - accuracy), delta)
+            l-=accuracy
+            u+=accuracy
+            v=self.data[:,x]
+            l=_np_.ones_like(v)*l
+            u=_np_.ones_like(v)*u
+            ix=_np_.logical_and(v>l,v<=u)
         elif isinstance(value, (list, _np_.ndarray)):
             ix = _np_.zeros(len(self), dtype=bool)
             for v in value:
@@ -3512,14 +3516,12 @@ class DataFile(metadataObject):
                 - *between*  value lies beween the minimum and maximum values of the arguement (the default test for 2-length tuple arguments)
                 - *ibetween*,*ilbetween*,*iubetween* as above but include both,lower or upper values
                 
-            if the operator is preceeded by *__not__* then the sense of the test is negated.
-            
-            The syntax is inspired by the Django project for selecting, but is not quite as rich.
-
         Returns:
             (DatFile): a copy the DataFile instance that contains just the matching rows.
 
         Note:
+            if the operator is preceeded by *__not__* then the sense of the test is negated.
+            
             If any of the tests is True, then the row will be selected, so the effect is a logical OR. To
             achieve a logical AND, you can chain two selects together::
 

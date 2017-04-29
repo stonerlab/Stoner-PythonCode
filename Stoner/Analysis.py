@@ -977,10 +977,14 @@ class AnalysisMixin(object):
         kinds={"linear":lambda x,m,c:m*x+c,
                "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
                "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
+        errs={"linear":lambda x,me,ce:_np_.sqrt((me*x)**2+ce**2),
+              "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x*ae)**2+(x*be)**2+ce**2),
+              "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x)**2+(2*x*be)**2+(x*ce)**2+de**2)}
+        
         if callable(kind):
             pass
         elif kind in kinds:
-            kind=kinds[kind]
+            kindf=kinds[kind]
         else:
             raise RuntimeError("Failed to recognise extrpolation function '{}'".format(kind))
         scalar_x=not isinstance(new_x,Iterable)
@@ -988,7 +992,7 @@ class AnalysisMixin(object):
             new_x=[new_x]
         if isinstance(new_x,ma.MaskedArray):
             new_x=new_x.compressed
-        results=_np_.zeros((len(new_x),len(_.ycol)))
+        results=_np_.zeros((len(new_x),2*len(_.ycol)))
         for ix,x in enumerate(new_x):
             r=self.closest(x,xcol=_.xcol)
             if isinstance(overlap,int):
@@ -1013,12 +1017,16 @@ class AnalysisMixin(object):
                     ll=r[_.xcol]-overlap/2
                     hl=r[_.xcol]+overlap/2
                 bounds=lambda xv,rv:ll<=xv<=hl
-            ret=self.curve_fit(kind,_.xcol,_.ycol,sigma=_.yerr,bounds=bounds)
+            mid_x=(ll+hl)/2.0
+            ret=self.curve_fit(kindf,_.xcol,_.ycol,sigma=_.yerr,bounds=bounds,absolute_sigma=True)
             if isinstance(ret,tuple):
                 ret=[ret]
             for iy,rt in enumerate(ret):
-                pcov,popt=rt
-                results[ix,iy]=kind(x,*pcov)
+                popt,pcov=rt
+                perr=_np_.sqrt(_np_.diag(pcov))
+                perr[-1]/=mid_x
+                results[ix,2*iy]=kindf(x,*popt)
+                results[ix,2*iy+1]=errs[kind](x-mid_x,*perr)
         if scalar_x:
             results=results[0]
         return results

@@ -1505,12 +1505,30 @@ class KermitPNGFile(DataFile):
     #   .. note::
     #      Subclasses with priority<=32 should make some positive identification that they have the right
     #      file type before attempting to read data.
-    priority=32 # reasonably generic format
+    priority=16 # We're checking for a the specoific PNG signature
     #: pattern (list of str): A list of file extensions that might contain this type of file. Used to construct
     # the file load/save dialog boxes.
     patterns=["*.png"] # Recognised filename patterns
 
     mime_type="image/png"
+
+    def _check_signature(self,filename):
+        """Check that this is a PNG file and raie a StonerLoadError if not."""
+        try:
+            with open(filename,"rb") as test:
+                sig=test.read(8)
+            if python_v3:
+                sig=[x for x in sig]
+            else:
+                sig=[ord(b) for b in sig]
+            if self.debug:
+                print(sig)
+            if sig!=[137,80,78,71,13,10,26,10]:
+                raise StonerLoadError("Signature mismatrch")
+        except Exception:
+            from traceback import format_exc
+            raise StonerLoadError("Not a PNG file!>\n{}".format(format_exc()))
+        return True
 
     def _load(self, filename=None, *args, **kargs):
         """PNG file loader routine.
@@ -1526,6 +1544,7 @@ class KermitPNGFile(DataFile):
             self.get_filename('r')
         else:
             self.filename = filename
+        self._check_signature(filename)
         try:
             with PIL.Image.open(self.filename,"r") as img:
                 for k in img.info:

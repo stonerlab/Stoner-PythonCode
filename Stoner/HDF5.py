@@ -476,9 +476,15 @@ class SLS_STXMFile(DataFile):
             f = filename
         else:
             raise StonerLoadError("Couldn't interpret {} as a valid HDF5 file or group or filename".format(filename))
-        if (len(f.items())!=1 or f.items()[0][0]!="entry1" or  "definition" not in f["entry1"] or  f["entry1"]["definition"].value[0]!="NXstxm"): #Bad HDF5
+        items=[x for x in f.items()]
+        if len(items)==1 and items[0][0]=="entry1":
+            group1=[x for x in f["entry1"]]
+            if  "definition" in group1 and  bytes2str(f["entry1"]["definition"].value[0])=="NXstxm": #Good HDF5
+                pass
+            else:
+                raise StonerLoadError("HDF5 file lacks single top level group called entry1")
+        else:
             raise StonerLoadError("HDF5 file lacks single top level group called entry1")
-
         root=f["entry1"]
         data=root["counter0"]["data"]
         if _np_.product(_np_.array(data.shape)) > 0:
@@ -487,11 +493,11 @@ class SLS_STXMFile(DataFile):
             self.data = [[]]
         self.scan_meta(root)
         if "file_name" in f.attrs:
-            self.filename = f.attrs["file_name"]
+            self["original filename"] = f.attrs["file_name"]
         elif isinstance(f, h5py.Group):
-            self.filename = f.name
+            self["original filename"] = f.name
         else:
-            self.filename = f.file.filename
+            self["original filename"] = f.file.filename
 
         if isinstance(filename, string_types):
             f.file.close()

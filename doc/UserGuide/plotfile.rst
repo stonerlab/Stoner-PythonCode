@@ -162,7 +162,7 @@ Following the naming convention above, the :py:meth:`PlotMixin.plot_xyzuvw` meth
 
 The :py:meth:`PlotMixin.plot_xyzuvw` method uses a default vector field plot function that is based on mayavi from
 Enthought. The import is done when the plot is required to speed loading times for the :py:mod:`Stoner.plot` when
-2D plotting only is required.
+2D plotting only is required. If the mayavi package is not available, then matplotlib's 3D quiver plot is used as a fall back.
 
 The first example above will result in a plot using flat arroiws coloured according to the vector magnitude. The second
 examnple will instead color them using the specified column from the data. The third example demonstrates passing in
@@ -177,6 +177,13 @@ demonstrates the use of the *plotter* keyword, analogous to the 2D and 3D exampl
 
 As the mayavi.mlab quiver3d plotting function doesn't support a title, and axes labels by default, these are not used by
 default in this function.
+
+As usual, the default operation should still produce reasonable graphs.
+
+.. plot:: samples/Vectorfield.py
+   :include-source:
+
+
 
 Very Quick Plotting
 ===================

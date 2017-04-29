@@ -32,6 +32,9 @@ class DocSamples_test(unittest.TestCase):
                 code=import_module(script)
                 fignum=len(plt.get_fignums())
                 self.assertGreaterEqual(fignum,1,"{} Did not produce any figures !".format(script))
+                print("Done")
+                fig=plt.gcf()
+                plt.close(fig)
                 plt.close("all")
             except Exception:
                 v=format_exc()

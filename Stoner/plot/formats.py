@@ -276,11 +276,8 @@ class DefaultPlotStyle(object):
                 if attrname in plt.rcParams.keys():
                     params[attrname] = value
         plt.rcParams.update(params)  # Apply these parameters
-        if "projection" in kargs:
-            projection = kargs["projection"]
-            del kargs["projection"]
-        else:
-            projection = "rectilinear"
+        projection=kargs.pop("projection","rectilinear")
+        self.template_figure_figsize=kargs.pop("figsize",self.template_figure_figsize)
         if isinstance(figure, bool) and not figure:
             ret = None
         elif figure is not None:
@@ -294,7 +291,7 @@ class DefaultPlotStyle(object):
                 else:
                     ax = fig.add_axes(rect)
             else:
-                ax = fig.gca(projection=projection)
+                ax = kargs.pop("ax",fig.gca(projection=projection))
             ret = fig
         else:
             if projection == "3d":

@@ -10,7 +10,10 @@ setup(
     version = str(Stoner.__version__),
     author = "Gavin Burnell",
     author_email = "g.burnell@leeds.ac.uk",
-    description = ("Classes to represent simple scientific data sets and write analysis codes, developed for the University of Leeds Condensed Matter Physics Group"),
+    description = ("""The Stoner Python package is a set of utility classes for writing data analysis code. It was written within the 
+                   Condensed Matter Physics group at the University of Leeds as a shared resource for quickly writing simple programs 
+                   to do things like fitting functions to data, extract curve parameters, churn through large numbers of small text 
+                   data files and work with certain types of scientific image files"""),
     license = "GPLv3",
     keywords = "Data-Analysis Physics",
     url = "http://github.com/~gb119/Stoner-PythonCode",

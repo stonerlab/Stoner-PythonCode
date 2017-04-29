@@ -275,13 +275,18 @@ class PlotMixin(object):
             matpltolib.pyplot.figure with a quiver plot."""
         if not _3D:
             raise RuntimeError("3D plotting Not available. Install matplotlib toolkits")
-        ax=plt.gca(projection="3d")
+        ax=kargs.pop("ax",plt.gca(projection="3d"))
         vector_field = ax.quiver(X, Y, Z, U,V,W,**kargs)
 
         return vector_field
 
-
-
+    def _span_slice(self,col,num):
+        """Create a slice that covers the range of a given column."""
+        v=self.column(col)
+        v1,v2=_np_.min(v),_np_.max(v)
+        span=v2-v1
+        delta=span/num
+        return slice(v1,v2+(delta/2),delta)
 
     def _VectorFieldPlot(self, X, Y, Z, U, V, W, **kargs):
         """Helper function to plot vector fields using mayavi.mlab.
@@ -486,6 +491,8 @@ class PlotMixin(object):
         if "set_{}".format(name) in dir(plt.Axes):
             tfig = plt.gcf()
             tax = tfig.gca()  # protect the current axes and figure
+            if self.fig is None: # oops we need a figure first!
+                self.figure()
             ax = self.fig.gca()
             if not isinstance(value, Iterable) or isinstance(value, string_types):
                 value = (value, )
@@ -642,25 +649,27 @@ class PlotMixin(object):
         if shape is None or not (isinstance(shape, tuple) and len(shape) == 2):
             shape = (_np_.floor(_np_.sqrt(len(self))), _np_.floor(_np_.sqrt(len(self))))
         if xlim is None:
-            xlim = (_np_.min(self.column(xcol)) * (shape[0] - 1) / shape[0], _np_.max(self.column(xcol)) *
-                    (shape[0] - 1) / shape[0])
-        if isinstance(xlim, tuple) and len(xlim) == 2:
+            xlim=self._span_slice(xcol,shape[0])
+        elif isinstance(xlim, tuple) and len(xlim) == 2:
             xlim = (xlim[0], xlim[1], (xlim[1] - xlim[0]) / shape[0])
+            xlim=slice(*xlim)
         elif isinstance(xlim, tuple) and len(xlim) == 3:
             xlim[2] = len(range(*xlim))
+            xlim=slice(*xlim)
         else:
             raise RuntimeError("X limit specification not good.")
         if ylim is None:
-            ylim = (_np_.min(self.column(ycol)) * (shape[1] - 1) / shape[1], _np_.max(self.column(ycol)) *
-                    (shape[0] - 1) / shape[0])
-        if isinstance(ylim, tuple) and len(ylim) == 2:
+            ylim=self._span_slice(ycol,shape[1])
+        elif isinstance(ylim, tuple) and len(ylim) == 2:
             ylim = (ylim[0], ylim[1], (ylim[1] - ylim[0]) / shape[1])
+            ylim=slice(*ylim)
         elif isinstance(ylim, tuple) and len(ylim) == 3:
             ylim[2] = len(range(*ylim))
+            ylim=slice(*ylim)
         else:
             raise RuntimeError("Y limit specification not good.")
 
-        np = _np_.mgrid[slice(*xlim), slice(*ylim)].T
+        np = _np_.mgrid[xlim,ylim].T
 
         points = _np_.array([self.column(xcol), self.column(ycol)]).T
         if zcol is None:
@@ -675,6 +684,7 @@ class PlotMixin(object):
             Z = _np_.zeros((np.shape[0], np.shape[1], zdata.shape[1]))
             for i in range(zdata.shape[1]):
                 Z[:,:, i] = griddata(points, zdata[:, i], np, method=method)
+
         return np[:,:, 0], np[:,:, 1], Z
 
     def image_plot(self, xcol=None, ycol=None, zcol=None, shape=None, xlim=None, ylim=None, **kargs):
@@ -1215,6 +1225,7 @@ class PlotMixin(object):
         """
         try:
             from mayavi import mlab, core
+            mlab.figure()
             mayavi=True
         except ImportError:
             mayavi=False
@@ -1334,7 +1345,7 @@ class PlotMixin(object):
         """
         locals().update(self._fix_cols(xcol=xcol, ycol=ycol, ucol=ucol, vcol=vcol, **kargs))
         defaults = {
-            "pivot": "center",
+            "pivot": "mid",
             "color": (0, 0, 0, 0.5),
             "headlength": 5,
             "headaxislength": 5,
