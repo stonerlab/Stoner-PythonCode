@@ -22,7 +22,7 @@ setup(
     package_data={'Stoner':['stylelib/*.mplstyle']},
     test_suite="tests",
     install_requires=["numpy>=1.7","scipy>=0.14","matplotlib>=1.5","h5py","lmfit","filemagic","pillow","scikit-image"],
-    long_description=read('doc/README.md'),
+    long_description=read(os.path.join('doc','README.md')),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
