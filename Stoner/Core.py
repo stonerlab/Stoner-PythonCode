@@ -526,7 +526,7 @@ class regexpDict(sorteddict):
     def __init__(self,*args,**kargs):
         super(regexpDict,self).__init__(*args,**kargs)
 
-    def __lookup__(self,name,multiple=False):
+    def __lookup__(self,name,multiple=False,exact=False):
         """Lookup name and find a matching key or raise KeyError.
 
         Parameters:
@@ -546,6 +546,8 @@ class regexpDict(sorteddict):
             super(regexpDict,self).__getitem__(name)
             ret=name
         except KeyError: #Fall back to regular expression lookup
+            if exact:
+                raise KeyError("{} not a key and exact match requested.".format(name))
             nm=name           
             if isinstance(name,string_types):
                 try:
@@ -576,7 +578,7 @@ class regexpDict(sorteddict):
     def __setitem__(self,name,value):
         """Overwrites any matching key, or if not found adds a new key."""
         try:
-            key=self.__lookup__(name)
+            key=self.__lookup__(name,exact=True)
         except KeyError:
             if not isinstance(name,string_types):
                 raise KeyError("{} is not a match to any key.".format(name))
@@ -3701,7 +3703,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
 
         try:
             value=float(self[key])
-        except ValueError:
+        except (ValueError, TypeError):
             raise KeyError("{} should be a floating point value of the metadata.",format(key))
         try:
             error=float(self[key+" err"])

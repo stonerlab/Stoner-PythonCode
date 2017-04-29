@@ -9,7 +9,7 @@ from __future__ import print_function
 
 from Stoner.Fit import cfg_data_from_ini,cfg_model_from_ini
 
-d=cfg_data_from_ini("PCAR-New.ini","../sample-data/PCAR Co Data.csv",debug=True)
+d=cfg_data_from_ini("PCAR-New.ini","../sample-data/PCAR Co Data.csv")
 
 model,p0=cfg_model_from_ini("PCAR-New.ini",data=d)
 

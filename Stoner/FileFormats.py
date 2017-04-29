@@ -1,10 +1,14 @@
 """Provides extra classes that can load data from various instruments into DataFile type objects.
 
-Eacg class has a priority attribute that is used to determine the order in which
-they are tried by DataFile and friends where trying to load data. High priority
-is run last.
+You do not need to use these classes directly, they are made available to :py:class:`Stoner.Core.Data` which
+will load each of them in turn when asked to load an unknown data file.
 
-Eacg class should implement a load() method and optionally a save() method.
+Each class has a priority attribute that is used to determine the order in which
+they are tried by :py:class:`Stoner.Core.Data` and friends where trying to load data. 
+High priority is run last (so is a bit of a misnomer!).
+
+Eacg class should implement a load() method and optionally a save() method. Classes should make every effort to
+positively identify that the file is one that they understand and throw a :py:exception:Stoner.Core.StonerLoadError` if not.
 """
 
 from __future__ import print_function

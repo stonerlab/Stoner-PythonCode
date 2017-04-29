@@ -5,6 +5,9 @@ Classes include
 * HDF5File - A :py:class:`Stoner.Code.DataFile` subclass that can save and load data from hdf5 files
 * HDF5Folder - A :py:class:`Stoner.Folders.DataFolder` subclass that can save and load data from a single hdf5 file
 
+It is only necessary to import this module for the subclasses of :py:class:`Stoner.Core.DataFile` to become available
+to :py:class:`Stoner.Core.Data`.
+
 """
 from Stoner.compat import string_types,bytes2str,get_filedialog
 import h5py
