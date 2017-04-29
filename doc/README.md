@@ -1,3 +1,15 @@
+[![image](https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master)](https://travis-ci.org/gb119/Stoner-PythonCode)
+
+[![image](https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master)](https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master)
+
+[![Code Health](https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat)](https://landscape.io/github/gb119/Stoner-PythonCode/master)
+
+[![image](https://badge.fury.io/py/Stoner.svg)](https://badge.fury.io/py/Stoner)
+
+[![Documentation Status](https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest)](http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest)
+
+[![image](https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg)](https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode)
+
 Introduction
 ============
 
@@ -79,9 +91,7 @@ Recent Changes
 Current PyPi Version
 --------------------
 
-The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start making beta packages available. The current version is:
-
-[![image](https://badge.fury.io/py/Stoner.svg)](https://badge.fury.io/py/Stoner)
+The current version of the package on PyPi will be the stable branch until the development branch enters beta testing, when we start making beta packages available.
 
 Development Version
 -------------------
@@ -99,21 +109,11 @@ Online documentation for all versions can be found on the ReadTheDocs pages [onl
 
 ### Build Status
 
-Travis CI is used to test the development branch to see if it passes the current unit tests and coveralls.io handles the unit test coverage reporting. The current status is:
-
-[![image](https://travis-ci.org/gb119/Stoner-PythonCode.svg?branch=master)](https://travis-ci.org/gb119/Stoner-PythonCode)
-
-[![image](https://coveralls.io/repos/github/gb119/Stoner-PythonCode/badge.svg?branch=master)](https://coveralls.io/github/gb119/Stoner-PythonCode?branch=master)
-
-[![Code Health](https://landscape.io/github/gb119/Stoner-PythonCode/master/landscape.svg?style=flat)](https://landscape.io/github/gb119/Stoner-PythonCode/master)
-
-[![Documentation Status](https://readthedocs.org/projects/stoner-pythoncode/badge/?version=latest)](http://stoner-pythoncode.readthedocs.io/en/latest/?badge=latest)
+Version 0.7 onwards are tested using the Travis-CI services with unit test coverage assessed by Coveralls. We currently test against python 2.7 and 3.5 via Travis and internally test on Python 3.6. Overall code quality is measured by landscape.io. The current status is shown at the top of this readme.
 
 ### Citing the Stoner Package
 
-You can cite the Stoner package via its doi:
-
-[![image](https://zenodo.org/badge/17265/gb119/Stoner-PythonCode.svg)](https://zenodo.org/badge/latestdoi/17265/gb119/Stoner-PythonCode)
+We maintain a digital object identifier (doi) for this package (linked to on the status bar at the top of this readme) and encourage any users to cite this package via that doi.
 
 Stable Version
 --------------
