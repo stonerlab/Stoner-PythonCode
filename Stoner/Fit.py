@@ -671,6 +671,11 @@ def wlfit(B, s0, DS, B1, B2):
 
     Return:
         Conductance vs Field for a weak localisation system
+        
+    Example:
+        .. plot:: samples/Fitting/Weak_localisation.py
+           :include-source:
+   
 
     .. note::
 
@@ -716,6 +721,10 @@ class WLfit(Model):
 
     Return:
         Conductance vs Field for a weak localisation system
+
+    Example:
+        .. plot:: samples/Fitting/Weak_localisation.py
+           :include-source:
 
     .. note::
 
@@ -880,6 +889,10 @@ def fluchsSondheimer(t, l, p, sigma_0):
     Return:
         Reduced Resistivity
 
+    Example:
+        .. plot:: samples/Fitting/f_s.py
+           :include-source:
+
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
     """
@@ -890,7 +903,9 @@ def fluchsSondheimer(t, l, p, sigma_0):
     result = _np_.zeros(k.shape)
     for i in range(len(k)):
         v = k[i]
-        result[i] = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v)) * quad(kernel, 0, 1, v)
+        ret1 = 1 - (3 * (1 - p) / (8 * v)) + (3 * (1 - p) / (2 * v))
+        ret2 = quad(kernel, 0, 1, (v,))[0]
+        result[i]=ret1*ret2
     return result / sigma_0
 
 
@@ -906,6 +921,10 @@ class FluchsSondheimer(Model):
 
     Return:
         Reduced Resistivity
+
+    Example:
+        .. plot:: samples/Fitting/f_s.py
+           :include-source:
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330

@@ -5,7 +5,7 @@ from  numpy import linspace,ones_like
 from numpy.random import normal
 
 #Make some data
-V=linspace(-4,4,1001)
+V=linspace(-4,4,1000)
 I=SF.bdr(V,2500,5.2,0.3,15.0,1.0)+normal(size=len(V),scale=1.0)
 dI=ones_like(V)*1.0
 
