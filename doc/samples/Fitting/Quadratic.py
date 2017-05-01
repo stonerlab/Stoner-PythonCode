@@ -15,7 +15,7 @@ d.plot(fmt="ro")
 d.polyfit(result=True,header="Polyfit")
 d.setas="x..y"
 d.plot(label="Polyfit")
-d.text(-9,400,"Polynominal co-efficients\n{}".format(d["2-order polyfit coefficients"]),fontdict={"size":"x-small"})
+d.text(-9,400,"Polynominal co-efficients\n{}".format(d["2nd-order polyfit coefficients"]),fontdict={"size":"x-small"})
 
 d.setas="xy"
 d.curve_fit(SF.quadratic,result=True,header="Curve-fit")

@@ -35,6 +35,20 @@ operator={
     "iendsswith":lambda k,v:str(v).upper().endswith(k.upper()),
 }
 
+prefs={"text":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        },
+        "latex":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        },
+        "html":{
+        3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
+        -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
+        }
+    }
+
 
 def isNone(iterator):
     """Returns True if input is None or an empty iterator, or an iterator of None.
@@ -143,6 +157,85 @@ def tex_escape(text):
     return regex.sub(lambda match: conv[match.group()], text)
 
 
+def format_val(value,**kargs):
+    """Format a number as an SI quantity
+    
+    Args:
+        value(float): Value to format
+
+    Keyword Arguments:
+        fmt (str): Specify the output format, opyions are:
+            *  "text" - plain text output
+            * "latex" - latex output
+            * "html" - html entities
+        escape (bool): Specifies whether to escape the prefix and units for unprintable characters in non text formats )default False)
+        mode (string): If "float" (default) the number is formatted as is, if "eng" the value and error is converted
+            to the next samllest power of 1000 and the appropriate SI index appended. If mode is "sci" then a scientifc,
+            i.e. mantissa and exponent format is used.
+        units (string): A suffix providing the units of the value. If si mode is used, then appropriate si prefixes are
+            prepended to the units string. In LaTeX mode, the units string is embedded in \\mathrm
+        prefix (string): A prefix string that should be included before the value and error string. in LaTeX mode this is
+            inside the math-mode markers, but not embedded in \\mathrm.
+
+    Returns:
+        (str): The formatted value.
+    """
+    mode=kargs.pop("mode","float")
+    units=kargs.pop("units","")
+    prefix=kargs.pop("prefix","")
+    latex=kargs.pop("latex",False)
+    fmt=kargs.pop("fmt","latex" if latex else "text")
+    escape=kargs.pop("escape",False)
+    escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
+
+    if escape:
+        prefix=escape_func(prefix)
+        units=escape_func(units)
+
+    if mode == "float":  # Standard
+        suffix_val = ""
+    elif mode == "eng":  #Use SI prefixes
+        v_mag = floor(log10(abs(value)) / 3.0) * 3.0
+        prefixes = prefs.get(fmt,prefs["text"])
+        if v_mag in prefixes:
+            if fmt=="latex":
+                suffix_val = r"\mathrm{{{{{}}}}}".format(prefixes[v_mag])
+            else:
+                suffix_val = prefixes[v_mag]
+            value /= 10 ** v_mag
+        else:  # Implies 10^-3<x<10^3
+            suffix_val = ""
+    elif mode == "sci":  # Scientific mode - raise to common power of 10
+        v_mag = floor(log10(abs(value)))
+        if fmt=="latex":
+            suffix_val = r"\times 10^{{{{{}}}}}".format(int(v_mag))
+        elif fmt=="html":
+            suffix_val = "&times; 10<sup>{}</sup> ".format(int(v_mag))
+        else:
+            suffix_val = "E{} ".format(int(v_mag))
+        value /= 10 ** v_mag
+    else:  # Bad mode
+        raise RuntimeError("Unrecognised mode: {} in format_error".format(mode))
+
+    #Protect {} in units string
+    units = units.replace("{", "{{").replace("}", "}}")
+    prefix = prefix.replace("{", "{{").replace("}", "}}")
+    if fmt=="latex":  # Switch to latex math mode symbols
+        val_fmt_str = r"${}{{}}".format(prefix)
+        if units != "":
+            suffix_fmt = r"\mathrm{{{{{}}}}}".format(units)
+        else:
+            suffix_fmt = ""
+        suffix_fmt += "$"
+    elif fmt=="html":  # Switch to latex math mode symbols
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    else:  # Plain text
+        val_fmt_str = r"{}{{}}".format(prefix)
+        suffix_fmt = units
+    fmt_str = val_fmt_str + suffix_val + suffix_fmt
+    return fmt_str.format(value)
+        
 def format_error(value, error, **kargs):
     """This handles the printing out of the answer with the uncertaintly to 1sf and the
     value to no more sf's than the uncertainty.
@@ -178,22 +271,8 @@ def format_error(value, error, **kargs):
         prefix=escape_func(prefix)
         units=escape_func(units)
 
-    prefs={"text":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: "u", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "latex":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"\mu", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            },
-            "html":{
-            3: "k",6: "M",9: "G",12: "T",15: "P",18: "E",21: "Z",24: "Y",
-            -3: "m", -6: r"&micro;", -9: "n", -12: "p", -15: "f", -18: "a", -21: "z", -24: "y"
-            }
-        }
-
     if error == 0.0:  # special case for zero uncertainty
-        return repr(value)
+        return format_val(value)
     #Sort out special fomatting for different modes
     if mode == "float":  # Standard
         suffix_val = ""

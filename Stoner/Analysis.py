@@ -825,6 +825,10 @@ class AnalysisMixin(object):
 
         Returns:
             self: The newly modified :py:class:`AnalysisMixin`.
+            
+        Example:
+            .. plot:: samples/decompose.py
+               :include-source:
         """
         if xcol is None and ycol is None:
             if "_startx" in kwords:
@@ -1715,22 +1719,22 @@ class AnalysisMixin(object):
                 This method is depricated and may be removed in a future version in favour of the more general curve_fit
             """
         from Stoner.Util import ordinal
+        _=self._col_args(xcol=xcol,ycol=ycol,scalar=False)
 
-        if None in (xcol, ycol):
-            cols = self.setas._get_cols()
-            if xcol is None:
-                xcol = cols["xcol"]
-            if ycol is None:
-                ycol = cols["ycol"][0]
-
-        working = self.search(xcol, bounds)
-        p = _np_.polyfit(working[:, self.find_col(xcol)], working[:, self.find_col(ycol)], polynomial_order)
-        if result is not None:
-            if header is None:
-                header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
-                                                                     ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, x=self.column(xcol)), index=result, replace=replace, header=header)
-        self["{}-order polyfit coefficients".format(polynomial_order)]=list(p)
+        working = self.search(_.xcol, bounds)
+        if not isinstance(_.ycol,Iterable):
+            _.ycol=[_.ycol]
+        p=_np_.zeros((len(_.ycol),polynomial_order+1))
+        for i,ycol in enumerate(_.ycol):    
+            p[i,:] = _np_.polyfit(working[:, self.find_col(_.xcol)], working[:, self.find_col(ycol)], polynomial_order)
+            if result is not None:
+                if header is None:
+                    header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
+                                                                         ordinal(polynomial_order))
+                self.add_column(_np_.polyval(p[i,:], x=self.column(_.xcol)), index=result, replace=replace, header=header)
+        if len(_.ycol)==1:
+            p=p[0,:]
+        self["{}-order polyfit coefficients".format(ordinal(polynomial_order))]=list(p)
         return p
 
     def scale(self,other,xcol=None,ycol=None,**kargs):
