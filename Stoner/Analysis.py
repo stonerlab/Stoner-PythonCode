@@ -1729,7 +1729,8 @@ class AnalysisMixin(object):
             if header is None:
                 header = "Fitted {} with {} order polynomial".format(self.column_headers[self.find_col(ycol)],
                                                                      ordinal(polynomial_order))
-            self.add_column(_np_.polyval(p, x=self.column(xcol)), index=result, replace=replace, column_header=header)
+            self.add_column(_np_.polyval(p, x=self.column(xcol)), index=result, replace=replace, header=header)
+        self["{}-order polyfit coefficients".format(polynomial_order)]=list(p)
         return p
 
     def scale(self,other,xcol=None,ycol=None,**kargs):

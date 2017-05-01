@@ -243,6 +243,11 @@ def arrhenius(x, A, DE):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/Arrhenius.py
+           :include-source:
+
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * x))
@@ -262,6 +267,10 @@ class Arrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/Arrhenius.py
+           :include-source:
     """
     
     display_names=["A",r"\Delta E"]
@@ -278,7 +287,7 @@ class Arrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -296,6 +305,11 @@ def nDimArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/nDimArrhenius.py
+           :include-source:
+
     """
     return arrhenius(x ** n, A, DE)
 
@@ -315,6 +329,10 @@ class NDimArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/nDimArrhenius.py
+           :include-source:
     """
     
     display_names=["A",r"\Delta E","n"]
@@ -330,7 +348,7 @@ class NDimArrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1, n=1.0)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -348,8 +366,12 @@ def modArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/modArrhenius.py
+           :include-source:
     """
-    return (x ** n) * Arrhenius(x, A, DE)
+    return (x ** n) * arrhenius(x, A, DE)
 
 
 class ModArrhenius(Model):
@@ -367,6 +389,10 @@ class ModArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
+    
+    Example:
+        .. plot:: samples/Fitting/modArrhenius.py
+           :include-source:
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -382,7 +408,7 @@ class ModArrhenius(Model):
         d1, d2 = 1., 0.0
         if x is not None:
             d1, d2 = _np_.polyfit(-1.0 / x, _np_.log(data), 1)
-        pars = self.make_params(A=_np_.exp(d2), dE=_kb * d1, n=1.0)
+        pars = self.make_params(A=_np_.exp(d2), DE=_kb * d1, n=1.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -397,7 +423,13 @@ def powerLaw(x, A, k):
     Return:
         Power law.
 
-    :math:`p=Ax^k`"""
+    :math:`p=Ax^k`
+    
+    Example:
+        .. plot:: samples/Fitting/Powerlaw.py
+           :include-source:
+    
+    """
     return A * x ** k
 
 
@@ -414,6 +446,10 @@ def quadratic(x, a, b, c):
         Array of data.
 
     :math:`y=ax^2+bx+c`
+    
+    Example:
+        .. plot:: samples/Fitting/Quadratic.py
+           :include-source:
     """
     return a * x ** 2 + b * x + c
 

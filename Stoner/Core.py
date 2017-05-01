@@ -1519,7 +1519,7 @@ class DataFile(metadataObject):
             "filename": string_types,
             "mask": (_np_.ndarray, bool),
         }
-        i = len(args) if len(args) < 2 else 2
+        i = len(args) if len(args) < 3 else 3
         handler = [None, self._init_single, self._init_double, self._init_many][i]
         self.mask = False
         self.data._setas._get_cols()
@@ -3704,7 +3704,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
         try:
             value=float(self[key])
         except (ValueError, TypeError):
-            raise KeyError("{} should be a floating point value of the metadata.",format(key))
+            raise KeyError("{} should be a floating point value of the metadata not a {}.".format(key,type(self[key])))
         try:
             error=float(self[key+" err"])
         except KeyError:
@@ -3775,8 +3775,10 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
                     zb,zt=ax.properties()["zlim"]
                     z=0.5*(zt-zb)+zb
                 ax.text3D(x,y,z,text)
-            else:
+            elif "arrowprops" in kargs:
                 ax.annotate(text, xy=(x,y), **kargs)
+            else:
+                ax.text(x,y,text,  **kargs)
             ret=self
         else:
             ret=text
