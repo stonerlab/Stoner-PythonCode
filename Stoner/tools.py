@@ -11,7 +11,7 @@ Created on Wed Apr 19 19:47:50 2017
 from collections import Iterable
 from .compat import string_types,bytes2str
 import re
-from numpy import log10,floor,abs,logical_and
+from numpy import log10,floor,abs,logical_and,isnan
 from cgi import escape as html_escape
 
 operator={
@@ -259,20 +259,20 @@ def format_error(value, error, **kargs):
     Returns:
         String containing the formated number with the eorr to one s.f. and value to no more d.p. than the error.
     """
-    mode=kargs.pop("mode","float")
-    units=kargs.pop("units","")
-    prefix=kargs.pop("prefix","")
-    latex=kargs.pop("latex",False)
-    fmt=kargs.pop("fmt","latex" if latex else "text")
-    escape=kargs.pop("escape",False)
+    mode=kargs.get("mode","float")
+    units=kargs.get("units","")
+    prefix=kargs.get("prefix","")
+    latex=kargs.get("latex",False)
+    fmt=kargs.get("fmt","latex" if latex else "text")
+    escape=kargs.get("escape",False)
     escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
 
     if escape:
         prefix=escape_func(prefix)
         units=escape_func(units)
 
-    if error == 0.0:  # special case for zero uncertainty
-        return format_val(value)
+    if error == 0.0 or isnan(error):  # special case for zero uncertainty
+        return format_val(value,**kargs)
     #Sort out special fomatting for different modes
     if mode == "float":  # Standard
         suffix_val = ""

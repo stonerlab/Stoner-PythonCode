@@ -466,6 +466,10 @@ def simmons(V, A, phi, d):
     Return:
         Data for tunneling rate according to the Sommons model.
 
+    Example:
+        .. plot:: samples/Fitting/Simmons.py
+           :include-source:
+
     .. note::
 
         Simmons model from Simmons J. App. Phys. 34 6 1963
@@ -488,6 +492,10 @@ class Simmons(Model):
     Return:
         Data for tunneling rate according to the Sommons model.
 
+    Example:
+        .. plot:: samples/Fitting/Simmons.py
+           :include-source:
+
     .. note::
 
        Simmons model from Simmons J. App. Phys. 34 6 1963
@@ -501,7 +509,7 @@ class Simmons(Model):
 
     def guess(self, data, V=None, **kwargs):  # pylint: disable=unused-argument
         """Just set the A, phi and d values to typical answers for a small tunnel junction"""
-        pars = self.make_params(A=1E-12, phi=3.0, d=10.0)
+        pars = self.make_params(A=1E3, phi=3.0, d=10.0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
 
@@ -518,6 +526,10 @@ def bdr(V, A, phi, dphi, d, mass):
 
     Return:
         Data for tunneling rate  according to the BDR model.
+
+    Example:
+        .. plot:: samples/Fitting/BDR.py
+           :include-source:
 
     .. note::
 
@@ -542,6 +554,10 @@ class BDR(Model):
 
     Return:
         Data for tunneling rate  according to the BDR model.
+
+    Example:
+        .. plot:: samples/Fitting/BDR.py
+           :include-source:
 
     .. note::
 
@@ -569,6 +585,10 @@ def fowlerNordheim(V, A, phi, d):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
+
+    Example:
+        .. plot:: samples/Fitting/FowlerNordeim.py
+           :include-source:
     """
     I = V / _np_.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * _np_.exp(-0.689 * phi ** 1.5 * d / _np_.abs(V))
     return I
@@ -586,6 +606,10 @@ class FowlerNordheim(Model):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
+        
+    Example:
+        .. plot:: samples/Fitting/FowlerNordeim.py
+           :include-source:
     """
 
     def __init__(self, *args, **kwargs):
