@@ -267,12 +267,13 @@ def format_error(value, error, **kargs):
     escape=kargs.get("escape",False)
     escape_func={"latex":tex_escape,"html":html_escape}.get(mode,lambda x:x)
 
+    if error == 0.0 or isnan(error):  # special case for zero uncertainty
+        return format_val(value,**kargs)
+
     if escape:
         prefix=escape_func(prefix)
         units=escape_func(units)
 
-    if error == 0.0 or isnan(error):  # special case for zero uncertainty
-        return format_val(value,**kargs)
     #Sort out special fomatting for different modes
     if mode == "float":  # Standard
         suffix_val = ""

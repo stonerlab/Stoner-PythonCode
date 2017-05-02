@@ -535,6 +535,9 @@ def bdr(V, A, phi, dphi, d, mass):
 
        See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
     """
+    mass=abs(mass)
+    phi=abs(phi)
+    d=abs(d)
     I = 3.16e10 * A ** 2 * _np_.sqrt(phi) / d * _np_.exp(-1.028 * _np_.sqrt(phi) * d) * (
         V - 0.0214 * _np_.sqrt(mass) * d * dphi / phi ** 1.5 * V ** 2 + 0.0110 * mass * d ** 2 / phi * V ** 3)
     return I

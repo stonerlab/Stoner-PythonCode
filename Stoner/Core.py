@@ -3696,7 +3696,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
         """
         mode=kargs.pop("mode","float")
         units=kargs.pop("units",self.get(key+" units","")	)
-        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{} =".format(key))))
+        prefix=kargs.pop("prefix","{} = ".format(self.get(key+" label","{}".format(key))))
         latex=kargs.pop("latex",False)
         fmt=kargs.pop("fmt","latex" if latex else "text")
         escape=kargs.pop("escape",False)
