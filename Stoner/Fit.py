@@ -590,7 +590,7 @@ def fowlerNordheim(V, A, phi, d):
         Tunneling rate according to Fowler Nordheim model.
 
     Example:
-        .. plot:: samples/Fitting/FowlerNordeim.py
+        .. plot:: samples/Fitting/FowlerNordheim.py
            :include-source:
     """
     I = V / _np_.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * _np_.exp(-0.689 * phi ** 1.5 * d / _np_.abs(V))
@@ -611,7 +611,7 @@ class FowlerNordheim(Model):
         Tunneling rate according to Fowler Nordheim model.
         
     Example:
-        .. plot:: samples/Fitting/FowlerNordeim.py
+        .. plot:: samples/Fitting/FowlerNordheim.py
            :include-source:
     """
 
@@ -676,7 +676,7 @@ def wlfit(B, s0, DS, B1, B2):
         Conductance vs Field for a weak localisation system
         
     Example:
-        .. plot:: samples/Fitting/Weak_localisation.py
+        .. plot:: samples/Fitting/weak_localisation.py
            :include-source:
    
 
@@ -726,7 +726,7 @@ class WLfit(Model):
         Conductance vs Field for a weak localisation system
 
     Example:
-        .. plot:: samples/Fitting/Weak_localisation.py
+        .. plot:: samples/Fitting/weak_localisation.py
            :include-source:
 
     .. note::
