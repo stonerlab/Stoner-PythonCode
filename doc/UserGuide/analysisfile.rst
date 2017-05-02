@@ -204,7 +204,7 @@ returns the configured model and also a 2D array of values to feed as the starti
 on the presence and values of the *vary* and *step* keys, tnhe code will either perform a single fitting attempt, or do a mapping of the
 :math:`\\chi^2` goodeness of fit.
 
-.. plot:: ../scripts/lmfit-demo.py
+.. plot:: samples/lmfit_demo.py
     :include-source:
 
 
