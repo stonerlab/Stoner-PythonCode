@@ -19,9 +19,9 @@ d.annotate_fit(SF.bdr,x=-3.95,y=5E-5,prefix="bdr",fontdict={"size":"x-small"})
 
 #lmfit
 d.setas="xy"
-fit=SF.BDR()
+fit=SF.BDR(missing="drop")
 p0=fit.guess(I,x=V)
-for p,v,mi,mx in zip(["A","phi","dphi","d","mass"],[2500,5.2,0.3,15.0,1.0],[100,1,0,5,0.5],[1E4,20.0,2.0,30.0,5.0]):
+for p,v,mi,mx in zip(["A","phi","dphi","d","mass"],[2500,5.2,0.3,15.0,1.0],[100,1,0.01,5,0.5],[1E4,20.0,2.0,30.0,5.0]):
     p0[p].value=v
     p0[p].bounds=[mi,mx]
 d.lmfit(SF.BDR,p0=p0,result=True,header="lmfit")

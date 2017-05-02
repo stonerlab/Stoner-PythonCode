@@ -387,7 +387,7 @@ class AnalysisMixin(object):
 
 
 
-    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,result=False,header="",replace=False,output="row"):
+    def __lmfit_one(self,model,xcol,ydata,scale_covar,sigma,p0,prefix,**kargs):
         """Carry out a single fit wioth lmfit.
 
         Args:
@@ -397,6 +397,9 @@ class AnalysisMixin(object):
             scale_covat (bool): Whether sigmas are absolute or relative.
             sigma (array): Uncertainties of ydata.
             p0 (dict): Dictionary of parameters including independent data
+            prefix (str): Prefix for labels in metadata
+            
+        Keyword Arguments:
             result (bool,str): Where the result goes
             header (str): Name of new data column if used
             replace (bool): whether to add new dataa
@@ -408,6 +411,10 @@ class AnalysisMixin(object):
         if not _lmfit:
             raise RuntimeError("lmfit module not available.")
 
+        replace=kargs.pop("replace",False)
+        result=kargs.pop("result",False)
+        header=kargs.pop("header","")
+        output=kargs.pop("output","row")
         fit = model.fit(ydata, None, scale_covar=scale_covar, weights=1.0 / sigma, **p0)
         if fit.success:
             row = []
@@ -1281,7 +1288,7 @@ class AnalysisMixin(object):
         if single_fit:
             p0[xvar] = xdata
 
-            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result,header,replace,output)
+            ret_val=self.__lmfit_one(model,_.xcol,ydata,scale_covar,sigma,p0,prefix,result=result,header=header,replace=replace,output=output)
         else: # chi^2 mode
             pn=p0
             ret_val=_np_.zeros((pn.shape[0],pn.shape[1]*2+1))
