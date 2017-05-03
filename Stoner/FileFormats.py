@@ -617,7 +617,7 @@ class RigakuFile(DataFile):
                         else:
                             self[key] = _np_.array([newvalue])
                     else:
-                        if isinstance(self[key][0], str):
+                        if isinstance(self[key][0], str) and isinstance(self[key],list):
                             self[key].append(newvalue)
                         else:
                             self[key] = _np_.append(self[key], newvalue)

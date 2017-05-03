@@ -1008,14 +1008,20 @@ def langevin(H, M_s, m, T):
 
     Returns:
         Magnetic Momemnts (array).
+        
+    Example:
+        .. plot:: samples/Fitting/langevin.py
+           :include-source:
 
-    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+    Note:
+        The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
     """
     from scipy.constants import k, mu_0
 
-    x = mu_0 * m * H / (k * T)
-    return M_s * _np_.coth(x) - 1.0 / x
-
+    x = mu_0 * H*m / (k * T)
+    n=M_s/m
+    
+    return m*n*(1.0/_np_.tanh(x)-1.0/x)
 
 class Langevin(Model):
 
@@ -1030,7 +1036,12 @@ class Langevin(Model):
     Returns:
         Magnetic Momemnts (array).
 
-    The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
+    Example:
+        .. plot:: samples/Fitting/langevin.py
+           :include-source:
+
+    Note:
+        The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
     """
 
     def __init__(self, *args, **kwargs):
@@ -1042,10 +1053,11 @@ class Langevin(Model):
 
         M_s is taken as half the difference of the range of thew M data,
         we can find m/T from the susceptibility chi= M_s \mu_o m / kT,"""
+        from scipy.signal import savgol_filter
+        from scipy.constants import k, mu_0, e, electron_mass, hbar
+
         M_s = (_np_.max(data) - _np_.min(data)) / 2.0
         if h is not None:
-            from scipy.signal import savgol_filter
-            from scipy.constants import k, mu_0, e, electron_mass, hbar
             d = _np_.sort(_np_.row_stack((h, data)))
             dd = savgol_filter(d, 7, 1)
             yd = dd[1] / dd[0]

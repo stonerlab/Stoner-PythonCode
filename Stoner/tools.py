@@ -236,7 +236,7 @@ def format_val(value,**kargs):
     fmt_str = val_fmt_str + suffix_val + suffix_fmt
     return fmt_str.format(value)
         
-def format_error(value, error, **kargs):
+def format_error(value, error=None, **kargs):
     """This handles the printing out of the answer with the uncertaintly to 1sf and the
     value to no more sf's than the uncertainty.
 
@@ -361,3 +361,4 @@ class _attribute_store(dict):
             return self[name]
         except KeyError:
             raise AttributeError
+

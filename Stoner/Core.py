@@ -749,7 +749,8 @@ class typeHintedDict(regexpDict):
             if m is not None:
                 if isinstance(valuetype, _evaluatable):
                     try:
-                        ret = eval(str(value), globals(), locals())
+                        array=_np_.array
+                        ret = eval(repr(value), globals(), locals())
                     except NameError:
                         ret = str(value)
                     except SyntaxError:
@@ -3535,6 +3536,8 @@ class DataFile(metadataObject):
             *__eq* in the keyword name to force the equality test. If the metadata keys to select on are not valid python identifiers,
             then pass them via the first positional dictionary value.
             
+            There is a "magic" column name "_i" which is interpreted as the row numbers of the data.
+            
         Example
             .. plot:: samples/select_example.py
                 :include-source:
@@ -3561,8 +3564,11 @@ class DataFile(metadataObject):
             else:
                 end=-1
                 negate=False
-            col="__".join(parts[:end])
-            res=_np_.logical_or(res,_np_.logical_xor(negate,operator[parts[-1]](self.column(col),kargs[arg])))
+            if parts[0]=="_i":
+                res=_np_.logical_or(res,_np_.logical_xor(negate,operator[parts[-1]](self.data.i,kargs[arg])))
+            else:
+                col="__".join(parts[:end])
+                res=_np_.logical_or(res,_np_.logical_xor(negate,operator[parts[-1]](self.column(col),kargs[arg])))
         result.data=self.data[res,:]
         return result
 
@@ -3733,6 +3739,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
         otherwise a prefix is generated from the model.prefix attribute. If *x* and *y* are not specified then they
         are set to be 0.75 * maximum x and y limit of the plot.
         """
+        mode=kargs.pop("mode","float")
         if _lmfit and _inspect_.isclass(model) and issubclass(model,Model):
             model=model()
         elif _lmfit and isinstance(model,Model):
@@ -3766,7 +3773,7 @@ class Data(AnalysisMixin,PlotMixin,DataFile):
         except (AttributeError,KeyError):
             pass
 
-        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex") for k in model.param_names])
+        text= "\n".join([self.format("{}{}".format(prefix,k),fmt="latex",mode=mode) for k in model.param_names])
         if not text_only:
             ax=self.fig.gca()
             if "zlim" in ax.properties():

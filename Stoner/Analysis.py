@@ -57,7 +57,8 @@ def _lmfit_p0_dict(p0,model):
     if isinstance(p0, (list, tuple, _np_.ndarray)):
         p0 = {p: pv for p, pv in zip(model.param_names, p0)}
     elif isinstance(p0,Parameters):
-        p0={k:p0[k].value for k in p0}
+        pass
+        #p0={k:p0[k].value for k in p0}
     if not isinstance(p0, dict):
         raise RuntimeError("p0 should have been a tuple, list, ndarray or dict, or lmfit.parameters")
     #p0={p0[k] for k in model.param_names}
@@ -202,7 +203,6 @@ def _twoD_fit(xy1,xy2,xmode="linear",ymode="linear",m0=None):
     default=_np_.array([[1.00,0.0,0.0],[0.0,1.0,0.0]])
     for pi,(u,v) in zip(popt,mapping):
         default[u,v]=pi
-
     default_err=_np_.zeros((2,3))
     for pi,(u,v) in zip(perr,mapping):
         default_err[u,v]=pi
@@ -989,8 +989,8 @@ class AnalysisMixin(object):
                "quadratic":lambda x,a,b,c:a*x**2+b*x+c,
                "cubic":lambda x,a,b,c,d: a*x**3+b*x**2+c*x+d}
         errs={"linear":lambda x,me,ce:_np_.sqrt((me*x)**2+ce**2),
-              "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x*ae)**2+(x*be)**2+ce**2),
-              "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x)**2+(2*x*be)**2+(x*ce)**2+de**2)}
+              "quadratic":lambda x,ae,be,ce:_np_.sqrt((2*x**2*ae)**2+(x*be)**2+ce**2),
+              "cubic":lambda x,ae,be,ce,de:_np_.sqrt((3*ae*x**3)**2+(2*x**2*be)**2+(x*ce)**2+de**2)}
         
         if callable(kind):
             pass
@@ -1004,19 +1004,21 @@ class AnalysisMixin(object):
         if isinstance(new_x,ma.MaskedArray):
             new_x=new_x.compressed
         results=_np_.zeros((len(new_x),2*len(_.ycol)))
+        work=self.clone
         for ix,x in enumerate(new_x):
             r=self.closest(x,xcol=_.xcol)
             if isinstance(overlap,int):
                 if (r.i-overlap/2)<0:
                     ll=0
-                    hl=overlap
+                    hl=min(len(self),overlap)
                 elif (r.i+overlap/2)>len(self):
                     hl=len(self)
-                    ll=hl-overlap
+                    ll=max(hl-overlap,0)
                 else:
                     ll=r.i-overlap/2
                     hl=r.i+overlap/2
-                bounds=lambda xv,rv:ll<=rv.i<hl
+                bounds={"_i__between":(ll,hl)}
+                mid_x=(self[ll,_.xcol]+self[hl-1,_.xcol])/2.0
             elif isinstance(overlap,float):
                 if (r[_.xcol]-overlap/2)<self.min(_.xcol)[0]:
                     ll=self.min(_.xcol)[0]
@@ -1027,16 +1029,17 @@ class AnalysisMixin(object):
                 else:
                     ll=r[_.xcol]-overlap/2
                     hl=r[_.xcol]+overlap/2
-                bounds=lambda xv,rv:ll<=xv<=hl
-            mid_x=(ll+hl)/2.0
-            ret=self.curve_fit(kindf,_.xcol,_.ycol,sigma=_.yerr,bounds=bounds,absolute_sigma=True)
+                bounds={"{}__between".format(self.column_headers[_.xcol]):(ll,hl)}
+                mid_x=(ll+hl)/2.0
+            pointdata=work.select(**bounds)
+            pointdata.data[:,_.xcol]=pointdata.column(_.xcol)-mid_x
+            ret=pointdata.curve_fit(kindf,_.xcol,_.ycol,sigma=_.yerr,absolute_sigma=True)
             if isinstance(ret,tuple):
                 ret=[ret]
             for iy,rt in enumerate(ret):
                 popt,pcov=rt
                 perr=_np_.sqrt(_np_.diag(pcov))
-                perr[-1]/=mid_x
-                results[ix,2*iy]=kindf(x,*popt)
+                results[ix,2*iy]=kindf(x-mid_x,*popt)
                 results[ix,2*iy+1]=errs[kind](x-mid_x,*perr)
         if scalar_x:
             results=results[0]
@@ -1282,6 +1285,10 @@ class AnalysisMixin(object):
         ydata = ydata[mask] 
         xdata = xdata[mask] #lmfit doesn't seem to work well with masked data - here we just delete masked points
         xvar = model.independent_vars[0]
+        if isinstance(p0,Parameters):
+            for p,pp in p0.items():
+                model.set_param_hint(p,value=pp.value,vary=pp.vary,min=pp.min,max=pp.max,expr=pp.expr)
+            p0=None
         if p0 is None: # We're working off parameter hints, but still need to set the independent var
             p0=dict()
 
@@ -1768,6 +1775,9 @@ class AnalysisMixin(object):
             *opt_trans*,*trans_err*,*new_xy_data*. Where *opt_trans* is the optimum affine transformation, *trans_err* is a matrix
             giving the standard error in the transformation matrix components and  *new_xy_data* is an (n x 2) array of the transformed data.
 
+        Example:
+            .. plot:: samples/scale_curves.py
+               :include-source:        
         """
         _=self._col_args(xcol=xcol,ycol=ycol)
         #
@@ -1827,14 +1837,14 @@ class AnalysisMixin(object):
                 m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         elif isinstance(use_estimate,_np_.ndarray) and use_estimate.shape==(2,3): #use_estimate is an initial value transformation
             m0=use_estimate
-        else: # Don't try to be cleber
+        else: # Don't try to be clever
             m0=_np_.array([[1.0,0.0,0.0],[0.0,1.0,0.0]])
         popt,perr,trans=_twoD_fit(xy1,xy2,xmode=xmode,ymode=ymode,m0=m0)
         data=self.data[:,[_.xcol,_.ycol]]
         new_data=trans(data)
         if replace: # In place scaling, replace and return self
-            self["Transform"]=popt
-            self["Transform Err"]=perr
+            self.metadata["Transform"]=popt
+            self.metadata["Transform Err"]=perr
             self.data[:,_.xcol]=new_data[:,0]
             self.data[:,_.ycol]=new_data[:,1]
             if headers:

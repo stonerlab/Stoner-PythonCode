@@ -9,6 +9,7 @@ npTDMS>=0.10.3
 numba>=0.31.0+0.g3bb1d98.dirty
 numexpr>=2.6.2
 numpy>=1.11.0
+tabulate>0.7
 Pillow>=4.0.0
 scikit-image>=0.12.3
 scipy>=0.18.1
