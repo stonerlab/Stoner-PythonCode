@@ -663,7 +663,10 @@ class AnalysisMixin(object):
             else:
                 w = _np_.ones((data.shape[0], len(ycol)))
                 W = data.shape[0]
-                e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
+                if data[:, ycol].size>1:
+                    e = _np_.std(data[:, ycol], axis=0) / _np_.sqrt(W)
+                else:
+                    e=_np_.nan
             y = _np_.sum(data[:, ycol] * (w / W), axis=0)
             ybin[i,:] = y
             ebin[i,:] = e
