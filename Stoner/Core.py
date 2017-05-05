@@ -199,6 +199,13 @@ class _setas(object):
         except AssertionError:
             raise SyntaxError("setas must be called with a single argument - string or other iterable")
 
+        #If reset is neither in kargs nor a False boolean, then clear the existing setas assignments
+        reset=kargs.get("reset",True)
+        if not isinstance(reset,bool):
+            reset=True
+        if reset:
+            self.setas=[]
+
         if len(self.setas) < len(self.column_headers):
             self.setas.extend(list("." * (len(self.column_headers) - len(self.setas))))
 
@@ -311,12 +318,12 @@ class _setas(object):
         return ret
 
 
-    def __setattr__(self, name, value):
-        """Wrapper to handle some special linked attributes."""
-        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
-            object.__setattr__(self,name, value)
-        else:
-            object.__setattr__(self,name, value)
+#    def __setattr__(self, name, value):
+#        """Wrapper to handle some special linked attributes."""
+#        if hasattr(type(self),name) and isinstance(getattr(type(self),name),property):
+#            object.__setattr__(self,name, value)
+#        else:
+#            object.__setattr__(self,name, value)
 
     def __setitem__(self, name, value):
         """Allow setting of the setas variable like a dictionary or a list.
@@ -328,7 +335,7 @@ class _setas(object):
             value (integer or column index): See above.
         """
         if isinstance(name, string_types) and len(name) == 1 and name in "xyzuvwdef.-":
-            self({name: value})
+            self({name: value},reset=False)
         else:
             try:
                 name = int(name)
@@ -340,6 +347,7 @@ class _setas(object):
                     raise ValueError("Column types can only be set to x,y,z,u,v,w,d,e, or f, not to {}".format(value))
             except ValueError:
                 kargs = {name: value}
+                kargs["reset"]=kargs.get("reset",False)
                 self(**kargs)
 
     def __len__(self):
