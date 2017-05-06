@@ -76,12 +76,13 @@ class TexEngFormatter(EngFormatter):
             ret = ""
         elif value != 0.0:
             power = _np_.floor(_np_.log10(_np_.abs(value)))
-            power = (_np_.sign(power) * (_np_.floor(_np_.abs(power / 3.0))) - 1) * 3.0
-            if _np_.abs(power) < 3:
+            pre=_np_.ceil(power/3.0)*3
+            power = power % 3
+            if pre==0:
                 ret = "${}$".format(value)
             else:
-                v = int(value / (10 ** power))
-                ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(power)], self.unit)
+                v = value / (10 ** pre)
+                ret = "${}\\mathrm{{{} {}}}$".format(v, self.prefix[int(pre)], self.unit)
         else:
             ret = "$0.0$"
         return ret

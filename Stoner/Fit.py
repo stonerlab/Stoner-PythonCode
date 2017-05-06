@@ -31,6 +31,7 @@ except ImportError:
 
 from scipy.integrate import quad
 import scipy.constants.codata as consts
+import scipy.constants as cnst
 try:
     if python_v3:
         import configparser as ConfigParser
@@ -268,9 +269,7 @@ class Arrhenius(Model):
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     
-    Example:
-        .. plot:: samples/Fitting/Arrhenius.py
-           :include-source:
+    See :py:func:`Stoner.Fit.arrhenius` for an example.
     """
     
     display_names=["A",r"\Delta E"]
@@ -330,9 +329,7 @@ class NDimArrhenius(Model):
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
     
-    Example:
-        .. plot:: samples/Fitting/nDimArrhenius.py
-           :include-source:
+    See :py:func:`Stoner.Fit.nDimArrhenius` for an example.
     """
     
     display_names=["A",r"\Delta E","n"]
@@ -390,9 +387,7 @@ class ModArrhenius(Model):
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     
-    Example:
-        .. plot:: samples/Fitting/modArrhenius.py
-           :include-source:
+    See :py:func:`Stoner.Fit.modArrhenius` for an example.
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -492,9 +487,7 @@ class Simmons(Model):
     Return:
         Data for tunneling rate according to the Sommons model.
 
-    Example:
-        .. plot:: samples/Fitting/Simmons.py
-           :include-source:
+    See :py:func:`Stoner.Fit.simmons` for an example.
 
     .. note::
 
@@ -558,9 +551,7 @@ class BDR(Model):
     Return:
         Data for tunneling rate  according to the BDR model.
 
-    Example:
-        .. plot:: samples/Fitting/BDR.py
-           :include-source:
+    See :py:func:`Stoner.Fit.bdr` for an example.
 
     .. note::
 
@@ -610,9 +601,7 @@ class FowlerNordheim(Model):
     Return:
         Tunneling rate according to Fowler Nordheim model.
         
-    Example:
-        .. plot:: samples/Fitting/FowlerNordheim.py
-           :include-source:
+    See :py:func:`Stoner.Fit.fowlerNordheim` for an example.
     """
 
     def __init__(self, *args, **kwargs):
@@ -725,9 +714,7 @@ class WLfit(Model):
     Return:
         Conductance vs Field for a weak localisation system
 
-    Example:
-        .. plot:: samples/Fitting/weak_localisation.py
-           :include-source:
+    See :py:func:`Stoner.Fit.wlfit` for an example.
 
     .. note::
 
@@ -925,9 +912,7 @@ class FluchsSondheimer(Model):
     Return:
         Reduced Resistivity
 
-    Example:
-        .. plot:: samples/Fitting/f_s.py
-           :include-source:
+    See :py:func:`Stoner.Fit.fluchsSondeimer` for an example.
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
@@ -1036,9 +1021,7 @@ class Langevin(Model):
     Returns:
         Magnetic Momemnts (array).
 
-    Example:
-        .. plot:: samples/Fitting/langevin.py
-           :include-source:
+    See :py:func:`Stoner.Fit.langevin` for an example.
 
     Note:
         The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
@@ -1086,6 +1069,10 @@ def vftEquation(x, A, DE, x_0):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    
+    Example:
+        .. plot:: samples/Fitting/vftEquation.py
+           :include-source:
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * (x - x_0)))
@@ -1106,6 +1093,9 @@ class VFTEquation(Model):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
+    
+    See :py:func:`Stoner.Fit.vftEquation` for an example.
+
     """
 
     display_names=["A",r"\Delta E","x_0"]
@@ -1139,6 +1129,8 @@ def stretchedExp(x, A, beta, x_0):
         Data for a stretched exponentional function.
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
+    
+    See :py:class:`Stoner.Fit.StretchedExp` for an example.
     """
     return A * _np_.exp(-(x / x_0) ** beta)
 
@@ -1157,6 +1149,10 @@ class StretchedExp(Model):
         Data for a stretched exponentional function.
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
+    
+    Example:
+        .. plot:: samples/lmfit_example.py
+           :include-source:
     """
 
     display_names=["A",r"\beta","x_0"]
@@ -1181,18 +1177,24 @@ class StretchedExp(Model):
         pars = self.make_params(A=A, beta=beta, x_0=x0)
         return update_param_vals(pars, self.prefix, **kwargs)
 
-def kittelEquation(H,gamma,M_s,H_k):
+def kittelEquation(H,g,M_s,H_k):
     """Kittel Equation for finding ferromagnetic resonance peak in frequency with field.
 
     Args:
         H (array): Magnetic fields in A/m
-        gamma (float): gyromagnetic radius
+        g (float): h g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+        
+    Example:
+        .. plot:: samples/Fitting/kittel.py
+           :include-source:
+        
     """
+    gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
 
 class KittelEquation(Model):
@@ -1201,15 +1203,17 @@ class KittelEquation(Model):
 
     Args:
         H (array): Magnetic fields in A/m
-        gamma (float): gyromagnetic radius
+        g (float): h g factor for the gyromagnetic radius
         M_s (float): Magnetisation of sample in A/m
         H_k (float): Anisotropy field term (including demagnetising factors) in A/m
 
     Returns:
         Reesonance peak frequencies in Hz
+        
+    See :py:func:`Stoner.Fit.kittelEquation` for an example
     """
 
-    display_names=[r"\gamma","M_s","H_k"]
+    display_names=[r"\g","M_s","H_k"]
 
     def __init__(self, *args, **kwargs):
         """Configure Initial fitting function."""
@@ -1217,9 +1221,16 @@ class KittelEquation(Model):
 
     def guess(self, data, x=None, **kwargs):
         """Guess parameters as gamma=2, H_k=0, M_s~(pi.f)^2/(mu_0^2.H)-H"""
+    
         M_s=(_np_.pi*data/consts.mu0)/x-x
+        M_s=_np_.mean(M_s[1:])
+        g=2
 
-        pars = self.make_params(gamma=2, M_s=M_s, H_k=0.0)
+        pars = self.make_params(g=g, M_s=M_s, H_k=100.0)
+        pars["M_s"].min=0
+        pars["g"].min=g/100
+        pars["H_k"].min=0
+        pars["H_k"].max=M_s.max()
         return update_param_vals(pars, self.prefix, **kwargs)
 
 

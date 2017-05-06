@@ -3,6 +3,8 @@ Analysing Data Files
 ********************
 .. currentmodule:: Stoner.Analysis
 
+.. _channel_maths_guide:
+
 Normalising and Basic Maths Operations
 ======================================
 
@@ -44,7 +46,23 @@ For completeness we also have::
    a.multiply('A','B',header='A*B', replace=True)
 
 with variants that take either a 1D array of data or a constant instead of the B column index.
+   
+The final variant for these channel operations is the :py:meth:`AnalysisMixin.diffsum` which takes the ratio of the difference over the sum of two channels.
+This is typically used to calculate asymmetry parameters.::
 
+    a.diffsum('I+','I-')
+    
+Of course, these elementary operations might look rather pointless given how easy it is to extract single columns of data and then add them to a
+:py:class:`Stoner.Core.Data` object, however if the cahnnels are specified as a **tuple** of two elements, then it is taken as a channel of data and a
+second channel of uncertainities. The uncertainity calculation is then propagated correctly for the maths operations. This is particularly useful for the
+:py:meth:`AnalysisMixin.diffsum` method where the error propagation is not entirely trivial.
+
+.. plot:: samples/channel_math.py
+   :include-source:
+
+Splitting Data Up
+=================
+   
 One might wish to split a single data file into several different data files each with the rows of the original
 that have a common unique value in one data column, or for which some function of the complete row determines which datafile
 each row belongs in. The :py:meth:`AnalysisMixin.split` method is useful for this case.::
