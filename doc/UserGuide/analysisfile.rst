@@ -158,7 +158,7 @@ sphere to a set of :math:`(x,y,z)` data points.
 See also :ref:`Fitting_tricks`
 
 
-.. _fitting_with_limits:
+._. _fitting_with_limits:
 
 Fitting with limits
 -------------------
@@ -210,7 +210,7 @@ edit the source code. :py:meth:`AnalysisMixin.lmfit` and :py:mod:`Stoner.Fit` pr
 
 Firstly, the initialisation file should take the form like so.
 
-.. include:: ../../scripts/PCAR-New.ini
+._. include:: ../../scripts/PCAR-New.ini
    :literal:
 
 This initialisation file can be passed to :py:func:`Stoner.Fit.cfg_data_from_ini` which will use the information in the [Data]

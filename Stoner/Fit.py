@@ -244,11 +244,6 @@ def arrhenius(x, A, DE):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
-    Example:
-        .. plot:: samples/Fitting/Arrhenius.py
-           :include-source:
-
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * x))
@@ -269,7 +264,6 @@ class Arrhenius(Model):
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
     
-    See :py:func:`Stoner.Fit.arrhenius` for an example.
     """
     
     display_names=["A",r"\Delta E"]
@@ -304,11 +298,6 @@ def nDimArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
-    Example:
-        .. plot:: samples/Fitting/nDimArrhenius.py
-           :include-source:
-
     """
     return arrhenius(x ** n, A, DE)
 
@@ -328,8 +317,6 @@ class NDimArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=A\exp\left(\frac{-\Delta E}{k_B x^n}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
-    See :py:func:`Stoner.Fit.nDimArrhenius` for an example.
     """
     
     display_names=["A",r"\Delta E","n"]
@@ -363,10 +350,6 @@ def modArrhenius(x, A, DE, n):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
-    Example:
-        .. plot:: samples/Fitting/modArrhenius.py
-           :include-source:
     """
     return (x ** n) * arrhenius(x, A, DE)
 
@@ -386,8 +369,6 @@ class ModArrhenius(Model):
 
     The Arrhenius function is defined as :math:`\tau=Ax^n\exp\left(\frac{-\Delta E}{k_B x}\right)` where
     :math:`k_B` is Boltzmann's constant.
-    
-    See :py:func:`Stoner.Fit.modArrhenius` for an example.
     """
 
     display_names=["A",r"\Delta E","n"]
@@ -419,11 +400,6 @@ def powerLaw(x, A, k):
         Power law.
 
     :math:`p=Ax^k`
-    
-    Example:
-        .. plot:: samples/Fitting/Powerlaw.py
-           :include-source:
-    
     """
     return A * x ** k
 
@@ -441,10 +417,6 @@ def quadratic(x, a, b, c):
         Array of data.
 
     :math:`y=ax^2+bx+c`
-    
-    Example:
-        .. plot:: samples/Fitting/Quadratic.py
-           :include-source:
     """
     return a * x ** 2 + b * x + c
 
@@ -460,10 +432,6 @@ def simmons(V, A, phi, d):
 
     Return:
         Data for tunneling rate according to the Sommons model.
-
-    Example:
-        .. plot:: samples/Fitting/Simmons.py
-           :include-source:
 
     .. note::
 
@@ -486,8 +454,6 @@ class Simmons(Model):
 
     Return:
         Data for tunneling rate according to the Sommons model.
-
-    See :py:func:`Stoner.Fit.simmons` for an example.
 
     .. note::
 
@@ -519,11 +485,6 @@ def bdr(V, A, phi, dphi, d, mass):
 
     Return:
         Data for tunneling rate  according to the BDR model.
-
-    Example:
-        .. plot:: samples/Fitting/BDR.py
-           :include-source:
-
     .. note::
 
        See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
@@ -551,8 +512,6 @@ class BDR(Model):
     Return:
         Data for tunneling rate  according to the BDR model.
 
-    See :py:func:`Stoner.Fit.bdr` for an example.
-
     .. note::
 
        See Brinkman et. al. J. Appl. Phys. 41 1915 (1970) or Tuan Comm. in Phys. 16, 1, (2006)
@@ -579,10 +538,6 @@ def fowlerNordheim(V, A, phi, d):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
-
-    Example:
-        .. plot:: samples/Fitting/FowlerNordheim.py
-           :include-source:
     """
     I = V / _np_.abs(V) * 3.38e6 * A * V ** 2 / (d ** 2 * phi) * _np_.exp(-0.689 * phi ** 1.5 * d / _np_.abs(V))
     return I
@@ -600,8 +555,6 @@ class FowlerNordheim(Model):
 
     Return:
         Tunneling rate according to Fowler Nordheim model.
-        
-    See :py:func:`Stoner.Fit.fowlerNordheim` for an example.
     """
 
     def __init__(self, *args, **kwargs):
@@ -663,11 +616,6 @@ def wlfit(B, s0, DS, B1, B2):
 
     Return:
         Conductance vs Field for a weak localisation system
-        
-    Example:
-        .. plot:: samples/Fitting/weak_localisation.py
-           :include-source:
-   
 
     .. note::
 
@@ -713,8 +661,6 @@ class WLfit(Model):
 
     Return:
         Conductance vs Field for a weak localisation system
-
-    See :py:func:`Stoner.Fit.wlfit` for an example.
 
     .. note::
 
@@ -879,10 +825,6 @@ def fluchsSondheimer(t, l, p, sigma_0):
     Return:
         Reduced Resistivity
 
-    Example:
-        .. plot:: samples/Fitting/f_s.py
-           :include-source:
-
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
     """
@@ -911,8 +853,6 @@ class FluchsSondheimer(Model):
 
     Return:
         Reduced Resistivity
-
-    See :py:func:`Stoner.Fit.fluchsSondeimer` for an example.
 
     Note:
         Expression used from: G.N.Gould and L.A. Moraga, Thin Solid Films 10 (2), 1972 pp 327-330
@@ -993,10 +933,6 @@ def langevin(H, M_s, m, T):
 
     Returns:
         Magnetic Momemnts (array).
-        
-    Example:
-        .. plot:: samples/Fitting/langevin.py
-           :include-source:
 
     Note:
         The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
@@ -1020,8 +956,6 @@ class Langevin(Model):
 
     Returns:
         Magnetic Momemnts (array).
-
-    See :py:func:`Stoner.Fit.langevin` for an example.
 
     Note:
         The Langevin Function is :math:`\coth(\frac{\mu_0HM_s}{k_BT})-\frac{k_BT}{\mu_0HM_s}`.
@@ -1069,10 +1003,6 @@ def vftEquation(x, A, DE, x_0):
 
     The VFT equation is defined as as :math:`\tau = A\exp\left(\frac{DE}{x-x_0}\right)` and represents
     a modifed form of the Arrenhius distribution with a freezing point of :math:`x_0`.
-    
-    Example:
-        .. plot:: samples/Fitting/vftEquation.py
-           :include-source:
     """
     _kb = consts.physical_constants['Boltzmann constant'][0] / consts.physical_constants['elementary charge'][0]
     return A * _np_.exp(-DE / (_kb * (x - x_0)))
@@ -1130,7 +1060,6 @@ def stretchedExp(x, A, beta, x_0):
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
     
-    See :py:class:`Stoner.Fit.StretchedExp` for an example.
     """
     return A * _np_.exp(-(x / x_0) ** beta)
 
@@ -1149,10 +1078,6 @@ class StretchedExp(Model):
         Data for a stretched exponentional function.
 
     The stretched exponential is defined as :math:`y=A\exp\left[\left(\frac{-x}{x_0}\right)^\beta\right]`.
-    
-    Example:
-        .. plot:: samples/lmfit_example.py
-           :include-source:
     """
 
     display_names=["A",r"\beta","x_0"]
@@ -1188,11 +1113,7 @@ def kittelEquation(H,g,M_s,H_k):
 
     Returns:
         Reesonance peak frequencies in Hz
-        
-    Example:
-        .. plot:: samples/Fitting/kittel.py
-           :include-source:
-        
+                
     """
     gamma=g*cnst.e/(2*cnst.m_e)
     return (consts.mu0*gamma/(2*_np_.pi))*_np_.sqrt((H+H_k)*(H+H_k+M_s))
@@ -1209,8 +1130,6 @@ class KittelEquation(Model):
 
     Returns:
         Reesonance peak frequencies in Hz
-        
-    See :py:func:`Stoner.Fit.kittelEquation` for an example
     """
 
     display_names=[r"\g","M_s","H_k"]

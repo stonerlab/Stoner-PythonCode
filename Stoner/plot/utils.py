@@ -51,7 +51,7 @@ def errorfill(x, y,
               ls=None,
               lw=None,
               alpha=1,
-              alpha_fill=0.7,
+              alpha_fill=0.5,
               label='',
               label_fill='',
               ax=None, **kargs):
@@ -142,7 +142,6 @@ def fill_between_x(x, y1, y2=0, ax=None, **kwargs):
     ym = (y1 + y2) / 2.0
     yd = (y1 - y2) / 3.0
     alpha = kwargs["alpha"]
-    a = np.linspace(0.1, 0.9, 15)
     a = np.linspace(0.1, 0.9, 15)
     z = lambda x, s,y: s * np.sqrt(-2 * np.log(np.sqrt(2 * np.pi) * s * y))
     for h in a:
