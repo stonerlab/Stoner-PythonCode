@@ -287,5 +287,11 @@ napoleon_use_rtype = False
 
 automodapi_toctreedirnm='classes'
 
+plot_formats = [("png",96),]
+plot_html_show_formats = False
+plot_include_source = True
+plot_html_show_source_link = False
+
+
 [extensions]
 todo_include_todos=True

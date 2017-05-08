@@ -19,6 +19,5 @@ d.subtract(a,b,replace=False)
 d.multiply(a,b,replace=False)
 d.divide(a,b,replace=False)
 d.diffsum(a,b,replace=False)
-
 d.setas="xyeyeyeyeyeyeye"
-d.plot(multiple="panels",plotter=errorfill,color="green")
+d.plot(multiple="panels",plotter=errorfill,color="red",alpha_fill=0.2)
