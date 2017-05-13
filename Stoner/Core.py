@@ -119,7 +119,8 @@ class _setas(object):
 
     @property
     def clone(self):
-        new = _setas()
+        cls=self.__class__
+        new = cls()
         for attr in self.__dict__:
             if not callable(self.__dict__[attr]):
                 new.__dict__[attr] = copy.deepcopy(self.__dict__[attr])
@@ -523,6 +524,8 @@ class _evaluatable(object):
 
 class regexpDict(sorteddict):
     """An ordered dictionary that permits looks up by regular expression."""
+    allowed_keys=(object,)
+    
     def __init__(self,*args,**kargs):
         super(regexpDict,self).__init__(*args,**kargs)
 
@@ -580,7 +583,7 @@ class regexpDict(sorteddict):
         try:
             key=self.__lookup__(name,exact=True)
         except KeyError:
-            if not isinstance(name,string_types):
+            if not isinstance(name,self.allowed_keys):
                 raise KeyError("{} is not a match to any key.".format(name))
             key=name
         super(regexpDict,self).__setitem__(key, value)
@@ -630,6 +633,8 @@ class typeHintedDict(regexpDict):
         Rather than subclassing a plain dict, this is a subclass of a :py:class:`blist.sorteddict` which stores the entries in a binary list structure.
         This makes accessing the keys much faster and also ensures that keys are always returned in alphabetical order.
     """
+    allowed_keys=string_types
+    #Force metadata keys to be strings
     _typehints = sorteddict()
 
     __regexGetType = re.compile(r'([^\{]*)\{([^\}]*)\}')
@@ -902,7 +907,8 @@ class typeHintedDict(regexpDict):
         Returns:
             A copy of the current typeHintedDict
         """
-        ret = typeHintedDict()
+        cls=self.__class__
+        ret = cls()
         for k in self.keys():
             t = self._typehints[k]
             nk = k + "{" + t + "}"
@@ -2117,6 +2123,18 @@ class DataFile(metadataObject):
             bool: True if item in self.metadata"""
         return item in self.metadata
 
+    def __deepcopy__(self, memo):
+        """Provides support for copy.deepcopy to work."""
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+            try:
+                setattr(result, k, copy.deepcopy(v, memo))
+            except Exception:
+                setattr(result, k, copy.copy(v))                
+        return result
+
     def __delitem__(self, item):
         """Implements row or metadata deletion.
 
@@ -2295,7 +2313,7 @@ class DataFile(metadataObject):
         return ret
 
     def __getstate__(self):
-        return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata}
+        return {"data": self.data, "column_headers": self.column_headers, "metadata": self.metadata,"filename":self.filename}
 
 
     def __iter__(self):
@@ -2508,7 +2526,8 @@ class DataFile(metadataObject):
         self["TDI Format"]=fmt
 
     def __reduce_ex__(self, p):
-        return (DataFile, (), self.__getstate__())
+        cls=self.__class__
+        return (cls, (), self.__getstate__())
 
     def __regexp_meta__(self, test):
         """Do a regular expression search for all meta data items.

@@ -22,6 +22,17 @@ from .Core import metadataObject,DataFile,regexpDict
 
 regexp_type=(re._pattern_type,)
 
+def _pathsplit(pth):
+    """Split pth into a sequence of individual parts with path.split."""
+    dpart,fpart=path.split(pth)
+    if dpart=="":
+        return [fpart,]
+    else:
+        rest=_pathsplit(dpart)
+        rest.append(fpart)
+        return rest
+    
+
 
 class baseFolder(MutableSequence):
     
@@ -41,6 +52,7 @@ class baseFolder(MutableSequence):
         lsgrp (list of str): the names of all the groups in the folder
         mindepth (int): the minimum level of nesting groups in the folder.
         not_empty (iterator of metadaaObject): iterates over all members of the folder that have non-zero length
+        shape (tuple): a data structure that indicates the structure of the objectFolder - tuple of number of files and dictionary of the shape of each group.
         type (subclass of metadtaObject): the class of objects sotred in this folder
     """
     
@@ -196,6 +208,11 @@ class baseFolder(MutableSequence):
         else:
             self._objects=value
 
+    @property
+    def shape(self):
+        """Return a data structure that is characteristic of the objectFolder's shape."""
+        grp_shape={k:self[k].shape for k in self.groups}
+        return (len(self),grp_shape)
 
     @property
     def type(self):
@@ -378,8 +395,20 @@ class baseFolder(MutableSequence):
             for iname in islice(self.__names__(),name.start,name.stop,name.step):
                 other.__setter__(iname,self.__getter__(iname))
             return other
+        elif isinstance(name,tuple): # Recursive indexing through tree with a tuple
+            item=name[0]
+            name=tuple(name[1:])
+            if len(name)==0: #Final stage of indexing and we're still in the data folder
+                return self[item]
+            elif len(name)==1: # This allows indexing into a metadataobject
+                name=name[0]
+                grp=self[item]
+                return grp[name]
+            else: # Continuing to index into the tree of groups
+                grp=self[item]
+                return grp[name]
         else:
-            raise KeyError("Can't index the baseFolder with {}",format(name))
+            raise KeyError("Can't index the baseFolder with {}".format(name))
 
     def __setitem__(self,name,value):
         """Attempts to store a value in either the groups or objects.
@@ -753,10 +782,10 @@ class baseFolder(MutableSequence):
         return obj
 
 
-    def _pruner_(self,grp,breadcrumb):
+    def _pruner_(self,grp,breadcrumb,prunelist=None):
         """Removes any empty groups fromthe objectFolder tree."""
-        if len(grp)==0:
-            self._pruneable.append(breadcrumb)
+        if len(grp)==0 and len(grp.groups)==0:
+            prunelist.append(breadcrumb)
             ret=True
         else:
             ret=False
@@ -783,7 +812,7 @@ class baseFolder(MutableSequence):
                 where f is either a objectFolder or metadataObject.
         """
         group=kargs.pop("group",False)
-        replace_terminal=kargs.op("replace_terminal",False)
+        replace_terminal=kargs.pop("replace_terminal",False)
         only_terminal=kargs.pop("only_terminal",True)
         walker_args=kargs.pop("walker_args",dict())
         breadcrumb=kargs.pop("breadcrumb",dict())
@@ -934,7 +963,7 @@ class baseFolder(MutableSequence):
             for g in self.groups:
                 self.groups[g].flatten()
                 self.extend([
-                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=False)
+                    self.groups[g].__getter__(self.groups[g].__lookup__(n),instantiate=None)
                     for n in self.groups[g].__names__()])
             self.groups={}
         return self
@@ -1048,6 +1077,7 @@ class baseFolder(MutableSequence):
         elif isinstance(value,string_types):
             return value
         else:
+            print(type(value))
             name="Untitled-{}".format(self._last_name)
             while name in self:
                 self._last_name+=1
@@ -1074,10 +1104,10 @@ class baseFolder(MutableSequence):
         Returns:
             A copy of thte pruned objectFolder.
         """
-        self._pruneable=[] # slightly ugly to avoid modifying whilst iterating
-        self.walk_groups(self._pruner_,group=True)
-        while len(self._pruneable)!=0:
-            for p in self._pruneable:
+        pruneable=[] # slightly ugly to avoid modifying whilst iterating
+        self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
+        while len(pruneable)!=0:
+            for p in pruneable:
                 pth=tuple(p[:-1])
                 item=p[-1]
                 if len(pth)==0:
@@ -1085,9 +1115,8 @@ class baseFolder(MutableSequence):
                 else:
                     grp=self[pth]
                     del grp[item]
-            self._pruneable=[]
-            self.walk_groups(self._pruner_,group=True)
-        del self._pruneable
+            pruneable=[]
+            self.walk_groups(self._pruner_,group=True,walker_args={"prunelist":pruneable})
         return self
 
     def select(self,*args, **kargs):
@@ -1139,6 +1168,7 @@ class baseFolder(MutableSequence):
             then pass them via the first positional dictionary value.
         """
         recurse=kargs.pop("recurse",False)
+        negate=kargs.pop("negate",False)
         if len(args)==1:
             if callable(args[0]):
                 kargs["__"]=args[0]
@@ -1156,6 +1186,7 @@ class baseFolder(MutableSequence):
                 if callable(kargs[arg]) and kargs[arg](f):
                     break
                 elif isinstance(arg,string_types):
+                    val=kargs[arg]
                     parts=arg.split("__")
                     if parts[-1] in operator and len(parts)>1:
                         if len(parts)>2 and parts[-2]=="not":
@@ -1174,7 +1205,7 @@ class baseFolder(MutableSequence):
                         else: #Everything else is exact matches
                             op="eq"
                     func=operator[op]
-                    if arg in f and negate^func(f[arg],kargs[arg]):
+                    if arg in f and negate^func(f[arg],val):
                         break
             else: # No tests matched - contineu to next line
                 continue
@@ -1263,10 +1294,10 @@ class baseFolder(MutableSequence):
         relpaths=[path.relpath(f,self.directory) for f in self.__names__()]
         dels=list()
         for i,f in enumerate(relpaths):
-            grp=path.split(f)[0]
+            grp=_pathsplit(f)[0]
             if grp!=f and grp!="":
                 self.add_group(grp)
-                self.groups[grp].append([i])
+                self.groups[grp].append(self.__getter__(i,instantiate=None))
                 dels.append(i)
         for i in sorted(dels,reverse=True):
             del self[i]
@@ -1309,7 +1340,7 @@ class baseFolder(MutableSequence):
                 where f is either a objectFolder or metadataObject.
         """
         group=kargs.pop("group",False)
-        replace_terminal=kargs.op("replace_terminal",False)
+        replace_terminal=kargs.pop("replace_terminal",False)
         only_terminal=kargs.pop("only_terminal",True)
         walker_args=kargs.pop("walker_args",dict())
         walker_args=dict() if walker_args is None else walker_args

@@ -74,7 +74,8 @@ class Folders_test(unittest.TestCase):
         fldr["QDFile"].group("Byapp")
         self.assertEqual(fldr.mindepth,1,"mindepth attribute of folder failed.")
         self.assertEqual(fldr.depth,2,"depth attribute failed.")
-        fldr.flatten()
+        self.setUp()
+        fldr=self.fldr
         fldr+=Data()
         self.assertEqual(len(list(fldr.loaded)),1,"loaded attribute failed {}".format(len(list(fldr.loaded))))
         self.assertEqual(len(list(fldr.not_empty)),len(fldr)-1,"not_empty attribute failed.")
@@ -102,9 +103,31 @@ class Folders_test(unittest.TestCase):
          self.assertTrue(t.pattern==['*.txt'], 'pattern didnt copy over')
          self.assertTrue(hasattr(t, "abc") and t.abc==123, 'user attribute didnt copy over')
          self.assertTrue(isinstance(t['recursivefoldertest'],SF.DataFolder), 'groups didnt copy over')
+         
+    def test_grouping(self):
+        self.fldr4=SF.DataFolder()
+        x=np.linspace(-np.pi,np.pi,181)
+        for phase in np.linspace(0,1.0,5):
+            for amplitude in np.linspace(1,2,6):
+                for frequency in np.linspace(1,2,5):
+                    y=amplitude*np.sin(frequency*x+phase*np.pi)
+                    d=Data(x,y)
+                    d["frequency"]=frequency
+                    d["amplitude"]=amplitude
+                    d["phase"]=phase
+                    d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
+                    self.fldr4+=d
+        self.fldr4.unflatten()
+        self.assertEqual(self.fldr4.mindepth,2,"Unflattened DataFolder had wrong mindepth.")
+        self.assertEqual(self.fldr4.shape, (~~self.fldr4).shape,"Datafodler changed shape on flatten/unflatten")
+        self.fldr5=self.fldr4.select(amplitude=1.4,recurse=True)
+        self.fldr5.prune()
+        pruned=(0,{'1.4': (0,{'0.0': (5, {}),'0.25': (5, {}),'0.5': (5, {}),'0.75': (5, {}),'1.0': (5, {})})})
+        self.assertEqual(self.fldr5.shape,pruned,"Folder pruning gave an unxpected shape.")
+        self.assertEqual(self.fldr5[("1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
+        shape=(~(~self.fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
+        self.assertEqual(shape,(0, {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})}),"Multi selects and inverts failed.")
         
-
-
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")
     test.setUp()
@@ -113,4 +136,4 @@ if __name__=="__main__": # Run some tests manually to allow debugging
     test.test_Properties()
     test.test_clone()
     test.test_methods()
-
+    test.test_grouping()
