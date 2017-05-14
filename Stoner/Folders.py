@@ -170,7 +170,8 @@ class baseFolder(MutableSequence):
     @property
     def ls(self):
         """List just the names of the objects in the folder."""
-        return self.__names__()
+        for f in self.__names__():
+            yield f
 
     @property
     def lsgrp(self):
@@ -936,7 +937,7 @@ class baseFolder(MutableSequence):
             
         Keyword Arguments:
             invert (bool): Invert the sense of the filter (done by doing an XOR whith the filter condition
-            copy (bool): If True, then a new copy of the current baseFolder is made before filtering.
+            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
             
         Returns:
             The current objectFolder object
@@ -964,17 +965,20 @@ class baseFolder(MutableSequence):
         result.extend(names)
         return result
 
-    def filterout(self, filter): # pylint: disable=redefined-builtin
+    def filterout(self, filter,copy=False): # pylint: disable=redefined-builtin
         """Synonym for self.filter(filter,invert=True)
         
         Args:
-        filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
-            metadataObject and evaluates True or False
+            filter (string or callable): Either a string flename pattern or a callable function which takes a single parameter x which is an instance of a 
+                metadataObject and evaluates True or False
+            
+        Keyword Arguments:
+            copy (bool): If set True then the :py:class:`DataFolder` is copied before being filtered. \Default is False - work in place.
         
         Returns:
             The current objectFolder object with the files in the file list filtered.
         """
-        return self.filter(filter, invert=True)
+        return self.filter(filter, invert=True,copy=copy)
 
     def flatten(self, depth=None):
         """Compresses all the groups and sub-groups iunto a single flat file list.
@@ -1540,7 +1544,7 @@ class DiskBssedFolder(object):
     def __sub_core__(self,result,other):
         """Additional logic to check for match to basenames,"""
         if isinstance(other,string_types):
-            if other in result.basenames and path.join(result.directory,other) in result.ls:
+            if other in list(result.basenames) and path.join(result.directory,other) in list(result.ls):
                 other=path.join(result.directory,other)
                 result.__deleter__(other)
                 return result
@@ -1550,8 +1554,8 @@ class DiskBssedFolder(object):
     def __lookup__(self,name):
         """Addional logic for the looking up names."""
         if isinstance(name,string_types):
-            if self.basenames.count(name)==1:
-                return self.__names__()[self.basenames.index(name)]
+            if list(self.basenames).count(name)==1:
+                return self.__names__()[list(self.basenames).index(name)]
             
         return super(DiskBssedFolder,self).__lookup__(name)
         
@@ -1584,15 +1588,17 @@ class DiskBssedFolder(object):
                 m=p.search(tmp.filename)
                 for k in m.groupdict():
                     tmp.metadata[k]=tmp.metadata.string_to_type(m.group(k))
-        if self.read_means:
+        if self.read_means: #Add mean and standard deviations to the metadata
             if len(tmp)==0:
                 pass
             elif len(tmp)==1:
                 for h in tmp.column_headers:
                     tmp[h]=tmp.column(h)[0]
+                    tmp["{}_stdev".format(h)]=None
             else:
                 for h in tmp.column_headers:
                     tmp[h]=_np_.mean(tmp.column(h))
+                    tmp["{}_stdev".format(h)]=_np_.std(tmp.column(h))
         tmp['Loaded from']=tmp.filename
         tmp=self._update_from_object_attrs(tmp)
         self.__setter__(name,tmp)
@@ -1613,10 +1619,8 @@ class DiskBssedFolder(object):
     @property
     def basenames(self):
         """Returns a list of just the filename parts of the objectFolder."""
-        ret=[]
         for x in self.__names__():
-            ret.append(path.basename(x))
-        return ret
+            yield path.basename(x)
 
     @property
     def pattern(self):
