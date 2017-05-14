@@ -504,7 +504,7 @@ class PlotMixin(object):
             plt.figure(tfig.number)
             plt.sca(tax)
 
-    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, **kargs):
         """Appends a column of data or inserts a column to a datafile instance.
     
         Args:
@@ -517,6 +517,8 @@ class PlotMixin(object):
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
+            setas (str): Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
+
     
         Returns:
             A :py:class:`DataFile` instance with the additonal column inserted.
@@ -526,7 +528,7 @@ class PlotMixin(object):
             the original DataFile Instance as well as returning it.
         """
         # Call the parent method and then update this label
-        super(PlotMixin,self).add_column(column_data,header=header,index=index,func_args=func_args,replace=replace)
+        super(PlotMixin,self).add_column(column_data,header=header,index=index,**kargs)
         #Mostly this is duplicating the parent method
         if index is None:
             index = len(self.column_headers)-1

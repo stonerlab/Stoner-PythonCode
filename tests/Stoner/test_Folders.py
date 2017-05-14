@@ -23,6 +23,8 @@ import Stoner.Zip as SZ
 
 from Stoner import Data
 
+import matplotlib.pyplot as plt
+
 pth=path.dirname(__file__)
 pth=path.realpath(path.join(pth,"../../"))
 sys.path.insert(0,pth)
@@ -111,10 +113,11 @@ class Folders_test(unittest.TestCase):
             for amplitude in np.linspace(1,2,6):
                 for frequency in np.linspace(1,2,5):
                     y=amplitude*np.sin(frequency*x+phase*np.pi)
-                    d=Data(x,y)
+                    d=Data(x,y,setas="xy",column_headers=["X","Y"])
                     d["frequency"]=frequency
                     d["amplitude"]=amplitude
                     d["phase"]=phase
+                    d["params"]=[phase,frequency,amplitude]
                     d.filename="test/{amplitude}/{phase}/{frequency}.dat".format(**d)
                     self.fldr4+=d
         self.fldr4.unflatten()
@@ -127,6 +130,30 @@ class Folders_test(unittest.TestCase):
         self.assertEqual(self.fldr5[("1.4","0.5",0,"phase")],0.5,"Multilevel indexing of tree failed.")
         shape=(~(~self.fldr4).select(amplitude=1.4).select(frequency=1).select(phase__gt=0.2)).shape
         self.assertEqual(shape,(0, {'0.25': (1, {}), '0.5': (1, {}), '0.75': (1, {}), '1.0': (1, {})}),"Multi selects and inverts failed.")
+        g=(~self.fldr4)/10
+        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
+                                     'Group 5': (15, {}),'Group 6': (15, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Dive by int failed.")
+        g["Group 6"]-=5
+        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (15, {}),'Group 4': (15, {}),
+                                     'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by int failed.")
+        remove=g["Group 3"][4]
+        g["Group 3"]-=remove
+        self.assertEqual(g.shape,(0,{'Group 0': (15, {}),'Group 1': (15, {}),'Group 2': (15, {}),'Group 3': (14, {}),'Group 4': (15, {}),
+                                     'Group 5': (15, {}),'Group 6': (14, {}),'Group 7': (15, {}),'Group 8': (15, {}),'Group 9': (15, {})}),"Sub by object failed.")
+        d=self.fldr4["1.0","1.0"].gather(0,1)
+        self.assertEqual(d.shape,(181,6),"Gather seems have failed.")
+        self.assertTrue(np.all(self.fldr4["1.0","1.0"].slice_metadata("phase")==
+                               np.ones(5)),"Slice metadata failure.")
+        d=(~self.fldr4).extract("phase","frequency","amplitude","params")
+        self.assertEqual(d.shape,(150,6),"Extract failed to produce data of correct shape.")
+        self.assertEqual(d.column_headers,['phase', 'frequency', 'amplitude', 'params', 'params', 'params'],"Exctract failed to get correct column headers.")
+        p=self.fldr4["1.0","1.0"]
+        p=SF.PlotFolder(p)
+        p.plot()
+        self.assertEqual(len(plt.get_fignums()),1,"Failed to generate a single plot for PlotFolder.")
+        plt.close("all")
+        
+        
         
 if __name__=="__main__": # Run some tests manually to allow debugging
     test=Folders_test("test_Folders")

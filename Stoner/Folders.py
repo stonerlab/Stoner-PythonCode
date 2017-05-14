@@ -89,14 +89,19 @@ class baseFolder(MutableSequence):
                 the mixin classes
             - calls the mixin init methods.
         """
-        self.args=copy(args)
-        self.kargs=copy(kargs)
-        #List of routines that define the interface for manipulating the objects stored in the folder
-        for k in list(self.kargs.keys()): # Store keyword parameters as attributes
-            if not hasattr(self,k) or k in ["type","kargs","args"]:
-                value=kargs.pop(k,None)
-                self.__setattr__(k,value)
-                if self.debug: print("Setting self.{} to {}".format(k,value))
+        if len(args)==1 and isinstance(args[0],baseFolder): # Special case for type changing.
+            self.args=()
+            self.kargs={}
+            self.__init_from_other(args[0])
+        else:
+            self.args=copy(args)
+            self.kargs=copy(kargs)
+            #List of routines that define the interface for manipulating the objects stored in the folder
+            for k in list(self.kargs.keys()): # Store keyword parameters as attributes
+                if not hasattr(self,k) or k in ["type","kargs","args"]:
+                    value=kargs.pop(k,None)
+                    self.__setattr__(k,value)
+                    if self.debug: print("Setting self.{} to {}".format(k,value))
         if python_v3:
             super(baseFolder,self).__init__()
         else:
@@ -105,6 +110,11 @@ class baseFolder(MutableSequence):
     ###########################################################################
     ################### Properties of baseFolder ##############################
 
+    @property
+    def clone(self):
+        """Clone just does a deepcopy as a property for compatibility with :py:class:`Stoner.Core.DataFile`."""
+        return deepcopy(self)
+    
     @property
     def depth(self):
         """Gives the maximum number of levels of group below the current objectFolder."""
@@ -490,11 +500,13 @@ class baseFolder(MutableSequence):
             return result
         elif isinstance(other,int_types): #Simple decimate
             for i in range(other):
-                self.add_group("Group {}".format(i))
-            for ix,d in enumerate(self):
+                result.add_group("Group {}".format(i))
+            for ix in range(len(self)):
+                d=self.__getter__(ix,instantiate=None)
                 group=ix%other
-                self.groups["Group {}".format(group)]+=d
-            self.__clear__()
+                result.groups["Group {}".format(group)].__setter__(self.__lookup__(ix),d)
+            result.__clear__()
+            return result
             
     def __sub_core_int__(self,result,other):
         """Remove indexed file."""
@@ -512,7 +524,7 @@ class baseFolder(MutableSequence):
     
     def __sub_core_data__(self,result,other):
         """Remove a data object."""
-        othername=getattr(other,"filename",getattr(other,"title"))
+        othername=getattr(other,"filename",getattr(other,"title",None))
         if othername in result.__names__():
             result.__deleter__(othername)
         else:
@@ -773,6 +785,26 @@ class baseFolder(MutableSequence):
 
     ###########################################################################
     ###################### Private Methods ####################################
+
+    def __init_from_other(self,other):
+        cls = self.__class__
+        result = cls.__new__(cls)
+        for k, v in other.__dict__.items():
+            if k=="groups":
+                continue
+            if k=="objects":
+                continue
+            try:
+                setattr(result, k, deepcopy(v))
+            except Exception:
+                setattr(result, k, copy(v))                
+
+        for g in other.groups:
+            self.groups[g]=cls(other.groups[g])
+        for n in other.ls:
+            self.__setter__(n,other.__getter__(n,instantiate=None))
+
+        return result
     
     def _update_from_object_attrs(self,obj):
         """Updates an object from object_attrs store."""
@@ -1415,7 +1447,7 @@ class DiskBssedFolder(object):
         for k in defaults:
             setattr(self,k,kargs.pop(k,defaults[k]))
         super(DiskBssedFolder,self).__init__(*args,**kargs) #initialise before __clone__ is called in getlist
-        if self.readlist and len(args)>0:
+        if self.readlist and len(args)>0 and isinstance(args[0],string_types):
             self.getlist(directory=args[0])
         
         
@@ -1784,40 +1816,65 @@ class DataFolder(DiskBssedFolder,baseFolder):
 
         return self
 
-    def extract(self,metadata):
+    def extract(self,*metadata,**kargs):
         """Walks through the terminal group and gets the listed metadata from each file and constructsa replacement metadataObject.
 
         Args:
-            metadata (list): List of metadata indices that should be used to construct the new data file.
+            *metadata (str): One or more metadata indices that should be used to construct the new data file.
+            
+        Ketyword Arguments:
+            copy (bool): Take a copy of the :py:class:`DataFolder` before starting the extract (default is True)
 
         Returns:
             An instance of a metadataObject like object.
         """
+        copy=kargs.pop("copy",True)
+
+        args=[]
+        for m in metadata:
+            if isinstance(m,string_types):
+                args.append(m)
+            elif isinstance(m,Iterable):
+                args.extend(m)
+            else:
+                raise TypeError("Metadata values should be strings, or lists of strings, not {}".format(type(m)))
+        metadata=args
 
         def _extractor(group,trail,metadata):
 
             results=group.type()
             results.metadata=group[0].metadata
-
-            ok_data=list
+            headers=[]
+            
+            ok_data=list()
             for m in metadata: # Sanity check the metadata to include
                 try:
-                    test=_np_.array(results[m])
+                    test=results[m]
+                    if not isinstance(test,Iterable) or isinstance(test,string_types):
+                        test=_np_.array([test])
+                    else:
+                        test=_np_.array(test)
                 except Exception:
                     continue
                 else:
                     ok_data.append(m)
-                    results.column_headers.extend([m]*len(test))
+                    headers.extend([m]*len(test))
 
-            row=_np_.array([])
             for d in group:
+                row=_np_.array([])
                 for m in ok_data:
                     row=_np_.append(row,_np_.array(d[m]))
                 results+=row
+            results.column_headers=headers
 
             return results
+        
+        if copy:
+            ret=deepcopy(self)
+        else:
+            ret=self
 
-        return self.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
+        return ret.walk_groups(_extractor,group=True,replace_terminal=True,walker_args={"metadata":metadata})
 
     def gather(self,xcol=None,ycol=None):
         """Collects xy and y columns from the subfiles in the final group in the tree and builds iunto a :py:class:`Stoner.Core.metadataObject`
@@ -1830,77 +1887,57 @@ class DataFolder(DiskBssedFolder,baseFolder):
             This is a wrapper around walk_groups that assembles the data into a single file for further analysis/plotting.
 
         """
-        def _gatherer(group,trail,xcol=None,ycol=None):
+        def _gatherer(group,trail,xcol=None,ycol=None,xerr=None,yerr=None,**kargs):
             yerr=None
             xerr=None
-            if xcol is None and ycol is None:
-                lookup=True
-                cols=group[0]._get_cols()
-                xcol=cols["xcol"]
-                ycol=cols["ycol"]
-                if  cols["has_xerr"]:
-                    xerr=cols["xerr"]
-                if cols["has_yerr"]:
-                    yerr=cols["yerr"]
+            cols=group[0]._col_args(xcol=xcol,ycol=ycol,xerr=xerr,yerr=yerr,scalar=False)
+            lookup=xcol is None and ycol is None
+            xcol=cols["xcol"]
+
+            if  cols["has_xerr"]:
+                xerr=cols["xerr"]
             else:
-                lookup=False
-
-            xcol=group[0].find_col(xcol)
-            ycol=group[0].find_col(ycol)
-
+                xerr=None
+           
+            common_x=kargs.pop("common_x",True)
+                        
             results=group.type()
             results.metadata=group[0].metadata
             xbase=group[0].column(xcol)
             xtitle=group[0].column_headers[xcol]
-            results&=xbase
-            results.column_headers[0]=xtitle
-            setas=["x"]
+            results.add_column(xbase,header=xtitle,setas="x")
             if cols["has_xerr"]:
                 xerrdata=group[0].column(xerr)
-                results&=xerrdata
-                results.column_headers[-1]="Error in {}".format(xtitle)
-                setas.append("d")
+                xerr_title="Error in {}".format(xtitle)
+                results.add_column(xerrdata,header=xerr_title,setas="d")
             for f in group:
                 if lookup:
-                    cols=f._get_cols()
+                    cols=f._col_args(scalar=False)
                     xcol=cols["xcol"]
-                    ycol=cols["ycol"]
-                    zcol=cols["zcol"]
                 xdata=f.column(xcol)
-                ydata=f.column(ycol)
-                if _np_.any(xdata!=xbase):
-                    results&=xdata
-                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xcol])
+                if _np_.any(xdata!=xbase) and not common_x:
+                    xtitle=group[0].column_headers[xcol]
+                    results.add_column(xbase,header=xtitle,setas="x")
                     xbase=xdata
-                    setas.append("x")
                     if cols["has_xerr"]:
                         xerr=cols["xerr"]
-                        if _np_.any(f.column(xerr)!=xerrdata):
-                            xerrdata=f.column(xerr)
-                            results&=xerrdata
-                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[xerr])
-                            setas.append("d")
-                for i in range(len(ycol)):
-                    results&=ydata[:,i]
-                    setas.append("y")
-                    results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[ycol[i]])
-                    if cols["has_yerr"]:
-                        yerr=cols["yerr"][i]
-                        results&=f.column(yerr)
-                        results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[yerr])
-                        setas.append("e")
-                if len(zcol)>0:
-                    zdata=f.column(zcol)
-                    for i in range(len(zcol)):
-                        results&=zdata[:,i]
-                        setas.append("z")
-                        results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zcol[i]])
-                        if cols["has_zerr"]:
-                            zerr=cols["zerr"][i]
-                            results&=f.column(zerr)
-                            results.column_headers[-1]="{}:{}".format(path.basename(f.filename),f.column_headers[zerr])
-                            setas.append("f")
-            results.setas=setas
+                        xerrdata=f.column(xerr)
+                        xerr_title="Error in {}".format(xtitle)
+                        results.add_column(xerrdata,header=xerr_title,setas="d")
+                for col,has_err,ecol,setcol,setecol in zip(["ycol","zcol","ucol","vcol","wcol"],
+                                                    ["has_yerr","has_zerr","","",""],
+                                                    ["yerr","zerr","","",""], "yzuvw","ef..."):
+                    if len(cols[col])==0:
+                        continue
+                    data=f.column(cols[col])
+                    for i in range(len(cols[col])):
+                        title="{}:{}".format(path.basename(f.filename),f.column_headers[cols[col][i]])
+                        results.add_column(data[:,i],header=title,setas=setcol)
+                    if has_err!="" and cols[has_err]:
+                        err_data=f.column(cols[ecol])
+                        for i in range(len(cols[ecol])):
+                            title="{}:{}".format(path.basename(f.filename),f.column_headers[cols[ecol][i]])
+                            results.add_column(err_data[:,i],header=title,setas=setecol)
             return results
 
         return self.walk_groups(_gatherer,group=True,replace_terminal=True,walker_args={"xcol":xcol,"ycol":ycol})

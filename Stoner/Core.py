@@ -255,6 +255,7 @@ class _setas(object):
                 value.extend(list("." * (len(self.column_headers) - len(value))))
             if len(self.setas)<self._size:
                 self.setas.extend("."*(self._size-len(self.setas)))
+            value=value[:len(self.setas)]
             for i, v in enumerate(list(value)):
                 if v.lower() not in "xyzedfuvw.-":
                     raise ValueError("Set as column element is invalid: {}".format(v))
@@ -2756,6 +2757,15 @@ class DataFile(metadataObject):
                         ret[c]=ret[c][0]
                     else:
                         ret[c]=None
+        elif isinstance(scalar,bool) and not scalar:
+            for c in ret:
+                if c.startswith("x") or c.startswith("has_"):
+                    continue
+                if not isinstance(ret[c],Iterable) and ret[c] is not None:
+                    ret[c]=list([ret[c]])
+                elif ret[c] is None:
+                    ret[c]=[]
+            
         return ret
 
     def _pop_mask(self):
@@ -2779,7 +2789,7 @@ class DataFile(metadataObject):
 
 #   PUBLIC METHODS
 
-    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False):
+    def add_column(self, column_data, header=None, index=None, func_args=None, replace=False,setas=None):
         """Appends a column of data or inserts a column to a datafile instance.
 
         Args:
@@ -2792,6 +2802,7 @@ class DataFile(metadataObject):
             func_args (dict): If column_data is a callable object, then this argument
                 can be used to supply a dictionary of function arguments to the callable object.
             replace (bool): Replace the data or insert the data (default)
+            setas (str): Set the type of column (x,y,z data etc - see :py:attr:`Stoner.Core.DataFile.setas`)
 
         Returns:
             self: The :py:class:`DataFile` instance with the additonal column inserted.
@@ -2808,7 +2819,14 @@ class DataFile(metadataObject):
             index = self.find_col(index)
             if header is None:
                 header = self.column_headers[index]
-
+                
+        if isinstance(setas,str) and len(setas)==1 and setas in "xyzdefuvw.-":
+            pass
+        elif setas is not None:
+            raise TypeError("setas parameter should be a single letter in the set xyzdefuvw.-, not {}".format(setas))
+        else:
+            setas="."
+                
         if isinstance(column_data, list):
             column_data = _np_.array(column_data)
 
@@ -2841,16 +2859,24 @@ class DataFile(metadataObject):
             _np__data = _np_.append(_np__data, _np_.zeros(dr - cl))
         if replace:
             self.data[:, index] = _np__data
+            if setas!="-":
+                self.setas[index]=setas
+                           
         else:
             if dc * dr == 0:
                 self.data = DataArray(_np_.transpose(_np_.atleast_2d(_np__data)),setas=self.data._setas)
                 self.column_headers=[header,]
+                self.setas=setas
+                
             else:
                 columns=copy.copy(self.column_headers)
-                setas=list(self.setas)
-                setas.insert(index,".")
+                old_setas=list(self.setas)
+                if setas!="-":
+                    old_setas.insert(index,setas)
+                else:
+                    old_setas.insert(index,old_setas[index])
                 self.data = DataArray(_np_.insert(self.data, index, _np__data, 1))
-                self.setas(setas)
+                self.setas(old_setas)
                 columns.insert(index,header)
                 self.column_headers=columns
         return self
